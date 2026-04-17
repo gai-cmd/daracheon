@@ -1,0 +1,168 @@
+{
+  "description": "Product and brand images downloaded from daracheon.com (https://service-369774072122.us-west1.run.app/)",
+  "downloadedAt": "2026-04-06",
+  "totalImages": 27,
+  "sources": {
+    "cloudinary": {
+      "cloudName": "ddsu7fl1o",
+      "folder": "agarwood",
+      "count": 2
+    },
+    "googleDrive": {
+      "count": 15
+    },
+    "flootApp": {
+      "count": 2
+    },
+    "unsplash": {
+      "count": 7,
+      "note": "Stock photos used as placeholders on the site"
+    },
+    "ogImage": {
+      "count": 1
+    }
+  },
+  "siteImageMapping": {
+    "imgAgarwood": "18_ch1_gift_tradition.png",
+    "imgProcess": "27_ch1.png",
+    "imgFarm": "18_ch1_gift_tradition.png",
+    "aboutAgarwoodBenefit": "27_ch1.png",
+    "brandStoryHero": "floot-brand-story-hero.jpg",
+    "processHero": "27_ch1.png",
+    "mediaHero": "27_ch1.png",
+    "heroImage1": "floot-hero-image.jpg",
+    "heroImage2": "floot-brand-story-hero.jpg",
+    "aboutAgarwoodHero": "18_ch1_gift_tradition.png",
+    "companyHero": "floot-hero-image.jpg"
+  },
+  "brandImages": {
+    "description": "Google Drive brand photos used in About/Brand Story sections",
+    "mapping": {
+      "brand-dearacheon-01.jpg": {
+        "alt": "brand image 1",
+        "section": "brand",
+        "googleDriveId": "1ysHtLQD-eWosY0RzcKUyPl81Vg8vYAJU",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1ysHtLQD-eWosY0RzcKUyPl81Vg8vYAJU"
+      },
+      "brand-dearacheon-02.jpg": {
+        "alt": "brand image 2",
+        "section": "brand",
+        "googleDriveId": "1x41yQZcD9Tw2X0OS2yO8gyTFIbZnMYjL",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1x41yQZcD9Tw2X0OS2yO8gyTFIbZnMYjL"
+      },
+      "brand-dearacheon-03.jpg": {
+        "alt": "brand image 3",
+        "section": "brand",
+        "googleDriveId": "150DP4twXGPZZSZcy1oEuDBfBYcnh7veI",
+        "originalUrl": "https://lh3.googleusercontent.com/d/150DP4twXGPZZSZcy1oEuDBfBYcnh7veI"
+      },
+      "brand-dearacheon-08.jpg": {
+        "alt": "history image 1",
+        "section": "history",
+        "googleDriveId": "18H4_TrP4YdOnrPLM5iSPhAhmINr4OFUM",
+        "originalUrl": "https://lh3.googleusercontent.com/d/18H4_TrP4YdOnrPLM5iSPhAhmINr4OFUM"
+      },
+      "brand-dearacheon-09.jpg": {
+        "alt": "history image 2",
+        "section": "history",
+        "googleDriveId": "1o_Gl34UbhvNdkZusqCjQgncv_vkZeCtF",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1o_Gl34UbhvNdkZusqCjQgncv_vkZeCtF"
+      },
+      "brand-dearacheon-10.jpg": {
+        "alt": "history image 3",
+        "section": "history",
+        "googleDriveId": "16bDkhswkafwHe0Vz31pMAiNCca9nv0Bm",
+        "originalUrl": "https://lh3.googleusercontent.com/d/16bDkhswkafwHe0Vz31pMAiNCca9nv0Bm"
+      },
+      "brand-dearacheon-11.jpg": {
+        "alt": "certification image 1",
+        "section": "certification",
+        "googleDriveId": "1STuvVXJ2PO3otEAThOdRr803_IylcsQ2",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1STuvVXJ2PO3otEAThOdRr803_IylcsQ2"
+      },
+      "brand-dearacheon-12.jpg": {
+        "alt": "certification image 2",
+        "section": "certification",
+        "googleDriveId": "163LBEIXLwxe06cJKYGCWjrk9IV82hO56",
+        "originalUrl": "https://lh3.googleusercontent.com/d/163LBEIXLwxe06cJKYGCWjrk9IV82hO56"
+      },
+      "brand-dearacheon-13.jpg": {
+        "alt": "certification image 3",
+        "section": "certification",
+        "googleDriveId": "1TzFiCV2UJZLe-c0LhBe05F5CV89zTTAp",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1TzFiCV2UJZLe-c0LhBe05F5CV89zTTAp"
+      },
+      "brand-dearacheon-14.jpg": {
+        "alt": "quality image 1",
+        "section": "quality",
+        "googleDriveId": "1dL0H-hlz-1jRVf2Xeo7i_aTNgS4KKmNC",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1dL0H-hlz-1jRVf2Xeo7i_aTNgS4KKmNC"
+      },
+      "brand-dearacheon-15.jpg": {
+        "alt": "quality image 2",
+        "section": "quality",
+        "googleDriveId": "1xsS2UKdVLxSmboReYkcVnMinEduhHljU",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1xsS2UKdVLxSmboReYkcVnMinEduhHljU"
+      },
+      "brand-dearacheon-16.jpg": {
+        "alt": "quality image 3",
+        "section": "quality",
+        "googleDriveId": "1FBMv0CfAVbBKqCEbcX2lDnRXG88WfMyT",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1FBMv0CfAVbBKqCEbcX2lDnRXG88WfMyT"
+      },
+      "brand-dearacheon-17.jpg": {
+        "alt": "process image 1",
+        "section": "process",
+        "googleDriveId": "1kqnSMCY3FdScIrhl5H4Mj8Zpq4eAAs2m",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1kqnSMCY3FdScIrhl5H4Mj8Zpq4eAAs2m"
+      },
+      "brand-dearacheon-18.jpg": {
+        "alt": "process image 2",
+        "section": "process",
+        "googleDriveId": "1c9tWUB6n8SwZHBC0FI9TlX2s7USVoobO",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1c9tWUB6n8SwZHBC0FI9TlX2s7USVoobO"
+      },
+      "brand-dearacheon-19.jpg": {
+        "alt": "process image 3",
+        "section": "process",
+        "googleDriveId": "1L4OSWD0R7hPRKdv3YeU7BEv24yDwiM3-",
+        "originalUrl": "https://lh3.googleusercontent.com/d/1L4OSWD0R7hPRKdv3YeU7BEv24yDwiM3-"
+      }
+    }
+  },
+  "unsplashImages": {
+    "unsplash-forest-1.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+      "usage": "background/decorative"
+    },
+    "unsplash-mountain.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+      "usage": "background/decorative"
+    },
+    "unsplash-nature-1.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05",
+      "usage": "background/decorative"
+    },
+    "unsplash-tree.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
+      "usage": "background/decorative"
+    },
+    "unsplash-leaves.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc",
+      "usage": "hero/background"
+    },
+    "unsplash-plant.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09",
+      "usage": "background/decorative"
+    },
+    "unsplash-tech.jpg": {
+      "originalUrl": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      "usage": "background/decorative"
+    }
+  },
+  "notes": {
+    "productImages": "Product images (침향환, 침향수, etc.) are stored in Firestore 'products' collection and loaded dynamically. They are NOT hardcoded in the JS bundle. The fallback products in code have empty image fields.",
+    "siteImages": "Site-wide images are stored in Firestore 'siteImages/main' document and loaded dynamically via real-time listener (onSnapshot). The KO constant provides defaults.",
+    "videoHero": "A hero video exists at https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06e/data/d40dc46f-82f5-4e47-8cb3-2b4e1d81a19c.mp4 (not downloaded)"
+  }
+}

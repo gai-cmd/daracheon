@@ -1,0 +1,52 @@
+# ═══════════════════════════════════════════════════════════════
+# Vercel 배포 제외 파일
+# .gitignore 와 별개로 배포 시점 제외 규칙
+# ═══════════════════════════════════════════════════════════════
+
+# 개발 파산물
+.next/
+node_modules/
+*.tsbuildinfo
+
+# 로컬 환경변수 (Vercel Dashboard에서 별도 설정)
+.env
+.env.local
+.env.*.local
+
+# ═══ data/db 선택적 포함 ═══
+# .gitignore 는 data/db/ 전체 무시.
+# Vercel 배포 시에는 공개 데이터(시드)만 포함, 민감 파일 제외.
+!data/db/
+!data/db/products.json
+!data/db/productCategories.json
+!data/db/reviews.json
+!data/db/media.json
+!data/db/broadcasts.json
+!data/db/faq.json
+!data/db/announcement.json
+!data/db/pages.json
+!data/db/company.json
+
+# 민감 파일 — 반드시 제외
+data/db/admin-users.json
+data/db/audit-log.json
+data/db/password-reset-tokens.json
+data/db/rate-limit.json
+data/db/inquiries.json
+
+# 업로드 이미지
+# ─ 큐레이션된 공개 자산(media/products/misc)은 배포 포함 (시드)
+# ─ 관리자가 런타임에 업로드하는 디렉토리는 제외 (Vercel FS는 쓰기 불가 — Blob 사용)
+public/uploads/broadcasts/*
+public/uploads/reviews/*
+public/uploads/settings/*
+!public/uploads/broadcasts/.gitkeep
+!public/uploads/reviews/.gitkeep
+!public/uploads/settings/.gitkeep
+
+# 문서
+docs/admin-requirements.md
+
+# 기타
+.DS_Store
+*.log

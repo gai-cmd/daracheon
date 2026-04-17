@@ -1,0 +1,121 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      // WARNING: Insecure rule added to support simple password login ("1234")
+      // In a production environment, this should strictly check request.auth
+      return true; 
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return data.keys().hasOnly(['email', 'role']) &&
+             data.email is string &&
+             data.role in ['admin', 'user'];
+    }
+
+    function isValidNotice(data) {
+      return data.keys().hasOnly(['title', 'content', 'createdAt', 'views']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.content is string && data.content.size() < 100000 &&
+             data.createdAt is string &&
+             data.views is number && data.views >= 0;
+    }
+
+    function isValidFAQ(data) {
+      return data.keys().hasOnly(['question', 'answer', 'order', 'createdAt']) &&
+             data.question is string && data.question.size() > 0 && data.question.size() < 500 &&
+             data.answer is string && data.answer.size() < 100000 &&
+             data.order is number &&
+             data.createdAt is string;
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasOnly(['name', 'category', 'price', 'image', 'isMain', 'order', 'description', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             data.category is string && data.category.size() < 100 &&
+             (data.price is string || data.price is number) &&
+             data.image is string && data.image.size() < 1000 &&
+             data.isMain is bool &&
+             data.order is number &&
+             (!('description' in data) || (data.description is string && data.description.size() < 10000)) &&
+             (!('createdAt' in data) || data.createdAt is string);
+    }
+
+    function isValidMedia(data) {
+      return data.keys().hasOnly(['title', 'url', 'order', 'type']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.url is string && data.url.size() < 1000 &&
+             data.order is number &&
+             data.type in ['photo', 'video'];
+    }
+
+    function isValidPageContent(data) {
+      return data.keys().hasOnly(['pageData', 'updatedAt']) &&
+             data.updatedAt is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /faqs/{faqId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /media/{mediaId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /pages/home {
+      allow read: if true;
+    }
+    match /pages/{pageId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /siteImages/{imageId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+  }
+}

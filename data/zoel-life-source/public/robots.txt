@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /login
+Disallow: /signup
+Disallow: /payment
+Disallow: /process
+
+Sitemap: https://www.daracheon.com/sitemap.xml

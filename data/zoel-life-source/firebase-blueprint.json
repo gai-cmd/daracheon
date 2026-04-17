@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and role",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
+      },
+      "required": ["email", "role"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Notice board post",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "views": { "type": "number" }
+      },
+      "required": ["title", "content", "createdAt", "views"]
+    },
+    "FAQ": {
+      "title": "FAQ",
+      "description": "Frequently Asked Question",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "answer": { "type": "string" },
+        "order": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["question", "answer", "order", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Product information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "string" },
+        "image": { "type": "string" },
+        "isMain": { "type": "boolean" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "category", "price", "image", "isMain", "order"]
+    },
+    "Media": {
+      "title": "Media",
+      "description": "Media gallery item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "order": { "type": "number" },
+        "type": { "type": "string", "enum": ["photo", "video"] }
+      },
+      "required": ["title", "url", "order", "type"]
+    },
+    "PageContent": {
+      "title": "Page Content",
+      "description": "Content for static pages like About, Brand Story, Process, Company",
+      "type": "object",
+      "properties": {
+        "pageData": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["pageData", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles and roles"
+    },
+    "notices/{noticeId}": {
+      "schema": { "$ref": "#/entities/Notice" },
+      "description": "Notices for customer support"
+    },
+    "faqs/{faqId}": {
+      "schema": { "$ref": "#/entities/FAQ" },
+      "description": "FAQs for customer support"
+    },
+    "products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Product catalog"
+    },
+    "media/{mediaId}": {
+      "schema": { "$ref": "#/entities/Media" },
+      "description": "Media gallery"
+    },
+    "pages/{pageId}": {
+      "schema": { "$ref": "#/entities/PageContent" },
+      "description": "Page content for About, Brand, Process, Company"
+    }
+  }
+}

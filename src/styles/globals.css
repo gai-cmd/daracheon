@@ -1,0 +1,237 @@
+/* ═══════════════════════════════════════
+   Google Fonts — ZOEL LIFE parity: Noto Sans KR only.
+   Serif / display roles resolve to the same family via tailwind.config.ts.
+   ═══════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════
+   Root tokens — mirror ZOEL LIFE --color-luxury-*
+   ═══════════════════════════════════════ */
+:root {
+  --luxury-black: #0a0b10;
+  --luxury-ink: #14161f;
+  --luxury-slate: #1a1d29;
+  --luxury-cream: #f5f5f5;
+  --luxury-ivory: #fdfbf7;
+  --luxury-sand: #f8f5f0;
+  --luxury-gold: #d4a843;
+  --luxury-gold-soft: #e2b857;
+  --luxury-caramel: #d4a574;
+  --luxury-bronze: #5c3d2e;
+  --luxury-sage: #4a6741;
+}
+
+/* ═══════════════════════════════════════
+   Base Layer
+   ═══════════════════════════════════════ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-sans text-neutral-800 bg-white leading-relaxed;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    background-color: var(--luxury-ivory);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(212, 168, 67, 0.28);
+    color: var(--luxury-black);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--luxury-ivory);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--luxury-gold);
+    border-radius: 3px;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Component Layer
+   ═══════════════════════════════════════ */
+@layer components {
+  /* Gold divider */
+  .gold-line {
+    @apply w-12 h-px bg-gold-600;
+  }
+
+  /* Section tag — small, wide-spaced label
+     gold-500 (#b88c2d) now meets AA on both light and dark backgrounds. */
+  .section-tag {
+    @apply text-[0.68rem] tracking-[0.35em] uppercase text-gold-500 mb-4;
+    font-weight: 600;
+  }
+
+  /* Section titles — Noto Sans KR, minimal-luxury look
+     (ZOEL LIFE uses light/medium weight + tight tracking for elegance) */
+  .section-title-kr {
+    @apply text-3xl md:text-4xl lg:text-5xl leading-tight;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title-en {
+    @apply text-3xl md:text-4xl lg:text-5xl leading-tight;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 200;
+    letter-spacing: 0.02em;
+  }
+
+  /* Buttons — ZOEL-style minimal luxe */
+  .btn {
+    @apply inline-block px-8 py-3.5 text-xs tracking-[0.2em] uppercase no-underline cursor-pointer transition-all duration-400;
+    font-weight: 500;
+  }
+
+  .btn-gold {
+    @apply bg-gold-500 text-luxury-black border border-gold-500 hover:bg-gold-600 hover:border-gold-600 hover:-translate-y-0.5 hover:shadow-lg;
+  }
+
+  .btn-outline-light {
+    @apply bg-transparent text-white border border-white/35 hover:border-gold-500 hover:text-gold-400 hover:-translate-y-0.5;
+  }
+
+  .btn-outline-dark {
+    @apply bg-transparent text-luxury-black border border-luxury-black hover:bg-luxury-black hover:text-white hover:-translate-y-0.5;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-500 hover:-translate-y-1 hover:shadow-xl;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Utility Layer
+   ═══════════════════════════════════════ */
+@layer utilities {
+  .duration-400 {
+    transition-duration: 400ms;
+  }
+
+  /* Reveal animations for IntersectionObserver */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-60px);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-scale.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Staggered delay utilities */
+  .delay-100 { transition-delay: 100ms; }
+  .delay-200 { transition-delay: 200ms; }
+  .delay-300 { transition-delay: 300ms; }
+  .delay-400 { transition-delay: 400ms; }
+  .delay-500 { transition-delay: 500ms; }
+}
+
+/* ═══════════════════════════════════════
+   Marquee Animation
+   ═══════════════════════════════════════ */
+.marquee-track {
+  display: flex;
+  gap: 4rem;
+  animation: marquee 40s linear infinite;
+  width: max-content;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══════════════════════════════════════
+   Admin Dark Mode
+   - toggled via .admin-dark on <html>
+   - only admin routes are affected via scoped selectors
+   ═══════════════════════════════════════ */
+html.admin-dark .bg-white { background-color: #1a1a17 !important; }
+html.admin-dark .bg-gray-50 { background-color: #0f0f0d !important; }
+html.admin-dark .bg-gray-100 { background-color: #262622 !important; }
+html.admin-dark .bg-gray-900 { background-color: #000 !important; }
+html.admin-dark .text-gray-900 { color: #f5f5f5 !important; }
+html.admin-dark .text-gray-800 { color: #e5e5e5 !important; }
+html.admin-dark .text-gray-700 { color: #d4d4d4 !important; }
+html.admin-dark .text-gray-600 { color: #a3a3a3 !important; }
+html.admin-dark .text-gray-500 { color: #8a8a8a !important; }
+html.admin-dark .text-gray-400 { color: #737373 !important; }
+html.admin-dark .border-gray-100 { border-color: #2d2d28 !important; }
+html.admin-dark .border-gray-200 { border-color: #35352e !important; }
+html.admin-dark .border-gray-300 { border-color: #404038 !important; }
+html.admin-dark .bg-emerald-50 { background-color: rgba(16,185,129,0.12) !important; }
+html.admin-dark .bg-amber-50 { background-color: rgba(245,158,11,0.12) !important; }
+html.admin-dark .bg-red-50 { background-color: rgba(239,68,68,0.12) !important; }
+html.admin-dark .bg-sky-50 { background-color: rgba(14,165,233,0.12) !important; }
+html.admin-dark .bg-blue-50 { background-color: rgba(59,130,246,0.12) !important; }
+html.admin-dark .bg-purple-50 { background-color: rgba(168,85,247,0.12) !important; }
+html.admin-dark .bg-pink-50 { background-color: rgba(236,72,153,0.12) !important; }
+html.admin-dark .bg-orange-50 { background-color: rgba(249,115,22,0.12) !important; }
+html.admin-dark .bg-teal-50 { background-color: rgba(20,184,166,0.12) !important; }
+html.admin-dark .bg-indigo-50 { background-color: rgba(99,102,241,0.12) !important; }
+html.admin-dark .hover\:bg-gray-50:hover { background-color: #252522 !important; }
+html.admin-dark .hover\:bg-gray-100:hover { background-color: #2d2d28 !important; }
+html.admin-dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.4) !important; }
+html.admin-dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.6) !important; }
+html.admin-dark .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.7) !important; }
+html.admin-dark .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8) !important; }
+html.admin-dark input, html.admin-dark select, html.admin-dark textarea {
+  background-color: #1a1a17 !important;
+  color: #e5e5e5 !important;
+  border-color: #35352e !important;
+}
+html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
+  color: #6b6b66 !important;
+}

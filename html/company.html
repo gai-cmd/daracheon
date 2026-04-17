@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회사 소개 | ZOEL LIFE 대라천 '참'침향</title>
+  <meta name="description" content="ZOEL LIFE 주식회사 — 베트남 200ha 직영 침향 농장을 운영하는 프리미엄 침향 전문 기업. 회사 개요, 인증, 오시는 길 안내." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+KR:wght@200;300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              50: '#fdf8eb', 100: '#f9edc8', 200: '#f2d88e', 300: '#e8bf54',
+              400: '#dea832', 500: '#c9a55c', 600: '#9e7b3a', 700: '#7a5c2e',
+              800: '#5c4524', 900: '#3d2e1a',
+            },
+            agarwood: {
+              50: '#f5f0e8', 100: '#e8dfd0', 200: '#d4c5a8', 300: '#b5a07a',
+              400: '#967b55', 500: '#7a6240', 600: '#5e4a30', 700: '#453624',
+              800: '#2d231a', 900: '#1a1510',
+            },
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'Noto Serif KR', 'serif'],
+            serif: ['Noto Serif KR', 'serif'],
+            body: ['Noto Sans KR', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: 'Noto Sans KR', sans-serif; font-weight: 300; overflow-x: hidden; color: #262626; background: #fff; line-height: 1.625; }
+    ::selection { background: rgba(201,165,92,0.25); color: #1a1a17; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #faf8f3; }
+    ::-webkit-scrollbar-thumb { background: #c9a55c; border-radius: 3px; }
+
+    .gold-line { width: 3rem; height: 1px; background: #c9a55c; }
+    .section-tag { font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase; color: #c9a55c; margin-bottom: 1rem; }
+    .section-title-kr { font-family: 'Noto Serif KR', serif; font-size: clamp(1.875rem, 4vw, 3rem); font-weight: 300; line-height: 1.25; letter-spacing: 0.05em; }
+    .section-title-en { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.875rem, 4vw, 3rem); font-weight: 300; font-style: italic; line-height: 1.25; letter-spacing: 0.05em; }
+
+    .btn { display: inline-block; padding: 0.875rem 2rem; font-size: 0.75rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.4s; }
+    .btn-gold { background: #c9a55c; color: #171717; border: 1px solid #c9a55c; }
+    .btn-gold:hover { background: #9e7b3a; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    .btn-outline-light { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+    .btn-outline-light:hover { border-color: #c9a55c; color: #c9a55c; transform: translateY(-2px); }
+    .btn-outline-dark { background: transparent; color: #262626; border: 1px solid #262626; }
+    .btn-outline-dark:hover { background: #262626; color: #fff; transform: translateY(-2px); }
+
+    .reveal-up { opacity: 0; transform: translateY(50px); transition: opacity 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1); }
+    .reveal-up.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1); }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(60px); transition: opacity 1s cubic-bezier(0.22,1,0.36,1), transform 1s cubic-bezier(0.22,1,0.36,1); }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .anim-fade-up { opacity: 0; animation: fadeUp 0.8s ease-out forwards; }
+    .anim-fade-in { opacity: 0; animation: fadeIn 1s ease-out forwards; }
+
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -6px; left: 0; height: 1px; background: #c9a55c; width: 0; transition: width 0.4s; }
+    .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+    .mobile-menu { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .mobile-menu.open { opacity: 1; pointer-events: auto; }
+
+    .ham-line { display: block; width: 26px; height: 1.5px; background: #c9a55c; transition: all 0.3s; }
+    .ham-open .ham-top { transform: rotate(45deg) translateY(6.5px); }
+    .ham-open .ham-mid { opacity: 0; }
+    .ham-open .ham-bot { transform: rotate(-45deg) translateY(-6.5px); }
+
+    /* Data row */
+    .data-row { display: grid; grid-template-columns: 160px 1fr; padding: 1.5rem 0; border-bottom: 1px solid rgba(201,165,92,0.12); gap: 1rem; }
+    .data-row:last-child { border-bottom: none; }
+    .data-label { font-family: 'Noto Serif KR', serif; font-size: 0.78rem; color: #c9a55c; letter-spacing: 0.15em; font-weight: 400; padding-top: 0.125rem; }
+    .data-value { font-size: 0.92rem; color: #3d3d3d; line-height: 1.8; }
+    @media (max-width: 640px) { .data-row { grid-template-columns: 110px 1fr; } }
+
+    /* Stat */
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; color: #c9a55c; }
+
+    /* Cert card */
+    .cert-card { border: 1px solid rgba(201,165,92,0.2); transition: all 0.4s; background: #fff; }
+    .cert-card:hover { border-color: #c9a55c; background: rgba(201,165,92,0.05); transform: translateY(-4px); }
+
+    /* Farm image */
+    .farm-img { transition: transform 0.8s; }
+    .farm-card:hover .farm-img { transform: scale(1.05); }
+  </style>
+</head>
+
+<body class="font-body">
+
+  <!-- ════════════════════════════════════════════ HEADER ════════════════════════════════════════════ -->
+  <header>
+    <nav id="mainNav" class="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between py-5 px-6 lg:px-16 transition-all duration-500">
+      <a href="index.html" class="group">
+        <span class="font-serif text-xl font-medium text-gold-500 tracking-[0.15em] group-hover:opacity-80 transition-opacity">大羅天</span>
+        <span class="block font-display text-[0.6rem] text-gold-300 tracking-[0.3em] font-light mt-0.5">ZOEL LIFE</span>
+      </a>
+
+      <ul class="hidden lg:flex items-center gap-8">
+        <li><a href="about-agarwood.html" class="nav-link text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">침향 이야기</a></li>
+        <li><a href="brand-story.html" class="nav-link text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">브랜드 이야기</a></li>
+        <li><a href="products.html" class="nav-link text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">제품 소개</a></li>
+        <li><a href="home-shopping.html" class="nav-link text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">홈쇼핑</a></li>
+        <li><a href="company.html" class="nav-link active text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">회사소개</a></li>
+        <li><a href="support.html" class="nav-link text-[0.75rem] font-normal tracking-[0.2em] uppercase text-white/75 hover:text-gold-500">문의하기</a></li>
+      </ul>
+
+      <button id="hamBtn" class="lg:hidden flex flex-col gap-[5px] cursor-pointer" aria-label="메뉴 열기">
+        <span class="ham-line ham-top"></span>
+        <span class="ham-line ham-mid"></span>
+        <span class="ham-line ham-bot"></span>
+      </button>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 z-[999] bg-[rgba(10,10,8,0.98)] flex flex-col items-center justify-center gap-6">
+      <button id="mobileClose" class="absolute top-5 right-6 text-gold-500 text-2xl cursor-pointer" aria-label="메뉴 닫기">&times;</button>
+      <a href="about-agarwood.html" class="text-lg tracking-[0.15em] text-white/70 hover:text-gold-500 transition-colors" onclick="closeMobile()">침향 이야기</a>
+      <a href="brand-story.html" class="text-lg tracking-[0.15em] text-white/70 hover:text-gold-500 transition-colors" onclick="closeMobile()">브랜드 이야기</a>
+      <a href="products.html" class="text-lg tracking-[0.15em] text-white/70 hover:text-gold-500 transition-colors" onclick="closeMobile()">제품 소개</a>
+      <a href="home-shopping.html" class="text-lg tracking-[0.15em] text-white/70 hover:text-gold-500 transition-colors" onclick="closeMobile()">홈쇼핑</a>
+      <a href="company.html" class="text-lg tracking-[0.15em] text-gold-500 transition-colors" onclick="closeMobile()">회사소개</a>
+      <a href="support.html" class="text-lg tracking-[0.15em] text-white/70 hover:text-gold-500 transition-colors" onclick="closeMobile()">문의하기</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ════════════════════════════════════════════ HERO ════════════════════════════════════════════ -->
+    <section class="relative pt-40 pb-32 bg-[#0a0a08] text-white overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-20">
+        <img
+          src="https://images.unsplash.com/photo-1511497584788-876760111969?w=1920&q=80&auto=format&fit=crop"
+          alt=""
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-[#0a0a08]/80"></div>
+      </div>
+      <div class="relative z-10 max-w-4xl mx-auto text-center px-6">
+        <p class="section-tag mb-5 anim-fade-up" style="animation-delay:0.3s;">Company</p>
+        <h1 class="section-title-en text-gold-400 mb-3 anim-fade-up" style="animation-delay:0.4s;">ZOEL LIFE Co., Ltd.</h1>
+        <h2 class="section-title-kr text-white mb-6 anim-fade-up" style="animation-delay:0.5s;">회사 소개</h2>
+        <div class="gold-line mx-auto mb-6 anim-fade-in" style="animation-delay:0.7s;"></div>
+        <p class="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto anim-fade-up" style="animation-delay:0.8s;">
+          베트남 200ha 직영 농장에서 키운 '참'침향,<br class="hidden md:block" />
+          한국 소비자에게 정직하게 전달합니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ KEY STATS ════════════════════════════════════════════ -->
+    <section class="py-24 px-6 bg-white border-b border-neutral-100">
+      <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="reveal-up">
+          <p class="stat-num text-5xl md:text-6xl mb-2">25<span class="text-2xl align-top">+</span></p>
+          <p class="text-[0.75rem] tracking-[0.15em] text-neutral-400 uppercase">Years Experience</p>
+          <p class="text-xs text-neutral-500 mt-2">연구 경력</p>
+        </div>
+        <div class="reveal-up" style="transition-delay:100ms;">
+          <p class="stat-num text-5xl md:text-6xl mb-2">200<span class="text-2xl">ha</span></p>
+          <p class="text-[0.75rem] tracking-[0.15em] text-neutral-400 uppercase">Direct Farm</p>
+          <p class="text-xs text-neutral-500 mt-2">직영 농장</p>
+        </div>
+        <div class="reveal-up" style="transition-delay:200ms;">
+          <p class="stat-num text-5xl md:text-6xl mb-2">4M<span class="text-2xl">+</span></p>
+          <p class="text-[0.75rem] tracking-[0.15em] text-neutral-400 uppercase">Trees Planted</p>
+          <p class="text-xs text-neutral-500 mt-2">침향나무</p>
+        </div>
+        <div class="reveal-up" style="transition-delay:300ms;">
+          <p class="stat-num text-5xl md:text-6xl mb-2">5</p>
+          <p class="text-[0.75rem] tracking-[0.15em] text-neutral-400 uppercase">Clean Regions</p>
+          <p class="text-xs text-neutral-500 mt-2">청정 지역</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ COMPANY OVERVIEW ════════════════════════════════════════════ -->
+    <section class="py-32 px-6 bg-[#faf8f3]">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+          <div class="lg:col-span-5 reveal-left">
+            <p class="section-tag">Overview</p>
+            <h3 class="section-title-kr mb-8">회사 개요</h3>
+            <div class="gold-line mb-10"></div>
+            <p class="text-neutral-600 text-[0.92rem] leading-8 mb-6">
+              ZOEL LIFE 주식회사는 베트남 직영 침향 농장을 운영하는
+              프리미엄 침향 전문 기업입니다.
+            </p>
+            <p class="text-neutral-600 text-[0.92rem] leading-8">
+              1999년부터 축적된 연구와 재배 노하우를 바탕으로
+              식약처가 인정한 정품 침향 원료만을 사용해 제품을 생산합니다.
+            </p>
+          </div>
+
+          <div class="lg:col-span-7 reveal-right">
+            <div class="bg-white border border-gold-500/15 p-8 md:p-12">
+              <div class="data-row">
+                <span class="data-label">회사명</span>
+                <span class="data-value">ZOEL LIFE 주식회사 (조엘라이프)</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">대표이사</span>
+                <span class="data-value">박 병 주</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">설립일</span>
+                <span class="data-value">1999년 (베트남 연구 기점)</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">사업분야</span>
+                <span class="data-value">침향 원료 재배 및 건강식품 제조 · 유통</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">본사</span>
+                <span class="data-value">서울특별시 금천구 벚꽃로36길 30 1511호</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">농장 소재</span>
+                <span class="data-value">베트남 동나이 · 하띤 · 푸꾸옥 외 5개 지역</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">연락처</span>
+                <span class="data-value">070-4140-4086</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">이메일</span>
+                <span class="data-value"><a href="mailto:bj0202@gmail.com" class="text-gold-600 hover:underline">bj0202@gmail.com</a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ CERTIFICATIONS ════════════════════════════════════════════ -->
+    <section class="py-32 px-6 bg-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="reveal-up"><p class="section-tag">Certifications</p></div>
+          <div class="reveal-up" style="transition-delay:100ms;">
+            <h3 class="section-title-kr mb-6">공인 인증 및 등록</h3>
+          </div>
+          <div class="reveal-up" style="transition-delay:200ms;">
+            <p class="text-neutral-500 text-sm leading-8 max-w-xl mx-auto">
+              국내외 공인 기관의 검증을 거친 합법적 · 안전한 원료만을 사용합니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+          <div class="cert-card p-6 text-center reveal-up">
+            <div class="text-3xl mb-3">&#127977;&#65039;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">CITES</p>
+            <p class="text-xs text-neutral-500 leading-6">국제멸종위기종<br />거래협약</p>
+          </div>
+          <div class="cert-card p-6 text-center reveal-up" style="transition-delay:50ms;">
+            <div class="text-3xl mb-3">&#129516;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">DNA</p>
+            <p class="text-xs text-neutral-500 leading-6">유전자<br />검증 완료</p>
+          </div>
+          <div class="cert-card p-6 text-center reveal-up" style="transition-delay:100ms;">
+            <div class="text-3xl mb-3">&#128203;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">HACCP</p>
+            <p class="text-xs text-neutral-500 leading-6">식품안전<br />관리인증</p>
+          </div>
+          <div class="cert-card p-6 text-center reveal-up" style="transition-delay:150ms;">
+            <div class="text-3xl mb-3">&#9989;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">MFDS</p>
+            <p class="text-xs text-neutral-500 leading-6">식약처<br />정품 인정</p>
+          </div>
+          <div class="cert-card p-6 text-center reveal-up" style="transition-delay:200ms;">
+            <div class="text-3xl mb-3">&#127807;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">ORGANIC</p>
+            <p class="text-xs text-neutral-500 leading-6">무농약<br />유기 재배</p>
+          </div>
+          <div class="cert-card p-6 text-center reveal-up" style="transition-delay:250ms;">
+            <div class="text-3xl mb-3">&#128279;</div>
+            <p class="text-[0.7rem] font-serif text-gold-600 tracking-wider mb-1">ISO</p>
+            <p class="text-xs text-neutral-500 leading-6">품질경영<br />국제표준</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ FARM INFRA ════════════════════════════════════════════ -->
+    <section class="py-32 px-6 bg-[#0a0a08] text-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-20">
+          <div class="reveal-up"><p class="section-tag">Infrastructure</p></div>
+          <div class="reveal-up" style="transition-delay:100ms;">
+            <h3 class="section-title-kr text-white mb-6">베트남 5개 청정 지역 농장</h3>
+          </div>
+          <div class="reveal-up" style="transition-delay:200ms;">
+            <p class="text-white/50 text-sm leading-8 max-w-xl mx-auto">
+              베트남 최고의 자연 환경에서 침향나무를 재배합니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <!-- 동나이 -->
+          <div class="farm-card reveal-up">
+            <div class="relative aspect-[4/5] overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80&auto=format&fit=crop" alt="동나이 농장" class="farm-img w-full h-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-6 left-6">
+                <p class="font-display italic text-gold-300 text-lg mb-1">Dong Nai</p>
+                <p class="font-serif text-white text-xl">동 나 이</p>
+              </div>
+            </div>
+            <p class="text-white/50 text-sm leading-7">본거지 직영 농장. 1999년 이후 대부분의 성체 침향나무가 자라고 있는 헤리티지 지역.</p>
+          </div>
+
+          <!-- 하띤 -->
+          <div class="farm-card reveal-up" style="transition-delay:100ms;">
+            <div class="relative aspect-[4/5] overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&auto=format&fit=crop" alt="하띤 농장" class="farm-img w-full h-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-6 left-6">
+                <p class="font-display italic text-gold-300 text-lg mb-1">Ha Tinh</p>
+                <p class="font-serif text-white text-xl">하 띤</p>
+              </div>
+            </div>
+            <p class="text-white/50 text-sm leading-7">베트남 중부 청정 산악 지역. 고도에 따른 다양한 기후에서 재배된 침향 원료 공급.</p>
+          </div>
+
+          <!-- 푸꾸옥 -->
+          <div class="farm-card reveal-up" style="transition-delay:200ms;">
+            <div class="relative aspect-[4/5] overflow-hidden mb-5">
+              <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=800&q=80&auto=format&fit=crop" alt="푸꾸옥 농장" class="farm-img w-full h-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute bottom-6 left-6">
+                <p class="font-display italic text-gold-300 text-lg mb-1">Phu Quoc</p>
+                <p class="font-serif text-white text-xl">푸 꾸 옥</p>
+              </div>
+            </div>
+            <p class="text-white/50 text-sm leading-7">섬 특유의 해풍과 안개가 머금은 청정 환경. 고품질 수지 형성의 최적지.</p>
+          </div>
+        </div>
+
+        <div class="mt-16 text-center reveal-up">
+          <p class="text-white/40 text-sm leading-8 max-w-2xl mx-auto mb-8">
+            그 외 2개 청정 지역 포함, 총 <span class="text-gold-400">200ha</span> 직영 농장에서
+            <span class="text-gold-400">400만 그루 이상</span>의 침향나무를 체계적으로 관리합니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ LOCATION ════════════════════════════════════════════ -->
+    <section class="py-32 px-6 bg-[#faf8f3]">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="reveal-up"><p class="section-tag">Location</p></div>
+          <div class="reveal-up" style="transition-delay:100ms;">
+            <h3 class="section-title-kr mb-6">오시는 길</h3>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div class="lg:col-span-7 reveal-left">
+            <div class="aspect-[16/10] bg-white border border-neutral-200 overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C+%EA%B8%88%EC%B2%9C%EA%B5%AC+%EB%B2%9A%EA%BD%83%EB%A1%9C36%EA%B8%B8+30&output=embed"
+                width="100%"
+                height="100%"
+                style="border:0;"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="ZOEL LIFE 오시는 길">
+              </iframe>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 reveal-right">
+            <div class="bg-white p-8 lg:p-10 border border-neutral-100 h-full flex flex-col">
+              <h4 class="font-serif text-xl text-neutral-800 mb-2">ZOEL LIFE 본사</h4>
+              <p class="font-display italic text-gold-500 mb-8">Head Office</p>
+
+              <div class="space-y-6 mb-auto">
+                <div>
+                  <p class="text-[0.68rem] text-gold-600 tracking-widest uppercase mb-2">Address</p>
+                  <p class="text-sm text-neutral-700 leading-7">
+                    서울특별시 금천구<br />
+                    벚꽃로36길 30, 1511호
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[0.68rem] text-gold-600 tracking-widest uppercase mb-2">Phone</p>
+                  <p class="text-sm text-neutral-700">
+                    <a href="tel:07041404086" class="hover:text-gold-500 transition-colors">070-4140-4086</a>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[0.68rem] text-gold-600 tracking-widest uppercase mb-2">Email</p>
+                  <p class="text-sm text-neutral-700">
+                    <a href="mailto:bj0202@gmail.com" class="hover:text-gold-500 transition-colors">bj0202@gmail.com</a>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-[0.68rem] text-gold-600 tracking-widest uppercase mb-2">Hours</p>
+                  <p class="text-sm text-neutral-700 leading-7">
+                    월–금 09:00 – 18:00<br />
+                    주말 · 공휴일 휴무
+                  </p>
+                </div>
+              </div>
+
+              <a href="support.html" class="btn btn-outline-dark mt-10 text-center">문의하기</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ CTA ════════════════════════════════════════════ -->
+    <section class="py-28 px-6 bg-[#0a0a08] text-white text-center">
+      <div class="max-w-3xl mx-auto">
+        <div class="reveal-up"><p class="section-tag mb-5">Business Inquiry</p></div>
+        <div class="reveal-up" style="transition-delay:100ms;">
+          <h3 class="section-title-kr text-white mb-8">비즈니스 문의</h3>
+        </div>
+        <div class="reveal-up" style="transition-delay:200ms;">
+          <p class="text-white/55 text-sm leading-8 mb-10 max-w-xl mx-auto">
+            대량 구매, 기업 납품, 해외 파트너십, OEM/ODM 협력에 관한 문의를 환영합니다.
+          </p>
+        </div>
+        <div class="reveal-up flex flex-col sm:flex-row justify-center gap-4" style="transition-delay:300ms;">
+          <a href="mailto:bj0202@gmail.com" class="btn btn-gold">이메일 문의</a>
+          <a href="support.html" class="btn btn-outline-light">온라인 문의</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════════════════════════════════════════ FOOTER ════════════════════════════════════════════ -->
+  <footer class="bg-[#0a0a08] text-white/50 pt-20 pb-10 px-6 border-t border-white/[0.05]">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16 pb-16 border-b border-white/[0.08]">
+        <div>
+          <a href="index.html" class="inline-block mb-5">
+            <span class="font-serif text-xl font-medium text-gold-500 tracking-[0.15em]">大羅天</span>
+            <span class="block font-display text-[0.6rem] text-gold-300 tracking-[0.3em] font-light mt-0.5">ZOEL LIFE</span>
+          </a>
+          <p class="text-sm leading-7 max-w-xs mb-6">
+            자연의 진실된 가치. 베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향.
+          </p>
+          <div class="space-y-2 text-[0.75rem] text-white/35 leading-6">
+            <p>ZOEL LIFE 주식회사 | CEO 박병주</p>
+            <p>서울특별시 금천구 벚꽃로36길 30 1511호</p>
+            <p>070-4140-4086 | bj0202@gmail.com</p>
+          </div>
+        </div>
+
+        <div>
+          <h5 class="font-serif text-sm font-normal text-gold-300 tracking-[0.1em] mb-5">제품</h5>
+          <ul class="space-y-3">
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향 연질캡슐</a></li>
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향 오일</a></li>
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향수</a></li>
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향환</a></li>
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향 스틱</a></li>
+            <li><a href="products.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">전체 제품</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="font-serif text-sm font-normal text-gold-300 tracking-[0.1em] mb-5">브랜드</h5>
+          <ul class="space-y-3">
+            <li><a href="about-agarwood.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">침향이란?</a></li>
+            <li><a href="brand-story.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">브랜드 이야기</a></li>
+            <li><a href="index.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">생산 공정</a></li>
+            <li><a href="company.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">회사 소개</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="font-serif text-sm font-normal text-gold-300 tracking-[0.1em] mb-5">고객 지원</h5>
+          <ul class="space-y-3">
+            <li><a href="support.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">고객 후기</a></li>
+            <li><a href="support.html#faq" class="text-sm text-white/40 hover:text-gold-500 transition-colors">FAQ</a></li>
+            <li><a href="support.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">배송 안내</a></li>
+            <li><a href="support.html" class="text-sm text-white/40 hover:text-gold-500 transition-colors">문의하기</a></li>
+            <li><a href="#" class="text-sm text-white/40 hover:text-gold-500 transition-colors">개인정보처리방침</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-[0.72rem] tracking-wider">
+        <span>&copy; 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-gold-500 transition-colors">개인정보처리방침</a>
+          <a href="#" class="hover:text-gold-500 transition-colors">이용약관</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════════ SCRIPTS ════════════════════════════════════════════ -->
+  <script>
+    const nav = document.getElementById('mainNav');
+    function updateNav() {
+      const scrolled = window.scrollY > 60;
+      if (scrolled) {
+        nav.style.background = 'rgba(10,10,8,0.95)';
+        nav.style.backdropFilter = 'blur(30px)';
+        nav.style.boxShadow = '0 2px 40px rgba(0,0,0,0.2)';
+        nav.style.paddingTop = '0.75rem';
+        nav.style.paddingBottom = '0.75rem';
+      } else {
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.boxShadow = 'none';
+        nav.style.paddingTop = '1.25rem';
+        nav.style.paddingBottom = '1.25rem';
+      }
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    const hamBtn = document.getElementById('hamBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+
+    hamBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      hamBtn.classList.toggle('ham-open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+
+    mobileClose.addEventListener('click', closeMobile);
+
+    function closeMobile() {
+      mobileMenu.classList.remove('open');
+      hamBtn.classList.remove('ham-open');
+      document.body.style.overflow = '';
+    }
+
+    const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+    );
+    revealElements.forEach((el) => observer.observe(el));
+  </script>
+
+</body>
+</html>
