@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
   { label: '문의 관리', href: '/admin/inquiries', icon: '◆', badgeKey: 'inquiries_new' },
   { label: '미디어 관리', href: '/admin/media', icon: '▣' },
   { label: 'FAQ 관리', href: '/admin/faq', icon: '▤' },
+  { label: '홈 편집', href: '/admin/pages/home', icon: '⌂' },
   { label: '침향 이야기', href: '/admin/pages/about-agarwood', icon: '◎' },
   { label: '브랜드 이야기', href: '/admin/pages/brand-story', icon: '◈' },
   { label: '네비게이션 관리', href: '/admin/navigation', icon: '☰' },

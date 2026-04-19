@@ -3,8 +3,49 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import JsonLd from '@/components/ui/JsonLd';
+import { readSingle } from '@/lib/db';
 
-export const revalidate = 3600;
+export const revalidate = 60;
+
+export interface HomeHero {
+  sectionTag: string;
+  titleKr: string;
+  subtitle: string;
+  heroBg: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryLabel: string;
+  ctaSecondaryHref: string;
+}
+
+export interface HomeStat {
+  value: string;
+  label: string;
+}
+
+export interface HomeData {
+  hero?: HomeHero;
+  stats?: HomeStat[];
+}
+
+const DEFAULT_HERO: HomeHero = {
+  sectionTag: '자연이 빚은 최고의 향',
+  titleKr: "대라천 '참'침향",
+  subtitle: '베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향',
+  heroBg:
+    'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg',
+  ctaPrimaryLabel: '제품 보기',
+  ctaPrimaryHref: '/products',
+  ctaSecondaryLabel: '브랜드 이야기',
+  ctaSecondaryHref: '/brand-story',
+};
+
+const DEFAULT_STATS: HomeStat[] = [
+  { value: '400만+', label: '침향 나무' },
+  { value: '25yr+', label: '연구 기간' },
+  { value: '5', label: '베트남 산지' },
+  { value: '200ha', label: '하띤성 직영 농장' },
+];
 
 export const metadata: Metadata = {
   title: 'ZOEL LIFE - 25년 전통 프리미엄 침향 전문 브랜드 | 대라천 \'참\'침향',
@@ -96,7 +137,11 @@ const processSteps = [
   '최고급 제품 가공 및 검수',
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const pagesData = await readSingle<{ home?: HomeData }>('pages');
+  const hero = pagesData?.home?.hero ?? DEFAULT_HERO;
+  const stats = pagesData?.home?.stats ?? DEFAULT_STATS;
+
   return (
     <>
       <JsonLd data={websiteJsonLd} />
@@ -105,7 +150,7 @@ export default function HomePage() {
       <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0a0b10]">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-45 animate-hero-zoom"
-          style={{ backgroundImage: "url('https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg')" }}
+          style={{ backgroundImage: `url('${hero.heroBg}')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/15 to-black/70" />
         <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.5)]" />
@@ -119,20 +164,20 @@ export default function HomePage() {
           </div>
 
           <p className="text-[0.72rem] tracking-[0.4em] uppercase text-gold-500 mb-5 opacity-0 animate-fade-up [animation-delay:0.5s]">
-            자연이 빚은 최고의 향
+            {hero.sectionTag}
           </p>
 
           <h1 className="font-serif text-[clamp(2.5rem,5.5vw,4.5rem)] font-light leading-[1.3] tracking-[0.08em] mb-2 opacity-0 animate-fade-up [animation-delay:0.7s]">
-            대라천 &lsquo;참&rsquo;침향
+            {hero.titleKr}
           </h1>
 
           <p className="font-display text-[clamp(1rem,2vw,1.3rem)] font-light italic tracking-[0.1em] text-gold-300 mb-6 opacity-0 animate-fade-up [animation-delay:0.9s]">
-            베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향
+            {hero.subtitle}
           </p>
 
           <div className="flex gap-4 justify-center flex-wrap opacity-0 animate-fade-up [animation-delay:1.3s]">
-            <Link href="/products" className="btn btn-gold">제품 보기</Link>
-            <Link href="/brand-story" className="btn btn-outline-light">브랜드 이야기</Link>
+            <Link href={hero.ctaPrimaryHref} className="btn btn-gold">{hero.ctaPrimaryLabel}</Link>
+            <Link href={hero.ctaSecondaryHref} className="btn btn-outline-light">{hero.ctaSecondaryLabel}</Link>
           </div>
         </div>
 
@@ -245,12 +290,7 @@ export default function HomePage() {
       {/* ════════════ Stats ════════════ */}
       <section className="py-20 px-6 bg-[#1a1d29]">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-          {[
-            { value: '400만+', label: '침향 나무' },
-            { value: '25yr+', label: '연구 기간' },
-            { value: '5', label: '베트남 산지' },
-            { value: '200ha', label: '하띤성 직영 농장' },
-          ].map((stat, i) => (
+          {stats.map((stat, i) => (
             <RevealOnScroll key={stat.label} delay={i * 100}>
               <div className="py-4">
                 <div className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-light text-gold-500 leading-none mb-2">

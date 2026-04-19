@@ -43,7 +43,7 @@ export const TOOLS: ToolDef[] = [
   {
     name: 'list_pages',
     description:
-      '수정 가능한 페이지 콘텐츠 키를 반환합니다. 현재 aboutAgarwood(침향 이야기), brandStory(브랜드 스토리)를 지원합니다.',
+      '수정 가능한 페이지 콘텐츠 키를 반환합니다. 현재 aboutAgarwood(침향 이야기), brandStory(브랜드 스토리), home(홈 히어로·통계)을 지원합니다.',
     input_schema: { type: 'object', properties: {}, additionalProperties: false },
   },
   {
@@ -52,7 +52,7 @@ export const TOOLS: ToolDef[] = [
     input_schema: {
       type: 'object',
       properties: {
-        key: { type: 'string', enum: ['aboutAgarwood', 'brandStory'] },
+        key: { type: 'string', enum: ['aboutAgarwood', 'brandStory', 'home'] },
       },
       required: ['key'],
       additionalProperties: false,
@@ -65,7 +65,7 @@ export const TOOLS: ToolDef[] = [
     input_schema: {
       type: 'object',
       properties: {
-        key: { type: 'string', enum: ['aboutAgarwood', 'brandStory'] },
+        key: { type: 'string', enum: ['aboutAgarwood', 'brandStory', 'home'] },
         data: { type: 'object', description: '페이지의 최종 상태(전체 JSON).' },
       },
       required: ['key', 'data'],
@@ -478,6 +478,7 @@ function revalidateAll(paths: string[]) {
 const PAGE_PATHS: Record<string, string[]> = {
   aboutAgarwood: ['/about-agarwood'],
   brandStory: ['/brand-story'],
+  home: ['/'],
 };
 
 /* ─────────────────────────────────────────────────────────
@@ -547,8 +548,8 @@ export async function executeTool(
       case 'list_pages': {
         return {
           ok: true,
-          summary: '수정 가능한 페이지: aboutAgarwood, brandStory',
-          data: { keys: ['aboutAgarwood', 'brandStory'] },
+          summary: '수정 가능한 페이지: aboutAgarwood, brandStory, home',
+          data: { keys: ['aboutAgarwood', 'brandStory', 'home'] },
         };
       }
 
