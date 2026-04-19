@@ -304,7 +304,7 @@ export const TOOLS: ToolDef[] = [
   {
     name: 'edit_source_file',
     description:
-      '레포지토리 파일을 새 내용으로 덮어쓰고 main 브랜치에 커밋합니다. Vercel 자동 재빌드 트리거(2~3분 후 반영). 파일이 이미 존재하면 sha 필수(read_source_file의 반환값 사용). 신규 파일 생성이면 sha 생략. 안전장치: 새 내용이 현재 파일 크기보다 크게 작으면 자동 거부합니다 (truncated read 후 실수로 뒷부분 날리는 것을 방지). 의도된 대폭 축소면 force=true.',
+      '[전체 파일 덮어쓰기] 레포지토리 파일을 새 내용으로 덮어쓰고 main 브랜치에 커밋. **이 도구는 신규 파일 생성이나 완전 재작성 시에만 사용하세요.** 기존 파일의 일부 수정은 반드시 `str_replace_source_file` 또는 `multi_str_replace_source_file`을 사용하세요 (출력 토큰·시간 20배 절감). 파일이 이미 존재하면 sha 필수. 신규 파일이면 sha 생략. 안전장치: 새 내용이 현재 파일 크기 70% 미만이면 거부 (truncated read 후 뒷부분 날림 방지). 의도된 대폭 축소면 force=true.',
     input_schema: {
       type: 'object',
       properties: {
@@ -321,6 +321,65 @@ export const TOOLS: ToolDef[] = [
         },
       },
       required: ['path', 'content', 'commit_message'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'str_replace_source_file',
+    description:
+      '[부분 수정 — 권장] 파일에서 old_string을 new_string으로 **정확히 한 번** 교체하고 커밋. 모델은 바뀌는 부분만 출력하면 되므로 대용량 파일(10KB+) 편집 시 edit_source_file 대비 20배 빠름. 규칙: (1) old_string은 파일 내에서 정확히 일치하는 유일한 문자열이어야 함 (공백·탭·줄바꿈 모두 보존). (2) 여러 곳을 동시에 수정하려면 multi_str_replace_source_file 사용. (3) 신규 파일 생성에는 사용 불가 (edit_source_file 사용).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: '파일 경로' },
+        old_string: {
+          type: 'string',
+          description:
+            '교체 대상 문자열. 파일 안에서 **정확히 한 번** 등장해야 함. 유일성 확보를 위해 앞뒤 3~5줄 포함 권장. 탭/공백/줄바꿈 1바이트라도 다르면 매칭 실패.',
+        },
+        new_string: {
+          type: 'string',
+          description: '교체 결과 문자열. old_string과 동일해선 안 됨.',
+        },
+        commit_message: { type: 'string', description: '커밋 메시지' },
+        sha: {
+          type: 'string',
+          description: '필수. read_source_file에서 얻은 blob SHA. 충돌 감지용.',
+        },
+      },
+      required: ['path', 'old_string', 'new_string', 'commit_message', 'sha'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'multi_str_replace_source_file',
+    description:
+      '[부분 수정 — 다중] 한 파일에 여러 교체를 **원자적으로** 적용하고 단일 커밋. 모든 교체가 순서대로 성공해야 커밋; 한 건이라도 실패하면 전체 롤백. BrandStoryClient.tsx에 탭 2개 추가처럼 import·state·JSX 3~5곳을 한 번에 바꿀 때 이상적. 각 replacement의 old_string은 해당 시점의 파일 내용에서 정확히 한 번 등장해야 함 (이전 교체의 new_string도 고려됨).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        replacements: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            properties: {
+              old_string: { type: 'string' },
+              new_string: { type: 'string' },
+            },
+            required: ['old_string', 'new_string'],
+            additionalProperties: false,
+          },
+          description: '적용할 교체 목록. 순서대로 적용됨.',
+        },
+        commit_message: { type: 'string' },
+        sha: {
+          type: 'string',
+          description: '필수. read_source_file에서 얻은 blob SHA.',
+        },
+      },
+      required: ['path', 'replacements', 'commit_message', 'sha'],
       additionalProperties: false,
     },
   },
@@ -390,6 +449,23 @@ function normalizeVariants(raw: unknown): ProductVariant[] | undefined {
     }
     return out;
   });
+}
+
+/**
+ * Count non-overlapping occurrences of `needle` in `haystack`. Used by
+ * str_replace tools to enforce the "exactly one match" invariant that
+ * prevents silent mass-replacement bugs (same rule as Claude Code's Edit).
+ */
+function countOccurrences(haystack: string, needle: string): number {
+  if (!needle) return 0;
+  let count = 0;
+  let idx = 0;
+  while (true) {
+    const found = haystack.indexOf(needle, idx);
+    if (found === -1) return count;
+    count += 1;
+    idx = found + needle.length;
+  }
 }
 
 function productSummary(p: Product) {
@@ -847,6 +923,196 @@ export async function executeTool(
           ok: true,
           summary: `'${path}' 커밋 완료 (${result.commitSha.slice(0, 7)}). Vercel 재빌드 시작 — 2~3분 후 사이트 반영.`,
           data: { path, commitSha: result.commitSha, htmlUrl: result.htmlUrl },
+        };
+      }
+
+      case 'str_replace_source_file': {
+        const path = String(input.path ?? '');
+        const oldStr = typeof input.old_string === 'string' ? input.old_string : '';
+        const newStr = typeof input.new_string === 'string' ? input.new_string : '';
+        const message = String(input.commit_message ?? '').trim();
+        const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
+        const allow = isPathAllowed(path);
+        if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
+        if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
+        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
+        if (!oldStr) return { ok: false, summary: 'old_string 필수', error: 'empty old_string' };
+        if (oldStr === newStr) {
+          return {
+            ok: false,
+            summary: 'old_string과 new_string이 동일',
+            error: 'old_string equals new_string — no change would be made',
+          };
+        }
+
+        let current: Awaited<ReturnType<typeof readRepoFile>>;
+        try {
+          current = await readRepoFile(path);
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : 'read failed';
+          return { ok: false, summary: '파일 읽기 실패', error: msg };
+        }
+        if (current.sha !== sha) {
+          return {
+            ok: false,
+            summary: 'SHA 불일치 (충돌)',
+            error: `파일이 다른 곳에서 수정되었습니다. read_source_file로 현재 sha를 다시 받아 재시도하세요. (기대 ${sha.slice(0, 7)}, 현재 ${current.sha.slice(0, 7)})`,
+          };
+        }
+
+        const occurrences = countOccurrences(current.content, oldStr);
+        if (occurrences === 0) {
+          return {
+            ok: false,
+            summary: 'old_string을 찾지 못함',
+            error:
+              'old_string이 파일 안에 없습니다. 탭/공백/줄바꿈이 파일 원문과 정확히 일치해야 합니다. read_source_file로 실제 내용을 확인하세요.',
+          };
+        }
+        if (occurrences > 1) {
+          return {
+            ok: false,
+            summary: `old_string이 ${occurrences}곳 — 유일하지 않음`,
+            error: `여러 곳에 매칭됩니다 (${occurrences}회). old_string에 앞뒤 컨텍스트를 더 포함해 유일성을 확보하세요. 혹은 multi_str_replace_source_file로 각 위치를 개별 지정하세요.`,
+          };
+        }
+
+        const newContent = current.content.replace(oldStr, newStr);
+        const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const result = await writeRepoFile({
+          path,
+          content: newContent,
+          message: `${message}\n\nvia daracheon admin AI (by ${actor})`,
+          sha,
+          authorName: context.actorName ?? 'daracheon-admin-ai',
+          authorEmail: context.actorEmail ?? 'ai@daracheon.local',
+        });
+        await logAdmin('settings', 'update', {
+          summary: `AI: str_replace — ${path} (${result.commitSha.slice(0, 7)})`,
+          targetId: path,
+          meta: {
+            commitSha: result.commitSha,
+            path,
+            oldBytes: Buffer.byteLength(oldStr, 'utf8'),
+            newBytes: Buffer.byteLength(newStr, 'utf8'),
+          },
+        });
+        return {
+          ok: true,
+          summary: `'${path}' 부분 수정 완료 (${result.commitSha.slice(0, 7)}). Vercel 재빌드 시작 — 2~3분 후 사이트 반영.`,
+          data: {
+            path,
+            commitSha: result.commitSha,
+            htmlUrl: result.htmlUrl,
+            newSha: result.sha,
+            bytesChanged: Buffer.byteLength(newStr, 'utf8') - Buffer.byteLength(oldStr, 'utf8'),
+          },
+        };
+      }
+
+      case 'multi_str_replace_source_file': {
+        const path = String(input.path ?? '');
+        const rawReplacements = Array.isArray(input.replacements) ? input.replacements : [];
+        const message = String(input.commit_message ?? '').trim();
+        const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
+        const allow = isPathAllowed(path);
+        if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
+        if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
+        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
+        if (rawReplacements.length === 0) {
+          return { ok: false, summary: 'replacements 비어있음', error: 'empty replacements' };
+        }
+
+        const replacements: { oldStr: string; newStr: string }[] = [];
+        for (let i = 0; i < rawReplacements.length; i += 1) {
+          const r = rawReplacements[i] as Record<string, unknown> | null;
+          const oldStr = r && typeof r.old_string === 'string' ? r.old_string : '';
+          const newStr = r && typeof r.new_string === 'string' ? r.new_string : '';
+          if (!oldStr) {
+            return {
+              ok: false,
+              summary: `replacements[${i}].old_string 비어있음`,
+              error: `empty old_string at index ${i}`,
+            };
+          }
+          if (oldStr === newStr) {
+            return {
+              ok: false,
+              summary: `replacements[${i}] 무변경`,
+              error: `old_string equals new_string at index ${i}`,
+            };
+          }
+          replacements.push({ oldStr, newStr });
+        }
+
+        let current: Awaited<ReturnType<typeof readRepoFile>>;
+        try {
+          current = await readRepoFile(path);
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : 'read failed';
+          return { ok: false, summary: '파일 읽기 실패', error: msg };
+        }
+        if (current.sha !== sha) {
+          return {
+            ok: false,
+            summary: 'SHA 불일치 (충돌)',
+            error: `파일이 다른 곳에서 수정되었습니다. read_source_file로 현재 sha를 다시 받아 재시도하세요. (기대 ${sha.slice(0, 7)}, 현재 ${current.sha.slice(0, 7)})`,
+          };
+        }
+
+        let working = current.content;
+        for (let i = 0; i < replacements.length; i += 1) {
+          const { oldStr, newStr } = replacements[i];
+          const occurrences = countOccurrences(working, oldStr);
+          if (occurrences === 0) {
+            return {
+              ok: false,
+              summary: `replacements[${i}] 매칭 실패`,
+              error: `old_string이 (이전 교체 ${i}건 적용 후) 파일 안에 없습니다. 탭/공백/줄바꿈 일치 확인.`,
+            };
+          }
+          if (occurrences > 1) {
+            return {
+              ok: false,
+              summary: `replacements[${i}] 매칭 ${occurrences}곳 — 유일하지 않음`,
+              error: `앞뒤 컨텍스트를 더 포함해 유일성을 확보하세요 (index ${i}, occurrences ${occurrences}).`,
+            };
+          }
+          working = working.replace(oldStr, newStr);
+        }
+
+        if (working === current.content) {
+          return { ok: false, summary: '변경 없음', error: '모든 교체 적용 후 내용이 동일합니다.' };
+        }
+
+        const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const result = await writeRepoFile({
+          path,
+          content: working,
+          message: `${message}\n\nvia daracheon admin AI (by ${actor}) — ${replacements.length} edits`,
+          sha,
+          authorName: context.actorName ?? 'daracheon-admin-ai',
+          authorEmail: context.actorEmail ?? 'ai@daracheon.local',
+        });
+        await logAdmin('settings', 'update', {
+          summary: `AI: multi_str_replace — ${path} (${result.commitSha.slice(0, 7)}, ${replacements.length}건)`,
+          targetId: path,
+          meta: {
+            commitSha: result.commitSha,
+            path,
+            editCount: replacements.length,
+          },
+        });
+        return {
+          ok: true,
+          summary: `'${path}' ${replacements.length}건 부분 수정 완료 (${result.commitSha.slice(0, 7)}). Vercel 재빌드 시작.`,
+          data: {
+            path,
+            commitSha: result.commitSha,
+            htmlUrl: result.htmlUrl,
+            newSha: result.sha,
+            editCount: replacements.length,
+          },
         };
       }
 
