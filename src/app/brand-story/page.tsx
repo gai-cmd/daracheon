@@ -9,6 +9,8 @@ export interface CertSection { title: string; items: string[] }
 export interface ProcessVideo { id: string; title: string }
 export interface ProcessChapter { title: string; titleEn: string; description: string; videos: ProcessVideo[] }
 export interface ProcessStat { value: string; label: string }
+export interface MediaItem { outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }
+export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string }
 
 export interface BrandStoryData {
   hero: { sectionTag: string; titleKr: string; subtitle: string; heroBg: string };
@@ -31,6 +33,8 @@ export interface BrandStoryData {
     totalTimeValue: string;
     totalTimeDesc: string;
   };
+  mediaTab?: { tag: string; title: string; subtitle: string; items: MediaItem[] };
+  testimonialsTab?: { tag: string; title: string; subtitle: string; items: TestimonialItem[] };
 }
 
 export default async function BrandStoryPage() {
