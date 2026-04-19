@@ -1,10 +1,19 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
 type PagesData = Record<string, unknown>;
+
+// Which public routes each editable page key renders on. After a PUT
+// we revalidate the matching routes so admin saves land on the live
+// site immediately instead of after the ISR window (revalidate=60).
+const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
+  aboutAgarwood: ['/about-agarwood'],
+  brandStory: ['/brand-story'],
+};
 
 export async function GET() {
   try {
@@ -45,6 +54,16 @@ export async function PUT(request: Request) {
       summary: `페이지 수정: ${body.key}`,
       targetId: body.key,
     });
+
+    // Push the fresh content to the public route so admins don't wait
+    // out the 60s ISR window. Best-effort — failures don't block the save.
+    for (const p of PAGE_PUBLIC_PATHS[body.key] ?? []) {
+      try {
+        revalidatePath(p);
+      } catch (err) {
+        console.warn('[Admin Pages] revalidate failed', p, err);
+      }
+    }
 
     return NextResponse.json({ success: true, pages: updated });
   } catch (error) {
