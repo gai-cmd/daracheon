@@ -327,7 +327,7 @@ export const TOOLS: ToolDef[] = [
   {
     name: 'str_replace_source_file',
     description:
-      '[부분 수정 — 권장] 파일에서 old_string을 new_string으로 **정확히 한 번** 교체하고 커밋. 모델은 바뀌는 부분만 출력하면 되므로 대용량 파일(10KB+) 편집 시 edit_source_file 대비 20배 빠름. 규칙: (1) old_string은 파일 내에서 정확히 일치하는 유일한 문자열이어야 함 (공백·탭·줄바꿈 모두 보존). (2) 여러 곳을 동시에 수정하려면 multi_str_replace_source_file 사용. (3) 신규 파일 생성에는 사용 불가 (edit_source_file 사용).',
+      '[부분 수정 — 권장] 파일에서 old_string을 new_string으로 **정확히 한 번** 교체하고 커밋. 모델은 바뀌는 부분만 출력하면 되므로 대용량 파일(10KB+) 편집 시 edit_source_file 대비 20배 빠름. 규칙: (1) old_string은 파일 내에서 정확히 일치하는 유일한 문자열이어야 함 (공백·탭·줄바꿈 모두 보존). (2) 여러 곳을 동시에 수정하려면 multi_str_replace_source_file 사용. (3) 신규 파일 생성에는 사용 불가 (edit_source_file 사용). commit_message는 생략 시 자동 생성됨.',
     input_schema: {
       type: 'object',
       properties: {
@@ -341,13 +341,16 @@ export const TOOLS: ToolDef[] = [
           type: 'string',
           description: '교체 결과 문자열. old_string과 동일해선 안 됨.',
         },
-        commit_message: { type: 'string', description: '커밋 메시지' },
+        commit_message: {
+          type: 'string',
+          description: '커밋 메시지. 생략하면 자동 생성 (예: "chore(admin-ai): edit <path>").',
+        },
         sha: {
           type: 'string',
           description: '필수. read_source_file에서 얻은 blob SHA. 충돌 감지용.',
         },
       },
-      required: ['path', 'old_string', 'new_string', 'commit_message', 'sha'],
+      required: ['path', 'old_string', 'new_string', 'sha'],
       additionalProperties: false,
     },
   },
@@ -373,13 +376,16 @@ export const TOOLS: ToolDef[] = [
           },
           description: '적용할 교체 목록. 순서대로 적용됨.',
         },
-        commit_message: { type: 'string' },
+        commit_message: {
+          type: 'string',
+          description: '커밋 메시지. 생략하면 자동 생성.',
+        },
         sha: {
           type: 'string',
           description: '필수. read_source_file에서 얻은 blob SHA.',
         },
       },
-      required: ['path', 'replacements', 'commit_message', 'sha'],
+      required: ['path', 'replacements', 'sha'],
       additionalProperties: false,
     },
   },
@@ -930,13 +936,13 @@ export async function executeTool(
         const path = String(input.path ?? '');
         const oldStr = typeof input.old_string === 'string' ? input.old_string : '';
         const newStr = typeof input.new_string === 'string' ? input.new_string : '';
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (!oldStr) return { ok: false, summary: 'old_string 필수', error: 'empty old_string' };
+        const message = providedMsg || `chore(admin-ai): edit ${path}`;
         if (oldStr === newStr) {
           return {
             ok: false,
@@ -1013,12 +1019,11 @@ export async function executeTool(
       case 'multi_str_replace_source_file': {
         const path = String(input.path ?? '');
         const rawReplacements = Array.isArray(input.replacements) ? input.replacements : [];
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (rawReplacements.length === 0) {
           return { ok: false, summary: 'replacements 비어있음', error: 'empty replacements' };
         }
@@ -1089,7 +1094,7 @@ export async function executeTool(
         const result = await writeRepoFile({
           path,
           content: working,
-          message: `${message}\n\nvia daracheon admin AI (by ${actor}) — ${replacements.length} edits`,
+          message: `${providedMsg || `chore(admin-ai): edit ${path} (${replacements.length} replacements)`}\n\nvia daracheon admin AI (by ${actor})`,
           sha,
           authorName: context.actorName ?? 'daracheon-admin-ai',
           authorEmail: context.actorEmail ?? 'ai@daracheon.local',

@@ -6,6 +6,8 @@ import { readData } from '@/lib/db';
 import type { Product } from '@/data/products';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
+import ProductTabs, { type TabItem } from '@/components/product-detail/ProductTabs';
+import VerificationTimeline from '@/components/product-detail/VerificationTimeline';
 
 export const revalidate = 60;
 
@@ -42,15 +44,85 @@ export default async function ProductDetailPage(
 
   const specEntries = Object.entries(product.specs ?? {});
 
+  // ProductTabs 구성: TabItem[] 형태 — content는 ReactNode 수용
+  const tabs: TabItem[] = [
+    {
+      id: 'desc',
+      label: '제품설명',
+      content: (
+        <div className="space-y-5 text-[0.95rem] font-light leading-[1.95] text-white/75">
+          <p>{product.description}</p>
+        </div>
+      ),
+    },
+    {
+      id: 'ingredients',
+      label: '원료·성분',
+      // TODO: 원료/성분 전용 필드 없음 — features를 임시 표시. CMS 스키마 확장 필요.
+      content:
+        product.features && product.features.length > 0 ? (
+          <ul className="space-y-3">
+            {product.features.map((f, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3 text-[0.95rem] font-light leading-[1.85] text-white/75"
+              >
+                <span className="mt-2 block h-1 w-1 shrink-0 rounded-full bg-gold-500" />
+                {f}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm font-light text-white/55">원료·성분 정보가 준비 중입니다.</p>
+        ),
+    },
+    {
+      id: 'intake',
+      label: '섭취법',
+      // TODO: 섭취법 전용 필드 없음 — CMS 확장 필요.
+      content: (
+        <p className="text-[0.95rem] font-light leading-[1.95] text-white/75">
+          섭취법 안내는 제품에 동봉된 설명서를 참고해 주세요. 상세 가이드는 준비 중입니다.
+        </p>
+      ),
+    },
+    {
+      id: 'cert',
+      label: '인증·시험',
+      content:
+        specEntries.length > 0 ? (
+          <div className="overflow-hidden border border-gold-500/20">
+            <table className="w-full text-sm">
+              <tbody>
+                {specEntries.map(([key, value]) => (
+                  <tr
+                    key={key}
+                    className="border-b border-gold-500/10 last:border-b-0"
+                  >
+                    <th className="w-48 bg-lx-ink px-5 py-4 text-left font-mono text-[0.68rem] font-normal uppercase tracking-[0.2em] text-gold-500">
+                      {key}
+                    </th>
+                    <td className="px-5 py-4 font-light text-white/80">{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm font-light text-white/55">인증·시험 정보가 준비 중입니다.</p>
+        ),
+    },
+  ];
+
   return (
-    <main className="bg-[#fdfbf7] pb-28 pt-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <main className="bg-lx-black pb-28 pt-32 text-lx-ivory">
+      <div className="mx-auto max-w-page px-7 lg:px-16">
         {/* Breadcrumb */}
-        <nav className="mb-10 text-[0.7rem] tracking-[0.2em] uppercase text-neutral-500">
-          <Link href="/" className="hover:text-gold-500">홈</Link>
-          <span className="mx-2 text-neutral-300">/</span>
-          <Link href="/products" className="hover:text-gold-500">제품</Link>
-          <span className="mx-2 text-neutral-300">/</span>
+        <nav className="mb-12 font-mono text-[0.66rem] uppercase tracking-[0.24em] text-white/50">
+          <Link href="/" className="transition-colors hover:text-gold-400">홈</Link>
+          <span className="mx-2 text-white/25">/</span>
+          <Link href="/products" className="transition-colors hover:text-gold-400">제품</Link>
+          <span className="mx-2 text-white/25">/</span>
           <span className="text-gold-500">{product.name}</span>
         </nav>
 
@@ -66,33 +138,61 @@ export default async function ProductDetailPage(
 
           {/* Info */}
           <div>
-            <p className="mb-2 text-[0.7rem] font-light uppercase tracking-[0.3em] text-gold-500">
+            <p className="mb-3 font-mono text-[0.66rem] font-light uppercase tracking-[0.3em] text-gold-500">
               {product.categoryEn || product.category}
             </p>
-            <h1 className="font-serif text-4xl font-light leading-tight text-neutral-900">
+            <h1 className="font-serif text-[clamp(2rem,3.6vw,3rem)] font-light leading-[1.2] tracking-kr-tight text-lx-ivory">
               {product.name}
             </h1>
             {product.nameEn && (
-              <p className="mt-2 font-display italic text-lg text-neutral-500">
+              <p className="mt-3 font-serif text-lg italic text-white/55">
                 {product.nameEn}
               </p>
             )}
 
             <div className="mt-6 h-px w-12 bg-gold-500" />
 
-            <p className="mt-6 text-[0.95rem] leading-8 text-neutral-700">
+            <p className="mt-6 text-[0.95rem] font-light leading-[1.95] text-white/75">
               {product.description}
             </p>
 
+            {/* Lot grid — 3칸 */}
+            <div className="mt-8 grid grid-cols-3 gap-px border border-gold-500/15 bg-gold-500/15">
+              <div className="bg-lx-black p-4">
+                <p className="mb-1 font-mono text-[0.58rem] uppercase tracking-[0.24em] text-gold-500">
+                  Lot
+                </p>
+                {/* TODO: Lot 번호 필드 없음 — CMS 추가 필요 */}
+                <p className="font-mono text-xs text-lx-ivory">—</p>
+              </div>
+              <div className="bg-lx-black p-4">
+                <p className="mb-1 font-mono text-[0.58rem] uppercase tracking-[0.24em] text-gold-500">
+                  Origin
+                </p>
+                <p className="font-mono text-xs text-lx-ivory">VN · Ha Tinh</p>
+              </div>
+              <div className="bg-lx-black p-4">
+                <p className="mb-1 font-mono text-[0.58rem] uppercase tracking-[0.24em] text-gold-500">
+                  Category
+                </p>
+                <p className="font-mono text-xs text-lx-ivory">
+                  {product.categoryEn || product.category}
+                </p>
+              </div>
+            </div>
+
             {/* Features */}
             {product.features && product.features.length > 0 && (
-              <div className="mt-8 border-t border-neutral-200 pt-8">
-                <p className="mb-4 text-[0.68rem] tracking-[0.25em] uppercase text-gold-500">
+              <div className="mt-8 border-t border-gold-500/15 pt-8">
+                <p className="mb-4 font-mono text-[0.66rem] uppercase tracking-[0.25em] text-gold-500">
                   제품 특징
                 </p>
                 <ul className="space-y-2.5">
                   {product.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-neutral-700">
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 text-sm font-light text-white/75"
+                    >
                       <span className="mt-1.5 block h-1 w-1 shrink-0 rounded-full bg-gold-500" />
                       {feature}
                     </li>
@@ -109,8 +209,10 @@ export default async function ProductDetailPage(
                 basePriceDisplay={product.priceDisplay}
               />
             ) : (
-              <div className="mt-8 border-t border-neutral-200 pt-8">
-                <p className="text-sm text-neutral-500">현재 판매 준비 중입니다. 출시 시 안내드립니다.</p>
+              <div className="mt-8 border-t border-gold-500/15 pt-8">
+                <p className="text-sm font-light text-white/55">
+                  현재 판매 준비 중입니다. 출시 시 안내드립니다.
+                </p>
               </div>
             )}
 
@@ -118,13 +220,13 @@ export default async function ProductDetailPage(
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/support"
-                className="inline-block bg-gold-500 px-8 py-3.5 text-center text-[0.72rem] font-medium uppercase tracking-[0.25em] text-[#0a0b10] transition hover:bg-gold-600"
+                className="inline-block bg-gold-500 px-8 py-3.5 text-center font-mono text-[0.7rem] font-medium uppercase tracking-[0.25em] text-lx-black transition hover:bg-gold-400"
               >
                 제품 문의
               </Link>
               <Link
                 href="/home-shopping"
-                className="inline-block border border-neutral-900 px-8 py-3.5 text-center text-[0.72rem] font-medium uppercase tracking-[0.25em] text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
+                className="inline-block border border-gold-500/40 px-8 py-3.5 text-center font-mono text-[0.7rem] font-medium uppercase tracking-[0.25em] text-lx-ivory transition hover:border-gold-500 hover:bg-gold-500/10 hover:text-gold-400"
               >
                 홈쇼핑 방송 확인
               </Link>
@@ -132,35 +234,21 @@ export default async function ProductDetailPage(
           </div>
         </div>
 
-        {/* Specs */}
-        {specEntries.length > 0 && (
-          <section className="mt-20">
-            <h2 className="mb-6 font-serif text-2xl font-light text-neutral-900">제품 정보</h2>
-            <div className="overflow-hidden border border-neutral-200 bg-white">
-              <table className="w-full text-sm">
-                <tbody>
-                  {specEntries.map(([key, value]) => (
-                    <tr key={key} className="border-b border-neutral-100 last:border-b-0">
-                      <th className="w-48 bg-neutral-50 px-5 py-4 text-left font-serif text-xs font-normal tracking-wider text-neutral-500">
-                        {key}
-                      </th>
-                      <td className="px-5 py-4 text-neutral-800">{value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
+        {/* Product Tabs */}
+        <section className="mt-24">
+          <ProductTabs tabs={tabs} />
+        </section>
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="mt-20">
-            <h2 className="mb-6 font-serif text-2xl font-light text-neutral-900">관련 제품</h2>
+          <section className="mt-24">
+            <h2 className="mb-8 font-serif text-2xl font-light tracking-kr-tight text-lx-ivory">
+              관련 제품
+            </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((p) => (
                 <Link key={p.id} href={`/products/${p.slug}`} className="group block">
-                  <div className="relative aspect-square overflow-hidden bg-white">
+                  <div className="relative aspect-square overflow-hidden bg-lx-ink">
                     {p.image && (
                       <Image
                         src={p.image}
@@ -172,10 +260,10 @@ export default async function ProductDetailPage(
                     )}
                   </div>
                   <div className="mt-4">
-                    <p className="text-[0.62rem] uppercase tracking-[0.25em] text-gold-500">
+                    <p className="font-mono text-[0.62rem] uppercase tracking-[0.25em] text-gold-500">
                       {p.categoryEn || p.category}
                     </p>
-                    <p className="mt-1 font-serif text-base text-neutral-800 group-hover:text-gold-600">
+                    <p className="mt-1 font-serif text-base font-light text-lx-ivory transition-colors group-hover:text-gold-400">
                       {p.name}
                     </p>
                   </div>
@@ -184,6 +272,12 @@ export default async function ProductDetailPage(
             </div>
           </section>
         )}
+      </div>
+
+      {/* Verification Timeline */}
+      {/* TODO: Lot 검증 이력 데이터 없음 — CMS 추가 필요 */}
+      <div className="mt-24">
+        <VerificationTimeline />
       </div>
     </main>
   );
