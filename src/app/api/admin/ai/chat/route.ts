@@ -10,6 +10,21 @@ export const maxDuration = 60;
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
+// Beta flag that opts into server-side compaction: when the conversation
+// approaches the context window limit (default ~150K tokens), Anthropic
+// summarizes earlier turns into a `compaction` block and returns it as
+// part of the response content. Must be appended back verbatim on the
+// next turn so the API can replace the compacted history.
+const ANTHROPIC_BETA_COMPACT = 'compact-2026-01-12';
+
+// Compaction is supported on Opus 4.6+, Sonnet 4.6+. Haiku 4.5 does not
+// support it; for those models we omit both the beta header and the
+// context_management block (the request would 400 otherwise).
+const COMPACTION_SUPPORTED = new Set([
+  'claude-opus-4-7',
+  'claude-opus-4-6',
+  'claude-sonnet-4-6',
+]);
 
 const ALLOWED_MODELS = new Set([
   'claude-opus-4-7',
@@ -223,31 +238,46 @@ async function callAnthropicOnce(params: {
   model: string;
   messages: AnthropicMessage[];
 }): Promise<AnthropicResponse> {
+  const withCompaction = COMPACTION_SUPPORTED.has(params.model);
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+    'x-api-key': params.apiKey,
+    'anthropic-version': ANTHROPIC_VERSION,
+  };
+  if (withCompaction) {
+    headers['anthropic-beta'] = ANTHROPIC_BETA_COMPACT;
+  }
+
+  const body: Record<string, unknown> = {
+    model: params.model,
+    max_tokens: 4096,
+    // Array form with cache_control caches the entire prefix (tools + system)
+    // together. Tools render before system in the prompt, so the breakpoint on
+    // the last system block covers both. This drops per-turn input tokens to
+    // ~10% of the original on cache hits — critical for the agentic loop
+    // where every turn re-sends the full tools + system + growing history.
+    system: [
+      {
+        type: 'text',
+        text: SYSTEM_PROMPT,
+        cache_control: { type: 'ephemeral' },
+      },
+    ],
+    tools: TOOLS,
+    messages: params.messages,
+  };
+  if (withCompaction) {
+    // Auto-compaction triggers when the prompt approaches the model's
+    // context window. The API summarizes older turns into a compaction
+    // block; we round-trip the full `response.content` (tool_use blocks
+    // and all) so the next request can replace them cleanly.
+    body.context_management = { edits: [{ type: 'compact_20260112' }] };
+  }
+
   const res = await fetch(ANTHROPIC_API_URL, {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': params.apiKey,
-      'anthropic-version': ANTHROPIC_VERSION,
-    },
-    body: JSON.stringify({
-      model: params.model,
-      max_tokens: 4096,
-      // Array form with cache_control caches the entire prefix (tools + system)
-      // together. Tools render before system in the prompt, so the breakpoint on
-      // the last system block covers both. This drops per-turn input tokens to
-      // ~10% of the original on cache hits — critical for the agentic loop
-      // where every turn re-sends the full tools + system + growing history.
-      system: [
-        {
-          type: 'text',
-          text: SYSTEM_PROMPT,
-          cache_control: { type: 'ephemeral' },
-        },
-      ],
-      tools: TOOLS,
-      messages: params.messages,
-    }),
+    headers,
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -275,6 +305,48 @@ async function callAnthropicOnce(params: {
 }
 
 /**
+ * Compress the oldest tool_result blocks — their `content` JSON payloads
+ * are by far the largest consumers when a read_source_file return or a
+ * list/get_* data dump gets round-tripped back. We replace the full JSON
+ * with a one-line placeholder so the tool_use_id linkage and is_error
+ * flag survive, but the body shrinks dramatically.
+ *
+ * Only touches tool_result blocks from the oldest `victimCount` user
+ * messages — recent turns stay intact so the agent can still reason
+ * about the active work.
+ */
+function trimOldestToolResults(
+  messages: AnthropicMessage[],
+  victimCount: number
+): { trimmed: AnthropicMessage[]; trimmedCount: number } {
+  let remaining = victimCount;
+  let trimmedCount = 0;
+  const trimmed = messages.map((msg) => {
+    if (remaining <= 0) return msg;
+    if (msg.role !== 'user' || typeof msg.content === 'string') return msg;
+    let touchedHere = false;
+    const newBlocks = msg.content.map((block) => {
+      if (block.type !== 'tool_result') return block;
+      const prev = typeof block.content === 'string' ? block.content : '';
+      if (prev.length < 500) return block;
+      touchedHere = true;
+      trimmedCount += 1;
+      return {
+        ...block,
+        content: JSON.stringify({
+          ok: !block.is_error,
+          summary: `(이전 도구 결과 — 컨텍스트 절약을 위해 ${prev.length}B → 축약됨)`,
+          elided: true,
+        }),
+      };
+    });
+    if (touchedHere) remaining -= 1;
+    return { ...msg, content: newBlocks };
+  });
+  return { trimmed, trimmedCount };
+}
+
+/**
  * Resilient wrapper around `callAnthropicOnce`:
  *
  *  1. On 429 / 529 for the requested model: wait `retry-after` (capped at
@@ -282,40 +354,74 @@ async function callAnthropicOnce(params: {
  *  2. If that still fails and a fallback exists, transparently retry
  *     against the next model in the chain. Emits a notice so the UI can
  *     show "Opus rate limit → Sonnet으로 자동 전환" to the admin.
+ *  3. On 413 (prompt_too_large): progressively compress the oldest
+ *     tool_result payloads and retry. Anthropic's server-side compaction
+ *     handles the usual growth curve, but if a single turn produces a
+ *     massive tool result (large file read), we may still blow past the
+ *     window — this is the belt to compaction's suspenders.
  *
- * Non-rate-limit errors (4xx other than 429, 5xx other than 529) are not
- * retried — those indicate a real request problem and we want the stream
- * to surface them as-is.
+ * Non-rate-limit errors (4xx other than 429/413, 5xx other than 529) are
+ * not retried — those indicate a real request problem and we want the
+ * stream to surface them as-is.
  */
 async function callAnthropic(params: {
   apiKey: string;
   model: string;
   messages: AnthropicMessage[];
   onFallback?: (from: string, to: string, reason: string) => void;
-}): Promise<{ resp: AnthropicResponse; modelUsed: string }> {
-  const isRetryable = (status: number) => status === 429 || status === 529;
+  onCompress?: (trimmedCount: number) => void;
+}): Promise<{ resp: AnthropicResponse; modelUsed: string; messages: AnthropicMessage[] }> {
+  const isRateLimit = (status: number) => status === 429 || status === 529;
+  let workingMessages = params.messages;
+
+  // Try a single model with: 413 prompt-too-large compression retries,
+  // then one rate-limit retry honoring retry-after. Returns on success,
+  // throws AnthropicHttpError on terminal failure for this model.
   const tryModel = async (model: string): Promise<AnthropicResponse> => {
-    try {
-      return await callAnthropicOnce({ apiKey: params.apiKey, model, messages: params.messages });
-    } catch (err) {
-      if (err instanceof AnthropicHttpError && isRetryable(err.status)) {
-        const waitMs = (err.retryAfterSeconds ?? 8) * 1000;
-        await sleep(waitMs);
+    let rateLimitRetried = false;
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      try {
         return await callAnthropicOnce({
           apiKey: params.apiKey,
           model,
-          messages: params.messages,
+          messages: workingMessages,
         });
+      } catch (err) {
+        if (!(err instanceof AnthropicHttpError)) throw err;
+
+        if (err.status === 413) {
+          // Prompt too large — shrink oldest tool_result payloads and try
+          // again. Victim count grows 2 → 4 → 8 to reach convergence fast.
+          const victims = 2 * Math.pow(2, attempt);
+          const { trimmed, trimmedCount } = trimOldestToolResults(workingMessages, victims);
+          if (trimmedCount === 0) throw err;
+          workingMessages = trimmed;
+          params.onCompress?.(trimmedCount);
+          continue;
+        }
+
+        if (isRateLimit(err.status) && !rateLimitRetried) {
+          rateLimitRetried = true;
+          const waitMs = (err.retryAfterSeconds ?? 8) * 1000;
+          await sleep(waitMs);
+          continue;
+        }
+
+        throw err;
       }
-      throw err;
     }
+    throw new AnthropicHttpError(
+      413,
+      '컨텍스트를 더 줄일 수 없습니다. 대화 초기화를 권장합니다.',
+      null
+    );
   };
 
   try {
     const resp = await tryModel(params.model);
-    return { resp, modelUsed: params.model };
+    return { resp, modelUsed: params.model, messages: workingMessages };
   } catch (err) {
-    if (!(err instanceof AnthropicHttpError) || !isRetryable(err.status)) throw err;
+    if (!(err instanceof AnthropicHttpError) || !isRateLimit(err.status)) throw err;
 
     const chain = FALLBACK_CHAIN[params.model] ?? [];
     let lastErr: AnthropicHttpError = err;
@@ -323,9 +429,9 @@ async function callAnthropic(params: {
       try {
         params.onFallback?.(params.model, next, lastErr.message);
         const resp = await tryModel(next);
-        return { resp, modelUsed: next };
+        return { resp, modelUsed: next, messages: workingMessages };
       } catch (inner) {
-        if (inner instanceof AnthropicHttpError && isRetryable(inner.status)) {
+        if (inner instanceof AnthropicHttpError && isRateLimit(inner.status)) {
           lastErr = inner;
           continue;
         }
@@ -490,7 +596,7 @@ export async function POST(request: NextRequest) {
 
         let activeModel = model;
         while (true) {
-          const { resp, modelUsed } = await callAnthropic({
+          const { resp, modelUsed, messages: nextMessages } = await callAnthropic({
             apiKey,
             model: activeModel,
             messages: conversation,
@@ -503,9 +609,25 @@ export async function POST(request: NextRequest) {
                 summary: `${from} rate limit — ${to} 으로 자동 전환`,
               });
             },
+            onCompress: (count) => {
+              emit({
+                type: 'tool_result',
+                id: `compress-${Date.now()}`,
+                name: 'context_compress',
+                ok: true,
+                summary: `컨텍스트 과대 — 오래된 도구 결과 ${count}개 자동 축약 후 재시도`,
+              });
+            },
           });
           if (modelUsed !== activeModel) {
             activeModel = modelUsed;
+          }
+          // If the request was compressed (413 recovery), reuse the trimmed
+          // version as the live conversation so subsequent turns don't
+          // repeat the overflow.
+          if (nextMessages !== conversation) {
+            conversation.length = 0;
+            conversation.push(...nextMessages);
           }
 
           if (resp.usage) {
