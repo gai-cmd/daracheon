@@ -113,7 +113,7 @@ function TabBrandStory({
           </RevealOnScroll>
           <RevealOnScroll delay={100}>
             <p className="text-gold-500 text-lg font-serif">
-              {data?.headlineSubtitle ?? '10ha 부지에 17,000그루 이상의 침향나무가 자라는 생명의 터전'}
+              {data?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
             </p>
           </RevealOnScroll>
           <RevealOnScroll delay={200}>
@@ -133,7 +133,7 @@ function TabBrandStory({
           </RevealOnScroll>
           <RevealOnScroll delay={200}>
             <p className="text-[0.95rem] text-neutral-500 leading-9 whitespace-pre-line">
-              {data?.sourceBody ?? '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 10ha 부지에서 17,000그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.'}
+              {data?.sourceBody ?? '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.'}
             </p>
           </RevealOnScroll>
         </div>
@@ -204,7 +204,7 @@ function TabScene({
           </RevealOnScroll>
           <RevealOnScroll delay={200}>
             <p className="text-gold-500 text-lg font-serif">
-              {data?.subtitle ?? '10ha 부지에 17,000그루 이상의 침향나무가 자라는 생명의 터전'}
+              {data?.subtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
             </p>
           </RevealOnScroll>
           <RevealOnScroll delay={300}>
@@ -234,7 +234,7 @@ function TabScene({
         <div className="max-w-4xl mx-auto mb-16">
           <RevealOnScroll>
             <p className="text-[0.95rem] text-neutral-500 leading-9 whitespace-pre-line">
-              {data?.body ?? '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 10ha 부지에서 17,000그루 이상의 침향나무를 직접 관리합니다.'}
+              {data?.body ?? '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리합니다.'}
             </p>
           </RevealOnScroll>
         </div>

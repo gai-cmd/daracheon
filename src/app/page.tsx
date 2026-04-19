@@ -246,10 +246,10 @@ export default function HomePage() {
       <section className="py-20 px-6 bg-[#1a1d29]">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {[
-            { value: '17,000+', label: '침향 나무' },
+            { value: '400만+', label: '침향 나무' },
             { value: '25yr+', label: '연구 기간' },
             { value: '5', label: '베트남 산지' },
-            { value: '10ha', label: '하띤성 직영 농장' },
+            { value: '200ha', label: '하띤성 직영 농장' },
           ].map((stat, i) => (
             <RevealOnScroll key={stat.label} delay={i * 100}>
               <div className="py-4">
@@ -297,7 +297,7 @@ export default function HomePage() {
       <div className="bg-[#1a1d29] py-8 overflow-hidden">
         <div className="marquee-track">
           {[...Array(2)].map((_, setIdx) => (
-            ['CITES 국제인증', 'Aquilaria agallocha Roxburgh', 'HACCP 식품안전 인증', 'Organic 유기농 인증', '하띤성 10ha 직영 농장', '17,000+ Trees', 'DNA 유전자 검증'].map((text) => (
+            ['CITES 국제인증', 'Aquilaria agallocha Roxburgh', 'HACCP 식품안전 인증', 'Organic 유기농 인증', '하띤성 200ha 직영 농장', '400만+ Trees', 'DNA 유전자 검증'].map((text) => (
               <span key={`${setIdx}-${text}`} className="font-display text-lg lg:text-xl font-light italic text-gold-500/60 whitespace-nowrap flex items-center gap-16 after:content-['◆'] after:text-[0.5rem] after:opacity-40">
                 {text}
               </span>

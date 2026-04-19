@@ -81,14 +81,34 @@ const SYSTEM_PROMPT = `당신은 ZOEL LIFE(대라천) 관리자 전용 AI 에이
    - 사용자에게 "Vercel 재빌드 중 (~2~3분). 완료 후 사이트에 반영됩니다" 안내
 3. 레이아웃/헤더/푸터/스타일/새 페이지 추가 요청은 무조건 소스 코드 영역.
 
-## 절대 규칙
-- "파일 시스템 도구가 없다" / "VS Code에서 찾으세요" 같은 안내는 **금지**. 위 도구들로 거의 모든 수정이 가능합니다.
-- 수정 요청엔 반드시 도구를 호출하세요. 설명만으로 끝내지 마세요.
-- update_page는 전체 JSON 덮어쓰기 — 반드시 get_page 후 변경된 부분만 교체한 **완전한** 객체 전달.
-- update_product는 부분 병합 — 변경 필드만 전달.
-- edit_source_file은 기존 파일이면 read_source_file의 sha 필수. 신규 파일이면 sha 생략.
-- 파괴적 작업(delete_*)은 사용자 명시적 요청 시만 실행.
-- 도구 호출 후 한국어로 1~3줄 요약 + 확인 경로(예: /brand-story) 안내.
+## 절대 규칙 (최우선)
+**A. 예고 금지 — 즉시 호출.**
+- "~하겠습니다", "~시작합니다", "지금 검색합니다", "동시에 읽겠습니다" 같은 **예고 문장만 출력하고 턴을 종료하는 것은 금지**입니다. 이는 시스템에서 '그냥 설명만 한 답변'으로 처리되어 아무 도구도 실행되지 않습니다.
+- 수정·검색·조회 요청이 들어오면, 이번 응답의 **같은 블록 안에** tool_use를 반드시 첨부하세요. 예고 문장은 짧게 "검색합니다" 한 줄이면 충분하고, 그 직후 같은 턴에 tool_use 블록이 붙어 있어야 합니다.
+- 병렬 호출 계획이 있으면 **이번 응답에서 실제로** 여러 tool_use 블록을 한 번에 내보내세요. "다음 턴에 호출하겠습니다"는 안 됩니다.
+
+**B. 검색 인덱싱 지연 대응.**
+- search_source_code는 GitHub Code Search 기반이라 최근 변경이 인덱싱 안 돼 0건이 나올 수 있습니다. **0건이면 즉시 포기하지 말고**: list_source_files → read_source_file 순으로 직접 파일을 열어 찾으세요.
+- 한국어 텍스트 수정은 흔히 아래 경로에 있습니다. 후보지를 한 번에 list_source_files/read_source_file로 뒤지세요:
+  - src/app/page.tsx (홈 히어로/스탯)
+  - src/app/layout.tsx (메타데이터)
+  - src/app/brand-story/BrandStoryClient.tsx 및 layout.tsx
+  - src/app/about-agarwood/
+  - src/data/company.ts (회사 정보, 통계, FAQ, 미디어)
+  - data/db/pages.json (DB 시드 — 여기도 반드시 고치거나 update_page로 덮어쓰기)
+- DB 저장된 콘텐츠와 소스 fallback 둘 다 있는 경우가 많습니다(예: data?.x ?? '하드코딩'). 둘 중 서빙되는 쪽만 고치면 안 되고, 가능하면 **둘 다** 수정하세요.
+
+**C. 도구 입력 규칙.**
+- update_page: 전체 JSON 덮어쓰기 — 반드시 get_page 후 변경된 부분만 교체한 **완전한** 객체 전달.
+- update_product: 부분 병합 — 변경 필드만 전달.
+- edit_source_file: 기존 파일이면 read_source_file의 sha 필수. 신규 파일이면 sha 생략.
+- 파괴적 작업(delete_*)은 사용자 명시적 요청 시만.
+
+**D. 턴 종료 전 자기 점검.**
+응답을 보내기 직전 속으로 확인: "이번 턴에 tool_use 블록을 실제로 붙였는가?" 안 붙였는데 사용자 요청이 수정/검색이면 **절대 턴을 끝내지 말고** tool_use를 붙이세요.
+
+**E. 완료 후 보고.**
+도구 실행이 끝나면 한국어로 1~3줄 요약 + 확인 경로(예: /brand-story)와 필요 시 "Vercel 재빌드 중 (2~3분 후 반영)" 안내.
 
 ## 브랜드 톤
 - 베트남산 프리미엄 침향(Aquilaria agallocha) 전문 브랜드. 고급스럽고 신뢰감 있는 표현.
@@ -348,9 +368,23 @@ export async function POST(request: NextRequest) {
         }
       };
 
+      // Detect if the user's latest message wants an edit/search — used to
+      // decide whether a text-only assistant reply is a bug (promise without
+      // action) and needs a forced retry with a system-reminder nudge.
+      const lastUser = [...sanitized].reverse().find((m) => m.role === 'user');
+      const lastUserText = (lastUser?.content ?? '').toLowerCase();
+      const ACTION_PATTERNS = [
+        '수정', '변경', '바꿔', '바꾸', '교체', '고쳐', '고치',
+        '업데이트', '추가', '삭제', '제거', '등록', '만들어', '생성',
+        '조회', '찾아', '검색', '보여', '읽어', '알려',
+      ];
+      const userWantsAction = ACTION_PATTERNS.some((p) => lastUserText.includes(p));
+
       try {
         let toolTurns = 0;
         let toolRuns = 0;
+        let nudgesUsed = 0;
+        const MAX_NUDGES = 2;
         const cumUsage = {
           input_tokens: 0,
           output_tokens: 0,
@@ -385,9 +419,40 @@ export async function POST(request: NextRequest) {
           // Append assistant message (full content array — required for tool_use continuation)
           conversation.push({ role: 'assistant', content: resp.content });
 
+          const toolUses = resp.content.filter((b): b is ToolUseBlock => b.type === 'tool_use');
+
+          // NUDGE: model produced only text but the user asked for an action
+          // (edit/search/update). This is the classic "promise without action"
+          // failure. Inject a system-reminder pushing the model to attach
+          // tool_use blocks now, instead of ending the turn.
+          if (
+            resp.stop_reason !== 'tool_use' &&
+            toolUses.length === 0 &&
+            userWantsAction &&
+            nudgesUsed < MAX_NUDGES
+          ) {
+            nudgesUsed += 1;
+            emit({
+              type: 'tool_result',
+              id: `nudge-${nudgesUsed}`,
+              name: 'system_nudge',
+              ok: true,
+              summary: `도구 호출 누락 감지 — 모델에게 즉시 실행 재요청 (${nudgesUsed}/${MAX_NUDGES})`,
+            });
+            conversation.push({
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: `<system-reminder>\n이번 응답에 tool_use 블록이 하나도 포함되지 않았습니다. 하지만 사용자는 수정·검색·조회를 요청했습니다. 예고 문장(${'"'}~하겠습니다${'"'}, ${'"'}지금 시작합니다${'"'})만 출력하고 턴을 종료하는 것은 금지입니다 (시스템 프롬프트 규칙 A).\n\n지금 이 턴에서 **즉시** 필요한 tool_use 블록들을 **한 번에 병렬로** 첨부하세요. 병렬 호출이 가능하면 여러 tool_use를 동시에 내보내세요. 설명 없이 tool만 호출해도 됩니다.\n</system-reminder>`,
+                },
+              ],
+            });
+            continue;
+          }
+
           if (resp.stop_reason !== 'tool_use') break;
 
-          const toolUses = resp.content.filter((b): b is ToolUseBlock => b.type === 'tool_use');
           if (toolUses.length === 0) break;
 
           toolTurns += 1;

@@ -15,7 +15,7 @@ export const company = {
   logo: '/images/logo.png',
 
   farms: [
-    { name: '하띤 농장', nameVi: 'Hà Tĩnh', region: '북부 베트남', trees: 17000, area: '10ha', description: '메인 대규모 농장' },
+    { name: '하띤 농장', nameVi: 'Hà Tĩnh', region: '북부 베트남', trees: 4000000, area: '200ha', description: '메인 대규모 농장' },
     { name: '동나이 농장', nameVi: 'Đồng Nai', region: '남부 베트남', trees: 0, description: '전략 재배 거점' },
     { name: '냐짱 농장', nameVi: 'Nha Trang', region: '중부 베트남', trees: 0, description: '고품질 원료 산지' },
     { name: '푸꾸옥 농장', nameVi: 'Phú Quốc', region: '남부 베트남', trees: 0, description: '해양성 기후 재배지' },
@@ -23,11 +23,11 @@ export const company = {
   ],
 
   stats: {
-    trees: 17000,
+    trees: 4000000,
     avgAge: 25,
     regions: 5,
     species: 'Aquilaria agallocha Roxburgh',
-    farmArea: '10ha',
+    farmArea: '200ha',
   },
 
   certifications: [
@@ -160,7 +160,7 @@ export const mediaItems = [
     date: '2025-11-15',
     image: 'https://images.unsplash.com/photo-1504711434969-e33886168d8c?w=600&q=80',
     excerpt:
-      "침향 전문기업 ZOEL LIFE(대라천 '참'침향)가 아시아 10대 선도 브랜드로 선정되었다. 베트남 5개 지역(하띤·동나이·냐짱·푸국·람동) 하띤성 10ha 부지에 17,000그루 이상의 침향나무를 직접 관리하며...",
+      "침향 전문기업 ZOEL LIFE(대라천 '참'침향)가 아시아 10대 선도 브랜드로 선정되었다. 베트남 5개 지역(하띤·동나이·냐짱·푸국·람동) 하띤성 200ha 부지에 400만 그루 이상의 침향나무를 직접 관리하며...",
     url: '#',
   },
   {
@@ -196,7 +196,7 @@ export const faqItems = [
   {
     question: '대라천 침향은 어디서 재배되나요?',
     answer:
-      '대라천의 침향은 베트남 5개 지역(하띤·동나이·냐짱·푸국·람동)에서 직접 재배됩니다.\n\n메인 농장은 하띤성에 위치한 10ha 부지이며, 17,000그루 이상의 Aquilaria agallocha를 직접 관리합니다.\n\n모든 나무에는 개별 추적 번호가 부여되어 원목별 이력을 완전히 관리합니다.',
+      '대라천의 침향은 베트남 5개 지역(하띤·동나이·냐짱·푸국·람동)에서 직접 재배됩니다.\n\n메인 농장은 하띤성에 위치한 200ha 부지이며, 400만 그루 이상의 Aquilaria agallocha를 직접 관리합니다.\n\n모든 나무에는 개별 추적 번호가 부여되어 원목별 이력을 완전히 관리합니다.',
   },
   {
     question: '진품 침향은 어떻게 구별하나요?',

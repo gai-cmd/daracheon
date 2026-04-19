@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     template: '%s | 대라천',
   },
   description:
-    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드 대라천. 17,000그루 직접 관리, GC-MS 인증, 대한약전 적합. 프리미엄 침향 원목, 에센셜 오일, 건강차.',
+    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드 대라천. 400만 그루 직접 관리, GC-MS 인증, 대한약전 적합. 프리미엄 침향 원목, 에센셜 오일, 건강차.',
   keywords: [
     '침향', '대라천', 'agarwood', '沈香', '침향 효능', '침향 구매',
     '프리미엄 침향', 'Aquilaria agallocha', '침향차', '침향 오일',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     siteName: '대라천',
     title: '대라천 — 프리미엄 침향 전문 브랜드',
     description:
-      '베트남 최고급 A. agallocha 침향. 17,000그루, 20년 이상 수령. 대라천이 엄선한 프리미엄 침향을 만나보세요.',
+      '베트남 최고급 A. agallocha 침향. 400만 그루, 20년 이상 수령. 대라천이 엄선한 프리미엄 침향을 만나보세요.',
     images: [
       {
         url: '/images/og-default.jpg',
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '대라천 — 프리미엄 침향 전문 브랜드',
     description:
-      '베트남 최고급 A. agallocha 침향. 17,000그루, 20년 이상 수령.',
+      '베트남 최고급 A. agallocha 침향. 400만 그루, 20년 이상 수령.',
     images: ['/images/og-default.jpg'],
   },
   alternates: {
@@ -81,7 +81,7 @@ const organizationJsonLd = {
   url: 'https://www.daracheon.com',
   logo: 'https://www.daracheon.com/images/logo.png',
   description:
-    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드. 17,000그루 직접 관리.',
+    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드. 400만 그루 직접 관리.',
   foundingDate: '2003',
   sameAs: [
     'https://www.instagram.com/daracheon',

@@ -255,6 +255,15 @@ export default function AdminAIPanel() {
   const [capturing, setCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [phase, setPhase] = useState<string>('생각 중');
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [nowTs, setNowTs] = useState<number>(Date.now());
+
+  useEffect(() => {
+    if (!sending) return;
+    const t = setInterval(() => setNowTs(Date.now()), 500);
+    return () => clearInterval(t);
+  }, [sending]);
 
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -458,6 +467,9 @@ export default function AdminAIPanel() {
     setInput('');
     setPending([]);
     setSending(true);
+    setPhase('요청 전송 중');
+    setStartedAt(Date.now());
+    setNowTs(Date.now());
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -502,8 +514,10 @@ export default function AdminAIPanel() {
         const t = evt.type;
         if (t === 'text' && typeof evt.delta === 'string') {
           textAcc += evt.delta;
+          setPhase('응답 작성 중');
         } else if (t === 'tool_start' && typeof evt.id === 'string' && typeof evt.name === 'string') {
           tools.push({ id: evt.id, name: evt.name, status: 'running' });
+          setPhase(`도구 실행: ${evt.name}`);
         } else if (t === 'tool_result' && typeof evt.id === 'string') {
           const idx = tools.findIndex((x) => x.id === evt.id);
           const ok = evt.ok !== false;
@@ -516,10 +530,12 @@ export default function AdminAIPanel() {
           };
           if (idx >= 0) tools[idx] = entry;
           else tools.push(entry);
+          setPhase('다음 단계 생각 중');
         } else if (t === 'error' && typeof evt.message === 'string') {
           streamError = evt.message;
+        } else if (t === 'done') {
+          setPhase('완료');
         }
-        // 'done' — no-op; loop will exit
       };
 
       const flushRender = () => {
@@ -737,6 +753,13 @@ export default function AdminAIPanel() {
             )}
           </div>
 
+          {sending && (
+            <StatusBanner
+              phase={phase}
+              elapsedMs={startedAt ? nowTs - startedAt : 0}
+            />
+          )}
+
           <form onSubmit={handleSubmit} className="border-t border-gray-800 bg-[#0b0d11] p-3">
             {pending.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-2">
@@ -941,6 +964,24 @@ function MessageBubble({ message, streaming }: { message: Message; streaming: bo
           {streaming && message.content && <BlinkingCaret />}
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatusBanner({ phase, elapsedMs }: { phase: string; elapsedMs: number }) {
+  const seconds = Math.max(0, Math.floor(elapsedMs / 1000));
+  const mm = Math.floor(seconds / 60);
+  const ss = seconds % 60;
+  const elapsed = mm > 0 ? `${mm}m ${ss}s` : `${ss}s`;
+  return (
+    <div className="flex items-center gap-2.5 border-t border-gray-800 bg-[#12151b] px-4 py-2.5 text-xs text-amber-200/90">
+      <span className="relative flex h-2 w-2 shrink-0">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+      </span>
+      <span className="flex-1 truncate font-medium">{phase}</span>
+      <SpinnerIcon />
+      <span className="font-mono text-[11px] tabular-nums text-gray-400">{elapsed}</span>
     </div>
   );
 }
