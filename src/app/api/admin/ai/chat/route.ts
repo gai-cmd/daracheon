@@ -192,12 +192,15 @@ interface AnthropicResponse {
 // ITPM ceiling of the three on most orgs; Sonnet 4.6 and Haiku 4.5 are far
 // more generous, so if the user-selected model 429s we transparently shift
 // THIS request (not the whole session) down the chain.
+// Anthropic meters ITPM per-model (429 error names the specific model),
+// so each entry in the chain draws from its own quota. We start with a
+// capability-equivalent Opus first, then step down to Sonnet, then Haiku.
 const FALLBACK_CHAIN: Record<string, string[]> = {
-  'claude-opus-4-7': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
-  'claude-opus-4-6': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
-  'claude-opus-4-5': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
-  'claude-sonnet-4-6': ['claude-haiku-4-5-20251001'],
-  'claude-sonnet-4-5': ['claude-haiku-4-5-20251001'],
+  'claude-opus-4-7': ['claude-opus-4-6', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
+  'claude-opus-4-6': ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
+  'claude-opus-4-5': ['claude-opus-4-6', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
+  'claude-sonnet-4-6': ['claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
+  'claude-sonnet-4-5': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
   'claude-haiku-4-5-20251001': [],
 };
 
