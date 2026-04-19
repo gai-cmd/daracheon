@@ -37,12 +37,14 @@ const ALLOWED_MODELS = new Set([
   'claude-opus-4-6',
   'claude-sonnet-4-5',
 ]);
-// Sonnet 4.6 is the default because source-file edits are bottlenecked on
-// output token generation speed. Opus 4.7 emits at ~75 tok/s while Sonnet
-// runs at ~250 tok/s — a 3–4× speedup with negligible quality loss on code
-// edits. Users can still pick Opus explicitly in the UI for tasks that
+// Haiku 4.5 is the default because source-file edits are bottlenecked on
+// output token generation speed. Opus 4.7 emits at ~75 tok/s, Sonnet 4.6
+// at ~250 tok/s, Haiku 4.5 at ~500–700 tok/s. On mechanical code edits
+// (str_replace, tab insertion, copy tweaks) the quality difference is
+// negligible but wall-clock time is 6–8× better vs Opus, 2–3× better
+// vs Sonnet. Users can pick Sonnet/Opus explicitly for tasks that
 // benefit from deeper reasoning.
-const DEFAULT_MODEL = 'claude-sonnet-4-6';
+const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 const ALLOWED_DOC_TYPES = new Set(['application/pdf']);
@@ -282,7 +284,12 @@ async function callAnthropicOnce(params: {
 
   const body: Record<string, unknown> = {
     model: params.model,
-    max_tokens: 4096,
+    // 4096 was truncating large multi_str_replace tool_use payloads — a
+    // BrandStoryClient-style multi-tab edit can need ~3K tokens of tool
+    // parameters, and the model would stall near the ceiling. 8192 gives
+    // headroom without real cost increase (output tokens are billed as
+    // used, not as capped). Still well below Haiku's 8192 native max.
+    max_tokens: 8192,
     // Array form with cache_control caches the entire prefix (tools + system)
     // together. Tools render before system in the prompt, so the breakpoint on
     // the last system block covers both. This drops per-turn input tokens to

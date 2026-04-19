@@ -54,12 +54,12 @@ interface ModelOption {
 }
 
 const MODEL_OPTIONS: ModelOption[] = [
-  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', hint: '균형 (기본·편집 권장)' },
-  { value: 'claude-opus-4-7', label: 'Claude Opus 4.7', hint: '최고 성능 (느림)' },
-  { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', hint: '빠른 응답' },
+  { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', hint: '가장 빠름 (기본·편집 권장)' },
+  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', hint: '균형' },
+  { value: 'claude-opus-4-7', label: 'Claude Opus 4.7', hint: '깊은 사고 (느림)' },
 ];
 
-const DEFAULT_MODEL = 'claude-sonnet-4-6';
+const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
 const STORAGE_KEY = 'zoel_admin_ai_panel_v2';
 
 const ALLOWED_MIME = [
@@ -323,14 +323,15 @@ export default function AdminAIPanel() {
     if (!isAdmin) return;
     const persisted = loadPersisted();
     if (typeof persisted.open === 'boolean') setOpen(persisted.open);
-    // One-time migration: the old default was Opus 4.7 which times out on
-    // large source edits. Bump anyone still on that stored default to the
-    // new Sonnet default so the fix takes effect without requiring them to
-    // find the model dropdown. Users who explicitly picked Opus 4.7 after
-    // the migration will keep their choice (it goes through setModel below
-    // on subsequent sessions only if they pick it again).
+    // One-time migration: earlier defaults (Opus 4.7, Sonnet 4.6) were too
+    // slow for source-file edits — Opus at ~75 tok/s and Sonnet at ~250
+    // tok/s still made multi-edit tool calls take minutes. Haiku 4.5 runs
+    // at ~500–700 tok/s with matching quality on mechanical code edits.
+    // Bump anyone still on an old default to Haiku so the fix takes effect
+    // without requiring them to find the model dropdown.
     if (typeof persisted.model === 'string') {
-      const migrated = persisted.model === 'claude-opus-4-7' ? DEFAULT_MODEL : persisted.model;
+      const STALE_DEFAULTS = ['claude-opus-4-7', 'claude-sonnet-4-6'];
+      const migrated = STALE_DEFAULTS.includes(persisted.model) ? DEFAULT_MODEL : persisted.model;
       setModel(migrated);
     }
     if (typeof persisted.width === 'number' && persisted.width >= 320 && persisted.width <= 720) {
