@@ -188,7 +188,34 @@ interface AnthropicResponse {
   usage?: AnthropicUsage;
 }
 
-async function callAnthropic(params: {
+// Model fallback chain for rate-limit recovery. Opus 4.7 has the strictest
+// ITPM ceiling of the three on most orgs; Sonnet 4.6 and Haiku 4.5 are far
+// more generous, so if the user-selected model 429s we transparently shift
+// THIS request (not the whole session) down the chain.
+const FALLBACK_CHAIN: Record<string, string[]> = {
+  'claude-opus-4-7': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
+  'claude-opus-4-6': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
+  'claude-opus-4-5': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
+  'claude-sonnet-4-6': ['claude-haiku-4-5-20251001'],
+  'claude-sonnet-4-5': ['claude-haiku-4-5-20251001'],
+  'claude-haiku-4-5-20251001': [],
+};
+
+class AnthropicHttpError extends Error {
+  status: number;
+  retryAfterSeconds: number | null;
+  constructor(status: number, message: string, retryAfterSeconds: number | null) {
+    super(message);
+    this.status = status;
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function callAnthropicOnce(params: {
   apiKey: string;
   model: string;
   messages: AnthropicMessage[];
@@ -229,15 +256,81 @@ async function callAnthropic(params: {
     } catch {
       /* ignore */
     }
-    const err = new Error(
+    const retryAfterRaw = res.headers.get('retry-after');
+    const retryAfterSeconds = retryAfterRaw
+      ? Math.max(0, Math.min(30, Number.parseInt(retryAfterRaw, 10) || 0))
+      : null;
+    throw new AnthropicHttpError(
+      res.status,
       detail
         ? `Anthropic API 오류 (${res.status}): ${detail}`
-        : `Anthropic API 오류 (${res.status})`
+        : `Anthropic API 오류 (${res.status})`,
+      retryAfterSeconds
     );
-    (err as Error & { status?: number }).status = res.status;
-    throw err;
   }
   return (await res.json()) as AnthropicResponse;
+}
+
+/**
+ * Resilient wrapper around `callAnthropicOnce`:
+ *
+ *  1. On 429 / 529 for the requested model: wait `retry-after` (capped at
+ *     30 s) and retry once. Many rate-limit windows recover within ~10 s.
+ *  2. If that still fails and a fallback exists, transparently retry
+ *     against the next model in the chain. Emits a notice so the UI can
+ *     show "Opus rate limit → Sonnet으로 자동 전환" to the admin.
+ *
+ * Non-rate-limit errors (4xx other than 429, 5xx other than 529) are not
+ * retried — those indicate a real request problem and we want the stream
+ * to surface them as-is.
+ */
+async function callAnthropic(params: {
+  apiKey: string;
+  model: string;
+  messages: AnthropicMessage[];
+  onFallback?: (from: string, to: string, reason: string) => void;
+}): Promise<{ resp: AnthropicResponse; modelUsed: string }> {
+  const isRetryable = (status: number) => status === 429 || status === 529;
+  const tryModel = async (model: string): Promise<AnthropicResponse> => {
+    try {
+      return await callAnthropicOnce({ apiKey: params.apiKey, model, messages: params.messages });
+    } catch (err) {
+      if (err instanceof AnthropicHttpError && isRetryable(err.status)) {
+        const waitMs = (err.retryAfterSeconds ?? 8) * 1000;
+        await sleep(waitMs);
+        return await callAnthropicOnce({
+          apiKey: params.apiKey,
+          model,
+          messages: params.messages,
+        });
+      }
+      throw err;
+    }
+  };
+
+  try {
+    const resp = await tryModel(params.model);
+    return { resp, modelUsed: params.model };
+  } catch (err) {
+    if (!(err instanceof AnthropicHttpError) || !isRetryable(err.status)) throw err;
+
+    const chain = FALLBACK_CHAIN[params.model] ?? [];
+    let lastErr: AnthropicHttpError = err;
+    for (const next of chain) {
+      try {
+        params.onFallback?.(params.model, next, lastErr.message);
+        const resp = await tryModel(next);
+        return { resp, modelUsed: next };
+      } catch (inner) {
+        if (inner instanceof AnthropicHttpError && isRetryable(inner.status)) {
+          lastErr = inner;
+          continue;
+        }
+        throw inner;
+      }
+    }
+    throw lastErr;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -392,8 +485,25 @@ export async function POST(request: NextRequest) {
           cache_read_input_tokens: 0,
         };
 
+        let activeModel = model;
         while (true) {
-          const resp = await callAnthropic({ apiKey, model, messages: conversation });
+          const { resp, modelUsed } = await callAnthropic({
+            apiKey,
+            model: activeModel,
+            messages: conversation,
+            onFallback: (from, to) => {
+              emit({
+                type: 'tool_result',
+                id: `fallback-${Date.now()}`,
+                name: 'model_fallback',
+                ok: true,
+                summary: `${from} rate limit — ${to} 으로 자동 전환`,
+              });
+            },
+          });
+          if (modelUsed !== activeModel) {
+            activeModel = modelUsed;
+          }
 
           if (resp.usage) {
             cumUsage.input_tokens += resp.usage.input_tokens ?? 0;
