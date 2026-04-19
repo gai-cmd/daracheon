@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { logAdmin } from '@/lib/audit';
+import { TOOLS, executeTool } from '@/lib/ai/tools';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
@@ -21,10 +23,11 @@ const DEFAULT_MODEL = 'claude-opus-4-7';
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 const ALLOWED_DOC_TYPES = new Set(['application/pdf']);
 const MAX_ATTACHMENTS_PER_MESSAGE = 10;
-const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;        // 5 MB per file (raw, after base64 decode)
-const MAX_TOTAL_ATTACHMENT_BYTES = 20 * 1024 * 1024; // 20 MB total per request
+const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+const MAX_TOTAL_ATTACHMENT_BYTES = 20 * 1024 * 1024;
 const MAX_MESSAGES = 50;
 const MAX_TEXT_CHARS = 20_000;
+const MAX_TOOL_TURNS = 6;
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 20;
@@ -48,19 +51,19 @@ interface ChatRequestBody {
   model?: string;
 }
 
-const SYSTEM_PROMPT = `당신은 ZOEL LIFE(대라천) 웹사이트 관리자를 돕는 AI 어시스턴트입니다.
+const SYSTEM_PROMPT = `당신은 ZOEL LIFE(대라천) 관리자 전용 AI 에이전트입니다.
+관리자가 요청하면 아래의 tool을 **직접 호출**하여 사이트 콘텐츠(페이지, 제품, FAQ, 공지, 리뷰)를 실제로 수정해야 합니다.
 
-역할:
-- 관리자가 프론트엔드 화면을 수정하고 개선할 수 있도록 조언합니다.
-- 사이트 콘텐츠(제품, 브랜드 스토리, 침향 이야기 등)의 기획·카피라이팅을 돕습니다.
-- 첨부된 화면 캡쳐 또는 이미지를 분석하여 구체적인 개선점을 제안합니다.
-- 디자인/UX 개선 아이디어를 제시하고, 구현에 필요한 구체적인 코드 스니펫(React/Next.js/Tailwind)을 제공합니다.
-- 베트남산 프리미엄 침향(Aquilaria agallocha) 전문 브랜드의 톤앤매너를 이해하고, 고급스럽고 신뢰감 있는 표현을 선호합니다.
+핵심 원칙:
+- 수정 요청에는 반드시 실제 tool을 호출하세요. 마크다운 코드나 "~하세요" 같은 지시만으로는 프론트에 반영되지 않습니다.
+- update_page는 전체 JSON을 덮어씁니다. 반드시 get_page로 현재 구조를 먼저 읽고, 변경된 부분만 고친 전체 객체를 넘기세요.
+- update_product는 부분 병합이므로 변경할 필드만 전달하세요.
+- 파괴적 작업(delete_*)은 사용자가 명시적으로 요청했을 때만 실행하고, 직전에 한 번 더 요약 확인을 제공하세요.
+- 작업 완료 후, 어떤 도구를 어떻게 실행했는지 한국어로 1~3줄 요약하고 프론트 경로(예: /brand-story)를 안내하세요.
 
-답변 스타일:
-- 한국어로 간결하고 명확하게 답합니다.
-- 코드 예시는 마크다운 코드 블록으로 제시합니다.
-- 관리자가 바로 적용할 수 있도록 실행 가능한 지시를 우선합니다.`;
+브랜드 톤:
+- 베트남산 프리미엄 침향(Aquilaria agallocha) 전문 브랜드. 고급스럽고 신뢰감 있는 표현을 선호합니다.
+- 답변은 간결한 한국어.`;
 
 function rateLimitHit(actor: string): boolean {
   const now = Date.now();
@@ -76,7 +79,7 @@ function rateLimitHit(actor: string): boolean {
 }
 
 function estimateBase64Bytes(b64: string): number {
-  const padding = (b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0);
+  const padding = b64.endsWith('==') ? 2 : b64.endsWith('=') ? 1 : 0;
   return Math.floor((b64.length * 3) / 4) - padding;
 }
 
@@ -85,12 +88,24 @@ function stripDataUrlPrefix(s: string): string {
   return s.startsWith('data:') && idx !== -1 ? s.slice(idx + 1) : s;
 }
 
-type ContentBlock =
-  | { type: 'text'; text: string }
-  | { type: 'image'; source: { type: 'base64'; media_type: string; data: string } }
-  | { type: 'document'; source: { type: 'base64'; media_type: string; data: string } };
+type TextBlock = { type: 'text'; text: string };
+type ImageBlock = { type: 'image'; source: { type: 'base64'; media_type: string; data: string } };
+type DocBlock = { type: 'document'; source: { type: 'base64'; media_type: string; data: string } };
+type ToolUseBlock = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
+type ToolResultBlock = {
+  type: 'tool_result';
+  tool_use_id: string;
+  content: string;
+  is_error?: boolean;
+};
+type ContentBlock = TextBlock | ImageBlock | DocBlock | ToolUseBlock | ToolResultBlock;
 
-function buildContent(msg: InboundMessage): string | ContentBlock[] {
+interface AnthropicMessage {
+  role: 'user' | 'assistant';
+  content: string | ContentBlock[];
+}
+
+function buildInitialContent(msg: InboundMessage): string | ContentBlock[] {
   const attachments = msg.attachments ?? [];
   if (attachments.length === 0) return msg.content;
 
@@ -98,19 +113,63 @@ function buildContent(msg: InboundMessage): string | ContentBlock[] {
   for (const a of attachments) {
     const data = stripDataUrlPrefix(a.data);
     if (a.type === 'image' && ALLOWED_IMAGE_TYPES.has(a.mediaType)) {
-      blocks.push({
-        type: 'image',
-        source: { type: 'base64', media_type: a.mediaType, data },
-      });
+      blocks.push({ type: 'image', source: { type: 'base64', media_type: a.mediaType, data } });
     } else if (a.type === 'pdf' && ALLOWED_DOC_TYPES.has(a.mediaType)) {
-      blocks.push({
-        type: 'document',
-        source: { type: 'base64', media_type: a.mediaType, data },
-      });
+      blocks.push({ type: 'document', source: { type: 'base64', media_type: a.mediaType, data } });
     }
   }
   if (msg.content.trim()) blocks.push({ type: 'text', text: msg.content });
   return blocks.length > 0 ? blocks : msg.content;
+}
+
+interface AnthropicResponse {
+  id: string;
+  type: 'message';
+  role: 'assistant';
+  content: ContentBlock[];
+  stop_reason: 'end_turn' | 'tool_use' | 'max_tokens' | 'stop_sequence' | string;
+  model: string;
+}
+
+async function callAnthropic(params: {
+  apiKey: string;
+  model: string;
+  messages: AnthropicMessage[];
+}): Promise<AnthropicResponse> {
+  const res = await fetch(ANTHROPIC_API_URL, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': params.apiKey,
+      'anthropic-version': ANTHROPIC_VERSION,
+    },
+    body: JSON.stringify({
+      model: params.model,
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      tools: TOOLS,
+      messages: params.messages,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    let detail = '';
+    try {
+      const parsed = JSON.parse(text) as { error?: { message?: string } };
+      if (parsed.error?.message) detail = parsed.error.message.slice(0, 300);
+    } catch {
+      /* ignore */
+    }
+    const err = new Error(
+      detail
+        ? `Anthropic API 오류 (${res.status}): ${detail}`
+        : `Anthropic API 오류 (${res.status})`
+    );
+    (err as Error & { status?: number }).status = res.status;
+    throw err;
+  }
+  return (await res.json()) as AnthropicResponse;
 }
 
 export async function POST(request: NextRequest) {
@@ -118,10 +177,7 @@ export async function POST(request: NextRequest) {
   const token = store.get(SESSION_COOKIE)?.value;
   const session = await verifySessionToken(token);
   if (!session) {
-    return NextResponse.json(
-      { success: false, message: '인증이 필요합니다.' },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, message: '인증이 필요합니다.' }, { status: 401 });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -129,8 +185,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message:
-          'ANTHROPIC_API_KEY가 설정되지 않았습니다. Vercel 환경변수에 추가하세요.',
+        message: 'ANTHROPIC_API_KEY가 설정되지 않았습니다. Vercel 환경변수에 추가하세요.',
       },
       { status: 500 }
     );
@@ -147,18 +202,12 @@ export async function POST(request: NextRequest) {
   try {
     body = (await request.json()) as ChatRequestBody;
   } catch {
-    return NextResponse.json(
-      { success: false, message: '잘못된 요청 본문입니다.' },
-      { status: 400 }
-    );
+    return NextResponse.json({ success: false, message: '잘못된 요청 본문입니다.' }, { status: 400 });
   }
 
   const incoming = Array.isArray(body.messages) ? body.messages : [];
   if (incoming.length === 0) {
-    return NextResponse.json(
-      { success: false, message: '메시지가 비어있습니다.' },
-      { status: 400 }
-    );
+    return NextResponse.json({ success: false, message: '메시지가 비어있습니다.' }, { status: 400 });
   }
   if (incoming.length > MAX_MESSAGES) {
     return NextResponse.json(
@@ -194,6 +243,7 @@ export async function POST(request: NextRequest) {
     for (const a of raw) {
       if (!a || (a.type !== 'image' && a.type !== 'pdf')) continue;
       if (typeof a.mediaType !== 'string' || typeof a.data !== 'string') continue;
+      if (a.data.length === 0) continue;
       const allowed =
         a.type === 'image'
           ? ALLOWED_IMAGE_TYPES.has(a.mediaType)
@@ -228,115 +278,129 @@ export async function POST(request: NextRequest) {
   }
 
   if (sanitized.length === 0) {
-    return NextResponse.json(
-      { success: false, message: '유효한 메시지가 없습니다.' },
-      { status: 400 }
-    );
+    return NextResponse.json({ success: false, message: '유효한 메시지가 없습니다.' }, { status: 400 });
   }
 
-  const model =
-    body.model && ALLOWED_MODELS.has(body.model) ? body.model : DEFAULT_MODEL;
+  const model = body.model && ALLOWED_MODELS.has(body.model) ? body.model : DEFAULT_MODEL;
 
-  const payloadMessages = sanitized.map((m) => ({
+  // Build initial Anthropic-format conversation
+  const conversation: AnthropicMessage[] = sanitized.map((m) => ({
     role: m.role,
-    content: buildContent(m),
+    content: buildInitialContent(m),
   }));
 
-  const upstream = await fetch(ANTHROPIC_API_URL, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': ANTHROPIC_VERSION,
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: payloadMessages,
-      stream: true,
-    }),
-  });
-
-  if (!upstream.ok || !upstream.body) {
-    const errText = await upstream.text().catch(() => '');
-    console.error('[AI Chat] upstream error', upstream.status, errText.slice(0, 300));
-    await logAdmin('ai', 'update', {
-      summary: `AI 호출 실패 (${upstream.status})`,
-      meta: { model, status: upstream.status },
-    }).catch(() => {});
-    return NextResponse.json(
-      {
-        success: false,
-        message: `Anthropic API 오류 (${upstream.status})`,
-      },
-      { status: 502 }
-    );
-  }
-
-  void logAdmin('ai', 'update', {
-    summary: 'AI 채팅 요청',
-    meta: {
-      model,
-      messages: sanitized.length,
-      attachments: totalAttachments,
-      bytes: totalAttachmentBytes,
-    },
-  }).catch(() => {});
-
   const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-  const reader = upstream.body.getReader();
-
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      let buffer = '';
+      const emit = (event: Record<string, unknown>) => {
+        try {
+          controller.enqueue(encoder.encode(JSON.stringify(event) + '\n'));
+        } catch {
+          /* ignore — controller may be closed */
+        }
+      };
+
       try {
+        let toolTurns = 0;
+        let toolRuns = 0;
+
         while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
+          const resp = await callAnthropic({ apiKey, model, messages: conversation });
 
-          const events = buffer.split('\n\n');
-          buffer = events.pop() ?? '';
-
-          for (const evt of events) {
-            const dataLine = evt.split('\n').find((l) => l.startsWith('data: '));
-            if (!dataLine) continue;
-            const dataStr = dataLine.slice(6).trim();
-            if (!dataStr) continue;
-            try {
-              const parsed = JSON.parse(dataStr) as {
-                type?: string;
-                delta?: { type?: string; text?: string };
-              };
-              if (
-                parsed.type === 'content_block_delta' &&
-                parsed.delta?.type === 'text_delta' &&
-                typeof parsed.delta.text === 'string'
-              ) {
-                controller.enqueue(encoder.encode(parsed.delta.text));
-              }
-            } catch {
-              // ignore unparseable SSE payloads
+          // Emit any text blocks that came back
+          for (const block of resp.content) {
+            if (block.type === 'text') {
+              emit({ type: 'text', delta: block.text });
+            } else if (block.type === 'tool_use') {
+              emit({
+                type: 'tool_start',
+                id: block.id,
+                name: block.name,
+                input: block.input,
+              });
             }
           }
+
+          // Append assistant message (full content array — required for tool_use continuation)
+          conversation.push({ role: 'assistant', content: resp.content });
+
+          if (resp.stop_reason !== 'tool_use') break;
+
+          const toolUses = resp.content.filter((b): b is ToolUseBlock => b.type === 'tool_use');
+          if (toolUses.length === 0) break;
+
+          toolTurns += 1;
+          if (toolTurns > MAX_TOOL_TURNS) {
+            emit({
+              type: 'error',
+              message: `도구 호출 반복 한도(${MAX_TOOL_TURNS})를 초과했습니다. 작업을 중단합니다.`,
+            });
+            break;
+          }
+
+          // Execute all tool_uses and build tool_result blocks
+          const toolResultBlocks: ToolResultBlock[] = [];
+          for (const tu of toolUses) {
+            const result = await executeTool(tu.name, tu.input ?? {});
+            toolRuns += 1;
+            emit({
+              type: 'tool_result',
+              id: tu.id,
+              name: tu.name,
+              ok: result.ok,
+              summary: result.summary,
+              error: result.error,
+            });
+            toolResultBlocks.push({
+              type: 'tool_result',
+              tool_use_id: tu.id,
+              content: JSON.stringify({
+                ok: result.ok,
+                summary: result.summary,
+                ...(result.data !== undefined ? { data: result.data } : {}),
+                ...(result.error !== undefined ? { error: result.error } : {}),
+              }),
+              is_error: !result.ok,
+            });
+          }
+
+          conversation.push({ role: 'user', content: toolResultBlocks });
         }
+
+        emit({ type: 'done' });
+
+        void logAdmin('ai', 'update', {
+          summary: `AI 채팅 + 도구 호출 (turns=${toolTurns}, runs=${toolRuns})`,
+          meta: {
+            model,
+            messages: sanitized.length,
+            attachments: totalAttachments,
+            bytes: totalAttachmentBytes,
+            toolTurns,
+            toolRuns,
+          },
+        }).catch(() => {});
       } catch (err) {
-        console.error('[AI Chat] stream error', err);
-        controller.error(err);
-        return;
+        const msg = err instanceof Error ? err.message : '알 수 없는 오류';
+        console.error('[AI Chat] error', msg);
+        emit({ type: 'error', message: msg });
+        await logAdmin('ai', 'update', {
+          summary: `AI 호출 실패`,
+          meta: { model, detail: msg.slice(0, 300) },
+        }).catch(() => {});
+      } finally {
+        try {
+          controller.close();
+        } catch {
+          /* already closed */
+        }
       }
-      controller.close();
-    },
-    cancel() {
-      void reader.cancel();
     },
   });
 
   return new Response(stream, {
     headers: {
-      'content-type': 'text/plain; charset=utf-8',
+      'content-type': 'application/x-ndjson; charset=utf-8',
       'cache-control': 'no-store',
       'x-ai-model': model,
       'x-content-type-options': 'nosniff',

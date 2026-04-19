@@ -22,11 +22,20 @@ interface Attachment {
   previewUrl?: string;
 }
 
+interface ToolEvent {
+  id: string;
+  name: string;
+  status: 'running' | 'ok' | 'error';
+  summary?: string;
+  error?: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   attachments?: Attachment[];
+  tools?: ToolEvent[];
 }
 
 interface ModelOption {
@@ -66,30 +75,74 @@ function loadPersisted(): Partial<PersistedState> {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
-    return JSON.parse(raw) as Partial<PersistedState>;
+    const parsed = JSON.parse(raw) as Partial<PersistedState>;
+    if (Array.isArray(parsed.messages)) {
+      parsed.messages = parsed.messages.map((m) => {
+        if (!m.attachments || m.attachments.length === 0) return m;
+        const valid = m.attachments.filter((a) => typeof a.data === 'string' && a.data.length > 0);
+        const restored = valid.map((a) => ({
+          ...a,
+          previewUrl: a.type === 'image' && a.data ? a.data : undefined,
+        }));
+        if (restored.length === 0) {
+          const { attachments: _drop, ...rest } = m;
+          void _drop;
+          return rest;
+        }
+        return { ...m, attachments: restored };
+      });
+    }
+    return parsed;
   } catch {
     return {};
   }
 }
 
+function trySetItem(value: string): boolean {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function savePersisted(state: PersistedState) {
   if (typeof window === 'undefined') return;
-  try {
-    const stripped: PersistedState = {
-      ...state,
-      messages: state.messages.map((m) => ({
-        ...m,
-        attachments: m.attachments?.map((a) => ({
-          ...a,
-          data: '',
-          previewUrl: undefined,
-        })),
-      })),
-    };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
-  } catch {
-    // ignore quota / private mode errors
+
+  const stripPreview: PersistedState = {
+    ...state,
+    messages: state.messages.map((m) => ({
+      ...m,
+      attachments: m.attachments?.map((a) => ({ ...a, previewUrl: undefined })),
+    })),
+  };
+
+  if (trySetItem(JSON.stringify(stripPreview))) return;
+
+  // Quota exceeded — progressively drop oldest attachment binary data
+  const working = stripPreview.messages.map((m) => ({
+    ...m,
+    attachments: m.attachments?.map((a) => ({ ...a })),
+  }));
+
+  for (let i = 0; i < working.length; i++) {
+    const msg = working[i];
+    if (!msg.attachments || msg.attachments.length === 0) continue;
+    msg.attachments = msg.attachments.map((a) => ({ ...a, data: '' }));
+    const candidate: PersistedState = { ...stripPreview, messages: working };
+    if (trySetItem(JSON.stringify(candidate))) return;
   }
+
+  // Last resort: strip all attachment data
+  const fullStripped: PersistedState = {
+    ...stripPreview,
+    messages: stripPreview.messages.map((m) => ({
+      ...m,
+      attachments: m.attachments?.map((a) => ({ ...a, data: '' })),
+    })),
+  };
+  trySetItem(JSON.stringify(fullStripped));
 }
 
 function makeId(): string {
@@ -229,6 +282,22 @@ export default function AdminAIPanel() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const root = document.documentElement;
+    if (open) {
+      root.style.setProperty('--ai-panel-width', `${width}px`);
+      document.body.style.paddingLeft = `${width}px`;
+    } else {
+      root.style.removeProperty('--ai-panel-width');
+      document.body.style.paddingLeft = '';
+    }
+    return () => {
+      root.style.removeProperty('--ai-panel-width');
+      document.body.style.paddingLeft = '';
+    };
+  }, [open, width, isAdmin]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -400,12 +469,14 @@ export default function AdminAIPanel() {
           messages: nextHistory.map((m) => ({
             role: m.role,
             content: m.content,
-            attachments: m.attachments?.map((a) => ({
-              type: a.type,
-              mediaType: a.mediaType,
-              data: a.data,
-              name: a.name,
-            })),
+            attachments: m.attachments
+              ?.filter((a) => typeof a.data === 'string' && a.data.length > 0)
+              .map((a) => ({
+                type: a.type,
+                mediaType: a.mediaType,
+                data: a.data,
+                name: a.name,
+              })),
           })),
         }),
         signal: controller.signal,
@@ -419,16 +490,81 @@ export default function AdminAIPanel() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let acc = '';
+      let buffer = '';
+      let textAcc = '';
+      const tools: ToolEvent[] = [];
+      let streamError: string | null = null;
+
+      const handleEvent = (evt: Record<string, unknown>) => {
+        const t = evt.type;
+        if (t === 'text' && typeof evt.delta === 'string') {
+          textAcc += evt.delta;
+        } else if (t === 'tool_start' && typeof evt.id === 'string' && typeof evt.name === 'string') {
+          tools.push({ id: evt.id, name: evt.name, status: 'running' });
+        } else if (t === 'tool_result' && typeof evt.id === 'string') {
+          const idx = tools.findIndex((x) => x.id === evt.id);
+          const ok = evt.ok !== false;
+          const entry: ToolEvent = {
+            id: String(evt.id),
+            name: idx >= 0 ? tools[idx].name : String(evt.name ?? 'tool'),
+            status: ok ? 'ok' : 'error',
+            summary: typeof evt.summary === 'string' ? evt.summary : undefined,
+            error: typeof evt.error === 'string' ? evt.error : undefined,
+          };
+          if (idx >= 0) tools[idx] = entry;
+          else tools.push(entry);
+        } else if (t === 'error' && typeof evt.message === 'string') {
+          streamError = evt.message;
+        }
+        // 'done' — no-op; loop will exit
+      };
+
+      const flushRender = () => {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content: textAcc,
+                  tools: tools.length > 0 ? tools.map((x) => ({ ...x })) : undefined,
+                }
+              : m
+          )
+        );
+      };
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        acc += decoder.decode(value, { stream: true });
-        setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: acc } : m))
-        );
+        buffer += decoder.decode(value, { stream: true });
+
+        let nl = buffer.indexOf('\n');
+        while (nl !== -1) {
+          const line = buffer.slice(0, nl).trim();
+          buffer = buffer.slice(nl + 1);
+          if (line) {
+            try {
+              handleEvent(JSON.parse(line) as Record<string, unknown>);
+            } catch {
+              // malformed event — skip
+            }
+          }
+          nl = buffer.indexOf('\n');
+        }
+        flushRender();
       }
+      // flush remainder
+      const tail = buffer.trim();
+      if (tail) {
+        try {
+          handleEvent(JSON.parse(tail) as Record<string, unknown>);
+        } catch {
+          /* ignore */
+        }
+      }
+      flushRender();
+
+      if (streamError) throw new Error(streamError);
     } catch (err) {
       if ((err as Error).name === 'AbortError') {
         setMessages((prev) =>
@@ -790,12 +926,62 @@ function MessageBubble({ message, streaming }: { message: Message; streaming: bo
             )}
           </div>
         )}
+        {message.tools && message.tools.length > 0 && (
+          <div className="mb-2 space-y-1">
+            {message.tools.map((t) => (
+              <ToolChip key={t.id} tool={t} />
+            ))}
+          </div>
+        )}
         <div className="whitespace-pre-wrap">
           {message.content || (streaming ? <TypingDots /> : null)}
           {streaming && message.content && <BlinkingCaret />}
         </div>
       </div>
     </div>
+  );
+}
+
+function ToolChip({ tool }: { tool: ToolEvent }) {
+  const isRunning = tool.status === 'running';
+  const isOk = tool.status === 'ok';
+  const isErr = tool.status === 'error';
+  const ring = isErr
+    ? 'border-red-700/60 bg-red-950/40 text-red-200'
+    : isOk
+    ? 'border-emerald-700/60 bg-emerald-950/30 text-emerald-200'
+    : 'border-amber-700/60 bg-amber-950/30 text-amber-200';
+  return (
+    <div className={`flex items-start gap-2 rounded-md border px-2.5 py-1.5 text-[11px] ${ring}`}>
+      <span className="mt-[1px] shrink-0">
+        {isRunning ? <SpinnerIcon /> : isOk ? <CheckIcon /> : <XIcon />}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="font-mono text-[11px] font-semibold tracking-tight">
+          {tool.name}
+          {isRunning && <span className="ml-1 opacity-70">실행 중…</span>}
+        </p>
+        {(tool.summary || tool.error) && (
+          <p className="mt-0.5 truncate opacity-90">{tool.error ?? tool.summary}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
   );
 }
 

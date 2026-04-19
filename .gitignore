@@ -49,3 +49,10 @@ data/db/
 
 .vercel
 .env*.local
+
+# try-n account credentials (per-project isolation, never commit)
+.vercel-token
+.backup-migration/
+
+.vercel
+.env*.local

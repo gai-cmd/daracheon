@@ -34,9 +34,10 @@ export default function Header() {
   return (
     <header>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between transition-all duration-500 ${navBg} ${
+        className={`fixed top-0 right-0 z-[1000] flex items-center justify-between transition-all duration-500 ${navBg} ${
           scrolled ? 'py-3 px-6 lg:px-16' : 'py-5 px-6 lg:px-16'
         }`}
+        style={{ left: 'var(--ai-panel-width, 0px)' }}
       >
         {/* Logo */}
         <Link href="/" className="group">
