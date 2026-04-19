@@ -237,6 +237,7 @@ async function callAnthropicOnce(params: {
   apiKey: string;
   model: string;
   messages: AnthropicMessage[];
+  signal?: AbortSignal;
 }): Promise<AnthropicResponse> {
   const withCompaction = COMPACTION_SUPPORTED.has(params.model);
   const headers: Record<string, string> = {
@@ -278,6 +279,7 @@ async function callAnthropicOnce(params: {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
+    signal: params.signal,
   });
 
   if (!res.ok) {
@@ -368,6 +370,7 @@ async function callAnthropic(params: {
   apiKey: string;
   model: string;
   messages: AnthropicMessage[];
+  signal?: AbortSignal;
   onFallback?: (from: string, to: string, reason: string) => void;
   onCompress?: (trimmedCount: number) => void;
 }): Promise<{ resp: AnthropicResponse; modelUsed: string; messages: AnthropicMessage[] }> {
@@ -385,6 +388,7 @@ async function callAnthropic(params: {
           apiKey: params.apiKey,
           model,
           messages: workingMessages,
+          signal: params.signal,
         });
       } catch (err) {
         if (!(err instanceof AnthropicHttpError)) throw err;
@@ -560,6 +564,11 @@ export async function POST(request: NextRequest) {
   }));
 
   const encoder = new TextEncoder();
+  // Propagate client disconnect (abort) to the upstream Anthropic call so we
+  // stop burning tokens the moment the user hits "stop" in the panel.
+  const upstreamAbort = new AbortController();
+  request.signal.addEventListener('abort', () => upstreamAbort.abort(), { once: true });
+
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const emit = (event: Record<string, unknown>) => {
@@ -600,6 +609,7 @@ export async function POST(request: NextRequest) {
             apiKey,
             model: activeModel,
             messages: conversation,
+            signal: upstreamAbort.signal,
             onFallback: (from, to) => {
               emit({
                 type: 'tool_result',

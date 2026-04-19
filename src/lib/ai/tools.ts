@@ -304,7 +304,7 @@ export const TOOLS: ToolDef[] = [
   {
     name: 'edit_source_file',
     description:
-      '레포지토리 파일을 새 내용으로 덮어쓰고 main 브랜치에 커밋합니다. Vercel 자동 재빌드 트리거(2~3분 후 반영). 파일이 이미 존재하면 sha 필수(read_source_file의 반환값 사용). 신규 파일 생성이면 sha 생략.',
+      '레포지토리 파일을 새 내용으로 덮어쓰고 main 브랜치에 커밋합니다. Vercel 자동 재빌드 트리거(2~3분 후 반영). 파일이 이미 존재하면 sha 필수(read_source_file의 반환값 사용). 신규 파일 생성이면 sha 생략. 안전장치: 새 내용이 현재 파일 크기보다 크게 작으면 자동 거부합니다 (truncated read 후 실수로 뒷부분 날리는 것을 방지). 의도된 대폭 축소면 force=true.',
     input_schema: {
       type: 'object',
       properties: {
@@ -314,6 +314,10 @@ export const TOOLS: ToolDef[] = [
         sha: {
           type: 'string',
           description: '기존 파일 수정 시 필수 (read_source_file에서 얻은 blob SHA). 신규 파일이면 생략.',
+        },
+        force: {
+          type: 'boolean',
+          description: '현재 크기보다 30% 이상 줄어드는 쓰기를 강행할 때 true. 기본 false.',
         },
       },
       required: ['path', 'content', 'commit_message'],
@@ -786,10 +790,44 @@ export async function executeTool(
         const content = typeof input.content === 'string' ? input.content : '';
         const message = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' && input.sha.trim() ? input.sha.trim() : undefined;
+        const force = input.force === true;
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (!content) return { ok: false, summary: 'content 필수', error: 'empty content' };
+
+        // Safety: if the file exists and the new content is drastically smaller
+        // than the current file, refuse. This catches the truncated-read data
+        // loss scenario — the model saw only the first 40 KB (read cap) and
+        // sends that back as the "full" file, which would delete the tail.
+        if (sha && !force) {
+          try {
+            const current = await readRepoFile(path);
+            const currentSize = current.size;
+            const newSize = Buffer.byteLength(content, 'utf8');
+            if (currentSize > 0 && newSize < currentSize * 0.7) {
+              return {
+                ok: false,
+                summary: '안전장치: 대폭 축소 거부',
+                error: `현재 ${currentSize}B → 제안 ${newSize}B (${Math.round((1 - newSize / currentSize) * 100)}% 감소). 의도하지 않은 데이터 손실 가능성. read_source_file로 전체 다시 읽은 뒤 필요한 부분만 수정하세요. 의도된 삭제면 force=true 플래그 추가.`,
+              };
+            }
+            // Also guard against stale SHA: if the provided sha doesn't match
+            // what's currently on main, someone else edited the file. Surface
+            // this before GitHub returns a cryptic 409.
+            if (current.sha !== sha) {
+              return {
+                ok: false,
+                summary: 'SHA 불일치 (충돌)',
+                error: `파일이 다른 곳에서 수정되었습니다. read_source_file로 현재 sha를 다시 받아 재시도하세요. (기대 ${sha.slice(0, 7)}, 현재 ${current.sha.slice(0, 7)})`,
+              };
+            }
+          } catch (err) {
+            // readRepoFile fails on missing — if sha was given but file is
+            // gone, keep going and let GitHub surface a clearer error.
+            void err;
+          }
+        }
 
         const actor = context.actorEmail ?? 'daracheon-admin-ai';
         const result = await writeRepoFile({

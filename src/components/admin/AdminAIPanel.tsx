@@ -31,12 +31,20 @@ interface ToolEvent {
   error?: string;
 }
 
+interface UsageInfo {
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens: number;
+  cache_read_input_tokens: number;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   attachments?: Attachment[];
   tools?: ToolEvent[];
+  usage?: UsageInfo;
 }
 
 interface ModelOption {
@@ -535,6 +543,20 @@ export default function AdminAIPanel() {
           streamError = evt.message;
         } else if (t === 'done') {
           setPhase('완료');
+          if (evt.usage && typeof evt.usage === 'object') {
+            const u = evt.usage as Record<string, unknown>;
+            const usage: UsageInfo = {
+              input_tokens: typeof u.input_tokens === 'number' ? u.input_tokens : 0,
+              output_tokens: typeof u.output_tokens === 'number' ? u.output_tokens : 0,
+              cache_creation_input_tokens:
+                typeof u.cache_creation_input_tokens === 'number' ? u.cache_creation_input_tokens : 0,
+              cache_read_input_tokens:
+                typeof u.cache_read_input_tokens === 'number' ? u.cache_read_input_tokens : 0,
+            };
+            setMessages((prev) =>
+              prev.map((m) => (m.id === assistantId ? { ...m, usage } : m))
+            );
+          }
         }
       };
 
@@ -921,6 +943,94 @@ function AttachmentChip({
   );
 }
 
+/**
+ * Minimal, XSS-safe markdown renderer. Supports: code fences, inline code,
+ * bold, italic. Everything else is rendered as plain text with newlines
+ * preserved. No library, no dangerouslySetInnerHTML — all escape-safe by
+ * virtue of React rendering strings as text nodes.
+ */
+function renderMarkdown(text: string): React.ReactNode[] {
+  if (!text) return [];
+  const nodes: React.ReactNode[] = [];
+  // Split on fenced code blocks first.
+  const parts = text.split(/```(\w*)\n?([\s\S]*?)```/g);
+  for (let i = 0; i < parts.length; i += 3) {
+    const prose = parts[i];
+    const lang = parts[i + 1];
+    const code = parts[i + 2];
+    if (prose) nodes.push(<InlineMd key={`p-${i}`} text={prose} />);
+    if (code !== undefined) {
+      nodes.push(
+        <pre
+          key={`c-${i}`}
+          className="my-2 overflow-x-auto rounded-md border border-gray-700 bg-[#0b0d11] p-2 text-[11px]"
+        >
+          {lang && <div className="mb-1 text-[10px] uppercase tracking-wide text-gray-500">{lang}</div>}
+          <code className="font-mono text-gray-200 whitespace-pre">{code.replace(/\n$/, '')}</code>
+        </pre>
+      );
+    }
+  }
+  return nodes;
+}
+
+function InlineMd({ text }: { text: string }) {
+  // Inline code → <code>, **bold** → <strong>, *italic* or _italic_ → <em>.
+  // Processed left-to-right without regex backreferences to keep it simple.
+  const out: React.ReactNode[] = [];
+  const re = /(`[^`\n]+`|\*\*[^*\n]+\*\*|\*[^*\n]+\*|_[^_\n]+_)/g;
+  let lastIdx = 0;
+  let m: RegExpExecArray | null;
+  let key = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > lastIdx) out.push(text.slice(lastIdx, m.index));
+    const token = m[0];
+    if (token.startsWith('`')) {
+      out.push(
+        <code key={`ic-${key++}`} className="rounded bg-black/30 px-1 font-mono text-[0.9em]">
+          {token.slice(1, -1)}
+        </code>
+      );
+    } else if (token.startsWith('**')) {
+      out.push(
+        <strong key={`b-${key++}`} className="font-semibold">
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else {
+      out.push(
+        <em key={`i-${key++}`} className="italic">
+          {token.slice(1, -1)}
+        </em>
+      );
+    }
+    lastIdx = re.lastIndex;
+  }
+  if (lastIdx < text.length) out.push(text.slice(lastIdx));
+  return <>{out}</>;
+}
+
+function formatNum(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
+}
+
+function UsageFooter({ usage }: { usage: UsageInfo }) {
+  const totalInput =
+    usage.input_tokens + usage.cache_creation_input_tokens + usage.cache_read_input_tokens;
+  const cacheHit =
+    totalInput > 0 ? Math.round((usage.cache_read_input_tokens / totalInput) * 100) : 0;
+  return (
+    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 border-t border-white/10 pt-1.5 text-[10px] text-white/50">
+      <span>in {formatNum(totalInput)}</span>
+      <span>out {formatNum(usage.output_tokens)}</span>
+      {usage.cache_read_input_tokens > 0 && (
+        <span className="text-emerald-200/80">cache {cacheHit}%</span>
+      )}
+    </div>
+  );
+}
+
 function MessageBubble({ message, streaming }: { message: Message; streaming: boolean }) {
   const isUser = message.role === 'user';
   return (
@@ -959,10 +1069,17 @@ function MessageBubble({ message, streaming }: { message: Message; streaming: bo
             ))}
           </div>
         )}
-        <div className="whitespace-pre-wrap">
-          {message.content || (streaming ? <TypingDots /> : null)}
+        <div className="whitespace-pre-wrap break-words">
+          {message.content
+            ? isUser
+              ? message.content
+              : renderMarkdown(message.content)
+            : streaming
+            ? <TypingDots />
+            : null}
           {streaming && message.content && <BlinkingCaret />}
         </div>
+        {!isUser && message.usage && <UsageFooter usage={message.usage} />}
       </div>
     </div>
   );
