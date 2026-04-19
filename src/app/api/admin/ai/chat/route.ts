@@ -413,6 +413,8 @@ export async function POST(request: NextRequest) {
       'content-type': 'application/x-ndjson; charset=utf-8',
       'cache-control': 'no-store',
       'x-ai-model': model,
+      'x-ai-tools-sent': String(TOOLS.length),
+      'x-ai-build': (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'no-referrer',
     },
