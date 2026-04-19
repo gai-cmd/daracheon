@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
-import type { BrandStoryData } from './page';
+import type { BrandStoryData, MediaItem, TestimonialItem } from './page';
 
 interface Props {
   data: BrandStoryData | null;
@@ -34,6 +34,8 @@ export default function BrandStoryClient({ data }: Props) {
   const certificationsTab = data?.certificationsTab;
   const qualityTab = data?.qualityTab;
   const processTab = data?.processTab;
+  const mediaTab = data?.mediaTab;
+  const testimonialsTab = data?.testimonialsTab;
 
   return (
     <>
@@ -88,6 +90,8 @@ export default function BrandStoryClient({ data }: Props) {
         {activeTab === 3 && <TabCertifications data={certificationsTab} />}
         {activeTab === 4 && <TabQuality data={qualityTab} />}
         {activeTab === 5 && <TabProcess data={processTab} />}
+        {activeTab === 6 && <TabMedia data={mediaTab} />}
+        {activeTab === 7 && <TabTestimonials data={testimonialsTab} />}
       </div>
     </>
   );
@@ -774,5 +778,183 @@ function TabProcess({ data }: { data: BrandStoryData['processTab'] | undefined }
         </section>
       )}
     </>
+  );
+}
+
+/* ═══════════════════════════════════════
+   Tab 7: Media (매체 보도)
+   ═══════════════════════════════════════ */
+function TabMedia({ data }: { data: { tag: string; title: string; subtitle: string; items: MediaItem[] } | undefined }) {
+  const items = data?.items ?? [];
+  const tag = data?.tag ?? 'In the Press';
+  const title = data?.title ?? '언론에 소개된 대라천';
+  const subtitle = data?.subtitle ?? '주요 매체와 보도자료에서 다룬 대라천의 소식을 확인하세요.';
+
+  return (
+    <section className="py-28 px-6 bg-[#fdfbf7]">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <RevealOnScroll><p className="section-tag">{tag}</p></RevealOnScroll>
+          <RevealOnScroll delay={100}>
+            <h2 className="section-title-kr mb-4">{title}</h2>
+          </RevealOnScroll>
+          <RevealOnScroll delay={200}>
+            <p className="text-sm text-neutral-500 leading-7 max-w-2xl mx-auto">{subtitle}</p>
+          </RevealOnScroll>
+          <RevealOnScroll delay={300}>
+            <div className="gold-line mx-auto mt-8" />
+          </RevealOnScroll>
+        </div>
+
+        {items.length === 0 ? (
+          <div className="max-w-md mx-auto text-center py-20">
+            <p className="text-neutral-400 text-sm">등록된 매체 소식이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.map((item, i) => {
+              const Card = (
+                <article className="group h-full flex flex-col bg-white border border-neutral-200 hover:border-gold-500/40 transition-all duration-400 overflow-hidden">
+                  {item.image && (
+                    <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="px-3 py-1 bg-gold-500/10 text-[0.65rem] tracking-[0.15em] text-gold-600 font-medium uppercase rounded-sm">
+                        {item.outlet}
+                      </span>
+                      {item.date && (
+                        <span className="text-[0.7rem] text-neutral-400">{item.date}</span>
+                      )}
+                    </div>
+                    <h3 className="font-serif text-base font-normal tracking-wide mb-3 group-hover:text-gold-600 transition-colors leading-7">
+                      {item.title}
+                    </h3>
+                    {item.summary && (
+                      <p className="text-[0.82rem] text-neutral-500 leading-7 flex-1">{item.summary}</p>
+                    )}
+                    {item.link && (
+                      <p className="mt-4 text-[0.68rem] tracking-[0.15em] uppercase text-gold-600 group-hover:underline">
+                        원문 보기 →
+                      </p>
+                    )}
+                  </div>
+                </article>
+              );
+              return (
+                <RevealOnScroll key={`${item.outlet}-${item.title}-${i}`} delay={(i % 6) * 60}>
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="block h-full">
+                      {Card}
+                    </a>
+                  ) : (
+                    Card
+                  )}
+                </RevealOnScroll>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════
+   Tab 8: Testimonials (고객 후기)
+   ═══════════════════════════════════════ */
+function TabTestimonials({ data }: { data: { tag: string; title: string; subtitle: string; items: TestimonialItem[] } | undefined }) {
+  const items = data?.items ?? [];
+  const tag = data?.tag ?? 'Customer Voices';
+  const title = data?.title ?? '고객이 전하는 대라천';
+  const subtitle = data?.subtitle ?? '실제 사용자분들이 들려주는 진솔한 후기입니다.';
+
+  return (
+    <section className="py-28 px-6 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <RevealOnScroll><p className="section-tag">{tag}</p></RevealOnScroll>
+          <RevealOnScroll delay={100}>
+            <h2 className="section-title-kr mb-4">{title}</h2>
+          </RevealOnScroll>
+          <RevealOnScroll delay={200}>
+            <p className="text-sm text-neutral-500 leading-7 max-w-2xl mx-auto">{subtitle}</p>
+          </RevealOnScroll>
+          <RevealOnScroll delay={300}>
+            <div className="gold-line mx-auto mt-8" />
+          </RevealOnScroll>
+        </div>
+
+        {items.length === 0 ? (
+          <div className="max-w-md mx-auto text-center py-20">
+            <p className="text-neutral-400 text-sm">등록된 고객 후기가 없습니다.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.map((t, i) => {
+              const stars = Math.max(0, Math.min(5, t.rating ?? 0));
+              return (
+                <RevealOnScroll key={`${t.name}-${i}`} delay={(i % 6) * 60}>
+                  <article className="group h-full flex flex-col bg-[#fdfbf7] border border-neutral-200 hover:border-gold-500/40 transition-all duration-400 p-8">
+                    {stars > 0 && (
+                      <div className="flex items-center gap-0.5 mb-5 text-gold-500">
+                        {Array.from({ length: 5 }).map((_, si) => (
+                          <span
+                            key={si}
+                            className={si < stars ? 'text-gold-500' : 'text-neutral-200'}
+                            aria-hidden="true"
+                          >
+                            ★
+                          </span>
+                        ))}
+                        <span className="sr-only">{stars}점</span>
+                      </div>
+                    )}
+                    <blockquote className="text-[0.92rem] text-neutral-700 leading-8 font-light flex-1 mb-6">
+                      &ldquo;{t.body}&rdquo;
+                    </blockquote>
+                    <div className="flex items-center gap-4 pt-5 border-t border-neutral-200">
+                      {t.image ? (
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-neutral-100 flex-shrink-0">
+                          <Image
+                            src={t.image}
+                            alt={t.name}
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-gold-600 text-lg font-serif">{t.name.charAt(0)}</span>
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-serif text-sm text-neutral-800 truncate">{t.name}</p>
+                        {(t.role || t.product) && (
+                          <p className="text-[0.7rem] text-neutral-400 truncate">
+                            {[t.role, t.product].filter(Boolean).join(' · ')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                </RevealOnScroll>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
