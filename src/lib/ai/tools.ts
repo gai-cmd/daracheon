@@ -751,14 +751,32 @@ export async function executeTool(
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         const file = await readRepoFile(path);
+
+        // Cap content to keep per-turn input tokens bounded. A file bigger than
+        // ~40 KB (~10k tokens) ballooning through the agentic loop is the usual
+        // path to ITPM rate-limit hits. Truncated reads still return the sha
+        // unchanged, so edit_source_file requires a full re-read first.
+        const MAX_READ_BYTES = 40 * 1024;
+        const truncated = file.content.length > MAX_READ_BYTES;
+        const content = truncated ? file.content.slice(0, MAX_READ_BYTES) : file.content;
+
         return {
           ok: true,
-          summary: `파일 읽음: ${file.path} (${file.size} B)`,
+          summary: truncated
+            ? `파일 읽음(앞 ${MAX_READ_BYTES}B로 자름): ${file.path} (실제 ${file.size} B)`
+            : `파일 읽음: ${file.path} (${file.size} B)`,
           data: {
             path: file.path,
             sha: file.sha,
             size: file.size,
-            content: file.content,
+            content,
+            truncated,
+            ...(truncated
+              ? {
+                  note:
+                    '파일이 큽니다. 전체 덮어쓰기 대신 부분 수정이 필요한 위치를 명확히 파악한 뒤 edit_source_file 사용 시 수정된 전체 내용을 정확히 전달하세요. 필요하면 search_source_code로 대상 라인을 먼저 찾으세요.',
+                }
+              : {}),
           },
         };
       }

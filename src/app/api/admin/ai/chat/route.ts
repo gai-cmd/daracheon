@@ -151,6 +151,13 @@ function buildInitialContent(msg: InboundMessage): string | ContentBlock[] {
   return blocks.length > 0 ? blocks : msg.content;
 }
 
+interface AnthropicUsage {
+  input_tokens?: number;
+  output_tokens?: number;
+  cache_creation_input_tokens?: number;
+  cache_read_input_tokens?: number;
+}
+
 interface AnthropicResponse {
   id: string;
   type: 'message';
@@ -158,6 +165,7 @@ interface AnthropicResponse {
   content: ContentBlock[];
   stop_reason: 'end_turn' | 'tool_use' | 'max_tokens' | 'stop_sequence' | string;
   model: string;
+  usage?: AnthropicUsage;
 }
 
 async function callAnthropic(params: {
@@ -175,7 +183,18 @@ async function callAnthropic(params: {
     body: JSON.stringify({
       model: params.model,
       max_tokens: 4096,
-      system: SYSTEM_PROMPT,
+      // Array form with cache_control caches the entire prefix (tools + system)
+      // together. Tools render before system in the prompt, so the breakpoint on
+      // the last system block covers both. This drops per-turn input tokens to
+      // ~10% of the original on cache hits — critical for the agentic loop
+      // where every turn re-sends the full tools + system + growing history.
+      system: [
+        {
+          type: 'text',
+          text: SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
       tools: TOOLS,
       messages: params.messages,
     }),
@@ -332,9 +351,22 @@ export async function POST(request: NextRequest) {
       try {
         let toolTurns = 0;
         let toolRuns = 0;
+        const cumUsage = {
+          input_tokens: 0,
+          output_tokens: 0,
+          cache_creation_input_tokens: 0,
+          cache_read_input_tokens: 0,
+        };
 
         while (true) {
           const resp = await callAnthropic({ apiKey, model, messages: conversation });
+
+          if (resp.usage) {
+            cumUsage.input_tokens += resp.usage.input_tokens ?? 0;
+            cumUsage.output_tokens += resp.usage.output_tokens ?? 0;
+            cumUsage.cache_creation_input_tokens += resp.usage.cache_creation_input_tokens ?? 0;
+            cumUsage.cache_read_input_tokens += resp.usage.cache_read_input_tokens ?? 0;
+          }
 
           // Emit any text blocks that came back
           for (const block of resp.content) {
@@ -399,15 +431,16 @@ export async function POST(request: NextRequest) {
           conversation.push({ role: 'user', content: toolResultBlocks });
         }
 
-        emit({ type: 'done' });
+        emit({ type: 'done', usage: cumUsage });
 
         void logAdmin('ai', 'update', {
-          summary: `AI 채팅 + 도구 호출 (turns=${toolTurns}, runs=${toolRuns})`,
+          summary: `AI 채팅 + 도구 호출 (turns=${toolTurns}, runs=${toolRuns}, cache_hit=${cumUsage.cache_read_input_tokens})`,
           meta: {
             model,
             messages: sanitized.length,
             attachments: totalAttachments,
             bytes: totalAttachmentBytes,
+            usage: cumUsage,
             toolTurns,
             toolRuns,
           },
@@ -436,6 +469,7 @@ export async function POST(request: NextRequest) {
       'cache-control': 'no-store',
       'x-ai-model': model,
       'x-ai-tools-sent': String(TOOLS.length),
+      'x-ai-prompt-cache': 'on',
       'x-ai-build': (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'no-referrer',
