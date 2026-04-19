@@ -16,6 +16,8 @@ const TAB_LIST = [
   '다양한 인증',
   '검증된 품질',
   '생산 공정',
+  '매체',
+  '고객 후기',
 ] as const;
 
 const DEFAULT_HERO_BG =
