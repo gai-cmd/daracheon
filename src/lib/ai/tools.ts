@@ -3,6 +3,14 @@ import { readData, writeData, readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import type { Product, ProductVariant } from '@/data/products';
 import type { Review } from '@/data/reviews';
+import {
+  deleteRepoFile,
+  isPathAllowed,
+  listRepoDir,
+  readRepoFile,
+  searchRepoCode,
+  writeRepoFile,
+} from './github';
 
 export interface ToolDef {
   name: string;
@@ -20,6 +28,11 @@ export interface ToolResult {
   summary: string;
   data?: unknown;
   error?: string;
+}
+
+export interface ToolContext {
+  actorEmail?: string;
+  actorName?: string;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -241,6 +254,87 @@ export const TOOLS: ToolDef[] = [
       additionalProperties: false,
     },
   },
+
+  /* ─── Source code editing (via GitHub API) ───────────
+     NOTE: These commit directly to the `main` branch and trigger
+     a Vercel rebuild (~2–3 minutes to reflect on the site).
+     Use DB tools first when the edit is about content; fall back to
+     source tools only when the target is hardcoded in .tsx/.ts files.
+     ──────────────────────────────────────────────────── */
+  {
+    name: 'search_source_code',
+    description:
+      '레포지토리 내 소스 코드에서 문자열/패턴을 검색합니다. 하드코딩된 문구(예: "10ha")의 위치를 찾을 때 사용하세요. GitHub Code Search 기반이며 인덱싱에 약간의 지연이 있을 수 있습니다.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: '검색어. 따옴표로 감싸면 exact match.' },
+        limit: { type: 'number', description: '최대 결과 수 (기본 20, 최대 50).' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'list_source_files',
+    description:
+      '레포지토리의 디렉터리 목록을 반환합니다. 허용 경로: src/, public/, data/, scripts/ 와 일부 루트 설정 파일.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: '디렉터리 경로 (예: "src/components/layout"). 빈 값이면 루트.' },
+      },
+      required: ['path'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'read_source_file',
+    description:
+      '레포지토리의 파일 원문을 반환합니다. 수정 전 반드시 먼저 읽어 현재 내용을 파악하세요. 반환값의 sha는 edit_source_file 호출 시 사용합니다.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: '파일 경로 (예: "src/components/layout/Header.tsx").' },
+      },
+      required: ['path'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'edit_source_file',
+    description:
+      '레포지토리 파일을 새 내용으로 덮어쓰고 main 브랜치에 커밋합니다. Vercel 자동 재빌드 트리거(2~3분 후 반영). 파일이 이미 존재하면 sha 필수(read_source_file의 반환값 사용). 신규 파일 생성이면 sha 생략.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        content: { type: 'string', description: '파일의 최종 전체 내용 (부분 교체 아님).' },
+        commit_message: { type: 'string', description: '커밋 메시지 (예: "fix: 히어로 문구 수정").' },
+        sha: {
+          type: 'string',
+          description: '기존 파일 수정 시 필수 (read_source_file에서 얻은 blob SHA). 신규 파일이면 생략.',
+        },
+      },
+      required: ['path', 'content', 'commit_message'],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: 'delete_source_file',
+    description:
+      '레포지토리 파일을 삭제하고 커밋합니다. 파괴적 작업이므로 사용자가 명시적으로 요청했을 때만 실행.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        sha: { type: 'string', description: 'read_source_file로 얻은 blob SHA' },
+        commit_message: { type: 'string' },
+      },
+      required: ['path', 'sha', 'commit_message'],
+      additionalProperties: false,
+    },
+  },
 ];
 
 /* ─────────────────────────────────────────────────────────
@@ -308,7 +402,8 @@ function productSummary(p: Product) {
 
 export async function executeTool(
   name: string,
-  input: Record<string, unknown>
+  input: Record<string, unknown>,
+  context: ToolContext = {}
 ): Promise<ToolResult> {
   try {
     switch (name) {
@@ -610,6 +705,122 @@ export async function executeTool(
         });
         revalidateAll(['/reviews', '/']);
         return { ok: true, summary: `리뷰 삭제 완료.` };
+      }
+
+      /* ── Source code editing (GitHub API) ─────────────── */
+      case 'search_source_code': {
+        const query = String(input.query ?? '').trim();
+        if (!query) return { ok: false, summary: 'query 필수', error: 'empty query' };
+        const limit = typeof input.limit === 'number' ? input.limit : 20;
+        const results = await searchRepoCode(query, limit);
+        return {
+          ok: true,
+          summary: `코드 검색 '${query}' — ${results.length}건`,
+          data: results.map((r) => ({
+            path: r.path,
+            snippet: r.textMatches?.[0]?.fragment?.slice(0, 300) ?? '',
+            score: r.score,
+          })),
+        };
+      }
+
+      case 'list_source_files': {
+        const path = String(input.path ?? '');
+        if (path) {
+          const allow = isPathAllowed(path === '' ? 'src/' : `${path.replace(/\/+$/, '')}/`);
+          // Allow listing the allow-prefixes themselves even without a trailing file
+          const bareAllow =
+            path === '' ||
+            ['src', 'public', 'data', 'scripts'].some(
+              (p) => path === p || path === `${p}/` || path.startsWith(`${p}/`)
+            );
+          if (!bareAllow && !allow.ok) {
+            return { ok: false, summary: '허용되지 않은 경로', error: allow.ok ? '' : allow.reason };
+          }
+        }
+        const entries = await listRepoDir(path);
+        return {
+          ok: true,
+          summary: `${path || '/'} — ${entries.length}개 항목`,
+          data: entries.map((e) => ({ name: e.name, path: e.path, type: e.type, size: e.size })),
+        };
+      }
+
+      case 'read_source_file': {
+        const path = String(input.path ?? '');
+        const allow = isPathAllowed(path);
+        if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
+        const file = await readRepoFile(path);
+        return {
+          ok: true,
+          summary: `파일 읽음: ${file.path} (${file.size} B)`,
+          data: {
+            path: file.path,
+            sha: file.sha,
+            size: file.size,
+            content: file.content,
+          },
+        };
+      }
+
+      case 'edit_source_file': {
+        const path = String(input.path ?? '');
+        const content = typeof input.content === 'string' ? input.content : '';
+        const message = String(input.commit_message ?? '').trim();
+        const sha = typeof input.sha === 'string' && input.sha.trim() ? input.sha.trim() : undefined;
+        const allow = isPathAllowed(path);
+        if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
+        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
+        if (!content) return { ok: false, summary: 'content 필수', error: 'empty content' };
+
+        const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const result = await writeRepoFile({
+          path,
+          content,
+          message: `${message}\n\nvia daracheon admin AI (by ${actor})`,
+          sha,
+          authorName: context.actorName ?? 'daracheon-admin-ai',
+          authorEmail: context.actorEmail ?? 'ai@daracheon.local',
+        });
+        await logAdmin('settings', 'update', {
+          summary: `AI: 소스 수정 — ${path} (${result.commitSha.slice(0, 7)})`,
+          targetId: path,
+          meta: { commitSha: result.commitSha, path },
+        });
+        return {
+          ok: true,
+          summary: `'${path}' 커밋 완료 (${result.commitSha.slice(0, 7)}). Vercel 재빌드 시작 — 2~3분 후 사이트 반영.`,
+          data: { path, commitSha: result.commitSha, htmlUrl: result.htmlUrl },
+        };
+      }
+
+      case 'delete_source_file': {
+        const path = String(input.path ?? '');
+        const sha = String(input.sha ?? '').trim();
+        const message = String(input.commit_message ?? '').trim();
+        const allow = isPathAllowed(path);
+        if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
+        if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
+        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
+
+        const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const result = await deleteRepoFile({
+          path,
+          sha,
+          message: `${message}\n\nvia daracheon admin AI (by ${actor})`,
+          authorName: context.actorName ?? 'daracheon-admin-ai',
+          authorEmail: context.actorEmail ?? 'ai@daracheon.local',
+        });
+        await logAdmin('settings', 'update', {
+          summary: `AI: 소스 삭제 — ${path} (${result.commitSha.slice(0, 7)})`,
+          targetId: path,
+          meta: { commitSha: result.commitSha, path },
+        });
+        return {
+          ok: true,
+          summary: `'${path}' 삭제 커밋 완료 (${result.commitSha.slice(0, 7)}). Vercel 재빌드 시작.`,
+          data: { path, commitSha: result.commitSha },
+        };
       }
 
       default:
