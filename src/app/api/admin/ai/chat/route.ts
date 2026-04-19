@@ -6,7 +6,11 @@ import { TOOLS, executeTool } from '@/lib/ai/tools';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60;
+// Agent loop runs several turns (탐색 → 읽기 → 편집) and Opus 4.7 generating
+// a 30–40KB edit_source_file payload alone takes ~60s. 60s was guaranteeing
+// mid-stream cutoffs where tool_use fired but tool_result never returned,
+// freezing the UI on "실행 중…". Vercel Pro allows up to 300s on Node.
+export const maxDuration = 300;
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
