@@ -11,6 +11,7 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Attachment {
   id: string;
@@ -261,6 +262,8 @@ export default function AdminAIPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragStateRef = useRef<{ startX: number; startWidth: number } | null>(null);
 
+  const pathname = usePathname();
+
   useEffect(() => {
     let cancelled = false;
     async function check() {
@@ -281,7 +284,7 @@ export default function AdminAIPanel() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isAdmin) return;
