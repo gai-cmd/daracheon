@@ -6,6 +6,11 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AdminAIPanel from '@/components/admin/AdminAIPanel';
 import { readSingle } from '@/lib/db';
 import Link from 'next/link';
+import {
+  DEFAULT_FOOTER_COLUMNS,
+  DEFAULT_MAIN_NAV,
+  type NavigationData,
+} from '@/data/navigation';
 import '@/styles/globals.css';
 
 interface Announcement {
@@ -99,13 +104,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const announcement = await readSingle<Announcement>('announcement');
   const showBanner = !!(announcement?.enabled && announcement.text);
 
+  // Navigation lives in the DB so admins can edit labels / order / links
+  // without a code deploy. Fall back to the compiled-in defaults if the
+  // seed hasn't been written yet (first deploy, or Blob store empty).
+  const nav = await readSingle<NavigationData>('navigation');
+  const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
+  const footerColumns = nav?.footerColumns ?? DEFAULT_FOOTER_COLUMNS;
+
   return (
     <html lang="ko">
       <head>
         <JsonLd data={organizationJsonLd} />
         <GoogleAnalytics />
       </head>
-      <body className="font-body">
+      <body className="font-body" data-palette="gold">
         {showBanner && (
           <div className={`w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}>
             <span>{announcement.text}</span>
@@ -119,9 +131,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             )}
           </div>
         )}
-        <Header />
+        <Header mainNav={mainNav} />
         <main>{children}</main>
-        <Footer />
+        <Footer footerColumns={footerColumns} />
         <AdminAIPanel />
       </body>
     </html>

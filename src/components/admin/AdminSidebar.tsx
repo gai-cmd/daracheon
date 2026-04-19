@@ -29,6 +29,7 @@ const navItems: NavItem[] = [
   { label: 'FAQ 관리', href: '/admin/faq', icon: '▤' },
   { label: '침향 이야기', href: '/admin/pages/about-agarwood', icon: '◎' },
   { label: '브랜드 이야기', href: '/admin/pages/brand-story', icon: '◈' },
+  { label: '네비게이션 관리', href: '/admin/navigation', icon: '☰' },
   { label: '계정 관리', href: '/admin/users', icon: '⦿', superAdminOnly: true },
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },
   { label: '설정', href: '/admin/settings', icon: '⚙' },

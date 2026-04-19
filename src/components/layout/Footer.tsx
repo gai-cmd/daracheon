@@ -1,8 +1,12 @@
 import Link from 'next/link';
-import { footerNavigation } from '@/data/navigation';
+import type { FooterColumn } from '@/data/navigation';
 import { company } from '@/data/company';
 
-export default function Footer() {
+interface FooterProps {
+  footerColumns: FooterColumn[];
+}
+
+export default function Footer({ footerColumns }: FooterProps) {
   return (
     <footer className="bg-[#0a0b10] text-white/50 pt-20 pb-10 px-6">
       <div className="max-w-7xl mx-auto">
@@ -38,7 +42,7 @@ export default function Footer() {
           </div>
 
           {/* Footer columns */}
-          {Object.values(footerNavigation).map((col) => (
+          {footerColumns.map((col) => (
             <div key={col.title}>
               <h5 className="font-serif text-sm font-normal text-gold-300 tracking-[0.1em] mb-5">
                 {col.title}

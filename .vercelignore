@@ -26,6 +26,7 @@ node_modules/
 !data/db/announcement.json
 !data/db/pages.json
 !data/db/company.json
+!data/db/navigation.json
 
 # 민감 파일 — 반드시 제외
 data/db/admin-users.json

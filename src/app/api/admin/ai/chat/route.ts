@@ -87,6 +87,7 @@ const SYSTEM_PROMPT = `당신은 ZOEL LIFE(대라천) 관리자 전용 AI 에이
 - 제품: list_products, get_product, create_product, update_product, delete_product
 - FAQ: list_faqs, create_faq, update_faq, delete_faq
 - 공지 배너: get_announcement, update_announcement
+- **네비게이션(헤더·푸터 메뉴)**: get_navigation, update_navigation ← 메뉴 라벨·순서·링크는 반드시 이 도구로. 소스 코드 편집 아님.
 - 리뷰: list_reviews, update_review_verified, delete_review
 
 ### B. 소스 코드 (Git 커밋 → Vercel 재빌드, 2~3분 후 반영)

@@ -3,9 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { mainNavigation } from '@/data/navigation';
+import type { NavItem } from '@/data/navigation';
 
-export default function Header() {
+interface HeaderProps {
+  mainNav: NavItem[];
+}
+
+export default function Header({ mainNav }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -51,7 +55,7 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex items-center gap-8">
-          {mainNavigation.map((item) => (
+          {mainNav.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
@@ -90,7 +94,7 @@ export default function Header() {
           >
             ✕
           </button>
-          {mainNavigation.map((item) => (
+          {mainNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}

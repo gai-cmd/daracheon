@@ -255,6 +255,62 @@ export const TOOLS: ToolDef[] = [
     },
   },
 
+  /* ─── Navigation (header/footer menus) ─────────────── */
+  {
+    name: 'get_navigation',
+    description: '사이트 헤더 주메뉴와 푸터 링크 구조를 반환합니다.',
+    input_schema: { type: 'object', properties: {}, additionalProperties: false },
+  },
+  {
+    name: 'update_navigation',
+    description:
+      '사이트 헤더 주메뉴와 푸터 링크 구조를 덮어씁니다. 저장 즉시 전체 사이트에 반영됩니다. 주메뉴는 1~15개, 푸터 컬럼은 1~6개로 제한됩니다.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        main: {
+          type: 'array',
+          description: '헤더 주메뉴 항목 목록',
+          items: {
+            type: 'object',
+            properties: {
+              label: { type: 'string' },
+              href: { type: 'string' },
+            },
+            required: ['label', 'href'],
+            additionalProperties: false,
+          },
+        },
+        footerColumns: {
+          type: 'array',
+          description: '푸터 링크 컬럼 목록',
+          items: {
+            type: 'object',
+            properties: {
+              title: { type: 'string' },
+              links: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'string' },
+                    href: { type: 'string' },
+                  },
+                  required: ['label', 'href'],
+                  additionalProperties: false,
+                },
+              },
+            },
+            required: ['title', 'links'],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ['main', 'footerColumns'],
+      additionalProperties: false,
+    },
+  },
+
   /* ─── Source code editing (via GitHub API) ───────────
      NOTE: These commit directly to the `main` branch and trigger
      a Vercel rebuild (~2–3 minutes to reflect on the site).
@@ -734,6 +790,103 @@ export async function executeTool(
         });
         revalidateAll(['/']);
         return { ok: true, summary: `공지 배너 저장 (${enabled ? '활성' : '비활성'}).` };
+      }
+
+      /* ── Navigation ─────────────────────────── */
+      case 'get_navigation': {
+        const data = (await readSingle('navigation')) ?? null;
+        return { ok: true, summary: '네비게이션 조회', data };
+      }
+
+      case 'update_navigation': {
+        const main = Array.isArray(input.main) ? input.main : [];
+        const footerColumns = Array.isArray(input.footerColumns) ? input.footerColumns : [];
+
+        if (main.length === 0 || main.length > 15) {
+          return {
+            ok: false,
+            summary: '주메뉴 개수 오류',
+            error: `주메뉴는 1~15개여야 합니다 (현재 ${main.length}).`,
+          };
+        }
+        if (footerColumns.length === 0 || footerColumns.length > 6) {
+          return {
+            ok: false,
+            summary: '푸터 컬럼 개수 오류',
+            error: `푸터 컬럼은 1~6개여야 합니다 (현재 ${footerColumns.length}).`,
+          };
+        }
+
+        const normalizedMain: { label: string; href: string }[] = [];
+        for (let i = 0; i < main.length; i += 1) {
+          const m = main[i] as Record<string, unknown> | null;
+          const label = typeof m?.label === 'string' ? m.label.trim() : '';
+          const href = typeof m?.href === 'string' ? m.href.trim() : '';
+          if (!label || !href) {
+            return {
+              ok: false,
+              summary: `main[${i}] 필드 누락`,
+              error: 'label과 href는 필수입니다.',
+            };
+          }
+          normalizedMain.push({ label, href });
+        }
+
+        const normalizedFooter: { title: string; links: { label: string; href: string }[] }[] = [];
+        for (let ci = 0; ci < footerColumns.length; ci += 1) {
+          const col = footerColumns[ci] as Record<string, unknown> | null;
+          const title = typeof col?.title === 'string' ? col.title.trim() : '';
+          const rawLinks = Array.isArray(col?.links) ? (col.links as unknown[]) : [];
+          if (!title) {
+            return {
+              ok: false,
+              summary: `footerColumns[${ci}].title 누락`,
+              error: 'title 필수',
+            };
+          }
+          if (rawLinks.length === 0) {
+            return {
+              ok: false,
+              summary: `footerColumns[${ci}].links 비어있음`,
+              error: '각 컬럼에 링크 최소 1개',
+            };
+          }
+          const links: { label: string; href: string }[] = [];
+          for (let li = 0; li < rawLinks.length; li += 1) {
+            const link = rawLinks[li] as Record<string, unknown> | null;
+            const label = typeof link?.label === 'string' ? link.label.trim() : '';
+            const href = typeof link?.href === 'string' ? link.href.trim() : '';
+            if (!label || !href) {
+              return {
+                ok: false,
+                summary: `footerColumns[${ci}].links[${li}] 필드 누락`,
+                error: 'label과 href 필수',
+              };
+            }
+            links.push({ label, href });
+          }
+          normalizedFooter.push({ title, links });
+        }
+
+        const updated = {
+          main: normalizedMain,
+          footerColumns: normalizedFooter,
+          updatedAt: new Date().toISOString(),
+        };
+        await writeSingle('navigation', updated);
+        await logAdmin('settings', 'update', {
+          summary: `AI: 네비게이션 업데이트 (주메뉴 ${normalizedMain.length}개 / 푸터 ${normalizedFooter.length}컬럼)`,
+          meta: {
+            mainCount: normalizedMain.length,
+            footerColumns: normalizedFooter.length,
+          },
+        });
+        revalidateAll(['/']);
+        return {
+          ok: true,
+          summary: `네비게이션 저장 (주메뉴 ${normalizedMain.length}개 / 푸터 ${normalizedFooter.length}컬럼). 전체 사이트 즉시 갱신.`,
+          data: updated,
+        };
       }
 
       /* ── Reviews ─────────────────────────── */
