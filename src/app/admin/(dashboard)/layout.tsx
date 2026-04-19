@@ -12,7 +12,10 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex bg-gray-50">
+    <div
+      className="fixed inset-y-0 right-0 z-50 flex bg-gray-50 transition-[left] duration-200"
+      style={{ left: 'var(--ai-panel-width, 0px)' }}
+    >
       {/* Sidebar */}
       <AdminSidebar />
 
