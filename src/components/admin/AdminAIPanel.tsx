@@ -54,12 +54,12 @@ interface ModelOption {
 }
 
 const MODEL_OPTIONS: ModelOption[] = [
-  { value: 'claude-opus-4-7', label: 'Claude Opus 4.7', hint: '최고 성능 (기본)' },
-  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', hint: '균형' },
+  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', hint: '균형 (기본·편집 권장)' },
+  { value: 'claude-opus-4-7', label: 'Claude Opus 4.7', hint: '최고 성능 (느림)' },
   { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', hint: '빠른 응답' },
 ];
 
-const DEFAULT_MODEL = 'claude-opus-4-7';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 const STORAGE_KEY = 'zoel_admin_ai_panel_v2';
 
 const ALLOWED_MIME = [
@@ -323,7 +323,16 @@ export default function AdminAIPanel() {
     if (!isAdmin) return;
     const persisted = loadPersisted();
     if (typeof persisted.open === 'boolean') setOpen(persisted.open);
-    if (typeof persisted.model === 'string') setModel(persisted.model);
+    // One-time migration: the old default was Opus 4.7 which times out on
+    // large source edits. Bump anyone still on that stored default to the
+    // new Sonnet default so the fix takes effect without requiring them to
+    // find the model dropdown. Users who explicitly picked Opus 4.7 after
+    // the migration will keep their choice (it goes through setModel below
+    // on subsequent sessions only if they pick it again).
+    if (typeof persisted.model === 'string') {
+      const migrated = persisted.model === 'claude-opus-4-7' ? DEFAULT_MODEL : persisted.model;
+      setModel(migrated);
+    }
     if (typeof persisted.width === 'number' && persisted.width >= 320 && persisted.width <= 720) {
       setWidth(persisted.width);
     }

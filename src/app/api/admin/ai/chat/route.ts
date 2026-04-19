@@ -37,7 +37,12 @@ const ALLOWED_MODELS = new Set([
   'claude-opus-4-6',
   'claude-sonnet-4-5',
 ]);
-const DEFAULT_MODEL = 'claude-opus-4-7';
+// Sonnet 4.6 is the default because source-file edits are bottlenecked on
+// output token generation speed. Opus 4.7 emits at ~75 tok/s while Sonnet
+// runs at ~250 tok/s — a 3–4× speedup with negligible quality loss on code
+// edits. Users can still pick Opus explicitly in the UI for tasks that
+// benefit from deeper reasoning.
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 const ALLOWED_DOC_TYPES = new Set(['application/pdf']);
