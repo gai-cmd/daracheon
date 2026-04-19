@@ -1,9 +1,23 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
-import ProductCard from '@/components/products/ProductCard';
 import type { Product } from '@/data/products';
+
+function getVariantDisplay(product: Product): { badge: string | null; priceLabel: string } {
+  const variants = product.variants;
+  if (!variants || variants.length === 0) {
+    return { badge: null, priceLabel: product.priceDisplay };
+  }
+  const inStockVariants = variants.filter((v) => v.inStock);
+  const source = inStockVariants.length > 0 ? inStockVariants : variants;
+  const minPrice = Math.min(...source.map((v) => v.price));
+  const badge = `${variants.length}가지 옵션`;
+  const priceLabel = minPrice > 0 ? `${minPrice.toLocaleString()}원~` : product.priceDisplay;
+  return { badge, priceLabel };
+}
 
 interface ProductCategory {
   id: string;
@@ -16,98 +30,119 @@ interface ProductsClientProps {
   productCategories: ProductCategory[];
 }
 
-type SortMode = 'featured' | 'price-asc' | 'price-desc' | 'new';
-
 export default function ProductsClient({ products, productCategories }: ProductsClientProps) {
   const [activeCategory, setActiveCategory] = useState('all');
-  // TODO: 콘텐츠 확인 필요 — Product 타입에 sort 기준(등록일) 없음, CMS 확인
-  const [sortMode, setSortMode] = useState<SortMode>('featured');
 
-  const filtered = useMemo(() => {
-    const base =
-      activeCategory === 'all'
-        ? products
-        : products.filter((p) => p.category === activeCategory);
-
-    const copy = [...base];
-    if (sortMode === 'price-asc') {
-      copy.sort((a, b) => a.price - b.price);
-    } else if (sortMode === 'price-desc') {
-      copy.sort((a, b) => b.price - a.price);
-    }
-    // 'featured' / 'new' keep original order (no createdAt field on Product)
-    return copy;
-  }, [activeCategory, products, sortMode]);
+  const filtered =
+    activeCategory === 'all'
+      ? products
+      : products.filter((p) => p.category === activeCategory);
 
   return (
     <>
-      {/* §2. Filter bar — sticky, dark */}
-      <section className="sticky top-nav z-40 bg-lx-black/90 backdrop-blur-xl border-b border-gold-500/15">
-        <div className="max-w-page mx-auto px-7 lg:px-16 py-7 flex flex-wrap gap-5 items-center justify-between">
-          {/* Category toggle group */}
-          <div
-            role="tablist"
-            aria-label="제품 카테고리"
-            className="flex flex-wrap border border-gold-500/25"
-          >
-            {productCategories.map((cat, idx) => {
-              const active = activeCategory === cat.id;
+      {/* Category Filter */}
+      <section className="py-4 px-6 bg-[#fdfbf7] border-b border-neutral-200 sticky top-[60px] z-50">
+        <div className="max-w-7xl mx-auto flex gap-3 overflow-x-auto pb-2">
+          {productCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`
+                flex-shrink-0 px-5 py-2.5 text-xs tracking-[0.15em] uppercase border transition-colors
+                ${
+                  activeCategory === cat.id
+                    ? 'border-gold-500 text-gold-500 bg-gold-500/5'
+                    : 'border-neutral-300 text-neutral-600 hover:border-gold-500 hover:text-gold-500'
+                }
+              `}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Product Grid */}
+      <section className="py-28 px-6 bg-[#fdfbf7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {filtered.map((product, i) => {
+              const { badge: variantBadge, priceLabel } = getVariantDisplay(product);
               return (
-                <button
-                  key={cat.id}
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-5 py-[11px] font-mono text-[0.64rem] tracking-en-nav uppercase transition-all duration-300 ${
-                    idx < productCategories.length - 1
-                      ? 'border-r border-gold-500/15'
-                      : ''
-                  } ${
-                    active
-                      ? 'bg-gold-500 text-lx-black font-medium'
-                      : 'bg-transparent text-white/65 hover:text-gold-400 hover:bg-gold-500/5'
-                  }`}
-                >
-                  {cat.label}
-                </button>
+                <RevealOnScroll key={product.id} delay={(i % 3) * 100}>
+                  <Link href={`/products/${product.slug}`} className="group block">
+                    <article className="bg-white border border-neutral-200 hover:border-gold-500/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+                      {/* Image */}
+                      <div className="relative h-[300px] overflow-hidden">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                        {/* Badge */}
+                        <span className="absolute top-4 left-4 px-3 py-1 bg-gold-500 text-[#0a0b10] text-[0.6rem] tracking-[0.2em] uppercase font-medium">
+                          {product.badge}
+                        </span>
+
+                        {/* Variant count badge */}
+                        {variantBadge && (
+                          <span className="absolute bottom-4 left-4 px-2.5 py-1 bg-[#0a0b10]/70 text-white text-[0.6rem] tracking-[0.12em] rounded">
+                            {variantBadge}
+                          </span>
+                        )}
+
+                        {/* Availability Badge */}
+                        {!product.inStock && (
+                          <span className="absolute top-4 right-4 px-3 py-1 bg-neutral-800/80 text-white text-[0.6rem] tracking-[0.15em] uppercase">
+                            준비 중
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-6">
+                        <p className="text-[0.6rem] tracking-[0.25em] uppercase text-gold-500 mb-1">
+                          {product.categoryEn}
+                        </p>
+                        <h2 className="font-serif text-xl font-normal tracking-wide mb-2">
+                          {product.name}
+                        </h2>
+                        <p className="text-sm text-neutral-500 leading-7 mb-4 line-clamp-2">
+                          {product.shortDescription}
+                        </p>
+
+                        {/* Price or status */}
+                        <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
+                          {product.inStock ? (
+                            <span className="font-display text-lg text-gold-500">
+                              {priceLabel}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-neutral-400 tracking-wider">
+                              준비 중
+                            </span>
+                          )}
+                          <span className="text-xs text-gold-500 tracking-[0.15em] uppercase group-hover:underline">
+                            {product.inStock ? '자세히 보기' : '알림 신청'}
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                </RevealOnScroll>
               );
             })}
           </div>
 
-          {/* Count + sort */}
-          <div className="flex gap-3.5 items-center font-mono text-[0.64rem] tracking-en-nav uppercase text-white/50">
-            <span>
-              총 <b className="text-gold-500 font-medium">{filtered.length}</b>개 제품
-            </span>
-            <select
-              aria-label="정렬"
-              value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as SortMode)}
-              className="bg-transparent border border-gold-500/25 text-lx-ivory px-3.5 py-[11px] font-mono text-[0.64rem] tracking-en-nav uppercase outline-none focus:border-gold-500 transition-colors"
-            >
-              <option value="featured" className="bg-lx-black">Featured</option>
-              <option value="new" className="bg-lx-black">신상품순</option>
-              <option value="price-asc" className="bg-lx-black">낮은가격순</option>
-              <option value="price-desc" className="bg-lx-black">높은가격순</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      {/* §3. Product grid */}
-      <section className="bg-lx-black text-lx-ivory pt-[60px] pb-[100px]">
-        <div className="max-w-page mx-auto px-7 lg:px-16">
-          {filtered.length === 0 ? (
-            <div className="py-20 px-5 text-center border border-dashed border-gold-500/25 text-white/50">
-              해당 카테고리의 제품이 없습니다.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[30px] md:gap-10 lg:gap-12">
-              {filtered.map((product, i) => (
-                <RevealOnScroll key={product.id} delay={(i % 3) * 100}>
-                  <ProductCard product={product} />
-                </RevealOnScroll>
-              ))}
+          {/* Empty state */}
+          {filtered.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-neutral-400 text-sm">
+                해당 카테고리의 제품이 없습니다.
+              </p>
             </div>
           )}
         </div>

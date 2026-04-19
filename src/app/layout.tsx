@@ -1,32 +1,12 @@
 import type { Metadata } from 'next';
-import { Noto_Sans_KR, Noto_Serif_KR, JetBrains_Mono } from 'next/font/google';
-import SiteNav from '@/components/shared/SiteNav';
-import SiteFooter from '@/components/shared/SiteFooter';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AdminAIPanel from '@/components/admin/AdminAIPanel';
 import { readSingle } from '@/lib/db';
 import Link from 'next/link';
 import '@/styles/globals.css';
-
-const notoSans = Noto_Sans_KR({
-  subsets: ['latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '900'],
-  variable: '--font-noto-sans',
-  display: 'swap',
-});
-const notoSerif = Noto_Serif_KR({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-noto-serif',
-  display: 'swap',
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
-});
 
 interface Announcement {
   enabled: boolean;
@@ -120,7 +100,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const showBanner = !!(announcement?.enabled && announcement.text);
 
   return (
-    <html lang="ko" className={`${notoSans.variable} ${notoSerif.variable} ${jetbrainsMono.variable}`}>
+    <html lang="ko">
       <head>
         <JsonLd data={organizationJsonLd} />
         <GoogleAnalytics />
@@ -139,9 +119,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             )}
           </div>
         )}
-        <SiteNav />
+        <Header />
         <main>{children}</main>
-        <SiteFooter />
+        <Footer />
         <AdminAIPanel />
       </body>
     </html>

@@ -32,81 +32,74 @@ export default async function MediaPage() {
   const articles = allMedia.filter((m) => m.type === 'article' || m.type === 'press');
 
   return (
-    <div className="bg-lx-black text-lx-ivory">
+    <>
       {/* Hero */}
-      <section className="relative pt-nav pb-28 md:pb-36 bg-hero-dark bg-hero-gold">
-        <div className="relative z-10 max-w-page mx-auto text-center px-7 lg:px-16 pt-24 md:pt-32">
-          <p className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500 mb-6">GALLERY</p>
-          <h1 className="text-[clamp(2.2rem,5vw,4.6rem)] font-extralight tracking-kr-tight leading-[1.1] text-lx-ivory mb-6">
-            침향 농장 <em className="font-serif not-italic text-gold-400">이야기</em>
-          </h1>
-          <span className="block w-12 h-px bg-gold-700 mx-auto mb-6" />
-          <p className="text-white/70 text-[0.95rem] md:text-base leading-[1.9] font-light max-w-2xl mx-auto">
+      <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
+          <p className="section-tag mb-5">GALLERY</p>
+          <h1 className="section-title-kr text-white mb-5">침향 농장 이야기</h1>
+          <p className="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto">
             영상과 사진으로 만나는 ZOEL LIFE 침향의 생생한 현장
           </p>
         </div>
       </section>
 
       {/* Videos Section */}
-      <section className="relative py-24 md:py-[110px] px-7 lg:px-16 bg-lx-black border-t border-gold-500/15">
-        <div className="max-w-page mx-auto">
-          <div className="max-w-3xl mb-14">
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-5">— Videos —</p>
-            <RevealOnScroll>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ivory mb-6 leading-[1.2]">
-                영상
-                <em className="not-italic font-serif font-normal text-gold-400"> 갤러리</em>
-              </h2>
+      <section className="py-28 px-6 bg-[#fdfbf7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <RevealOnScroll><p className="section-tag">Videos</p></RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr mb-4">영상 갤러리</h2>
             </RevealOnScroll>
-            <span className="block w-12 h-px bg-gold-700 mt-4" aria-hidden />
           </div>
 
           <RevealOnScroll>
             {videos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {videos.map((item) => (
                   <Link key={item.id} href={item.url ?? '#'} className="group block">
-                    <div className="aspect-video relative overflow-hidden border border-gold-500/20 hover:border-gold-400/60 transition-colors bg-lx-slate">
+                    <div className="aspect-video relative overflow-hidden border border-neutral-200 hover:border-gold-500/40 transition-colors bg-white">
                       {item.image ? (
                         <Image
                           src={item.image}
                           alt={item.title}
                           fill
-                          className="object-cover transition-transform duration-900 group-hover:scale-[1.06]"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                       ) : null}
-                      <div className="absolute inset-0 bg-black/45 group-hover:bg-black/25 transition-colors flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full bg-gold-500/90 backdrop-blur flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-400">
-                          <span className="text-lx-black text-xl pl-1">&#9654;</span>
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full border-2 border-white/60 flex items-center justify-center">
+                          <span className="text-white text-2xl">&#9654;</span>
                         </div>
                       </div>
                     </div>
-                    <div className="mt-4">
-                      <p className="text-[0.9rem] font-light text-lx-ivory line-clamp-2 group-hover:text-gold-400 transition-colors leading-[1.55]">{item.title}</p>
-                      <p className="font-mono text-[0.64rem] tracking-en-nav uppercase text-white/45 mt-2">{item.source} · {item.date}</p>
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-neutral-800 line-clamp-2 group-hover:text-gold-600 transition-colors">{item.title}</p>
+                      <p className="text-xs text-neutral-400 mt-1">{item.source} · {item.date}</p>
                     </div>
                   </Link>
                 ))}
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="aspect-video border border-dashed border-gold-500/25 flex items-center justify-center bg-lx-ink"
+                      className="aspect-video border-2 border-dashed border-gold-500/30 flex items-center justify-center bg-white/50"
                     >
                       <div className="text-center px-6">
-                        <div className="w-14 h-14 mx-auto mb-4 rounded-full border border-gold-500/40 flex items-center justify-center">
-                          <span className="text-gold-500 text-xl">&#9654;</span>
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full border-2 border-gold-500/30 flex items-center justify-center">
+                          <span className="text-gold-500 text-2xl">&#9654;</span>
                         </div>
-                        <p className="font-mono text-[0.66rem] tracking-en-tag uppercase text-gold-500/80">Coming Soon</p>
+                        <p className="text-sm text-neutral-400">Coming Soon</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <p className="text-center font-mono text-[0.72rem] tracking-en-nav uppercase text-white/40 mt-10">
-                  등록된 영상이 없습니다 · 곧 업데이트됩니다
+                <p className="text-center text-sm text-neutral-400 mt-8">
+                  등록된 영상이 없습니다. 곧 업데이트됩니다.
                 </p>
               </>
             )}
@@ -116,48 +109,42 @@ export default async function MediaPage() {
 
       {/* Articles / Press Section */}
       {articles.length > 0 && (
-        <section className="relative py-24 md:py-[110px] px-7 lg:px-16 bg-lx-ivory text-lx-ink border-t border-gold-500/15">
-          <div className="max-w-page mx-auto">
-            <div className="max-w-3xl mb-14">
-              <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-700 mb-5">— Press —</p>
-              <RevealOnScroll>
-                <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ink mb-6 leading-[1.2]">
-                  미디어 &amp;
-                  <em className="not-italic font-serif font-normal text-gold-700"> 뉴스</em>
-                </h2>
+        <section className="py-28 px-6 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-14">
+              <RevealOnScroll><p className="section-tag">Press</p></RevealOnScroll>
+              <RevealOnScroll delay={100}>
+                <h2 className="section-title-kr mb-4">미디어 &amp; 뉴스</h2>
               </RevealOnScroll>
-              <span className="block w-12 h-px bg-gold-500 mt-4" aria-hidden />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {articles.map((item, i) => (
                 <RevealOnScroll key={item.id} delay={i * 80}>
                   <Link href={item.url ?? '#'} className="group block h-full">
-                    <article className="border border-gold-500/25 hover:border-gold-500/60 transition-colors overflow-hidden h-full flex flex-col bg-white">
+                    <article className="border border-neutral-200 hover:border-gold-500/40 transition-colors overflow-hidden h-full flex flex-col">
                       {item.image && (
-                        <div className="relative h-[200px] overflow-hidden bg-lx-slate">
+                        <div className="relative h-[200px] overflow-hidden">
                           <Image
                             src={item.image}
                             alt={item.title}
                             fill
-                            className="object-cover transition-transform duration-900 group-hover:scale-[1.06]"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                         </div>
                       )}
-                      <div className="p-6 md:p-7 flex flex-col flex-1">
-                        <span className="font-mono text-[0.64rem] tracking-en-tag uppercase text-gold-700 mb-3">
+                      <div className="p-6 flex flex-col flex-1">
+                        <span className="text-[0.6rem] tracking-[0.2em] uppercase text-gold-500 mb-2">
                           {item.type === 'press' ? 'Press' : 'Article'}
                         </span>
-                        <h3 className="font-serif text-[1.02rem] md:text-[1.08rem] font-normal mb-3 group-hover:text-gold-700 transition-colors line-clamp-2 leading-[1.45] tracking-kr-tight text-lx-ink">
+                        <h3 className="font-serif text-base mb-2 group-hover:text-gold-600 transition-colors line-clamp-2">
                           {item.title}
                         </h3>
                         {item.excerpt && (
-                          <p className="text-[0.82rem] text-neutral-600 leading-[1.75] line-clamp-3 flex-1 font-light">
+                          <p className="text-xs text-neutral-500 leading-6 line-clamp-3 flex-1">
                             {item.excerpt}
                           </p>
                         )}
-                        <p className="font-mono text-[0.62rem] tracking-en-nav uppercase text-neutral-400 mt-4">
-                          {item.source} · {item.date}
-                        </p>
+                        <p className="text-xs text-neutral-400 mt-3">{item.source} · {item.date}</p>
                       </div>
                     </article>
                   </Link>
@@ -169,30 +156,26 @@ export default async function MediaPage() {
       )}
 
       {/* Photos Section */}
-      <section className="relative py-24 md:py-[110px] px-7 lg:px-16 bg-lx-black border-t border-gold-500/15">
-        <div className="max-w-page mx-auto">
-          <div className="max-w-3xl mb-14">
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-5">— Photos —</p>
-            <RevealOnScroll>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ivory mb-6 leading-[1.2]">
-                사진
-                <em className="not-italic font-serif font-normal text-gold-400"> 갤러리</em>
-              </h2>
+      <section className="py-28 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <RevealOnScroll><p className="section-tag">Photos</p></RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr mb-4">사진 갤러리</h2>
             </RevealOnScroll>
-            <span className="block w-12 h-px bg-gold-700 mt-4" aria-hidden />
           </div>
 
           <RevealOnScroll>
             {photos.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {photos.map((item) => (
-                  <div key={item.id} className="aspect-square relative overflow-hidden border border-gold-500/20 hover:border-gold-400/60 transition-colors bg-lx-slate group">
+                  <div key={item.id} className="aspect-square relative overflow-hidden border border-neutral-200 hover:border-gold-500/40 transition-colors">
                     {item.image && (
                       <Image
                         src={item.image}
                         alt={item.title}
                         fill
-                        className="object-cover transition-transform duration-900 group-hover:scale-[1.06]"
+                        className="object-cover"
                       />
                     )}
                   </div>
@@ -200,22 +183,22 @@ export default async function MediaPage() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {[...Array(8)].map((_, i) => (
                     <div
                       key={i}
-                      className="aspect-square border border-dashed border-gold-500/25 flex items-center justify-center bg-lx-ink"
+                      className="aspect-square border-2 border-dashed border-gold-500/30 flex items-center justify-center bg-[#fdfbf7]"
                     >
                       <div className="text-center">
-                        <div className="w-10 h-10 mx-auto rounded-full border border-gold-500/30 flex items-center justify-center">
-                          <span className="text-gold-500/50 text-lg">&#10010;</span>
+                        <div className="w-10 h-10 mx-auto mb-2 rounded-full border-2 border-gold-500/20 flex items-center justify-center">
+                          <span className="text-gold-500/40 text-lg">&#10010;</span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <p className="text-center font-mono text-[0.72rem] tracking-en-nav uppercase text-white/40 mt-10">
-                  등록된 사진이 없습니다 · 곧 업데이트됩니다
+                <p className="text-center text-sm text-neutral-400 mt-8">
+                  등록된 사진이 없습니다. 곧 업데이트됩니다.
                 </p>
               </>
             )}
@@ -224,22 +207,20 @@ export default async function MediaPage() {
       </section>
 
       {/* Coming Soon CTA */}
-      <section className="relative py-24 md:py-28 px-7 lg:px-16 bg-lx-ink text-center overflow-hidden border-t border-gold-500/15">
-        <div className="absolute inset-0 bg-hero-gold pointer-events-none" aria-hidden />
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <RevealOnScroll>
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-6">— Stay Tuned —</p>
-            <h2 className="text-[clamp(1.8rem,3.5vw,2.4rem)] font-light tracking-kr-tight text-lx-ivory mb-6 leading-[1.25]">
-              더 많은 이야기가
-              <em className="not-italic font-serif font-normal text-gold-400"> 준비되고 있습니다</em>
+      <section className="py-20 px-6 bg-[#0a0b10] text-white text-center">
+        <RevealOnScroll>
+          <div className="max-w-2xl mx-auto">
+            <p className="section-tag mb-5">Stay Tuned</p>
+            <h2 className="font-serif text-2xl text-white mb-4">
+              더 많은 이야기가 준비되고 있습니다
             </h2>
-            <p className="text-white/60 text-[0.92rem] leading-[1.9] font-light max-w-xl mx-auto">
+            <p className="text-white/50 text-sm leading-8">
               ZOEL LIFE 베트남 직영 농장의 생생한 현장과 침향 제품의 생산 과정을
               영상과 사진으로 곧 만나보실 수 있습니다.
             </p>
-          </RevealOnScroll>
-        </div>
+          </div>
+        </RevealOnScroll>
       </section>
-    </div>
+    </>
   );
 }

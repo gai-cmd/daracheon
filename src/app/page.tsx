@@ -3,9 +3,6 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import JsonLd from '@/components/ui/JsonLd';
-import Hero from '@/components/home/Hero';
-import TrustStrip from '@/components/home/TrustStrip';
-import VerificationGrid from '@/components/home/VerificationGrid';
 
 export const revalidate = 3600;
 
@@ -90,16 +87,6 @@ const benefits = [
   },
 ];
 
-// TODO: 콘텐츠 확인 필요 — Benefits 영문 카테고리 라벨 디자인 추가, CMS 확인 필요
-const benefitCategories = [
-  'Qi Circulation',
-  'Vitality',
-  'Relaxation',
-  'Anti-inflammatory',
-  'Brain Health',
-  'Digestion',
-];
-
 const processSteps = [
   '씨앗 발아 및 묘목 육성',
   '베트남 직영 농장 식재',
@@ -109,77 +96,75 @@ const processSteps = [
   '최고급 제품 가공 및 검수',
 ];
 
-// TODO: 콘텐츠 확인 필요 — 6단계 공정 duration 라벨 디자인 추가, CMS 확인 필요
-const processMeta = [
-  '6 — 12 Months',
-  'Ha Tinh 200ha',
-  '20+ Years',
-  '3 — 5 Years',
-  'Controlled Harvest',
-  'HACCP · GMP',
-];
-
-const marqueeItems = [
-  'CITES 국제인증',
-  'Aquilaria Agallocha Roxburgh',
-  'HACCP 식품안전 인증',
-  'Organic 유기농 인증',
-  '하띤성 200ha 직영 농장',
-  '400만+ Trees',
-  'DNA 유전자 검증',
-];
-
-// TODO: 콘텐츠 확인 필요 — Heritage 타임라인 label/meta 디자인 추가, CMS 확인 필요
-const heritageTimeline = [
-  {
-    year: '1999',
-    label: 'RESEARCH BEGINS',
-    body: '베트남 침향 연구 시작. 하띤·동나이·푸꾸옥 세 지역의 침향목 생태 조사 착수.',
-    meta: ['Ha Tinh', 'Dong Nai', 'Phu Quoc'],
-  },
-  {
-    year: '2010',
-    label: 'TECHNOLOGY PATENTED',
-    body: '독자적 수지유도 기술 특허 획득. 3~5년간 3~5회 주입식 공법으로 안정적인 수지 수율 확보.',
-    meta: ['KR Patent', 'Resin Induction'],
-  },
-  {
-    year: '2024',
-    label: 'BRAND LAUNCH',
-    body: "프리미엄 침향 브랜드 '대라천 참침향' 정식 론칭. 학명·제조·시험 공개 정책 도입.",
-    meta: ['Premium', 'Transparency'],
-  },
-];
-
 export default function HomePage() {
   return (
-    <main className="bg-lx-black text-lx-ivory">
+    <>
       <JsonLd data={websiteJsonLd} />
 
-      {/* ════════════ §1 Hero ════════════ */}
-      <Hero />
+      {/* ════════════ Hero ════════════ */}
+      <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0a0b10]">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-45 animate-hero-zoom"
+          style={{ backgroundImage: "url('https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/15 to-black/70" />
+        <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.5)]" />
 
-      {/* ════════════ §1.5 Trust Strip (stats under hero) ════════════ */}
-      <TrustStrip />
+        <div className="relative z-10 text-center text-white max-w-[900px] px-6">
+          {/* Emblem */}
+          <div className="w-[60px] h-[60px] mx-auto mb-10 rounded-full border border-gold-500 flex items-center justify-center opacity-0 animate-fade-up [animation-delay:0.3s]">
+            <svg className="w-7 h-7 fill-gold-500" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+            </svg>
+          </div>
 
-      {/* ════════════ §2 Verified — 4단계 검증 ════════════ */}
-      <VerificationGrid
-        notice={
-          <p className="text-[0.95rem] text-white/70 leading-[1.9] font-light">
-            대한민국 국가법령정보센터의 식약처 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과
-            &lsquo;식약처 식품공전&rsquo; 두 곳에서 동일하게 등록된 공식 침향은{' '}
-            <em className="font-serif text-gold-400 font-medium not-italic">
-              Aquilaria Agallocha Roxburgh(AAR)
-            </em>
-            입니다.
+          <p className="text-[0.72rem] tracking-[0.4em] uppercase text-gold-500 mb-5 opacity-0 animate-fade-up [animation-delay:0.5s]">
+            자연이 빚은 최고의 향
           </p>
-        }
-      />
 
-      {/* ════════════ §2b Notice detail + badges ════════════ */}
-      <section className="py-20 md:py-28 px-7 lg:px-16 bg-lx-ink text-white">
+          <h1 className="font-serif text-[clamp(2.5rem,5.5vw,4.5rem)] font-light leading-[1.3] tracking-[0.08em] mb-2 opacity-0 animate-fade-up [animation-delay:0.7s]">
+            대라천 &lsquo;참&rsquo;침향
+          </h1>
+
+          <p className="font-display text-[clamp(1rem,2vw,1.3rem)] font-light italic tracking-[0.1em] text-gold-300 mb-6 opacity-0 animate-fade-up [animation-delay:0.9s]">
+            베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향
+          </p>
+
+          <div className="flex gap-4 justify-center flex-wrap opacity-0 animate-fade-up [animation-delay:1.3s]">
+            <Link href="/products" className="btn btn-gold">제품 보기</Link>
+            <Link href="/brand-story" className="btn btn-outline-light">브랜드 이야기</Link>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0 animate-fade-in [animation-delay:2s] hidden md:flex">
+          <span className="text-[0.65rem] tracking-[0.3em] uppercase text-gold-300 [writing-mode:vertical-lr]">
+            scroll
+          </span>
+          <div className="w-px h-12 bg-gold-500" />
+        </div>
+      </section>
+
+      {/* ════════════ Consumer Notice ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-[#0a0b10] text-white">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-14">
+          <div className="text-center mb-16">
+            <RevealOnScroll><p className="section-tag">NOTICE</p></RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr text-white mb-5">
+                진짜 침향, 이젠<br />학명부터 확인하세요!
+              </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mx-auto mb-8" /></RevealOnScroll>
+            <RevealOnScroll delay={200}>
+              <p className="text-[0.95rem] text-white/70 leading-9 max-w-3xl mx-auto mb-12">
+                대한민국 국가법령정보센터의 식약처 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과 &lsquo;식약처 식품공전&rsquo; 두 곳에서
+                동일하게 등록된 공식 침향은 <span className="text-gold-500 font-medium">Aquilaria Agallocha Roxburgh(AAR)</span>입니다.
+              </p>
+            </RevealOnScroll>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {[
               {
                 num: '01',
@@ -195,22 +180,21 @@ export default function HomePage() {
               },
             ].map((item, i) => (
               <RevealOnScroll key={item.num} delay={i * 100}>
-                <div className="h-full p-8 bg-lx-slate border border-gold-500/15 hover:border-gold-400/40 hover:-translate-y-1 transition-all duration-600">
-                  <div className="font-serif text-2xl text-gold-400 font-light mb-4">{item.num}</div>
-                  <p className="text-[0.88rem] text-white/65 leading-[1.9] font-light">
-                    {item.text}
-                  </p>
+                <div className="p-6 border border-gold-500/20 hover:border-gold-500 transition-all duration-400 h-full">
+                  <div className="font-display text-2xl text-gold-500 mb-4">{item.num}</div>
+                  <p className="text-[0.88rem] text-white/60 leading-8">{item.text}</p>
                 </div>
               </RevealOnScroll>
             ))}
           </div>
 
+          {/* Certification Badges */}
           <RevealOnScroll>
-            <div className="flex flex-wrap justify-center gap-3 mb-10">
+            <div className="flex flex-wrap justify-center gap-3 mb-12">
               {certificationBadges.map((badge) => (
                 <span
                   key={badge}
-                  className="px-4 py-2 border border-gold-500/30 font-mono text-[0.68rem] tracking-[0.12em] uppercase text-gold-400 hover:border-gold-500 hover:bg-gold-500/10 transition-all duration-400"
+                  className="px-4 py-2 border border-gold-500/30 text-[0.72rem] tracking-[0.1em] text-gold-300 hover:border-gold-500 hover:bg-gold-500/10 transition-all duration-400"
                 >
                   {badge}
                 </span>
@@ -222,7 +206,7 @@ export default function HomePage() {
             <div className="text-center">
               <Link
                 href="/brand-story"
-                className="inline-flex items-center gap-2 font-mono text-[0.7rem] tracking-en-nav uppercase text-gold-500 hover:gap-4 hover:text-gold-400 transition-all"
+                className="inline-flex items-center gap-2 text-[0.72rem] tracking-[0.15em] uppercase text-gold-500 hover:gap-4 transition-all"
               >
                 대라천 &lsquo;참&rsquo;침향 인증 확인하기 →
               </Link>
@@ -231,45 +215,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §3 Agarwood — 신들의 나무 ════════════ */}
-      <section className="py-24 md:py-[140px] px-7 lg:px-16 bg-lx-ivory text-lx-ink">
-        <div className="max-w-page mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] gap-14 md:gap-20 items-end mb-20 md:mb-24">
-            <RevealOnScroll>
-              <div>
-                <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-                  Agarwood · 신들의 나무
-                </span>
-                <h2 className="mt-4 text-[clamp(2.2rem,4.4vw,3.6rem)] font-extralight tracking-kr-tight leading-[1.15]">
-                  신들의 나무,
-                  <br />
-                  침향
-                </h2>
-              </div>
-            </RevealOnScroll>
+      {/* ════════════ Agarwood ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-[#fdfbf7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <RevealOnScroll><p className="section-tag">AGARWOOD</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <p className="text-[0.96rem] text-neutral-600 leading-[1.95] font-light">
-                침향은 침향나무(Aquilaria)가 스스로의 상처를 치유하며 수십 년에 걸쳐 만들어 낸
-                수지입니다. 동의보감은 침향을 &lsquo;기를 통하게 하는 상약&rsquo;으로 기록했고,
-                오늘날 SCI급 논문이 그 가치를 재확인하고 있습니다.
-              </p>
+              <h2 className="section-title-kr mb-4">신들의 나무, 침향</h2>
             </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mx-auto mb-8" /></RevealOnScroll>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 border-t border-lx-ink/10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {agarwoodCards.map((card, i) => (
               <RevealOnScroll key={card.title} delay={i * 100}>
-                <div className="h-full px-9 pt-12 pb-14 border-b border-r last:border-r-0 border-lx-ink/10 hover:bg-white transition-colors duration-500">
-                  <div className="flex items-center gap-3 mb-9 font-mono text-[0.72rem] tracking-en-tag uppercase text-gold-500 font-semibold">
-                    {String(i + 1).padStart(2, '0')}
-                    <span className="flex-1 h-px bg-lx-ink/12" />
+                <div className="p-8 bg-white border border-neutral-200 hover:border-gold-500/40 transition-all duration-400 h-full">
+                  <div className="w-12 h-12 rounded-full border border-gold-500 flex items-center justify-center mb-6">
+                    <span className="font-display text-lg text-gold-500">{String(i + 1).padStart(2, '0')}</span>
                   </div>
-                  <h3 className="text-[1.4rem] font-normal tracking-kr-tight mb-3.5 text-lx-ink">
-                    {card.title}
-                  </h3>
-                  <p className="text-[0.88rem] text-neutral-600 leading-[1.9] font-light">
-                    {card.description}
-                  </p>
+                  <h3 className="font-serif text-xl font-normal tracking-wide mb-4">{card.title}</h3>
+                  <p className="text-sm text-neutral-500 leading-7">{card.description}</p>
                 </div>
               </RevealOnScroll>
             ))}
@@ -277,42 +242,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §4 Benefits — 연구 기반 효능 ════════════ */}
-      <section id="benefits" className="py-24 md:py-[140px] px-7 lg:px-16 bg-lx-sand text-lx-ink">
-        <div className="max-w-page mx-auto">
-          <div className="text-center max-w-[700px] mx-auto mb-16 md:mb-20">
-            <RevealOnScroll>
-              <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-                Benefits · 연구 기반 효능
-              </span>
+      {/* ════════════ Stats ════════════ */}
+      <section className="py-20 px-6 bg-[#1a1d29]">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          {[
+            { value: '400만+', label: '침향 나무' },
+            { value: '25yr+', label: '연구 기간' },
+            { value: '5', label: '베트남 산지' },
+            { value: '200ha', label: '하띤성 직영 농장' },
+          ].map((stat, i) => (
+            <RevealOnScroll key={stat.label} delay={i * 100}>
+              <div className="py-4">
+                <div className="font-display text-[clamp(2.5rem,4vw,3.5rem)] font-light text-gold-500 leading-none mb-2">
+                  {stat.value}
+                </div>
+                <div className="w-8 h-px bg-gold-500/50 mx-auto mb-3" />
+                <div className="text-[0.75rem] tracking-[0.15em] text-neutral-400 uppercase">
+                  {stat.label}
+                </div>
+              </div>
             </RevealOnScroll>
+          ))}
+        </div>
+      </section>
+
+      {/* ════════════ Benefits ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-white" id="benefits">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <RevealOnScroll><p className="section-tag">BENEFITS</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <h2 className="mt-4 text-[clamp(2rem,4vw,3.2rem)] font-extralight tracking-kr-tight leading-[1.2]">
-                침향의 효능에 주목!
-              </h2>
+              <h2 className="section-title-kr mb-4">침향의 효능에 주목!</h2>
             </RevealOnScroll>
-            <RevealOnScroll delay={200}>
-              <span className="block mx-auto my-6 w-12 h-px bg-gold-700" />
-            </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mx-auto mb-8" /></RevealOnScroll>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-white border border-lx-ink/8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((b, i) => (
               <RevealOnScroll key={b.title} delay={i * 80}>
-                <div className="h-full px-9 py-11 border-r border-b border-lx-ink/8">
-                  <div className="flex items-baseline gap-3 mb-7 font-serif text-[1.2rem] font-medium text-gold-500 tracking-[0.1em]">
-                    {String(i + 1).padStart(2, '0')}
-                    <span className="block w-7 h-px bg-gold-500" />
+                <div className="p-8 border border-neutral-200 hover:border-gold-500/40 transition-all duration-400 h-full">
+                  <div className="w-10 h-10 rounded-full bg-gold-500/10 flex items-center justify-center mb-5">
+                    <span className="font-display text-sm text-gold-500 font-medium">{String(i + 1).padStart(2, '0')}</span>
                   </div>
-                  {benefitCategories[i] && (
-                    <div className="font-mono text-[0.68rem] tracking-[0.12em] uppercase text-gold-700 mb-3.5">
-                      {benefitCategories[i]}
-                    </div>
-                  )}
-                  <h4 className="text-[1.05rem] font-medium text-lx-ink mb-2.5">{b.title}</h4>
-                  <p className="text-[0.84rem] text-neutral-600 leading-[1.9] font-light">
-                    {b.description}
-                  </p>
+                  <h3 className="font-serif text-lg font-normal mb-3">{b.title}</h3>
+                  <p className="text-sm text-neutral-500 leading-7">{b.description}</p>
                 </div>
               </RevealOnScroll>
             ))}
@@ -320,55 +293,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §5 Marquee ════════════ */}
-      <div className="bg-lx-black py-10 overflow-hidden border-y border-gold-500/15">
+      {/* ════════════ Marquee ════════════ */}
+      <div className="bg-[#1a1d29] py-8 overflow-hidden">
         <div className="marquee-track">
-          {[...Array(2)].map((_, setIdx) =>
-            marqueeItems.map((text) => (
-              <span
-                key={`${setIdx}-${text}`}
-                className="font-serif text-[1.05rem] italic text-gold-500/65 font-light tracking-[0.08em] whitespace-nowrap inline-flex items-center gap-16 after:content-['◆'] after:text-[0.45rem] after:opacity-50 after:not-italic"
-              >
+          {[...Array(2)].map((_, setIdx) => (
+            ['CITES 국제인증', 'Aquilaria agallocha Roxburgh', 'HACCP 식품안전 인증', 'Organic 유기농 인증', '하띤성 200ha 직영 농장', '400만+ Trees', 'DNA 유전자 검증'].map((text) => (
+              <span key={`${setIdx}-${text}`} className="font-display text-lg lg:text-xl font-light italic text-gold-500/60 whitespace-nowrap flex items-center gap-16 after:content-['◆'] after:text-[0.5rem] after:opacity-40">
                 {text}
               </span>
             ))
-          )}
+          ))}
         </div>
       </div>
 
-      {/* ════════════ §6 Heritage — 26년의 집념 ════════════ */}
-      <section
-        id="heritage"
-        className="relative py-24 md:py-[140px] px-7 lg:px-16 bg-lx-black text-white overflow-hidden"
-      >
-        {/* 大羅天 giant hanja watermark */}
+      {/* ════════════ Heritage ════════════ */}
+      <section className="relative py-28 lg:py-36 px-6 bg-[#0a0b10] text-white overflow-hidden">
         <div
-          aria-hidden
-          className="absolute right-[-4%] top-1/2 -translate-y-1/2 font-serif font-medium leading-[0.9] tracking-[-0.04em] text-gold-500/[0.03] select-none pointer-events-none [writing-mode:vertical-rl]"
-          style={{ fontSize: 'clamp(16rem, 28vw, 32rem)' }}
-        >
-          大羅天
-        </div>
-
-        <div className="relative z-10 max-w-page mx-auto grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-20 lg:gap-24 items-start">
+          className="absolute inset-0 bg-cover bg-center opacity-[0.12]"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=1920&q=80')" }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div>
-            <RevealOnScroll>
-              <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-                Heritage · 26년의 집념
-              </span>
-            </RevealOnScroll>
+            <RevealOnScroll><p className="section-tag">HERITAGE</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <h2 className="mt-4 text-[clamp(2.2rem,4.4vw,3.6rem)] font-extralight tracking-kr-tight leading-[1.15]">
-                수십 년 이상의 집념,
-                <br />
-                완벽을 향한 여정
+              <h2 className="section-title-kr text-white mb-5">
+                수십 년 이상의 집념,<br />완벽을 향한 여정
               </h2>
             </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mb-8" /></RevealOnScroll>
             <RevealOnScroll delay={200}>
-              <span className="block mt-7 w-12 h-px bg-gold-500" />
-            </RevealOnScroll>
-            <RevealOnScroll delay={200}>
-              <p className="mt-7 max-w-[500px] text-[0.94rem] text-white/72 leading-[1.95] font-light">
+              <p className="text-[0.92rem] text-white/65 leading-9 mb-5">
                 조엘라이프는 &lsquo;자연의 진실된 가치&rsquo;를 모토로 한 프리미엄 침향 브랜드
                 [대라천 &lsquo;참&rsquo;침향]을 소개합니다. 침향은 수천 년 전부터 귀하게 여겨져 온
                 천연의 선물로, 침향나무가 스스로 상처를 치유하며 만들어내는 고귀한 수지입니다.
@@ -376,32 +330,19 @@ export default function HomePage() {
             </RevealOnScroll>
           </div>
 
-          <div className="border-l border-gold-500/30 pl-9">
-            {heritageTimeline.map((item, i) => (
+          <div className="space-y-8">
+            {[
+              { year: '1999', event: '베트남 침향 연구 시작' },
+              { year: '2010', event: '독자적 수지유도 기술 특허 획득' },
+              { year: '2024', event: '프리미엄 브랜드 론칭' },
+            ].map((item, i) => (
               <RevealOnScroll key={item.year} delay={i * 100}>
-                <div className="relative pb-12 last:pb-0">
-                  <span
-                    aria-hidden
-                    className="absolute -left-[46px] top-2.5 w-2.5 h-2.5 rounded-full bg-gold-500 ring-4 ring-gold-500/12"
-                  />
-                  <div className="font-serif text-[2rem] font-light text-gold-500 tracking-[0.04em] leading-none">
+                <div className="flex items-start gap-6">
+                  <div className="flex-shrink-0 w-20 h-20 rounded-full border border-gold-500 flex items-center justify-center font-display text-xl font-light text-gold-500 hover:bg-gold-500 hover:text-[#0a0b10] transition-all duration-400">
                     {item.year}
                   </div>
-                  <div className="mt-2.5 mb-4 font-mono text-[0.65rem] tracking-[0.28em] uppercase text-white/50">
-                    {item.label}
-                  </div>
-                  <p className="text-[0.88rem] text-white/78 leading-[1.9] font-light">
-                    {item.body}
-                  </p>
-                  <div className="mt-3.5 flex flex-wrap gap-2.5">
-                    {item.meta.map((m) => (
-                      <span
-                        key={m}
-                        className="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold-400 px-2.5 py-1 border border-gold-500/25"
-                      >
-                        {m}
-                      </span>
-                    ))}
+                  <div className="pt-5">
+                    <p className="text-white/70 text-[0.95rem] leading-7">{item.event}</p>
                   </div>
                 </div>
               </RevealOnScroll>
@@ -410,38 +351,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §7 Process — 6단계 공정 ════════════ */}
-      <section className="py-24 md:py-[140px] px-7 lg:px-16 bg-lx-ivory text-lx-ink">
-        <div className="max-w-page mx-auto">
-          <div className="text-center max-w-[700px] mx-auto mb-20 md:mb-24">
-            <RevealOnScroll>
-              <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-                Craftsmanship · 6단계 공정
-              </span>
-            </RevealOnScroll>
+      {/* ════════════ Craftsmanship ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-[#fdfbf7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <RevealOnScroll><p className="section-tag">CRAFTSMANSHIP</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <h2 className="mt-4 text-[clamp(2rem,4vw,3.2rem)] font-extralight tracking-kr-tight leading-[1.2]">
-                완벽을 향한 6단계 공정
-              </h2>
+              <h2 className="section-title-kr mb-4">완벽을 향한 6단계 공정</h2>
             </RevealOnScroll>
-            <RevealOnScroll delay={200}>
-              <span className="block mx-auto my-6 w-12 h-px bg-gold-700" />
-            </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mx-auto mb-8" /></RevealOnScroll>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-lx-ink/10">
+          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {processSteps.map((step, i) => (
-              <RevealOnScroll key={step} delay={i * 80}>
-                <div className="h-full px-8 pt-11 pb-12 border-b border-r border-lx-ink/10 hover:bg-white transition-colors duration-500">
-                  <div className="font-serif text-[2.6rem] font-light text-gold-500 leading-none tracking-kr-tight opacity-90">
+              <RevealOnScroll key={step} delay={i * 100}>
+                <div className="text-center px-4 lg:px-6">
+                  <div className="relative z-10 w-20 h-20 mx-auto mb-6 rounded-full border border-gold-500 flex items-center justify-center font-display text-2xl font-light text-gold-500 bg-[#fdfbf7] hover:bg-gold-500 hover:text-[#0a0b10] transition-all duration-400">
                     {String(i + 1).padStart(2, '0')}
                   </div>
-                  <h4 className="mt-7 text-base font-medium text-lx-ink">{step}</h4>
-                  {processMeta[i] && (
-                    <div className="mt-2 font-mono text-[0.7rem] tracking-[0.18em] uppercase text-gold-700">
-                      {processMeta[i]}
-                    </div>
-                  )}
+                  <h4 className="font-serif text-lg font-normal tracking-wide mb-3">
+                    {step}
+                  </h4>
                 </div>
               </RevealOnScroll>
             ))}
@@ -449,38 +379,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §8 Origin — 청정 자연 ════════════ */}
-      <section className="py-24 md:py-[140px] px-7 lg:px-16 bg-white text-lx-ink">
-        <div className="max-w-page mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+      {/* ════════════ Origin ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-white">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div>
-            <RevealOnScroll>
-              <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-                Origin · 베트남 하띤
-              </span>
-            </RevealOnScroll>
+            <RevealOnScroll><p className="section-tag">ORIGIN</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <h2 className="mt-4 text-[clamp(2rem,4vw,3.2rem)] font-extralight tracking-kr-tight leading-[1.2]">
-                청정 자연이 품은
-                <br />
-                생명의 땅
+              <h2 className="section-title-kr mb-5">
+                청정 자연이 품은<br />생명의 땅
               </h2>
             </RevealOnScroll>
+            <RevealOnScroll delay={200}><div className="gold-line mb-8" /></RevealOnScroll>
             <RevealOnScroll delay={200}>
-              <span className="block my-7 w-12 h-px bg-gold-700" />
-            </RevealOnScroll>
-            <RevealOnScroll delay={200}>
-              <p className="text-[0.95rem] text-neutral-600 leading-[1.9] font-light">
-                동나이, 하띤, 푸꾸옥. 베트남 최고의 청정 지역에 위치한 ZOEL LIFE 직영 농장. 최적의
-                기후와 토양, 그리고 장인의 정성이 만나 세계 최고 품질의 침향이 탄생합니다.
+              <p className="text-[0.95rem] text-neutral-500 leading-9">
+                동나이, 하띤, 푸꾸옥. 베트남 최고의 청정 지역에 위치한 ZOEL LIFE 직영 농장.
+                최적의 기후와 토양, 그리고 장인의 정성이 만나 세계 최고 품질의 침향이 탄생합니다.
               </p>
-            </RevealOnScroll>
-            <RevealOnScroll delay={300}>
-              <Link
-                href="/process"
-                className="mt-10 inline-flex items-center gap-2 font-mono text-[0.7rem] tracking-en-nav uppercase text-gold-500 hover:gap-4 hover:text-gold-700 transition-all"
-              >
-                농장 이야기 자세히 →
-              </Link>
             </RevealOnScroll>
           </div>
 
@@ -499,49 +413,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════════ §9 CTA ════════════ */}
-      <section className="py-24 md:py-[140px] px-7 lg:px-16 bg-lx-ivory text-lx-ink text-center">
+      {/* ════════════ CTA ════════════ */}
+      <section className="py-28 lg:py-36 px-6 bg-[#fdfbf7] text-center">
         <div className="max-w-[700px] mx-auto">
-          <RevealOnScroll>
-            <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500">
-              Contact · 문의
-            </span>
-          </RevealOnScroll>
+          <RevealOnScroll><p className="section-tag">Contact Us</p></RevealOnScroll>
           <RevealOnScroll delay={100}>
-            <h2 className="mt-4 text-[clamp(2.2rem,4.4vw,3.6rem)] font-extralight tracking-kr-tight leading-[1.15]">
-              대라천 &lsquo;참&rsquo;침향의
-              <br />
-              세계로 초대합니다
+            <h2 className="section-title-kr mb-4">
+              대라천 &lsquo;참&rsquo;침향의<br />세계로 초대합니다
             </h2>
           </RevealOnScroll>
+          <RevealOnScroll delay={200}><div className="gold-line mx-auto mb-8" /></RevealOnScroll>
           <RevealOnScroll delay={200}>
-            <span className="block mx-auto my-7 w-12 h-px bg-gold-700" />
-          </RevealOnScroll>
-          <RevealOnScroll delay={200}>
-            <p className="max-w-[560px] mx-auto mb-10 text-[0.92rem] text-neutral-600 leading-[1.9] font-light">
-              ZOEL LIFE의 제품 상담, 대량 구매, 기업 납품 문의를 환영합니다.
-              <br />
+            <p className="text-[0.92rem] text-neutral-500 leading-8 mb-10">
+              ZOEL LIFE의 제품 상담, 대량 구매, 기업 납품 문의를 환영합니다.<br />
               전문 컨설턴트가 고객님의 요구에 맞는 최적의 제품을 추천해 드립니다.
             </p>
           </RevealOnScroll>
           <RevealOnScroll delay={300}>
-            <div className="flex gap-3.5 justify-center flex-wrap">
-              <Link
-                href="/support#contact"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-gold-500 text-lx-black border border-gold-500 text-xs font-medium tracking-en-nav uppercase transition-all duration-400 ease-out-soft hover:bg-gold-700 hover:border-gold-700 hover:-translate-y-0.5"
-              >
-                문의하기
-              </Link>
-              <Link
-                href="/home-shopping"
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-transparent text-lx-ink border border-lx-ink/40 text-xs font-medium tracking-en-nav uppercase transition-all duration-400 ease-out-soft hover:border-gold-700 hover:text-gold-700 hover:-translate-y-0.5"
-              >
-                홈쇼핑 바로가기
-              </Link>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link href="/support#contact" className="btn btn-gold">문의하기</Link>
+              <Link href="/home-shopping" className="btn btn-outline-dark">홈쇼핑 바로가기</Link>
             </div>
           </RevealOnScroll>
         </div>
       </section>
-    </main>
+    </>
   );
 }

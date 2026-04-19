@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
-import StorySection from '@/components/about-agarwood/StorySection';
 
 export const metadata: Metadata = {
   title: '생산 공정 - 완벽을 향한 장인 정신 | ZOEL LIFE',
@@ -75,124 +74,59 @@ const certifications = [
   },
 ];
 
-const STEP_TAGS = [
-  'Selection',
-  'Maturation',
-  'Harvest',
-  'Drying',
-  'Extraction',
-  'Quality',
-  'Packaging',
-  'Shipment',
-];
-
 export default function ProcessPage() {
   return (
     <>
-      {/* Hero — dark luxury with ambient gold glow */}
-      <section className="relative pt-nav bg-lx-black text-lx-ivory overflow-hidden border-b border-gold-500/15">
+      {/* Hero */}
+      <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
+          className="absolute inset-0 bg-cover bg-center opacity-25"
           style={{ backgroundImage: `url('${HERO_BG}')` }}
         />
-        <div className="absolute inset-0 bg-hero-gold" />
-        <div className="absolute inset-0 bg-gradient-to-b from-lx-black/40 via-lx-black/60 to-lx-ink" />
-        <div className="relative z-10 max-w-page mx-auto px-7 lg:px-16 pt-[140px] pb-[120px]">
-          <p className="font-mono text-[0.72rem] tracking-en-tag uppercase text-gold-500 mb-[30px]">
-            Craftsmanship &amp; Process
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
+          <p className="section-tag mb-5">CRAFTSMANSHIP & PROCESS</p>
+          <h1 className="section-title-kr text-white mb-5">생산 공정</h1>
+          <p className="text-white/65 text-[0.95rem] leading-9 max-w-2xl mx-auto mb-6">
+            자연이 허락한 시간, 정직한 땀방울의 결실
           </p>
-          <h1 className="text-[clamp(2.2rem,5vw,4.2rem)] font-extralight tracking-kr-tight leading-[1.15] mb-8">
-            생산 공정<br />
-            <em className="not-italic font-serif font-normal text-gold-500 whitespace-nowrap">
-              완벽을 향한 장인 정신
-            </em>
-          </h1>
-          <p className="text-[1.05rem] leading-[1.9] text-white/72 font-light max-w-[720px]">
-            자연이 허락한 시간, 정직한 땀방울의 결실. 식목부터 최종 출하까지
-            최소 26년의 시간이 한 병의 대라천 침향에 담깁니다.
-          </p>
+          <div className="gold-line mx-auto" />
         </div>
       </section>
 
-      {/* 8 Production Steps — rendered as story chapters */}
-      {processSteps.map((step, i) => (
-        <RevealOnScroll key={step.num}>
-          <StorySection
-            num={String(step.num).padStart(2, '0')}
-            tag={`Step ${String(step.num).padStart(2, '0')} — ${STEP_TAGS[i]}`}
-            title={step.title}
-            alt={i % 2 === 1}
-          >
-            <p>{step.desc}</p>
-          </StorySection>
-        </RevealOnScroll>
-      ))}
-
-      {/* Visual Break — 26+ Years */}
-      <section className="relative h-[420px] overflow-hidden">
-        <Image
-          src={HERO_BG}
-          alt="침향 생산 공정"
-          fill
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-lx-black/70" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <RevealOnScroll>
-            <div className="text-center px-6">
-              <p className="font-mono text-[0.72rem] tracking-en-tag uppercase text-gold-500 mb-5">
-                From Planting to Final Product
-              </p>
-              <p className="font-serif text-[clamp(3rem,6vw,5.5rem)] font-light text-gold-500 leading-none tracking-kr-tight">
-                26<span className="text-white/80">+</span>{' '}
-                <span className="text-white/90 text-[0.6em] align-middle font-sans font-extralight">
-                  Years
-                </span>
-              </p>
-            </div>
-          </RevealOnScroll>
-        </div>
-      </section>
-
-      {/* Certifications — dark chapter */}
-      <section className="bg-[#0c0d13] text-lx-ivory border-b border-gold-500/10">
-        <div className="max-w-page mx-auto px-7 lg:px-16 py-[90px]">
-          <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-10 md:gap-20 mb-16">
-            <div>
-              <div className="font-serif text-[3.2rem] font-light leading-none tracking-kr-tight text-gold-500">
-                05
-              </div>
-              <div className="mt-4 font-mono text-[0.66rem] tracking-en-tag uppercase text-white/50">
-                Certifications
-              </div>
-            </div>
-            <div className="max-w-[62ch]">
-              <RevealOnScroll>
-                <h3 className="text-[clamp(1.5rem,2.6vw,2rem)] font-light tracking-[-0.01em] leading-[1.3] mb-6 text-white">
-                  국제 인증 기준
-                </h3>
-              </RevealOnScroll>
-              <RevealOnScroll delay={100}>
-                <p className="text-[1.02rem] leading-[1.95] font-light text-white/72">
-                  모든 공정은 네 가지 국제·국내 기준 하에 검증됩니다.
-                </p>
-              </RevealOnScroll>
-            </div>
+      {/* 8 Process Steps */}
+      <section className="py-28 px-6 bg-[#fdfbf7]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <RevealOnScroll>
+              <p className="section-tag">PROCESS</p>
+            </RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr mb-4">8단계 정밀 공정</h2>
+            </RevealOnScroll>
+            <RevealOnScroll delay={200}>
+              <div className="gold-line mx-auto" />
+            </RevealOnScroll>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gold-500/10">
-            {certifications.map((cert, i) => (
-              <RevealOnScroll key={cert.title} delay={i * 100}>
-                <div className="h-full bg-lx-black p-8 transition-colors duration-400 ease-reveal hover:bg-[#12141c] group">
-                  <div className="font-mono text-[0.66rem] tracking-en-tag uppercase text-gold-500 mb-4">
-                    0{i + 1}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {processSteps.map((step, i) => (
+              <RevealOnScroll key={step.num} delay={(i % 4) * 100}>
+                <div className="relative p-8 bg-white border border-neutral-200 hover:border-gold-500/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl h-full">
+                  {/* Gold numbered circle */}
+                  <div className="w-14 h-14 mb-6 rounded-full bg-gold-500 text-[#0a0b10] flex items-center justify-center font-display text-xl font-semibold">
+                    {step.num}
                   </div>
-                  <h4 className="font-serif text-2xl font-light text-gold-500 mb-4 tracking-kr-tight">
-                    {cert.title}
-                  </h4>
-                  <p className="text-sm text-white/65 leading-[1.85] font-light">
-                    {cert.desc}
+                  <h3 className="font-serif text-lg mb-3">{step.title}</h3>
+                  <p className="text-sm text-neutral-500 leading-7">
+                    {step.desc}
                   </p>
+
+                  {/* Connector arrow (hidden on last in row) */}
+                  {step.num < 8 && (
+                    <div className="hidden lg:block absolute -right-4 top-1/2 -translate-y-1/2 text-gold-500/40 text-2xl z-10">
+                      &rarr;
+                    </div>
+                  )}
                 </div>
               </RevealOnScroll>
             ))}
@@ -200,25 +134,79 @@ export default function ProcessPage() {
         </div>
       </section>
 
-      {/* Closing Quote — dark, serif pull-quote */}
-      <section className="bg-lx-black text-lx-ivory">
-        <div className="max-w-page mx-auto px-7 lg:px-16 py-[120px] text-center">
+      {/* Visual Break - Full width image */}
+      <section className="relative h-[400px] overflow-hidden">
+        <Image
+          src={HERO_BG}
+          alt="침향 생산 공정"
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
           <RevealOnScroll>
-            <p className="font-mono text-[0.72rem] tracking-en-tag uppercase text-gold-500 mb-10">
-              Principle
-            </p>
+            <div className="text-center px-6">
+              <p className="font-display text-5xl md:text-6xl text-gold-500 mb-4">
+                26+ Years
+              </p>
+              <p className="text-white/70 text-sm tracking-[0.2em] uppercase">
+                From Planting to Final Product
+              </p>
+            </div>
+          </RevealOnScroll>
+        </div>
+      </section>
+
+      {/* Certification Cards */}
+      <section className="py-28 px-6 bg-[#0a0b10] text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <RevealOnScroll>
+              <p className="section-tag">CERTIFICATIONS</p>
+            </RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr text-white mb-4">
+                국제 인증 기준
+              </h2>
+            </RevealOnScroll>
+            <RevealOnScroll delay={200}>
+              <div className="gold-line mx-auto" />
+            </RevealOnScroll>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {certifications.map((cert, i) => (
+              <RevealOnScroll key={cert.title} delay={i * 100}>
+                <div className="p-8 border border-gold-500/20 hover:border-gold-500 transition-colors h-full text-center">
+                  <div className="w-16 h-16 mx-auto mb-5 rounded-full border-2 border-gold-500 flex items-center justify-center">
+                    <span className="font-display text-lg text-gold-500 italic">
+                      {cert.title}
+                    </span>
+                  </div>
+                  <p className="text-sm text-white/60 leading-7">{cert.desc}</p>
+                </div>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Quote */}
+      <section className="py-24 px-6 bg-[#fdfbf7] text-center">
+        <div className="max-w-3xl mx-auto">
+          <RevealOnScroll>
+            <div className="font-display text-4xl text-gold-500 mb-6">
+              &ldquo;
+            </div>
           </RevealOnScroll>
           <RevealOnScroll delay={100}>
-            <blockquote className="font-serif text-[clamp(1.5rem,2.8vw,2.25rem)] font-light leading-[1.5] tracking-kr-tight text-white/90 max-w-3xl mx-auto">
+            <blockquote className="font-serif text-xl md:text-2xl font-light leading-relaxed tracking-wide text-neutral-700 mb-6">
               자연의 시간을 기다리는 정직함이
               <br />
-              <em className="not-italic text-gold-500">
-                ZOEL LIFE의 품질을 만듭니다.
-              </em>
+              ZOEL LIFE의 품질을 만듭니다.
             </blockquote>
           </RevealOnScroll>
           <RevealOnScroll delay={200}>
-            <span className="mt-12 block w-12 h-px bg-gold-700 mx-auto" />
+            <div className="gold-line mx-auto" />
           </RevealOnScroll>
         </div>
       </section>

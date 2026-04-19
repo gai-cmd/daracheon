@@ -53,11 +53,7 @@ const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_ATTACHMENT_BYTES = 20 * 1024 * 1024;
 const MAX_MESSAGES = 50;
 const MAX_TEXT_CHARS = 20_000;
-// Haiku 4.5 breaks large tasks into many small tool calls (read → edit →
-// re-read → edit → …) instead of bundling via multi_str_replace. A
-// BrandStory-class multi-tab edit routinely needs 10+ turns. 6 was too
-// tight and caused premature "반복 한도 초과" aborts mid-task.
-const MAX_TOOL_TURNS = 20;
+const MAX_TOOL_TURNS = 6;
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 20;

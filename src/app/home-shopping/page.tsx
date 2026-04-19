@@ -62,61 +62,36 @@ export default async function HomeShoppingPage() {
     .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
 
   return (
-    <div className="bg-lx-black text-lx-ivory">
+    <>
       {/* Top Banner */}
-      <section className="bg-gold-500 text-lx-black py-3 text-center border-b border-gold-700/40">
-        <p className="font-mono text-[0.68rem] tracking-en-tag uppercase font-medium">
-          TV홈쇼핑 특별 방송 기념 · 한정 수량 특별가 공개
+      <section className="bg-gradient-to-r from-gold-600 to-gold-500 text-white py-4 text-center">
+        <p className="text-sm font-medium tracking-wide">
+          TV홈쇼핑 특별 방송 기념 - 한정 수량 특별가 공개
         </p>
       </section>
 
       {/* Hero */}
-      <section className="relative pt-[calc(theme(spacing.nav)+60px)] pb-20 md:pb-[90px] overflow-hidden bg-hero-dark">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_50%_70%_at_80%_30%,rgba(255,60,60,0.12),transparent_60%),radial-gradient(ellipse_60%_60%_at_20%_70%,rgba(212,168,67,0.10),transparent_60%)]"
-        />
-        <div className="relative z-10 max-w-page mx-auto px-7 lg:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-10 lg:gap-16 items-end">
-            <RevealOnScroll>
-              <div>
-                <p className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500 mb-5">
-                  Home Shopping · 편성표 · 다시보기
-                </p>
-                <h1 className="text-[clamp(2.2rem,5vw,4.6rem)] font-extralight tracking-kr-tight leading-[1.1] text-lx-ivory">
-                  TV 홈쇼핑
-                  <br />
-                  <em className="not-italic font-serif font-normal text-gold-400">
-                    편성표 · 다시보기
-                  </em>
-                </h1>
-              </div>
-            </RevealOnScroll>
-            <RevealOnScroll delay={100}>
-              <p className="text-base md:text-[1.05rem] leading-[1.9] text-white/72 font-light max-w-md">
-                롯데홈쇼핑을 시작으로 현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간
-                방송은 각 홈쇼핑 앱과 대라천 웹에서 동시 송출됩니다.
-              </p>
-            </RevealOnScroll>
-          </div>
+      <section className="relative pt-36 pb-28 bg-[#0a0b10] text-white">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
+          <p className="section-tag mb-5">HOME SHOPPING SPECIAL</p>
+          <h1 className="section-title-kr text-white mb-5">홈쇼핑 특별관</h1>
+          <p className="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto">
+            ZOEL LIFE 프리미엄 침향을 특별한 가격에 만나보세요
+          </p>
         </div>
       </section>
 
       {/* Consumer Alert */}
-      <section className="py-20 md:py-[90px] bg-lx-ink border-t border-gold-500/15">
-        <div className="max-w-page mx-auto px-7 lg:px-16">
+      <section className="py-28 px-6 bg-[#14161f] text-white">
+        <div className="max-w-4xl mx-auto">
           <RevealOnScroll>
-            <div className="text-center mb-12">
-              <p className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500 mb-5">
-                Consumer Alert
-              </p>
-              <h2 className="text-[clamp(1.8rem,3.5vw,3rem)] font-light tracking-kr-tight text-lx-ivory mb-6">
-                가짜 침향,
-                <em className="not-italic font-serif font-normal text-gold-400"> 당신의 건강을 위협합니다</em>
+            <div className="text-center mb-10">
+              <h2 className="font-serif text-2xl md:text-3xl text-white mb-6">
+                가짜 침향, 당신의 건강을 위협합니다
               </h2>
-              <p className="text-white/70 font-light text-[0.95rem] md:text-base leading-[1.85] max-w-2xl mx-auto">
-                최근 뉴스에서 가짜 침향 유통 문제가 보도되고 있습니다. 식약처가
-                인정한 침향은 단 2종뿐이며, 오직 이 종들만이 식용 가능합니다.
+              <p className="text-white/60 text-sm leading-8 max-w-2xl mx-auto">
+                최근 뉴스에서 가짜 침향 유통 문제가 보도되고 있습니다.
+                식약처가 인정한 침향은 단 2종뿐이며, 오직 이 종들만이 식용 가능합니다.
               </p>
             </div>
           </RevealOnScroll>
@@ -126,12 +101,10 @@ export default async function HomeShoppingPage() {
               {badges.map((badge) => (
                 <div
                   key={badge.label}
-                  className="flex items-center gap-2 px-5 py-3 border border-gold-500/30 bg-gold-500/5 backdrop-blur"
+                  className="flex items-center gap-2 px-5 py-3 border border-gold-500/30 bg-gold-500/5"
                 >
                   <span className="text-lg">{badge.icon}</span>
-                  <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-400">
-                    {badge.label}
-                  </span>
+                  <span className="text-[0.75rem] tracking-wider text-gold-400">{badge.label}</span>
                 </div>
               ))}
             </div>
@@ -140,39 +113,28 @@ export default async function HomeShoppingPage() {
       </section>
 
       {/* News Section */}
-      <section className="py-20 md:py-[90px] bg-lx-slate border-t border-gold-500/15">
-        <div className="max-w-page mx-auto px-7 lg:px-16">
-          <div className="text-center mb-12 max-w-3xl mx-auto">
-            <RevealOnScroll>
-              <p className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-500 mb-5">
-                News
-              </p>
-            </RevealOnScroll>
+      <section className="py-28 px-6 bg-[#fdfbf7]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <RevealOnScroll><p className="section-tag">News</p></RevealOnScroll>
             <RevealOnScroll delay={100}>
-              <h3 className="text-[clamp(1.8rem,3.5vw,3rem)] font-light tracking-kr-tight text-lx-ivory">
-                뉴스에서도 주목한
-                <em className="not-italic font-serif font-normal text-gold-400"> 침향의 진실</em>
-              </h3>
+              <h3 className="section-title-kr mb-4">뉴스에서도 주목한 침향의 진실</h3>
             </RevealOnScroll>
           </div>
 
           <RevealOnScroll>
-            <div className="max-w-3xl mx-auto bg-lx-ink p-8 lg:p-12 border border-gold-500/20 backdrop-blur">
+            <div className="bg-white p-8 lg:p-10 border border-neutral-200">
               <div className="flex items-start gap-4 mb-6">
-                <span className="font-mono text-[0.62rem] tracking-en-tag uppercase px-3 py-1 border border-gold-500 text-gold-400 flex-shrink-0">
-                  News
+                <span className="px-3 py-1 text-[0.65rem] tracking-wider border border-gold-500 text-gold-600 flex-shrink-0">
+                  NEWS
                 </span>
                 <div>
-                  <h4 className="font-serif text-lg md:text-xl text-lx-ivory mb-2 font-normal">
-                    가짜 침향 가려낸다...한약재도 유전자 검사
-                  </h4>
-                  <p className="font-mono text-[0.65rem] tracking-en-tag uppercase text-white/45">
-                    연합뉴스TV · 2026.03.28
-                  </p>
+                  <h4 className="font-serif text-lg mb-1">가짜 침향 가려낸다...한약재도 유전자 검사</h4>
+                  <p className="text-xs text-neutral-400">연합뉴스TV 2026.03.28 보도</p>
                 </div>
               </div>
-              <div className="border-t border-gold-500/15 pt-6">
-                <p className="text-[0.95rem] text-white/70 leading-[1.85] font-light">
+              <div className="border-t border-neutral-100 pt-6">
+                <p className="text-sm text-neutral-500 leading-8">
                   ZOEL LIFE 침향은 이미 DNA 유전자 분석을 통해 검증된 정품 침향만을 사용합니다.
                   Aquilaria agallocha Roxburgh 학명이 확인된 원료만을 엄선하여, 소비자가 안심하고
                   섭취할 수 있는 제품을 제공합니다.
@@ -184,52 +146,46 @@ export default async function HomeShoppingPage() {
       </section>
 
       {/* Broadcast Schedule — DB 연동 */}
-      <section className="relative py-24 md:py-[110px] px-7 lg:px-16 bg-lx-black border-t border-gold-500/15">
-        <div className="max-w-page mx-auto">
-          <div className="max-w-3xl mb-14">
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-5">— On Air · 편성표 —</p>
-            <RevealOnScroll>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ivory mb-6 leading-[1.2]">
-                방송 일정
-                <em className="not-italic font-serif font-normal text-gold-400"> · 예정·라이브·종료</em>
-              </h2>
-            </RevealOnScroll>
-            <span className="block w-12 h-px bg-gold-700 mt-4" aria-hidden />
-          </div>
+      <section className="py-28 px-6 bg-[#0a0b10] text-white text-center">
+        <div className="max-w-3xl mx-auto">
+          <RevealOnScroll>
+            <p className="section-tag mb-5">On Air</p>
+            <h2 className="font-serif text-2xl md:text-3xl text-white mb-6">
+              방송 일정
+            </h2>
+          </RevealOnScroll>
 
           {upcomingBroadcasts.length > 0 ? (
-            <div className="space-y-5">
+            <div className="mt-8 space-y-4">
               {upcomingBroadcasts.map((bc, i) => (
                 <RevealOnScroll key={bc.id} delay={i * 80}>
-                  <div className="border border-gold-500/30 bg-lx-ink p-7 md:p-8 hover:border-gold-400/60 transition-all duration-600 ease-out-soft">
-                    <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-                      <div className="flex items-center gap-3 flex-wrap">
+                  <div className="border border-gold-500/30 bg-gold-500/5 p-6 text-left">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2">
                         <BroadcastCountdown
                           scheduledAt={bc.scheduledAt}
                           channel={bc.channel}
                           status={bc.status}
                         />
                         {bc.status !== 'live' && (
-                          <span className="px-3 py-1 font-mono text-[0.62rem] tracking-en-tag uppercase border border-gold-500/50 text-gold-400">
+                          <span className="px-3 py-1 text-[0.65rem] tracking-wider font-semibold border border-gold-500/50 text-gold-400">
                             {statusLabel[bc.status]}
                           </span>
                         )}
                       </div>
-                      <span className="font-mono text-[0.68rem] tracking-en-nav uppercase text-white/45">
-                        {formatBroadcastDate(bc.scheduledAt)}
-                      </span>
+                      <span className="text-xs text-white/50">{formatBroadcastDate(bc.scheduledAt)}</span>
                     </div>
-                    <h3 className="font-serif text-xl md:text-2xl text-lx-ivory mb-2 font-normal tracking-kr-tight">{bc.channel}</h3>
+                    <h3 className="font-serif text-lg text-white mb-1">{bc.channel}</h3>
                     {bc.description && (
-                      <p className="text-white/68 text-[0.92rem] leading-[1.85] font-light mt-3">{bc.description}</p>
+                      <p className="text-white/60 text-sm mt-2">{bc.description}</p>
                     )}
-                    <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4">
+                    <div className="flex flex-wrap gap-4 mt-3 text-sm">
                       {bc.host && (
-                        <span className="font-mono text-[0.68rem] tracking-en-tag uppercase text-gold-400/80">쇼호스트 · {bc.host}</span>
+                        <span className="text-gold-400/80 text-xs">쇼호스트: {bc.host}</span>
                       )}
                       {bc.specialPrice && (
-                        <span className="font-serif text-gold-400 text-[0.95rem]">
-                          특별가 {bc.specialPrice.toLocaleString()}원
+                        <span className="text-gold-400 text-xs font-semibold">
+                          특별가: {bc.specialPrice.toLocaleString()}원
                           {bc.discountRate ? ` (${bc.discountRate}% 할인)` : ''}
                         </span>
                       )}
@@ -239,9 +195,9 @@ export default async function HomeShoppingPage() {
                         href={bc.livestreamUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 font-mono text-[0.68rem] tracking-en-nav uppercase border border-gold-500 text-gold-400 hover:bg-gold-500 hover:text-lx-black transition-all duration-400 ease-out-soft"
+                        className="inline-block mt-4 px-4 py-2 text-[0.7rem] tracking-wider border border-gold-500 text-gold-400 hover:bg-gold-500/10 transition-colors"
                       >
-                        라이브 시청하기 →
+                        라이브 시청하기
                       </a>
                     )}
                   </div>
@@ -250,51 +206,38 @@ export default async function HomeShoppingPage() {
             </div>
           ) : (
             <RevealOnScroll>
-              <div className="border border-gold-500/20 bg-lx-ink p-10 text-center">
-                <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-3">Coming Soon</p>
-                <p className="text-white/65 text-[0.95rem] leading-[1.85] font-light">
-                  현재 예정된 방송이 없습니다. 곧 방송 일정이 업데이트됩니다.
-                </p>
-              </div>
+              <p className="text-white/60 text-sm leading-8 max-w-xl mx-auto mt-4">
+                현재 예정된 방송이 없습니다. 곧 방송 일정이 업데이트됩니다.
+              </p>
             </RevealOnScroll>
           )}
         </div>
       </section>
 
       {/* Product Lineup */}
-      <section className="relative py-24 md:py-[110px] px-7 lg:px-16 bg-lx-ivory text-lx-ink border-t border-gold-500/15">
-        <div className="max-w-page mx-auto">
-          <div className="max-w-3xl mb-14">
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-700 mb-5">— Products —</p>
-            <RevealOnScroll>
-              <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ink mb-6 leading-[1.2]">
-                대표 제품
-                <em className="not-italic font-serif font-normal text-gold-700"> 라인업</em>
-              </h2>
+      <section className="py-28 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <RevealOnScroll><p className="section-tag">Products</p></RevealOnScroll>
+            <RevealOnScroll delay={100}>
+              <h2 className="section-title-kr mb-4">대표 제품 라인업</h2>
             </RevealOnScroll>
-            <span className="block w-12 h-px bg-gold-500 mt-4" aria-hidden />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProducts.map((product, i) => (
               <RevealOnScroll key={product.name} delay={i * 100}>
-                <div className="border border-gold-500/25 hover:border-gold-500/60 transition-colors overflow-hidden bg-white h-full flex flex-col">
-                  <div className="bg-lx-black p-8 text-center flex-1 flex flex-col justify-center border-b border-gold-500/30">
-                    <div className="font-mono text-[0.66rem] tracking-en-tag uppercase text-gold-500 mb-4">
-                      {String(i + 1).padStart(2, '0')} — Signature
-                    </div>
-                    <h3 className="font-serif text-xl md:text-2xl text-lx-ivory mb-3 font-normal tracking-kr-tight">{product.name}</h3>
-                    <p className="text-white/55 text-[0.85rem] leading-[1.75] font-light">{product.description}</p>
+                <div className="border border-neutral-200 hover:border-gold-500/40 transition-colors overflow-hidden">
+                  <div className="bg-[#0a0b10] p-8 text-center">
+                    <h3 className="font-serif text-xl text-white mb-2">{product.name}</h3>
+                    <p className="text-white/50 text-sm">{product.description}</p>
                   </div>
-                  <div className="p-7 text-center">
-                    <span className="inline-block px-4 py-2 font-mono text-[0.66rem] tracking-en-tag uppercase border border-gold-500 text-gold-700 mb-5">
+                  <div className="p-8 text-center">
+                    <span className="inline-block px-4 py-2 text-[0.75rem] tracking-wider border border-gold-500 text-gold-600">
                       방송 중 특별가 공개
                     </span>
-                    <Link
-                      href="tel:070-4140-4086"
-                      className="flex items-center justify-center gap-2.5 px-5 py-3 bg-gold-500 text-lx-black border border-gold-500 font-mono text-[0.68rem] font-medium tracking-en-nav uppercase transition-all duration-400 ease-out-soft hover:bg-gold-700 hover:border-gold-700"
-                    >
-                      전화 주문하기 →
+                    <Link href="tel:070-4140-4086" className="block mt-6 btn btn-gold text-center w-full">
+                      전화 주문하기
                     </Link>
                   </div>
                 </div>
@@ -305,46 +248,43 @@ export default async function HomeShoppingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-24 md:py-28 px-7 lg:px-16 bg-lx-black text-center border-t border-gold-500/15 overflow-hidden">
-        <div className="absolute inset-0 bg-hero-gold pointer-events-none" aria-hidden />
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <RevealOnScroll>
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-500 mb-6">— Order Now —</p>
-            <h2 className="text-[clamp(1.8rem,3.5vw,2.8rem)] font-light tracking-kr-tight text-lx-ivory mb-8 leading-[1.2]">
-              지금 바로
-              <em className="not-italic font-serif font-normal text-gold-400"> 전화주문</em>
+      <section className="py-20 px-6 bg-gradient-to-b from-[#0a0b10] to-[#1a1d29] text-white text-center">
+        <RevealOnScroll>
+          <div className="max-w-2xl mx-auto">
+            <p className="section-tag mb-5">Order Now</p>
+            <h2 className="font-serif text-2xl md:text-3xl text-white mb-6">
+              지금 바로 전화주문
             </h2>
             <a
               href="tel:070-4140-4086"
-              className="inline-block font-serif text-[clamp(2.8rem,6vw,4.2rem)] font-light text-gold-400 hover:text-gold-300 transition-colors duration-400 mb-8 tracking-tight"
+              className="inline-block font-display text-4xl md:text-5xl text-gold-500 hover:text-gold-400 transition-colors mb-8"
             >
               070-4140-4086
             </a>
-            <p className="font-mono text-[0.68rem] tracking-en-nav uppercase text-white/45">
-              평일 09:00 — 18:00 · 점심 12:00 — 13:00 · 주말 휴무
+            <p className="text-white/40 text-sm">
+              평일 09:00 - 18:00 (점심시간 12:00 - 13:00 / 주말 및 공휴일 휴무)
             </p>
-          </RevealOnScroll>
-        </div>
+          </div>
+        </RevealOnScroll>
       </section>
 
       {/* Certification Logos */}
-      <section className="relative py-20 px-7 lg:px-16 bg-lx-ivory border-t border-gold-500/15">
-        <div className="max-w-page mx-auto">
+      <section className="py-16 px-6 bg-[#fdfbf7]">
+        <div className="max-w-4xl mx-auto">
           <RevealOnScroll>
-            <p className="font-mono text-[0.7rem] tracking-en-tag uppercase text-gold-700 text-center mb-10">— Certifications —</p>
-            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-14">
+            <div className="flex flex-wrap justify-center gap-8">
               {certifications.map((cert) => (
                 <div key={cert.name} className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full border border-gold-500/50 flex items-center justify-center bg-white">
-                    <span className="font-mono text-[0.68rem] font-medium tracking-en-tag uppercase text-gold-700">{cert.name}</span>
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full border-2 border-gold-500/30 flex items-center justify-center bg-white">
+                    <span className="font-display text-sm text-gold-600 tracking-wider">{cert.name}</span>
                   </div>
-                  <p className="font-mono text-[0.62rem] tracking-en-nav uppercase text-neutral-500">{cert.description}</p>
+                  <p className="text-xs text-neutral-400">{cert.description}</p>
                 </div>
               ))}
             </div>
           </RevealOnScroll>
         </div>
       </section>
-    </div>
+    </>
   );
 }
