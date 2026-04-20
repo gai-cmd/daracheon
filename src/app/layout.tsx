@@ -117,7 +117,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLd data={organizationJsonLd} />
         <GoogleAnalytics />
       </head>
-      <body className="font-body" data-palette="gold">
+      <body data-palette="gold">
         {showBanner && (
           <div className={`w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}>
             <span>{announcement.text}</span>

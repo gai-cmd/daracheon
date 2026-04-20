@@ -198,11 +198,17 @@ export default async function HomePage() {
       <JsonLd data={websiteJsonLd} />
 
       {/* HERO */}
-      <section className={styles.hero}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        <div className="hero-bg-agarwood" aria-hidden />
         <div
           className={styles.heroBg}
           style={{ backgroundImage: `url('${hero.heroBg}')` }}
           aria-hidden
+        />
+        <div
+          className="orn-plume"
+          aria-hidden
+          style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.heroContent}>
           <div className={styles.wrap}>

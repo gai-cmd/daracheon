@@ -2,7 +2,7 @@
    Source: tokens.json + brand-guidelines.md
    모든 variation이 import하여 동일 시스템 위에서 동작 */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&family=Noto+Serif+KR:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&family=Noto+Serif+KR:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* Gold scale */

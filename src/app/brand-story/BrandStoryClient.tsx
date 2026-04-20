@@ -40,11 +40,17 @@ export default function BrandStoryClient({ data }: Props) {
   return (
     <div className={styles.page}>
       {/* HERO */}
-      <section className={styles.hero}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        <div className="hero-bg-agarwood" aria-hidden />
         <div
           className={styles.heroBg}
           style={{ backgroundImage: `url('${hero?.heroBg ?? DEFAULT_HERO_BG}')` }}
           aria-hidden
+        />
+        <div
+          className="orn-plume"
+          aria-hidden
+          style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.heroInner}>
           <div className={styles.heroKicker}>{hero?.sectionTag ?? 'Agarwood Story'}</div>

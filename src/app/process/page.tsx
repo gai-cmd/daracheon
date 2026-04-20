@@ -53,7 +53,17 @@ export default function ProcessPage() {
   return (
     <>
       {/* HERO */}
-      <section className={styles.hero}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        <div
+          className="orn-plume"
+          aria-hidden
+          style={{ right: '4%', bottom: '-60px', opacity: 0.45, zIndex: 1 }}
+        />
+        <div
+          className="orn-plume"
+          aria-hidden
+          style={{ left: '8%', bottom: '-120px', opacity: 0.22, transform: 'scaleX(-1)', width: 240, height: 320, zIndex: 1 }}
+        />
         <div className={styles.wrap}>
           <div className={styles.kicker}>침향 농장 이야기</div>
           <h1>

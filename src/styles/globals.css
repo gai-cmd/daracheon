@@ -28,23 +28,9 @@
 }
 
 /* ═══════════════════════════════════════
-   Base Layer
+   Base Layer — zoel/tokens.css 가 body 폰트·배경 설정 (덮어쓰지 않음)
    ═══════════════════════════════════════ */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    @apply font-sans text-neutral-800 bg-white leading-relaxed;
-    font-weight: 400;
-    letter-spacing: -0.005em;
-    background-color: var(--luxury-ivory);
-    overflow-x: hidden;
-  }
-
   ::selection {
     background: rgba(212, 168, 67, 0.28);
     color: var(--luxury-black);

@@ -48,7 +48,12 @@ export default function CompanyPage() {
   return (
     <>
       {/* HERO */}
-      <section className={styles.hero}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        <div
+          className="orn-plume"
+          aria-hidden
+          style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
+        />
         <div className={styles.wrap}>
           <div className={styles.kicker}>회사소개</div>
           <h1>
