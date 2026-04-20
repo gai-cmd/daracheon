@@ -68,10 +68,11 @@ const DEFAULT_ERAS = [
 ];
 
 const DEFAULT_CERT_IMAGES = [
-  '/uploads/misc/kfda-doc-1.jpg',
-  '/uploads/misc/kfda-doc-2.jpg',
-  '/uploads/misc/kfda-doc-3.jpg',
-  '/uploads/misc/kfda-doc-4.jpg',
+  // 인증서 placeholder — 실제 KFDA/CITES 인증서 PDF 스캔본 업로드 시 교체
+  'https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280',
+  'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280',
+  'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
+  'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png',
 ];
 const DEFAULT_CERT_SECTIONS = [
   {
