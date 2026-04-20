@@ -2,8 +2,10 @@
 
 .nav {
   position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
+  top: 0;
+  right: 0;
+  left: var(--ai-panel-width, 0px);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,7 +14,7 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(212, 168, 67, 0.14);
-  left: var(--ai-panel-width, 0px);
+  height: var(--nav-h, 72px);
 }
 @media (min-width: 1024px) {
   .nav { padding: 20px 64px; }
@@ -93,7 +95,7 @@
   color: var(--accent-soft);
 }
 
-.navLinks a.active {
+.navLinks a:global(.active) {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
@@ -175,6 +177,6 @@
 }
 
 .mobileOverlay a:hover,
-.mobileOverlay a.active {
+.mobileOverlay a:global(.active) {
   color: var(--accent);
 }
