@@ -34,20 +34,27 @@ export async function GET() {
   }
 
   if (putUrl) {
-    try {
-      // cache-buster 로 CDN 우회 (Vercel Blob default TTL 31,536,000s 극복)
+    // Vercel Blob put() 직후 edge 복제가 완료되는데 ~수초 걸림.
+    // 실제 admin→프론트 플로우는 사용자 저장 → 페이지 방문 간격이 이보다 길어
+    // 문제없음. 테스트에선 최대 10s 까지 재시도.
+    let attempts = 0;
+    let lastBody: unknown = null;
+    for (; attempts < 20; attempts++) {
       const bustUrl = `${putUrl}?v=${Date.now()}`;
       const res = await fetch(bustUrl, { cache: 'no-store' });
       const body = res.ok ? await res.json() : null;
-      const ok = body?.nonce === testValue.nonce;
-      steps.push({
-        step: 'A2: fetch(put.url?v=…) with cache-buster',
-        ok,
-        detail: ok ? `nonce matched` : `body=${JSON.stringify(body)}`,
-      });
-    } catch (err) {
-      steps.push({ step: 'A2: fetch(put.url?v=…) with cache-buster', ok: false, error: err instanceof Error ? err.message : String(err) });
+      lastBody = body;
+      if (body && typeof body === 'object' && 'nonce' in body && (body as { nonce: string }).nonce === testValue.nonce) {
+        break;
+      }
+      await new Promise((r) => setTimeout(r, 500));
     }
+    const ok = attempts < 20;
+    steps.push({
+      step: 'A2: fetch with cache-buster + retry',
+      ok,
+      detail: ok ? `nonce matched after ${attempts + 1} attempt(s)` : `still stale after 20 attempts: ${JSON.stringify(lastBody)}`,
+    });
   }
 
   // === B. list consistency ===
