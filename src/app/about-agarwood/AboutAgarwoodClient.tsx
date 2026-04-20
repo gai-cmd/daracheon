@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { AboutAgarwoodData } from './page';
 
@@ -8,7 +10,22 @@ interface Props {
   data: AboutAgarwoodData | null;
 }
 
+const TABS = ['침향이란?', '문헌에 실린 침향', '논문에 실린 침향'] as const;
+
+// 공식 등재 규격집 — 원본 하드코딩 (데이터베이스 의존하지 않음)
+const REGISTRY_ROWS: Array<{ label: string; value: string }> = [
+  { label: '정식명', value: '침수향(沈水香), AQUILARIAE LIGNUM' },
+  { label: '학명', value: 'Aquilaria Agallocha Roxburgh' },
+  { label: '과명', value: '팥꽃나무과 Thymeleaceae' },
+  { label: '정의', value: '이 약은 침향나무의 수지가 침착된 수간목이다' },
+  { label: '성상', value: '흑갈색을 띠며 수지를 함유하고 많은 평행 섬유질로 되어 있다' },
+  { label: '기준', value: '건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상' },
+  { label: '특징', value: '흑갈색을 띠고 맛은 달고 쓰며 물에 가라앉아야 한다' },
+];
+
 export default function AboutAgarwoodClient({ data }: Props) {
+  const [activeTab, setActiveTab] = useState<number>(0);
+
   const hero = data?.hero;
   const definition = data?.definitionSection;
   const formationSteps = data?.formationSteps ?? [];
@@ -28,327 +45,620 @@ export default function AboutAgarwoodClient({ data }: Props) {
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.wrap}>
-          <div className={styles.kicker}>{hero?.sectionTag ?? '브랜드 이야기'}</div>
+          <div className={styles.kicker}>{hero?.sectionTag ?? 'Agarwood Story · 침향 이야기'}</div>
           <h1>
-            {hero?.titleKr ?? '자연이 건넨 약속,'}
+            {hero?.titleKr ?? '이젠 진짜 침향,'}
             <br />
-            <em>{hero?.titleEn ?? '사람이 지킨 25년'}</em>
+            <em>{hero?.titleEn ?? '학명부터 확인하세요'}</em>
           </h1>
           <p className={styles.lede}>
             {hero?.subtitle ??
-              '1999년, 베트남 하띤(Ha Tinh) 깊은 숲 속의 한 그루에서 시작된 대라천 ZOEL LIFE의 이야기.'}
+              "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh."}
           </p>
         </div>
       </section>
 
-      {/* Chapter 01 — Definition */}
-      {definition && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>01</div>
-                <div className={styles.chapterTag}>Chapter I · Definition</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>{definition.title ?? '침향이란 무엇인가?'}</h3>
-                {definition.subtitle && (
-                  <p style={{ color: 'var(--accent-soft)', marginBottom: 16, fontStyle: 'italic' }}>
-                    {definition.subtitle}
-                  </p>
-                )}
-                <p>{definition.body ?? ''}</p>
-                {definition.officialNameCallout && (
-                  <p style={{ marginTop: 16, color: 'var(--accent)' }}>
-                    공식 침향: {definition.officialNameCallout}
-                  </p>
-                )}
+      {/* TAB BAR */}
+      <section
+        style={{
+          position: 'sticky',
+          top: 72,
+          zIndex: 40,
+          background: 'rgba(10, 11, 16, 0.92)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderTop: '1px solid rgba(212,168,67,0.15)',
+          borderBottom: '1px solid rgba(212,168,67,0.15)',
+        }}
+      >
+        <div className={styles.wrap} style={{ display: 'flex', gap: 4, justifyContent: 'center', padding: '14px 28px', flexWrap: 'wrap' }}>
+          {TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(i)}
+              aria-current={activeTab === i ? 'page' : undefined}
+              style={{
+                padding: '10px 20px',
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontSize: '0.72rem',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                background: activeTab === i ? 'var(--accent)' : 'transparent',
+                color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                fontWeight: activeTab === i ? 600 : 400,
+                transition: 'all 300ms',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ════════════ TAB 0: 침향이란? ════════════ */}
+      {activeTab === 0 && (
+        <>
+          {/* Chapter 01 — Definition */}
+          <section className={styles.chapter}>
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>01</div>
+                  <div className={styles.chapterTag}>Chapter I · Definition</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <RevealOnScroll>
+                    <h3>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h3>
+                  </RevealOnScroll>
+                  <RevealOnScroll delay={100}>
+                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.08rem', marginBottom: 18 }}>
+                      {definition?.subtitle ?? '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)'}
+                    </p>
+                  </RevealOnScroll>
+                  <RevealOnScroll delay={200}>
+                    <p>
+                      {definition?.body ??
+                        '침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.'}
+                    </p>
+                  </RevealOnScroll>
+                  <RevealOnScroll delay={300}>
+                    <div
+                      style={{
+                        marginTop: 26,
+                        padding: '22px 24px',
+                        border: '1px solid rgba(212,168,67,0.35)',
+                        background: 'rgba(212,168,67,0.05)',
+                      }}
+                    >
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                        진짜 침향, 이제는 학명을 반드시 확인하세요.
+                      </p>
+                      <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
+                        공식 침향은{' '}
+                        <span style={{ color: 'var(--accent)', fontWeight: 500 }}>
+                          {definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'}
+                        </span>
+                        입니다.
+                      </p>
+                    </div>
+                  </RevealOnScroll>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
 
-      {/* Chapter 02 — Formation */}
-      {formationSteps.length > 0 && (
-        <section className={styles.chapter} data-alt="1">
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>02</div>
-                <div className={styles.chapterTag}>Chapter II · Formation</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>침향은 어떻게 만들어지나요?</h3>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    display: 'grid',
-                    gap: 24,
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                    marginTop: 16,
-                  }}
-                >
-                  {formationSteps.map((s, i) => (
-                    <li key={s.step + i} style={{ borderLeft: '1px solid rgba(212,168,67,0.35)', paddingLeft: 20 }}>
+          {/* Chapter 02 — Official Registration (하드코딩, 항상 노출) */}
+          <section className={styles.chapter} data-alt="1">
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>02</div>
+                  <div className={styles.chapterTag}>Chapter II · Registry</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <RevealOnScroll>
+                    <h3>
+                      대한민국약전외한약(생약)규격집
+                      <br />
+                      <em>공식 등재</em>
+                    </h3>
+                  </RevealOnScroll>
+                  <RevealOnScroll delay={150}>
+                    <div
+                      style={{
+                        marginTop: 20,
+                        padding: '28px 30px',
+                        border: '1px solid rgba(212,168,67,0.25)',
+                        background: 'rgba(255,255,255,0.02)',
+                      }}
+                    >
                       <div
                         style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '0.66rem',
-                          letterSpacing: '0.28em',
-                          textTransform: 'uppercase',
-                          color: 'var(--accent)',
-                          marginBottom: 10,
+                          display: 'grid',
+                          gridTemplateColumns: '1fr',
+                          gap: '18px 30px',
                         }}
                       >
-                        {s.step}
+                        {REGISTRY_ROWS.map((row) => (
+                          <div
+                            key={row.label}
+                            style={{
+                              display: 'flex',
+                              gap: 18,
+                              paddingBottom: 12,
+                              borderBottom: '1px solid rgba(212,168,67,0.12)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                flexShrink: 0,
+                                width: 70,
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.66rem',
+                                letterSpacing: '0.18em',
+                                color: 'var(--accent)',
+                                textTransform: 'uppercase',
+                                paddingTop: 3,
+                              }}
+                            >
+                              {row.label}
+                            </span>
+                            <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, fontWeight: 300 }}>
+                              {row.value}
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                      <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.1rem', color: '#fff', marginBottom: 8 }}>
-                        {s.title}
-                      </div>
-                      <p style={{ fontSize: '0.92rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.65)', maxWidth: 'none' }}>
-                        {s.description}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
+                    </div>
+                  </RevealOnScroll>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
 
-      {/* Chapter 03 — Special Reasons */}
-      {specialReasons.length > 0 && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>03</div>
-                <div className={styles.chapterTag}>Chapter III · Why Special</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>침향이 특별한 이유</h3>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    display: 'grid',
-                    gap: 24,
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    marginTop: 16,
-                  }}
-                >
-                  {specialReasons.map((r, i) => (
-                    <li key={r.title + i}>
-                      <div
-                        style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '0.66rem',
-                          letterSpacing: '0.28em',
-                          textTransform: 'uppercase',
-                          color: 'var(--accent)',
-                          marginBottom: 10,
-                        }}
-                      >
-                        {String(i + 1).padStart(2, '0')} — Reason
-                      </div>
-                      <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.1rem', color: '#fff', marginBottom: 8 }}>
-                        {r.title}
-                      </div>
-                      <p style={{ fontSize: '0.92rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.65)', maxWidth: 'none' }}>
-                        {r.description}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Chapter 04 — Benefits */}
-      {benefits.length > 0 && (
-        <section className={styles.chapter} data-alt="1">
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>04</div>
-                <div className={styles.chapterTag}>Chapter IV · Benefits</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>침향의 효능</h3>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    display: 'grid',
-                    gap: 20,
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                    marginTop: 16,
-                  }}
-                >
-                  {benefits.map((b, i) => (
-                    <li key={b.title + i} style={{ borderTop: '1px solid rgba(212,168,67,0.2)', paddingTop: 16 }}>
-                      <div
-                        style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '0.64rem',
-                          letterSpacing: '0.22em',
-                          textTransform: 'uppercase',
-                          color: 'var(--accent)',
-                          marginBottom: 8,
-                        }}
-                      >
-                        {String(i + 1).padStart(2, '0')}
-                      </div>
-                      <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 6 }}>
-                        {b.title}
-                      </div>
-                      <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255,255,255,0.62)', maxWidth: 'none' }}>
-                        {b.description}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Chapter 05 — Literatures */}
-      {literatures.length > 0 && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>05</div>
-                <div className={styles.chapterTag}>Chapter V · Literature</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>문헌에 실린 침향</h3>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    display: 'grid',
-                    gap: 20,
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    marginTop: 16,
-                  }}
-                >
-                  {literatures.map((l, i) => (
-                    <li key={l.title + i} style={{ borderLeft: '1px solid rgba(212,168,67,0.35)', paddingLeft: 16 }}>
-                      <div
-                        style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '0.62rem',
-                          letterSpacing: '0.22em',
-                          textTransform: 'uppercase',
-                          color: 'var(--accent)',
-                          marginBottom: 6,
-                        }}
-                      >
-                        {l.year} · {l.author}
-                      </div>
-                      <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 4 }}>
-                        {l.title}
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--accent-soft)', marginBottom: 8 }}>{l.topic}</div>
-                      <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255,255,255,0.62)', maxWidth: 'none' }}>
-                        {l.description}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Chapter 06 — Research */}
-      {papers.length > 0 && (
-        <section className={styles.chapter} data-alt="1">
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>06</div>
-                <div className={styles.chapterTag}>Chapter VI · Research</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>논문에 실린 침향</h3>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    display: 'grid',
-                    gap: 20,
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    marginTop: 16,
-                  }}
-                >
-                  {papers.map((p, i) => {
-                    const body = (
-                      <>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: '0.62rem',
-                            letterSpacing: '0.22em',
-                            textTransform: 'uppercase',
-                            color: 'var(--accent)',
-                            marginBottom: 8,
-                          }}
-                        >
-                          <span>{p.year}</span>
-                          {p.citations && p.citations !== '-' && (
-                            <span style={{ color: 'rgba(255,255,255,0.4)' }}>cited {p.citations}</span>
-                          )}
-                        </div>
-                        <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.98rem', color: '#fff', marginBottom: 6, lineHeight: 1.5 }}>
-                          {p.title}
-                        </div>
-                        {p.authors && (
-                          <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginBottom: 4 }}>
-                            {p.authors}
-                          </p>
-                        )}
-                        <p style={{ fontSize: '0.8rem', color: 'var(--accent-soft)', fontStyle: 'italic' }}>{p.journal}</p>
-                        {p.link && (
+          {/* Chapter 03 — Formation */}
+          <section className={styles.chapter}>
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>03</div>
+                  <div className={styles.chapterTag}>Chapter III · Formation</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <RevealOnScroll>
+                    <h3>침향은 어떻게 만들어지나요?</h3>
+                  </RevealOnScroll>
+                  <RevealOnScroll delay={100}>
+                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.08rem', marginBottom: 26 }}>
+                      자연의 치유 본능이 만든 기적의 향
+                    </p>
+                  </RevealOnScroll>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: 24,
+                    }}
+                  >
+                    {(formationSteps.length > 0
+                      ? formationSteps
+                      : [
+                          { step: '01', title: '외부 자극', description: '침향나무가 외부 상처나 곰팡이 감염 등 자극을 받습니다.' },
+                          { step: '02', title: '수지 분비', description: '상처 치유를 위해 나무 스스로 방어 수지를 분비합니다.' },
+                          { step: '03', title: '침착', description: '분비된 수지가 수십 년에 걸쳐 나무 내부에 서서히 침착됩니다.' },
+                          { step: '04', title: '형성', description: '수지가 충분히 침착된 부분이 향목 — 침향이 됩니다.' },
+                        ]
+                    ).map((item, i) => (
+                      <RevealOnScroll key={item.step + i} delay={i * 90}>
+                        <div style={{ textAlign: 'center' }}>
                           <div
                             style={{
-                              marginTop: 12,
-                              fontFamily: "'JetBrains Mono', monospace",
-                              fontSize: '0.64rem',
-                              letterSpacing: '0.22em',
-                              textTransform: 'uppercase',
+                              width: 72,
+                              height: 72,
+                              margin: '0 auto 18px',
+                              borderRadius: '50%',
+                              border: '1px solid var(--accent)',
+                              display: 'grid',
+                              placeItems: 'center',
+                              fontFamily: "'Noto Serif KR', serif",
+                              fontSize: '1.2rem',
+                              fontWeight: 400,
                               color: 'var(--accent)',
                             }}
                           >
-                            원문 보기 →
+                            {item.step}
                           </div>
-                        )}
-                      </>
-                    );
-                    return (
-                      <li key={p.title + i} style={{ borderTop: '1px solid rgba(212,168,67,0.2)', paddingTop: 16 }}>
-                        {p.link ? (
-                          <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'block' }}>
-                            {body}
-                          </a>
-                        ) : (
-                          body
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
+                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
+                            {item.title}
+                          </h4>
+                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
+                            {item.description}
+                          </p>
+                        </div>
+                      </RevealOnScroll>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Chapter 04 — Why Special (4가지 이유) */}
+          <section className={styles.chapter} data-alt="1">
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>04</div>
+                  <div className={styles.chapterTag}>Chapter IV · Why Special</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <RevealOnScroll>
+                    <h3>
+                      침향이 <em>특별한 4가지 이유</em>
+                    </h3>
+                  </RevealOnScroll>
+                  <div
+                    style={{
+                      marginTop: 26,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: 20,
+                    }}
+                  >
+                    {(specialReasons.length > 0
+                      ? specialReasons
+                      : [
+                          { title: '수십 년의 시간', description: '20년 이상의 긴 시간이 만들어낸 자연의 결정체입니다.' },
+                          { title: '희귀한 수지', description: '전 세계적으로 생산량이 제한된 귀한 향목입니다.' },
+                          { title: '학명 기반 품질', description: '식약처 고시 학명 Aquilaria Agallocha Roxburgh.' },
+                          { title: '동서양 의학서', description: '동의보감·본초강목 등 수천 년간 약재로 기록.' },
+                        ]
+                    ).map((card, i) => (
+                      <RevealOnScroll key={card.title + i} delay={i * 90}>
+                        <div
+                          style={{
+                            padding: 26,
+                            border: '1px solid rgba(212,168,67,0.22)',
+                            background: 'rgba(255,255,255,0.02)',
+                            height: '100%',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.62rem',
+                              letterSpacing: '0.26em',
+                              color: 'var(--accent)',
+                              textTransform: 'uppercase',
+                              marginBottom: 14,
+                            }}
+                          >
+                            {String(i + 1).padStart(2, '0')} — Reason
+                          </div>
+                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
+                            {card.title}
+                          </h4>
+                          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
+                            {card.description}
+                          </p>
+                        </div>
+                      </RevealOnScroll>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Chapter 05 — Benefits */}
+          <section className={styles.chapter}>
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>05</div>
+                  <div className={styles.chapterTag}>Chapter V · Benefits</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <RevealOnScroll>
+                    <h3>
+                      침향의 <em>효능에 주목!</em>
+                    </h3>
+                  </RevealOnScroll>
+                  <div
+                    style={{
+                      marginTop: 26,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: 20,
+                    }}
+                  >
+                    {(benefits.length > 0
+                      ? benefits
+                      : [
+                          { title: '기혈 순환', description: '막힌 기를 뚫어 오장육부 기능을 정상화합니다.' },
+                          { title: '자양강장', description: '찬 기운을 몰아내고 몸을 따뜻하게 보강합니다.' },
+                          { title: '신경 안정', description: '예민한 신경을 이완시키고 숙면에 도움.' },
+                          { title: '항염 · 혈관', description: '염증 억제와 혈관 건강 증진.' },
+                          { title: '뇌 건강', description: '뇌혈류 개선과 뇌세포 보호.' },
+                          { title: '소화 · 복통', description: '위를 따뜻하게 하여 소화 기능 개선.' },
+                        ]
+                    ).map((b, i) => (
+                      <RevealOnScroll key={b.title + i} delay={(i % 6) * 70}>
+                        <div style={{ paddingTop: 18, borderTop: '1px solid rgba(212,168,67,0.2)' }}>
+                          <div
+                            style={{
+                              fontFamily: "'Noto Serif KR', serif",
+                              fontSize: '1.3rem',
+                              color: 'var(--accent)',
+                              fontWeight: 400,
+                              marginBottom: 8,
+                            }}
+                          >
+                            {String(i + 1).padStart(2, '0')}
+                          </div>
+                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                            {b.title}
+                          </h4>
+                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
+                            {b.description}
+                          </p>
+                        </div>
+                      </RevealOnScroll>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ════════════ TAB 1: 문헌에 실린 침향 ════════════ */}
+      {activeTab === 1 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>—</div>
+                <div className={styles.chapterTag}>Literature · 문헌</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>
+                    <em>문헌에 실린 침향</em>
+                  </h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p>
+                    침향(沈香)은 수천 년간 동서양의 의학 문헌에서 그 가치를 인정받아 온 귀중한 약재입니다.
+                  </p>
+                </RevealOnScroll>
+                {literatures.length > 0 ? (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                      gap: 20,
+                    }}
+                  >
+                    {literatures.map((lit, i) => (
+                      <RevealOnScroll key={lit.title + i} delay={(i % 6) * 60}>
+                        <div
+                          style={{
+                            padding: 22,
+                            border: '1px solid rgba(212,168,67,0.2)',
+                            background: 'rgba(255,255,255,0.02)',
+                            height: '100%',
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+                            <span
+                              style={{
+                                padding: '4px 10px',
+                                border: '1px solid rgba(212,168,67,0.35)',
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.62rem',
+                                letterSpacing: '0.22em',
+                                color: 'var(--accent)',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {lit.year}
+                            </span>
+                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{lit.author}</span>
+                          </div>
+                          <h4
+                            style={{
+                              fontFamily: "'Noto Serif KR', serif",
+                              fontSize: '1.05rem',
+                              color: '#fff',
+                              marginBottom: 6,
+                              fontWeight: 400,
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            {lit.title}
+                          </h4>
+                          <p
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.62rem',
+                              letterSpacing: '0.2em',
+                              color: 'var(--accent-soft)',
+                              textTransform: 'uppercase',
+                              marginBottom: 10,
+                            }}
+                          >
+                            {lit.topic}
+                          </p>
+                          <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, fontWeight: 300 }}>
+                            {lit.description}
+                          </p>
+                        </div>
+                      </RevealOnScroll>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      padding: '50px 30px',
+                      textAlign: 'center',
+                      border: '1px dashed rgba(212,168,67,0.25)',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                      Coming Soon
+                    </div>
+                    문헌 자료가 곧 업데이트됩니다.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════ TAB 2: 논문에 실린 침향 ════════════ */}
+      {activeTab === 2 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>—</div>
+                <div className={styles.chapterTag}>Research · 논문</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>
+                    <em>논문에 실린 침향</em>
+                  </h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p>현대 과학 논문에서 그 가치를 인정받아 온 귀중한 약재입니다.</p>
+                </RevealOnScroll>
+                {papers.length > 0 ? (
+                  <>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                        gap: 20,
+                      }}
+                    >
+                      {papers.map((paper, i) => {
+                        const CardInner = (
+                          <div
+                            style={{
+                              padding: 22,
+                              border: '1px solid rgba(212,168,67,0.2)',
+                              background: 'rgba(255,255,255,0.02)',
+                              height: '100%',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+                              <span
+                                style={{
+                                  padding: '4px 10px',
+                                  border: '1px solid rgba(212,168,67,0.35)',
+                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                  fontSize: '0.62rem',
+                                  letterSpacing: '0.22em',
+                                  color: 'var(--accent)',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {paper.year}
+                              </span>
+                              {paper.citations && paper.citations !== '-' && (
+                                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
+                                  cited {paper.citations}
+                                </span>
+                              )}
+                            </div>
+                            <h4
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '0.98rem',
+                                color: '#fff',
+                                marginBottom: 8,
+                                fontWeight: 400,
+                                lineHeight: 1.5,
+                              }}
+                            >
+                              {paper.title}
+                            </h4>
+                            {paper.authors && (
+                              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6, lineHeight: 1.6 }}>
+                                {paper.authors}
+                              </p>
+                            )}
+                            <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', fontSize: '0.8rem', color: 'var(--accent-soft)' }}>
+                              {paper.journal}
+                            </p>
+                            {paper.link && (
+                              <p
+                                style={{
+                                  marginTop: 12,
+                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                  fontSize: '0.64rem',
+                                  letterSpacing: '0.22em',
+                                  color: 'var(--accent)',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                원문 보기 →
+                              </p>
+                            )}
+                          </div>
+                        );
+                        return (
+                          <RevealOnScroll key={paper.title + i} delay={(i % 6) * 60}>
+                            {paper.link ? (
+                              <a
+                                href={paper.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+                              >
+                                {CardInner}
+                              </a>
+                            ) : (
+                              CardInner
+                            )}
+                          </RevealOnScroll>
+                        );
+                      })}
+                    </div>
+                    <RevealOnScroll>
+                      <p style={{ textAlign: 'center', marginTop: 50, fontSize: '0.86rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.85, fontWeight: 300 }}>
+                        위 논문은 침향의 전통적·과학적 가치를 뒷받침하는 대표적인 자료입니다.
+                      </p>
+                    </RevealOnScroll>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      padding: '50px 30px',
+                      textAlign: 'center',
+                      border: '1px dashed rgba(212,168,67,0.25)',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                      Coming Soon
+                    </div>
+                    논문 자료가 곧 업데이트됩니다.
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -356,51 +666,63 @@ export default function AboutAgarwoodClient({ data }: Props) {
       )}
 
       {/* CTA */}
-      {cta && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap} style={{ textAlign: 'center' }}>
-            <h3 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(1.4rem, 2.4vw, 1.8rem)', fontWeight: 300, marginBottom: 24, color: '#fff' }}>
-              {cta.title ?? '침향의 세계가 궁금하시다면'}
+      <section className={styles.chapter} data-alt="1">
+        <div className={styles.wrap} style={{ textAlign: 'center' }}>
+          <RevealOnScroll>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontSize: '0.7rem',
+                letterSpacing: '0.3em',
+                color: 'var(--accent)',
+                textTransform: 'uppercase',
+                marginBottom: 16,
+              }}
+            >
+              — Explore —
+            </div>
+            <h3 style={{ marginBottom: 30, fontFamily: "'Noto Sans KR', sans-serif" }}>
+              {cta?.title ?? '침향의 세계가 궁금하시다면'}
             </h3>
-            <div style={{ display: 'inline-flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ display: 'inline-flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link
-                href={cta.buttonProductsHref ?? '/products'}
+                href={cta?.buttonProductsHref ?? '/products'}
                 style={{
-                  padding: '12px 28px',
+                  padding: '14px 28px',
                   background: 'var(--accent)',
-                  color: '#000',
-                  fontSize: '0.72rem',
+                  color: 'var(--lx-black)',
+                  border: '1px solid var(--accent)',
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.7rem',
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 500,
+                  fontWeight: 600,
                   textDecoration: 'none',
-                  border: '1px solid var(--accent)',
                 }}
               >
-                {cta.buttonProducts ?? '제품 보기'}
+                {cta?.buttonProducts ?? '제품 보기'}
               </Link>
               <Link
-                href={cta.buttonBrandHref ?? '/brand-story'}
+                href={cta?.buttonBrandHref ?? '/brand-story'}
                 style={{
-                  padding: '12px 28px',
+                  padding: '14px 28px',
                   background: 'transparent',
                   color: '#fff',
-                  fontSize: '0.72rem',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.7rem',
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  fontFamily: "'JetBrains Mono', monospace",
                   fontWeight: 500,
                   textDecoration: 'none',
-                  border: '1px solid rgba(255,255,255,0.3)',
                 }}
               >
-                {cta.buttonBrand ?? '브랜드 스토리'}
+                {cta?.buttonBrand ?? '브랜드 스토리'}
               </Link>
             </div>
-          </div>
-        </section>
-      )}
+          </RevealOnScroll>
+        </div>
+      </section>
     </>
   );
 }
