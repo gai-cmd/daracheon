@@ -99,14 +99,24 @@ async function blobReadRaw(filename: string): Promise<unknown | null> {
 }
 
 async function blobWriteRaw(filename: string, data: unknown) {
+  // allowOverwrite:true 만으로는 Vercel CDN 이 기존 cache entry 의 TTL
+  // (default 1년) 을 유지해 새 콘텐츠가 반영 안 됨. 기존 blob 을 먼저
+  // del → put 으로 CDN entry 자체를 재생성해야 cacheControlMaxAge:0 이
+  // 확실히 적용됨. del 실패는 무시 (blob 이 아직 없거나 동시 쓰기 경합).
+  // del 과 put 사이 short window 동안 read 가 null 을 받을 수 있으나,
+  // 그 경우 fs seed fallback 으로 기본값이 노출됨 — acceptable.
+  try {
+    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
+    const existing = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
+    if (existing) await del(existing.url);
+  } catch (err) {
+    console.warn(`[db] pre-write del skipped for ${filename}`, err);
+  }
   await put(`${BLOB_PREFIX}${filename}.json`, JSON.stringify(data, null, 2), {
     access: 'public',
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: 'application/json',
-    // 기본값(31536000s)이면 Vercel CDN 이 overwrite 후에도 이전 콘텐츠를
-    // 오랫동안 서빙해 admin 저장 → 프론트 반영이 지연됨. 0 으로 내려
-    // 다음 요청마다 origin 까지 가도록 강제.
     cacheControlMaxAge: 0,
   });
 }
