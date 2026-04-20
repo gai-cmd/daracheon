@@ -463,6 +463,81 @@ export default function BrandStoryClient({ data }: Props) {
                 {processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}
               </div>
             </div>
+
+            {/* 공장 동영상 — Drive mov 폴더 (1t8GYG9Gl4_EleEQBlxmwwntQF662RpNO) */}
+            <div style={{ marginTop: 60 }}>
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.3em',
+                  color: 'var(--accent)',
+                  textTransform: 'uppercase',
+                  marginBottom: 14,
+                  textAlign: 'center',
+                }}
+              >
+                Factory Footage · 공장 현장 영상
+              </div>
+              <h3
+                style={{
+                  textAlign: 'center',
+                  fontFamily: "'Noto Sans KR', sans-serif",
+                  fontSize: 'clamp(1.4rem, 2.8vw, 2rem)',
+                  fontWeight: 200,
+                  color: '#fff',
+                  marginBottom: 30,
+                }}
+              >
+                베트남 직영 공장 <em style={{ color: 'var(--accent)', fontFamily: "'Noto Serif KR', serif", fontStyle: 'normal', fontWeight: 400 }}>실측 영상</em>
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: 16,
+                }}
+              >
+                {[
+                  { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '농장 현장 — 식목·관수' },
+                  { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '수확 현장 — 침향 채취' },
+                  { id: '1uMxdrgJds4tYaMfiC-He9RXsu5P0vLLN', title: '특허 #12835 — 수지유도 공정' },
+                  { id: '1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I', title: '72시간 고온증류' },
+                  { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
+                  { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
+                ].map((v) => (
+                  <div
+                    key={v.id}
+                    style={{
+                      border: '1px solid rgba(212,168,67,0.25)',
+                      background: 'rgba(255,255,255,0.02)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div style={{ aspectRatio: '16 / 9', position: 'relative', background: '#000' }}>
+                      <iframe
+                        src={`https://drive.google.com/file/d/${v.id}/preview`}
+                        allow="autoplay; encrypted-media; fullscreen"
+                        allowFullScreen
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                        title={v.title}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        padding: '14px 16px',
+                        fontFamily: "'Noto Sans KR', sans-serif",
+                        fontSize: '0.88rem',
+                        color: '#fff',
+                        fontWeight: 400,
+                      }}
+                    >
+                      {v.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       )}
