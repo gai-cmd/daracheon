@@ -178,7 +178,6 @@ export default function BrandStoryClient({ data }: Props) {
                 onClick={() => setActiveTab(i)}
                 aria-current={activeTab === i ? 'page' : undefined}
               >
-                <span className={styles.tabIdx}>{String(i + 1).padStart(2, '0')}</span>
                 {tab}
               </button>
             ))}
