@@ -36,6 +36,10 @@ interface Paper {
   journal: string;
   year: string;
   citations: string;
+  description?: string;
+  tag?: string;
+  link?: string;
+  authors?: string;
 }
 
 interface MediaItem {
@@ -184,6 +188,19 @@ function SectionCard({
         <SaveButton onClick={onSave} loading={saving} />
       </div>
     </section>
+  );
+}
+
+/** Divider that mirrors the frontend tab bar on /about-agarwood. */
+function TabGroupHeader({ index, label }: { index: number; label: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-4">
+      <span className="inline-flex h-7 min-w-[2.5rem] items-center justify-center rounded-full bg-gold-500 px-3 text-xs font-semibold tracking-wider text-white">
+        탭 {index}
+      </span>
+      <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
+      <div className="flex-1 border-t border-gold-500/30" />
+    </div>
   );
 }
 
@@ -433,6 +450,8 @@ export default function AdminAboutAgarwoodPage() {
         <p className="text-gray-500 mb-8">/about-agarwood 공개 페이지의 콘텐츠를 관리합니다.</p>
 
         <div className="space-y-8">
+          <TabGroupHeader index={1} label="침향이란?" />
+
           {/* Hero */}
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -644,8 +663,10 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
+          <TabGroupHeader index={2} label="문헌에 실린 침향" />
+
           {/* Literatures */}
-          <SectionCard title="Tab 2 · 문헌에 실린 침향" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
+          <SectionCard title="문헌 목록" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
             <div className="space-y-4">
               {literatures.map((lit, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -672,8 +693,10 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
+          <TabGroupHeader index={3} label="논문에 실린 침향" />
+
           {/* Papers */}
-          <SectionCard title="Tab 3 · 논문에 실린 침향" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
+          <SectionCard title="논문 목록" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
             <div className="space-y-4">
               {papers.map((paper, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -690,7 +713,13 @@ export default function AdminAboutAgarwoodPage() {
                     <input placeholder="연도" value={paper.year} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], year: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                     <input placeholder="인용수 (미정시 -)" value={paper.citations} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], citations: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                   </div>
-                  <input placeholder="논문 제목" value={paper.title} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], title: e.target.value }; setPapers(n); }} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <input placeholder="논문 제목" value={paper.title} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], title: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                    <input placeholder="저자 (선택)" value={paper.authors ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], authors: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                    <input placeholder="태그 (예: 학술)" value={paper.tag ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], tag: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  </div>
+                  <textarea placeholder="요약/설명 (선택)" rows={2} value={paper.description ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], description: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <input placeholder="원문 링크 (선택, https://...)" value={paper.link ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], link: e.target.value }; setPapers(n); }} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                 </div>
               ))}
               <button type="button" onClick={() => setPapers([...papers, { title: '', journal: '', year: '', citations: '-' }])} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
@@ -699,8 +728,10 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
+          <TabGroupHeader index={4} label="매체에 실린 침향" />
+
           {/* Media Tab */}
-          <SectionCard title="Tab 4 · 매체에 실린 침향" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
+          <SectionCard title="매체 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={mediaTab.tag} onChange={(v) => setMediaTab({ ...mediaTab, tag: v })} />
@@ -743,8 +774,10 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
+          <TabGroupHeader index={5} label="고객이 남긴 침향" />
+
           {/* Testimonials Tab */}
-          <SectionCard title="Tab 5 · 고객이 남긴 침향" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
+          <SectionCard title="고객 후기 목록" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={testimonialsTab.tag} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, tag: v })} />

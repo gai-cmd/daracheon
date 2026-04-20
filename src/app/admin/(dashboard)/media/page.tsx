@@ -5,7 +5,7 @@ import Image from 'next/image';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
 /* ─── Types ─── */
-type MediaType = 'article' | 'press' | 'video';
+type MediaType = 'video' | 'press' | 'article' | 'photo';
 
 interface MediaItem {
   id: string;
@@ -19,16 +19,19 @@ interface MediaItem {
 }
 
 /* ─── Label / Color Maps ─── */
+// Order mirrors the /media frontend section order: 01 Videos · 02 Press · 03 Photos.
 const typeLabel: Record<MediaType, string> = {
-  article: '기사',
-  press: '보도',
   video: '영상',
+  press: '보도',
+  article: '기사',
+  photo: '사진',
 };
 
 const typeColor: Record<MediaType, string> = {
-  article: 'bg-forest-400 text-white',
-  press: 'bg-gold-500 text-white',
   video: 'bg-red-600 text-white',
+  press: 'bg-gold-500 text-white',
+  article: 'bg-forest-400 text-white',
+  photo: 'bg-neutral-700 text-white',
 };
 
 /* ─── Component ─── */
@@ -184,8 +187,10 @@ export default function MediaAdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 font-serif">미디어 관리</h1>
-            <p className="text-sm text-neutral-500 mt-1">뉴스, 보도자료, 영상 콘텐츠를 관리합니다.</p>
+            <h1 className="text-2xl font-bold text-neutral-900 font-serif">침향 농장 이야기</h1>
+            <p className="text-sm text-neutral-500 mt-1">
+              <span className="font-mono">/media</span> 공개 페이지의 세 섹션(01 Videos · 02 Press · 03 Photos) 콘텐츠를 관리합니다.
+            </p>
           </div>
           <button
             onClick={openAddModal}
@@ -200,7 +205,7 @@ export default function MediaAdminPage() {
 
         {/* Type Filter Tabs */}
         <div className="flex gap-2 mb-8">
-          {(['all', 'article', 'press', 'video'] as const).map((t) => (
+          {(['all', 'video', 'press', 'article', 'photo'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
@@ -334,9 +339,10 @@ export default function MediaAdminPage() {
                     onChange={(e) => setEditingItem({ ...editingItem, type: e.target.value as MediaType })}
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
                   >
-                    <option value="article">기사</option>
-                    <option value="press">보도</option>
-                    <option value="video">영상</option>
+                    <option value="video">영상 (01 Videos)</option>
+                    <option value="press">보도 (02 Press)</option>
+                    <option value="article">기사 (02 Press)</option>
+                    <option value="photo">사진 (03 Photos)</option>
                   </select>
                 </div>
 
