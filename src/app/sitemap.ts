@@ -3,7 +3,7 @@ import { readData } from '@/lib/db';
 import type { Product } from '@/data/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.daracheon.com';
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.daracheon.com').replace(/\/$/, '');
   const lastModified = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [

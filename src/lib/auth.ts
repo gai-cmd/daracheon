@@ -1,5 +1,17 @@
-const SECRET = process.env.ADMIN_SESSION_SECRET || 'dev-only-insecure-secret';
 const MAX_AGE_DAYS = Number(process.env.ADMIN_SESSION_MAX_AGE_DAYS ?? '7');
+
+function getSecret(): string {
+  const raw = process.env.ADMIN_SESSION_SECRET;
+  if (raw) return raw;
+  // Runtime check only: builds (next build / page-data collection) may not have env loaded.
+  // Deployed runtime (Vercel) sets VERCEL=1; reject there if secret is missing.
+  if (process.env.VERCEL || process.env.ADMIN_SESSION_ENFORCE_SECRET === '1') {
+    throw new Error(
+      'ADMIN_SESSION_SECRET 환경변수가 설정되지 않았습니다. 프로덕션에서는 반드시 32바이트 이상의 안전한 값을 지정해야 합니다.'
+    );
+  }
+  return 'dev-only-insecure-secret-do-not-use-in-production';
+}
 
 export const SESSION_COOKIE = 'daracheon_admin_session';
 export const SESSION_MAX_AGE_SECONDS = MAX_AGE_DAYS * 24 * 60 * 60;
@@ -35,7 +47,7 @@ function base64UrlToString(b64url: string): string {
 async function hmacSign(payload: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
-    new TextEncoder().encode(SECRET),
+    new TextEncoder().encode(getSecret()),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign']
@@ -88,7 +100,9 @@ export function verifyCredentials(email: string, password: string): AdminSession
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminEmail || !adminPassword) return null;
-  if (email.trim().toLowerCase() === adminEmail.trim().toLowerCase() && password === adminPassword) {
+  const emailMatches = email.trim().toLowerCase() === adminEmail.trim().toLowerCase();
+  const passwordMatches = constantTimeEqual(password, adminPassword);
+  if (emailMatches && passwordMatches) {
     return 'super_admin';
   }
   return null;

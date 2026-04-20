@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readSingle, writeSingle } from '@/lib/db';
-import { put, list, del } from '@vercel/blob';
+import { list, del } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

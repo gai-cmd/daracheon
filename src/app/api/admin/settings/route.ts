@@ -13,7 +13,7 @@ export async function GET() {
         { status: 404 }
       );
     }
-    return NextResponse.json({ company });
+    return NextResponse.json(company);
   } catch (error) {
     console.error('[Admin Settings] GET Error:', error);
     return NextResponse.json(

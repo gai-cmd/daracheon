@@ -18,7 +18,7 @@ function isPublicAdminPath(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const pathname = request.nextUrl.pathname.toLowerCase();
 
   const isAdminPage = pathname.startsWith('/admin');
   const isAdminApi = pathname.startsWith('/api/admin');

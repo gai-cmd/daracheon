@@ -54,7 +54,7 @@ async function blobReadRaw(filename: string): Promise<unknown | null> {
     const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
     const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
     if (!match) return null;
-    const res = await fetch(match.url, { cache: 'no-store' });
+    const res = await fetch(match.url, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return await res.json();
   } catch (err) {
