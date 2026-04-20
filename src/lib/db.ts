@@ -53,39 +53,42 @@ function fsWriteRaw(filename: string, data: unknown) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-async function blobReadRawUncached(filename: string): Promise<unknown | null> {
-  try {
-    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
-    const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
-    if (!match) return null;
-    // match.url 은 Vercel CDN 에서 서빙되며 기본 TTL 이 1년 — overwrite 해도
-    // CDN 이 이전 콘텐츠를 계속 서빙함. list 가 응답에 포함해주는
-    // uploadedAt 타임스탬프를 query 로 붙여 CDN cache key 를 uploadedAt 별로
-    // 갈라 버린다. 새 uploadedAt = 새 캐시 엔트리 = origin 히트 = fresh.
-    const bust = match.uploadedAt
-      ? `?v=${new Date(match.uploadedAt).getTime()}`
-      : `?v=${Date.now()}`;
-    const res = await fetch(`${match.url}${bust}`, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch (err) {
-    console.error(`[db] blob read failed for ${filename}`, err);
-    return null;
+// Sentinel: blob 에 명백히 없음. 일시 장애(fetch 실패 등)는 throw 로 구분.
+const NOT_FOUND = Symbol('not_found');
+
+// 3상태 반환: 데이터 / 명백히 없음(NOT_FOUND) / 일시 장애(throw)
+// fs seed fallback 은 NOT_FOUND 에만 적용되어야 함. 일시 장애를
+// NOT_FOUND 로 취급하면 admin PUT 의 '기존 데이터 merge' 가
+// seed 로 오염되어 사용자 저장분이 소실될 수 있음.
+async function blobReadRawUncached(filename: string): Promise<unknown | typeof NOT_FOUND> {
+  const t0 = Date.now();
+  const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
+  const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
+  if (!match) {
+    console.log(`[db:read] ${filename}: NOT_FOUND (list returned ${blobs.length} entries)`);
+    return NOT_FOUND;
   }
+  const bust = match.uploadedAt
+    ? `?v=${new Date(match.uploadedAt).getTime()}`
+    : `?v=${Date.now()}`;
+  const res = await fetch(`${match.url}${bust}`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error(`[db] blob fetch failed ${filename}: HTTP ${res.status}`);
+  }
+  const body = await res.json();
+  console.log(`[db:read] ${filename}: OK (${Date.now() - t0}ms, uploaded=${match.uploadedAt})`);
+  return body;
 }
 
 // Wrap the blob read with Next's data cache, tagged so writes can
-// invalidate every serverless instance globally in one call. We throw
-// on null so the cache entry is not persisted — otherwise a missing
-// blob (e.g. before eventual consistency on list) would be cached as
-// null for the entire revalidate window.
-const NOT_FOUND = Symbol('not_found');
-async function blobReadRaw(filename: string): Promise<unknown | null> {
+// invalidate every serverless instance globally in one call.
+// 반환: 데이터 | NOT_FOUND | (장애는 throw 해서 fs seed 오염 방지)
+async function blobReadRaw(filename: string): Promise<unknown | typeof NOT_FOUND> {
   const cached = unstable_cache(
     async () => {
-      const data = await blobReadRawUncached(filename);
-      if (data === null) throw NOT_FOUND;
-      return data;
+      const result = await blobReadRawUncached(filename);
+      if (result === NOT_FOUND) throw NOT_FOUND; // 캐시 오염 방지
+      return result;
     },
     ['db', filename],
     { tags: [dbTag(filename)], revalidate: 300 }
@@ -93,39 +96,45 @@ async function blobReadRaw(filename: string): Promise<unknown | null> {
   try {
     return await cached();
   } catch (err) {
-    if (err === NOT_FOUND) return null;
-    throw err;
+    if (err === NOT_FOUND) return NOT_FOUND;
+    throw err; // 일시 장애는 caller 에게 전파
   }
 }
 
 async function blobWriteRaw(filename: string, data: unknown) {
-  // allowOverwrite:true 만으로는 Vercel CDN 이 기존 cache entry 의 TTL
-  // (default 1년) 을 유지해 새 콘텐츠가 반영 안 됨. 기존 blob 을 먼저
-  // del → put 으로 CDN entry 자체를 재생성해야 cacheControlMaxAge:0 이
-  // 확실히 적용됨. del 실패는 무시 (blob 이 아직 없거나 동시 쓰기 경합).
-  // del 과 put 사이 short window 동안 read 가 null 을 받을 수 있으나,
-  // 그 경우 fs seed fallback 으로 기본값이 노출됨 — acceptable.
+  // 기존 CDN cache entry 의 TTL(default 1년) 무효화를 위해 put 전에 del.
+  // del 실패는 무시(blob 미존재 or 동시 경합).
+  const t0 = Date.now();
+  let delResult: 'deleted' | 'none' | 'error' = 'none';
   try {
     const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
     const existing = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
-    if (existing) await del(existing.url);
+    if (existing) {
+      await del(existing.url);
+      delResult = 'deleted';
+    }
   } catch (err) {
-    console.warn(`[db] pre-write del skipped for ${filename}`, err);
+    delResult = 'error';
+    console.warn(`[db:write] ${filename}: pre-write del skipped`, err);
   }
-  await put(`${BLOB_PREFIX}${filename}.json`, JSON.stringify(data, null, 2), {
+  const putRes = await put(`${BLOB_PREFIX}${filename}.json`, JSON.stringify(data, null, 2), {
     access: 'public',
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: 'application/json',
     cacheControlMaxAge: 0,
   });
+  console.log(`[db:write] ${filename}: OK (${Date.now() - t0}ms, del=${delResult}, url=${putRes.url})`);
 }
 
 async function readRaw(filename: string): Promise<unknown | null> {
   if (hasBlob) {
-    const data = await blobReadRaw(filename);
-    // First-time seed: fall back to bundled JSON when blob has no entry yet
-    return data ?? fsReadRaw(filename);
+    const result = await blobReadRaw(filename);
+    // fs seed fallback 은 "blob 에 명백히 없음(NOT_FOUND)" 일 때만.
+    // 일시 장애(fetch/list 예외)는 blobReadRaw 가 throw 하므로 여기까지
+    // 오지 않음 → admin PUT 이 잘못된 seed 로 merge 하지 않음.
+    if (result === NOT_FOUND) return fsReadRaw(filename);
+    return result;
   }
   return fsReadRaw(filename);
 }
@@ -133,12 +142,11 @@ async function readRaw(filename: string): Promise<unknown | null> {
 async function writeRaw(filename: string, data: unknown): Promise<void> {
   if (hasBlob) {
     await blobWriteRaw(filename, data);
-    // Bust Next's shared data cache so every instance fetches fresh.
     try {
       revalidateTag(dbTag(filename));
+      console.log(`[db:write] ${filename}: revalidateTag OK`);
     } catch (err) {
-      // revalidateTag may throw outside a request scope — safe to ignore.
-      console.warn(`[db] revalidateTag failed for ${filename}`, err);
+      console.warn(`[db:write] ${filename}: revalidateTag failed`, err);
     }
     return;
   }
