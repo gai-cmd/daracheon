@@ -111,6 +111,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
   const footerColumns = nav?.footerColumns ?? DEFAULT_FOOTER_COLUMNS;
 
+  // 브랜드 로고 (좌측 상단) — settings(company)에서 관리
+  const settings = await readSingle<{ brandLogo?: string; companyLogo?: string }>('company');
+  const brandLogo = settings?.brandLogo ?? '';
+
   return (
     <html lang="ko">
       <head>
@@ -131,7 +135,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             )}
           </div>
         )}
-        <Header mainNav={mainNav} />
+        <Header mainNav={mainNav} brandLogo={brandLogo} />
         <main>{children}</main>
         <Footer footerColumns={footerColumns} />
         <AdminAIPanel />

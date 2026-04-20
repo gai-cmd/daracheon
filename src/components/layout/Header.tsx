@@ -8,6 +8,7 @@ import styles from './Header.module.css';
 
 interface HeaderProps {
   mainNav: NavItem[];
+  brandLogo?: string;
 }
 
 // Critical positioning enforced via inline style — guarantees nav visibility
@@ -30,7 +31,7 @@ const NAV_INLINE_STYLE: React.CSSProperties = {
   boxShadow: '0 8px 24px -16px rgba(0, 0, 0, 0.6)',
 };
 
-export default function Header({ mainNav }: HeaderProps) {
+export default function Header({ mainNav, brandLogo }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
@@ -49,11 +50,21 @@ export default function Header({ mainNav }: HeaderProps) {
     <header>
       <nav className={styles.nav} style={NAV_INLINE_STYLE} data-zoel-nav="v2">
         <Link href="/" className={styles.navBrand}>
-          <span className={styles.brandDot} aria-hidden="true" />
-          <span className={styles.brandText}>
-            <span className={styles.brandWord}>ZOEL LIFE</span>
-            <span className={styles.brandSub}>대라천 · 침향</span>
-          </span>
+          {brandLogo ? (
+            <img
+              src={brandLogo}
+              alt="대라천 ZOEL LIFE"
+              style={{ height: 36, width: 'auto', display: 'block', objectFit: 'contain' }}
+            />
+          ) : (
+            <>
+              <span className={styles.brandDot} aria-hidden="true" />
+              <span className={styles.brandText}>
+                <span className={styles.brandWord}>ZOEL LIFE</span>
+                <span className={styles.brandSub}>대라천 · 침향</span>
+              </span>
+            </>
+          )}
         </Link>
 
         <ul className={styles.navLinks}>

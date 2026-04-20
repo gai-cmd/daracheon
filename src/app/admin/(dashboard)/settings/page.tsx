@@ -45,7 +45,9 @@ interface SettingsData {
   description: string;
   email: string;
   url: string;
-  logo: string;
+  logo: string;          // legacy 단일 로고 (호환 유지)
+  brandLogo: string;     // 대라천 브랜드 로고 (Header 좌측 상단)
+  companyLogo: string;   // ZOEL LIFE 회사 로고 (Company 페이지)
   social: {
     instagram: string;
     youtube: string;
@@ -74,6 +76,8 @@ export default function AdminSettingsPage() {
     email: '',
     url: '',
     logo: '',
+    brandLogo: '',
+    companyLogo: '',
   });
 
   // Section 2: Social
@@ -147,6 +151,8 @@ export default function AdminSettingsPage() {
           email: data.email || '',
           url: data.url || '',
           logo: data.logo || '',
+          brandLogo: data.brandLogo || '',
+          companyLogo: data.companyLogo || '',
         });
         setSocial({
           instagram: data.social?.instagram || '',
@@ -397,11 +403,36 @@ export default function AdminSettingsPage() {
               />
               <div className="md:col-span-2">
                 <ImageUploadField
-                  label="로고 이미지"
+                  label="로고 이미지 (legacy)"
                   value={basicInfo.logo}
                   onChange={(url) => setBasicInfo({ ...basicInfo, logo: url })}
                   subdir="settings"
                 />
+                <p className="mt-1 text-xs text-gray-400">
+                  하위 호환용 단일 로고 필드. 신규 사이트에서는 아래 두 로고를 사용합니다.
+                </p>
+              </div>
+              <div className="md:col-span-2">
+                <ImageUploadField
+                  label="브랜드 로고 (좌측 상단 Header — 대라천)"
+                  value={basicInfo.brandLogo}
+                  onChange={(url) => setBasicInfo({ ...basicInfo, brandLogo: url })}
+                  subdir="settings"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  사이트 전 페이지 좌측 상단 nav 에 표시. 비어있으면 골드 도트 + 텍스트 fallback.
+                </p>
+              </div>
+              <div className="md:col-span-2">
+                <ImageUploadField
+                  label="ZOEL LIFE 회사 로고 (Company 페이지)"
+                  value={basicInfo.companyLogo}
+                  onChange={(url) => setBasicInfo({ ...basicInfo, companyLogo: url })}
+                  subdir="settings"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  /company 페이지 상단에 표시. 비어있으면 미노출.
+                </p>
               </div>
             </div>
             <div className="mt-6 flex justify-end">

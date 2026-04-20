@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { readSingle } from '@/lib/db';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -44,7 +45,11 @@ const chapters: Chapter[] = [
   },
 ];
 
-export default function CompanyPage() {
+export default async function CompanyPage() {
+  const settings = await readSingle<{ brandLogo?: string; companyLogo?: string }>('company');
+  const brandLogo = settings?.brandLogo ?? '';
+  const companyLogo = settings?.companyLogo ?? '';
+
   return (
     <>
       {/* HERO */}
@@ -55,6 +60,63 @@ export default function CompanyPage() {
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.wrap}>
+          {(brandLogo || companyLogo) && (
+            <div
+              style={{
+                display: 'flex',
+                gap: 40,
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                marginBottom: 40,
+                paddingBottom: 30,
+                borderBottom: '1px solid rgba(212,168,67,0.18)',
+                flexWrap: 'wrap',
+              }}
+            >
+              {brandLogo && (
+                <div style={{ textAlign: 'center' }}>
+                  <img
+                    src={brandLogo}
+                    alt="대라천 브랜드 로고"
+                    style={{ height: 64, width: 'auto', objectFit: 'contain', display: 'block' }}
+                  />
+                  <div
+                    style={{
+                      marginTop: 10,
+                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                      fontSize: '0.62rem',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    Brand · 대라천
+                  </div>
+                </div>
+              )}
+              {companyLogo && (
+                <div style={{ textAlign: 'center' }}>
+                  <img
+                    src={companyLogo}
+                    alt="ZOEL LIFE 회사 로고"
+                    style={{ height: 64, width: 'auto', objectFit: 'contain', display: 'block' }}
+                  />
+                  <div
+                    style={{
+                      marginTop: 10,
+                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                      fontSize: '0.62rem',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    Company · ZOEL LIFE
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <div className={styles.kicker}>회사소개</div>
           <h1>
             진짜를 증명하는 일에
