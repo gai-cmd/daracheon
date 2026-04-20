@@ -72,6 +72,7 @@ interface BrandStoryData {
     title: string;
     subtitle: string;
     images: string[];
+    imageLabels?: string[];
     sections: CertSection[];
   };
   qualityTab: {
@@ -239,11 +240,17 @@ export default function AdminBrandStoryPage() {
       'https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600',
       'https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600',
       'https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600',
-      'https://lh3.googleusercontent.com/d/13rr7HLSCAnZbsrG2f55UYTvf_nSgThfz=w1600',
       'https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600',
-      'https://lh3.googleusercontent.com/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq=w1600',
       'https://lh3.googleusercontent.com/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY=w1600',
       'https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w1600',
+    ],
+    imageLabels: [
+      'CITES 국제거래 인증서',
+      '식약처 건강기능식품 규격 적합',
+      '베트남 OCOP 품질 인증',
+      'HACCP 식품안전 인증',
+      '수지유도 특허증 #12835',
+      'TSL ISO/IEC 17025:2017 시험성적서',
     ],
     sections: [
       { title: '국제 거래 및 기술 특허', items: ['CITES IIA-DNI-007', '수지유도 특허 #12835'] },
@@ -526,21 +533,64 @@ export default function AdminBrandStoryPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">인증 이미지 (최대 2개)</label>
-                <div className="space-y-3">
-                  {certificationsTab.images.map((img, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...certificationsTab.images]; n[i] = url; setCertificationsTab({ ...certificationsTab, images: n }); }} subdir="pages" />
+                <label className="block text-sm font-medium text-gray-700 mb-2">인증 이미지 + 인증명 (개수 제한 없음)</label>
+                <div className="space-y-4">
+                  {certificationsTab.images.map((img, i) => {
+                    const labels = certificationsTab.imageLabels ?? [];
+                    const label = labels[i] ?? '';
+                    return (
+                      <div key={i} className="flex gap-3 items-start border border-gray-200 rounded-lg p-3 bg-gray-50">
+                        <div className="flex-1 space-y-2">
+                          <ImageUploadField
+                            value={img}
+                            onChange={(url) => {
+                              const n = [...certificationsTab.images];
+                              n[i] = url;
+                              setCertificationsTab({ ...certificationsTab, images: n });
+                            }}
+                            subdir="pages"
+                          />
+                          <input
+                            type="text"
+                            placeholder={`인증명 ${i + 1} (예: CITES 국제거래 인증서)`}
+                            value={label}
+                            onChange={(e) => {
+                              const n = [...labels];
+                              while (n.length <= i) n.push('');
+                              n[i] = e.target.value;
+                              setCertificationsTab({ ...certificationsTab, imageLabels: n });
+                            }}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newImages = removeItem(certificationsTab.images, i);
+                            const newLabels = labels.length > 0 ? removeItem(labels, i) : labels;
+                            setCertificationsTab({ ...certificationsTab, images: newImages, imageLabels: newLabels });
+                          }}
+                          className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5"
+                        >
+                          삭제
+                        </button>
                       </div>
-                      <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, images: removeItem(certificationsTab.images, i) })} className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5">삭제</button>
-                    </div>
-                  ))}
-                  {certificationsTab.images.length < 2 && (
-                    <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, images: [...certificationsTab.images, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                      + 이미지 추가
-                    </button>
-                  )}
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const labels = certificationsTab.imageLabels ?? [];
+                      setCertificationsTab({
+                        ...certificationsTab,
+                        images: [...certificationsTab.images, ''],
+                        imageLabels: [...labels, ''],
+                      });
+                    }}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                  >
+                    + 인증서 추가
+                  </button>
                 </div>
               </div>
               <div>

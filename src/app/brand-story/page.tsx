@@ -18,7 +18,7 @@ export interface BrandStoryData {
   farms: Farm[];
   sceneTab: { tag: string; title: string; subtitle: string; body: string; images: string[] };
   historyTab: { tag: string; title: string; eras: HistoryEra[] };
-  certificationsTab: { tag: string; title: string; subtitle: string; images: string[]; sections: CertSection[] };
+  certificationsTab: { tag: string; title: string; subtitle: string; images: string[]; imageLabels?: string[]; sections: CertSection[] };
   qualityTab: { tag: string; title: string; subtitle: string; images: string[]; heavyMetals: string[] };
   processTab: {
     tag: string;

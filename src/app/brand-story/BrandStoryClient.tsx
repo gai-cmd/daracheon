@@ -65,16 +65,23 @@ const DEFAULT_ERAS = [
   },
 ];
 
+// 실제 인증서 — Google Drive 폴더 1uTUso6IURawC0oNFEQqzp9qWNDsVml_g
+// (8장 중 시각적 중복 가능성 있는 항목 제외 — 6장 대표 인증서만 노출)
 const DEFAULT_CERT_IMAGES = [
-  // 실제 인증서 — Google Drive 폴더 1uTUso6IURawC0oNFEQqzp9qWNDsVml_g 에서 추출 (8장)
   'https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600',
   'https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600',
   'https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600',
-  'https://lh3.googleusercontent.com/d/13rr7HLSCAnZbsrG2f55UYTvf_nSgThfz=w1600',
   'https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600',
-  'https://lh3.googleusercontent.com/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq=w1600',
   'https://lh3.googleusercontent.com/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY=w1600',
   'https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w1600',
+];
+const DEFAULT_CERT_LABELS = [
+  'CITES 국제거래 인증서',
+  '식약처 건강기능식품 규격 적합',
+  '베트남 OCOP 품질 인증',
+  'HACCP 식품안전 인증',
+  '수지유도 특허증 #12835',
+  'TSL ISO/IEC 17025:2017 시험성적서',
 ];
 const DEFAULT_CERT_SECTIONS = [
   {
@@ -132,6 +139,7 @@ export default function BrandStoryClient({ data }: Props) {
   const eras = historyTab?.eras && historyTab.eras.length > 0 ? historyTab.eras : DEFAULT_ERAS;
   const certificationsTab = data?.certificationsTab;
   const certImages = certificationsTab?.images && certificationsTab.images.length > 0 ? certificationsTab.images : DEFAULT_CERT_IMAGES;
+  const certLabels = certificationsTab?.imageLabels && certificationsTab.imageLabels.length > 0 ? certificationsTab.imageLabels : DEFAULT_CERT_LABELS;
   const certSections = certificationsTab?.sections && certificationsTab.sections.length > 0 ? certificationsTab.sections : DEFAULT_CERT_SECTIONS;
   const qualityTab = data?.qualityTab;
   const qualityImages = qualityTab?.images && qualityTab.images.length > 0 ? qualityTab.images : DEFAULT_QUALITY_IMAGES;
@@ -302,28 +310,45 @@ export default function BrandStoryClient({ data }: Props) {
                 margin: '30px 0',
               }}
             >
-              {certImages.map((src, i) => (
-                <div
-                  key={i}
-                  style={{
-                    aspectRatio: '3 / 4',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    border: '1px solid rgba(212,168,67,0.28)',
-                    background: '#ffffff',
-                    padding: 16,
-                  }}
-                >
-                  <Image
-                    src={src}
-                    alt={`인증서 ${i + 1}`}
-                    fill
-                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                    style={{ objectFit: 'contain' }}
-                    unoptimized
-                  />
-                </div>
-              ))}
+              {certImages.map((src, i) => {
+                const label = certLabels[i] ?? `인증서 ${i + 1}`;
+                return (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div
+                      style={{
+                        aspectRatio: '3 / 4',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(212,168,67,0.28)',
+                        background: '#ffffff',
+                        padding: 16,
+                      }}
+                    >
+                      <Image
+                        src={src}
+                        alt={label}
+                        fill
+                        sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                        style={{ objectFit: 'contain' }}
+                        unoptimized
+                      />
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                        fontSize: '0.66rem',
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        color: 'var(--accent)',
+                        textAlign: 'center',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {label}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <div className={styles.gridAuto}>
               {certSections.map((section, i) => (
