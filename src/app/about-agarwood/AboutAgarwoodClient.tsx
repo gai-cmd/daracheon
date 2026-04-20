@@ -65,10 +65,12 @@ const FALLBACK_TESTIMONIAL_ITEMS: Array<{ name: string; role?: string; rating?: 
   },
 ];
 
-// 공식 등재 규격집 — 원본 하드코딩 (데이터베이스 의존하지 않음)
-const REGISTRY_ROWS: Array<{ label: string; value: string }> = [
+// Registry fallback (CMS data 없을 때) — data/db/pages.json 시드와 동일
+const DEFAULT_REGISTRY_TITLE = '대한민국약전외한약(생약)규격집';
+const DEFAULT_REGISTRY_SUBTITLE = '공식 등재';
+const DEFAULT_REGISTRY_ROWS: Array<{ label: string; value: string }> = [
   { label: '정식명', value: '침수향(沈水香), AQUILARIAE LIGNUM' },
-  { label: '학명', value: 'Aquilaria Agallocha Roxburgh' },
+  { label: '학명', value: 'Aquilaria\u00A0Agallocha\u00A0Roxburgh' },
   { label: '과명', value: '팥꽃나무과 Thymeleaceae' },
   { label: '정의', value: '이 약은 침향나무의 수지가 침착된 수간목이다' },
   { label: '성상', value: '흑갈색을 띠며 수지를 함유하고 많은 평행 섬유질로 되어 있다' },
@@ -90,6 +92,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const testimonialsTab = data?.testimonialsTab;
   const mediaItems = mediaTab?.items && mediaTab.items.length > 0 ? mediaTab.items : FALLBACK_MEDIA_ITEMS;
   const testimonialItems = testimonialsTab?.items && testimonialsTab.items.length > 0 ? testimonialsTab.items : FALLBACK_TESTIMONIAL_ITEMS;
+  const registry = data?.registrySection;
+  const registryTitle = registry?.title ?? DEFAULT_REGISTRY_TITLE;
+  const registrySubtitle = registry?.subtitle ?? DEFAULT_REGISTRY_SUBTITLE;
+  const registryRows = registry?.rows && registry.rows.length > 0 ? registry.rows : DEFAULT_REGISTRY_ROWS;
   const cta = data?.cta;
 
   return (
@@ -196,8 +202,9 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                       <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
                         공식 침향은{' '}
-                        <span style={{ color: 'var(--accent)', fontWeight: 500 }}>
-                          {definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'}
+                        <span style={{ color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                          {(definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)')
+                            .replace(/Aquilaria\s+Agallocha\s+Roxburgh/g, 'Aquilaria\u00A0Agallocha\u00A0Roxburgh')}
                         </span>
                         입니다.
                       </p>
@@ -208,7 +215,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </section>
 
-          {/* Chapter 02 — Official Registration (하드코딩, 항상 노출) */}
+          {/* Chapter 02 — Official Registration (CMS 편집 가능) */}
           <section className={styles.chapter} data-alt="1">
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
@@ -219,9 +226,9 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
                     <h3>
-                      대한민국약전외한약(생약)규격집
+                      {registryTitle}
                       <br />
-                      <em>공식 등재</em>
+                      <em>{registrySubtitle}</em>
                     </h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={150}>
@@ -240,7 +247,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           gap: '18px 30px',
                         }}
                       >
-                        {REGISTRY_ROWS.map((row) => (
+                        {registryRows.map((row) => (
                           <div
                             key={row.label}
                             style={{
