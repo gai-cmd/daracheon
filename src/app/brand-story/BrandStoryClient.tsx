@@ -16,8 +16,6 @@ const TAB_LIST = [
   '다양한 인증',
   '검증된 품질',
   '생산 공정',
-  '매체에 실린 침향',
-  '고객이 말한 침향',
 ] as const;
 
 const DEFAULT_HERO_BG =
@@ -137,8 +135,7 @@ export default function BrandStoryClient({ data }: Props) {
   const processTab = data?.processTab;
   const processSteps = processTab?.steps && processTab.steps.length > 0 ? processTab.steps : DEFAULT_PROCESS_STEPS;
   const processStats = processTab?.stats && processTab.stats.length > 0 ? processTab.stats : DEFAULT_PROCESS_STATS;
-  const mediaTab = data?.mediaTab;
-  const testimonialsTab = data?.testimonialsTab;
+  // mediaTab/testimonialsTab는 /about-agarwood 전용 — brand-story에서는 노출 안 함
 
   return (
     <div className={styles.page}>
@@ -442,100 +439,6 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 6 — Media */}
-      {activeTab === 6 && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{mediaTab?.tag ?? 'IN THE MEDIA'}</div>
-              <h2 className={styles.chapterTitle}>{mediaTab?.title ?? '매체에 실린 침향'}</h2>
-              {mediaTab?.subtitle && <p className={styles.chapterSubtitle}>{mediaTab.subtitle}</p>}
-              <div className={styles.line} />
-            </div>
-            {mediaTab?.items && mediaTab.items.length > 0 ? (
-              <div className={styles.gridAuto}>
-                {mediaTab.items.map((item, i) => {
-                  const card = (
-                    <div className={styles.card}>
-                      {item.image && (
-                        <div className={styles.imgFrame} style={{ marginBottom: 14, aspectRatio: '16/9' }}>
-                          <Image src={item.image} alt={item.title} fill sizes="(max-width: 1024px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
-                        </div>
-                      )}
-                      <div className={styles.cardKicker}>
-                        {item.outlet}
-                        {item.date ? ` · ${item.date}` : ''}
-                      </div>
-                      <div className={styles.cardTitle}>{item.title}</div>
-                      {item.summary && <div className={styles.cardDesc}>{item.summary}</div>}
-                    </div>
-                  );
-                  return item.link ? (
-                    <a
-                      key={item.title + i}
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {card}
-                    </a>
-                  ) : (
-                    <div key={item.title + i}>{card}</div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className={styles.empty}>
-                <div className={styles.emptyTag}>Coming Soon</div>
-                등록된 매체 기사가 없습니다.
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* TAB 7 — Testimonials */}
-      {activeTab === 7 && (
-        <section className={`${styles.chapter} ${styles.chapterAlt}`}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{testimonialsTab?.tag ?? 'TESTIMONIALS'}</div>
-              <h2 className={styles.chapterTitle}>{testimonialsTab?.title ?? '고객이 말한 침향'}</h2>
-              {testimonialsTab?.subtitle && <p className={styles.chapterSubtitle}>{testimonialsTab.subtitle}</p>}
-              <div className={styles.line} />
-            </div>
-            {testimonialsTab?.items && testimonialsTab.items.length > 0 ? (
-              <div className={styles.gridAuto}>
-                {testimonialsTab.items.map((item, i) => (
-                  <div key={item.name + i} className={styles.testCard}>
-                    {typeof item.rating === 'number' && (
-                      <div className={styles.testStars}>
-                        {[...Array(5)].map((_, j) => (
-                          <span key={j} className={j < item.rating! ? styles.testStarFill : styles.testStar}>
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <p className={styles.testBody}>{item.body}</p>
-                    <div className={styles.testFoot}>
-                      <span className={styles.testName}>{item.name}</span>
-                      {item.role && <span className={styles.testRole}>{item.role}</span>}
-                      {item.product && <span className={styles.testProd}>{item.product}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className={styles.empty}>
-                <div className={styles.emptyTag}>Coming Soon</div>
-                등록된 고객 후기가 없습니다.
-              </div>
-            )}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
