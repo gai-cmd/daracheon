@@ -1,21 +1,24 @@
 import fs from 'fs';
 import path from 'path';
 import { put, list, del } from '@vercel/blob';
+import { revalidateTag, unstable_cache } from 'next/cache';
 
 /**
  * Persistent JSON store
  *
  * Strategy:
  *  ─ Prod (BLOB_READ_WRITE_TOKEN set): reads+writes go to Vercel Blob.
+ *     - Reads go through Next's shared data cache tagged `db:<filename>`.
+ *     - Writes overwrite the blob AND revalidate the tag, so every
+ *       serverless instance sees the new value on the next read.
  *     - First read on a fresh store: no blob exists → fall back to the
  *       bundled JSON seed in /data/db (included via .vercelignore whitelist).
- *     - First write: materializes the blob; subsequent reads come from blob.
- *  ─ Dev (no token): reads+writes use the local filesystem as before.
+ *  ─ Dev (no token): reads+writes use the local filesystem.
  *
- * A module-scope cache avoids a Blob round-trip on every call within the
- * same serverless instance. Writes invalidate the cache entry and persist
- * to Blob before returning, so the next read in the same request sees
- * the latest value.
+ * Previously this module maintained its own per-instance cache, which
+ * broke admin→frontend propagation (admin's write updated only its own
+ * instance; frontend instances kept returning stale data until recycled).
+ * revalidateTag flushes Vercel's shared data cache globally.
  */
 
 const DB_DIR = path.join(process.cwd(), 'data', 'db');
@@ -23,8 +26,9 @@ const BLOB_PREFIX = 'db/';
 
 const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
-type CacheEntry = { data: unknown };
-const cache = new Map<string, CacheEntry>();
+function dbTag(filename: string) {
+  return `db:${filename}`;
+}
 
 function ensureDir() {
   if (!fs.existsSync(DB_DIR)) {
@@ -49,18 +53,31 @@ function fsWriteRaw(filename: string, data: unknown) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-async function blobReadRaw(filename: string): Promise<unknown | null> {
+async function blobReadRawUncached(filename: string): Promise<unknown | null> {
   try {
     const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
     const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
     if (!match) return null;
-    const res = await fetch(match.url, { next: { revalidate: 60 } });
+    // cache: 'no-store' bypasses Next's fetch cache — we already wrap the
+    // whole read with unstable_cache below, which respects our tag.
+    const res = await fetch(match.url, { cache: 'no-store' });
     if (!res.ok) return null;
     return await res.json();
   } catch (err) {
     console.error(`[db] blob read failed for ${filename}`, err);
     return null;
   }
+}
+
+// Wrap the blob read with Next's data cache, tagged so writes can
+// invalidate every serverless instance globally in one call.
+async function blobReadRaw(filename: string): Promise<unknown | null> {
+  const cached = unstable_cache(
+    async () => blobReadRawUncached(filename),
+    ['db', filename],
+    { tags: [dbTag(filename)], revalidate: 300 }
+  );
+  return cached();
 }
 
 async function blobWriteRaw(filename: string, data: unknown) {
@@ -73,36 +90,35 @@ async function blobWriteRaw(filename: string, data: unknown) {
 }
 
 async function readRaw(filename: string): Promise<unknown | null> {
-  const cached = cache.get(filename);
-  if (cached) return cached.data;
-
-  let data: unknown | null = null;
   if (hasBlob) {
-    data = await blobReadRaw(filename);
+    const data = await blobReadRaw(filename);
     // First-time seed: fall back to bundled JSON when blob has no entry yet
-    if (data === null) data = fsReadRaw(filename);
-  } else {
-    data = fsReadRaw(filename);
+    return data ?? fsReadRaw(filename);
   }
-
-  cache.set(filename, { data });
-  return data;
+  return fsReadRaw(filename);
 }
 
 async function writeRaw(filename: string, data: unknown): Promise<void> {
-  cache.set(filename, { data });
   if (hasBlob) {
     await blobWriteRaw(filename, data);
-  } else if (process.env.VERCEL) {
+    // Bust Next's shared data cache so every instance fetches fresh.
+    try {
+      revalidateTag(dbTag(filename));
+    } catch (err) {
+      // revalidateTag may throw outside a request scope — safe to ignore.
+      console.warn(`[db] revalidateTag failed for ${filename}`, err);
+    }
+    return;
+  }
+  if (process.env.VERCEL) {
     // Vercel serverless fs is read-only. Refuse the write with a clear signal
     // instead of silently losing data.
     throw new Error(
       'DB write failed: BLOB_READ_WRITE_TOKEN is not set. ' +
         'Create a Vercel Blob store and link it to this project (Dashboard → Storage → Blob).'
     );
-  } else {
-    fsWriteRaw(filename, data);
   }
+  fsWriteRaw(filename, data);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -139,12 +155,12 @@ export async function writeSingle<T = any>(filename: string, data: T): Promise<v
    ───────────────────────────────────────────────────────── */
 
 export async function deleteData(filename: string): Promise<void> {
-  cache.delete(filename);
   if (hasBlob) {
     try {
       const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
       const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
       if (match) await del(match.url);
+      revalidateTag(dbTag(filename));
     } catch (err) {
       console.error(`[db] blob delete failed for ${filename}`, err);
     }
@@ -155,8 +171,10 @@ export async function deleteData(filename: string): Promise<void> {
 }
 
 export function invalidateCache(filename?: string) {
-  if (filename) cache.delete(filename);
-  else cache.clear();
+  // Retained for callers — revalidate the shared tag globally.
+  if (filename) {
+    try { revalidateTag(dbTag(filename)); } catch { /* outside request scope */ }
+  }
 }
 
 export function isBlobEnabled(): boolean {
