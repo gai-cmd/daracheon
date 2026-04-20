@@ -99,6 +99,10 @@ async function blobWriteRaw(filename: string, data: unknown) {
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: 'application/json',
+    // 기본값(31536000s)이면 Vercel CDN 이 overwrite 후에도 이전 콘텐츠를
+    // 오랫동안 서빙해 admin 저장 → 프론트 반영이 지연됨. 0 으로 내려
+    // 다음 요청마다 origin 까지 가도록 강제.
+    cacheControlMaxAge: 0,
   });
 }
 
