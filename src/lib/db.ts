@@ -198,15 +198,21 @@ export async function readSingle<T = any>(filename: string): Promise<T | null> {
   return data as T;
 }
 
-// 프론트엔드 RSC 용: blob 일시 장애도 null 로 흡수.
-// 페이지는 DEFAULT_* fallback 으로 안전하게 렌더링 유지.
-// admin PUT 처럼 '사용자 저장분 보호' 가 필요한 경로는 그냥 readSingle 사용.
+// 프론트엔드 RSC 용: blob 일시 장애 시 번들된 fs seed 를 최후 수단으로 반환.
+// 이전 구현은 throw 를 그냥 null 로 흡수해서, blob 일시 장애마다 페이지
+// 콘텐츠(예: /brand-story 인증서 이미지)가 "반영 됐다 안 됐다" 깜빡임.
+// admin PUT 처럼 '사용자 저장분 보호' 가 필요한 경로는 여전히 readSingle
+// (Safe 아님) 을 써서 throw 받도록 유지 — seed 로 오염될 위험 없음.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function readSingleSafe<T = any>(filename: string): Promise<T | null> {
   try {
     return await readSingle<T>(filename);
   } catch (err) {
-    console.warn(`[db:safe] ${filename}: read failed, returning null`, err);
+    console.warn(`[db:safe] ${filename}: read failed, trying fs seed`, err);
+    try {
+      const seed = fsReadRaw(filename);
+      if (seed && !Array.isArray(seed)) return seed as T;
+    } catch { /* ignore */ }
     return null;
   }
 }
@@ -216,7 +222,11 @@ export async function readDataSafe<T = any>(filename: string): Promise<T[]> {
   try {
     return await readData<T>(filename);
   } catch (err) {
-    console.warn(`[db:safe] ${filename}: read failed, returning []`, err);
+    console.warn(`[db:safe] ${filename}: read failed, trying fs seed`, err);
+    try {
+      const seed = fsReadRaw(filename);
+      if (Array.isArray(seed)) return seed as T[];
+    } catch { /* ignore */ }
     return [];
   }
 }
