@@ -1,4 +1,4 @@
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { readData, writeData, readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import type { Product, ProductVariant } from '@/data/products';
@@ -470,18 +470,41 @@ export const TOOLS: ToolDef[] = [
    ───────────────────────────────────────────────────────── */
 
 function revalidateAll(paths: string[]) {
+  // 3층 무효화: 각 층이 서로 다른 캐시를 잡는다.
+  //
+  // (1) revalidateTag('db:pages')  → db.ts 의 unstable_cache 로 래핑된 blob
+  //     fetch 캐시. db.writeRaw 가 이미 호출하므로 여기서는 중복 호출로 보험.
+  //     중복 호출은 무해 — Next 는 tag 레지스트리에 mark-invalid 만 한다.
+  // (2) revalidatePath(p, 'page')  → 해당 경로의 full-route cache(ISR HTML).
+  //     'page' 타입을 **명시**해야 page.tsx 단일 라우트를 정확히 잡는다.
+  //     과거 기본값 의존 버전에서 간헐적으로 반영 안 되는 보고가 있어 명시화.
+  // (3) revalidatePath('/', 'layout') → 루트 레이아웃 변경(헤더·푸터 등)까지
+  //     하위 전 경로를 함께 플러시.
+  const results: { path: string; ok: boolean }[] = [];
   for (const p of paths) {
     try {
-      revalidatePath(p);
+      revalidatePath(p, 'page');
+      results.push({ path: p, ok: true });
     } catch (err) {
+      results.push({ path: p, ok: false });
       console.warn('[ai-tools] revalidatePath failed', p, err);
     }
   }
+  let layoutOk = true;
   try {
     revalidatePath('/', 'layout');
-  } catch {
-    /* ignore */
+  } catch (err) {
+    layoutOk = false;
+    console.warn('[ai-tools] revalidatePath / layout failed', err);
   }
+  let tagOk = true;
+  try {
+    revalidateTag('db:pages');
+  } catch (err) {
+    tagOk = false;
+    console.warn('[ai-tools] revalidateTag db:pages failed', err);
+  }
+  console.log('[ai-tools] revalidateAll', { paths: results, layoutOk, tagOk });
 }
 
 const PAGE_PATHS: Record<string, string[]> = {
@@ -546,6 +569,34 @@ function productSummary(p: Product) {
   };
 }
 
+/**
+ * Deep merge two plain objects.
+ * - Arrays are replaced (not concatenated) — AI 가 배열 전체를 재전송한다는 계약.
+ * - 내부 plain object 는 재귀 병합 — 부분 필드 저장 시 기존 형제 필드 보존.
+ * - Primitive / null / undefined 는 교체.
+ *
+ * update_page 가 과거에 { ...existing, [key]: data } 로 단순 스프레드만
+ * 했던 탓에, AI 가 hero.title 만 담아 호출하면 brandStory.hero.sectionTag /
+ * subtitle / heroBg 등 형제 필드가 전부 소실되는 버그가 있었음. 이 함수로
+ * 최상위 key 레벨에서 재귀 병합해 부분 업데이트를 안전하게 만든다.
+ */
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+function deepMerge<T extends Record<string, unknown>>(base: T, patch: Record<string, unknown>): T {
+  const out: Record<string, unknown> = { ...base };
+  for (const k of Object.keys(patch)) {
+    const next = patch[k];
+    const prev = out[k];
+    if (isPlainObject(prev) && isPlainObject(next)) {
+      out[k] = deepMerge(prev, next);
+    } else {
+      out[k] = next;
+    }
+  }
+  return out as T;
+}
+
 export async function executeTool(
   name: string,
   input: Record<string, unknown>,
@@ -578,20 +629,51 @@ export async function executeTool(
         const key = String(input.key ?? '');
         const data = input.data;
         if (!PAGE_PATHS[key]) return { ok: false, summary: '잘못된 페이지 키', error: `invalid key: ${key}` };
-        if (!data || typeof data !== 'object') {
+        if (!isPlainObject(data)) {
           return { ok: false, summary: 'data가 객체가 아닙니다', error: 'data must be object' };
         }
         const existing = ((await readSingle('pages')) as Record<string, unknown>) ?? {};
-        const updated = { ...existing, [key]: data };
+        const prevPage = isPlainObject(existing[key]) ? (existing[key] as Record<string, unknown>) : {};
+        // 🔴 핵심: 부분 패치를 받아 기존 페이지 JSON 과 deep merge.
+        // AI 가 { hero: { title: "X" } } 만 보내도 sectionTag / subtitle 등
+        // 형제 필드가 날아가지 않는다. 배열은 교체되므로 farms / eras 같은
+        // 리스트 수정 시에는 AI 가 배열 전체를 재전송해야 함 (시스템 프롬프트
+        // 에도 명시).
+        const mergedPage = deepMerge(prevPage, data);
+        const updated = { ...existing, [key]: mergedPage };
+        const patchedKeys = Object.keys(data);
+        console.log('[ai-tools] update_page merge', {
+          key,
+          patchedKeys,
+          prevKeys: Object.keys(prevPage),
+          mergedKeys: Object.keys(mergedPage),
+        });
         await writeSingle('pages', updated);
+        // Read-back verification: 병합된 결과가 blob 에 그대로 기록됐는지 확인.
+        const verify = (await readSingle('pages')) as Record<string, unknown> | null;
+        const roundTripOk =
+          verify && JSON.stringify(verify[key]) === JSON.stringify(mergedPage);
+        console.log('[ai-tools] update_page verify', { key, roundTripOk });
+        if (!roundTripOk) {
+          await logAdmin('settings', 'update', {
+            summary: `AI: 페이지 수정 실패(read-back 불일치) — ${key}`,
+            targetId: key,
+          });
+          return {
+            ok: false,
+            summary: `페이지 '${key}' 저장 후 재검증 실패 — 캐시/CDN 전파 지연 의심.`,
+            error: 'read-back mismatch after writeSingle',
+          };
+        }
         await logAdmin('settings', 'update', {
-          summary: `AI: 페이지 수정 — ${key}`,
+          summary: `AI: 페이지 수정 — ${key} (${patchedKeys.join(', ')})`,
           targetId: key,
         });
         revalidateAll(PAGE_PATHS[key]);
         return {
           ok: true,
-          summary: `페이지 '${key}' 저장 완료. 프론트 반영됨.`,
+          summary: `페이지 '${key}' 부분 저장 완료. 수정된 필드: ${patchedKeys.join(', ')}`,
+          data: { patchedKeys, mergedKeys: Object.keys(mergedPage) },
         };
       }
 

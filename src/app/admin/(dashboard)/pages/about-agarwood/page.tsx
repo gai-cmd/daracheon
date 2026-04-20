@@ -326,8 +326,15 @@ export default function AdminAboutAgarwoodPage() {
     async function fetchData() {
       try {
         const res = await fetch('/api/admin/pages');
-        const data = await res.json() as { pages: { aboutAgarwood: AboutAgarwoodData } };
-        const d = data.pages.aboutAgarwood;
+        // pages / aboutAgarwood 누락 시 TypeError 방지 — brandStory 와 동일 패턴.
+        const raw = (await res.json().catch(() => ({}))) as {
+          pages?: { aboutAgarwood?: Partial<AboutAgarwoodData> };
+        };
+        const d = raw?.pages?.aboutAgarwood;
+        if (!d) {
+          setLoading(false);
+          return;
+        }
         // CMS 데이터가 있으면 그것 사용, 없으면 초기값(=frontend fallback) 유지
         if (d.hero) setHero(d.hero);
         if (d.definitionSection) setDefinitionSection(d.definitionSection);
@@ -356,8 +363,11 @@ export default function AdminAboutAgarwoodPage() {
     setSaving(sectionKey);
     try {
       const res = await fetch('/api/admin/pages');
-      const existing = await res.json() as { pages: { aboutAgarwood: AboutAgarwoodData } };
-      const merged = { ...existing.pages.aboutAgarwood, ...payload };
+      const existing = (await res.json().catch(() => ({}))) as {
+        pages?: { aboutAgarwood?: Partial<AboutAgarwoodData> };
+      };
+      const prev = existing?.pages?.aboutAgarwood ?? {};
+      const merged = { ...prev, ...payload };
 
       const result = await saveAdminPage('aboutAgarwood', merged);
       if (!result.ok) {

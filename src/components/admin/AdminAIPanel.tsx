@@ -537,9 +537,12 @@ export default function AdminAIPanel() {
       let textAcc = '';
       const tools: ToolEvent[] = [];
       let streamError: string | null = null;
+      let sawDone = false;
+      let droppedLines = 0;
 
       const handleEvent = (evt: Record<string, unknown>) => {
         const t = evt.type;
+        if (t === 'done') sawDone = true;
         if (t === 'text' && typeof evt.delta === 'string') {
           textAcc += evt.delta;
           setPhase('응답 작성 중');
@@ -606,8 +609,12 @@ export default function AdminAIPanel() {
           if (line) {
             try {
               handleEvent(JSON.parse(line) as Record<string, unknown>);
-            } catch {
-              // malformed event — skip
+            } catch (e) {
+              droppedLines += 1;
+              console.warn('[ai-panel] malformed event line dropped', {
+                line: line.slice(0, 200),
+                err: e instanceof Error ? e.message : e,
+              });
             }
           }
           nl = buffer.indexOf('\n');
@@ -619,13 +626,28 @@ export default function AdminAIPanel() {
       if (tail) {
         try {
           handleEvent(JSON.parse(tail) as Record<string, unknown>);
-        } catch {
-          /* ignore */
+        } catch (e) {
+          droppedLines += 1;
+          console.warn('[ai-panel] tail fragment dropped', {
+            tail: tail.slice(0, 200),
+            err: e instanceof Error ? e.message : e,
+          });
         }
       }
       flushRender();
 
       if (streamError) throw new Error(streamError);
+      if (!sawDone) {
+        // Stream closed without `done` event — likely a function timeout or
+        // mid-stream disconnect. Tools may have executed server-side; surface
+        // the warning so the user refreshes instead of assuming failure.
+        console.warn('[ai-panel] stream ended without done event', { droppedLines });
+        setError(
+          '응답 스트림이 완료 이벤트 없이 종료됨. 변경은 서버에서 이미 반영되었을 수 있으니 페이지 새로고침 후 확인하세요.'
+        );
+      } else if (droppedLines > 0) {
+        console.warn(`[ai-panel] ${droppedLines} malformed event(s) discarded during stream`);
+      }
     } catch (err) {
       if ((err as Error).name === 'AbortError') {
         setMessages((prev) =>

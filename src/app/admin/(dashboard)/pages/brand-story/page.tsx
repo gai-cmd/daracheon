@@ -309,8 +309,15 @@ export default function AdminBrandStoryPage() {
     async function fetchData() {
       try {
         const res = await fetch('/api/admin/pages');
-        const data = await res.json() as { pages: { brandStory: BrandStoryData | undefined } };
-        const d = data.pages.brandStory;
+        // pages / pages.brandStory 둘 다 없을 수 있음 (초기 배포, blob 미존재,
+        // AI 도구가 빈 객체로 덮어쓴 경우 등). 낙관적 구조 분해는 TypeError:
+        // Cannot read properties of undefined (reading 'brandStory') 를 발생시켜
+        // 폼 전체가 빈칸으로 렌더링되던 버그가 있었음. 옵셔널 체이닝 + 기본값
+        // fallback 으로 방어.
+        const raw = (await res.json().catch(() => ({}))) as {
+          pages?: { brandStory?: Partial<BrandStoryData> };
+        };
+        const d = raw?.pages?.brandStory;
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
@@ -337,8 +344,14 @@ export default function AdminBrandStoryPage() {
     setSaving(sectionKey);
     try {
       const res = await fetch('/api/admin/pages');
-      const existing = await res.json() as { pages: { brandStory: BrandStoryData } };
-      const merged = { ...existing.pages.brandStory, ...payload };
+      // 기존 brandStory 가 전부 비어있을 수 있음 (AI 가 전체 덮어쓰기 실수
+      // 했거나 초기 상태). 빈 객체로 fallback 하면 현재 폼 state 기반으로
+      // 모든 탭 payload 를 덮어써 다음 저장부터 정상화됨.
+      const existing = (await res.json().catch(() => ({}))) as {
+        pages?: { brandStory?: Partial<BrandStoryData> };
+      };
+      const prev = existing?.pages?.brandStory ?? {};
+      const merged = { ...prev, ...payload };
 
       const result = await saveAdminPage('brandStory', merged);
       if (!result.ok) {

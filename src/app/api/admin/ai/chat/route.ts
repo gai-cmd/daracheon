@@ -152,7 +152,10 @@ const SYSTEM_PROMPT = `당신은 ZOEL LIFE(대라천) 관리자 전용 AI 에이
 - DB 저장된 콘텐츠와 소스 fallback 둘 다 있는 경우가 많습니다(예: data?.x ?? '하드코딩'). 둘 중 서빙되는 쪽만 고치면 안 되고, 가능하면 **둘 다** 수정하세요.
 
 **C. 도구 입력 규칙.**
-- update_page: 전체 JSON 덮어쓰기 — 반드시 get_page 후 변경된 부분만 교체한 **완전한** 객체 전달.
+- update_page: **부분 병합(deep merge)**. 변경하려는 필드만 담아 보내도 기존 형제 필드는 보존됩니다.
+  - 예: hero.title 만 바꾸려면 \`{ hero: { title: "새 제목" } }\` 만 전송 (sectionTag/subtitle/heroBg 는 기존 값 유지).
+  - **배열은 교체**입니다 (farms/eras/items 등). 리스트 1개만 바꾸려 해도 배열 **전체**를 재전송하세요 — 누락된 요소는 삭제됩니다.
+  - get_page 로 현재 형태를 먼저 확인해야 정확한 경로로 패치할 수 있습니다.
 - update_product: 부분 병합 — 변경 필드만 전달.
 - str_replace_source_file: sha 필수, old_string은 파일 내 **정확히 1회** 등장, new_string ≠ old_string.
 - multi_str_replace_source_file: sha 필수, 각 replacement 순서대로 적용. 이전 교체의 new_string을 다음 old_string 매칭에 고려해야 함.
@@ -550,10 +553,16 @@ export async function POST(request: NextRequest) {
   let totalAttachmentBytes = 0;
   let totalAttachments = 0;
   let totalTextChars = 0;
+  let droppedMessages = 0;
+  let droppedAttachments = 0;
   const sanitized: InboundMessage[] = [];
 
   for (const m of incoming) {
-    if (!m || (m.role !== 'user' && m.role !== 'assistant')) continue;
+    if (!m || (m.role !== 'user' && m.role !== 'assistant')) {
+      droppedMessages += 1;
+      console.warn('[ai-chat] drop message: invalid role', { role: m?.role });
+      continue;
+    }
     const text = typeof m.content === 'string' ? m.content : '';
     totalTextChars += text.length;
     if (totalTextChars > MAX_TEXT_CHARS) {
@@ -572,9 +581,21 @@ export async function POST(request: NextRequest) {
       );
     }
     for (const a of raw) {
-      if (!a || (a.type !== 'image' && a.type !== 'pdf')) continue;
-      if (typeof a.mediaType !== 'string' || typeof a.data !== 'string') continue;
-      if (a.data.length === 0) continue;
+      if (!a || (a.type !== 'image' && a.type !== 'pdf')) {
+        droppedAttachments += 1;
+        console.warn('[ai-chat] drop attachment: invalid type', { type: a?.type });
+        continue;
+      }
+      if (typeof a.mediaType !== 'string' || typeof a.data !== 'string') {
+        droppedAttachments += 1;
+        console.warn('[ai-chat] drop attachment: missing mediaType/data');
+        continue;
+      }
+      if (a.data.length === 0) {
+        droppedAttachments += 1;
+        console.warn('[ai-chat] drop attachment: empty data', { name: a.name });
+        continue;
+      }
       const allowed =
         a.type === 'image'
           ? ALLOWED_IMAGE_TYPES.has(a.mediaType)
@@ -604,8 +625,22 @@ export async function POST(request: NextRequest) {
       atts.push({ type: a.type, mediaType: a.mediaType, data: cleaned, name: a.name });
     }
 
-    if (!text.trim() && atts.length === 0) continue;
+    if (!text.trim() && atts.length === 0) {
+      droppedMessages += 1;
+      console.warn('[ai-chat] drop message: empty after sanitize', { role: m.role });
+      continue;
+    }
     sanitized.push({ role: m.role, content: text, attachments: atts });
+  }
+
+  if (droppedMessages > 0 || droppedAttachments > 0) {
+    console.warn('[ai-chat] sanitize summary', {
+      actor: session.email,
+      incoming: incoming.length,
+      kept: sanitized.length,
+      droppedMessages,
+      droppedAttachments,
+    });
   }
 
   if (sanitized.length === 0) {
@@ -642,11 +677,23 @@ export async function POST(request: NextRequest) {
       const lastUser = [...sanitized].reverse().find((m) => m.role === 'user');
       const lastUserText = (lastUser?.content ?? '').toLowerCase();
       const ACTION_PATTERNS = [
-        '수정', '변경', '바꿔', '바꾸', '교체', '고쳐', '고치',
-        '업데이트', '추가', '삭제', '제거', '등록', '만들어', '생성',
-        '조회', '찾아', '검색', '보여', '읽어', '알려',
+        // 수정/편집 계열
+        '수정', '변경', '바꿔', '바꾸', '교체', '고쳐', '고치', '리라이트', '재작성',
+        '반영', '올려', '올려줘', '붙여', '넣어', '넣어줘', '채워', '덮어',
+        // 생성 계열
+        '업데이트', '추가', '등록', '만들어', '생성', '신규', '새로',
+        // 삭제 계열
+        '삭제', '제거', '빼', '없애', '지워',
+        // 조회/검색 계열
+        '조회', '찾아', '검색', '보여', '읽어', '알려', '확인', '열어',
       ];
       const userWantsAction = ACTION_PATTERNS.some((p) => lastUserText.includes(p));
+      if (userWantsAction) {
+        console.log('[ai-chat] userWantsAction=true', {
+          actor: session.email,
+          preview: lastUserText.slice(0, 80),
+        });
+      }
 
       try {
         let toolTurns = 0;
@@ -722,6 +769,27 @@ export async function POST(request: NextRequest) {
           conversation.push({ role: 'assistant', content: resp.content });
 
           const toolUses = resp.content.filter((b): b is ToolUseBlock => b.type === 'tool_use');
+          console.log('[ai-chat] turn', {
+            turn: toolTurns,
+            model: modelUsed,
+            stop_reason: resp.stop_reason,
+            toolUses: toolUses.length,
+            textBlocks: resp.content.filter((b) => b.type === 'text').length,
+          });
+
+          // max_tokens: 모델이 출력 한도(8192)에 걸려 잘렸는데, tool_use 블록이
+          // 완성되지 못한 경우가 흔함. 이때 tool_use 배열에 포함시켜 다음 턴에
+          // 넘기면 Anthropic 이 400 을 돌려준다. 사용자에게 명시적으로 알리고
+          // 중단한다 — 중간 상태로 돌면 조용히 실패해서 "반영 안 됨" 버그.
+          if (resp.stop_reason === 'max_tokens' && toolUses.length === 0) {
+            emit({
+              type: 'error',
+              message:
+                '모델 출력 한도(8192 tokens)에 도달. 요청을 더 작은 단위로 쪼개거나 str_replace 계열 도구 사용을 권합니다.',
+            });
+            console.warn('[ai-chat] max_tokens with no tool_use — aborting');
+            break;
+          }
 
           // NUDGE: model produced only text but the user asked for an action
           // (edit/search/update). This is the classic "promise without action"
@@ -734,6 +802,7 @@ export async function POST(request: NextRequest) {
             nudgesUsed < MAX_NUDGES
           ) {
             nudgesUsed += 1;
+            console.log('[ai-chat] nudge injected', { nudge: nudgesUsed, stop_reason: resp.stop_reason });
             emit({
               type: 'tool_result',
               id: `nudge-${nudgesUsed}`,
