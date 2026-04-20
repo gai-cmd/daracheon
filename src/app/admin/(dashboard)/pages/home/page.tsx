@@ -60,7 +60,12 @@ interface HomeProcess {
   tag: string;
   title: string;
   steps: string[];
+  durations?: string[];
 }
+
+interface VerificationRow { num: string; label: string; meta: string }
+interface VerifiedCard { step: string; title: string; en: string; body: string }
+interface CertChip { mark: string; name: string; sub: string }
 
 interface HomeData {
   hero: HomeHero;
@@ -69,6 +74,9 @@ interface HomeData {
   agarwood?: HomeAgarwood;
   benefits?: HomeBenefits;
   process?: HomeProcess;
+  verification?: VerificationRow[];
+  verifiedCards?: VerifiedCard[];
+  certs?: CertChip[];
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -102,7 +110,15 @@ const DEFAULT_NOTICE: HomeNotice = {
 
 const DEFAULT_AGARWOOD: HomeAgarwood = { tag: 'AGARWOOD', title: '신들의 나무, 침향', cards: [] };
 const DEFAULT_BENEFITS: HomeBenefits = { tag: 'BENEFITS', title: '침향의 효능에 주목!', items: [] };
-const DEFAULT_PROCESS: HomeProcess = { tag: 'CRAFTSMANSHIP', title: '완벽을 향한 6단계 공정', steps: [] };
+const DEFAULT_PROCESS: HomeProcess = { tag: 'CRAFTSMANSHIP', title: '완벽을 향한 6단계 공정', steps: [], durations: [] };
+const DEFAULT_VERIFICATION: VerificationRow[] = [
+  { num: '01', label: '원산지 — 베트남 하띤 직영 20ha', meta: 'CITES' },
+  { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
+  { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
+  { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
+];
+const DEFAULT_VERIFIED_CARDS: VerifiedCard[] = [];
+const DEFAULT_CERTS: CertChip[] = [];
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
@@ -174,6 +190,9 @@ export default function AdminHomePage() {
   const [agarwood, setAgarwood] = useState<HomeAgarwood>(DEFAULT_AGARWOOD);
   const [benefits, setBenefits] = useState<HomeBenefits>(DEFAULT_BENEFITS);
   const [processSection, setProcessSection] = useState<HomeProcess>(DEFAULT_PROCESS);
+  const [verification, setVerification] = useState<VerificationRow[]>(DEFAULT_VERIFICATION);
+  const [verifiedCards, setVerifiedCards] = useState<VerifiedCard[]>(DEFAULT_VERIFIED_CARDS);
+  const [certs, setCerts] = useState<CertChip[]>(DEFAULT_CERTS);
 
   useEffect(() => {
     if (!toast) return;
@@ -196,7 +215,10 @@ export default function AdminHomePage() {
         if (d?.notice) setNotice({ ...DEFAULT_NOTICE, ...d.notice, items: d.notice.items ?? [], badges: d.notice.badges ?? [] });
         if (d?.agarwood) setAgarwood({ ...DEFAULT_AGARWOOD, ...d.agarwood, cards: d.agarwood.cards ?? [] });
         if (d?.benefits) setBenefits({ ...DEFAULT_BENEFITS, ...d.benefits, items: d.benefits.items ?? [] });
-        if (d?.process) setProcessSection({ ...DEFAULT_PROCESS, ...d.process, steps: d.process.steps ?? [] });
+        if (d?.process) setProcessSection({ ...DEFAULT_PROCESS, ...d.process, steps: d.process.steps ?? [], durations: d.process.durations ?? [] });
+        if (Array.isArray(d?.verification)) setVerification(d.verification);
+        if (Array.isArray(d?.verifiedCards)) setVerifiedCards(d.verifiedCards);
+        if (Array.isArray(d?.certs)) setCerts(d.certs);
       } catch (err) {
         console.error('Failed to fetch home:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -462,20 +484,99 @@ export default function AdminHomePage() {
                 <LabeledInput label="제목" value={processSection.title} onChange={(v) => setProcessSection({ ...processSection, title: v })} />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">공정 단계 ({processSection.steps.length})</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">공정 단계 + 소요기간 ({processSection.steps.length})</label>
+                <p className="mb-2 text-xs text-gray-500">각 단계의 이름과 오른쪽에 표시될 기간·라벨을 짝으로 입력합니다.</p>
                 <div className="space-y-2">
                   {processSection.steps.map((s, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className="w-8 text-center text-xs text-gray-400">{String(i + 1).padStart(2, '0')}</span>
-                      <input value={s} onChange={(e) => { const n = [...processSection.steps]; n[i] = e.target.value; setProcessSection({ ...processSection, steps: n }); }} placeholder="공정 단계명" className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: moveItem(processSection.steps, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: moveItem(processSection.steps, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: removeIndex(processSection.steps, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    <div key={i} className="grid grid-cols-[32px_1fr_1fr_auto] items-center gap-2">
+                      <span className="text-center text-xs text-gray-400">{String(i + 1).padStart(2, '0')}</span>
+                      <input value={s} onChange={(e) => { const n = [...processSection.steps]; n[i] = e.target.value; setProcessSection({ ...processSection, steps: n }); }} placeholder="공정 단계명 (예: 씨앗 발아)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <input value={processSection.durations?.[i] ?? ''} onChange={(e) => { const n = [...(processSection.durations ?? [])]; while (n.length < processSection.steps.length) n.push(''); n[i] = e.target.value; setProcessSection({ ...processSection, durations: n }); }} placeholder="기간 라벨 (예: 6 — 12 Months)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => {
+                          const ns = moveItem(processSection.steps, i, i - 1);
+                          const nd = moveItem(processSection.durations ?? [], i, i - 1);
+                          setProcessSection({ ...processSection, steps: ns, durations: nd });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => {
+                          const ns = moveItem(processSection.steps, i, i + 1);
+                          const nd = moveItem(processSection.durations ?? [], i, i + 1);
+                          setProcessSection({ ...processSection, steps: ns, durations: nd });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => {
+                          const ns = removeIndex(processSection.steps, i);
+                          const nd = removeIndex(processSection.durations ?? [], i);
+                          setProcessSection({ ...processSection, steps: ns, durations: nd });
+                        }} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setProcessSection({ ...processSection, steps: [...processSection.steps, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 단계 추가</button>
+                  <button type="button" onClick={() => setProcessSection({ ...processSection, steps: [...processSection.steps, ''], durations: [...(processSection.durations ?? []), ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 단계 추가</button>
                 </div>
               </div>
+            </div>
+          </SectionCard>
+
+          {/* Verification (hero 4-point card) */}
+          <SectionCard title="히어로 4-Point Verification" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">히어로 오른쪽 "4-Point Verification" 카드의 4줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
+              {verification.map((r, i) => (
+                <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
+                  <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 20ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={r.meta} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], meta: e.target.value }; setVerification(n); }} placeholder="메타 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <div className="flex gap-1">
+                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                    <button type="button" onClick={() => setVerification(removeIndex(verification, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={() => setVerification([...verification, { num: '', label: '', meta: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 행 추가</button>
+            </div>
+          </SectionCard>
+
+          {/* Verified Cards (3-step Notice section) */}
+          <SectionCard title="Verified Cards (Origin · Process · Evidence)" onSave={() => saveSection('verifiedCards', { verifiedCards })} saving={saving === 'verifiedCards'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">히어로 아래 "진짜 침향..." 섹션의 3단 카드. 보통 Origin / Process / Evidence 3개.</p>
+              {verifiedCards.map((c, i) => (
+                <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <input value={c.step} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], step: e.target.value }; setVerifiedCards(n); }} placeholder="스텝 태그 (예: 01 · Origin)" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    <div className="ml-2 flex gap-1">
+                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i - 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i + 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                      <button type="button" onClick={() => setVerifiedCards(removeIndex(verifiedCards, i))} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    </div>
+                  </div>
+                  <input value={c.title} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], title: e.target.value }; setVerifiedCards(n); }} placeholder="한글 제목 (예: 학명 확인된 AAR)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.en} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], en: e.target.value }; setVerifiedCards(n); }} placeholder="영문 부제 (예: Aquilaria Agallocha Roxburgh)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <textarea rows={3} value={c.body} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], body: e.target.value }; setVerifiedCards(n); }} placeholder="본문 설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                </div>
+              ))}
+              <button type="button" onClick={() => setVerifiedCards([...verifiedCards, { step: '', title: '', en: '', body: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
+            </div>
+          </SectionCard>
+
+          {/* Certification Chips */}
+          <SectionCard title="인증 칩 (8개 권장)" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">Verified 섹션 하단의 인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제.</p>
+              {certs.map((c, i) => (
+                <div key={i} className="grid grid-cols-[60px_1fr_2fr_auto] items-center gap-2">
+                  <input value={c.mark} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], mark: e.target.value }; setCerts(n); }} placeholder="C" maxLength={3} className="rounded-lg border border-gray-300 px-3 py-2 text-center font-serif text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.name} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], name: e.target.value }; setCerts(n); }} placeholder="이름 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.sub} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], sub: e.target.value }; setCerts(n); }} placeholder="부제 (예: 국제 보호 수종)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <div className="flex gap-1">
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                    <button type="button" onClick={() => setCerts(removeIndex(certs, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
             </div>
           </SectionCard>
         </div>
