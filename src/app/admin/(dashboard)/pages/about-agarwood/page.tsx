@@ -37,6 +37,24 @@ interface Paper {
   citations: string;
 }
 
+interface MediaItem {
+  outlet: string;
+  date?: string;
+  title: string;
+  summary?: string;
+  image?: string;
+  link?: string;
+}
+
+interface TestimonialItem {
+  name: string;
+  role?: string;
+  rating?: number;
+  body: string;
+  product?: string;
+  image?: string;
+}
+
 interface AboutAgarwoodData {
   hero: {
     sectionTag: string;
@@ -62,6 +80,18 @@ interface AboutAgarwoodData {
     buttonProductsHref: string;
     buttonBrand: string;
     buttonBrandHref: string;
+  };
+  mediaTab?: {
+    tag: string;
+    title: string;
+    subtitle?: string;
+    items: MediaItem[];
+  };
+  testimonialsTab?: {
+    tag: string;
+    title: string;
+    subtitle?: string;
+    items: TestimonialItem[];
   };
 }
 
@@ -185,6 +215,18 @@ export default function AdminAboutAgarwoodPage() {
     buttonBrand: '',
     buttonBrandHref: '',
   });
+  const [mediaTab, setMediaTab] = useState<NonNullable<AboutAgarwoodData['mediaTab']>>({
+    tag: 'In the Media',
+    title: '매체에 실린 침향',
+    subtitle: '주요 매체와 기관에서 조명한 대라천 침향의 이야기.',
+    items: [],
+  });
+  const [testimonialsTab, setTestimonialsTab] = useState<NonNullable<AboutAgarwoodData['testimonialsTab']>>({
+    tag: 'Testimonials',
+    title: '고객이 남긴 침향',
+    subtitle: '대라천 침향을 경험한 고객들의 진솔한 이야기.',
+    items: [],
+  });
 
   /* toast auto-hide */
   useEffect(() => {
@@ -208,6 +250,8 @@ export default function AdminAboutAgarwoodPage() {
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
         setCta(d.cta ?? cta);
+        if (d.mediaTab) setMediaTab(d.mediaTab);
+        if (d.testimonialsTab) setTestimonialsTab(d.testimonialsTab);
       } catch (err) {
         console.error('Failed to fetch pages:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -502,6 +546,101 @@ export default function AdminAboutAgarwoodPage() {
               <button type="button" onClick={() => setPapers([...papers, { title: '', journal: '', year: '', citations: '-' }])} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
                 + 논문 추가
               </button>
+            </div>
+          </SectionCard>
+
+          {/* Media Tab */}
+          <SectionCard title="매체 탭 (매체에 실린 침향)" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="태그" value={mediaTab.tag} onChange={(v) => setMediaTab({ ...mediaTab, tag: v })} />
+                <LabeledInput label="제목" value={mediaTab.title} onChange={(v) => setMediaTab({ ...mediaTab, title: v })} />
+                <div className="md:col-span-2">
+                  <LabeledTextarea label="부제목 (선택)" value={mediaTab.subtitle ?? ''} onChange={(v) => setMediaTab({ ...mediaTab, subtitle: v })} rows={2} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">매체 보도 항목 ({mediaTab.items.length})</label>
+                <div className="space-y-4">
+                  {mediaTab.items.map((item, i) => (
+                    <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: removeItem(mediaTab.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <input placeholder="매체명 (예: 한국경제)" value={item.outlet} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], outlet: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                        <input placeholder="날짜 (예: 2026.01.15)" value={item.date ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], date: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      </div>
+                      <input placeholder="기사 제목" value={item.title} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], title: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <textarea placeholder="요약 (선택)" rows={2} value={item.summary ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], summary: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <input placeholder="원문 링크 (선택, https://...)" value={item.link ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], link: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">썸네일 이미지 (선택)</label>
+                        <ImageUploadField value={item.image ?? ''} onChange={(url) => { const n = [...mediaTab.items]; n[i] = { ...n[i], image: url }; setMediaTab({ ...mediaTab, items: n }); }} subdir="pages" />
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: [...mediaTab.items, { outlet: '', title: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 매체 보도 추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Testimonials Tab */}
+          <SectionCard title="고객 후기 탭 (고객이 남긴 침향)" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="태그" value={testimonialsTab.tag} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, tag: v })} />
+                <LabeledInput label="제목" value={testimonialsTab.title} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, title: v })} />
+                <div className="md:col-span-2">
+                  <LabeledTextarea label="부제목 (선택)" value={testimonialsTab.subtitle ?? ''} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, subtitle: v })} rows={2} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">고객 후기 ({testimonialsTab.items.length})</label>
+                <div className="space-y-4">
+                  {testimonialsTab.items.map((item, i) => (
+                    <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: moveItem(testimonialsTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: moveItem(testimonialsTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: removeItem(testimonialsTab.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                        <input placeholder="이름" value={item.name} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], name: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                        <input placeholder="역할/소속 (선택)" value={item.role ?? ''} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], role: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                        <select value={item.rating ?? 0} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], rating: Number(e.target.value) }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none bg-white">
+                          <option value={0}>별점 없음</option>
+                          <option value={1}>★☆☆☆☆ (1점)</option>
+                          <option value={2}>★★☆☆☆ (2점)</option>
+                          <option value={3}>★★★☆☆ (3점)</option>
+                          <option value={4}>★★★★☆ (4점)</option>
+                          <option value={5}>★★★★★ (5점)</option>
+                        </select>
+                      </div>
+                      <textarea placeholder="후기 본문" rows={3} value={item.body} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], body: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <input placeholder="사용 제품명 (선택)" value={item.product ?? ''} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], product: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">프로필 이미지 (선택)</label>
+                        <ImageUploadField value={item.image ?? ''} onChange={(url) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], image: url }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} subdir="pages" />
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: [...testimonialsTab.items, { name: '', body: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 고객 후기 추가
+                  </button>
+                </div>
+              </div>
             </div>
           </SectionCard>
 

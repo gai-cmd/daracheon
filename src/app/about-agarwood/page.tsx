@@ -31,6 +31,8 @@ export interface SpecialReason { title: string; description: string }
 export interface Benefit { title: string; description: string }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
+export interface MediaItem { outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }
+export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string }
 
 export interface AboutAgarwoodData {
   hero: { sectionTag: string; titleKr: string; titleEn: string; subtitle: string; heroImage: string };
@@ -41,6 +43,8 @@ export interface AboutAgarwoodData {
   literatures: Literature[];
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
+  mediaTab?: { tag: string; title: string; subtitle?: string; items: MediaItem[] };
+  testimonialsTab?: { tag: string; title: string; subtitle?: string; items: TestimonialItem[] };
 }
 
 export default async function AboutAgarwoodPage() {

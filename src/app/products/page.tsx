@@ -18,13 +18,162 @@ const CERTS = [
   { mark: 'K', k: '식약처', v: '식품공전 등재' },
 ];
 
+// Fallback categories mirroring data/db/productCategories.json
+const DEFAULT_CATEGORIES: ProductCategory[] = [
+  { id: 'all', label: '전체', labelEn: 'All' },
+  { id: '오일', label: '오일', labelEn: 'Essential Oil' },
+  { id: '환', label: '환', labelEn: 'Pill' },
+  { id: '수', label: '침향수', labelEn: 'Water' },
+  { id: '차', label: '건강차', labelEn: 'Tea' },
+  { id: '스틱', label: '스틱', labelEn: 'Stick' },
+  { id: '향', label: '향', labelEn: 'Incense' },
+  { id: '염주', label: '염주', labelEn: 'Prayer Beads' },
+];
+
+// Fallback products sourced from data/db/products.json (first 6 items).
+// TODO: Cloudinary migration — local /uploads/products/* paths 404 on Vercel.
+// Replace with Cloudinary URLs when production assets are uploaded.
+const DEFAULT_PRODUCTS: Product[] = [
+  {
+    id: 'cham-oil-capsule',
+    slug: 'daerachoen-cham-agarwood-oil-capsule',
+    name: "대라천 '참'침향 오일 캡슐",
+    nameEn: 'Daeracheon Cham Agarwood Oil Capsule',
+    category: '오일',
+    categoryEn: 'Essential Oil',
+    badge: 'Signature',
+    price: 248000,
+    priceDisplay: '248,000원',
+    image: '/uploads/products/oil-gift-box.jpg',
+    gallery: [
+      '/uploads/products/oil-gift-box.jpg',
+      '/uploads/products/oil-gift-open.jpg',
+      '/uploads/products/oil-single-box.jpg',
+    ],
+    description:
+      "25년 이상 숙성된 Aquilaria Agallocha Roxburgh 침향나무 수지의 오일 0.59%를 담은 대라천의 시그니처 연질캡슐.",
+    shortDescription: '25년산 정품 침향오일 연질캡슐 — 30캡슐 기프트박스.',
+    features: [
+      'Aquilaria Agallocha Roxburgh (정품 학명 인증)',
+      '침향나무 수지 오일 0.59% 함유',
+      '507.5mg × 30캡슐 = 총 15.225g',
+    ],
+    specs: {
+      원산지: '베트남 (하띤, 동나이, 냐짱, 푸꿕, 람동)',
+      수종: 'Aquilaria Agallocha Roxburgh',
+      중량: '507.5mg × 30캡슐 (15.225g)',
+      인증: 'Organic, HACCP, OCOP',
+    },
+    inStock: true,
+    variants: [
+      { id: 'v-cap-30', label: '30캡슐 (1박스)', price: 248000, priceDisplay: '248,000원', inStock: true, sku: 'CHAM-OIL-30' },
+      { id: 'v-cap-90', label: '90캡슐 (3박스 세트)', price: 680000, priceDisplay: '680,000원', inStock: true, sku: 'CHAM-OIL-90' },
+    ],
+  },
+  {
+    id: 'cham-oil-raw',
+    slug: 'agarwood-essential-oil-1ml',
+    name: '대라천 침향 에센셜 오일 (침향油)',
+    nameEn: 'Agarwood Essential Oil (1ml)',
+    category: '오일',
+    categoryEn: 'Essential Oil',
+    badge: 'Premium',
+    price: 650000,
+    priceDisplay: '650,000원',
+    image: '/uploads/products/oil-bottle-closeup.jpg',
+    description:
+      '25년산 Aquilaria Agallocha Roxburgh 원목을 72시간 고온증류하여 얻은 순수 침향 에센셜 오일 100%.',
+    shortDescription: '25년산 침향 100% 에센셜 오일, 72시간 고온증류 추출.',
+    features: ['침향 에센셜 오일 100% (25년산)', '72시간 고온증류 추출', '취향·복용·마사지 다용도 사용'],
+    specs: {
+      원산지: '베트남',
+      성분: '침향 에센셜 오일 100% (25년산)',
+      부피: '1ml',
+      인증: 'Organic, HACCP, OCOP',
+    },
+    inStock: true,
+  },
+  {
+    id: 'cham-pill-chimhyang',
+    slug: 'agarwood-chimhyangdan',
+    name: '침향단 (沈香丹)',
+    nameEn: 'Agarwood Traditional Pill',
+    category: '환',
+    categoryEn: 'Pill',
+    badge: 'Traditional',
+    price: 180000,
+    priceDisplay: '180,000원',
+    image: '/uploads/products/oil-packaging-stack.jpg',
+    description:
+      '노니엑기스·북방감초·인삼·칵깐(녹용)·콜라겐·표고에 25년산 침향분말 10%를 더한 전통 방식의 환제(丸劑).',
+    shortDescription: '25년산 침향분말 10% 배합 전통 환 — 1일 1단 식후 복용.',
+    features: ['25년산 침향분말 10% 배합', '1일 1회 1단 식후 복용', 'Organic / HACCP / OCOP 인증'],
+    specs: { 중량: '1단 5g × 15단 (총 75g)', 유통기한: '3년', 인증: 'Organic, HACCP, OCOP' },
+    inStock: true,
+  },
+  {
+    id: 'cham-pill-gibo',
+    slug: 'agarwood-gibodan',
+    name: '기보단 (氣寶丹)',
+    nameEn: 'Gibodan Supreme',
+    category: '환',
+    categoryEn: 'Pill',
+    badge: 'Luxury',
+    price: 480000,
+    priceDisplay: '480,000원',
+    image: '/uploads/products/oil-gift-open.jpg',
+    description: '25년산 침향에 동충하초·제비집을 더해 완성한 대라천의 최고급 복합 환.',
+    shortDescription: '25년산 침향·동충하초·제비집 복합 프리미엄 환.',
+    features: ['25년산 침향 + 동충하초 + 제비집', '1박스 3병 × 20포 = 60포 구성'],
+    specs: { 포장: '1박스 3병 × 60포', 유통기한: '3년', 인증: 'Organic, HACCP, OCOP' },
+    inStock: true,
+  },
+  {
+    id: 'cham-water',
+    slug: 'agarwood-water-500ml',
+    name: '침향수 (沈香水)',
+    nameEn: 'Agarwood Distilled Water',
+    category: '수',
+    categoryEn: 'Water',
+    badge: 'Daily',
+    price: 120000,
+    priceDisplay: '120,000원',
+    image: '/uploads/products/oil-box-back.jpg',
+    description: '25년산 침향 증류 추출물 100%로 만든 대라천 침향수. 분무·가습기로 확산시켜 취향하거나, 음용할 수 있는 일상형 제품.',
+    shortDescription: '25년산 침향 증류 추출물 100% — 분무·음용 다용도.',
+    features: ['침향 증류 추출물 100% (25년산)', '1일 음용 권장량 20ml'],
+    specs: { 부피: '1병 500ml', 유통기한: '2년', 인증: 'Organic, HACCP, OCOP' },
+    inStock: true,
+  },
+  {
+    id: 'cham-tea-paramignya',
+    slug: 'agarwood-paramignya-tea',
+    name: '침향 파라미냐차 (沈香茶)',
+    nameEn: 'Agarwood Paramignya Herbal Tea',
+    category: '차',
+    categoryEn: 'Tea',
+    badge: 'Wellness',
+    price: 95000,
+    priceDisplay: '95,000원',
+    image: '/uploads/products/oil-nutrition-facts.jpg',
+    description: '25년산 침향과 베트남 전통 항암차 파라미냐(Paramignya)를 블렌딩한 허브티.',
+    shortDescription: '25년산 침향 + 베트남 전통 파라미냐 블렌드 — 3탕 가능.',
+    features: ['25년산 침향 + 파라미냐 블렌드', '30포 / 1박스 (총 75g)'],
+    specs: { 중량: '1포 2.5g × 30포 (75g)', 유통기한: '4년', 인증: 'Organic, HACCP, OCOP' },
+    inStock: true,
+  },
+];
+
 export default async function ProductsPage() {
-  const products = await readData<Product>('products');
+  const dbProducts = await readData<Product>('products');
   const dbCategories = await readData<ProductCategory>('productCategories');
+
+  const products = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
+  const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
 
   const productCategories: ProductCategory[] = [
     { id: 'all', label: '전체', labelEn: 'All' },
-    ...dbCategories.filter((c) => c.id !== 'all'),
+    ...sourceCategories.filter((c) => c.id !== 'all'),
   ];
 
   return (

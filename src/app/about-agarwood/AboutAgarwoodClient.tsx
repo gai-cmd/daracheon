@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { AboutAgarwoodData } from './page';
@@ -10,7 +11,59 @@ interface Props {
   data: AboutAgarwoodData | null;
 }
 
-const TABS = ['침향이란?', '문헌에 실린 침향', '논문에 실린 침향'] as const;
+const TABS = ['침향이란?', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'] as const;
+
+const FALLBACK_MEDIA_ITEMS: Array<{ outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }> = [
+  {
+    outlet: '한국경제',
+    date: '2025.11',
+    title: '25년의 기록 — 대라천, 200ha 침향 숲을 일구다',
+    summary: '1998년 캄보디아에서 시작된 침향 여정, 베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기.',
+  },
+  {
+    outlet: '한국디자인진흥원',
+    date: '2026.01',
+    title: '라이프스타일 브랜드 인증 — 조엘라이프',
+    summary: '침향 원료의 프리미엄 라이프스타일 브랜드로서 정체성과 디자인 완성도를 인정받아 공식 인증 획득.',
+  },
+  {
+    outlet: '식품의약품안전처',
+    date: '2026.02',
+    title: '건강기능식품 규격 부합 — Aquilaria Agallocha Roxburgh',
+    summary: '식약처 고시 공식 학명에 등재된 진짜 침향. 대한민국약전외한약(생약)규격집과 식품공전, 두 곳에 공식 등록된 원료.',
+  },
+];
+
+const FALLBACK_TESTIMONIAL_ITEMS: Array<{ name: string; role?: string; rating?: number; body: string; product?: string; image?: string }> = [
+  {
+    name: '김*선',
+    role: '60대 · 직장인',
+    rating: 5,
+    body: '매일 아침 한 알씩 꾸준히 복용했더니 기력이 확연히 좋아졌습니다. 특히 환절기에도 컨디션이 안정적으로 유지되어 놀라웠어요.',
+    product: '대라천 참침향환',
+  },
+  {
+    name: '박*호',
+    role: '50대 · 자영업',
+    rating: 5,
+    body: '잠을 제대로 이루지 못해 고민이 많았는데, 침향을 꾸준히 복용하면서 숙면에 도움을 받고 있습니다. 자연의 힘을 느낍니다.',
+    product: '대라천 침향 오일',
+  },
+  {
+    name: '이*영',
+    role: '70대 · 주부',
+    rating: 5,
+    body: '손자가 선물해 준 침향환을 어머님께 드렸더니 매우 좋아하셨습니다. 어르신 선물로 이만한 게 없다고 생각합니다.',
+    product: '대라천 참침향환 프리미엄',
+  },
+  {
+    name: '정*현',
+    role: '40대 · 직장인',
+    rating: 4,
+    body: '학명(Aquilaria Agallocha Roxburgh)을 직접 확인하고 구매했습니다. 진짜 침향의 그윽한 향과 품질에 만족하고 있어요.',
+    product: '대라천 침향 오일',
+  },
+];
 
 // 공식 등재 규격집 — 원본 하드코딩 (데이터베이스 의존하지 않음)
 const REGISTRY_ROWS: Array<{ label: string; value: string }> = [
@@ -33,6 +86,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const benefits = data?.benefits ?? [];
   const literatures = data?.literatures ?? [];
   const papers = data?.papers ?? [];
+  const mediaTab = data?.mediaTab;
+  const testimonialsTab = data?.testimonialsTab;
+  const mediaItems = mediaTab?.items && mediaTab.items.length > 0 ? mediaTab.items : FALLBACK_MEDIA_ITEMS;
+  const testimonialItems = testimonialsTab?.items && testimonialsTab.items.length > 0 ? testimonialsTab.items : FALLBACK_TESTIMONIAL_ITEMS;
   const cta = data?.cta;
 
   return (
@@ -659,6 +716,256 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     논문 자료가 곧 업데이트됩니다.
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════ TAB 3: 매체에 실린 침향 ════════════ */}
+      {activeTab === 3 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>—</div>
+                <div className={styles.chapterTag}>{mediaTab?.tag ?? 'In the Media · 매체'}</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>
+                    <em>{mediaTab?.title ?? '매체에 실린 침향'}</em>
+                  </h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p>
+                    {mediaTab?.subtitle ??
+                      '주요 매체와 기관에서 조명한 대라천 침향의 이야기. 25년의 기록과 공식 인증을 확인하세요.'}
+                  </p>
+                </RevealOnScroll>
+                <div
+                  style={{
+                    marginTop: 30,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                    gap: 20,
+                  }}
+                >
+                  {mediaItems.map((item, i) => {
+                    const CardInner = (
+                      <div
+                        style={{
+                          padding: 22,
+                          border: '1px solid rgba(212,168,67,0.2)',
+                          background: 'rgba(255,255,255,0.02)',
+                          height: '100%',
+                        }}
+                      >
+                        {item.image && (
+                          <div
+                            style={{
+                              position: 'relative',
+                              width: '100%',
+                              aspectRatio: '16/9',
+                              marginBottom: 16,
+                              overflow: 'hidden',
+                              border: '1px solid rgba(212,168,67,0.15)',
+                            }}
+                          >
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              sizes="(max-width: 1024px) 50vw, 33vw"
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14, gap: 10 }}>
+                          <span
+                            style={{
+                              padding: '4px 10px',
+                              border: '1px solid rgba(212,168,67,0.35)',
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.62rem',
+                              letterSpacing: '0.22em',
+                              color: 'var(--accent)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {item.outlet}
+                          </span>
+                          {item.date && (
+                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{item.date}</span>
+                          )}
+                        </div>
+                        <h4
+                          style={{
+                            fontFamily: "'Noto Serif KR', serif",
+                            fontSize: '1.05rem',
+                            color: '#fff',
+                            marginBottom: 10,
+                            fontWeight: 400,
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {item.title}
+                        </h4>
+                        {item.summary && (
+                          <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, fontWeight: 300 }}>
+                            {item.summary}
+                          </p>
+                        )}
+                        {item.link && (
+                          <p
+                            style={{
+                              marginTop: 14,
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.64rem',
+                              letterSpacing: '0.22em',
+                              color: 'var(--accent)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            원문 보기 →
+                          </p>
+                        )}
+                      </div>
+                    );
+                    return (
+                      <RevealOnScroll key={item.title + i} delay={(i % 6) * 60}>
+                        {item.link ? (
+                          <a
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+                          >
+                            {CardInner}
+                          </a>
+                        ) : (
+                          CardInner
+                        )}
+                      </RevealOnScroll>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════ TAB 4: 고객이 남긴 침향 ════════════ */}
+      {activeTab === 4 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>—</div>
+                <div className={styles.chapterTag}>{testimonialsTab?.tag ?? 'Testimonials · 후기'}</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>
+                    <em>{testimonialsTab?.title ?? '고객이 남긴 침향'}</em>
+                  </h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p>
+                    {testimonialsTab?.subtitle ??
+                      '대라천 침향을 경험한 고객들의 진솔한 이야기. 세월이 빚어낸 향이 일상에 남긴 흔적입니다.'}
+                  </p>
+                </RevealOnScroll>
+                <div
+                  style={{
+                    marginTop: 30,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                    gap: 20,
+                  }}
+                >
+                  {testimonialItems.map((item, i) => (
+                    <RevealOnScroll key={item.name + i} delay={(i % 6) * 60}>
+                      <div
+                        style={{
+                          padding: 24,
+                          border: '1px solid rgba(212,168,67,0.2)',
+                          background: 'rgba(255,255,255,0.02)',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        {typeof item.rating === 'number' && item.rating > 0 && (
+                          <div style={{ marginBottom: 14, letterSpacing: '0.1em' }}>
+                            {[...Array(5)].map((_, j) => (
+                              <span
+                                key={j}
+                                style={{
+                                  color: j < item.rating! ? 'var(--accent)' : 'rgba(212,168,67,0.2)',
+                                  fontSize: '0.95rem',
+                                }}
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p
+                          style={{
+                            fontFamily: "'Noto Serif KR', serif",
+                            fontSize: '0.95rem',
+                            color: 'rgba(255,255,255,0.82)',
+                            lineHeight: 1.85,
+                            fontWeight: 300,
+                            flexGrow: 1,
+                            marginBottom: 18,
+                          }}
+                        >
+                          &ldquo;{item.body}&rdquo;
+                        </p>
+                        <div style={{ paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.15)' }}>
+                          <div
+                            style={{
+                              fontFamily: "'Noto Serif KR', serif",
+                              fontSize: '1rem',
+                              color: '#fff',
+                              fontWeight: 400,
+                              marginBottom: 4,
+                            }}
+                          >
+                            {item.name}
+                          </div>
+                          {item.role && (
+                            <div
+                              style={{
+                                fontSize: '0.72rem',
+                                color: 'rgba(255,255,255,0.55)',
+                                marginBottom: 6,
+                              }}
+                            >
+                              {item.role}
+                            </div>
+                          )}
+                          {item.product && (
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.6rem',
+                                letterSpacing: '0.22em',
+                                color: 'var(--accent-soft)',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {item.product}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </RevealOnScroll>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
