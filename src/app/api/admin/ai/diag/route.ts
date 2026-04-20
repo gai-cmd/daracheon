@@ -7,16 +7,57 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 /**
- * Admin-only diagnostic endpoint: reports the deployed ANTHROPIC_API_KEY's
- * last 4 chars and the live status of a tiny Anthropic call. Used to
- * distinguish between:
- *   - wrong key in Vercel env (key suffix won't match Console)
- *   - correct key but org/workspace billing issue (live call returns 400
- *     "credit balance too low")
- *   - correct key + billing fine but something else (live call 200)
- *
- * Never returns the full key. Requires a valid admin session.
+ * Admin-only diagnostic endpoint. Probes multiple models in parallel so that
+ * a transient 429 on Haiku doesn't look like a global outage — chat route's
+ * fallback chain may still be usable via Sonnet/Opus.
  */
+
+const PROBE_MODELS = [
+  'claude-haiku-4-5-20251001',
+  'claude-sonnet-4-6',
+  'claude-opus-4-7',
+] as const;
+
+interface ModelProbe {
+  model: string;
+  status: number | null;
+  ok: boolean;
+  elapsedMs: number;
+  body?: string;
+  error?: string;
+}
+
+async function probeModel(key: string, model: string): Promise<ModelProbe> {
+  const startedAt = Date.now();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 10,
+        messages: [{ role: 'user', content: 'hi' }],
+      }),
+    });
+    const elapsedMs = Date.now() - startedAt;
+    if (res.ok) return { model, status: res.status, ok: true, elapsedMs, body: '(ok)' };
+    const text = await res.text().catch(() => '');
+    return { model, status: res.status, ok: false, elapsedMs, body: text.slice(0, 500) };
+  } catch (err) {
+    return {
+      model,
+      status: null,
+      ok: false,
+      elapsedMs: Date.now() - startedAt,
+      error: err instanceof Error ? err.message.slice(0, 300) : 'fetch error',
+    };
+  }
+}
+
 export async function GET() {
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
@@ -36,42 +77,14 @@ export async function GET() {
   const hasBlobToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
   const vercelCommitSha = (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7);
 
-  // Live probe: smallest possible Anthropic call. Uses Haiku to minimise cost.
-  let liveStatus: number | null = null;
-  let liveBody: string | null = null;
-  let liveOk = false;
-  let liveElapsedMs = 0;
+  const probes: ModelProbe[] = keyPresent
+    ? await Promise.all(PROBE_MODELS.map((m) => probeModel(key, m)))
+    : [];
 
-  if (keyPresent) {
-    const startedAt = Date.now();
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 10,
-          messages: [{ role: 'user', content: 'hi' }],
-        }),
-      });
-      liveStatus = res.status;
-      liveOk = res.ok;
-      liveElapsedMs = Date.now() - startedAt;
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        liveBody = text.slice(0, 500);
-      } else {
-        liveBody = '(ok — omitted)';
-      }
-    } catch (err) {
-      liveBody = err instanceof Error ? err.message.slice(0, 300) : 'unknown fetch error';
-      liveElapsedMs = Date.now() - startedAt;
-    }
-  }
+  const anyOk = probes.some((p) => p.ok);
+  const okModels = probes.filter((p) => p.ok).map((p) => p.model);
+  const rateLimitedModels = probes.filter((p) => p.status === 429).map((p) => p.model);
+  const primary = probes[0] ?? null; // Haiku — 호환성용 legacy 필드
 
   return NextResponse.json({
     ok: true,
@@ -86,42 +99,54 @@ export async function GET() {
       githubRepo,
       vercelCommitSha,
     },
-    liveProbe: keyPresent
-      ? {
-          status: liveStatus,
-          ok: liveOk,
-          elapsedMs: liveElapsedMs,
-          body: liveBody,
-        }
+    // 전체 probe 결과
+    probes,
+    anyOk,
+    okModels,
+    rateLimitedModels,
+    // Legacy 단일 probe 필드 (기존 UI 호환)
+    liveProbe: keyPresent && primary
+      ? { status: primary.status, ok: primary.ok, elapsedMs: primary.elapsedMs, body: primary.body ?? primary.error ?? null }
       : { skipped: 'ANTHROPIC_API_KEY 미설정' },
-    diagnosis: interpret({ keyPresent, keyLast4, liveOk, liveStatus, liveBody }),
+    diagnosis: interpret({ keyPresent, keyLast4, probes }),
   });
 }
 
 function interpret(params: {
   keyPresent: boolean;
   keyLast4: string;
-  liveOk: boolean;
-  liveStatus: number | null;
-  liveBody: string | null;
+  probes: ModelProbe[];
 }): string {
   if (!params.keyPresent) {
     return '❌ ANTHROPIC_API_KEY가 Vercel 환경변수에 없음. Settings → Environment Variables에서 추가 후 재배포.';
   }
-  if (params.liveOk) {
-    return `✅ 키·크레딧·한도 모두 정상. 마지막 4자리 ${params.keyLast4}. Anthropic Console에서 같은 접미사의 키를 확인하세요.`;
+  const anyOk = params.probes.some((p) => p.ok);
+  const okModels = params.probes.filter((p) => p.ok).map((p) => p.model);
+  const rateLimited = params.probes.filter((p) => p.status === 429).map((p) => p.model);
+  const auth401 = params.probes.find((p) => p.status === 401);
+  const credit400 = params.probes.find((p) => p.status === 400 && p.body?.includes('credit balance'));
+
+  if (auth401) {
+    return `❌ 키 인증 실패 (401). 모든 모델에서 동일. 키 ${params.keyLast4} revoke 또는 오타 가능. Console 에서 새 키 발급 후 Vercel 에 교체 · 재배포.`;
   }
-  if (params.liveStatus === 401) {
-    return `❌ 키 인증 실패 (401). 이 키는 revoke됐거나 오타. 마지막 4자리 ${params.keyLast4}. Console에서 새 키 발급 후 Vercel에 교체하고 재배포.`;
+  if (credit400) {
+    return `❌ 크레딧 부족 (400). 키 ${params.keyLast4}. Anthropic Console 에서 조직/워크스페이스 크레딧 확인.`;
   }
-  if (params.liveStatus === 400 && params.liveBody?.includes('credit balance')) {
-    return `❌ 크레딧 부족 (400). 키 마지막 4자리 ${params.keyLast4}. 이 키가 속한 조직·워크스페이스를 Anthropic Console에서 찾아 크레딧/한도 확인. Console에서 다른 키와 접미사 비교해보세요.`;
+  if (anyOk) {
+    const summary = `✅ AI 사용 가능 — 성공 모델: ${okModels.join(', ')}.`;
+    if (rateLimited.length > 0) {
+      return `${summary} ⚠️ Rate limit 모델: ${rateLimited.join(', ')} (chat 은 fallback 으로 자동 전환됨).`;
+    }
+    return `${summary} 키 ${params.keyLast4}.`;
   }
-  if (params.liveStatus === 429) {
-    return `⚠️ 현재 rate limit (429) — 크레딧 문제 아님. 잠시 후 재시도.`;
+  if (rateLimited.length === params.probes.length) {
+    return `⚠️ 전 모델 rate limit (429) — 크레딧 문제 아님. 1~2 분 후 재시도.`;
   }
-  if (params.liveStatus && params.liveStatus >= 500) {
-    return `⚠️ Anthropic 서버 에러 (${params.liveStatus}) — 키 문제 아님. 재시도.`;
+  if (rateLimited.length > 0) {
+    const other = params.probes.filter((p) => !p.ok && p.status !== 429);
+    const detail = other.map((p) => `${p.model}=${p.status ?? 'err'}`).join(', ');
+    return `⚠️ 일부 rate limit(${rateLimited.join(',')}) · 나머지 실패(${detail}). 1~2 분 후 재시도.`;
   }
-  return `❓ 예상 못한 상태 (status ${params.liveStatus ?? 'n/a'}). 응답 body 확인: ${params.liveBody ?? ''}`;
+  const details = params.probes.map((p) => `${p.model}=${p.status ?? 'err'}`).join(', ');
+  return `❓ 예상 못한 상태: ${details}.`;
 }

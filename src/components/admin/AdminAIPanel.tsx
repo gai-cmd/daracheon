@@ -689,17 +689,23 @@ export default function AdminAIPanel() {
       const body = (await res.json()) as {
         env?: { keyPresent?: boolean; keyLast4?: string };
         liveProbe?: { ok?: boolean; status?: number; elapsedMs?: number; body?: string };
+        probes?: { model: string; status: number | null; ok: boolean; elapsedMs: number; body?: string }[];
+        anyOk?: boolean;
+        okModels?: string[];
+        rateLimitedModels?: string[];
         diagnosis?: string;
       };
       if (!body.env?.keyPresent) {
         setHealth({ status: 'error', reason: 'ANTHROPIC_API_KEY 미설정' });
         return;
       }
-      if (body.liveProbe?.ok) {
+      // anyOk: 체인 중 하나라도 성공하면 chat route 가 fallback 으로 서비스 가능 → ok 간주.
+      if (body.anyOk) {
+        const okProbe = body.probes?.find((p) => p.ok);
         setHealth({
           status: 'ok',
           keyLast4: body.env.keyLast4 ?? '????',
-          elapsedMs: body.liveProbe.elapsedMs ?? 0,
+          elapsedMs: okProbe?.elapsedMs ?? body.liveProbe?.elapsedMs ?? 0,
         });
         return;
       }
