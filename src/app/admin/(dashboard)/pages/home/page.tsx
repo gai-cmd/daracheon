@@ -19,9 +19,56 @@ interface HomeStat {
   label: string;
 }
 
+interface NoticeItem {
+  num: string;
+  text: string;
+}
+
+interface HomeNotice {
+  tag: string;
+  title: string;
+  body: string;
+  items: NoticeItem[];
+  badges: string[];
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+interface AgarwoodCard {
+  title: string;
+  description: string;
+}
+
+interface HomeAgarwood {
+  tag: string;
+  title: string;
+  cards: AgarwoodCard[];
+}
+
+interface BenefitItem {
+  title: string;
+  description: string;
+}
+
+interface HomeBenefits {
+  tag: string;
+  title: string;
+  items: BenefitItem[];
+}
+
+interface HomeProcess {
+  tag: string;
+  title: string;
+  steps: string[];
+}
+
 interface HomeData {
   hero: HomeHero;
   stats: HomeStat[];
+  notice?: HomeNotice;
+  agarwood?: HomeAgarwood;
+  benefits?: HomeBenefits;
+  process?: HomeProcess;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -42,6 +89,20 @@ const DEFAULT_STATS: HomeStat[] = [
   { value: '5', label: '베트남 산지' },
   { value: '200ha', label: '하띤성 직영 농장' },
 ];
+
+const DEFAULT_NOTICE: HomeNotice = {
+  tag: 'NOTICE',
+  title: '진짜 침향, 이젠\n학명부터 확인하세요!',
+  body: "대한민국 국가법령정보센터의 식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전' 두 곳에서 동일하게 등록된 공식 침향은 Aquilaria Agallocha Roxburgh(AAR)입니다.",
+  items: [],
+  badges: [],
+  ctaLabel: "대라천 '참'침향 인증 확인하기 →",
+  ctaHref: '/brand-story',
+};
+
+const DEFAULT_AGARWOOD: HomeAgarwood = { tag: 'AGARWOOD', title: '신들의 나무, 침향', cards: [] };
+const DEFAULT_BENEFITS: HomeBenefits = { tag: 'BENEFITS', title: '침향의 효능에 주목!', items: [] };
+const DEFAULT_PROCESS: HomeProcess = { tag: 'CRAFTSMANSHIP', title: '완벽을 향한 6단계 공정', steps: [] };
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
@@ -109,6 +170,10 @@ export default function AdminHomePage() {
 
   const [hero, setHero] = useState<HomeHero>(DEFAULT_HERO);
   const [stats, setStats] = useState<HomeStat[]>(DEFAULT_STATS);
+  const [notice, setNotice] = useState<HomeNotice>(DEFAULT_NOTICE);
+  const [agarwood, setAgarwood] = useState<HomeAgarwood>(DEFAULT_AGARWOOD);
+  const [benefits, setBenefits] = useState<HomeBenefits>(DEFAULT_BENEFITS);
+  const [processSection, setProcessSection] = useState<HomeProcess>(DEFAULT_PROCESS);
 
   useEffect(() => {
     if (!toast) return;
@@ -128,6 +193,10 @@ export default function AdminHomePage() {
         const d = data.pages?.home;
         if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
         if (Array.isArray(d?.stats) && d.stats.length > 0) setStats(d.stats);
+        if (d?.notice) setNotice({ ...DEFAULT_NOTICE, ...d.notice, items: d.notice.items ?? [], badges: d.notice.badges ?? [] });
+        if (d?.agarwood) setAgarwood({ ...DEFAULT_AGARWOOD, ...d.agarwood, cards: d.agarwood.cards ?? [] });
+        if (d?.benefits) setBenefits({ ...DEFAULT_BENEFITS, ...d.benefits, items: d.benefits.items ?? [] });
+        if (d?.process) setProcessSection({ ...DEFAULT_PROCESS, ...d.process, steps: d.process.steps ?? [] });
       } catch (err) {
         console.error('Failed to fetch home:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -275,6 +344,138 @@ export default function AdminHomePage() {
               >
                 + 통계 추가
               </button>
+            </div>
+          </SectionCard>
+
+          {/* Notice */}
+          <SectionCard title="Consumer Notice (진짜 침향 알림)" onSave={() => saveSection('notice', { notice })} saving={saving === 'notice'}>
+            <div className="space-y-5">
+              <LabeledInput label="태그 (예: NOTICE)" value={notice.tag} onChange={(v) => setNotice({ ...notice, tag: v })} />
+              <LabeledTextarea label="제목 (줄바꿈 = 실제 줄바꿈으로 표시)" value={notice.title} onChange={(v) => setNotice({ ...notice, title: v })} rows={2} />
+              <LabeledTextarea label="본문" value={notice.body} onChange={(v) => setNotice({ ...notice, body: v })} rows={3} />
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Notice 항목 ({notice.items.length}, 3개 권장)</label>
+                <div className="space-y-3">
+                  {notice.items.map((it, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <input value={it.num} onChange={(e) => { const n = [...notice.items]; n[i] = { ...n[i], num: e.target.value }; setNotice({ ...notice, items: n }); }} placeholder="번호 (예: 01)" className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-gold-500 focus:outline-none" />
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setNotice({ ...notice, items: moveItem(notice.items, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs disabled:opacity-30">▲</button>
+                          <button type="button" onClick={() => setNotice({ ...notice, items: moveItem(notice.items, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs disabled:opacity-30">▼</button>
+                          <button type="button" onClick={() => setNotice({ ...notice, items: removeIndex(notice.items, i) })} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <textarea rows={2} value={it.text} onChange={(e) => { const n = [...notice.items]; n[i] = { ...n[i], text: e.target.value }; setNotice({ ...notice, items: n }); }} placeholder="본문" className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:border-gold-500 focus:outline-none" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setNotice({ ...notice, items: [...notice.items, { num: '', text: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 항목 추가</button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">인증 뱃지 ({notice.badges.length})</label>
+                <div className="space-y-2">
+                  {notice.badges.map((b, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input value={b} onChange={(e) => { const n = [...notice.badges]; n[i] = e.target.value; setNotice({ ...notice, badges: n }); }} placeholder="예: CITES 보호 수종" className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <button type="button" onClick={() => setNotice({ ...notice, badges: moveItem(notice.badges, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                      <button type="button" onClick={() => setNotice({ ...notice, badges: moveItem(notice.badges, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                      <button type="button" onClick={() => setNotice({ ...notice, badges: removeIndex(notice.badges, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setNotice({ ...notice, badges: [...notice.badges, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 뱃지 추가</button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <LabeledInput label="하단 CTA 라벨" value={notice.ctaLabel} onChange={(v) => setNotice({ ...notice, ctaLabel: v })} />
+                <LabeledInput label="하단 CTA 링크" value={notice.ctaHref} onChange={(v) => setNotice({ ...notice, ctaHref: v })} />
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Agarwood */}
+          <SectionCard title="침향 소개 카드 (AGARWOOD)" onSave={() => saveSection('agarwood', { agarwood })} saving={saving === 'agarwood'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <LabeledInput label="태그" value={agarwood.tag} onChange={(v) => setAgarwood({ ...agarwood, tag: v })} />
+                <LabeledInput label="제목" value={agarwood.title} onChange={(v) => setAgarwood({ ...agarwood, title: v })} />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">카드 ({agarwood.cards.length})</label>
+                <div className="space-y-3">
+                  {agarwood.cards.map((c, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <input value={c.title} onChange={(e) => { const n = [...agarwood.cards]; n[i] = { ...n[i], title: e.target.value }; setAgarwood({ ...agarwood, cards: n }); }} placeholder="카드 제목" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                        <div className="ml-2 flex gap-1">
+                          <button type="button" onClick={() => setAgarwood({ ...agarwood, cards: moveItem(agarwood.cards, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                          <button type="button" onClick={() => setAgarwood({ ...agarwood, cards: moveItem(agarwood.cards, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                          <button type="button" onClick={() => setAgarwood({ ...agarwood, cards: removeIndex(agarwood.cards, i) })} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <textarea rows={3} value={c.description} onChange={(e) => { const n = [...agarwood.cards]; n[i] = { ...n[i], description: e.target.value }; setAgarwood({ ...agarwood, cards: n }); }} placeholder="설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setAgarwood({ ...agarwood, cards: [...agarwood.cards, { title: '', description: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Benefits */}
+          <SectionCard title="침향의 효능 (BENEFITS)" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <LabeledInput label="태그" value={benefits.tag} onChange={(v) => setBenefits({ ...benefits, tag: v })} />
+                <LabeledInput label="제목" value={benefits.title} onChange={(v) => setBenefits({ ...benefits, title: v })} />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">효능 항목 ({benefits.items.length})</label>
+                <div className="space-y-3">
+                  {benefits.items.map((it, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <input value={it.title} onChange={(e) => { const n = [...benefits.items]; n[i] = { ...n[i], title: e.target.value }; setBenefits({ ...benefits, items: n }); }} placeholder="제목" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                        <div className="ml-2 flex gap-1">
+                          <button type="button" onClick={() => setBenefits({ ...benefits, items: moveItem(benefits.items, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                          <button type="button" onClick={() => setBenefits({ ...benefits, items: moveItem(benefits.items, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                          <button type="button" onClick={() => setBenefits({ ...benefits, items: removeIndex(benefits.items, i) })} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <textarea rows={3} value={it.description} onChange={(e) => { const n = [...benefits.items]; n[i] = { ...n[i], description: e.target.value }; setBenefits({ ...benefits, items: n }); }} placeholder="설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setBenefits({ ...benefits, items: [...benefits.items, { title: '', description: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 효능 추가</button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Process */}
+          <SectionCard title="생산 공정 (CRAFTSMANSHIP)" onSave={() => saveSection('process', { process: processSection })} saving={saving === 'process'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <LabeledInput label="태그" value={processSection.tag} onChange={(v) => setProcessSection({ ...processSection, tag: v })} />
+                <LabeledInput label="제목" value={processSection.title} onChange={(v) => setProcessSection({ ...processSection, title: v })} />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">공정 단계 ({processSection.steps.length})</label>
+                <div className="space-y-2">
+                  {processSection.steps.map((s, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="w-8 text-center text-xs text-gray-400">{String(i + 1).padStart(2, '0')}</span>
+                      <input value={s} onChange={(e) => { const n = [...processSection.steps]; n[i] = e.target.value; setProcessSection({ ...processSection, steps: n }); }} placeholder="공정 단계명" className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: moveItem(processSection.steps, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: moveItem(processSection.steps, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                      <button type="button" onClick={() => setProcessSection({ ...processSection, steps: removeIndex(processSection.steps, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setProcessSection({ ...processSection, steps: [...processSection.steps, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 단계 추가</button>
+                </div>
+              </div>
             </div>
           </SectionCard>
         </div>
