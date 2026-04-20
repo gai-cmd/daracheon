@@ -253,6 +253,16 @@ export default function AdminAIPanel() {
   const [authChecked, setAuthChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Health probe: tells the user at a glance whether the backend path
+  // (auth → Anthropic key → live API) is healthy. Runs automatically when
+  // the panel opens and can be re-run by clicking the dot.
+  type HealthState =
+    | { status: 'idle' }
+    | { status: 'checking' }
+    | { status: 'ok'; keyLast4: string; elapsedMs: number }
+    | { status: 'error'; reason: string; status_code?: number };
+  const [health, setHealth] = useState<HealthState>({ status: 'idle' });
+
   const [open, setOpen] = useState(false);
   const [model, setModel] = useState<string>(DEFAULT_MODEL);
   const [width, setWidth] = useState<number>(420);
@@ -661,6 +671,61 @@ export default function AdminAIPanel() {
     setError(null);
   }, [sending, stopStreaming]);
 
+  const runHealthCheck = useCallback(async () => {
+    setHealth({ status: 'checking' });
+    try {
+      const res = await fetch('/api/admin/ai/diag', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
+      if (!res.ok) {
+        setHealth({
+          status: 'error',
+          reason: res.status === 401 ? '관리자 로그인 필요' : `진단 API ${res.status}`,
+          status_code: res.status,
+        });
+        return;
+      }
+      const body = (await res.json()) as {
+        env?: { keyPresent?: boolean; keyLast4?: string };
+        liveProbe?: { ok?: boolean; status?: number; elapsedMs?: number; body?: string };
+        diagnosis?: string;
+      };
+      if (!body.env?.keyPresent) {
+        setHealth({ status: 'error', reason: 'ANTHROPIC_API_KEY 미설정' });
+        return;
+      }
+      if (body.liveProbe?.ok) {
+        setHealth({
+          status: 'ok',
+          keyLast4: body.env.keyLast4 ?? '????',
+          elapsedMs: body.liveProbe.elapsedMs ?? 0,
+        });
+        return;
+      }
+      const probeStatus = body.liveProbe?.status;
+      let reason = body.diagnosis ?? `Anthropic ${probeStatus ?? 'unknown'}`;
+      if (probeStatus === 400 && body.liveProbe?.body?.includes('credit balance')) {
+        reason = 'Anthropic 크레딧 부족 — console.anthropic.com/settings/billing';
+      } else if (probeStatus === 401) {
+        reason = 'API 키 인증 실패 — 키 재발급 필요';
+      }
+      setHealth({ status: 'error', reason, status_code: probeStatus });
+    } catch (err) {
+      setHealth({
+        status: 'error',
+        reason: err instanceof Error ? err.message : '진단 호출 실패',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin || !open) return;
+    if (health.status === 'idle') {
+      void runHealthCheck();
+    }
+  }, [isAdmin, open, health.status, runHealthCheck]);
+
   const modelLabel = useMemo(
     () => MODEL_OPTIONS.find((m) => m.value === model)?.label ?? model,
     [model]
@@ -725,6 +790,43 @@ export default function AdminAIPanel() {
             <div className="flex items-center gap-1">
               <button
                 type="button"
+                onClick={runHealthCheck}
+                disabled={health.status === 'checking'}
+                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] transition hover:bg-gray-800 disabled:cursor-not-allowed"
+                title={
+                  health.status === 'ok'
+                    ? `정상 · 키 ...${health.keyLast4} · ${health.elapsedMs}ms (클릭으로 재확인)`
+                    : health.status === 'error'
+                      ? `오류: ${health.reason}`
+                      : health.status === 'checking'
+                        ? '확인 중...'
+                        : '상태 확인'
+                }
+                aria-label="백엔드 상태"
+              >
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    health.status === 'ok'
+                      ? 'bg-emerald-400'
+                      : health.status === 'error'
+                        ? 'bg-red-400'
+                        : health.status === 'checking'
+                          ? 'animate-pulse bg-amber-400'
+                          : 'bg-gray-500'
+                  }`}
+                />
+                <span className="hidden text-gray-400 sm:inline">
+                  {health.status === 'ok'
+                    ? 'OK'
+                    : health.status === 'error'
+                      ? 'ERROR'
+                      : health.status === 'checking'
+                        ? '...'
+                        : '?'}
+                </span>
+              </button>
+              <button
+                type="button"
                 onClick={clearConversation}
                 disabled={messages.length === 0 && pending.length === 0}
                 className="rounded-md p-1.5 text-gray-400 transition hover:bg-gray-800 hover:text-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
@@ -744,6 +846,25 @@ export default function AdminAIPanel() {
               </button>
             </div>
           </header>
+
+          {health.status === 'error' && (
+            <div className="border-b border-red-900/60 bg-red-950/40 px-4 py-2.5 text-[11px] text-red-200">
+              <div className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0">⚠</span>
+                <div className="min-w-0">
+                  <p className="font-semibold">AI 백엔드 오류</p>
+                  <p className="truncate text-red-300/90">{health.reason}</p>
+                  <button
+                    type="button"
+                    onClick={runHealthCheck}
+                    className="mt-1 text-[10px] text-red-300 underline underline-offset-2 hover:text-red-200"
+                  >
+                    다시 확인
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="border-b border-gray-800 px-4 py-2.5">
             <label className="block text-[11px] font-medium uppercase tracking-wide text-gray-500">

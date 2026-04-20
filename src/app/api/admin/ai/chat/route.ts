@@ -801,7 +801,15 @@ export async function POST(request: NextRequest) {
         }).catch(() => {});
       } catch (err) {
         const msg = err instanceof Error ? err.message : '알 수 없는 오류';
-        console.error('[AI Chat] error', msg);
+        // Full stack + error object to Vercel logs so we can retro-diagnose
+        // any stream failure. The client only sees `msg` (above) for safety.
+        console.error('[AI Chat] fatal', {
+          error: err,
+          message: msg,
+          model,
+          actor: session.email,
+          stack: err instanceof Error ? err.stack : undefined,
+        });
         emit({ type: 'error', message: msg });
         await logAdmin('ai', 'update', {
           summary: `AI 호출 실패`,
