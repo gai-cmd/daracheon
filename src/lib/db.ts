@@ -70,14 +70,27 @@ async function blobReadRawUncached(filename: string): Promise<unknown | null> {
 }
 
 // Wrap the blob read with Next's data cache, tagged so writes can
-// invalidate every serverless instance globally in one call.
+// invalidate every serverless instance globally in one call. We throw
+// on null so the cache entry is not persisted — otherwise a missing
+// blob (e.g. before eventual consistency on list) would be cached as
+// null for the entire revalidate window.
+const NOT_FOUND = Symbol('not_found');
 async function blobReadRaw(filename: string): Promise<unknown | null> {
   const cached = unstable_cache(
-    async () => blobReadRawUncached(filename),
+    async () => {
+      const data = await blobReadRawUncached(filename);
+      if (data === null) throw NOT_FOUND;
+      return data;
+    },
     ['db', filename],
     { tags: [dbTag(filename)], revalidate: 300 }
   );
-  return cached();
+  try {
+    return await cached();
+  } catch (err) {
+    if (err === NOT_FOUND) return null;
+    throw err;
+  }
 }
 
 async function blobWriteRaw(filename: string, data: unknown) {

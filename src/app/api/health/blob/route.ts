@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle, invalidateCache } from '@/lib/db';
-import { list, del } from '@vercel/blob';
+import { readSingle, writeSingle } from '@/lib/db';
+import { list } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 // 자가진단용 — admin 저장 경로와 동일한 writeSingle/readSingle 를 사용해
-// Blob 토큰 유무 + 실제 read/write/delete 가 작동하는지 end-to-end 검증.
-// 결과는 JSON 으로 공개 (민감 정보 없음 — 테스트 키는 즉시 삭제).
+// write + read round-trip 을 end-to-end 검증. probe 키는 일부러 삭제하지
+// 않음 — 매 호출마다 새 blob 을 만들면 Vercel Blob `list` 의 eventual
+// consistency 때문에 방금 쓴 걸 못 찾는 레이스가 생김. probe 를 영속화
+// 하면 두 번째 호출부터는 "기존 blob 덮어쓰기" 가 되어 실제 admin 저장
+// 플로우(항상 기존 pages blob 을 덮어씀)와 동일 조건이 된다.
 export async function GET() {
   const steps: Array<{ step: string; ok: boolean; detail?: string; error?: string }> = [];
   const testKey = '__health_probe__';
@@ -29,21 +32,25 @@ export async function GET() {
     return NextResponse.json({ ok: false, steps }, { status: 500 });
   }
 
-  // 2) read-back — invalidate cache 를 명시적으로 호출해 blob 실 fetch 보장
-  try {
-    invalidateCache(testKey);
+  // 2) read-back — 첫 호출(새 blob)은 list eventual consistency 로 실패할 수
+  //    있으므로 최대 3초간 500ms 간격 재시도.
+  let match = false;
+  let lastNonce: string | null = null;
+  for (let attempt = 0; attempt < 6; attempt++) {
     const read = await readSingle<typeof testValue>(testKey);
-    const match = read?.nonce === testValue.nonce;
-    steps.push({
-      step: 'readSingle round-trip (cache bypassed)',
-      ok: !!match,
-      detail: match ? `nonce matched (${testValue.nonce})` : `expected ${testValue.nonce}, got ${read?.nonce ?? 'null'}`,
-    });
-  } catch (err) {
-    steps.push({ step: 'readSingle round-trip (cache bypassed)', ok: false, error: err instanceof Error ? err.message : String(err) });
+    lastNonce = read?.nonce ?? null;
+    if (lastNonce === testValue.nonce) { match = true; break; }
+    await new Promise((r) => setTimeout(r, 500));
   }
+  steps.push({
+    step: 'readSingle round-trip',
+    ok: match,
+    detail: match
+      ? `nonce matched (${testValue.nonce})`
+      : `expected ${testValue.nonce}, got ${lastNonce ?? 'null'} — list eventual consistency?`,
+  });
 
-  // 3) list blob (확인용)
+  // 3) blob list (확인용)
   let blobCount = 0;
   try {
     const { blobs } = await list({ prefix: 'db/', limit: 100 });
@@ -53,25 +60,11 @@ export async function GET() {
     steps.push({ step: 'blob list', ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 
-  // 4) cleanup
-  try {
-    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 1 });
-    const match = blobs.find((b) => b.pathname === `db/${testKey}.json`);
-    if (match) {
-      await del(match.url);
-      steps.push({ step: 'cleanup delete', ok: true });
-    } else {
-      steps.push({ step: 'cleanup delete', ok: true, detail: 'no test blob to delete' });
-    }
-  } catch (err) {
-    steps.push({ step: 'cleanup delete', ok: false, error: err instanceof Error ? err.message : String(err) });
-  }
-
   const allOk = steps.every((s) => s.ok);
   return NextResponse.json(
     {
       ok: allOk,
-      summary: allOk ? '✓ Blob read/write 정상 — admin 저장 가능' : '✗ 문제 발견 — steps 참조',
+      summary: allOk ? '✓ Blob read/write 정상 — admin 저장 → 프론트 반영 OK' : '✗ 문제 발견 — steps 참조',
       blobCount,
       steps,
     },
