@@ -14,6 +14,9 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   aboutAgarwood: ['/about-agarwood'],
   brandStory: ['/brand-story'],
   home: ['/'],
+  company: ['/company'],
+  process: ['/process'],
+  support: ['/support'],
 };
 
 export async function GET() {
@@ -39,7 +42,7 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json() as { key: string; data: unknown };
 
-    const validKeys = ['aboutAgarwood', 'brandStory', 'home'];
+    const validKeys = ['aboutAgarwood', 'brandStory', 'home', 'company', 'process', 'support'];
     if (!body.key || !validKeys.includes(body.key)) {
       return NextResponse.json(
         { success: false, message: '유효하지 않은 페이지 키입니다.' },

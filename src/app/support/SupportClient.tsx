@@ -4,8 +4,51 @@ import { useState, type FormEvent } from 'react';
 import type { FaqItem } from '@/data/company';
 import styles from './page.module.css';
 
+export interface SupportHero {
+  kicker: string;
+  titleLine1: string;
+  titleEmphasis: string;
+  lede: string;
+}
+
+export interface SupportChannel {
+  num: string;
+  label: string;
+  title: string;
+  sub: string;
+  value: string;
+  hint: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+export interface SupportCompanyInfoRow {
+  dt: string;
+  dd: string;
+  bold?: string;
+}
+
+export interface SupportCompanyInfo {
+  rows: SupportCompanyInfoRow[];
+}
+
+export interface SupportMapLabel {
+  title: string;
+  address: string;
+}
+
+export interface SupportData {
+  hero?: SupportHero;
+  channels?: SupportChannel[];
+  sampleLots?: string[];
+  productOptions?: string[];
+  companyInfo?: SupportCompanyInfo;
+  mapLabel?: SupportMapLabel;
+}
+
 interface SupportClientProps {
   faqItems: FaqItem[];
+  supportData: SupportData | null;
 }
 
 const TOPICS = [
@@ -17,9 +60,50 @@ const TOPICS = [
   '기타',
 ] as const;
 
-const SAMPLE_LOTS = ['DRT-2024-0847', 'DRT-2024-0312', 'DRT-2023-1104'];
+const DEFAULT_HERO: SupportHero = {
+  kicker: '문의하기',
+  titleLine1: '무엇을',
+  titleEmphasis: '도와드릴까요',
+  lede:
+    '제품에 대한 질문, Lot 번호 조회, 대량 주문, 베트남 직영 농장 견학 신청까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
+};
 
-const PRODUCT_OPTIONS = [
+const DEFAULT_CHANNELS: SupportChannel[] = [
+  {
+    num: '01 · Phone',
+    label: 'Phone',
+    title: '전화 문의',
+    sub: '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무',
+    value: '070 · 4140 · 4086',
+    hint: 'Customer · 대표번호',
+    ctaLabel: '지금 전화하기 →',
+    ctaHref: 'tel:070-4140-4086',
+  },
+  {
+    num: '02 · Email',
+    label: 'Email',
+    title: '이메일 문의',
+    sub: '24시간 접수 · 평일 24시간 내 회신\n첨부파일은 10MB 이하로 부탁드립니다',
+    value: 'zoel@zoellife.co.kr',
+    hint: 'Business · 사업 제휴 · 대량 주문',
+    ctaLabel: '메일 작성하기 →',
+    ctaHref: 'mailto:zoel@zoellife.co.kr',
+  },
+  {
+    num: '03 · KakaoTalk',
+    label: 'KakaoTalk',
+    title: '카카오톡 상담',
+    sub: '실시간 1:1 상담 · 평일 09:00 – 18:00\n이미지·영상 첨부 가능',
+    value: '@대라천ZOELLIFE',
+    hint: 'Live Chat · 가장 빠른 응답',
+    ctaLabel: '채팅 시작 →',
+    ctaHref: '#',
+  },
+];
+
+const DEFAULT_SAMPLE_LOTS = ['DRT-2024-0847', 'DRT-2024-0312', 'DRT-2023-1104'];
+
+const DEFAULT_PRODUCT_OPTIONS = [
   '선택 안 함',
   "'참'침향 오일 캡슐",
   '대라천 침향 진액',
@@ -30,7 +114,49 @@ const PRODUCT_OPTIONS = [
   '원니핀 데일리 캡슐',
 ];
 
-export default function SupportClient({ faqItems }: SupportClientProps) {
+const DEFAULT_COMPANY_INFO: SupportCompanyInfo = {
+  rows: [
+    { dt: '상호', dd: '(주)조엘라이프', bold: 'ZOEL LIFE Co., Ltd.' },
+    { dt: '브랜드', dd: '대라천', bold: '大羅天 · DAERACHEON' },
+    { dt: '대표자', dd: '박병주' },
+    { dt: '설립일', dd: '2019년 · 연구 개시 1999년' },
+    { dt: '사업자번호', dd: '749-86-03668' },
+    { dt: '주소', dd: '서울특별시 금천구 벚꽃로36길 30, 1511호' },
+    { dt: '전화', dd: '070 - 4140 - 4086' },
+    { dt: '이메일', dd: 'bj0202@gmail.com' },
+  ],
+};
+
+const DEFAULT_MAP_LABEL: SupportMapLabel = {
+  title: '대라천 · ZOEL LIFE 본사',
+  address: '서울 금천구 벚꽃로36길 30, 1511호',
+};
+
+function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
+  return (
+    <>
+      <dt>{row.dt}</dt>
+      <dd>
+        {row.dd}
+        {row.bold && (
+          <>
+            {' '}
+            <b>{row.bold}</b>
+          </>
+        )}
+      </dd>
+    </>
+  );
+}
+
+export default function SupportClient({ faqItems, supportData }: SupportClientProps) {
+  const hero = supportData?.hero ?? DEFAULT_HERO;
+  const channels = supportData?.channels && supportData.channels.length > 0 ? supportData.channels : DEFAULT_CHANNELS;
+  const sampleLots = supportData?.sampleLots && supportData.sampleLots.length > 0 ? supportData.sampleLots : DEFAULT_SAMPLE_LOTS;
+  const productOptions = supportData?.productOptions && supportData.productOptions.length > 0 ? supportData.productOptions : DEFAULT_PRODUCT_OPTIONS;
+  const companyInfo = supportData?.companyInfo && supportData.companyInfo.rows.length > 0 ? supportData.companyInfo : DEFAULT_COMPANY_INFO;
+  const mapLabel = supportData?.mapLabel ?? DEFAULT_MAP_LABEL;
+
   const [topic, setTopic] = useState<string>(TOPICS[0]);
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [showToast, setShowToast] = useState(false);
@@ -77,14 +203,11 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.wrap}>
-          <div className={styles.kicker}>문의하기</div>
+          <div className={styles.kicker}>{hero.kicker}</div>
           <h1>
-            무엇을 <em>도와드릴까요</em>
+            {hero.titleLine1} <em>{hero.titleEmphasis}</em>
           </h1>
-          <p className={styles.lede}>
-            제품에 대한 질문, Lot 번호 조회, 대량 주문, 베트남 직영 농장 견학 신청까지.
-            평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.
-          </p>
+          <p className={styles.lede}>{hero.lede}</p>
         </div>
       </section>
 
@@ -92,49 +215,28 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
       <section className={styles.channels}>
         <div className={styles.wrap}>
           <div className={styles.chGrid}>
-            <div className={styles.ch}>
-              <div className={styles.chNum}>01 · Phone</div>
-              <h3>전화 문의</h3>
-              <p className={styles.chSub}>
-                평일 09:00 – 18:00 (점심 12:00 – 13:00)
-                <br />
-                주말 및 공휴일 휴무
-              </p>
-              <div className={styles.chVal}>070 · 4140 · 4086</div>
-              <div className={styles.chHint}>Customer · 대표번호</div>
-              <a href="tel:070-4140-4086" className={styles.chLink}>
-                지금 전화하기 →
-              </a>
-            </div>
-            <div className={styles.ch}>
-              <div className={styles.chNum}>02 · Email</div>
-              <h3>이메일 문의</h3>
-              <p className={styles.chSub}>
-                24시간 접수 · 평일 24시간 내 회신
-                <br />
-                첨부파일은 10MB 이하로 부탁드립니다
-              </p>
-              <div className={`${styles.chVal} ${styles.chValSm}`}>zoel@zoellife.co.kr</div>
-              <div className={styles.chHint}>Business · 사업 제휴 · 대량 주문</div>
-              <a href="mailto:zoel@zoellife.co.kr" className={styles.chLink}>
-                메일 작성하기 →
-              </a>
-            </div>
-            <div className={styles.ch}>
-              <div className={styles.chNum}>03 · KakaoTalk</div>
-              <h3>카카오톡 상담</h3>
-              <p className={styles.chSub}>
-                실시간 1:1 상담 · 평일 09:00 – 18:00
-                <br />
-                이미지·영상 첨부 가능
-              </p>
-              <div className={`${styles.chVal} ${styles.chValSm}`}>@대라천ZOELLIFE</div>
-              <div className={styles.chHint}>Live Chat · 가장 빠른 응답</div>
-              {/* TODO: 카카오톡 채널 실제 URL 확인 필요 */}
-              <a href="#" className={styles.chLink}>
-                채팅 시작 →
-              </a>
-            </div>
+            {channels.map((c, i) => {
+              const isSmall = i !== 0; // original: ch 01 uses chVal, ch 02/03 use chValSm
+              return (
+                <div key={i} className={styles.ch}>
+                  <div className={styles.chNum}>{c.num}</div>
+                  <h3>{c.title}</h3>
+                  <p className={styles.chSub}>
+                    {c.sub.split('\n').map((line, j, arr) => (
+                      <span key={j}>
+                        {line}
+                        {j < arr.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </p>
+                  <div className={`${styles.chVal} ${isSmall ? styles.chValSm : ''}`}>{c.value}</div>
+                  <div className={styles.chHint}>{c.hint}</div>
+                  <a href={c.ctaHref} className={styles.chLink}>
+                    {c.ctaLabel}
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -202,7 +304,7 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
                 <div className={styles.fld}>
                   <label htmlFor="subject">관심 제품 / 제목</label>
                   <select id="subject" name="subject">
-                    {PRODUCT_OPTIONS.map((p) => (
+                    {productOptions.map((p) => (
                       <option key={p} value={p}>
                         {p}
                       </option>
@@ -273,7 +375,7 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
               </div>
 
               <div className={styles.samples}>
-                {SAMPLE_LOTS.map((s) => (
+                {sampleLots.map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -337,28 +439,9 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
                 회사 <em>정보</em>
               </h2>
               <dl>
-                <dt>상호</dt>
-                <dd>
-                  (주)조엘라이프 <b>ZOEL LIFE Co., Ltd.</b>
-                </dd>
-                <dt>브랜드</dt>
-                <dd>
-                  대라천 <b>大羅天 · DAERACHEON</b>
-                </dd>
-                <dt>대표자</dt>
-                <dd>박병주</dd>
-                <dt>설립일</dt>
-                <dd>2019년 · 연구 개시 1999년</dd>
-                <dt>사업자번호</dt>
-                <dd>749-86-03668</dd>
-                <dt>주소</dt>
-                <dd>
-                  서울특별시 금천구 벚꽃로36길 30, 1511호
-                </dd>
-                <dt>전화</dt>
-                <dd>070 - 4140 - 4086</dd>
-                <dt>이메일</dt>
-                <dd>bj0202@gmail.com</dd>
+                {companyInfo.rows.map((row, i) => (
+                  <FragmentRow key={i} row={row} />
+                ))}
               </dl>
             </div>
             <div>
@@ -369,8 +452,8 @@ export default function SupportClient({ faqItems }: SupportClientProps) {
               <div className={styles.map}>
                 <div className={styles.mapPin} />
                 <div className={styles.mapLabel}>
-                  대라천 · ZOEL LIFE 본사
-                  <small>서울 금천구 벚꽃로36길 30, 1511호</small>
+                  {mapLabel.title}
+                  <small>{mapLabel.address}</small>
                 </div>
               </div>
               <p

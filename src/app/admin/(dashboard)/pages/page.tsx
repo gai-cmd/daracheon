@@ -3,6 +3,12 @@ import Link from 'next/link';
 export default function AdminPagesPage() {
   const pageLinks = [
     {
+      href: '/admin/pages/home',
+      title: '홈 (메인)',
+      desc: '/ 메인 페이지 콘텐츠 편집',
+      icon: '◉',
+    },
+    {
       href: '/admin/pages/about-agarwood',
       title: '침향 이야기',
       desc: '/about-agarwood 공개 페이지 콘텐츠 편집',
@@ -13,6 +19,24 @@ export default function AdminPagesPage() {
       title: '브랜드 이야기',
       desc: '/brand-story 공개 페이지 콘텐츠 편집',
       icon: '◈',
+    },
+    {
+      href: '/admin/pages/company',
+      title: '회사소개',
+      desc: '/company 회사 개요 · 4 챕터 편집',
+      icon: '◇',
+    },
+    {
+      href: '/admin/pages/process',
+      title: '생산 공정 · 농장',
+      desc: '/process 농장 챕터 · 영상 · 인증서 편집',
+      icon: '◆',
+    },
+    {
+      href: '/admin/pages/support',
+      title: '문의하기',
+      desc: '/support 연락 채널 · 회사정보 · 샘플 Lot 편집',
+      icon: '○',
     },
   ];
 

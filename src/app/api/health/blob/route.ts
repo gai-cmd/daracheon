@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingle, writeSingle, invalidateCache } from '@/lib/db';
 import { list, del } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
@@ -29,17 +29,18 @@ export async function GET() {
     return NextResponse.json({ ok: false, steps }, { status: 500 });
   }
 
-  // 2) read-back
+  // 2) read-back — invalidate cache 를 명시적으로 호출해 blob 실 fetch 보장
   try {
+    invalidateCache(testKey);
     const read = await readSingle<typeof testValue>(testKey);
     const match = read?.nonce === testValue.nonce;
     steps.push({
-      step: 'readSingle round-trip',
+      step: 'readSingle round-trip (cache bypassed)',
       ok: !!match,
       detail: match ? `nonce matched (${testValue.nonce})` : `expected ${testValue.nonce}, got ${read?.nonce ?? 'null'}`,
     });
   } catch (err) {
-    steps.push({ step: 'readSingle round-trip', ok: false, error: err instanceof Error ? err.message : String(err) });
+    steps.push({ step: 'readSingle round-trip (cache bypassed)', ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 
   // 3) list blob (확인용)

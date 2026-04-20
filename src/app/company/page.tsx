@@ -11,14 +11,34 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.daracheon.com/company' },
 };
 
-interface Chapter {
+interface CompanyChapter {
   num: string;
   tag: string;
   title: string;
   body: string;
 }
 
-const chapters: Chapter[] = [
+interface CompanyHero {
+  kicker: string;
+  titleLine1: string;
+  titleEmphasis: string;
+  lede: string;
+}
+
+interface CompanyData {
+  hero?: CompanyHero;
+  chapters?: CompanyChapter[];
+}
+
+const DEFAULT_HERO: CompanyHero = {
+  kicker: '회사소개',
+  titleLine1: '진짜를 증명하는 일에',
+  titleEmphasis: '25년을 쓰다',
+  lede:
+    '대라천 ZOEL LIFE Co., Ltd. — 베트남 직영 농장 기반의 침향 전문 기업. 원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시 규격집에 등재된 공식 침향만을 다룹니다.',
+};
+
+const DEFAULT_CHAPTERS: CompanyChapter[] = [
   {
     num: '01',
     tag: 'About',
@@ -46,9 +66,18 @@ const chapters: Chapter[] = [
 ];
 
 export default async function CompanyPage() {
+  const pagesData = await readSingle<{ company?: CompanyData }>('pages');
   const settings = await readSingle<{ brandLogo?: string; companyLogo?: string }>('company');
   const brandLogo = settings?.brandLogo ?? '';
   const companyLogo = settings?.companyLogo ?? '';
+
+  const hero: CompanyHero = pagesData?.company?.hero
+    ? { ...DEFAULT_HERO, ...pagesData.company.hero }
+    : DEFAULT_HERO;
+  const chapters: CompanyChapter[] =
+    pagesData?.company?.chapters && pagesData.company.chapters.length > 0
+      ? pagesData.company.chapters
+      : DEFAULT_CHAPTERS;
 
   return (
     <>
@@ -117,23 +146,20 @@ export default async function CompanyPage() {
               )}
             </div>
           )}
-          <div className={styles.kicker}>회사소개</div>
+          <div className={styles.kicker}>{hero.kicker}</div>
           <h1>
-            진짜를 증명하는 일에
+            {hero.titleLine1}
             <br />
-            <em>25년을 쓰다</em>
+            <em>{hero.titleEmphasis}</em>
           </h1>
-          <p className={styles.lede}>
-            대라천 ZOEL LIFE Co., Ltd. — 베트남 직영 농장 기반의 침향 전문 기업. 원산지부터 제품까지
-            전 과정을 자체 운영하며, 식약처 고시 규격집에 등재된 공식 침향만을 다룹니다.
-          </p>
+          <p className={styles.lede}>{hero.lede}</p>
         </div>
       </section>
 
       {/* CHAPTERS */}
       {chapters.map((ch, i) => (
         <section
-          key={ch.num}
+          key={`${ch.num}-${i}`}
           className={`${styles.chapter} ${i % 2 === 1 ? styles.chapterAlt : ''}`}
         >
           <div className={styles.wrap}>

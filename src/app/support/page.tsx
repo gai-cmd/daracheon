@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { readData } from '@/lib/db';
-import type { FaqItem } from '@/data/company';
-import SupportClient from './SupportClient';
+import { readData, readSingle } from '@/lib/db';
+import SupportClient, { type SupportData } from './SupportClient';
 
 export const revalidate = 60;
 
@@ -13,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SupportPage() {
-  const faqItems = await readData('faq');
+  const [faqItems, pagesData] = await Promise.all([
+    readData('faq'),
+    readSingle<{ support?: SupportData }>('pages'),
+  ]);
 
-  return <SupportClient faqItems={faqItems} />;
+  return <SupportClient faqItems={faqItems} supportData={pagesData?.support ?? null} />;
 }
