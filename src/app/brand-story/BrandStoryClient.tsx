@@ -167,8 +167,8 @@ export default function BrandStoryClient({ data }: Props) {
         <div className={styles.heroInner}>
           <div className={styles.heroKicker}>{hero?.sectionTag ?? 'Agarwood Story'}</div>
           <div className={styles.heroHanja} aria-hidden>沈香</div>
-          <h1>{hero?.titleKr ?? "대라천 '참'침향"}</h1>
-          <p className={styles.heroSub}>
+          <h1 style={{ whiteSpace: 'nowrap' }}>{hero?.titleKr ?? "대라천 '참'침향"}</h1>
+          <p className={styles.heroSub} style={{ whiteSpace: 'nowrap' }}>
             {hero?.subtitle ??
               "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
           </p>
