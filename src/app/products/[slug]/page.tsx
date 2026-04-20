@@ -8,7 +8,7 @@ import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const products = await readDataSafe<Product>('products');

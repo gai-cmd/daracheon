@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { readSingleSafe } from '@/lib/db';
 import styles from '@/styles/zoel/story-page.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: '침향 농장 이야기 - 베트남 하띤 200ha | ZOEL LIFE',

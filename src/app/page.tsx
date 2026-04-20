@@ -4,7 +4,7 @@ import JsonLd from '@/components/ui/JsonLd';
 import { readSingleSafe } from '@/lib/db';
 import styles from './page.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export interface HomeHero {
   sectionTag: string;

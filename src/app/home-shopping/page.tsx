@@ -4,7 +4,7 @@ import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import styles from './page.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: '홈쇼핑 특별관 - TV 편성표 · 다시보기 | ZOEL LIFE',

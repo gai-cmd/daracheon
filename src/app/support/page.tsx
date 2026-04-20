@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
 import SupportClient, { type SupportData } from './SupportClient';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: '고객 지원 - 문의 및 안내 | ZOEL LIFE',

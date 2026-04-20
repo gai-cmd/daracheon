@@ -3,7 +3,7 @@ import type { Product } from '@/data/products';
 import ProductsClient from './ProductsClient';
 import styles from './page.module.css';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface ProductCategory {
   id: string;

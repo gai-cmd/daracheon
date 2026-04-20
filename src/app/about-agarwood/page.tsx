@@ -2,7 +2,10 @@ import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import AboutAgarwoodClient from './AboutAgarwoodClient';
 
-export const revalidate = 60;
+// Admin 저장 즉시 반영을 위해 dynamic 렌더링 (CDN/ISR 캐시 우회).
+// readSingleSafe 는 내부적으로 unstable_cache + tag 무효화를 사용하므로
+// blob 비용은 admin 저장 시점에만 발생.
+export const dynamic = 'force-dynamic';
 
 const articleJsonLd = {
   '@context': 'https://schema.org',

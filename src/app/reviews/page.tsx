@@ -7,7 +7,7 @@ import type { Review } from '@/data/reviews';
 import { formatDate } from '@/lib/utils';
 import ReviewFormModal from './ReviewFormModal';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: '고객 리뷰 - ZOEL LIFE 침향 후기 | ZOEL LIFE',

@@ -1,7 +1,7 @@
 import { readSingleSafe } from '@/lib/db';
 import BrandStoryClient from './BrandStoryClient';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export interface Farm { name: string; nameVi: string; desc: string; image?: string }
 export interface HistoryEra { era: string; items: string[] }
