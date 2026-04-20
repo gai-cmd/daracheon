@@ -1,8 +1,10 @@
 /* ═══════════════════════════════════════
-   Google Fonts — ZOEL LIFE parity: Noto Sans KR only.
-   Serif / display roles resolve to the same family via tailwind.config.ts.
+   ZOEL LIFE variations 원본 CSS (포팅됨 — 디자이너 의도 그대로)
+   tokens.css 가 Noto Sans KR + Noto Serif KR 자동 import
    ═══════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&display=swap');
+@import './zoel/tokens.css';
+@import './zoel/dark-theme.css';
+@import './zoel/curves.css';
 
 @tailwind base;
 @tailwind components;

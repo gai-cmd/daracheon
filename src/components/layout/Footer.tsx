@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { FooterColumn } from '@/data/navigation';
 import { company } from '@/data/company';
+import styles from './Footer.module.css';
 
 interface FooterProps {
   footerColumns: FooterColumn[];
@@ -8,54 +9,37 @@ interface FooterProps {
 
 export default function Footer({ footerColumns }: FooterProps) {
   return (
-    <footer className="bg-[#0a0b10] text-white/50 pt-20 pb-10 px-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Top */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16 pb-16 border-b border-white/[0.08]">
+    <footer className={styles.footer}>
+      <div className={styles.wrap}>
+        <div className={styles.grid}>
           {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-5">
-              <span className="font-serif text-xl font-medium text-gold-500 tracking-[0.15em]">
-                大羅天
-              </span>
-              <span className="block font-display text-[0.6rem] text-gold-300 tracking-[0.3em] font-light mt-0.5">
-                ZOEL LIFE
-              </span>
+          <div className={styles.brandBlock}>
+            <Link href="/" className={styles.brandLine}>
+              <span className={styles.brandDot} aria-hidden="true" />
+              <span className={styles.brandWord}>ZOEL LIFE</span>
             </Link>
-            <p className="text-sm leading-7 max-w-md">
+            <span className={styles.brandSub}>대라천 · 침향</span>
+            <p className={styles.brandDesc}>
               자연의 진실된 가치. 베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향.
               CITES 국제인증, 특허 기술, Organic HACCP 인증으로 증명합니다.
             </p>
-            <div className="flex gap-5 mt-6">
+            <div className={styles.social}>
               {Object.entries(company.social).map(([platform, url]) => (
-                <a
-                  key={platform}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs tracking-[0.1em] text-white/30 hover:text-gold-500 transition-colors capitalize"
-                >
+                <a key={platform} href={url} target="_blank" rel="noopener noreferrer">
                   {platform}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Footer columns */}
+          {/* Columns */}
           {footerColumns.map((col) => (
-            <div key={col.title}>
-              <h5 className="font-serif text-sm font-normal text-gold-300 tracking-[0.1em] mb-5">
-                {col.title}
-              </h5>
-              <ul className="space-y-3">
+            <div key={col.title} className={styles.col}>
+              <h5>{col.title}</h5>
+              <ul>
                 {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/40 hover:text-gold-500 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
+                  <li key={link.label + link.href}>
+                    <Link href={link.href}>{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -64,25 +48,22 @@ export default function Footer({ footerColumns }: FooterProps) {
         </div>
 
         {/* Company Info */}
-        <div className="pt-8 pb-8 border-b border-white/[0.08] text-[0.7rem] leading-6 text-white/30">
-          <p>ZOEL LIFE 주식회사 | 대표: {company.ceo} | 사업자등록번호: {company.businessReg}</p>
+        <div className={styles.companyInfo}>
+          <p>
+            ZOEL LIFE 주식회사 | 대표: {company.ceo} | 사업자등록번호: {company.businessReg}
+          </p>
           <p>주소: {company.address}</p>
-          <p>전화: {company.phone} | 이메일: {company.email}</p>
+          <p>
+            전화: {company.phone} | 이메일: {company.email}
+          </p>
         </div>
 
-        {/* Bottom */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-[0.72rem] tracking-wider">
-          <span>&copy; 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
-          <div className="flex gap-6">
-            <Link href="/support#privacy" className="hover:text-gold-500 transition-colors">
-              개인정보처리방침
-            </Link>
-            <Link href="/support#terms" className="hover:text-gold-500 transition-colors">
-              이용약관
-            </Link>
-            <Link href="/admin" className="hover:text-gold-500 transition-colors">
-              관리자
-            </Link>
+        <div className={styles.bottom}>
+          <span>© 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
+          <div className={styles.bottomLinks}>
+            <Link href="/support#privacy">개인정보처리방침</Link>
+            <Link href="/support#terms">이용약관</Link>
+            <Link href="/admin">관리자</Link>
           </div>
         </div>
       </div>

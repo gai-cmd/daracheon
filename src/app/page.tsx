@@ -30,11 +30,21 @@ export interface HomeNotice {
   ctaHref: string;
 }
 
-export interface AgarwoodCard { title: string; description: string }
+export interface AgarwoodCard { title: string; description: string; kicker?: string }
 export interface HomeAgarwood { tag: string; title: string; cards: AgarwoodCard[] }
-export interface BenefitItem { title: string; description: string }
+export interface BenefitItem { title: string; description: string; kicker?: string }
 export interface HomeBenefits { tag: string; title: string; items: BenefitItem[] }
-export interface HomeProcess { tag: string; title: string; steps: string[] }
+export interface ProcessStepItem { title: string; duration?: string }
+export interface HomeProcess {
+  tag: string;
+  title: string;
+  steps: string[];
+  durations?: string[];
+}
+
+export interface VerificationRow { num: string; label: string; meta: string }
+export interface VerifiedCard { step: string; title: string; en: string; body: string }
+export interface CertChip { mark: string; name: string; sub: string }
 
 export interface HomeData {
   hero?: HomeHero;
@@ -43,6 +53,9 @@ export interface HomeData {
   agarwood?: HomeAgarwood;
   benefits?: HomeBenefits;
   process?: HomeProcess;
+  verification?: VerificationRow[];
+  verifiedCards?: VerifiedCard[];
+  certs?: CertChip[];
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -175,6 +188,10 @@ export default async function HomePage() {
   const agarwood = home.agarwood ?? DEFAULT_AGARWOOD;
   const benefits = home.benefits ?? DEFAULT_BENEFITS;
   const processData = home.process ?? DEFAULT_PROCESS;
+  const verification = home.verification ?? DEFAULT_VERIFICATION;
+  const verifiedCards = home.verifiedCards ?? DEFAULT_VERIFIED_CARDS;
+  const certs = home.certs ?? DEFAULT_CERTS;
+  const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
 
   return (
     <div className={styles.page}>
@@ -217,12 +234,11 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* 4-Point Verification Card */}
-              {/* TODO: HomeData 에 verification 필드 없음 — 디자인 기준 하드코딩 (CMS 추가 시 옮길 것) */}
+              {/* 4-Point Verification Card (edit in /admin/pages/home) */}
               <div className={styles.heroTrust}>
                 <div className={styles.heroTrustTitle}>4-Point Verification</div>
-                {DEFAULT_VERIFICATION.map((row) => (
-                  <div key={row.num} className={styles.heroTrustRow}>
+                {verification.map((row, i) => (
+                  <div key={`${row.num}-${i}`} className={styles.heroTrustRow}>
                     <div className={styles.heroTrustNum}>{row.num}</div>
                     <div className={styles.heroTrustLabel}>{row.label}</div>
                     <div className={styles.heroTrustMeta}>{row.meta}</div>
@@ -268,8 +284,8 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.verifiedGrid}>
-            {DEFAULT_VERIFIED_CARDS.map((c) => (
-              <div key={c.step} className={styles.verifiedCard}>
+            {verifiedCards.map((c, i) => (
+              <div key={`${c.step}-${i}`} className={styles.verifiedCard}>
                 <div className={styles.verifiedStep}>{c.step}</div>
                 <h3>{c.title}</h3>
                 <div className={styles.verifiedEn}>{c.en}</div>
@@ -279,10 +295,10 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.certRow}>
-            <span className={styles.tag}>Certifications · 8개 인증</span>
+            <span className={styles.tag}>Certifications · {certs.length}개 인증</span>
             <div className={styles.certGrid}>
-              {DEFAULT_CERTS.map((c) => (
-                <div key={c.name} className={styles.certChip}>
+              {certs.map((c, i) => (
+                <div key={`${c.name}-${i}`} className={styles.certChip}>
                   <div className={styles.certMark}>{c.mark}</div>
                   <div className={styles.certName}>{c.name}</div>
                   <div className={styles.certSub}>{c.sub}</div>
@@ -302,13 +318,16 @@ export default async function HomePage() {
             <div className={styles.line} />
           </div>
           <div className={styles.agGrid}>
-            {agarwood.cards.map((c, i) => (
-              <div key={c.title} className={styles.agCard}>
-                <div className={styles.agNum}>{String(i + 1).padStart(2, '0')} · {['Heritage', 'Time', 'Research'][i] ?? 'Insight'}</div>
-                <h3>{c.title}</h3>
-                <p>{c.description}</p>
-              </div>
-            ))}
+            {agarwood.cards.map((c, i) => {
+              const kicker = c.kicker ?? (['Heritage', 'Time', 'Research'][i] ?? 'Insight');
+              return (
+                <div key={`${c.title}-${i}`} className={styles.agCard}>
+                  <div className={styles.agNum}>{String(i + 1).padStart(2, '0')} · {kicker}</div>
+                  <h3>{c.title}</h3>
+                  <p>{c.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -322,16 +341,17 @@ export default async function HomePage() {
             <div className={styles.line} />
           </div>
           <div className={styles.benGrid}>
-            {benefits.items.map((b, i) => (
-              <div key={b.title} className={styles.benItem}>
-                <div className={styles.benIdx}>{String(i + 1).padStart(2, '0')}</div>
-                <div className={styles.benKo}>
-                  {['Qi Circulation', 'Vitality', 'Relaxation', 'Anti-inflammatory', 'Brain Health', 'Digestion'][i] ?? 'Benefit'}
+            {benefits.items.map((b, i) => {
+              const kicker = b.kicker ?? (['Qi Circulation', 'Vitality', 'Relaxation', 'Anti-inflammatory', 'Brain Health', 'Digestion'][i] ?? 'Benefit');
+              return (
+                <div key={`${b.title}-${i}`} className={styles.benItem}>
+                  <div className={styles.benIdx}>{String(i + 1).padStart(2, '0')}</div>
+                  <div className={styles.benKo}>{kicker}</div>
+                  <h4>{b.title}</h4>
+                  <p>{b.description}</p>
                 </div>
-                <h4>{b.title}</h4>
-                <p>{b.description}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -349,10 +369,10 @@ export default async function HomePage() {
           </div>
           <div className={styles.procGrid}>
             {processData.steps.map((step, i) => (
-              <div key={i} className={styles.procStep}>
+              <div key={`${step}-${i}`} className={styles.procStep}>
                 <div className={styles.procIdx}>{String(i + 1).padStart(2, '0')}</div>
                 <h4>{step}</h4>
-                <div className={styles.procDur}>{PROCESS_DURATIONS[i] ?? '—'}</div>
+                <div className={styles.procDur}>{processDurations[i] ?? '—'}</div>
               </div>
             ))}
           </div>

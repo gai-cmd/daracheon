@@ -1,0 +1,372 @@
+/* ────────────────────────────────────────────────────────────
+   대라천 — Universal Dark Theme Override
+   전체 variation을 Variation A와 동일한 검정+골드 톤으로 통일
+   import 한 줄로 모든 페이지에 적용
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+  /* Reassign all light surface tokens to dark equivalents.
+     Existing CSS keeps using var(--lx-ivory) / var(--lx-sand) / var(--lx-cream)
+     but now they resolve to deep ink/slate instead of paper white. */
+  --lx-ivory: #0a0b10;   /* was paper white */
+  --lx-sand:  #14161f;   /* was warm cream */
+  --lx-cream: #1a1d29;   /* was neutral cream */
+  --lx-ink:   #fdfbf7;   /* text color flips to ivory */
+
+  /* Structural rules */
+  --rule:       rgba(212,168,67,0.14);
+  --rule-soft:  rgba(255,255,255,0.08);
+  --rule-hard:  rgba(212,168,67,0.32);
+}
+
+/* Body baseline */
+body {
+  background: #0a0b10 !important;
+  color: #fdfbf7 !important;
+}
+
+/* ── Kill hard-coded white / near-white backgrounds ─────────
+   These selectors match the repeated patterns across all 21 pages.
+   Translate each to a dark layered surface with gold hairlines. */
+
+/* Generic: any background:#fff becomes ink-elevated card */
+.ch-item,
+.pc,
+.atlas-card,
+.bc-card,
+.ag-card,
+.proc-step,
+.prod-card,
+.ben-item,
+.step,
+.card,
+.doc-card,
+.info-card,
+.product-card,
+.chapter-card,
+.review-card,
+.form-card,
+.contact-card {
+  background: #14161f !important;
+  color: #fdfbf7 !important;
+  border-color: rgba(212,168,67,0.16) !important;
+}
+
+/* Hover elevation for all card-ish things */
+.ch-item:hover,
+.pc:hover,
+.atlas-card:hover,
+.bc-card:hover,
+.ag-card:hover,
+.proc-step:hover,
+.prod-card:hover {
+  background: #1a1d29 !important;
+  border-color: rgba(212,168,67,0.36) !important;
+}
+
+/* Benefit grid (Variation A uses a bordered white grid) */
+.ben-grid {
+  background: #14161f !important;
+  border-color: rgba(212,168,67,0.16) !important;
+}
+.ben-grid > * {
+  background: transparent !important;
+  border-color: rgba(212,168,67,0.10) !important;
+}
+
+/* Product image aspect-ratio slots */
+.prod-img,
+.pc-img,
+.atlas-img,
+.pd-img,
+.img-slot {
+  background: #1a1d29 !important;
+}
+
+/* Navigation — force dark sticky/fixed nav (C uses sticky ivory) */
+.nav,
+.topbar,
+header.nav,
+header.topbar {
+  background: rgba(10,11,16,0.96) !important;
+  border-bottom-color: rgba(212,168,67,0.18) !important;
+}
+.nav.scrolled {
+  background: rgba(10,11,16,0.98) !important;
+}
+
+/* Ensure nav links & brand stay readable */
+.nav a,
+.nav-links a,
+.nav-link {
+  color: rgba(253,251,247,0.75) !important;
+}
+.nav a:hover,
+.nav-links a:hover {
+  color: var(--accent-soft) !important;
+}
+.nav-links a.active {
+  color: var(--accent) !important;
+}
+
+/* ── Page "paper" containers that were ivory ────────────── */
+.page,
+.container,
+.shell,
+.wrap.paper,
+main.paper {
+  background: #0a0b10 !important;
+  color: #fdfbf7 !important;
+}
+
+/* Variation-C archive shell is a bordered max-width container */
+body > .shell,
+body > main.shell {
+  background: #0a0b10 !important;
+  border-color: rgba(212,168,67,0.14) !important;
+}
+
+/* ── Text color inheritance fixes ───────────────────────── */
+/* h1-h6, p, li, a default to parent color, but some are locked dark */
+.agarwood, .benefits, .process, .products, .cta,
+.feature, .chapters, .bens, .prod,
+.timeline, .atlas, .colophon,
+.bc-copy, .bcast, .form-section,
+section, article {
+  color: inherit;
+}
+
+/* Titles that were set to near-black */
+h1, h2, h3, h4, h5, h6 {
+  color: inherit !important;
+}
+
+/* Any inline color: var(--lx-black) / color:#0a0b10 / color:#14161f */
+[style*="color:#0a0b10"],
+[style*="color: #0a0b10"],
+[style*="color:#14161f"],
+[style*="color: #14161f"] {
+  color: #fdfbf7 !important;
+}
+
+/* Form fields */
+input[type="text"], input[type="email"], input[type="tel"], input[type="search"],
+input[type="password"], input[type="number"], input[type="date"],
+textarea, select {
+  background: #14161f !important;
+  color: #fdfbf7 !important;
+  border-color: rgba(212,168,67,0.25) !important;
+}
+input::placeholder, textarea::placeholder {
+  color: rgba(253,251,247,0.4) !important;
+}
+label, .form-label { color: rgba(253,251,247,0.75) !important; }
+
+/* Tables (archive style) */
+table { background: transparent !important; color: #fdfbf7 !important; }
+th, td {
+  border-color: rgba(212,168,67,0.14) !important;
+  color: #fdfbf7 !important;
+}
+th { background: #14161f !important; color: var(--accent-soft) !important; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.02) !important; }
+
+/* Buttons — keep gold primary, flip outline-dark to outline-light */
+.btn-outline-dark {
+  color: #fdfbf7 !important;
+  border-color: rgba(253,251,247,0.4) !important;
+}
+.btn-outline-dark:hover {
+  background: #fdfbf7 !important;
+  color: #0a0b10 !important;
+}
+
+/* Hero section — many pages use var(--lx-ivory) here */
+.hero {
+  background: #0a0b10 !important;
+  color: #fdfbf7 !important;
+}
+.hero-hanja {
+  color: rgba(212,168,67,0.08) !important;
+}
+
+/* Section backgrounds that were ivory/sand */
+.agarwood, .process, .cta,
+.feature, .bens, .prod,
+.timeline, .atlas, .colophon {
+  background: #0a0b10 !important;
+  color: #fdfbf7 !important;
+}
+.benefits, .chapters {
+  background: #14161f !important;
+  color: #fdfbf7 !important;
+}
+.products {
+  background: #0a0b10 !important;
+  color: #fdfbf7 !important;
+}
+
+/* Divider rules & borders that were rgba(10,11,16,*) */
+[style*="border-top:1px solid rgba(10,11,16"],
+[style*="border-bottom:1px solid rgba(10,11,16"],
+[style*="border-right:1px solid rgba(10,11,16"],
+[style*="border-left:1px solid rgba(10,11,16"],
+[style*="border:1px solid rgba(10,11,16"],
+[style*="border: 1px solid rgba(10,11,16"] {
+  border-color: rgba(212,168,67,0.16) !important;
+}
+
+/* Selection override for dark bg */
+::selection { background: rgba(212,168,67,0.38); color: #0a0b10; }
+
+/* ── Subtle paper texture on dark so surfaces don't feel flat ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(212,168,67,0.05), transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(184,140,45,0.04), transparent 55%);
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+body > * { position: relative; z-index: 1; }
+
+/* Grain overlay — very subtle */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 9999;
+  mix-blend-mode: overlay;
+}
+
+/* ────────────────────────────────────────────────
+   HERO BACKGROUND TREATMENTS (nature / agarwood mood)
+   Replace product-packaging hero images with layered
+   painterly CSS+SVG moods. Applied via body[data-hero] 
+   OR directly as .hero-bg-{agarwood|smoke|forest|mist}.
+   ──────────────────────────────────────────────── */
+
+/* Shared base — deep ink vignette */
+.hero-bg-agarwood, .hero-bg-smoke, .hero-bg-forest, .hero-bg-mist {
+  background-color: #0a0b10;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.hero-bg-agarwood::before,
+.hero-bg-smoke::before,
+.hero-bg-forest::before,
+.hero-bg-mist::before,
+.hero-bg-agarwood::after,
+.hero-bg-smoke::after,
+.hero-bg-forest::after,
+.hero-bg-mist::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Slide #1 — AGARWOOD: deep bronze/umber w/ amber glow ── */
+.hero-bg-agarwood {
+  background-image:
+    radial-gradient(ellipse 70% 55% at 22% 28%, rgba(231,197,111,0.55), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 55% 55%, rgba(212,168,67,0.40), transparent 60%),
+    radial-gradient(ellipse 75% 65% at 92% 98%, rgba(70,42,16,0.85), transparent 60%),
+    linear-gradient(135deg, #3a2812 0%, #4a3318 30%, #2d1e0c 65%, #0c0805 100%);
+}
+/* wood-grain vertical stripes */
+.hero-bg-agarwood::before {
+  background-image: repeating-linear-gradient(
+    92deg,
+    transparent 0px,
+    rgba(80,50,20,0.22) 1px,
+    transparent 3px,
+    rgba(180,130,60,0.08) 6px,
+    transparent 10px,
+    rgba(60,35,15,0.18) 13px,
+    transparent 18px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+}
+/* knot/flame highlight bottom-center */
+.hero-bg-agarwood::after {
+  background: radial-gradient(ellipse 45% 30% at 50% 85%, rgba(255,200,100,0.18), transparent 70%);
+}
+
+/* ── Slide #2 — SMOKE: drifting incense ── */
+.hero-bg-smoke {
+  background-image:
+    radial-gradient(ellipse 85% 60% at 50% 100%, rgba(212,168,67,0.45), transparent 65%),
+    radial-gradient(circle at 78% 20%, rgba(231,197,111,0.32), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 30% 60%, rgba(180,140,70,0.20), transparent 60%),
+    linear-gradient(180deg, #0f1218 0%, #1a1410 50%, #241a0a 100%);
+}
+/* large blurred wisps as radial blobs */
+.hero-bg-smoke::before {
+  background-image:
+    radial-gradient(ellipse 20% 8% at 28% 72%, rgba(220,175,80,0.42), transparent 70%),
+    radial-gradient(ellipse 24% 10% at 58% 54%, rgba(245,210,140,0.28), transparent 70%),
+    radial-gradient(ellipse 22% 9% at 80% 74%, rgba(200,150,60,0.38), transparent 70%),
+    radial-gradient(ellipse 26% 6% at 45% 86%, rgba(253,251,247,0.12), transparent 70%),
+    radial-gradient(ellipse 14% 5% at 70% 32%, rgba(220,175,80,0.22), transparent 70%);
+  filter: blur(1px);
+}
+/* fine grain */
+.hero-bg-smoke::after {
+  background-image: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%);
+}
+
+/* ── Slide #3 — FOREST / MIST ── */
+.hero-bg-forest {
+  background-image:
+    linear-gradient(112deg, transparent 30%, rgba(255,215,140,0.32) 48%, rgba(255,200,110,0.10) 60%, transparent 72%),
+    linear-gradient(95deg, transparent 44%, rgba(253,251,247,0.14) 54%, transparent 65%),
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(60,90,55,0.70), transparent 72%),
+    radial-gradient(ellipse 80% 55% at 85% 35%, rgba(255,190,100,0.22), transparent 68%),
+    radial-gradient(ellipse 70% 50% at 20% 40%, rgba(120,130,140,0.18), transparent 70%),
+    linear-gradient(180deg, #3d4560 0%, #2a3245 35%, #1a1f2e 65%, #0e1018 100%);
+}
+/* soft ground haze + ray highlights */
+.hero-bg-forest::before {
+  background:
+    linear-gradient(115deg, transparent 40%, rgba(255,235,180,0.14) 50%, transparent 60%),
+    linear-gradient(105deg, transparent 48%, rgba(255,220,150,0.10) 54%, transparent 62%),
+    radial-gradient(ellipse 55% 22% at 50% 90%, rgba(140,160,120,0.25), transparent 70%);
+  mix-blend-mode: screen;
+}
+/* subtle vignette at bottom so text is readable */
+.hero-bg-forest::after {
+  background: linear-gradient(180deg, transparent 50%, rgba(8,10,16,0.55) 100%);
+}
+
+/* ── Slide #4 bonus — MIST/INK ── */
+.hero-bg-mist {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 30% 30%, rgba(253,251,247,0.08), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 75% 70%, rgba(212,168,67,0.18), transparent 60%),
+    linear-gradient(135deg, #1a1e2a 0%, #0a0b10 100%);
+}
+
+/* Drift animation for subtle motion */
+@keyframes hero-drift {
+  0%   { transform: translate3d(0,0,0) scale(1.05); }
+  100% { transform: translate3d(-2%, -1%, 0) scale(1.14); }
+}
+.hero-bg-agarwood, .hero-bg-smoke, .hero-bg-forest {
+  animation: hero-drift 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Footer — usually already dark, but ensure */
+footer, .footer {
+  background: #0a0b10 !important;
+  color: rgba(253,251,247,0.8) !important;
+  border-top: 1px solid rgba(212,168,67,0.16) !important;
+}

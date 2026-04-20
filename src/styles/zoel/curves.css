@@ -1,0 +1,353 @@
+/* ─────────────────────────────────────────────────────────────
+   대라천 — 공통 장식 시스템 (curves & ornaments)
+   ──────────────────────────────────────────────────────────────
+   컨셉: "침향의 연기, 나뭇결, 호흡"
+   - 가는 금선(0.6~1px, gold-400, opacity 0.28~0.5)으로 선언적 선 사용
+   - 모든 곡선은 베지어(asymmetric)로 수작업 느낌
+   - 직선 divider 대신 웨이브/실선 혼합 divider
+   - em/강조구 아래 curved underline
+   - 카드·통계 블록 모서리에 corner arc (1/4 원호)
+   - 섹션 배경에 나뭇결 SVG 패턴 (very subtle)
+   - chapter-num / stat-num은 원 안에 배치
+   ────────────────────────────────────────────────────────────── */
+
+/* ── 토큰 확장 ─────────────────────────────────────────── */
+:root {
+  --orn-gold: var(--gold-400, #d4a843);
+  --orn-gold-soft: rgba(212, 168, 67, 0.28);
+  --orn-gold-ghost: rgba(212, 168, 67, 0.12);
+  --orn-stroke: 0.8px;
+  --orn-stroke-bold: 1.4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   1. WAVE DIVIDER — 섹션 사이 물결 구분선
+   사용: <div class="orn-divider"></div>
+   변형: .orn-divider--calm (낮은 진폭), .orn-divider--smoke (연기형)
+   ═══════════════════════════════════════════════════════════════ */
+.orn-divider {
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1200px 48px;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 48' preserveAspectRatio='none'><path d='M0 24 Q 150 6 300 24 T 600 24 T 900 24 T 1200 24' fill='none' stroke='%23d4a843' stroke-width='0.8' stroke-opacity='0.42' stroke-linecap='round'/><path d='M0 30 Q 180 16 360 30 T 720 30 T 1080 30 T 1200 30' fill='none' stroke='%23d4a843' stroke-width='0.6' stroke-opacity='0.22'/></svg>");
+}
+.orn-divider--calm {
+  height: 36px;
+  background-size: 1200px 36px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 36' preserveAspectRatio='none'><path d='M0 18 Q 200 10 400 18 T 800 18 T 1200 18' fill='none' stroke='%23d4a843' stroke-width='0.7' stroke-opacity='0.32'/></svg>");
+}
+.orn-divider--smoke {
+  height: 80px;
+  background-size: 1400px 80px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 80' preserveAspectRatio='none'><path d='M0 60 C 200 30 300 12 500 40 S 800 68 1000 40 S 1300 10 1400 30' fill='none' stroke='%23d4a843' stroke-width='0.9' stroke-opacity='0.38' stroke-linecap='round'/><path d='M0 50 C 250 40 320 24 520 52 S 820 72 1020 48 S 1320 20 1400 42' fill='none' stroke='%23d4a843' stroke-width='0.5' stroke-opacity='0.18'/></svg>");
+}
+
+/* 풀 너비로 섹션 끝에 붙이기 */
+.orn-divider--bleed {
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. CURVED UNDERLINE — em / 강조구 / 숫자 아래 호
+   사용: h1 em, .stat-num, a.orn-link
+   ═══════════════════════════════════════════════════════════════ */
+.orn-underline,
+.orn-underline-host em,
+h1 em.orn,
+.stat-num.orn {
+  position: relative;
+  display: inline-block;
+}
+.orn-underline::after,
+.orn-underline-host em::after,
+h1 em.orn::after,
+.stat-num.orn::after {
+  content: '';
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: -0.18em;
+  height: 14px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><path d='M2 9 Q 50 1 100 7 T 198 5' fill='none' stroke='%23d4a843' stroke-width='1.3' stroke-opacity='0.72' stroke-linecap='round'/></svg>");
+  pointer-events: none;
+}
+
+/* 변형: 이중 호 (메인 제목용, 풍부한 느낌) */
+.orn-underline--double::after {
+  height: 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 18' preserveAspectRatio='none'><path d='M2 8 Q 55 0 100 6 T 198 4' fill='none' stroke='%23d4a843' stroke-width='1.5' stroke-opacity='0.78' stroke-linecap='round'/><path d='M8 15 Q 60 10 105 13 T 195 12' fill='none' stroke='%23d4a843' stroke-width='0.8' stroke-opacity='0.35'/></svg>");
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. CORNER ARC — 카드/박스 모서리 호 (액자 느낌)
+   사용: 호스트 요소에 .orn-frame + 모서리 지정 .orn-frame--tl 등
+   ═══════════════════════════════════════════════════════════════ */
+.orn-frame {
+  position: relative;
+}
+.orn-frame::before,
+.orn-frame::after {
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border: var(--orn-stroke) solid var(--orn-gold-soft);
+  border-radius: 0;
+  pointer-events: none;
+  transition: border-color 0.3s ease;
+}
+/* 기본: 좌상 + 우하 */
+.orn-frame::before {
+  top: -1px; left: -1px;
+  border-right: none; border-bottom: none;
+  border-top-left-radius: 20px;
+}
+.orn-frame::after {
+  bottom: -1px; right: -1px;
+  border-left: none; border-top: none;
+  border-bottom-right-radius: 20px;
+}
+.orn-frame:hover::before,
+.orn-frame:hover::after { border-color: var(--orn-gold); }
+
+/* 변형: 네 모서리 모두 */
+.orn-frame--all::before { top: -1px; left: -1px; border-right:none; border-bottom:none; border-top-left-radius:20px; }
+.orn-frame--all::after  { top: -1px; right:-1px; border-left:none; border-bottom:none; border-top-right-radius:20px; bottom:auto; left:auto; }
+.orn-frame--all { /* 나머지 두 모서리는 아래에 span으로 */ }
+
+/* ═══════════════════════════════════════════════════════════════
+   4. WOOD GRAIN PATTERN — 섹션 배경에 아주 얇게
+   사용: <section class="orn-grain">
+   ═══════════════════════════════════════════════════════════════ */
+.orn-grain {
+  position: relative;
+  isolation: isolate;
+}
+.orn-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='400' viewBox='0 0 800 400'><defs><filter id='g'><feTurbulence type='turbulence' baseFrequency='0.012 0.18' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.72   0 0 0 0 0.56   0 0 0 0 0.20   0 0 0 0.18 0'/></filter></defs><rect width='800' height='400' filter='url(%23g)'/></svg>");
+  background-size: 900px auto;
+  background-repeat: repeat;
+  pointer-events: none;
+}
+.orn-grain--strong::before { opacity: 0.9; }
+.orn-grain--faint::before  { opacity: 0.28; }
+
+/* ═══════════════════════════════════════════════════════════════
+   5. NUM-RING — chapter 번호를 원 안에 (금빛 테두리 링)
+   사용: <div class="orn-ring">01</div>
+   ═══════════════════════════════════════════════════════════════ */
+.orn-ring {
+  --ring-size: 88px;
+  width: var(--ring-size);
+  height: var(--ring-size);
+  border-radius: 50%;
+  border: 1px solid var(--orn-gold-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: calc(var(--ring-size) * 0.38);
+  font-weight: 300;
+  color: var(--orn-gold);
+  position: relative;
+  background: radial-gradient(circle at 30% 30%, rgba(212,168,67,0.04), transparent 70%);
+}
+/* 링 주위에 얇은 호(3/4 원형) 장식 */
+.orn-ring::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid transparent;
+  border-top-color: var(--orn-gold-soft);
+  border-right-color: var(--orn-gold-ghost);
+  border-radius: 50%;
+  animation: orn-ring-spin 40s linear infinite;
+}
+@keyframes orn-ring-spin { to { transform: rotate(360deg); } }
+.orn-ring--sm { --ring-size: 60px; }
+.orn-ring--lg { --ring-size: 120px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   6. STAT CIRCLE — 큰 숫자를 원 안에 (process/farm-story 등)
+   사용: <div class="orn-stat"><b>20</b><span>ha</span></div>
+   ═══════════════════════════════════════════════════════════════ */
+.orn-stat {
+  --stat-size: 180px;
+  width: var(--stat-size);
+  height: var(--stat-size);
+  border-radius: 50%;
+  border: 1px solid var(--orn-gold-soft);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(212,168,67,0.06), transparent 65%),
+    transparent;
+}
+.orn-stat::before {
+  /* 얇은 외곽 링 */
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 0.5px solid var(--orn-gold-ghost);
+  pointer-events: none;
+}
+.orn-stat::after {
+  /* 1/4 호 강조 (좌상~우상) */
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: var(--orn-gold);
+  border-right-color: var(--orn-gold-soft);
+  transform: rotate(-10deg);
+  pointer-events: none;
+}
+.orn-stat b {
+  font-family: 'Noto Serif KR', serif;
+  font-size: calc(var(--stat-size) * 0.28);
+  font-weight: 300;
+  color: var(--orn-gold);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.orn-stat span {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(253,251,247,0.6);
+}
+.orn-stat--sm { --stat-size: 120px; }
+.orn-stat--lg { --stat-size: 240px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   7. LATITUDE / ARC LINE — 가로로 긴 얇은 금선 + 끝점 원
+   사용: <div class="orn-lat">Lat 18° N</div>
+   ═══════════════════════════════════════════════════════════════ */
+.orn-lat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orn-gold);
+}
+.orn-lat::before,
+.orn-lat::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orn-gold-soft) 20%, var(--orn-gold-soft) 80%, transparent);
+  position: relative;
+}
+.orn-lat::before {
+  mask: radial-gradient(circle 3px at 100% 50%, transparent 98%, black 100%);
+}
+.orn-lat::after {
+  mask: radial-gradient(circle 3px at 0% 50%, transparent 98%, black 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. SMOKE PLUME — 히어로/섹션에 피어오르는 연기 같은 곡선
+   사용: <div class="orn-plume" aria-hidden="true"></div>
+   ═══════════════════════════════════════════════════════════════ */
+.orn-plume {
+  position: absolute;
+  width: 320px; height: 420px;
+  pointer-events: none;
+  opacity: 0.5;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 420'><defs><linearGradient id='pg' x1='0' y1='1' x2='0' y2='0'><stop offset='0' stop-color='%23d4a843' stop-opacity='0.75'/><stop offset='1' stop-color='%23d4a843' stop-opacity='0'/></linearGradient></defs><path d='M160 410 C 140 340 200 300 170 240 C 140 180 210 140 170 80 C 140 40 180 20 180 0' fill='none' stroke='url(%23pg)' stroke-width='0.9'/><path d='M160 410 C 180 360 130 320 170 270 C 200 220 150 180 180 130 C 205 90 170 60 190 30' fill='none' stroke='url(%23pg)' stroke-width='0.6' stroke-opacity='0.7'/><path d='M160 410 C 160 370 180 340 160 300 C 140 260 175 225 160 190' fill='none' stroke='url(%23pg)' stroke-width='0.5' stroke-opacity='0.5'/></svg>");
+  animation: orn-plume-drift 14s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes orn-plume-drift {
+  0%   { transform: translateY(12px) scaleX(1); opacity: 0.38; }
+  100% { transform: translateY(-8px) scaleX(1.04); opacity: 0.58; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   9. SEAL / STAMP — "大" 한자 도장 모양 (brand seal)
+   사용: 섹션 모서리 장식
+   ═══════════════════════════════════════════════════════════════ */
+.orn-seal {
+  width: 72px; height: 72px;
+  border: 1px solid var(--orn-gold);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 32px;
+  color: var(--orn-gold);
+  background: radial-gradient(circle at 30% 30%, rgba(212,168,67,0.08), transparent 70%);
+  transform: rotate(-4deg);
+  position: relative;
+}
+.orn-seal::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 0.5px solid var(--orn-gold-soft);
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   10. KICKER / SECTION LABEL (기존 것 업그레이드)
+   '— 라벨 —' 형식이지만 양쪽 대시를 금선 + 점으로 교체
+   ═══════════════════════════════════════════════════════════════ */
+.orn-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--orn-gold);
+}
+.orn-kicker::before,
+.orn-kicker::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--orn-gold-soft);
+  position: relative;
+}
+.orn-kicker::before {
+  box-shadow: -4px 0 0 -2px var(--orn-gold);
+}
+.orn-kicker::after {
+  box-shadow:  4px 0 0 -2px var(--orn-gold);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   접근성: prefers-reduced-motion
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .orn-ring::before,
+  .orn-plume { animation: none !important; }
+}

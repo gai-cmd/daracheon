@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import { readData } from '@/lib/db';
+import styles from '@/styles/zoel/story-page.module.css';
 
 export const revalidate = 60;
 
@@ -26,200 +26,229 @@ interface MediaItem {
 
 export default async function MediaPage() {
   const allMedia = await readData<MediaItem>('media');
-
   const videos = allMedia.filter((m) => m.type === 'video');
   const photos = allMedia.filter((m) => m.type === 'photo');
   const articles = allMedia.filter((m) => m.type === 'article' || m.type === 'press');
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white">
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-          <p className="section-tag mb-5">GALLERY</p>
-          <h1 className="section-title-kr text-white mb-5">침향 농장 이야기</h1>
-          <p className="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto">
-            영상과 사진으로 만나는 ZOEL LIFE 침향의 생생한 현장
-          </p>
+      {/* HERO */}
+      <section className={styles.hero}>
+        <div className={styles.wrap}>
+          <div className={styles.kicker}>Gallery · 미디어</div>
+          <h1>
+            침향 농장
+            <br />
+            <em>이야기</em>
+          </h1>
+          <p className={styles.lede}>영상과 사진으로 만나는 ZOEL LIFE 침향의 생생한 현장.</p>
         </div>
       </section>
 
-      {/* Videos Section */}
-      <section className="py-28 px-6 bg-[#fdfbf7]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
-            <RevealOnScroll><p className="section-tag">Videos</p></RevealOnScroll>
-            <RevealOnScroll delay={100}>
-              <h2 className="section-title-kr mb-4">영상 갤러리</h2>
-            </RevealOnScroll>
-          </div>
-
-          <RevealOnScroll>
-            {videos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {videos.map((item) => (
-                  <Link key={item.id} href={item.url ?? '#'} className="group block">
-                    <div className="aspect-video relative overflow-hidden border border-neutral-200 hover:border-gold-500/40 transition-colors bg-white">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : null}
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full border-2 border-white/60 flex items-center justify-center">
-                          <span className="text-white text-2xl">&#9654;</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-3">
-                      <p className="text-sm font-medium text-neutral-800 line-clamp-2 group-hover:text-gold-600 transition-colors">{item.title}</p>
-                      <p className="text-xs text-neutral-400 mt-1">{item.source} · {item.date}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {[...Array(3)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="aspect-video border-2 border-dashed border-gold-500/30 flex items-center justify-center bg-white/50"
+      {/* VIDEOS */}
+      <section className={styles.chapter}>
+        <div className={styles.wrap}>
+          <div className={styles.chapterGrid}>
+            <div>
+              <div className={styles.chapterNum}>01</div>
+              <div className={styles.chapterTag}>Videos</div>
+            </div>
+            <div className={styles.chapterBody}>
+              <h3>영상 갤러리</h3>
+              {videos.length > 0 ? (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: 24,
+                    marginTop: 30,
+                  }}
+                >
+                  {videos.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.url ?? '#'}
+                      style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                     >
-                      <div className="text-center px-6">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full border-2 border-gold-500/30 flex items-center justify-center">
-                          <span className="text-gold-500 text-2xl">&#9654;</span>
+                      <div
+                        style={{
+                          aspectRatio: '16/9',
+                          position: 'relative',
+                          overflow: 'hidden',
+                          background: '#1a1d29',
+                          border: '1px solid rgba(212,168,67,0.18)',
+                        }}
+                      >
+                        {item.image && (
+                          <Image src={item.image} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                        )}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'rgba(10,11,16,0.4)',
+                            display: 'grid',
+                            placeItems: 'center',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 56,
+                              height: 56,
+                              borderRadius: '50%',
+                              border: '2px solid rgba(255,255,255,0.7)',
+                              display: 'grid',
+                              placeItems: 'center',
+                              color: '#fff',
+                              fontSize: 18,
+                            }}
+                          >
+                            ▶
+                          </div>
                         </div>
-                        <p className="text-sm text-neutral-400">Coming Soon</p>
                       </div>
-                    </div>
+                      <p style={{ marginTop: 14, color: '#fff', fontSize: '0.95rem', fontWeight: 400 }}>{item.title}</p>
+                      <p
+                        style={{
+                          marginTop: 4,
+                          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                          fontSize: '0.6rem',
+                          letterSpacing: '0.18em',
+                          color: 'rgba(255,255,255,0.45)',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {item.source} · {item.date}
+                      </p>
+                    </Link>
                   ))}
                 </div>
-                <p className="text-center text-sm text-neutral-400 mt-8">
-                  등록된 영상이 없습니다. 곧 업데이트됩니다.
-                </p>
-              </>
-            )}
-          </RevealOnScroll>
+              ) : (
+                <p style={{ color: 'rgba(255,255,255,0.5)' }}>등록된 영상이 없습니다. 곧 업데이트됩니다.</p>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Articles / Press Section */}
+      {/* PRESS */}
       {articles.length > 0 && (
-        <section className="py-28 px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-14">
-              <RevealOnScroll><p className="section-tag">Press</p></RevealOnScroll>
-              <RevealOnScroll delay={100}>
-                <h2 className="section-title-kr mb-4">미디어 &amp; 뉴스</h2>
-              </RevealOnScroll>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {articles.map((item, i) => (
-                <RevealOnScroll key={item.id} delay={i * 80}>
-                  <Link href={item.url ?? '#'} className="group block h-full">
-                    <article className="border border-neutral-200 hover:border-gold-500/40 transition-colors overflow-hidden h-full flex flex-col">
-                      {item.image && (
-                        <div className="relative h-[200px] overflow-hidden">
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          />
-                        </div>
-                      )}
-                      <div className="p-6 flex flex-col flex-1">
-                        <span className="text-[0.6rem] tracking-[0.2em] uppercase text-gold-500 mb-2">
-                          {item.type === 'press' ? 'Press' : 'Article'}
-                        </span>
-                        <h3 className="font-serif text-base mb-2 group-hover:text-gold-600 transition-colors line-clamp-2">
-                          {item.title}
-                        </h3>
-                        {item.excerpt && (
-                          <p className="text-xs text-neutral-500 leading-6 line-clamp-3 flex-1">
-                            {item.excerpt}
-                          </p>
+        <section className={styles.chapter} data-alt="1">
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>02</div>
+                <div className={styles.chapterTag}>Press</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <h3>미디어 &amp; 뉴스</h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                    gap: 24,
+                    marginTop: 30,
+                  }}
+                >
+                  {articles.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.url ?? '#'}
+                      style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                    >
+                      <article style={{ border: '1px solid rgba(212,168,67,0.18)', overflow: 'hidden' }}>
+                        {item.image && (
+                          <div style={{ aspectRatio: '16/9', position: 'relative', background: '#1a1d29' }}>
+                            <Image src={item.image} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                          </div>
                         )}
-                        <p className="text-xs text-neutral-400 mt-3">{item.source} · {item.date}</p>
-                      </div>
-                    </article>
-                  </Link>
-                </RevealOnScroll>
-              ))}
+                        <div style={{ padding: 20 }}>
+                          <span
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.6rem',
+                              letterSpacing: '0.24em',
+                              color: 'var(--accent)',
+                              textTransform: 'uppercase',
+                              marginBottom: 8,
+                              display: 'inline-block',
+                            }}
+                          >
+                            {item.type === 'press' ? 'Press' : 'Article'}
+                          </span>
+                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1rem', color: '#fff', marginBottom: 8 }}>
+                            {item.title}
+                          </h4>
+                          {item.excerpt && (
+                            <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, fontWeight: 300 }}>
+                              {item.excerpt}
+                            </p>
+                          )}
+                          <p
+                            style={{
+                              marginTop: 12,
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.6rem',
+                              letterSpacing: '0.18em',
+                              color: 'rgba(255,255,255,0.45)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {item.source} · {item.date}
+                          </p>
+                        </div>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Photos Section */}
-      <section className="py-28 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
-            <RevealOnScroll><p className="section-tag">Photos</p></RevealOnScroll>
-            <RevealOnScroll delay={100}>
-              <h2 className="section-title-kr mb-4">사진 갤러리</h2>
-            </RevealOnScroll>
-          </div>
-
-          <RevealOnScroll>
-            {photos.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {photos.map((item) => (
-                  <div key={item.id} className="aspect-square relative overflow-hidden border border-neutral-200 hover:border-gold-500/40 transition-colors">
-                    {item.image && (
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {[...Array(8)].map((_, i) => (
+      {/* PHOTOS */}
+      <section className={styles.chapter}>
+        <div className={styles.wrap}>
+          <div className={styles.chapterGrid}>
+            <div>
+              <div className={styles.chapterNum}>03</div>
+              <div className={styles.chapterTag}>Photos</div>
+            </div>
+            <div className={styles.chapterBody}>
+              <h3>사진 갤러리</h3>
+              {photos.length > 0 ? (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: 14,
+                    marginTop: 30,
+                  }}
+                >
+                  {photos.map((item) => (
                     <div
-                      key={i}
-                      className="aspect-square border-2 border-dashed border-gold-500/30 flex items-center justify-center bg-[#fdfbf7]"
+                      key={item.id}
+                      style={{
+                        aspectRatio: '1/1',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        background: '#1a1d29',
+                        border: '1px solid rgba(212,168,67,0.18)',
+                      }}
                     >
-                      <div className="text-center">
-                        <div className="w-10 h-10 mx-auto mb-2 rounded-full border-2 border-gold-500/20 flex items-center justify-center">
-                          <span className="text-gold-500/40 text-lg">&#10010;</span>
-                        </div>
-                      </div>
+                      {item.image && (
+                        <Image src={item.image} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                      )}
                     </div>
                   ))}
                 </div>
-                <p className="text-center text-sm text-neutral-400 mt-8">
-                  등록된 사진이 없습니다. 곧 업데이트됩니다.
-                </p>
-              </>
-            )}
-          </RevealOnScroll>
-        </div>
-      </section>
-
-      {/* Coming Soon CTA */}
-      <section className="py-20 px-6 bg-[#0a0b10] text-white text-center">
-        <RevealOnScroll>
-          <div className="max-w-2xl mx-auto">
-            <p className="section-tag mb-5">Stay Tuned</p>
-            <h2 className="font-serif text-2xl text-white mb-4">
-              더 많은 이야기가 준비되고 있습니다
-            </h2>
-            <p className="text-white/50 text-sm leading-8">
-              ZOEL LIFE 베트남 직영 농장의 생생한 현장과 침향 제품의 생산 과정을
-              영상과 사진으로 곧 만나보실 수 있습니다.
-            </p>
+              ) : (
+                <p style={{ color: 'rgba(255,255,255,0.5)' }}>등록된 사진이 없습니다. 곧 업데이트됩니다.</p>
+              )}
+            </div>
           </div>
-        </RevealOnScroll>
+        </div>
       </section>
     </>
   );

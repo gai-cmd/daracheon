@@ -1,8 +1,7 @@
-import Link from 'next/link';
-import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import { readData } from '@/lib/db';
 import type { Product } from '@/data/products';
 import ProductsClient from './ProductsClient';
+import styles from './page.module.css';
 
 export const revalidate = 60;
 
@@ -12,11 +11,17 @@ interface ProductCategory {
   labelEn: string;
 }
 
+const CERTS = [
+  { mark: 'C', k: 'CITES', v: '국제협약 인증' },
+  { mark: 'H', k: 'HACCP', v: '식품안전' },
+  { mark: 'V', k: 'VCO', v: '베트남 유기농' },
+  { mark: 'K', k: '식약처', v: '식품공전 등재' },
+];
+
 export default async function ProductsPage() {
   const products = await readData<Product>('products');
   const dbCategories = await readData<ProductCategory>('productCategories');
 
-  // 'all' 카테고리를 맨 앞에 추가
   const productCategories: ProductCategory[] = [
     { id: 'all', label: '전체', labelEn: 'All' },
     ...dbCategories.filter((c) => c.id !== 'all'),
@@ -24,41 +29,54 @@ export default async function ProductsPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage:
-              "url('https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png')",
-          }}
-        />
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-          <p className="section-tag mb-5">COLLECTION</p>
-          <h1 className="section-title-kr text-white mb-5">
-            ZOEL LIFE 침향 제품
-          </h1>
-          <p className="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto">
-            자연의 진실된 가치를 담은 프리미엄 라인업
-          </p>
-          <div className="gold-line mx-auto mt-6" />
+      {/* PAGE HERO */}
+      <section className={styles.pageHero}>
+        <div className={styles.wrap}>
+          <div className={styles.crumb}>
+            <a href="/">Home</a>
+            <span className={styles.crumbSep}>/</span>
+            <b>Products</b>
+          </div>
+          <div className={styles.pageHeroMain}>
+            <div>
+              <h1>
+                수십 년 숙성의 시간을
+                <br />
+                담은 <em>{products.length}가지 제품</em>
+              </h1>
+            </div>
+            <p className={styles.lede}>
+              베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업.
+              모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Client component handles category filter + product grid */}
+      {/* Client: filter + sort + grid */}
       <ProductsClient products={products} productCategories={productCategories} />
 
-      {/* CTA */}
-      <section className="py-20 px-6 bg-[#0a0b10] text-center">
-        <RevealOnScroll>
-          <p className="section-tag mb-4">INQUIRY</p>
-          <h2 className="font-serif text-2xl text-white mb-5">
-            제품에 대해 궁금하신 점이 있으시면
-          </h2>
-          <Link href="/support#contact" className="btn btn-gold">
-            문의하기
-          </Link>
-        </RevealOnScroll>
+      {/* CERTIFICATIONS */}
+      <section className={styles.certs}>
+        <div className={styles.wrap}>
+          <div className={styles.certsInner}>
+            <div>
+              <div className={styles.certsKicker}>Certified</div>
+              <h3 className={styles.certsHeadline}>
+                모든 제품은 <em>국제 인증</em>으로<br />증명된 진품입니다
+              </h3>
+            </div>
+            <div className={styles.certsRow}>
+              {CERTS.map((c) => (
+                <div key={c.k} className={styles.cert}>
+                  <div className={styles.certMark}>{c.mark}</div>
+                  <div className={styles.certK}>{c.k}</div>
+                  <div className={styles.certV}>{c.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );

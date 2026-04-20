@@ -1,0 +1,216 @@
+/* 대라천 — 공통 디자인 토큰 (리뉴얼판)
+   Source: tokens.json + brand-guidelines.md
+   모든 variation이 import하여 동일 시스템 위에서 동작 */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&family=Noto+Serif+KR:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Gold scale */
+  --gold-50:  #fbf6e6;
+  --gold-100: #f6e9bf;
+  --gold-200: #ecd488;
+  --gold-300: #e2bf56;
+  --gold-400: #d4a843;
+  --gold-500: #b88c2d;
+  --gold-600: #9e7825;
+  --gold-700: #7a5d1d;
+  --gold-800: #5a4415;
+  --gold-900: #3d2e0e;
+
+  /* Luxury chrome */
+  --lx-black:  #0a0b10;
+  --lx-ink:    #14161f;
+  --lx-slate:  #1a1d29;
+  --lx-ivory:  #fdfbf7;
+  --lx-sand:   #f8f5f0;
+  --lx-cream:  #f5f5f5;
+  --lx-bronze: #5c3d2e;
+  --lx-sage:   #4a6741;
+
+  /* Agarwood (침향 원목톤) */
+  --aw-100: #e8dfd0;
+  --aw-300: #b5a07a;
+  --aw-500: #7a6240;
+  --aw-700: #453624;
+  --aw-900: #1a1510;
+
+  /* Palette toggle defaults (Tweaks로 덮어씀) */
+  --accent:       var(--gold-500);
+  --accent-soft:  var(--gold-400);
+  --accent-deep:  var(--gold-700);
+
+  /* Motion */
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --t-quick:     300ms;
+  --t-base:      500ms;
+  --t-slow:      900ms;
+
+  /* Layout */
+  --nav-h: 72px;
+  --max-w: 1440px;
+
+  /* ━━━ Curvature tokens ━━━ (유기적 라인 시스템) */
+  --r-xs:  6px;    /* small badges, tiny tags */
+  --r-sm:  10px;   /* inputs, small cards */
+  --r-md:  16px;   /* standard cards, panels */
+  --r-lg:  24px;   /* feature cards, image frames */
+  --r-xl:  32px;   /* large panels, hero cards */
+  --r-2xl: 48px;   /* dramatic containers */
+  --r-pill: 999px; /* buttons, pills */
+  --r-blob: 42% 58% 62% 38% / 45% 42% 58% 55%;  /* organic blob shape */
+}
+
+/* Palette variants for Tweaks */
+[data-palette="gold"]   { --accent:#b88c2d; --accent-soft:#d4a843; --accent-deep:#7a5d1d; }
+[data-palette="bronze"] { --accent:#8a5a30; --accent-soft:#b07a44; --accent-deep:#5c3d2e; }
+[data-palette="sage"]   { --accent:#4a6741; --accent-soft:#7a9c70; --accent-deep:#2c3e28; }
+[data-palette="ivory"]  { --accent:#9c8a5a; --accent-soft:#c4b48a; --accent-deep:#5a4415; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  color: var(--lx-ink);
+  background: var(--lx-ivory);
+  overflow-x: hidden;
+
+  /* ━━━ 한국어 조판(KR typography) 기본값 ━━━
+     word-break: keep-all      → 어절(공백 단위) 유지, 단어 중간 줄바꿈 금지
+     overflow-wrap: break-word → 정말 긴 URL/영문만 예외적으로 깨짐 허용
+     line-break: strict        → 문장부호 줄 처음/끝 규칙 엄격 적용 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  line-break: strict;
+}
+
+/* 모든 텍스트 요소에 어절 보존 규칙 상속 강제 */
+h1, h2, h3, h4, h5, h6, p, li, a, span, div, button, label, th, td, figcaption, blockquote {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* 본문 단락은 text-wrap: pretty 로 마지막 줄 고아 글자(orphan) 방지 */
+p, li, blockquote, figcaption {
+  text-wrap: pretty;
+}
+
+/* 헤드라인은 balance 로 줄별 길이를 균형있게 — 히어로 카피 한국어에 특히 효과적 */
+h1, h2, h3, .title-kr, .title-en {
+  text-wrap: balance;
+}
+
+::selection { background: rgba(212,168,67,0.28); color: var(--lx-black); }
+
+/* ━━━ Primitive type roles ━━━ */
+.tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.title-kr {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.title-en {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 200;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  font-style: italic;
+}
+.wordmark-cn {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.submark {
+  font-weight: 300;
+  letter-spacing: 0.34em;
+  font-size: 0.58rem;
+  color: var(--accent-soft);
+  text-transform: uppercase;
+}
+
+/* ━━━ Gold hairline divider ━━━ */
+.gold-line { width: 48px; height: 1px; background: var(--accent-deep); display:block; border-radius: var(--r-pill); }
+.gold-line-v { width: 1px; height: 48px; background: var(--accent-deep); display:block; border-radius: var(--r-pill); }
+
+/* 유기적 S자 곡선 라인 — 섹션 디바이더용 */
+.curve-line {
+  width: 120px; height: 24px; display: block;
+  color: var(--accent);
+}
+.curve-line svg { width: 100%; height: 100%; }
+
+/* ━━━ Buttons ━━━ */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 14px 30px;
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  transition: all 400ms var(--ease-out);
+  white-space: nowrap;
+}
+.btn-gold {
+  background: var(--accent); color: var(--lx-black);
+  border-color: var(--accent);
+}
+.btn-gold:hover { background: var(--accent-deep); border-color: var(--accent-deep); transform: translateY(-2px); box-shadow: 0 14px 34px -10px rgba(184,140,45,0.4); }
+.btn-outline-light {
+  background: transparent; color: #fff; border-color: rgba(255,255,255,0.35);
+}
+.btn-outline-light:hover { border-color: var(--accent); color: var(--accent-soft); transform: translateY(-2px); }
+.btn-outline-dark {
+  background: transparent; color: var(--lx-black); border-color: var(--lx-black);
+}
+.btn-outline-dark:hover { background: var(--lx-black); color: #fff; transform: translateY(-2px); }
+
+/* ━━━ Organic curve decorations ━━━ */
+/* .wave-divider: 섹션 사이 SVG wave. 배경색이 위/아래 섹션과 맞아야 자연스러움 */
+.wave-divider { display: block; width: 100%; height: 80px; }
+.wave-divider svg { display: block; width: 100%; height: 100%; }
+
+/* .blob: 배경 장식 얼룩. 골드 글로우 원형 대신 유기적 형상 */
+.blob {
+  position: absolute;
+  border-radius: var(--r-blob);
+  filter: blur(60px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: blob-drift 22s ease-in-out infinite alternate;
+}
+@keyframes blob-drift {
+  0%   { transform: translate(0,0) rotate(0deg) scale(1); }
+  50%  { transform: translate(30px,-20px) rotate(8deg) scale(1.06); }
+  100% { transform: translate(-20px,30px) rotate(-6deg) scale(0.96); }
+}
+
+/* .card-organic: 모서리 2개는 크게, 2개는 작게 — 유기적 비대칭 */
+.card-organic {
+  border-radius: var(--r-lg) var(--r-sm) var(--r-lg) var(--r-sm);
+  transition: border-radius 600ms var(--ease-out);
+}
+.card-organic:hover {
+  border-radius: var(--r-sm) var(--r-lg) var(--r-sm) var(--r-lg);
+}
+
+/* ━━━ Reveal animations ━━━ */
+.reveal-up   { opacity:0; transform: translateY(40px); transition: opacity 1s var(--ease-reveal), transform 1s var(--ease-reveal); }
+.reveal-left { opacity:0; transform: translateX(-50px); transition: opacity 1s var(--ease-reveal), transform 1s var(--ease-reveal); }
+.reveal-right{ opacity:0; transform: translateX(50px); transition: opacity 1s var(--ease-reveal), transform 1s var(--ease-reveal); }
+.reveal-scale{ opacity:0; transform: scale(0.94); transition: opacity 1s var(--ease-reveal), transform 1s var(--ease-reveal); }
+.visible     { opacity:1 !important; transform: none !important; }
+
+/* Scroll observer utility loader */

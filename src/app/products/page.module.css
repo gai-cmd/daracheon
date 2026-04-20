@@ -1,0 +1,375 @@
+/* variation-a-products.html — 포팅 */
+
+.wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+@media (min-width: 1024px) {
+  .wrap { padding: 0 64px; }
+}
+
+/* PAGE HERO */
+.pageHero {
+  position: relative;
+  padding: calc(var(--nav-h) + 80px) 0 70px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
+  color: #fdfbf7;
+  background:
+    radial-gradient(ellipse 50% 60% at 18% 40%, rgba(212, 168, 67, 0.12), transparent 60%),
+    radial-gradient(ellipse 40% 50% at 82% 70%, rgba(70, 42, 16, 0.6), transparent 60%),
+    linear-gradient(180deg, #0a0b10 0%, #0f1119 100%);
+}
+
+.crumb {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 30px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.crumb a {
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+}
+.crumb a:hover { color: var(--accent-soft); }
+.crumb b { color: var(--accent); font-weight: 500; }
+.crumbSep { opacity: 0.4; }
+
+.pageHeroMain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .pageHeroMain { grid-template-columns: 1.8fr 1fr; gap: 80px; }
+}
+
+.pageHero h1 {
+  font-size: clamp(2rem, 4.2vw, 3.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #fff;
+}
+.pageHero h1 em {
+  font-style: normal;
+  color: var(--accent);
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
+}
+.lede {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  max-width: 460px;
+}
+
+/* FILTER BAR */
+.filters {
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
+  background: rgba(10, 11, 16, 0.92);
+  position: sticky;
+  top: var(--nav-h);
+  z-index: 40;
+  backdrop-filter: blur(20px);
+}
+
+.filters .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.filterGroup button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  padding: 11px 20px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 300ms;
+  border-right: 1px solid rgba(212, 168, 67, 0.15);
+  white-space: nowrap;
+}
+
+.filterGroup button:last-child { border-right: none; }
+.filterGroup button:hover {
+  color: var(--accent-soft);
+  background: rgba(212, 168, 67, 0.05);
+}
+.filterGroup button.active {
+  background: var(--accent);
+  color: var(--lx-black);
+  font-weight: 500;
+}
+
+.sortGroup {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sortGroup select {
+  background: transparent;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  color: #fdfbf7;
+  padding: 11px 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.count b { color: var(--accent); font-weight: 500; }
+
+/* GRID */
+.gridSection {
+  padding: 60px 0 100px;
+  background: #0a0b10;
+  color: #fdfbf7;
+}
+
+.prodGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+@media (min-width: 700px) {
+  .prodGrid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+}
+@media (min-width: 1100px) {
+  .prodGrid { grid-template-columns: repeat(3, 1fr); gap: 48px; }
+}
+
+.prod {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 500ms var(--ease-out);
+}
+.prod:hover { transform: translateY(-6px); }
+
+.prodImg {
+  aspect-ratio: 4 / 5;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1a1d29 0%, #0f1119 100%);
+  border: 1px solid rgba(212, 168, 67, 0.18);
+}
+.prodImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-out);
+}
+.prod:hover .prodImg img { transform: scale(1.06); }
+
+.prodTag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  padding: 6px 12px;
+  background: rgba(10, 11, 16, 0.85);
+  border: 1px solid var(--accent);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  backdrop-filter: blur(10px);
+}
+.prodTagNew { background: var(--accent); color: var(--lx-black); }
+.prodTagSold {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.prodBody { padding-top: 22px; }
+
+.prodCat {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.prodTitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  color: #fff;
+}
+.prodSub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+  margin-bottom: 18px;
+  line-height: 1.7;
+}
+
+.prodMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 16px;
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+}
+
+.prodPrice {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.3rem;
+  color: var(--accent);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.prodPrice .was {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: line-through;
+  margin-right: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+}
+.prodPrice .unit {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.15em;
+  margin-left: 4px;
+}
+
+.prodArrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 300ms;
+}
+.prod:hover .prodArrow { color: var(--accent); }
+
+.empty {
+  padding: 80px 20px;
+  text-align: center;
+  grid-column: 1 / -1;
+  border: 1px dashed rgba(212, 168, 67, 0.25);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* CERTIFICATIONS */
+.certs {
+  padding: 70px 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  background: #0f1119;
+  color: #fdfbf7;
+}
+
+.certsInner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .certsInner { grid-template-columns: 1fr 2fr; gap: 80px; }
+}
+
+.certsKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.certsHeadline {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-top: 14px;
+  line-height: 1.4;
+}
+.certsHeadline em {
+  color: var(--accent-soft);
+  font-style: normal;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
+}
+
+.certsRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: rgba(212, 168, 67, 0.15);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+}
+@media (min-width: 700px) {
+  .certsRow { grid-template-columns: repeat(4, 1fr); }
+}
+
+.cert {
+  background: #0a0b10;
+  padding: 32px 24px;
+  text-align: center;
+}
+.certMark {
+  font-family: 'Noto Serif KR', serif;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 1.3rem;
+}
+.certK {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: -0.005em;
+}
+.certV {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
