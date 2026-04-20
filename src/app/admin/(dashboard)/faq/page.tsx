@@ -289,7 +289,7 @@ export default function FaqAdminPage() {
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="px-2 py-1 text-[0.65rem] font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                            className="px-2 py-1 text-[0.65rem] font-medium text-white bg-red-600 rounded-md hover:bg-red-700 shadow-sm transition-colors"
                           >
                             확인
                           </button>

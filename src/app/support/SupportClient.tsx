@@ -60,78 +60,6 @@ const TOPICS = [
   '기타',
 ] as const;
 
-const DEFAULT_HERO: SupportHero = {
-  kicker: '문의하기',
-  titleLine1: '무엇을',
-  titleEmphasis: '도와드릴까요',
-  lede:
-    '제품에 대한 질문, Lot 번호 조회, 대량 주문, 베트남 직영 농장 견학 신청까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
-};
-
-const DEFAULT_CHANNELS: SupportChannel[] = [
-  {
-    num: '01 · Phone',
-    label: 'Phone',
-    title: '전화 문의',
-    sub: '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무',
-    value: '070 · 4140 · 4086',
-    hint: 'Customer · 대표번호',
-    ctaLabel: '지금 전화하기 →',
-    ctaHref: 'tel:070-4140-4086',
-  },
-  {
-    num: '02 · Email',
-    label: 'Email',
-    title: '이메일 문의',
-    sub: '24시간 접수 · 평일 24시간 내 회신\n첨부파일은 10MB 이하로 부탁드립니다',
-    value: 'zoel@zoellife.co.kr',
-    hint: 'Business · 사업 제휴 · 대량 주문',
-    ctaLabel: '메일 작성하기 →',
-    ctaHref: 'mailto:zoel@zoellife.co.kr',
-  },
-  {
-    num: '03 · KakaoTalk',
-    label: 'KakaoTalk',
-    title: '카카오톡 상담',
-    sub: '실시간 1:1 상담 · 평일 09:00 – 18:00\n이미지·영상 첨부 가능',
-    value: '@대라천ZOELLIFE',
-    hint: 'Live Chat · 가장 빠른 응답',
-    ctaLabel: '채팅 시작 →',
-    ctaHref: '#',
-  },
-];
-
-const DEFAULT_SAMPLE_LOTS = ['DRT-2024-0847', 'DRT-2024-0312', 'DRT-2023-1104'];
-
-const DEFAULT_PRODUCT_OPTIONS = [
-  '선택 안 함',
-  "'참'침향 오일 캡슐",
-  '대라천 침향 진액',
-  '침향묵주 108염주 — 합장주',
-  '침향묵주 108염주 — 평주 (라이트)',
-  '침향묵주 108염주 — 대주 (더블랩)',
-  '대라천 침향차 티백',
-  '원니핀 데일리 캡슐',
-];
-
-const DEFAULT_COMPANY_INFO: SupportCompanyInfo = {
-  rows: [
-    { dt: '상호', dd: '(주)조엘라이프', bold: 'ZOEL LIFE Co., Ltd.' },
-    { dt: '브랜드', dd: '대라천', bold: '大羅天 · DAERACHEON' },
-    { dt: '대표자', dd: '박병주' },
-    { dt: '설립일', dd: '2019년 · 연구 개시 1999년' },
-    { dt: '사업자번호', dd: '749-86-03668' },
-    { dt: '주소', dd: '서울특별시 금천구 벚꽃로36길 30, 1511호' },
-    { dt: '전화', dd: '070 - 4140 - 4086' },
-    { dt: '이메일', dd: 'bj0202@gmail.com' },
-  ],
-};
-
-const DEFAULT_MAP_LABEL: SupportMapLabel = {
-  title: '대라천 · ZOEL LIFE 본사',
-  address: '서울 금천구 벚꽃로36길 30, 1511호',
-};
-
 function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
   return (
     <>
@@ -150,12 +78,12 @@ function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
 }
 
 export default function SupportClient({ faqItems, supportData }: SupportClientProps) {
-  const hero = supportData?.hero ?? DEFAULT_HERO;
-  const channels = supportData?.channels && supportData.channels.length > 0 ? supportData.channels : DEFAULT_CHANNELS;
-  const sampleLots = supportData?.sampleLots && supportData.sampleLots.length > 0 ? supportData.sampleLots : DEFAULT_SAMPLE_LOTS;
-  const productOptions = supportData?.productOptions && supportData.productOptions.length > 0 ? supportData.productOptions : DEFAULT_PRODUCT_OPTIONS;
-  const companyInfo = supportData?.companyInfo && supportData.companyInfo.rows.length > 0 ? supportData.companyInfo : DEFAULT_COMPANY_INFO;
-  const mapLabel = supportData?.mapLabel ?? DEFAULT_MAP_LABEL;
+  const hero = supportData?.hero;
+  const channels = supportData?.channels ?? [];
+  const sampleLots = supportData?.sampleLots ?? [];
+  const productOptions = supportData?.productOptions ?? [];
+  const companyInfo = supportData?.companyInfo;
+  const mapLabel = supportData?.mapLabel;
 
   const [topic, setTopic] = useState<string>(TOPICS[0]);
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -201,45 +129,49 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   return (
     <>
       {/* HERO */}
-      <section className={styles.hero}>
-        <div className={styles.wrap}>
-          <div className={styles.kicker}>{hero.kicker}</div>
-          <h1>
-            {hero.titleLine1} <em>{hero.titleEmphasis}</em>
-          </h1>
-          <p className={styles.lede}>{hero.lede}</p>
-        </div>
-      </section>
+      {hero && (
+        <section className={styles.hero}>
+          <div className={styles.wrap}>
+            <div className={styles.kicker}>{hero.kicker}</div>
+            <h1>
+              {hero.titleLine1} <em>{hero.titleEmphasis}</em>
+            </h1>
+            <p className={styles.lede}>{hero.lede}</p>
+          </div>
+        </section>
+      )}
 
       {/* 3 CHANNELS */}
-      <section className={styles.channels}>
-        <div className={styles.wrap}>
-          <div className={styles.chGrid}>
-            {channels.map((c, i) => {
-              const isSmall = i !== 0; // original: ch 01 uses chVal, ch 02/03 use chValSm
-              return (
-                <div key={i} className={styles.ch}>
-                  <div className={styles.chNum}>{c.num}</div>
-                  <h3>{c.title}</h3>
-                  <p className={styles.chSub}>
-                    {c.sub.split('\n').map((line, j, arr) => (
-                      <span key={j}>
-                        {line}
-                        {j < arr.length - 1 && <br />}
-                      </span>
-                    ))}
-                  </p>
-                  <div className={`${styles.chVal} ${isSmall ? styles.chValSm : ''}`}>{c.value}</div>
-                  <div className={styles.chHint}>{c.hint}</div>
-                  <a href={c.ctaHref} className={styles.chLink}>
-                    {c.ctaLabel}
-                  </a>
-                </div>
-              );
-            })}
+      {channels.length > 0 && (
+        <section className={styles.channels}>
+          <div className={styles.wrap}>
+            <div className={styles.chGrid}>
+              {channels.map((c, i) => {
+                const isSmall = i !== 0;
+                return (
+                  <div key={i} className={styles.ch}>
+                    <div className={styles.chNum}>{c.num}</div>
+                    <h3>{c.title}</h3>
+                    <p className={styles.chSub}>
+                      {c.sub.split('\n').map((line, j, arr) => (
+                        <span key={j}>
+                          {line}
+                          {j < arr.length - 1 && <br />}
+                        </span>
+                      ))}
+                    </p>
+                    <div className={`${styles.chVal} ${isSmall ? styles.chValSm : ''}`}>{c.value}</div>
+                    <div className={styles.chHint}>{c.hint}</div>
+                    <a href={c.ctaHref} className={styles.chLink}>
+                      {c.ctaLabel}
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* FORM + LOT CHECKER */}
       <section className={styles.main} id="contact">
@@ -301,16 +233,18 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                   </div>
                 </div>
 
-                <div className={styles.fld}>
-                  <label htmlFor="subject">관심 제품 / 제목</label>
-                  <select id="subject" name="subject">
-                    {productOptions.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {productOptions.length > 0 && (
+                  <div className={styles.fld}>
+                    <label htmlFor="subject">관심 제품 / 제목</label>
+                    <select id="subject" name="subject">
+                      {productOptions.map((p) => (
+                        <option key={p} value={p}>
+                          {p}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div className={styles.fld}>
                   <label htmlFor="message">
@@ -360,7 +294,6 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                 크로마토그램을 즉시 확인할 수 있습니다.
               </p>
 
-              {/* TODO: Lot 조회 API 없음 — 샘플 응답 표시 (실제 API 연결 필요) */}
               <div className={styles.lotIn}>
                 <input
                   type="text"
@@ -374,25 +307,27 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                 </button>
               </div>
 
-              <div className={styles.samples}>
-                {sampleLots.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => {
-                      setLotNum(s);
-                      checkLot();
-                    }}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+              {sampleLots.length > 0 && (
+                <div className={styles.samples}>
+                  {sampleLots.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => {
+                        setLotNum(s);
+                        checkLot();
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {showLotResult && (
                 <div className={styles.lotResult}>
                   <div className={styles.ok}>✓ Verified · 정품 인증</div>
-                  <div className={styles.lotProd}>'참'침향 오일 캡슐 60정</div>
+                  <div className={styles.lotProd}>&apos;참&apos;침향 오일 캡슐 60정</div>
                   <dl>
                     <dt>Lot 번호</dt>
                     <dd>
@@ -431,48 +366,53 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
       </section>
 
       {/* INFO + MAP */}
-      <section className={styles.info}>
-        <div className={styles.wrap}>
-          <div className={styles.infoGrid}>
-            <div>
-              <h2>
-                회사 <em>정보</em>
-              </h2>
-              <dl>
-                {companyInfo.rows.map((row, i) => (
-                  <FragmentRow key={i} row={row} />
-                ))}
-              </dl>
-            </div>
-            <div>
-              <h2>
-                오시는 <em>길</em>
-              </h2>
-              {/* TODO: Kakao Map embed/API 키 확인 필요 — 현재는 placeholder */}
-              <div className={styles.map}>
-                <div className={styles.mapPin} />
-                <div className={styles.mapLabel}>
-                  {mapLabel.title}
-                  <small>{mapLabel.address}</small>
+      {(companyInfo || mapLabel) && (
+        <section className={styles.info}>
+          <div className={styles.wrap}>
+            <div className={styles.infoGrid}>
+              {companyInfo && companyInfo.rows.length > 0 && (
+                <div>
+                  <h2>
+                    회사 <em>정보</em>
+                  </h2>
+                  <dl>
+                    {companyInfo.rows.map((row, i) => (
+                      <FragmentRow key={i} row={row} />
+                    ))}
+                  </dl>
                 </div>
-              </div>
-              <p
-                style={{
-                  marginTop: 18,
-                  fontSize: '0.85rem',
-                  color: 'rgba(255,255,255,0.55)',
-                  lineHeight: 1.8,
-                  fontWeight: 300,
-                }}
-              >
-                지하철 및 도보 안내는 사전 예약 시 별도 안내드립니다.
-              </p>
+              )}
+              {mapLabel && (
+                <div>
+                  <h2>
+                    오시는 <em>길</em>
+                  </h2>
+                  <div className={styles.map}>
+                    <div className={styles.mapPin} />
+                    <div className={styles.mapLabel}>
+                      {mapLabel.title}
+                      <small>{mapLabel.address}</small>
+                    </div>
+                  </div>
+                  <p
+                    style={{
+                      marginTop: 18,
+                      fontSize: '0.85rem',
+                      color: 'rgba(255,255,255,0.55)',
+                      lineHeight: 1.8,
+                      fontWeight: 300,
+                    }}
+                  >
+                    지하철 및 도보 안내는 사전 예약 시 별도 안내드립니다.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* FAQ (DB-driven, 보존) */}
+      {/* FAQ (DB-driven) */}
       {faqItems.length > 0 && (
         <section className={styles.faqSection} id="faq">
           <div className={styles.wrap}>

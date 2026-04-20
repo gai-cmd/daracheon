@@ -473,13 +473,13 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEdit(product)}
-                          className="px-3 py-1.5 text-xs font-medium text-gold-700 bg-gold-50 rounded-lg hover:bg-gold-100 transition-colors"
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 shadow-sm transition-colors"
                         >
                           편집
                         </button>
                         <button
                           onClick={() => setDeleteTarget(product)}
-                          className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
                         >
                           삭제
                         </button>

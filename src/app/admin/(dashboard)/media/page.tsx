@@ -262,7 +262,7 @@ export default function MediaAdminPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => openEditModal(item)}
-                      className="flex-1 px-3 py-1.5 text-xs font-medium text-gold-600 bg-gold-50 rounded-lg hover:bg-gold-100 transition-colors"
+                      className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 shadow-sm transition-colors"
                     >
                       수정
                     </button>
@@ -270,7 +270,7 @@ export default function MediaAdminPage() {
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleDelete(item.id)}
-                          className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
                         >
                           확인
                         </button>
@@ -284,7 +284,7 @@ export default function MediaAdminPage() {
                     ) : (
                       <button
                         onClick={() => setDeleteConfirmId(item.id)}
-                        className="px-3 py-1.5 text-xs font-medium text-red-500 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
                       >
                         삭제
                       </button>

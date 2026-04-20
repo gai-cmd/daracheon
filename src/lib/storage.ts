@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { put } from '@vercel/blob';
 
 export interface UploadResult {
   url: string;
   filename: string;
   size: number;
   mimeType: string;
-  driver: 'local' | 'cloudinary';
+  driver: 'local' | 'cloudinary' | 'blob';
 }
 
 const EXT_MAP: Record<string, string> = {
@@ -24,11 +25,13 @@ function safeSubdir(raw: string): string {
 }
 
 /**
- * 저장 드라이버 자동 감지:
- *   CLOUDINARY_CLOUD_NAME + CLOUDINARY_UPLOAD_PRESET 이 있으면 Cloudinary (unsigned upload)
- *   그렇지 않으면 로컬 파일시스템 (/public/uploads)
+ * 저장 드라이버 자동 감지 (우선순위):
+ *   1. BLOB_READ_WRITE_TOKEN → Vercel Blob (프로덕션 권장)
+ *   2. CLOUDINARY_CLOUD_NAME + CLOUDINARY_UPLOAD_PRESET → Cloudinary unsigned upload
+ *   3. 그 외 → 로컬 파일시스템 (/public/uploads, Vercel 프로덕션에선 실패)
  */
-export function getStorageDriver(): 'cloudinary' | 'local' {
+export function getStorageDriver(): 'blob' | 'cloudinary' | 'local' {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return 'blob';
   const cloud = process.env.CLOUDINARY_CLOUD_NAME ?? process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD;
   const preset = process.env.CLOUDINARY_UPLOAD_PRESET;
   if (cloud && preset) return 'cloudinary';
@@ -52,6 +55,30 @@ export async function uploadToLocal(file: File, subdirRaw: string): Promise<Uplo
     size: file.size,
     mimeType: file.type,
     driver: 'local',
+  };
+}
+
+export async function uploadToBlob(file: File, subdirRaw: string): Promise<UploadResult> {
+  const ext = EXT_MAP[file.type] ?? 'bin';
+  const id = crypto.randomBytes(10).toString('hex');
+  const timestamp = Date.now();
+  const filename = `${timestamp}-${id}.${ext}`;
+  const subdir = safeSubdir(subdirRaw);
+  const pathname = `uploads/${subdir}/${filename}`;
+
+  const res = await put(pathname, file, {
+    access: 'public',
+    addRandomSuffix: false,
+    allowOverwrite: false,
+    contentType: file.type,
+  });
+
+  return {
+    url: res.url,
+    filename,
+    size: file.size,
+    mimeType: file.type,
+    driver: 'blob',
   };
 }
 
@@ -89,6 +116,7 @@ export async function uploadToCloudinary(file: File, subdirRaw: string): Promise
 
 export async function uploadFile(file: File, subdirRaw: string): Promise<UploadResult> {
   const driver = getStorageDriver();
+  if (driver === 'blob') return uploadToBlob(file, subdirRaw);
   if (driver === 'cloudinary') return uploadToCloudinary(file, subdirRaw);
   return uploadToLocal(file, subdirRaw);
 }

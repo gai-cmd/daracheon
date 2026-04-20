@@ -13,71 +13,6 @@ interface Props {
 
 const TABS = ['침향이란?', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'] as const;
 
-const FALLBACK_MEDIA_ITEMS: Array<{ outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }> = [
-  {
-    outlet: '한국경제',
-    date: '2025.11',
-    title: '25년의 기록 — 대라천, 200ha 침향 숲을 일구다',
-    summary: '1998년 캄보디아에서 시작된 침향 여정, 베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기.',
-  },
-  {
-    outlet: '한국디자인진흥원',
-    date: '2026.01',
-    title: '라이프스타일 브랜드 인증 — 조엘라이프',
-    summary: '침향 원료의 프리미엄 라이프스타일 브랜드로서 정체성과 디자인 완성도를 인정받아 공식 인증 획득.',
-  },
-  {
-    outlet: '식품의약품안전처',
-    date: '2026.02',
-    title: '건강기능식품 규격 부합 — Aquilaria Agallocha Roxburgh',
-    summary: '식약처 고시 공식 학명에 등재된 진짜 침향. 대한민국약전외한약(생약)규격집과 식품공전, 두 곳에 공식 등록된 원료.',
-  },
-];
-
-const FALLBACK_TESTIMONIAL_ITEMS: Array<{ name: string; role?: string; rating?: number; body: string; product?: string; image?: string }> = [
-  {
-    name: '김*선',
-    role: '60대 · 직장인',
-    rating: 5,
-    body: '매일 아침 한 알씩 꾸준히 복용했더니 기력이 확연히 좋아졌습니다. 특히 환절기에도 컨디션이 안정적으로 유지되어 놀라웠어요.',
-    product: '대라천 참침향환',
-  },
-  {
-    name: '박*호',
-    role: '50대 · 자영업',
-    rating: 5,
-    body: '잠을 제대로 이루지 못해 고민이 많았는데, 침향을 꾸준히 복용하면서 숙면에 도움을 받고 있습니다. 자연의 힘을 느낍니다.',
-    product: '대라천 침향 오일',
-  },
-  {
-    name: '이*영',
-    role: '70대 · 주부',
-    rating: 5,
-    body: '손자가 선물해 준 침향환을 어머님께 드렸더니 매우 좋아하셨습니다. 어르신 선물로 이만한 게 없다고 생각합니다.',
-    product: '대라천 참침향환 프리미엄',
-  },
-  {
-    name: '정*현',
-    role: '40대 · 직장인',
-    rating: 4,
-    body: '학명(Aquilaria Agallocha Roxburgh)을 직접 확인하고 구매했습니다. 진짜 침향의 그윽한 향과 품질에 만족하고 있어요.',
-    product: '대라천 침향 오일',
-  },
-];
-
-// Registry fallback (CMS data 없을 때) — data/db/pages.json 시드와 동일
-const DEFAULT_REGISTRY_TITLE = '대한민국약전외한약(생약)규격집';
-const DEFAULT_REGISTRY_SUBTITLE = '공식 등재';
-const DEFAULT_REGISTRY_ROWS: Array<{ label: string; value: string }> = [
-  { label: '정식명', value: '침수향(沈水香), AQUILARIAE LIGNUM' },
-  { label: '학명', value: 'Aquilaria\u00A0Agallocha\u00A0Roxburgh' },
-  { label: '과명', value: '팥꽃나무과 Thymeleaceae' },
-  { label: '정의', value: '이 약은 침향나무의 수지가 침착된 수간목이다' },
-  { label: '성상', value: '흑갈색을 띠며 수지를 함유하고 많은 평행 섬유질로 되어 있다' },
-  { label: '기준', value: '건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상' },
-  { label: '특징', value: '흑갈색을 띠고 맛은 달고 쓰며 물에 가라앉아야 한다' },
-];
-
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
 
@@ -90,12 +25,12 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const papers = data?.papers ?? [];
   const mediaTab = data?.mediaTab;
   const testimonialsTab = data?.testimonialsTab;
-  const mediaItems = mediaTab?.items && mediaTab.items.length > 0 ? mediaTab.items : FALLBACK_MEDIA_ITEMS;
-  const testimonialItems = testimonialsTab?.items && testimonialsTab.items.length > 0 ? testimonialsTab.items : FALLBACK_TESTIMONIAL_ITEMS;
+  const mediaItems = mediaTab?.items ?? [];
+  const testimonialItems = testimonialsTab?.items ?? [];
   const registry = data?.registrySection;
-  const registryTitle = registry?.title ?? DEFAULT_REGISTRY_TITLE;
-  const registrySubtitle = registry?.subtitle ?? DEFAULT_REGISTRY_SUBTITLE;
-  const registryRows = registry?.rows && registry.rows.length > 0 ? registry.rows : DEFAULT_REGISTRY_ROWS;
+  const registryTitle = registry?.title ?? '';
+  const registrySubtitle = registry?.subtitle ?? '';
+  const registryRows = registry?.rows ?? [];
   const cta = data?.cta;
 
   return (

@@ -590,7 +590,7 @@ export default function InquiriesPage() {
                           )}
                           <button
                             onClick={() => handleDelete(inq.id)}
-                            className="px-4 py-2 bg-red-50 border border-red-200 text-xs font-medium text-red-600 rounded-lg hover:bg-red-100 transition-colors ml-auto"
+                            className="px-4 py-2 bg-red-600 text-xs font-medium text-white rounded-lg hover:bg-red-700 shadow-sm transition-colors ml-auto"
                           >
                             삭제
                           </button>
