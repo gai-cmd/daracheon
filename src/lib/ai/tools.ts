@@ -366,7 +366,10 @@ export const TOOLS: ToolDef[] = [
       properties: {
         path: { type: 'string' },
         content: { type: 'string', description: '파일의 최종 전체 내용 (부분 교체 아님).' },
-        commit_message: { type: 'string', description: '커밋 메시지 (예: "fix: 히어로 문구 수정").' },
+        commit_message: {
+          type: 'string',
+          description: '커밋 메시지 (예: "fix: 히어로 문구 수정"). 생략 시 자동 생성.',
+        },
         sha: {
           type: 'string',
           description: '기존 파일 수정 시 필수 (read_source_file에서 얻은 blob SHA). 신규 파일이면 생략.',
@@ -376,7 +379,7 @@ export const TOOLS: ToolDef[] = [
           description: '현재 크기보다 30% 이상 줄어드는 쓰기를 강행할 때 true. 기본 false.',
         },
       },
-      required: ['path', 'content', 'commit_message'],
+      required: ['path', 'content'],
       additionalProperties: false,
     },
   },
@@ -397,13 +400,16 @@ export const TOOLS: ToolDef[] = [
           type: 'string',
           description: '교체 결과 문자열. old_string과 동일해선 안 됨.',
         },
-        commit_message: { type: 'string', description: '커밋 메시지' },
+        commit_message: {
+          type: 'string',
+          description: '커밋 메시지. 생략 시 자동 생성.',
+        },
         sha: {
           type: 'string',
           description: '필수. read_source_file에서 얻은 blob SHA. 충돌 감지용.',
         },
       },
-      required: ['path', 'old_string', 'new_string', 'commit_message', 'sha'],
+      required: ['path', 'old_string', 'new_string', 'sha'],
       additionalProperties: false,
     },
   },
@@ -429,13 +435,16 @@ export const TOOLS: ToolDef[] = [
           },
           description: '적용할 교체 목록. 순서대로 적용됨.',
         },
-        commit_message: { type: 'string' },
+        commit_message: {
+          type: 'string',
+          description: '커밋 메시지. 생략 시 자동 생성.',
+        },
         sha: {
           type: 'string',
           description: '필수. read_source_file에서 얻은 blob SHA.',
         },
       },
-      required: ['path', 'replacements', 'commit_message', 'sha'],
+      required: ['path', 'replacements', 'sha'],
       additionalProperties: false,
     },
   },
@@ -448,9 +457,9 @@ export const TOOLS: ToolDef[] = [
       properties: {
         path: { type: 'string' },
         sha: { type: 'string', description: 'read_source_file로 얻은 blob SHA' },
-        commit_message: { type: 'string' },
+        commit_message: { type: 'string', description: '커밋 메시지. 생략 시 자동 생성.' },
       },
-      required: ['path', 'sha', 'commit_message'],
+      required: ['path', 'sha'],
       additionalProperties: false,
     },
   },
@@ -1018,13 +1027,13 @@ export async function executeTool(
       case 'edit_source_file': {
         const path = String(input.path ?? '');
         const content = typeof input.content === 'string' ? input.content : '';
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' && input.sha.trim() ? input.sha.trim() : undefined;
         const force = input.force === true;
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (!content) return { ok: false, summary: 'content 필수', error: 'empty content' };
+        const message = providedMsg || `chore(admin-ai): ${sha ? 'edit' : 'create'} ${path}`;
 
         // Safety: if the file exists and the new content is drastically smaller
         // than the current file, refuse. This catches the truncated-read data
@@ -1084,13 +1093,13 @@ export async function executeTool(
         const path = String(input.path ?? '');
         const oldStr = typeof input.old_string === 'string' ? input.old_string : '';
         const newStr = typeof input.new_string === 'string' ? input.new_string : '';
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (!oldStr) return { ok: false, summary: 'old_string 필수', error: 'empty old_string' };
+        const message = providedMsg || `chore(admin-ai): edit ${path}`;
         if (oldStr === newStr) {
           return {
             ok: false,
@@ -1167,12 +1176,11 @@ export async function executeTool(
       case 'multi_str_replace_source_file': {
         const path = String(input.path ?? '');
         const rawReplacements = Array.isArray(input.replacements) ? input.replacements : [];
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const sha = typeof input.sha === 'string' ? input.sha.trim() : '';
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
         if (rawReplacements.length === 0) {
           return { ok: false, summary: 'replacements 비어있음', error: 'empty replacements' };
         }
@@ -1240,10 +1248,11 @@ export async function executeTool(
         }
 
         const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const message = providedMsg || `chore(admin-ai): edit ${path} (${replacements.length} replacements)`;
         const result = await writeRepoFile({
           path,
           content: working,
-          message: `${message}\n\nvia daracheon admin AI (by ${actor}) — ${replacements.length} edits`,
+          message: `${message}\n\nvia daracheon admin AI (by ${actor})`,
           sha,
           authorName: context.actorName ?? 'daracheon-admin-ai',
           authorEmail: context.actorEmail ?? 'ai@daracheon.local',
@@ -1273,13 +1282,13 @@ export async function executeTool(
       case 'delete_source_file': {
         const path = String(input.path ?? '');
         const sha = String(input.sha ?? '').trim();
-        const message = String(input.commit_message ?? '').trim();
+        const providedMsg = String(input.commit_message ?? '').trim();
         const allow = isPathAllowed(path);
         if (!allow.ok) return { ok: false, summary: '허용되지 않은 경로', error: allow.reason };
         if (!sha) return { ok: false, summary: 'sha 필수', error: 'sha required' };
-        if (!message) return { ok: false, summary: 'commit_message 필수', error: 'commit_message required' };
 
         const actor = context.actorEmail ?? 'daracheon-admin-ai';
+        const message = providedMsg || `chore(admin-ai): delete ${path}`;
         const result = await deleteRepoFile({
           path,
           sha,

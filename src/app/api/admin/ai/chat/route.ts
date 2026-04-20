@@ -53,7 +53,12 @@ const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_ATTACHMENT_BYTES = 20 * 1024 * 1024;
 const MAX_MESSAGES = 50;
 const MAX_TEXT_CHARS = 20_000;
-const MAX_TOOL_TURNS = 6;
+// Haiku 4.5 is the default and tends to decompose tasks into many small
+// atomic tool calls (read → edit → re-read → edit …). A BrandStory-style
+// multi-tab edit routinely needs 10–15 turns. 6 was terminating tasks
+// mid-flight with "도구 호출 반복 한도 초과". 25 covers realistic edit
+// sequences while still bounding runaway loops.
+const MAX_TOOL_TURNS = 25;
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 20;
