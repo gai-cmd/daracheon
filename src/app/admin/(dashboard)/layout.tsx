@@ -11,9 +11,14 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  // data-admin-root="true" opts this subtree out of the global dark theme
+  // (see globals.css "Admin area — light theme override"). Admin forms need
+  // white backgrounds and dark text — the public site's dark palette makes
+  // form inputs unreadable.
   return (
     <div
-      className="fixed inset-y-0 right-0 z-50 flex bg-gray-50 transition-[left] duration-200"
+      data-admin-root="true"
+      className="fixed inset-y-0 right-0 z-50 flex bg-gray-50 text-gray-800 transition-[left] duration-200"
       style={{ left: 'var(--ai-panel-width, 0px)' }}
     >
       {/* Sidebar */}
@@ -22,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <AdminHeader />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-gray-50 p-6 text-gray-800 lg:p-8">
           {children}
         </main>
       </div>

@@ -305,3 +305,89 @@ html.admin-dark input, html.admin-dark select, html.admin-dark textarea {
 html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
   color: #6b6b66 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Admin area — light theme override
+   ═══════════════════════════════════════════════════════════════
+   dark-theme.css forces body { background:#0a0b10; color:#fdfbf7 }
+   with !important on every page. That makes admin forms unreadable
+   (ivory text on near-white card backgrounds). This block restores
+   a light UI inside the admin subtree marked by data-admin-root.
+   Uses explicit !important + high specificity to outrank the global
+   dark overrides defined earlier in the cascade.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-admin-root="true"] {
+  background: #f9fafb !important;
+  color: #1f2937 !important;
+}
+
+/* Re-assert text colors so the body-level ivory color:#fdfbf7 from
+   dark-theme.css doesn't cascade into admin text. */
+[data-admin-root="true"],
+[data-admin-root="true"] h1,
+[data-admin-root="true"] h2,
+[data-admin-root="true"] h3,
+[data-admin-root="true"] h4,
+[data-admin-root="true"] h5,
+[data-admin-root="true"] h6,
+[data-admin-root="true"] p,
+[data-admin-root="true"] span,
+[data-admin-root="true"] label,
+[data-admin-root="true"] li,
+[data-admin-root="true"] td,
+[data-admin-root="true"] th,
+[data-admin-root="true"] dt,
+[data-admin-root="true"] dd {
+  color: inherit;
+}
+
+/* Form controls — white surface, dark text, visible borders.
+   Stronger than html.admin-dark input rule that would flip them
+   back to the dark palette. */
+[data-admin-root="true"] input:not([type="checkbox"]):not([type="radio"]),
+[data-admin-root="true"] textarea,
+[data-admin-root="true"] select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+[data-admin-root="true"] input::placeholder,
+[data-admin-root="true"] textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* White-background cards inside admin — re-assert their whiteness so
+   dark-theme's .card / .form-card / etc. (ink-elevated) don't leak in
+   when a page uses those class names. */
+[data-admin-root="true"] .bg-white {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+[data-admin-root="true"] .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+[data-admin-root="true"] .bg-gray-100 {
+  background-color: #f3f4f6 !important;
+}
+
+/* Buttons — keep Tailwind colors; just ensure text is not globally
+   overridden to ivory inside gold/red/green solid buttons. */
+[data-admin-root="true"] button {
+  color: inherit;
+}
+
+/* Default text color for plain content blocks that rely on body color */
+[data-admin-root="true"] .text-gray-900 { color: #111827 !important; }
+[data-admin-root="true"] .text-gray-800 { color: #1f2937 !important; }
+[data-admin-root="true"] .text-gray-700 { color: #374151 !important; }
+[data-admin-root="true"] .text-gray-600 { color: #4b5563 !important; }
+[data-admin-root="true"] .text-gray-500 { color: #6b7280 !important; }
+[data-admin-root="true"] .text-gray-400 { color: #9ca3af !important; }
+
+/* Borders inside admin should not inherit gold hairlines */
+[data-admin-root="true"] .border-gray-200 { border-color: #e5e7eb !important; }
+[data-admin-root="true"] .border-gray-300 { border-color: #d1d5db !important; }
