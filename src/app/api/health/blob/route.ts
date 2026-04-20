@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { readSingle, writeSingle } from '@/lib/db';
-import { list, put } from '@vercel/blob';
+import { list, put, del } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,18 +19,36 @@ export async function GET() {
     detail: hasToken ? 'set' : 'NOT set',
   });
 
-  // === A. raw put→fetch (list 우회) ===
+  // === A. del + put(cacheControlMaxAge:0) → fetch (list 우회) ===
+  // 기존 blob 이 old cacheControlMaxAge(default 31,536,000s)로 CDN 에
+  // 박혀 있으면 overwrite 만으로는 CDN 이 갱신되지 않음. 한 번 del →
+  // put(maxAge:0) 으로 CDN entry 자체를 재생성.
+  try {
+    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 1 });
+    const existing = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    if (existing) await del(existing.url);
+    steps.push({ step: 'A0: del existing probe', ok: true, detail: existing ? 'deleted' : 'none' });
+  } catch (err) {
+    steps.push({ step: 'A0: del existing probe', ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+
   let putUrl: string | null = null;
   try {
     const raw = await put(
       `db/${testKey}.json`,
       JSON.stringify(testValue),
-      { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' }
+      {
+        access: 'public',
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        contentType: 'application/json',
+        cacheControlMaxAge: 0,
+      }
     );
     putUrl = raw.url;
-    steps.push({ step: 'A1: put() direct', ok: true, detail: `url=${raw.url}` });
+    steps.push({ step: 'A1: put(maxAge:0)', ok: true, detail: `url=${raw.url}` });
   } catch (err) {
-    steps.push({ step: 'A1: put() direct', ok: false, error: err instanceof Error ? err.message : String(err) });
+    steps.push({ step: 'A1: put(maxAge:0)', ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 
   if (putUrl) {
