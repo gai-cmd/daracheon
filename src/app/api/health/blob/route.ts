@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server';
 import { readSingle, writeSingle } from '@/lib/db';
-import { list } from '@vercel/blob';
+import { list, put } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// 자가진단용 — admin 저장 경로와 동일한 writeSingle/readSingle 를 사용해
-// write + read round-trip 을 end-to-end 검증. probe 키는 일부러 삭제하지
-// 않음 — 매 호출마다 새 blob 을 만들면 Vercel Blob `list` 의 eventual
-// consistency 때문에 방금 쓴 걸 못 찾는 레이스가 생김. probe 를 영속화
-// 하면 두 번째 호출부터는 "기존 blob 덮어쓰기" 가 되어 실제 admin 저장
-// 플로우(항상 기존 pages blob 을 덮어씀)와 동일 조건이 된다.
+// 자가진단 — writeSingle/readSingle 경로 전체를 E2E 검증.
+// 실패 원인 분리용으로 "raw blob put→fetch" 경로도 나란히 검증.
 export async function GET() {
   const steps: Array<{ step: string; ok: boolean; detail?: string; error?: string }> = [];
   const testKey = '__health_probe__';
@@ -20,20 +16,59 @@ export async function GET() {
   steps.push({
     step: 'env.BLOB_READ_WRITE_TOKEN',
     ok: hasToken,
-    detail: hasToken ? 'set' : 'NOT set — 저장 실패 원인',
+    detail: hasToken ? 'set' : 'NOT set',
   });
 
-  // 1) write
+  // === A. raw put→fetch (list 우회) ===
+  let putUrl: string | null = null;
   try {
-    await writeSingle(testKey, testValue);
-    steps.push({ step: 'writeSingle', ok: true });
+    const raw = await put(
+      `db/${testKey}.json`,
+      JSON.stringify(testValue),
+      { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' }
+    );
+    putUrl = raw.url;
+    steps.push({ step: 'A1: put() direct', ok: true, detail: `url=${raw.url}` });
   } catch (err) {
-    steps.push({ step: 'writeSingle', ok: false, error: err instanceof Error ? err.message : String(err) });
-    return NextResponse.json({ ok: false, steps }, { status: 500 });
+    steps.push({ step: 'A1: put() direct', ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 
-  // 2) read-back — 첫 호출(새 blob)은 list eventual consistency 로 실패할 수
-  //    있으므로 최대 3초간 500ms 간격 재시도.
+  if (putUrl) {
+    try {
+      const res = await fetch(putUrl, { cache: 'no-store' });
+      const body = res.ok ? await res.json() : null;
+      const ok = body?.nonce === testValue.nonce;
+      steps.push({
+        step: 'A2: fetch(put.url) direct',
+        ok,
+        detail: ok ? `nonce matched via put.url` : `body=${JSON.stringify(body)}`,
+      });
+    } catch (err) {
+      steps.push({ step: 'A2: fetch(put.url) direct', ok: false, error: err instanceof Error ? err.message : String(err) });
+    }
+  }
+
+  // === B. list consistency ===
+  try {
+    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 5 });
+    const found = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    steps.push({
+      step: 'B: list() finds just-written probe',
+      ok: !!found,
+      detail: found ? `url=${found.url}` : `list returned ${blobs.length} entries (none matching)`,
+    });
+  } catch (err) {
+    steps.push({ step: 'B: list() finds just-written probe', ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+
+  // === C. writeSingle/readSingle round-trip ===
+  try {
+    await writeSingle(testKey, testValue);
+    steps.push({ step: 'C1: writeSingle', ok: true });
+  } catch (err) {
+    steps.push({ step: 'C1: writeSingle', ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+
   let match = false;
   let lastNonce: string | null = null;
   for (let attempt = 0; attempt < 6; attempt++) {
@@ -43,28 +78,28 @@ export async function GET() {
     await new Promise((r) => setTimeout(r, 500));
   }
   steps.push({
-    step: 'readSingle round-trip',
+    step: 'C2: readSingle round-trip',
     ok: match,
     detail: match
-      ? `nonce matched (${testValue.nonce})`
-      : `expected ${testValue.nonce}, got ${lastNonce ?? 'null'} — list eventual consistency?`,
+      ? `nonce matched via readSingle`
+      : `expected ${testValue.nonce}, got ${lastNonce ?? 'null'}`,
   });
 
-  // 3) blob list (확인용)
+  // === D. total blob count ===
   let blobCount = 0;
   try {
     const { blobs } = await list({ prefix: 'db/', limit: 100 });
     blobCount = blobs.length;
-    steps.push({ step: 'blob list', ok: true, detail: `${blobCount} blobs under db/ prefix` });
+    steps.push({ step: 'D: blob list total', ok: true, detail: `${blobCount} blobs under db/ prefix` });
   } catch (err) {
-    steps.push({ step: 'blob list', ok: false, error: err instanceof Error ? err.message : String(err) });
+    steps.push({ step: 'D: blob list total', ok: false, error: err instanceof Error ? err.message : String(err) });
   }
 
   const allOk = steps.every((s) => s.ok);
   return NextResponse.json(
     {
       ok: allOk,
-      summary: allOk ? '✓ Blob read/write 정상 — admin 저장 → 프론트 반영 OK' : '✗ 문제 발견 — steps 참조',
+      summary: allOk ? '✓ 전 경로 정상' : '✗ 일부 실패 — steps 참조',
       blobCount,
       steps,
     },
