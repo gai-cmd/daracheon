@@ -164,14 +164,130 @@ export default function AdminBrandStoryPage() {
   const [saving, setSaving] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
-  const [hero, setHero] = useState<BrandStoryData['hero']>({ sectionTag: '', titleKr: '', subtitle: '', heroBg: '' });
-  const [brandStoryTab, setBrandStoryTab] = useState<BrandStoryData['brandStoryTab']>({ headlineTitle: '', headlineSubtitle: '', sourceTag: '', sourceTitle: '', sourceBody: '' });
-  const [farms, setFarms] = useState<Farm[]>([]);
-  const [sceneTab, setSceneTab] = useState<BrandStoryData['sceneTab']>({ tag: '', title: '', subtitle: '', body: '', images: [] });
-  const [historyTab, setHistoryTab] = useState<BrandStoryData['historyTab']>({ tag: '', title: '', eras: [] });
-  const [certificationsTab, setCertificationsTab] = useState<BrandStoryData['certificationsTab']>({ tag: '', title: '', subtitle: '', images: [], sections: [] });
-  const [qualityTab, setQualityTab] = useState<BrandStoryData['qualityTab']>({ tag: '', title: '', subtitle: '', images: [], heavyMetals: [] });
-  const [processTab, setProcessTab] = useState<BrandStoryData['processTab']>({ tag: '', title: '', subtitle: '', images: [], steps: [], totalTimeLabel: '', totalTimeValue: '', totalTimeDesc: '' });
+  // Frontend fallback 값과 동일 — CMS 데이터가 없을 때 현재 사이트에 노출되는 내용
+  const DEFAULT_HERO_BG =
+    'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg';
+
+  const [hero, setHero] = useState<BrandStoryData['hero']>({
+    sectionTag: 'Agarwood Story',
+    titleKr: "대라천 '참'침향",
+    subtitle: "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다.",
+    heroBg: DEFAULT_HERO_BG,
+  });
+  const [brandStoryTab, setBrandStoryTab] = useState<BrandStoryData['brandStoryTab']>({
+    headlineTitle: '100% 베트남산, 아갈로차 침향나무만!',
+    headlineSubtitle: '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전',
+    sourceTag: 'THE SOURCE',
+    sourceTitle: '',
+    sourceBody:
+      '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+  });
+  const [farms, setFarms] = useState<Farm[]>([
+    { name: '하띤', nameVi: 'Ha Tinh', desc: '메인 대규모 농장 (200ha)' },
+    { name: '동나이', nameVi: 'Dong Nai', desc: '전략 재배 거점' },
+    { name: '냐짱', nameVi: 'Nha Trang', desc: '고품질 원료 산지' },
+    { name: '푸국', nameVi: 'Phu Quoc', desc: '해양성 기후 재배지' },
+    { name: '람동', nameVi: 'Lam Dong', desc: '고산지대 특화 농장' },
+  ]);
+  const [sceneTab, setSceneTab] = useState<BrandStoryData['sceneTab']>({
+    tag: 'THE FIELD',
+    title: '대라천 침향 현장',
+    subtitle: '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전',
+    body:
+      '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+    images: [
+      'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
+      'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
+      'https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280',
+    ],
+  });
+  const [historyTab, setHistoryTab] = useState<BrandStoryData['historyTab']>({
+    tag: 'HISTORY',
+    title: '대라천 침향 역사',
+    eras: [
+      {
+        era: '1998-2001',
+        items: [
+          '1998 캄보디아 침향사업 시작',
+          '2000 베트남 5개 성 농장 조성',
+          '2001 동나이성 대규모 식재',
+        ],
+      },
+      {
+        era: '2014-2019',
+        items: [
+          '2014 노니발효 시스템 개발',
+          '2018 NTV Vietnam 통합법인 + Organic/HACCP 인증 + 식용가능 수지유도제 재개발',
+          '2019 OCOP 품질보증',
+        ],
+      },
+      {
+        era: '2023-2025',
+        items: [
+          '2023 침향캡슐 건강기능성 재인증(18품목)',
+          '2024 조엘라이프 한국 시장 진출',
+          '2025 아시아 10대 선도 브랜드 선정 + 특허 출원',
+        ],
+      },
+    ],
+  });
+  const [certificationsTab, setCertificationsTab] = useState<BrandStoryData['certificationsTab']>({
+    tag: 'CERTIFICATIONS',
+    title: '신뢰의 지표',
+    subtitle: '국제가 인정하는 대라천의 품질',
+    images: [
+      'https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600',
+      'https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600',
+      'https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600',
+      'https://lh3.googleusercontent.com/d/13rr7HLSCAnZbsrG2f55UYTvf_nSgThfz=w1600',
+      'https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600',
+      'https://lh3.googleusercontent.com/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq=w1600',
+      'https://lh3.googleusercontent.com/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY=w1600',
+      'https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w1600',
+    ],
+    sections: [
+      { title: '국제 거래 및 기술 특허', items: ['CITES IIA-DNI-007', '수지유도 특허 #12835'] },
+      { title: '품질 보증', items: ['Organic', 'HACCP', 'OCOP', '2025 아시아 10대 브랜드'] },
+      { title: '안전성 시험', items: ['TSL ISO/IEC 17025:2017', '중금속 8종 전부 불검출'] },
+    ],
+  });
+  const [qualityTab, setQualityTab] = useState<BrandStoryData['qualityTab']>({
+    tag: 'VERIFIED QUALITY',
+    title: '과학으로 입증된 안전',
+    subtitle: '최소 26년의 시간이 만드는 한 방울의 가치',
+    images: [
+      'https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280',
+      'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280',
+    ],
+    heavyMetals: ['납(Pb)', '카드뮴(Cd)', '수은(Hg)', '비소(As)', '구리(Cu)', '주석(Sn)', '안티몬(Sb)', '니켈(Ni)'],
+  });
+  const [processTab, setProcessTab] = useState<BrandStoryData['processTab']>({
+    tag: 'PRODUCTION PROCESS',
+    title: '생산 공정',
+    subtitle: '총 소요 시간: 최소 26년',
+    images: [],
+    steps: [
+      '식목',
+      '수지앉힘(특허#12835)',
+      '침향검사',
+      '침향수확',
+      '원목입고',
+      '세척(표피제거)',
+      '절단(10-20cm)',
+      '수지목분리',
+      '이물질제거',
+      '세척(3회)',
+      '건조(자연광)',
+      '분쇄(1-2mm)',
+      '고온증류(72시간)',
+      '수지채취후숙성검사출고',
+    ],
+    totalTimeLabel: 'TOTAL PROCESS TIME',
+    totalTimeValue: '26+ Years',
+    totalTimeDesc: '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치',
+  });
+  // mediaTab / testimonialsTab: /about-agarwood 전용. brand-story UI에서는 노출 안 함
+  // (데이터 계약 유지를 위해 state는 보존)
   const [mediaTab, setMediaTab] = useState<NonNullable<BrandStoryData['mediaTab']>>({ tag: 'In the Press', title: '언론에 소개된 대라천', subtitle: '주요 매체와 보도자료에서 다룬 대라천의 소식을 확인하세요.', items: [] });
   const [testimonialsTab, setTestimonialsTab] = useState<NonNullable<BrandStoryData['testimonialsTab']>>({ tag: 'Customer Voices', title: '고객이 전하는 대라천', subtitle: '실제 사용자분들이 들려주는 진솔한 후기입니다.', items: [] });
 
@@ -185,18 +301,19 @@ export default function AdminBrandStoryPage() {
     async function fetchData() {
       try {
         const res = await fetch('/api/admin/pages');
-        const data = await res.json() as { pages: { brandStory: BrandStoryData } };
+        const data = await res.json() as { pages: { brandStory: BrandStoryData | undefined } };
         const d = data.pages.brandStory;
-        setHero(d.hero ?? hero);
-        setBrandStoryTab(d.brandStoryTab ?? brandStoryTab);
-        setFarms(d.farms ?? []);
-        setSceneTab(d.sceneTab ?? sceneTab);
-        setHistoryTab(d.historyTab ?? historyTab);
-        setCertificationsTab(d.certificationsTab ?? certificationsTab);
-        setQualityTab(d.qualityTab ?? qualityTab);
-        setProcessTab(d.processTab ?? processTab);
-        if (d.mediaTab) setMediaTab(d.mediaTab);
-        if (d.testimonialsTab) setTestimonialsTab(d.testimonialsTab);
+        // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
+        if (d?.hero) setHero(d.hero);
+        if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
+        if (d?.farms && d.farms.length > 0) setFarms(d.farms);
+        if (d?.sceneTab) setSceneTab(d.sceneTab);
+        if (d?.historyTab) setHistoryTab(d.historyTab);
+        if (d?.certificationsTab) setCertificationsTab(d.certificationsTab);
+        if (d?.qualityTab) setQualityTab(d.qualityTab);
+        if (d?.processTab) setProcessTab(d.processTab);
+        if (d?.mediaTab) setMediaTab(d.mediaTab);
+        if (d?.testimonialsTab) setTestimonialsTab(d.testimonialsTab);
       } catch (err) {
         console.error('Failed to fetch pages:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -275,7 +392,7 @@ export default function AdminBrandStoryPage() {
 
         <div className="space-y-8">
           {/* Hero */}
-          <SectionCard title="히어로 섹션" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
+          <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
               <LabeledInput label="섹션 태그" value={hero.sectionTag} onChange={(v) => setHero({ ...hero, sectionTag: v })} />
               <LabeledInput label="제목 (한글)" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
@@ -285,7 +402,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Brand Story Tab */}
-          <SectionCard title="브랜드 스토리 탭" onSave={() => saveSection('brandStoryTab', { brandStoryTab })} saving={saving === 'brandStoryTab'}>
+          <SectionCard title="탭 1 · 브랜드 스토리" onSave={() => saveSection('brandStoryTab', { brandStoryTab })} saving={saving === 'brandStoryTab'}>
             <div className="space-y-5">
               <LabeledInput label="헤드라인 제목" value={brandStoryTab.headlineTitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, headlineTitle: v })} />
               <LabeledInput label="헤드라인 부제목" value={brandStoryTab.headlineSubtitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, headlineSubtitle: v })} />
@@ -296,7 +413,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Farms */}
-          <SectionCard title="농장 목록 (브랜드/현장 탭 공통)" onSave={() => saveSection('farms', { farms })} saving={saving === 'farms'}>
+          <SectionCard title="탭 1 · 브랜드 스토리 — 농장 네트워크" onSave={() => saveSection('farms', { farms })} saving={saving === 'farms'}>
             <div className="space-y-4">
               {farms.map((farm, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -322,7 +439,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Scene Tab */}
-          <SectionCard title="현장 탭" onSave={() => saveSection('sceneTab', { sceneTab })} saving={saving === 'sceneTab'}>
+          <SectionCard title="탭 2 · 대라천 침향 현장" onSave={() => saveSection('sceneTab', { sceneTab })} saving={saving === 'sceneTab'}>
             <div className="space-y-5">
               <LabeledInput label="태그" value={sceneTab.tag} onChange={(v) => setSceneTab({ ...sceneTab, tag: v })} />
               <LabeledInput label="제목" value={sceneTab.title} onChange={(v) => setSceneTab({ ...sceneTab, title: v })} />
@@ -350,7 +467,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* History Tab */}
-          <SectionCard title="역사 탭" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
+          <SectionCard title="탭 3 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
             <div className="space-y-5">
               <LabeledInput label="태그" value={historyTab.tag} onChange={(v) => setHistoryTab({ ...historyTab, tag: v })} />
               <LabeledInput label="제목" value={historyTab.title} onChange={(v) => setHistoryTab({ ...historyTab, title: v })} />
@@ -399,7 +516,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Certifications Tab */}
-          <SectionCard title="인증 탭" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
+          <SectionCard title="탭 4 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={certificationsTab.tag} onChange={(v) => setCertificationsTab({ ...certificationsTab, tag: v })} />
@@ -462,7 +579,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Quality Tab */}
-          <SectionCard title="품질 탭" onSave={() => saveSection('qualityTab', { qualityTab })} saving={saving === 'qualityTab'}>
+          <SectionCard title="탭 5 · 검증된 품질" onSave={() => saveSection('qualityTab', { qualityTab })} saving={saving === 'qualityTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={qualityTab.tag} onChange={(v) => setQualityTab({ ...qualityTab, tag: v })} />
@@ -507,7 +624,7 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           {/* Process Tab */}
-          <SectionCard title="생산 공정 탭" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
+          <SectionCard title="탭 6 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={processTab.tag} onChange={(v) => setProcessTab({ ...processTab, tag: v })} />
@@ -559,100 +676,10 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
-          {/* Media Tab */}
-          <SectionCard title="매체 탭 (언론 보도)" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <LabeledInput label="태그" value={mediaTab.tag} onChange={(v) => setMediaTab({ ...mediaTab, tag: v })} />
-                <LabeledInput label="제목" value={mediaTab.title} onChange={(v) => setMediaTab({ ...mediaTab, title: v })} />
-                <div className="md:col-span-2">
-                  <LabeledTextarea label="부제목" value={mediaTab.subtitle} onChange={(v) => setMediaTab({ ...mediaTab, subtitle: v })} rows={2} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">매체 보도 항목 ({mediaTab.items.length})</label>
-                <div className="space-y-4">
-                  {mediaTab.items.map((item, i) => (
-                    <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
-                        <div className="flex gap-1">
-                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
-                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
-                          <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: removeItem(mediaTab.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                        <input placeholder="매체명 (예: 조선일보)" value={item.outlet} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], outlet: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                        <input placeholder="날짜 (예: 2026.01.15)" value={item.date ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], date: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      </div>
-                      <input placeholder="기사 제목" value={item.title} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], title: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <textarea placeholder="요약 (선택)" rows={2} value={item.summary ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], summary: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <input placeholder="원문 링크 (선택, https://...)" value={item.link ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], link: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <div>
-                        <label className="block text-xs text-gray-500 mb-1">썸네일 이미지 (선택)</label>
-                        <ImageUploadField value={item.image ?? ''} onChange={(url) => { const n = [...mediaTab.items]; n[i] = { ...n[i], image: url }; setMediaTab({ ...mediaTab, items: n }); }} subdir="pages" />
-                      </div>
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: [...mediaTab.items, { outlet: '', title: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                    + 매체 보도 추가
-                  </button>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
-          {/* Testimonials Tab */}
-          <SectionCard title="고객 후기 탭" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <LabeledInput label="태그" value={testimonialsTab.tag} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, tag: v })} />
-                <LabeledInput label="제목" value={testimonialsTab.title} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, title: v })} />
-                <div className="md:col-span-2">
-                  <LabeledTextarea label="부제목" value={testimonialsTab.subtitle} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, subtitle: v })} rows={2} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">고객 후기 ({testimonialsTab.items.length})</label>
-                <div className="space-y-4">
-                  {testimonialsTab.items.map((item, i) => (
-                    <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
-                        <div className="flex gap-1">
-                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: moveItem(testimonialsTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
-                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: moveItem(testimonialsTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
-                          <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: removeItem(testimonialsTab.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                        <input placeholder="이름" value={item.name} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], name: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                        <input placeholder="역할/소속 (선택)" value={item.role ?? ''} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], role: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                        <select value={item.rating ?? 0} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], rating: Number(e.target.value) }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none bg-white">
-                          <option value={0}>별점 없음</option>
-                          <option value={1}>★☆☆☆☆ (1점)</option>
-                          <option value={2}>★★☆☆☆ (2점)</option>
-                          <option value={3}>★★★☆☆ (3점)</option>
-                          <option value={4}>★★★★☆ (4점)</option>
-                          <option value={5}>★★★★★ (5점)</option>
-                        </select>
-                      </div>
-                      <textarea placeholder="후기 본문" rows={3} value={item.body} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], body: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <input placeholder="사용 제품명 (선택)" value={item.product ?? ''} onChange={(e) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], product: e.target.value }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <div>
-                        <label className="block text-xs text-gray-500 mb-1">프로필 이미지 (선택)</label>
-                        <ImageUploadField value={item.image ?? ''} onChange={(url) => { const n = [...testimonialsTab.items]; n[i] = { ...n[i], image: url }; setTestimonialsTab({ ...testimonialsTab, items: n }); }} subdir="pages" />
-                      </div>
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => setTestimonialsTab({ ...testimonialsTab, items: [...testimonialsTab.items, { name: '', body: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                    + 고객 후기 추가
-                  </button>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
+          {/*
+            mediaTab / testimonialsTab UI는 /brand-story 페이지에서 더 이상 노출되지 않아 제거.
+            (해당 탭은 /about-agarwood 전용. 데이터 계약 유지를 위해 state와 BrandStoryData 인터페이스의 옵셔널 필드는 보존.)
+          */}
         </div>
       </div>
     </div>

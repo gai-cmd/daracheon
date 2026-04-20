@@ -189,43 +189,110 @@ export default function AdminAboutAgarwoodPage() {
   const [saving, setSaving] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
-  /* state */
+  /* state — 초기값은 frontend AboutAgarwoodClient.tsx 의 하드코딩 fallback과 동일.
+     CMS 데이터가 있으면 fetchData 에서 덮어씁니다. */
   const [hero, setHero] = useState<AboutAgarwoodData['hero']>({
-    sectionTag: '',
-    titleKr: '',
-    titleEn: '',
-    subtitle: '',
+    sectionTag: 'Agarwood Story · 침향 이야기',
+    titleKr: '이젠 진짜 침향,',
+    titleEn: '학명부터 확인하세요',
+    subtitle:
+      "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh.",
     heroImage: '',
   });
   const [definitionSection, setDefinitionSection] = useState<AboutAgarwoodData['definitionSection']>({
-    title: '',
-    subtitle: '',
-    body: '',
-    officialNameCallout: '',
+    title: '침향(沈香)이란 무엇인가?',
+    subtitle: '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)',
+    body: '침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.',
+    officialNameCallout: '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)',
   });
-  const [formationSteps, setFormationSteps] = useState<FormationStep[]>([]);
-  const [specialReasons, setSpecialReasons] = useState<SpecialReason[]>([]);
-  const [benefits, setBenefits] = useState<Benefit[]>([]);
+  const [formationSteps, setFormationSteps] = useState<FormationStep[]>([
+    { step: '01', title: '외부 자극', description: '침향나무가 외부 상처나 곰팡이 감염 등 자극을 받습니다.' },
+    { step: '02', title: '수지 분비', description: '상처 치유를 위해 나무 스스로 방어 수지를 분비합니다.' },
+    { step: '03', title: '침착', description: '분비된 수지가 수십 년에 걸쳐 나무 내부에 서서히 침착됩니다.' },
+    { step: '04', title: '형성', description: '수지가 충분히 침착된 부분이 향목 — 침향이 됩니다.' },
+  ]);
+  const [specialReasons, setSpecialReasons] = useState<SpecialReason[]>([
+    { title: '수십 년의 시간', description: '20년 이상의 긴 시간이 만들어낸 자연의 결정체입니다.' },
+    { title: '희귀한 수지', description: '전 세계적으로 생산량이 제한된 귀한 향목입니다.' },
+    { title: '학명 기반 품질', description: '식약처 고시 학명 Aquilaria Agallocha Roxburgh.' },
+    { title: '동서양 의학서', description: '동의보감·본초강목 등 수천 년간 약재로 기록.' },
+  ]);
+  const [benefits, setBenefits] = useState<Benefit[]>([
+    { title: '기혈 순환', description: '막힌 기를 뚫어 오장육부 기능을 정상화합니다.' },
+    { title: '자양강장', description: '찬 기운을 몰아내고 몸을 따뜻하게 보강합니다.' },
+    { title: '신경 안정', description: '예민한 신경을 이완시키고 숙면에 도움.' },
+    { title: '항염 · 혈관', description: '염증 억제와 혈관 건강 증진.' },
+    { title: '뇌 건강', description: '뇌혈류 개선과 뇌세포 보호.' },
+    { title: '소화 · 복통', description: '위를 따뜻하게 하여 소화 기능 개선.' },
+  ]);
   const [literatures, setLiteratures] = useState<Literature[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [cta, setCta] = useState<AboutAgarwoodData['cta']>({
-    title: '',
-    buttonProducts: '',
-    buttonProductsHref: '',
-    buttonBrand: '',
-    buttonBrandHref: '',
+    title: '침향의 세계가 궁금하시다면',
+    buttonProducts: '제품 보기',
+    buttonProductsHref: '/products',
+    buttonBrand: '브랜드 스토리',
+    buttonBrandHref: '/brand-story',
   });
   const [mediaTab, setMediaTab] = useState<NonNullable<AboutAgarwoodData['mediaTab']>>({
-    tag: 'In the Media',
+    tag: 'In the Media · 매체',
     title: '매체에 실린 침향',
-    subtitle: '주요 매체와 기관에서 조명한 대라천 침향의 이야기.',
-    items: [],
+    subtitle: '주요 매체와 기관에서 조명한 대라천 침향의 이야기. 25년의 기록과 공식 인증을 확인하세요.',
+    items: [
+      {
+        outlet: '한국경제',
+        date: '2025.11',
+        title: '25년의 기록 — 대라천, 200ha 침향 숲을 일구다',
+        summary: '1998년 캄보디아에서 시작된 침향 여정, 베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기.',
+      },
+      {
+        outlet: '한국디자인진흥원',
+        date: '2026.01',
+        title: '라이프스타일 브랜드 인증 — 조엘라이프',
+        summary: '침향 원료의 프리미엄 라이프스타일 브랜드로서 정체성과 디자인 완성도를 인정받아 공식 인증 획득.',
+      },
+      {
+        outlet: '식품의약품안전처',
+        date: '2026.02',
+        title: '건강기능식품 규격 부합 — Aquilaria Agallocha Roxburgh',
+        summary: '식약처 고시 공식 학명에 등재된 진짜 침향. 대한민국약전외한약(생약)규격집과 식품공전, 두 곳에 공식 등록된 원료.',
+      },
+    ],
   });
   const [testimonialsTab, setTestimonialsTab] = useState<NonNullable<AboutAgarwoodData['testimonialsTab']>>({
-    tag: 'Testimonials',
+    tag: 'Testimonials · 후기',
     title: '고객이 남긴 침향',
-    subtitle: '대라천 침향을 경험한 고객들의 진솔한 이야기.',
-    items: [],
+    subtitle: '대라천 침향을 경험한 고객들의 진솔한 이야기. 세월이 빚어낸 향이 일상에 남긴 흔적입니다.',
+    items: [
+      {
+        name: '김*선',
+        role: '60대 · 직장인',
+        rating: 5,
+        body: '매일 아침 한 알씩 꾸준히 복용했더니 기력이 확연히 좋아졌습니다. 특히 환절기에도 컨디션이 안정적으로 유지되어 놀라웠어요.',
+        product: '대라천 참침향환',
+      },
+      {
+        name: '박*호',
+        role: '50대 · 자영업',
+        rating: 5,
+        body: '잠을 제대로 이루지 못해 고민이 많았는데, 침향을 꾸준히 복용하면서 숙면에 도움을 받고 있습니다. 자연의 힘을 느낍니다.',
+        product: '대라천 침향 오일',
+      },
+      {
+        name: '이*영',
+        role: '70대 · 주부',
+        rating: 5,
+        body: '손자가 선물해 준 침향환을 어머님께 드렸더니 매우 좋아하셨습니다. 어르신 선물로 이만한 게 없다고 생각합니다.',
+        product: '대라천 참침향환 프리미엄',
+      },
+      {
+        name: '정*현',
+        role: '40대 · 직장인',
+        rating: 4,
+        body: '학명(Aquilaria Agallocha Roxburgh)을 직접 확인하고 구매했습니다. 진짜 침향의 그윽한 향과 품질에 만족하고 있어요.',
+        product: '대라천 침향 오일',
+      },
+    ],
   });
 
   /* toast auto-hide */
@@ -242,14 +309,15 @@ export default function AdminAboutAgarwoodPage() {
         const res = await fetch('/api/admin/pages');
         const data = await res.json() as { pages: { aboutAgarwood: AboutAgarwoodData } };
         const d = data.pages.aboutAgarwood;
-        setHero(d.hero ?? hero);
-        setDefinitionSection(d.definitionSection ?? definitionSection);
-        setFormationSteps(d.formationSteps ?? []);
-        setSpecialReasons(d.specialReasons ?? []);
-        setBenefits(d.benefits ?? []);
+        // CMS 데이터가 있으면 그것 사용, 없으면 초기값(=frontend fallback) 유지
+        if (d.hero) setHero(d.hero);
+        if (d.definitionSection) setDefinitionSection(d.definitionSection);
+        if (d.formationSteps && d.formationSteps.length > 0) setFormationSteps(d.formationSteps);
+        if (d.specialReasons && d.specialReasons.length > 0) setSpecialReasons(d.specialReasons);
+        if (d.benefits && d.benefits.length > 0) setBenefits(d.benefits);
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
-        setCta(d.cta ?? cta);
+        if (d.cta) setCta(d.cta);
         if (d.mediaTab) setMediaTab(d.mediaTab);
         if (d.testimonialsTab) setTestimonialsTab(d.testimonialsTab);
       } catch (err) {
@@ -337,7 +405,7 @@ export default function AdminAboutAgarwoodPage() {
 
         <div className="space-y-8">
           {/* Hero */}
-          <SectionCard title="히어로 섹션" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
+          <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <LabeledInput label="섹션 태그" value={hero.sectionTag} onChange={(v) => setHero({ ...hero, sectionTag: v })} />
               <LabeledInput label="제목 (영문)" value={hero.titleEn} onChange={(v) => setHero({ ...hero, titleEn: v })} />
@@ -359,7 +427,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Definition Section */}
-          <SectionCard title="침향 정의 섹션" onSave={() => saveSection('definition', { definitionSection })} saving={saving === 'definition'}>
+          <SectionCard title="Chapter I · Definition · 침향(沈香)이란 무엇인가?" onSave={() => saveSection('definition', { definitionSection })} saving={saving === 'definition'}>
             <div className="space-y-5">
               <LabeledInput label="섹션 제목" value={definitionSection.title} onChange={(v) => setDefinitionSection({ ...definitionSection, title: v })} />
               <LabeledInput label="부제목 (이탤릭)" value={definitionSection.subtitle} onChange={(v) => setDefinitionSection({ ...definitionSection, subtitle: v })} />
@@ -369,7 +437,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Formation Steps */}
-          <SectionCard title="침향 형성 과정" onSave={() => saveSection('formationSteps', { formationSteps })} saving={saving === 'formationSteps'}>
+          <SectionCard title="Chapter III · Formation · 침향은 어떻게 만들어지나요?" onSave={() => saveSection('formationSteps', { formationSteps })} saving={saving === 'formationSteps'}>
             <div className="space-y-4">
               {formationSteps.map((step, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4 relative">
@@ -415,7 +483,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Special Reasons */}
-          <SectionCard title="침향이 특별한 이유" onSave={() => saveSection('specialReasons', { specialReasons })} saving={saving === 'specialReasons'}>
+          <SectionCard title="Chapter IV · Why Special · 침향이 특별한 4가지 이유" onSave={() => saveSection('specialReasons', { specialReasons })} saving={saving === 'specialReasons'}>
             <div className="space-y-4">
               {specialReasons.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -455,7 +523,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Benefits */}
-          <SectionCard title="침향 효능" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
+          <SectionCard title="Chapter V · Benefits · 침향의 효능에 주목!" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
             <div className="space-y-4">
               {benefits.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -495,7 +563,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Literatures */}
-          <SectionCard title="문헌 목록" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
+          <SectionCard title="Tab 2 · 문헌에 실린 침향" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
             <div className="space-y-4">
               {literatures.map((lit, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -523,7 +591,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Papers */}
-          <SectionCard title="논문 목록" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
+          <SectionCard title="Tab 3 · 논문에 실린 침향" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
             <div className="space-y-4">
               {papers.map((paper, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -550,7 +618,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Media Tab */}
-          <SectionCard title="매체 탭 (매체에 실린 침향)" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
+          <SectionCard title="Tab 4 · 매체에 실린 침향" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={mediaTab.tag} onChange={(v) => setMediaTab({ ...mediaTab, tag: v })} />
@@ -594,7 +662,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Testimonials Tab */}
-          <SectionCard title="고객 후기 탭 (고객이 남긴 침향)" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
+          <SectionCard title="Tab 5 · 고객이 남긴 침향" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={testimonialsTab.tag} onChange={(v) => setTestimonialsTab({ ...testimonialsTab, tag: v })} />
@@ -645,7 +713,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* CTA */}
-          <SectionCard title="하단 CTA" onSave={() => saveSection('cta', { cta })} saving={saving === 'cta'}>
+          <SectionCard title="CTA · 하단 콜아웃" onSave={() => saveSection('cta', { cta })} saving={saving === 'cta'}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2">
                 <LabeledInput label="CTA 제목" value={cta.title} onChange={(v) => setCta({ ...cta, title: v })} />

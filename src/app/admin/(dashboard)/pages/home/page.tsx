@@ -80,22 +80,23 @@ interface HomeData {
 }
 
 const DEFAULT_HERO: HomeHero = {
-  sectionTag: '자연이 빚은 최고의 향',
-  titleKr: "대라천 '참'침향",
-  subtitle: '베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향',
+  sectionTag: 'Verified Agarwood · 참침향',
+  titleKr: '확인되는 침향, 대라천 참침향',
+  subtitle:
+    '베트남 직영 농장에서 25년. 원산지·원료·제조·시험까지 4단계로 검증된 침향을 프리미엄이 아니라 근거로 증명합니다.',
   heroBg:
     'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg',
-  ctaPrimaryLabel: '제품 보기',
-  ctaPrimaryHref: '/products',
-  ctaSecondaryLabel: '브랜드 이야기',
-  ctaSecondaryHref: '/brand-story',
+  ctaPrimaryLabel: '검증 과정 보기 →',
+  ctaPrimaryHref: '/brand-story',
+  ctaSecondaryLabel: '제품 보기',
+  ctaSecondaryHref: '/products',
 };
 
 const DEFAULT_STATS: HomeStat[] = [
-  { value: '400만+', label: '침향 나무' },
-  { value: '25yr+', label: '연구 기간' },
-  { value: '5', label: '베트남 산지' },
-  { value: '200ha', label: '하띤성 직영 농장' },
+  { value: '25yrs', label: 'Research' },
+  { value: '400만+', label: 'Trees' },
+  { value: '20ha', label: 'Farm' },
+  { value: '8건', label: 'Certifications' },
 ];
 
 const DEFAULT_NOTICE: HomeNotice = {
@@ -108,17 +109,96 @@ const DEFAULT_NOTICE: HomeNotice = {
   ctaHref: '/brand-story',
 };
 
-const DEFAULT_AGARWOOD: HomeAgarwood = { tag: 'AGARWOOD', title: '신들의 나무, 침향', cards: [] };
-const DEFAULT_BENEFITS: HomeBenefits = { tag: 'BENEFITS', title: '침향의 효능에 주목!', items: [] };
-const DEFAULT_PROCESS: HomeProcess = { tag: 'CRAFTSMANSHIP', title: '완벽을 향한 6단계 공정', steps: [], durations: [] };
+const DEFAULT_AGARWOOD: HomeAgarwood = {
+  tag: 'Agarwood · 신들의 나무',
+  title: '수천 년을 지나온 가장 귀한 약재이자 향',
+  cards: [
+    {
+      title: '동서양의 역사적 가치',
+      description:
+        '수천 년 전부터 왕실과 귀족들만이 향유할 수 있었던, 동서양을 막론하고 최고의 가치로 인정받아 온 귀한 약재이자 향입니다.',
+    },
+    {
+      title: '20년 이상의 긴 시간',
+      description:
+        '20년 이상 생육된 침향나무에서 채취한 수지는 함량이 높아 약재로서의 효능과 가치가 매우 높게 평가됩니다.',
+    },
+    {
+      title: '논문에서 발표하는 침향',
+      description:
+        '침향에 대한 연구가 전 세계적으로 진행되고 있으며, SCI급 논문에서도 실제적인 효과에 대해 발표하고 있습니다.',
+    },
+  ],
+};
+
+const DEFAULT_BENEFITS: HomeBenefits = {
+  tag: 'Benefits · 연구 기반 효능',
+  title: '침향의 가치, 여섯 가지 방향',
+  items: [
+    { title: '기를 뚫어 순환 효과', description: '침향은 아래로 떨어지는 기운을 통해 몸속 기혈 순환을 원활하게 하여, 막힌 기를 뚫어주고 오장육부의 기능을 정상화합니다.' },
+    { title: '원기 회복 · 자양강장', description: '동의보감에 기록된 바와 같이, 찬 기운을 몰아내고 따뜻한 성질로 몸의 기운을 보강해 피로 해소와 활력 증진을 돕습니다.' },
+    { title: '신경 안정 · 숙면', description: "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할. 예민해진 신경을 이완시키고 심리적 안정과 불면증 개선에 효과적입니다." },
+    { title: '항염 · 혈관 건강', description: '항염 작용을 통해 염증 물질(사이토카인)을 억제하고 혈전 형성을 방지하여 만성 염증 완화와 혈관 건강 증진에 도움을 줍니다.' },
+    { title: '뇌 질환 예방', description: '뇌혈류 개선 및 뇌세포 보호에 도움을 주어 뇌졸중과 같은 혈관 질환, 퇴행성 뇌 질환 예방에 긍정적 영향을 미칩니다.' },
+    { title: '소화 · 복통 완화', description: '기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화하고 복통을 멈추게 합니다.' },
+  ],
+};
+
+const DEFAULT_PROCESS: HomeProcess = {
+  tag: 'Craftsmanship · 6단계 공정',
+  title: '씨앗에서 완제품까지 20년이 넘는 시간',
+  steps: [
+    '씨앗 발아 및 묘목 육성',
+    '베트남 직영 농장 식재',
+    '20년 이상 오르가닉 육성',
+    '특허 수지유도제 주입',
+    '벌목 및 원물 정밀 채취',
+    '최고급 제품 가공 및 검수',
+  ],
+  durations: ['6 — 12 Months', 'Ha Tinh 20ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'],
+};
+
 const DEFAULT_VERIFICATION: VerificationRow[] = [
   { num: '01', label: '원산지 — 베트남 하띤 직영 20ha', meta: 'CITES' },
   { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
 ];
-const DEFAULT_VERIFIED_CARDS: VerifiedCard[] = [];
-const DEFAULT_CERTS: CertChip[] = [];
+
+const DEFAULT_VERIFIED_CARDS: VerifiedCard[] = [
+  {
+    step: '01 · Origin',
+    title: '학명 확인된 AAR',
+    en: 'Aquilaria Agallocha Roxburgh',
+    body:
+      "식약처 '대한민국약전외한약(생약)규격집'에 등록된 공식 학명. 유전자(DNA) 검증으로 종 일치 확인 후에만 가공 단계로 진입합니다.",
+  },
+  {
+    step: '02 · Process',
+    title: 'HACCP·GMP 생산',
+    en: 'Controlled Manufacturing',
+    body:
+      '원료 수령·분쇄·배합·충전·포장의 5단계 공정을 HACCP 및 GMP 시설에서 관리. 공정별 기록이 Lot 단위로 유지됩니다.',
+  },
+  {
+    step: '03 · Evidence',
+    title: 'Lot별 시험성적서',
+    en: 'Per-Batch Lab Reports',
+    body:
+      '중금속(납·카드뮴·비소·수은)·잔류농약·유해물질 검사를 제조 Lot 단위로 실시. 결과는 제품 패키지 QR로 언제든 열람 가능합니다.',
+  },
+];
+
+const DEFAULT_CERTS: CertChip[] = [
+  { mark: 'C', name: 'CITES', sub: '국제 보호 수종' },
+  { mark: 'H', name: 'HACCP', sub: '식품 안전' },
+  { mark: 'G', name: 'GMP', sub: '우수 제조' },
+  { mark: 'O', name: 'ORGANIC', sub: '유기농' },
+  { mark: 'V', name: '원산지', sub: '베트남 증명' },
+  { mark: 'D', name: 'DNA', sub: '유전자 검증' },
+  { mark: 'F', name: '식약처', sub: '고시 학명' },
+  { mark: 'S', name: 'SGS', sub: '국제 검사' },
+];
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
@@ -289,7 +369,7 @@ export default function AdminHomePage() {
 
         <div className="space-y-8">
           {/* Hero */}
-          <SectionCard title="히어로 섹션" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
+          <SectionCard title="Hero · 메인 히어로 (확인되는 침향, 대라천 참침향)" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
               <LabeledInput label="상단 태그라인" value={hero.sectionTag} onChange={(v) => setHero({ ...hero, sectionTag: v })} />
               <LabeledInput label="메인 제목" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
@@ -308,7 +388,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Stats */}
-          <SectionCard title="통계 섹션 (4개 권장)" onSave={() => saveSection('stats', { stats })} saving={saving === 'stats'}>
+          <SectionCard title="Trust Strip · 4 통계 (25년·400만+·20ha·8건)" onSave={() => saveSection('stats', { stats })} saving={saving === 'stats'}>
             <div className="space-y-3">
               {stats.map((stat, i) => (
                 <div key={i} className="grid grid-cols-[auto_1fr_2fr_auto] items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
@@ -370,7 +450,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Notice */}
-          <SectionCard title="Consumer Notice (진짜 침향 알림)" onSave={() => saveSection('notice', { notice })} saving={saving === 'notice'}>
+          <SectionCard title="Notice · 식약처 고시 기준 (4 단계 검증)" onSave={() => saveSection('notice', { notice })} saving={saving === 'notice'}>
             <div className="space-y-5">
               <LabeledInput label="태그 (예: NOTICE)" value={notice.tag} onChange={(v) => setNotice({ ...notice, tag: v })} />
               <LabeledTextarea label="제목 (줄바꿈 = 실제 줄바꿈으로 표시)" value={notice.title} onChange={(v) => setNotice({ ...notice, title: v })} rows={2} />
@@ -419,7 +499,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Agarwood */}
-          <SectionCard title="침향 소개 카드 (AGARWOOD)" onSave={() => saveSection('agarwood', { agarwood })} saving={saving === 'agarwood'}>
+          <SectionCard title="Agarwood · 신들의 나무" onSave={() => saveSection('agarwood', { agarwood })} saving={saving === 'agarwood'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <LabeledInput label="태그" value={agarwood.tag} onChange={(v) => setAgarwood({ ...agarwood, tag: v })} />
@@ -448,7 +528,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Benefits */}
-          <SectionCard title="침향의 효능 (BENEFITS)" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
+          <SectionCard title="Benefits · 연구 기반 효능 (6개)" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <LabeledInput label="태그" value={benefits.tag} onChange={(v) => setBenefits({ ...benefits, tag: v })} />
@@ -477,7 +557,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Process */}
-          <SectionCard title="생산 공정 (CRAFTSMANSHIP)" onSave={() => saveSection('process', { process: processSection })} saving={saving === 'process'}>
+          <SectionCard title="Craftsmanship · 6단계 공정" onSave={() => saveSection('process', { process: processSection })} saving={saving === 'process'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <LabeledInput label="태그" value={processSection.tag} onChange={(v) => setProcessSection({ ...processSection, tag: v })} />
@@ -518,7 +598,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Verification (hero 4-point card) */}
-          <SectionCard title="히어로 4-Point Verification" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
+          <SectionCard title="4-Point Verification · Hero 우측 카드 (01-04)" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
             <div className="space-y-3">
               <p className="text-xs text-gray-500">히어로 오른쪽 "4-Point Verification" 카드의 4줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
               {verification.map((r, i) => (
@@ -538,7 +618,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Verified Cards (3-step Notice section) */}
-          <SectionCard title="Verified Cards (Origin · Process · Evidence)" onSave={() => saveSection('verifiedCards', { verifiedCards })} saving={saving === 'verifiedCards'}>
+          <SectionCard title="Verified · 검증 3카드 (Origin/Process/Evidence)" onSave={() => saveSection('verifiedCards', { verifiedCards })} saving={saving === 'verifiedCards'}>
             <div className="space-y-3">
               <p className="text-xs text-gray-500">히어로 아래 "진짜 침향..." 섹션의 3단 카드. 보통 Origin / Process / Evidence 3개.</p>
               {verifiedCards.map((c, i) => (
@@ -561,7 +641,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Certification Chips */}
-          <SectionCard title="인증 칩 (8개 권장)" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
+          <SectionCard title="Certifications · 8개 인증 칩 (CITES/HACCP/...)" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
             <div className="space-y-3">
               <p className="text-xs text-gray-500">Verified 섹션 하단의 인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제.</p>
               {certs.map((c, i) => (
