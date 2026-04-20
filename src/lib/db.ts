@@ -58,9 +58,14 @@ async function blobReadRawUncached(filename: string): Promise<unknown | null> {
     const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
     const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
     if (!match) return null;
-    // cache: 'no-store' bypasses Next's fetch cache — we already wrap the
-    // whole read with unstable_cache below, which respects our tag.
-    const res = await fetch(match.url, { cache: 'no-store' });
+    // match.url 은 Vercel CDN 에서 서빙되며 기본 TTL 이 1년 — overwrite 해도
+    // CDN 이 이전 콘텐츠를 계속 서빙함. list 가 응답에 포함해주는
+    // uploadedAt 타임스탬프를 query 로 붙여 CDN cache key 를 uploadedAt 별로
+    // 갈라 버린다. 새 uploadedAt = 새 캐시 엔트리 = origin 히트 = fresh.
+    const bust = match.uploadedAt
+      ? `?v=${new Date(match.uploadedAt).getTime()}`
+      : `?v=${Date.now()}`;
+    const res = await fetch(`${match.url}${bust}`, { cache: 'no-store' });
     if (!res.ok) return null;
     return await res.json();
   } catch (err) {

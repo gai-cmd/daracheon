@@ -35,16 +35,18 @@ export async function GET() {
 
   if (putUrl) {
     try {
-      const res = await fetch(putUrl, { cache: 'no-store' });
+      // cache-buster 로 CDN 우회 (Vercel Blob default TTL 31,536,000s 극복)
+      const bustUrl = `${putUrl}?v=${Date.now()}`;
+      const res = await fetch(bustUrl, { cache: 'no-store' });
       const body = res.ok ? await res.json() : null;
       const ok = body?.nonce === testValue.nonce;
       steps.push({
-        step: 'A2: fetch(put.url) direct',
+        step: 'A2: fetch(put.url?v=…) with cache-buster',
         ok,
-        detail: ok ? `nonce matched via put.url` : `body=${JSON.stringify(body)}`,
+        detail: ok ? `nonce matched` : `body=${JSON.stringify(body)}`,
       });
     } catch (err) {
-      steps.push({ step: 'A2: fetch(put.url) direct', ok: false, error: err instanceof Error ? err.message : String(err) });
+      steps.push({ step: 'A2: fetch(put.url?v=…) with cache-buster', ok: false, error: err instanceof Error ? err.message : String(err) });
     }
   }
 
