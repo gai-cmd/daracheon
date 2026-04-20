@@ -191,7 +191,7 @@ export default async function ProductsPage() {
               <h1>
                 수십 년 숙성의 시간을
                 <br />
-                담은 <em>{products.length}가지 제품</em>
+                담은 <em>고귀한 제품</em>
               </h1>
             </div>
             <p className={styles.lede}>
