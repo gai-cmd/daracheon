@@ -1,4 +1,4 @@
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import AboutAgarwoodClient from './AboutAgarwoodClient';
 
@@ -51,7 +51,7 @@ export interface AboutAgarwoodData {
 }
 
 export default async function AboutAgarwoodPage() {
-  const pagesData = await readSingle<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
+  const pagesData = await readSingleSafe<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
   const data: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
 
   return (

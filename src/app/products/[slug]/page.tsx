@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
@@ -11,7 +11,7 @@ import styles from './page.module.css';
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const products = await readData<Product>('products');
+  const products = await readDataSafe<Product>('products');
   return products.map((p) => ({ slug: p.slug }));
 }
 
@@ -19,7 +19,7 @@ export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const products = await readData<Product>('products');
+  const products = await readDataSafe<Product>('products');
   const product = products.find((p) => p.slug === slug);
   if (!product) return { title: '제품 상세 | ZOEL LIFE' };
   return {
@@ -33,7 +33,7 @@ export default async function ProductDetailPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const products = await readData<Product>('products');
+  const products = await readDataSafe<Product>('products');
   const product = products.find((p) => p.slug === slug);
   if (!product) notFound();
 

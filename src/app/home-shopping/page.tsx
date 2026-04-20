@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import styles from './page.module.css';
@@ -188,7 +188,7 @@ function formatDate(iso: string) {
 }
 
 export default async function HomeShoppingPage() {
-  const dbBroadcasts = await readData<Broadcast>('broadcasts');
+  const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
   const all = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
   const sorted = [...all].sort(
     (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()

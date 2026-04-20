@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import JsonLd from '@/components/ui/JsonLd';
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import styles from './page.module.css';
 
 export const revalidate = 60;
@@ -181,7 +181,7 @@ const websiteJsonLd = {
 };
 
 export default async function HomePage() {
-  const pagesData = await readSingle<{ home?: HomeData }>('pages');
+  const pagesData = await readSingleSafe<{ home?: HomeData }>('pages');
   const home = pagesData?.home ?? {};
   const hero = home.hero ?? DEFAULT_HERO;
   const stats = home.stats ?? DEFAULT_STATS;

@@ -1,4 +1,4 @@
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import ProductsClient from './ProductsClient';
 import styles from './page.module.css';
@@ -165,8 +165,8 @@ const DEFAULT_PRODUCTS: Product[] = [
 ];
 
 export default async function ProductsPage() {
-  const dbProducts = await readData<Product>('products');
-  const dbCategories = await readData<ProductCategory>('productCategories');
+  const dbProducts = await readDataSafe<Product>('products');
+  const dbCategories = await readDataSafe<ProductCategory>('productCategories');
 
   const products = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;

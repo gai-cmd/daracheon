@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -66,8 +66,8 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
 ];
 
 export default async function CompanyPage() {
-  const pagesData = await readSingle<{ company?: CompanyData }>('pages');
-  const settings = await readSingle<{ brandLogo?: string; companyLogo?: string }>('company');
+  const pagesData = await readSingleSafe<{ company?: CompanyData }>('pages');
+  const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company');
   const brandLogo = settings?.brandLogo ?? '';
   const companyLogo = settings?.companyLogo ?? '';
 

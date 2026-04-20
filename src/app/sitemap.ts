@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let productDetailRoutes: MetadataRoute.Sitemap = [];
   try {
-    const products = await readData<Product>('products');
+    const products = await readDataSafe<Product>('products');
     productDetailRoutes = products
       .filter((p) => p.slug)
       .map((p) => ({

@@ -1,4 +1,4 @@
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import BrandStoryClient from './BrandStoryClient';
 
 export const revalidate = 60;
@@ -38,7 +38,7 @@ export interface BrandStoryData {
 }
 
 export default async function BrandStoryPage() {
-  const pagesData = await readSingle<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
+  const pagesData = await readSingleSafe<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
   const data: BrandStoryData | null = pagesData?.brandStory ?? null;
 
   return <BrandStoryClient data={data} />;

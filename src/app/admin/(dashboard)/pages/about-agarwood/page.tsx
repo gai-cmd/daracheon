@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
+import { saveAdminPage } from '@/lib/adminSave';
 
 /* ─────────────────────────────────────────────
    Types
@@ -358,16 +359,15 @@ export default function AdminAboutAgarwoodPage() {
       const existing = await res.json() as { pages: { aboutAgarwood: AboutAgarwoodData } };
       const merged = { ...existing.pages.aboutAgarwood, ...payload };
 
-      const saveRes = await fetch('/api/admin/pages', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'aboutAgarwood', data: merged }),
-      });
-      if (!saveRes.ok) throw new Error('Save failed');
-      setToast({ msg: '저장 완료', type: 'success' });
+      const result = await saveAdminPage('aboutAgarwood', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
-      setToast({ msg: '저장 실패', type: 'error' });
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setSaving(null);
     }

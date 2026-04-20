@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const revalidate = 60;
@@ -146,7 +146,7 @@ const DEFAULT_CERTS: NonNullable<ProcessData['certifications']> = {
 };
 
 export default async function ProcessPage() {
-  const pagesData = await readSingle<{ process?: ProcessData }>('pages');
+  const pagesData = await readSingleSafe<{ process?: ProcessData }>('pages');
   const hero = pagesData?.process?.hero ?? DEFAULT_HERO;
   const chapters =
     pagesData?.process?.chapters && pagesData.process.chapters.length > 0

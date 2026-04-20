@@ -185,6 +185,29 @@ export async function readSingle<T = any>(filename: string): Promise<T | null> {
   return data as T;
 }
 
+// 프론트엔드 RSC 용: blob 일시 장애도 null 로 흡수.
+// 페이지는 DEFAULT_* fallback 으로 안전하게 렌더링 유지.
+// admin PUT 처럼 '사용자 저장분 보호' 가 필요한 경로는 그냥 readSingle 사용.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readSingleSafe<T = any>(filename: string): Promise<T | null> {
+  try {
+    return await readSingle<T>(filename);
+  } catch (err) {
+    console.warn(`[db:safe] ${filename}: read failed, returning null`, err);
+    return null;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readDataSafe<T = any>(filename: string): Promise<T[]> {
+  try {
+    return await readData<T>(filename);
+  } catch (err) {
+    console.warn(`[db:safe] ${filename}: read failed, returning []`, err);
+    return [];
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function writeSingle<T = any>(filename: string, data: T): Promise<void> {
   await writeRaw(filename, data);

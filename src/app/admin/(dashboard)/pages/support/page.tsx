@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { saveAdminPage } from '@/lib/adminSave';
 
 interface SupportHero {
   kicker: string;
@@ -233,16 +234,15 @@ export default function AdminSupportPage() {
       };
       const merged = { ...currentSupport, ...payload };
 
-      const saveRes = await fetch('/api/admin/pages', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'support', data: merged }),
-      });
-      if (!saveRes.ok) throw new Error('Save failed');
-      setToast({ msg: '저장 완료', type: 'success' });
+      const result = await saveAdminPage('support', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
-      setToast({ msg: '저장 실패', type: 'error' });
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setSaving(null);
     }

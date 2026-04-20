@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AdminAIPanel from '@/components/admin/AdminAIPanel';
-import { readSingle } from '@/lib/db';
+import { readSingleSafe } from '@/lib/db';
 import Link from 'next/link';
 import {
   DEFAULT_FOOTER_COLUMNS,
@@ -101,18 +101,18 @@ const organizationJsonLd = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const announcement = await readSingle<Announcement>('announcement');
+  const announcement = await readSingleSafe<Announcement>('announcement');
   const showBanner = !!(announcement?.enabled && announcement.text);
 
   // Navigation lives in the DB so admins can edit labels / order / links
   // without a code deploy. Fall back to the compiled-in defaults if the
   // seed hasn't been written yet (first deploy, or Blob store empty).
-  const nav = await readSingle<NavigationData>('navigation');
+  const nav = await readSingleSafe<NavigationData>('navigation');
   const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
   const footerColumns = nav?.footerColumns ?? DEFAULT_FOOTER_COLUMNS;
 
   // 브랜드 로고 (좌측 상단) — settings(company)에서 관리
-  const settings = await readSingle<{ brandLogo?: string; companyLogo?: string }>('company');
+  const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company');
   const brandLogo = settings?.brandLogo ?? '';
 
   return (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
+import { saveAdminPage } from '@/lib/adminSave';
 
 interface ProcessHero {
   kicker: string;
@@ -277,16 +278,15 @@ export default function AdminProcessPage() {
       const currentProcess = body.pages?.process ?? { hero: DEFAULT_HERO, chapters: DEFAULT_CHAPTERS, productionVideos: DEFAULT_VIDEOS, certifications: DEFAULT_CERTS };
       const merged = { ...currentProcess, ...payload };
 
-      const saveRes = await fetch('/api/admin/pages', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'process', data: merged }),
-      });
-      if (!saveRes.ok) throw new Error('Save failed');
-      setToast({ msg: '저장 완료', type: 'success' });
+      const result = await saveAdminPage('process', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
-      setToast({ msg: '저장 실패', type: 'error' });
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setSaving(null);
     }

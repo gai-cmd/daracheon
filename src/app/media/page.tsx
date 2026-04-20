@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const revalidate = 60;
@@ -178,7 +178,7 @@ const DEFAULT_MEDIA: MediaItem[] = [
 ];
 
 export default async function MediaPage() {
-  const dbMedia = await readData<MediaItem>('media');
+  const dbMedia = await readDataSafe<MediaItem>('media');
   const allMedia = dbMedia.length > 0 ? dbMedia : DEFAULT_MEDIA;
   const videos = allMedia.filter((m) => m.type === 'video');
   const photos = allMedia.filter((m) => m.type === 'photo');

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import JsonLd from '@/components/ui/JsonLd';
-import { readData } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Review } from '@/data/reviews';
 import { formatDate } from '@/lib/utils';
 import ReviewFormModal from './ReviewFormModal';
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function ReviewsPage() {
   // 공개 페이지: 인증된(verified) 리뷰만 표시
-  const reviews = (await readData<Review>('reviews')).filter((r) => r.verified === true);
+  const reviews = (await readDataSafe<Review>('reviews')).filter((r) => r.verified === true);
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)

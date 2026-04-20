@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { saveAdminPage } from '@/lib/adminSave';
 
 interface CompanyChapter {
   num: string;
@@ -156,16 +157,15 @@ export default function AdminCompanyPage() {
       const current = body.pages?.company ?? {};
       const merged: CompanyData = { ...current, ...payload };
 
-      const saveRes = await fetch('/api/admin/pages', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'company', data: merged }),
-      });
-      if (!saveRes.ok) throw new Error('Save failed');
-      setToast({ msg: '저장 완료', type: 'success' });
+      const result = await saveAdminPage('company', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
-      setToast({ msg: '저장 실패', type: 'error' });
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setSaving(null);
     }
