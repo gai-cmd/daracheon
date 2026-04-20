@@ -310,51 +310,67 @@ html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
    Admin area — light theme override
    ═══════════════════════════════════════════════════════════════
    dark-theme.css forces body { background:#0a0b10; color:#fdfbf7 }
-   with !important on every page. That makes admin forms unreadable
-   (ivory text on near-white card backgrounds). This block restores
-   a light UI inside the admin subtree marked by data-admin-root.
-   Uses explicit !important + high specificity to outrank the global
-   dark overrides defined earlier in the cascade.
+   with !important on every page, AND targets input[type="text"] etc
+   at same-specificity with its own !important. We outrank it by
+   prefixing with `html body` (2 extra element selectors of specificity)
+   in addition to the data-admin-root attribute scope.
    ═══════════════════════════════════════════════════════════════ */
 
-[data-admin-root="true"] {
+/* Hide public site chrome (Header, Footer) when admin shell renders.
+   Root layout always mounts <Header/><Footer/>; admin has its own
+   AdminHeader and the public header (z-[1000]) overlays the admin
+   (z-50), causing two nav bars on top of each other. */
+body:has([data-admin-root="true"]) > header,
+body:has([data-admin-root="true"]) > footer {
+  display: none !important;
+}
+
+html body [data-admin-root="true"] {
   background: #f9fafb !important;
   color: #1f2937 !important;
 }
 
-/* Re-assert text colors so the body-level ivory color:#fdfbf7 from
-   dark-theme.css doesn't cascade into admin text. */
-[data-admin-root="true"],
-[data-admin-root="true"] h1,
-[data-admin-root="true"] h2,
-[data-admin-root="true"] h3,
-[data-admin-root="true"] h4,
-[data-admin-root="true"] h5,
-[data-admin-root="true"] h6,
-[data-admin-root="true"] p,
-[data-admin-root="true"] span,
-[data-admin-root="true"] label,
-[data-admin-root="true"] li,
-[data-admin-root="true"] td,
-[data-admin-root="true"] th,
-[data-admin-root="true"] dt,
-[data-admin-root="true"] dd {
+/* Re-assert text colors so body-level ivory doesn't cascade into admin. */
+html body [data-admin-root="true"],
+html body [data-admin-root="true"] h1,
+html body [data-admin-root="true"] h2,
+html body [data-admin-root="true"] h3,
+html body [data-admin-root="true"] h4,
+html body [data-admin-root="true"] h5,
+html body [data-admin-root="true"] h6,
+html body [data-admin-root="true"] p,
+html body [data-admin-root="true"] span,
+html body [data-admin-root="true"] label,
+html body [data-admin-root="true"] li,
+html body [data-admin-root="true"] td,
+html body [data-admin-root="true"] th,
+html body [data-admin-root="true"] dt,
+html body [data-admin-root="true"] dd {
   color: inherit;
 }
 
 /* Form controls — white surface, dark text, visible borders.
-   Stronger than html.admin-dark input rule that would flip them
-   back to the dark palette. */
-[data-admin-root="true"] input:not([type="checkbox"]):not([type="radio"]),
-[data-admin-root="true"] textarea,
-[data-admin-root="true"] select {
+   `html body [data-admin-root] input[type="text"]` specificity (0,0,2,3)
+   beats dark-theme's `input[type="text"]` (0,0,1,1). Enumerate all the
+   types dark-theme targets so each is outranked individually. */
+html body [data-admin-root="true"] input[type="text"],
+html body [data-admin-root="true"] input[type="email"],
+html body [data-admin-root="true"] input[type="tel"],
+html body [data-admin-root="true"] input[type="search"],
+html body [data-admin-root="true"] input[type="password"],
+html body [data-admin-root="true"] input[type="number"],
+html body [data-admin-root="true"] input[type="date"],
+html body [data-admin-root="true"] input[type="url"],
+html body [data-admin-root="true"] input:not([type]),
+html body [data-admin-root="true"] textarea,
+html body [data-admin-root="true"] select {
   background-color: #ffffff !important;
   color: #111827 !important;
   border-color: #d1d5db !important;
 }
 
-[data-admin-root="true"] input::placeholder,
-[data-admin-root="true"] textarea::placeholder {
+html body [data-admin-root="true"] input::placeholder,
+html body [data-admin-root="true"] textarea::placeholder {
   color: #9ca3af !important;
 }
 
