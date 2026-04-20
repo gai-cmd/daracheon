@@ -11,6 +11,20 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════
+   Stacking context fix — body > header 가 z-index 1, body > main 도 z-index 1
+   인 상황에서 DOM 순서상 main이 header를 덮어 nav가 가려지는 문제 해소.
+   header 를 100으로 올리고 main의 stacking context 자체를 해제.
+   ═══════════════════════════════════════ */
+body > header {
+  position: relative;
+  z-index: 100;
+}
+body > main {
+  position: relative;
+  z-index: auto;
+}
+
+/* ═══════════════════════════════════════
    Root tokens — mirror ZOEL LIFE --color-luxury-*
    ═══════════════════════════════════════ */
 :root {
