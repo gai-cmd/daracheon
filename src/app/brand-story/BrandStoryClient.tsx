@@ -66,11 +66,15 @@ const DEFAULT_ERAS = [
 ];
 
 const DEFAULT_CERT_IMAGES = [
-  // 인증서 placeholder — 실제 KFDA/CITES 인증서 PDF 스캔본 업로드 시 교체
-  'https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280',
-  'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280',
-  'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
-  'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png',
+  // 실제 인증서 — Google Drive 폴더 1uTUso6IURawC0oNFEQqzp9qWNDsVml_g 에서 추출 (8장)
+  'https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600',
+  'https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600',
+  'https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600',
+  'https://lh3.googleusercontent.com/d/13rr7HLSCAnZbsrG2f55UYTvf_nSgThfz=w1600',
+  'https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600',
+  'https://lh3.googleusercontent.com/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq=w1600',
+  'https://lh3.googleusercontent.com/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY=w1600',
+  'https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w1600',
 ];
 const DEFAULT_CERT_SECTIONS = [
   {
@@ -290,10 +294,34 @@ export default function BrandStoryClient({ data }: Props) {
               <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
               <div className={styles.line} />
             </div>
-            <div className={styles.imgGrid}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: 28,
+                margin: '30px 0',
+              }}
+            >
               {certImages.map((src, i) => (
-                <div key={i} className={styles.imgFrame} style={{ aspectRatio: '3/4', background: '#fff', padding: 12 }}>
-                  <Image src={src} alt={`인증서 ${i + 1}`} fill sizes="(max-width: 1024px) 50vw, 25vw" style={{ objectFit: 'contain' }} />
+                <div
+                  key={i}
+                  style={{
+                    aspectRatio: '3 / 4',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(212,168,67,0.28)',
+                    background: '#ffffff',
+                    padding: 16,
+                  }}
+                >
+                  <Image
+                    src={src}
+                    alt={`인증서 ${i + 1}`}
+                    fill
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                    style={{ objectFit: 'contain' }}
+                    unoptimized
+                  />
                 </div>
               ))}
             </div>

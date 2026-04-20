@@ -105,13 +105,54 @@ export default function ProductsClient({ products, productCategories }: Products
                       {badge && (
                         <span className={`${styles.prodTag} ${badgeClass}`}>{badge}</span>
                       )}
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={600}
-                        height={750}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={600}
+                          height={750}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div
+                          aria-hidden
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'grid',
+                            placeItems: 'center',
+                            background:
+                              'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(212,168,67,0.08), transparent 70%), linear-gradient(180deg, #1a1d29, #0a0b10)',
+                            border: '1px solid rgba(212,168,67,0.18)',
+                          }}
+                        >
+                          <div style={{ textAlign: 'center', padding: 24 }}>
+                            <div
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '2.4rem',
+                                color: 'var(--accent)',
+                                opacity: 0.6,
+                                marginBottom: 8,
+                                letterSpacing: '0.1em',
+                              }}
+                            >
+                              沈香
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.6rem',
+                                letterSpacing: '0.28em',
+                                color: 'rgba(255,255,255,0.4)',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              Image · Coming Soon
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className={styles.prodBody}>
                       <div className={styles.prodCat}>{product.categoryEn}</div>
