@@ -68,7 +68,10 @@
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
-  max-width: 720px;
+  max-width: 1200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── CHAPTER ── */
