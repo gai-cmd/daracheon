@@ -30,12 +30,13 @@ const COMPACTION_SUPPORTED = new Set([
   'claude-sonnet-4-6',
 ]);
 
+// 실존·검증된 모델 ID 만 허용. 가상/구형 ID (claude-opus-4-6,
+// claude-sonnet-4-5 등) 를 허용하면 fallback 체인이 404 를 치고
+// rate-limit 아니므로 즉시 chain 중단 → 사용자는 '쓸모없음' 경험.
 const ALLOWED_MODELS = new Set([
   'claude-opus-4-7',
   'claude-sonnet-4-6',
   'claude-haiku-4-5-20251001',
-  'claude-opus-4-6',
-  'claude-sonnet-4-5',
 ]);
 // Haiku 4.5 is the default because source-file edits are bottlenecked on
 // output token generation speed. Opus 4.7 emits at ~75 tok/s, Sonnet 4.6
@@ -242,20 +243,14 @@ interface AnthropicResponse {
   usage?: AnthropicUsage;
 }
 
-// Model fallback chain for rate-limit recovery. Opus 4.7 has the strictest
-// ITPM ceiling of the three on most orgs; Sonnet 4.6 and Haiku 4.5 are far
-// more generous, so if the user-selected model 429s we transparently shift
-// THIS request (not the whole session) down the chain.
-// Anthropic meters ITPM per-model (429 error names the specific model),
-// so each entry in the chain draws from its own quota. We start with a
-// capability-equivalent Opus first, then step down to Sonnet, then Haiku.
+// 모든 모델은 다른 두 모델로 자유롭게 fallback. Anthropic 은 model 별
+// 로 ITPM 쿼터를 따로 계량하므로 한 모델 429 여도 다른 모델은 서비스
+// 가능. Haiku(기본)도 429 되면 Sonnet/Opus 로 넘어가야 '쓸모없음' 이
+// 안 남.
 const FALLBACK_CHAIN: Record<string, string[]> = {
-  'claude-opus-4-7': ['claude-opus-4-6', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
-  'claude-opus-4-6': ['claude-opus-4-7', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
-  'claude-opus-4-5': ['claude-opus-4-6', 'claude-sonnet-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
-  'claude-sonnet-4-6': ['claude-sonnet-4-5', 'claude-haiku-4-5-20251001'],
-  'claude-sonnet-4-5': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
-  'claude-haiku-4-5-20251001': [],
+  'claude-opus-4-7': ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'],
+  'claude-sonnet-4-6': ['claude-haiku-4-5-20251001', 'claude-opus-4-7'],
+  'claude-haiku-4-5-20251001': ['claude-sonnet-4-6', 'claude-opus-4-7'],
 };
 
 class AnthropicHttpError extends Error {
@@ -465,11 +460,20 @@ async function callAnthropic(params: {
     );
   };
 
+  // fallback 조건:
+  //  - 429 / 529 (rate limit / overloaded): 확실히 다른 모델로 재시도
+  //  - 404 / 400 (model not found / invalid): 구형/오타 model ID 가능성
+  //    → 다른 모델로 재시도
+  //  - 401 / 402 (key/credit): 계정 전체 문제 — 재시도 무의미, 즉시 throw
+  //  - 기타 4xx, 5xx (network/server): 재시도 가치 있음
+  const shouldFallback = (status: number) =>
+    status !== 401 && status !== 402 && status !== 403 && status !== 413;
+
   try {
     const resp = await tryModel(params.model);
     return { resp, modelUsed: params.model, messages: workingMessages };
   } catch (err) {
-    if (!(err instanceof AnthropicHttpError) || !isRateLimit(err.status)) throw err;
+    if (!(err instanceof AnthropicHttpError) || !shouldFallback(err.status)) throw err;
 
     const chain = FALLBACK_CHAIN[params.model] ?? [];
     let lastErr: AnthropicHttpError = err;
@@ -479,14 +483,23 @@ async function callAnthropic(params: {
         const resp = await tryModel(next);
         return { resp, modelUsed: next, messages: workingMessages };
       } catch (inner) {
-        if (inner instanceof AnthropicHttpError && isRateLimit(inner.status)) {
+        if (inner instanceof AnthropicHttpError && shouldFallback(inner.status)) {
           lastErr = inner;
           continue;
         }
         throw inner;
       }
     }
-    throw lastErr;
+    // 전 chain 실패 — 구체적 안내 메시지로 재포장
+    throw new AnthropicHttpError(
+      lastErr.status,
+      `전 모델 실패 (마지막: ${lastErr.message}). ${
+        lastErr.status === 429 || lastErr.status === 529
+          ? '계정 전체 rate limit — 1~2분 후 재시도 또는 Anthropic 콘솔에서 한도 상향 요청.'
+          : ''
+      }`,
+      lastErr.retryAfterSeconds
+    );
   }
 }
 

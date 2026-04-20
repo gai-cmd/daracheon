@@ -340,9 +340,9 @@ export default function AdminAIPanel() {
     // Bump anyone still on an old default to Haiku so the fix takes effect
     // without requiring them to find the model dropdown.
     if (typeof persisted.model === 'string') {
-      const STALE_DEFAULTS = ['claude-opus-4-7', 'claude-sonnet-4-6'];
-      const migrated = STALE_DEFAULTS.includes(persisted.model) ? DEFAULT_MODEL : persisted.model;
-      setModel(migrated);
+      // 사용자가 Opus/Sonnet 을 명시 선택했어도 refresh 하면 Haiku 로
+      // 강제 마이그레이션되는 버그가 있었다. 선택 존중.
+      setModel(persisted.model);
     }
     if (typeof persisted.width === 'number' && persisted.width >= 320 && persisted.width <= 720) {
       setWidth(persisted.width);
