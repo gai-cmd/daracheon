@@ -10,6 +10,26 @@ interface HeaderProps {
   mainNav: NavItem[];
 }
 
+// Critical positioning enforced via inline style — guarantees nav visibility
+// even if CSS Module loading is delayed/failed for any reason.
+const NAV_INLINE_STYLE: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  left: 'var(--ai-panel-width, 0px)',
+  zIndex: 9999,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  height: 72,
+  padding: '0 28px',
+  background: 'rgba(10, 11, 16, 0.96)',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+  borderBottom: '1px solid rgba(212, 168, 67, 0.35)',
+  boxShadow: '0 8px 24px -16px rgba(0, 0, 0, 0.6)',
+};
+
 export default function Header({ mainNav }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -27,7 +47,7 @@ export default function Header({ mainNav }: HeaderProps) {
 
   return (
     <header>
-      <nav className={styles.nav}>
+      <nav className={styles.nav} style={NAV_INLINE_STYLE} data-zoel-nav="v2">
         <Link href="/" className={styles.navBrand}>
           <span className={styles.brandDot} aria-hidden="true" />
           <span className={styles.brandText}>
