@@ -11,7 +11,7 @@
 
 /* HERO */
 .hero {
-  padding: calc(var(--nav-h) + 80px) 0 60px;
+  padding: calc(var(--nav-h) + 70px) 0 60px;
   position: relative;
   overflow: hidden;
   color: #fdfbf7;
