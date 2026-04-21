@@ -120,10 +120,10 @@ function SkeletonRow() {
 /* ─── Badge variant styles ─── */
 
 const badgeStyles: Record<StatCard['badgeVariant'], string> = {
-  emerald: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
-  amber: 'bg-amber-100 text-amber-900 border border-amber-300',
-  sky: 'bg-sky-100 text-sky-800 border border-sky-300',
-  rose: 'bg-rose-100 text-rose-800 border border-rose-300',
+  emerald: 'bg-emerald-600 text-white',
+  amber: 'bg-amber-500 text-white',
+  sky: 'bg-sky-600 text-white',
+  rose: 'bg-rose-600 text-white',
 };
 
 /* ─── Render ─── */
@@ -296,12 +296,12 @@ export default function AdminDashboard() {
   }
 
   const inquiryStatusColors: Record<string, string> = {
-    new: 'bg-amber-100 text-amber-900 border border-amber-300',
-    replied: 'bg-sky-100 text-sky-800 border border-sky-300',
-    resolved: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
-    pending: 'bg-gray-200 text-gray-800 border border-gray-300',
-    'in-progress': 'bg-blue-100 text-blue-800 border border-blue-300',
-    closed: 'bg-gray-200 text-gray-700 border border-gray-300',
+    new: 'bg-amber-500 text-white',
+    replied: 'bg-sky-600 text-white',
+    resolved: 'bg-emerald-600 text-white',
+    pending: 'bg-gray-500 text-white',
+    'in-progress': 'bg-blue-600 text-white',
+    closed: 'bg-gray-600 text-white',
   };
 
   const inquiryStatusLabel: Record<string, string> = {
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                           </div>
                           <p className="mt-0.5 text-xs text-gray-500 line-clamp-1">{inq.subject ?? inq.message}</p>
                         </div>
-                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${inquiryStatusColors[inq.status] ?? 'bg-gray-200 text-gray-700 border border-gray-300'}`}>
+                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${inquiryStatusColors[inq.status] ?? 'bg-gray-500 text-white'}`}>
                           {inquiryStatusLabel[inq.status] ?? inq.status}
                         </span>
                       </div>
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                            bc.status === 'live' ? 'bg-red-600 text-white' : 'bg-sky-100 text-sky-800 border border-sky-300'
+                            bc.status === 'live' ? 'bg-red-600 text-white' : 'bg-sky-600 text-white'
                           }`}>
                             {bc.status === 'live' ? 'ON AIR' : '예정'}
                           </span>

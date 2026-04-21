@@ -117,18 +117,18 @@ export default function AuditLogPage() {
 
   function moduleBadgeClass(module: string): string {
     const map: Record<string, string> = {
-      products: 'bg-indigo-100 text-indigo-800 border border-indigo-300',
-      reviews: 'bg-purple-100 text-purple-800 border border-purple-300',
-      inquiries: 'bg-amber-100 text-amber-900 border border-amber-300',
-      media: 'bg-sky-100 text-sky-800 border border-sky-300',
-      faq: 'bg-teal-100 text-teal-800 border border-teal-300',
-      settings: 'bg-gray-200 text-gray-800 border border-gray-300',
-      broadcasts: 'bg-pink-100 text-pink-800 border border-pink-300',
-      auth: 'bg-blue-100 text-blue-800 border border-blue-300',
-      upload: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
-      announcement: 'bg-orange-100 text-orange-900 border border-orange-300',
+      products: 'bg-indigo-600 text-white',
+      reviews: 'bg-purple-600 text-white',
+      inquiries: 'bg-amber-500 text-white',
+      media: 'bg-sky-600 text-white',
+      faq: 'bg-teal-600 text-white',
+      settings: 'bg-gray-600 text-white',
+      broadcasts: 'bg-pink-600 text-white',
+      auth: 'bg-blue-600 text-white',
+      upload: 'bg-emerald-600 text-white',
+      announcement: 'bg-orange-500 text-white',
     };
-    return map[module] ?? 'bg-gray-200 text-gray-800 border border-gray-300';
+    return map[module] ?? 'bg-gray-500 text-white';
   }
 
   function actionColor(action: string): string {

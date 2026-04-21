@@ -29,9 +29,9 @@ const statusLabel: Record<InquiryStatus, string> = {
 };
 
 const statusColor: Record<InquiryStatus, string> = {
-  new: 'bg-blue-100 text-blue-800 border border-blue-300',
-  replied: 'bg-yellow-100 text-yellow-900 border border-yellow-400',
-  resolved: 'bg-green-100 text-green-800 border border-green-300',
+  new: 'bg-blue-600 text-white',
+  replied: 'bg-amber-400 text-gray-900',
+  resolved: 'bg-green-600 text-white',
 };
 
 const categoryLabel: Record<InquiryCategory, string> = {
@@ -43,11 +43,11 @@ const categoryLabel: Record<InquiryCategory, string> = {
 };
 
 const categoryColor: Record<InquiryCategory, string> = {
-  product: 'bg-amber-100 text-amber-900 border border-amber-300',
-  order: 'bg-purple-100 text-purple-800 border border-purple-300',
-  wholesale: 'bg-teal-100 text-teal-800 border border-teal-300',
-  media: 'bg-pink-100 text-pink-800 border border-pink-300',
-  other: 'bg-neutral-200 text-neutral-800 border border-neutral-300',
+  product: 'bg-amber-500 text-white',
+  order: 'bg-purple-600 text-white',
+  wholesale: 'bg-teal-600 text-white',
+  media: 'bg-pink-600 text-white',
+  other: 'bg-neutral-500 text-white',
 };
 
 /* ─── Next Status ─── */
@@ -313,10 +313,10 @@ export default function InquiriesPage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: '전체 문의', value: stats.total, color: 'bg-neutral-200 text-neutral-800 border border-neutral-300' },
-            { label: '신규', value: stats.new, color: 'bg-blue-100 text-blue-800 border border-blue-300' },
-            { label: '답변완료', value: stats.replied, color: 'bg-yellow-100 text-yellow-900 border border-yellow-400' },
-            { label: '처리완료', value: stats.resolved, color: 'bg-green-100 text-green-800 border border-green-300' },
+            { label: '전체 문의', value: stats.total, color: 'bg-neutral-600 text-white' },
+            { label: '신규', value: stats.new, color: 'bg-blue-600 text-white' },
+            { label: '답변완료', value: stats.replied, color: 'bg-amber-400 text-gray-900' },
+            { label: '처리완료', value: stats.resolved, color: 'bg-green-600 text-white' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
               <p className="text-xs text-neutral-500 mb-1">{stat.label}</p>

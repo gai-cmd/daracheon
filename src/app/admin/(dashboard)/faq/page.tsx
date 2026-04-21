@@ -15,10 +15,10 @@ interface FaqItem {
 }
 
 const categoryColor: Record<FaqCategory, string> = {
-  '제품': 'bg-amber-100 text-amber-900 border border-amber-300',
-  '배송/결제': 'bg-blue-100 text-blue-800 border border-blue-300',
-  '성분': 'bg-green-100 text-green-800 border border-green-300',
-  '기타': 'bg-neutral-200 text-neutral-800 border border-neutral-300',
+  '제품': 'bg-amber-500 text-white',
+  '배송/결제': 'bg-blue-600 text-white',
+  '성분': 'bg-green-600 text-white',
+  '기타': 'bg-neutral-500 text-white',
 };
 
 /* ─── Component ─── */
@@ -195,7 +195,7 @@ export default function FaqAdminPage() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-500">등록된 FAQ</span>
             <span className="text-lg font-bold text-neutral-900">{items.length}</span>
-            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-medium bg-gold-100 text-gold-900 border border-gold-300">
+            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-semibold bg-gold-600 text-white">
               {items.length}개 항목
             </span>
           </div>
@@ -259,7 +259,7 @@ export default function FaqAdminPage() {
                     </span>
 
                     {/* Q Number */}
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-100 text-gold-900 border border-gold-300 flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-600 text-white flex items-center justify-center text-xs font-bold">
                       Q{index + 1}
                     </span>
 
@@ -332,7 +332,7 @@ export default function FaqAdminPage() {
                     <div className="px-5 pb-5 border-t border-neutral-100">
                       <div className="pt-4 pl-12">
                         <div className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-neutral-200 text-neutral-800 border border-neutral-300 flex items-center justify-center text-xs font-bold">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-neutral-700 text-white flex items-center justify-center text-xs font-bold">
                             A
                           </span>
                           <p className="text-sm text-neutral-600 leading-relaxed pt-1">

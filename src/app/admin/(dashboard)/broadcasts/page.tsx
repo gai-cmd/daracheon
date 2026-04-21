@@ -35,10 +35,10 @@ const STATUS_LABELS: Record<Broadcast['status'], string> = {
 };
 
 const STATUS_COLORS: Record<Broadcast['status'], string> = {
-  scheduled: 'bg-blue-100 text-blue-800 border-blue-300',
-  live: 'bg-red-100 text-red-800 border-red-400',
-  ended: 'bg-gray-200 text-gray-800 border-gray-300',
-  canceled: 'bg-yellow-100 text-yellow-900 border-yellow-400',
+  scheduled: 'bg-blue-600 text-white border-blue-700',
+  live: 'bg-red-600 text-white border-red-700',
+  ended: 'bg-gray-600 text-white border-gray-700',
+  canceled: 'bg-amber-400 text-gray-900 border-amber-500',
 };
 
 function fmtDateTimeLocal(iso: string | undefined | null): string {
@@ -248,10 +248,10 @@ export default function AdminBroadcastsPage() {
               key={s}
               type="button"
               onClick={() => setStatusFilter(s)}
-              className={`rounded-full border px-3 py-1 text-xs transition ${
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
                 statusFilter === s
-                  ? 'border-gold-500 bg-gold-50 text-gold-700'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                  ? 'border-gold-600 bg-gold-600 text-white'
+                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
               {s === 'all' ? '전체' : STATUS_LABELS[s]}
@@ -314,26 +314,26 @@ export default function AdminBroadcastsPage() {
                   <td className="px-4 py-3 text-gray-700">
                     {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
                     {b.discountRate ? (
-                      <span className="ml-2 rounded border border-red-300 bg-red-100 px-1.5 py-0.5 text-[0.65rem] font-semibold text-red-800">
+                      <span className="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
                         -{b.discountRate}%
                       </span>
                     ) : null}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${STATUS_COLORS[b.status]}`}>
+                    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[b.status]}`}>
                       {STATUS_LABELS[b.status]}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => openEdit(b)}
-                      className="mr-2 inline-flex rounded-md border border-gold-300 bg-gold-50 px-2.5 py-1 text-xs font-medium text-gold-800 hover:bg-gold-100"
+                      className="mr-2 inline-flex rounded-md bg-gold-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-gold-700"
                     >
                       수정
                     </button>
                     <button
                       onClick={() => setDeleteTarget(b)}
-                      className="inline-flex rounded-md border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                      className="inline-flex rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700"
                     >
                       삭제
                     </button>
