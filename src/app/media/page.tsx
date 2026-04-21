@@ -73,12 +73,12 @@ const DEFAULT_MEDIA: MediaItem[] = [
   {
     id: 'v-default-5',
     type: 'video',
-    title: '냐짱 · 칸호아성 침향 농장 현장 탐방',
-    source: 'Vietnam Agarwood',
-    date: '2021-06-08',
-    image: 'https://img.youtube.com/vi/ObPRUJjzkOI/hqdefault.jpg',
-    excerpt: '베트남 냐짱(나트랑) 칸호아성의 침향 농장을 직접 방문한 현장 탐방 영상.',
-    url: 'https://www.youtube.com/watch?v=ObPRUJjzkOI',
+    title: '베트남 침향 채취 현장 — 신기한 침향나무 직접 촬영',
+    source: '약초방송',
+    date: '2023-09-19',
+    image: 'https://img.youtube.com/vi/D13PLn15lH0/hqdefault.jpg',
+    excerpt: '베트남 현지 침향 채취 현장에서 신기한 침향나무를 가까이 확인. 막힌 것을 뻥 뚫어주는 침향의 원산지 풍경.',
+    url: 'https://www.youtube.com/watch?v=D13PLn15lH0',
   },
   {
     id: 'v-default-6',
