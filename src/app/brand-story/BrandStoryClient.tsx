@@ -52,7 +52,14 @@ export default function BrandStoryClient({ data }: Props) {
           <div className={styles.kicker}>{hero?.sectionTag ?? 'Brand Story'}</div>
           <div className={styles.heroMain}>
             <h1>
-              {hero?.titleKr ?? "대라천 '참'침향"}
+              {(() => {
+                const t = hero?.titleKr ?? "대라천 '참'침향";
+                const cut = t.indexOf("'참'");
+                if (cut > 0) {
+                  return <>{t.slice(0, cut).trim()}<br /><em>{t.slice(cut)}</em></>;
+                }
+                return t;
+              })()}
             </h1>
             <p className={styles.lede}>
               {hero?.subtitle ??
