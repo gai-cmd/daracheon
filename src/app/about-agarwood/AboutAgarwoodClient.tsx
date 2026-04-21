@@ -140,7 +140,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         cursor: 'pointer',
                       }}
                     >
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 600 }}>
                         진짜 침향, 이제는 학명을 반드시 확인하세요.
                       </p>
                       <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
