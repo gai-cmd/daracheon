@@ -29,9 +29,9 @@ const statusLabel: Record<InquiryStatus, string> = {
 };
 
 const statusColor: Record<InquiryStatus, string> = {
-  new: 'bg-red-700 text-white',
-  replied: 'bg-amber-700 text-white',
-  resolved: 'bg-sage-700 text-white',
+  new: 'bg-red-500 text-white',
+  replied: 'bg-amber-500 text-white',
+  resolved: 'bg-emerald-600 text-white',
 };
 
 const categoryLabel: Record<InquiryCategory, string> = {
@@ -43,11 +43,11 @@ const categoryLabel: Record<InquiryCategory, string> = {
 };
 
 const categoryColor: Record<InquiryCategory, string> = {
-  product: 'bg-gold-700 text-white',
-  order: 'bg-sage-700 text-white',
-  wholesale: 'bg-stone-600 text-white',
-  media: 'bg-slate-600 text-white',
-  other: 'bg-neutral-500 text-white',
+  product: 'bg-gold-500 text-white',
+  order: 'bg-blue-500 text-white',
+  wholesale: 'bg-violet-500 text-white',
+  media: 'bg-sky-500 text-white',
+  other: 'bg-gray-500 text-white',
 };
 
 /* ─── Next Status ─── */
@@ -313,16 +313,16 @@ export default function InquiriesPage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: '전체 문의', value: stats.total, color: 'bg-stone-600 text-white' },
-            { label: '신규', value: stats.new, color: 'bg-red-700 text-white' },
-            { label: '답변완료', value: stats.replied, color: 'bg-amber-700 text-white' },
-            { label: '처리완료', value: stats.resolved, color: 'bg-sage-700 text-white' },
+            { label: '전체 문의', value: stats.total, color: 'bg-gray-500 text-white' },
+            { label: '신규', value: stats.new, color: 'bg-red-500 text-white' },
+            { label: '답변완료', value: stats.replied, color: 'bg-amber-500 text-white' },
+            { label: '처리완료', value: stats.resolved, color: 'bg-emerald-600 text-white' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
               <p className="text-xs text-neutral-500 mb-1">{stat.label}</p>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-neutral-900">{stat.value}</span>
-                <span className={`text-[0.65rem] px-2 py-0.5 rounded-full font-medium ${stat.color}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${stat.color}`}>
                   {stat.label}
                 </span>
               </div>
@@ -490,7 +490,7 @@ export default function InquiriesPage() {
                       {inq.email}
                     </p>
 
-                    <span className={`inline-block w-fit px-2 py-0.5 text-[0.65rem] rounded-full font-medium ${categoryColor[inq.category]}`}>
+                    <span className={`inline-block w-fit px-2 py-0.5 text-xs rounded-full font-medium ${categoryColor[inq.category]}`}>
                       {categoryLabel[inq.category]}
                     </span>
 
@@ -503,7 +503,7 @@ export default function InquiriesPage() {
 
                     <p className="text-xs text-neutral-400">{inq.date}</p>
 
-                    <span className={`inline-block w-fit px-2 py-0.5 text-[0.65rem] rounded-full font-medium ${statusColor[inq.status]}`}>
+                    <span className={`inline-block w-fit px-2 py-0.5 text-xs rounded-full font-medium ${statusColor[inq.status]}`}>
                       {statusLabel[inq.status]}
                     </span>
 
@@ -545,7 +545,7 @@ export default function InquiriesPage() {
                             <label className="text-xs font-medium text-neutral-500 mb-1 block">답변 이력</label>
                             <div className="bg-gold-50 rounded-lg border border-gold-200 p-4 space-y-1">
                               <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">{inq.reply}</p>
-                              <div className="flex gap-3 text-[0.65rem] text-neutral-400 pt-1">
+                              <div className="flex gap-3 text-xs text-neutral-400 pt-1">
                                 {inq.replyAt && <span>답변일시: {formatDateTime(inq.replyAt)}</span>}
                                 {inq.replyBy && <span>답변자: {inq.replyBy}</span>}
                               </div>
