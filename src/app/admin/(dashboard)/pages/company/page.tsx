@@ -130,15 +130,22 @@ export default function AdminCompanyPage() {
     return () => clearTimeout(t);
   }, [toast]);
 
+  function applyCompanyData(d: CompanyData | undefined) {
+    if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
+    // 저장된 chapters 는 길이가 0 이든 1 이든 그대로 반영한다.
+    // 예전엔 length>0 가드가 있어, 사용자가 챕터를 1개만 남겨도(혹은
+    // 모두 지워도) 리로드 시 DEFAULT 4개로 되돌아가 '저장이 안 된 것처럼'
+    // 보였다. 배열만 확인하고 그대로 세팅한다.
+    if (Array.isArray(d?.chapters)) setChapters(d.chapters);
+  }
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch('/api/admin/pages', { cache: 'no-store' });
         if (res.status === 404) return;
         const data = (await res.json()) as { pages?: { company?: CompanyData } };
-        const d = data.pages?.company;
-        if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
-        if (Array.isArray(d?.chapters) && d.chapters.length > 0) setChapters(d.chapters);
+        applyCompanyData(data.pages?.company);
       } catch (err) {
         console.error('Failed to fetch company:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -152,7 +159,10 @@ export default function AdminCompanyPage() {
   async function saveSection(sectionKey: string, payload: Partial<CompanyData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      // 서버의 현재 company 객체와 병합(다른 섹션 키 보존) 후 저장.
+      // no-store 로 브라우저 캐시 우회 — 이전 응답이 재사용되면 stale hero/chapters
+      // 로 overwrite 될 수 있었다.
+      const res = await fetch('/api/admin/pages', { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { company?: CompanyData } }) : { pages: {} };
       const current = body.pages?.company ?? {};
       const merged: CompanyData = { ...current, ...payload };
@@ -161,6 +171,17 @@ export default function AdminCompanyPage() {
       if (!result.ok) {
         setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
         return;
+      }
+      // 저장된 서버 진실을 UI 에 다시 반영 — 실제로 무엇이 영속화되었는지
+      // 즉시 보여줘 사용자 기대와 서버 상태가 어긋나는 것을 드러낸다.
+      try {
+        const verifyRes = await fetch('/api/admin/pages', { cache: 'no-store' });
+        if (verifyRes.ok) {
+          const verify = (await verifyRes.json()) as { pages?: { company?: CompanyData } };
+          applyCompanyData(verify.pages?.company);
+        }
+      } catch (verifyErr) {
+        console.warn('post-save verify fetch failed', verifyErr);
       }
       setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
