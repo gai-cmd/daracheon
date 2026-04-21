@@ -147,12 +147,23 @@ export async function PUT(request: Request) {
       );
     }
 
-    const cleaned = normalize(rest as Record<string, unknown>);
-    broadcasts[index] = {
-      ...broadcasts[index],
-      ...(cleaned as Partial<Broadcast>),
-      updatedAt: new Date().toISOString(),
-    };
+    // Merge semantics for PUT:
+    //   - undefined → field not sent by client; keep existing value.
+    //   - null or '' → explicit clear signal for optional fields; drop the key.
+    //   - other → overwrite existing value.
+    // Required fields (channel/scheduledAt…) are guarded by zod `.min(1)` so
+    // an empty-string clear never reaches this loop.
+    const merged: Record<string, unknown> = { ...broadcasts[index] };
+    for (const [k, v] of Object.entries(rest)) {
+      if (v === undefined) continue;
+      if (v === null || v === '') {
+        delete merged[k];
+      } else {
+        merged[k] = v;
+      }
+    }
+    merged.updatedAt = new Date().toISOString();
+    broadcasts[index] = merged as unknown as Broadcast;
     await writeData('broadcasts', broadcasts);
 
     await logAdmin('broadcasts', 'update', {

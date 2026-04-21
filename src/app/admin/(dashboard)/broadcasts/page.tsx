@@ -7,17 +7,17 @@ interface Broadcast {
   channel: string;
   scheduledAt: string;
   durationMinutes: number;
-  host?: string;
+  host?: string | null;
   productIds: string[];
-  specialPrice?: number;
-  regularPrice?: number;
-  discountRate?: number;
-  livestreamUrl?: string;
-  vodUrl?: string;
-  description?: string;
+  specialPrice?: number | null;
+  regularPrice?: number | null;
+  discountRate?: number | null;
+  livestreamUrl?: string | null;
+  vodUrl?: string | null;
+  description?: string | null;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
-  salesCount?: number;
-  feedback?: string;
+  salesCount?: number | null;
+  feedback?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -413,7 +413,7 @@ export default function AdminBroadcastsPage() {
                     min={0}
                     value={draft.regularPrice ?? ''}
                     onChange={(e) =>
-                      setDraft({ ...draft, regularPrice: e.target.value ? Number(e.target.value) : undefined })
+                      setDraft({ ...draft, regularPrice: e.target.value ? Number(e.target.value) : null })
                     }
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
@@ -425,7 +425,7 @@ export default function AdminBroadcastsPage() {
                     min={0}
                     value={draft.specialPrice ?? ''}
                     onChange={(e) =>
-                      setDraft({ ...draft, specialPrice: e.target.value ? Number(e.target.value) : undefined })
+                      setDraft({ ...draft, specialPrice: e.target.value ? Number(e.target.value) : null })
                     }
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
@@ -438,7 +438,7 @@ export default function AdminBroadcastsPage() {
                     max={100}
                     value={draft.discountRate ?? ''}
                     onChange={(e) =>
-                      setDraft({ ...draft, discountRate: e.target.value ? Number(e.target.value) : undefined })
+                      setDraft({ ...draft, discountRate: e.target.value ? Number(e.target.value) : null })
                     }
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
@@ -519,9 +519,13 @@ export default function AdminBroadcastsPage() {
                     type="number"
                     min={0}
                     value={draft.salesCount ?? ''}
-                    onChange={(e) =>
-                      setDraft({ ...draft, salesCount: e.target.value ? Number(e.target.value) : undefined })
-                    }
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      setDraft({
+                        ...draft,
+                        salesCount: raw === '' ? null : Number(raw),
+                      });
+                    }}
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
                 </div>
