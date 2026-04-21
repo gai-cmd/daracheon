@@ -128,11 +128,16 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </RevealOnScroll>
                   <RevealOnScroll delay={300}>
                     <div
+                      onMouseEnter={() => setHoveredDefinitionBox(true)}
+                      onMouseLeave={() => setHoveredDefinitionBox(false)}
                       style={{
                         marginTop: 26,
                         padding: '22px 24px',
-                        border: '1px solid rgba(212,168,67,0.35)',
-                        background: 'rgba(212,168,67,0.05)',
+                        border: `2px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.35)'}`,
+                        background: hoveredDefinitionBox ? 'rgba(212,168,67,0.12)' : 'rgba(212,168,67,0.05)',
+                        transition: 'all 300ms ease',
+                        transform: hoveredDefinitionBox ? 'scale(1.02)' : 'scale(1)',
+                        cursor: 'pointer',
                       }}
                     >
                       <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
