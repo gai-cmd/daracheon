@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import AboutAgarwoodClient from './AboutAgarwoodClient';
@@ -6,6 +7,33 @@ import AboutAgarwoodClient from './AboutAgarwoodClient';
 // readSingleSafe 는 내부적으로 unstable_cache + tag 무효화를 사용하므로
 // blob 비용은 admin 저장 시점에만 발생.
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh | 대라천 ZOEL LIFE',
+  description:
+    '식약처 공식 등재 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
+  keywords: [
+    '침향', '沈香', 'Agarwood', 'Aquilaria Agallocha Roxburgh',
+    '침향 효능', '침향 학명', '침향 정의', '대라천', 'ZOEL LIFE',
+    '식약처 침향', '동의보감 침향', '본초강목 침향',
+  ],
+  alternates: { canonical: 'https://www.daracheon.com/about-agarwood' },
+  openGraph: {
+    type: 'article',
+    title: '침향 이야기 — 식약처 등재 Aquilaria Agallocha Roxburgh',
+    description: '학명·정의·효능·문헌·논문·매체 보도까지, 진짜 침향을 알아야 할 모든 것.',
+    url: 'https://www.daracheon.com/about-agarwood',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    images: [{ url: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png', width: 1200, height: 630, alt: '대라천 침향 이야기' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
+    description: '식약처 공식 등재 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
+    images: ['https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png'],
+  },
+};
 
 const articleJsonLd = {
   '@context': 'https://schema.org',

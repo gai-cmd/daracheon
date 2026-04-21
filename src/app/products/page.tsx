@@ -1,9 +1,34 @@
+import type { Metadata } from 'next';
 import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import ProductsClient from './ProductsClient';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: '제품 소개 — 수십 년 숙성의 고귀한 침향 제품 | 대라천 ZOEL LIFE',
+  description:
+    "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria Agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
+  keywords: [
+    '대라천 제품', '침향 오일', '침향환', '침향수', '침향차',
+    '침향 스틱', '침향 염주', 'ZOEL LIFE 제품', '25년산 침향',
+  ],
+  alternates: { canonical: 'https://www.daracheon.com/products' },
+  openGraph: {
+    type: 'website',
+    title: '제품 소개 — 대라천 침향 제품 라인업',
+    description: '오일·환·수·차·스틱·향·염주 — 25년 숙성 침향 제품 전 라인업.',
+    url: 'https://www.daracheon.com/products',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '제품 소개 — 대라천 침향 제품',
+    description: '25년 숙성 Aquilaria Agallocha Roxburgh 정품 라인업.',
+  },
+};
 
 interface ProductCategory {
   id: string;

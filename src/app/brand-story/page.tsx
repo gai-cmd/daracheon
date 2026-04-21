@@ -1,7 +1,34 @@
+import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
 import BrandStoryClient from './BrandStoryClient';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "브랜드 스토리 — 대라천 '참'침향 | ZOEL LIFE",
+  description:
+    "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
+  keywords: [
+    '대라천', '대라천 참침향', 'ZOEL LIFE', '조엘라이프',
+    '베트남 침향', '하띤성 농장', 'Aquilaria Agallocha Roxburgh',
+    '침향 농장', '침향 생산 공정', '침향 브랜드',
+  ],
+  alternates: { canonical: 'https://www.daracheon.com/brand-story' },
+  openGraph: {
+    type: 'article',
+    title: "브랜드 스토리 — 대라천 '참'침향의 25년 여정",
+    description:
+      '베트남 하띤성 200ha 직영 농장에서 자란 400만 그루 침향나무 — 농장·공정·역사·인증·품질을 담은 대라천 브랜드 스토리.',
+    url: 'https://www.daracheon.com/brand-story',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "대라천 '참'침향 — 25년 여정",
+    description: '1998년 캄보디아에서 시작된 대라천 침향의 농장·공정·역사 이야기.',
+  },
+};
 
 export interface Farm { name: string; nameVi: string; desc: string; image?: string }
 export interface HistoryEra { era: string; items: string[] }
