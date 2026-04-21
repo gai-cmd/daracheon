@@ -43,25 +43,22 @@ export default function BrandStoryClient({ data }: Props) {
     <div className={styles.page}>
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
-        <div className="hero-bg-agarwood" aria-hidden />
-        <div
-          className={styles.heroBg}
-          style={{ backgroundImage: hero?.heroBg ? `url('${hero.heroBg}')` : undefined }}
-          aria-hidden
-        />
         <div
           className="orn-plume"
           aria-hidden
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
-        <div className={styles.heroInner}>
-          <div className={styles.heroKicker}>{hero?.sectionTag ?? 'Agarwood Story'}</div>
-          <div className={styles.heroHanja} aria-hidden>沈香</div>
-          <h1 style={{ whiteSpace: 'nowrap' }}>{hero?.titleKr ?? "대라천 '참'침향"}</h1>
-          <p className={styles.heroSub} style={{ whiteSpace: 'nowrap' }}>
-            {hero?.subtitle ??
-              "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
-          </p>
+        <div className={styles.wrap}>
+          <div className={styles.kicker}>{hero?.sectionTag ?? 'Brand Story'}</div>
+          <div className={styles.heroMain}>
+            <h1>
+              {hero?.titleKr ?? "대라천 '참'침향"}
+            </h1>
+            <p className={styles.lede}>
+              {hero?.subtitle ??
+                "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
+            </p>
+          </div>
         </div>
       </section>
 

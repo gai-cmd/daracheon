@@ -14,51 +14,24 @@
   .wrap { padding: 0 64px; }
 }
 
-/* HERO */
+/* HERO — story-page.module.css 표준 패턴과 동일 */
 .hero {
   position: relative;
-  min-height: 80vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: calc(var(--nav-h) + 20px);
-  padding-bottom: 30px;
+  padding: calc(var(--nav-h) + 70px) 0 60px;
   overflow: hidden;
-  text-align: center;
   background:
-    radial-gradient(ellipse 60% 70% at 30% 30%, rgba(212, 168, 67, 0.14), transparent 60%),
-    linear-gradient(180deg, #0a0b10, #14161f);
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(10, 11, 16, 0.55) 0%, rgba(10, 11, 16, 0.35) 40%, rgba(10, 11, 16, 0.9) 100%);
-  pointer-events: none;
+    radial-gradient(1200px 600px at 20% 30%, rgba(212, 168, 67, 0.10), transparent 60%),
+    linear-gradient(180deg, #0a0b10 0%, #14161f 100%);
+  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
+  color: #fdfbf7;
 }
 
-.heroBg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.35;
-}
-
-.heroInner {
+.hero .wrap {
   position: relative;
-  z-index: 2;
-  max-width: 900px;
-  padding: 0 28px;
-  /* .hero 에 text-align:center 가 걸려있어 h1 · 부제 둘 다 센터정렬
-     되면서 시작점이 서로 다르게 보임. 블록 자체는 flex 로 화면 중앙에
-     배치되게 유지하되, 안의 텍스트는 좌측 기준선으로 통일. */
-  text-align: left;
+  z-index: 1;
 }
 
-.heroKicker {
+.kicker {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.32em;
@@ -67,15 +40,17 @@
   margin-bottom: 28px;
 }
 
-.heroHanja {
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 400;
-  font-size: clamp(5rem, 12vw, 10rem);
-  color: var(--accent);
-  line-height: 1;
-  letter-spacing: 0.1em;
-  margin-bottom: 14px;
-  user-select: none;
+.heroMain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .heroMain {
+    grid-template-columns: 1.8fr 1fr;
+    gap: 80px;
+  }
 }
 
 .hero h1 {
@@ -83,26 +58,25 @@
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  margin-bottom: 18px;
+  margin-bottom: 0;
+  max-width: 18ch;
   color: #fff;
 }
 .hero h1 em {
   font-style: normal;
-  color: var(--accent-soft);
-  font-weight: 300;
+  color: var(--accent);
   font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
 }
 
-.heroSub {
+.lede {
   font-size: 1.05rem;
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
-  max-width: 1000px;
-  /* h1(대라천 '참'침향)과 동일한 좌측 기준선에 맞추도록 auto 센터
-     정렬 해제. heroInner 가 이미 max-width:900px + padding 으로
-     레이아웃을 잡고 있어 좌측 정렬이 자연스러움. */
-  margin: 0 0 36px;
+  margin-bottom: 36px;
+  max-width: 780px;
+  word-break: keep-all;
 }
 
 /* TAB BAR — about-agarwood 와 동일한 컨셉 (사각형 chip 버튼) */
