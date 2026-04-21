@@ -35,10 +35,10 @@ const STATUS_LABELS: Record<Broadcast['status'], string> = {
 };
 
 const STATUS_COLORS: Record<Broadcast['status'], string> = {
-  scheduled: 'bg-blue-600 text-white border-blue-700',
-  live: 'bg-red-600 text-white border-red-700',
-  ended: 'bg-gray-600 text-white border-gray-700',
-  canceled: 'bg-amber-400 text-gray-900 border-amber-500',
+  scheduled: 'bg-sage-700 text-white border-sage-800',
+  live: 'bg-red-700 text-white border-red-800',
+  ended: 'bg-stone-500 text-white border-stone-600',
+  canceled: 'bg-amber-700 text-white border-amber-800',
 };
 
 function fmtDateTimeLocal(iso: string | undefined | null): string {
@@ -250,8 +250,8 @@ export default function AdminBroadcastsPage() {
               onClick={() => setStatusFilter(s)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
                 statusFilter === s
-                  ? 'border-gold-600 bg-gold-600 text-white'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'border-gold-700 bg-gold-700 text-white'
+                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
               }`}
             >
               {s === 'all' ? '전체' : STATUS_LABELS[s]}
@@ -314,7 +314,7 @@ export default function AdminBroadcastsPage() {
                   <td className="px-4 py-3 text-gray-700">
                     {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
                     {b.discountRate ? (
-                      <span className="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
+                      <span className="ml-2 rounded bg-red-700 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
                         -{b.discountRate}%
                       </span>
                     ) : null}
@@ -333,7 +333,7 @@ export default function AdminBroadcastsPage() {
                     </button>
                     <button
                       onClick={() => setDeleteTarget(b)}
-                      className="inline-flex rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-700"
+                      className="inline-flex rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-800"
                     >
                       삭제
                     </button>

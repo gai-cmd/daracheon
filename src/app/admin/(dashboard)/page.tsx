@@ -120,10 +120,10 @@ function SkeletonRow() {
 /* ─── Badge variant styles ─── */
 
 const badgeStyles: Record<StatCard['badgeVariant'], string> = {
-  emerald: 'bg-emerald-600 text-white',
-  amber: 'bg-amber-500 text-white',
-  sky: 'bg-sky-600 text-white',
-  rose: 'bg-rose-600 text-white',
+  emerald: 'bg-sage-700 text-white',
+  amber: 'bg-amber-700 text-white',
+  sky: 'bg-slate-600 text-white',
+  rose: 'bg-rose-700 text-white',
 };
 
 /* ─── Render ─── */
@@ -296,12 +296,12 @@ export default function AdminDashboard() {
   }
 
   const inquiryStatusColors: Record<string, string> = {
-    new: 'bg-amber-500 text-white',
-    replied: 'bg-sky-600 text-white',
-    resolved: 'bg-emerald-600 text-white',
-    pending: 'bg-gray-500 text-white',
-    'in-progress': 'bg-blue-600 text-white',
-    closed: 'bg-gray-600 text-white',
+    new: 'bg-red-700 text-white',
+    replied: 'bg-amber-700 text-white',
+    resolved: 'bg-sage-700 text-white',
+    pending: 'bg-stone-500 text-white',
+    'in-progress': 'bg-slate-700 text-white',
+    closed: 'bg-stone-600 text-white',
   };
 
   const inquiryStatusLabel: Record<string, string> = {
@@ -376,7 +376,7 @@ export default function AdminDashboard() {
                           </div>
                           <p className="mt-0.5 text-xs text-gray-500 line-clamp-1">{inq.subject ?? inq.message}</p>
                         </div>
-                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${inquiryStatusColors[inq.status] ?? 'bg-gray-500 text-white'}`}>
+                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${inquiryStatusColors[inq.status] ?? 'bg-stone-500 text-white'}`}>
                           {inquiryStatusLabel[inq.status] ?? inq.status}
                         </span>
                       </div>
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                            bc.status === 'live' ? 'bg-red-600 text-white' : 'bg-sky-600 text-white'
+                            bc.status === 'live' ? 'bg-red-700 text-white' : 'bg-sage-700 text-white'
                           }`}>
                             {bc.status === 'live' ? 'ON AIR' : '예정'}
                           </span>

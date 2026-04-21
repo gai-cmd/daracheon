@@ -29,9 +29,9 @@ const statusLabel: Record<InquiryStatus, string> = {
 };
 
 const statusColor: Record<InquiryStatus, string> = {
-  new: 'bg-blue-600 text-white',
-  replied: 'bg-amber-400 text-gray-900',
-  resolved: 'bg-green-600 text-white',
+  new: 'bg-red-700 text-white',
+  replied: 'bg-amber-700 text-white',
+  resolved: 'bg-sage-700 text-white',
 };
 
 const categoryLabel: Record<InquiryCategory, string> = {
@@ -43,10 +43,10 @@ const categoryLabel: Record<InquiryCategory, string> = {
 };
 
 const categoryColor: Record<InquiryCategory, string> = {
-  product: 'bg-amber-500 text-white',
-  order: 'bg-purple-600 text-white',
-  wholesale: 'bg-teal-600 text-white',
-  media: 'bg-pink-600 text-white',
+  product: 'bg-gold-700 text-white',
+  order: 'bg-sage-700 text-white',
+  wholesale: 'bg-stone-600 text-white',
+  media: 'bg-slate-600 text-white',
   other: 'bg-neutral-500 text-white',
 };
 
@@ -313,10 +313,10 @@ export default function InquiriesPage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: '전체 문의', value: stats.total, color: 'bg-neutral-600 text-white' },
-            { label: '신규', value: stats.new, color: 'bg-blue-600 text-white' },
-            { label: '답변완료', value: stats.replied, color: 'bg-amber-400 text-gray-900' },
-            { label: '처리완료', value: stats.resolved, color: 'bg-green-600 text-white' },
+            { label: '전체 문의', value: stats.total, color: 'bg-stone-600 text-white' },
+            { label: '신규', value: stats.new, color: 'bg-red-700 text-white' },
+            { label: '답변완료', value: stats.replied, color: 'bg-amber-700 text-white' },
+            { label: '처리완료', value: stats.resolved, color: 'bg-sage-700 text-white' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
               <p className="text-xs text-neutral-500 mb-1">{stat.label}</p>

@@ -19,9 +19,9 @@ const ROLE_LABELS: Record<Role, string> = {
 };
 
 const ROLE_BADGE: Record<Role, string> = {
-  super_admin: 'bg-gold-600 text-white border-gold-700',
-  admin: 'bg-blue-600 text-white border-blue-700',
-  editor: 'bg-gray-500 text-white border-gray-600',
+  super_admin: 'bg-gold-700 text-white border-gold-800',
+  admin: 'bg-sage-700 text-white border-sage-800',
+  editor: 'bg-stone-500 text-white border-stone-600',
 };
 
 function formatAt(iso: string | undefined): string {

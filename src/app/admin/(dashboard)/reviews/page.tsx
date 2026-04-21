@@ -473,14 +473,14 @@ export default function AdminReviewsPage() {
                         <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{review.date}</td>
                         <td className="px-4 py-3">
                           {review.verified ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-600 text-white">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-sage-700 text-white">
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
                               인증
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-500 text-white">
+                            <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-stone-500 text-white">
                               미인증
                             </span>
                           )}
