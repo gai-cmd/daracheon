@@ -129,19 +129,22 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   return (
     <>
       {/* HERO */}
-      {hero && (
-        <section className={styles.hero}>
-          <div className={styles.wrap}>
-            <div className={styles.kicker}>{hero.kicker}</div>
-            <div className={styles.heroMain}>
-              <h1>
-                {hero.titleLine1} <em>{hero.titleEmphasis}</em>
-              </h1>
-              <p className={styles.lede}>{hero.lede}</p>
-            </div>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
+        <div className={styles.wrap}>
+          <div className={styles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>
+          <div className={styles.heroMain}>
+            <h1>
+              {hero?.titleLine1 ?? '무엇을'}
+              <br />
+              <em>{hero?.titleEmphasis ?? '도와드릴까요'}</em>
+            </h1>
+            <p className={styles.lede}>
+              {hero?.lede ?? '제품 상담부터 Lot 인증서 조회까지. 대라천이 직접 답변드립니다.'}
+            </p>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* 3 CHANNELS */}
       {channels.length > 0 && (

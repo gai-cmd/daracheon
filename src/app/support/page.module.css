@@ -20,7 +20,6 @@
     radial-gradient(ellipse 50% 60% at 85% 80%, rgba(74, 103, 65, 0.08), transparent 60%),
     linear-gradient(180deg, #0a0b10, #0f1119);
 }
-.hero .wrap { max-width: 900px; }
 
 .kicker {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
