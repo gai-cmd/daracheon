@@ -35,7 +35,7 @@ const baseSchema = z.object({
   productIds: z.array(z.string()).default([]),
   specialPrice: z.coerce.number().int().min(0).optional().nullable(),
   regularPrice: z.coerce.number().int().min(0).optional().nullable(),
-  discountRate: z.coerce.number().int().min(0).max(100).optional().nullable(),
+  discountRate: z.coerce.number().min(0).max(100).optional().nullable(),
   livestreamUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
   vodUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
