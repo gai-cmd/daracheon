@@ -246,6 +246,25 @@ export async function readData<T = any>(filename: string): Promise<T[]> {
   return Array.isArray(data) ? (data as T[]) : [];
 }
 
+// unstable_cache 를 우회해 blob 에서 직접 읽는다.
+// 어드민 write 경로(PUT/DELETE)에서 사용 — 직전 write 가 다른 Lambda
+// 인스턴스에서 발생했을 때 revalidateTag 전파 지연으로 stale cache 를
+// 읽어 정상 데이터를 덮어쓰는 문제를 방지한다.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readDataUncached<T = any>(filename: string): Promise<T[]> {
+  if (hasBlob) {
+    const result = await blobReadRawUncached(filename);
+    if (result === NOT_FOUND) return [];
+    if (Array.isArray(result)) {
+      lastKnownGood.set(filename, result);
+      return result as T[];
+    }
+    return [];
+  }
+  const data = fsReadRaw(filename);
+  return Array.isArray(data) ? (data as T[]) : [];
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function writeData<T = any>(filename: string, data: T[]): Promise<void> {
   await writeRaw(filename, data);

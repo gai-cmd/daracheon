@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readData, writeData } from '@/lib/db';
+import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -62,7 +62,7 @@ function normalize(input: Record<string, unknown>): Record<string, unknown> {
 
 export async function GET() {
   try {
-    const broadcasts = await readData('broadcasts');
+    const broadcasts = await readDataUncached('broadcasts');
     broadcasts.sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
     return NextResponse.json({ broadcasts, total: broadcasts.length });
   } catch (error) {
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       updatedAt: now,
     };
 
-    const broadcasts = await readData('broadcasts');
+    const broadcasts = await readDataUncached('broadcasts');
     broadcasts.push(item);
     await writeData('broadcasts', broadcasts);
 
@@ -138,7 +138,7 @@ export async function PUT(request: Request) {
     }
 
     const { id, ...rest } = parsed.data;
-    const broadcasts = await readData('broadcasts');
+    const broadcasts = await readDataUncached('broadcasts');
     const index = broadcasts.findIndex((b) => b.id === id);
     if (index === -1) {
       return NextResponse.json(
@@ -190,7 +190,7 @@ export async function DELETE(request: Request) {
         { status: 400 }
       );
     }
-    const broadcasts = await readData('broadcasts');
+    const broadcasts = await readDataUncached('broadcasts');
     const index = broadcasts.findIndex((b) => b.id === body.id);
     if (index === -1) {
       return NextResponse.json(
