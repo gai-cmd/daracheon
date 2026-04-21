@@ -224,6 +224,8 @@ export default async function MediaPage() {
                     <Link
                       key={item.id}
                       href={item.url ?? '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                     >
                       <div
