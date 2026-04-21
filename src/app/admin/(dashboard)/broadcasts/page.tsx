@@ -87,6 +87,7 @@ export default function AdminBroadcastsPage() {
   const [draft, setDraft] = useState<Broadcast | null>(null);
   const [isAddMode, setIsAddMode] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Broadcast | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -189,7 +190,8 @@ export default function AdminBroadcastsPage() {
   }
 
   async function handleDelete() {
-    if (!deleteTarget) return;
+    if (!deleteTarget || deleting) return;
+    setDeleting(true);
     try {
       const res = await fetch('/api/admin/broadcasts', {
         method: 'DELETE',
@@ -207,6 +209,8 @@ export default function AdminBroadcastsPage() {
     } catch (err) {
       console.error('[Admin Broadcasts] delete error:', err);
       setToast('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -577,16 +581,18 @@ export default function AdminBroadcastsPage() {
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                disabled={deleting}
+                className="rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
               >
                 취소
               </button>
               <button
                 type="button"
                 onClick={handleDelete}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                disabled={deleting}
+                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
               >
-                삭제
+                {deleting ? '삭제 중...' : '삭제'}
               </button>
             </div>
           </div>
