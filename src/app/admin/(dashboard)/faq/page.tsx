@@ -15,10 +15,10 @@ interface FaqItem {
 }
 
 const categoryColor: Record<FaqCategory, string> = {
-  '제품': 'bg-amber-100 text-amber-700',
-  '배송/결제': 'bg-blue-100 text-blue-700',
-  '성분': 'bg-green-100 text-green-700',
-  '기타': 'bg-neutral-100 text-neutral-600',
+  '제품': 'bg-amber-100 text-amber-900 border border-amber-300',
+  '배송/결제': 'bg-blue-100 text-blue-800 border border-blue-300',
+  '성분': 'bg-green-100 text-green-800 border border-green-300',
+  '기타': 'bg-neutral-200 text-neutral-800 border border-neutral-300',
 };
 
 /* ─── Component ─── */
@@ -195,7 +195,7 @@ export default function FaqAdminPage() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-500">등록된 FAQ</span>
             <span className="text-lg font-bold text-neutral-900">{items.length}</span>
-            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-medium bg-gold-50 text-gold-700">
+            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-medium bg-gold-100 text-gold-900 border border-gold-300">
               {items.length}개 항목
             </span>
           </div>
@@ -259,7 +259,7 @@ export default function FaqAdminPage() {
                     </span>
 
                     {/* Q Number */}
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-50 text-gold-600 flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-100 text-gold-900 border border-gold-300 flex items-center justify-center text-xs font-bold">
                       Q{index + 1}
                     </span>
 
@@ -277,7 +277,7 @@ export default function FaqAdminPage() {
                     <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => openEditModal(item)}
-                        className="p-1.5 text-neutral-400 hover:text-gold-500 transition-colors rounded-lg hover:bg-gold-50"
+                        className="p-1.5 text-neutral-600 hover:text-gold-700 transition-colors rounded-lg hover:bg-gold-50"
                         title="수정"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -303,7 +303,7 @@ export default function FaqAdminPage() {
                       ) : (
                         <button
                           onClick={() => setDeleteConfirmId(item.id)}
-                          className="p-1.5 text-neutral-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                          className="p-1.5 text-neutral-600 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"
                           title="삭제"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -313,7 +313,7 @@ export default function FaqAdminPage() {
                       )}
 
                       {/* Expand Arrow */}
-                      <button className="p-1.5 text-neutral-400 hover:text-neutral-600 transition-colors">
+                      <button className="p-1.5 text-neutral-600 hover:text-neutral-900 transition-colors">
                         <svg
                           className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                           fill="none"
@@ -332,7 +332,7 @@ export default function FaqAdminPage() {
                     <div className="px-5 pb-5 border-t border-neutral-100">
                       <div className="pt-4 pl-12">
                         <div className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-neutral-100 text-neutral-500 flex items-center justify-center text-xs font-bold">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-neutral-200 text-neutral-800 border border-neutral-300 flex items-center justify-center text-xs font-bold">
                             A
                           </span>
                           <p className="text-sm text-neutral-600 leading-relaxed pt-1">

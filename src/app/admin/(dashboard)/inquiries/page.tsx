@@ -29,9 +29,9 @@ const statusLabel: Record<InquiryStatus, string> = {
 };
 
 const statusColor: Record<InquiryStatus, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  replied: 'bg-yellow-100 text-yellow-700',
-  resolved: 'bg-green-100 text-green-700',
+  new: 'bg-blue-100 text-blue-800 border border-blue-300',
+  replied: 'bg-yellow-100 text-yellow-900 border border-yellow-400',
+  resolved: 'bg-green-100 text-green-800 border border-green-300',
 };
 
 const categoryLabel: Record<InquiryCategory, string> = {
@@ -43,11 +43,11 @@ const categoryLabel: Record<InquiryCategory, string> = {
 };
 
 const categoryColor: Record<InquiryCategory, string> = {
-  product: 'bg-amber-100 text-amber-700',
-  order: 'bg-purple-100 text-purple-700',
-  wholesale: 'bg-teal-100 text-teal-700',
-  media: 'bg-pink-100 text-pink-700',
-  other: 'bg-neutral-100 text-neutral-600',
+  product: 'bg-amber-100 text-amber-900 border border-amber-300',
+  order: 'bg-purple-100 text-purple-800 border border-purple-300',
+  wholesale: 'bg-teal-100 text-teal-800 border border-teal-300',
+  media: 'bg-pink-100 text-pink-800 border border-pink-300',
+  other: 'bg-neutral-200 text-neutral-800 border border-neutral-300',
 };
 
 /* ─── Next Status ─── */
@@ -313,10 +313,10 @@ export default function InquiriesPage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: '전체 문의', value: stats.total, color: 'bg-neutral-100 text-neutral-700' },
-            { label: '신규', value: stats.new, color: 'bg-blue-50 text-blue-700' },
-            { label: '답변완료', value: stats.replied, color: 'bg-yellow-50 text-yellow-700' },
-            { label: '처리완료', value: stats.resolved, color: 'bg-green-50 text-green-700' },
+            { label: '전체 문의', value: stats.total, color: 'bg-neutral-200 text-neutral-800 border border-neutral-300' },
+            { label: '신규', value: stats.new, color: 'bg-blue-100 text-blue-800 border border-blue-300' },
+            { label: '답변완료', value: stats.replied, color: 'bg-yellow-100 text-yellow-900 border border-yellow-400' },
+            { label: '처리완료', value: stats.resolved, color: 'bg-green-100 text-green-800 border border-green-300' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-xl shadow-sm border border-neutral-200 p-5">
               <p className="text-xs text-neutral-500 mb-1">{stat.label}</p>
@@ -510,7 +510,7 @@ export default function InquiriesPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : inq.id)}
-                        className="text-neutral-400 hover:text-gold-500 transition-colors"
+                        className="rounded p-1 text-neutral-600 hover:bg-gold-50 hover:text-gold-700 transition-colors"
                         title={isExpanded ? '접기' : '펼치기'}
                       >
                         <svg className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

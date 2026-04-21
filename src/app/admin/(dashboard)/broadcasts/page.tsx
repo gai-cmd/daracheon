@@ -35,10 +35,10 @@ const STATUS_LABELS: Record<Broadcast['status'], string> = {
 };
 
 const STATUS_COLORS: Record<Broadcast['status'], string> = {
-  scheduled: 'bg-blue-50 text-blue-700 border-blue-200',
-  live: 'bg-red-50 text-red-700 border-red-200',
-  ended: 'bg-gray-100 text-gray-700 border-gray-200',
-  canceled: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  scheduled: 'bg-blue-100 text-blue-800 border-blue-300',
+  live: 'bg-red-100 text-red-800 border-red-400',
+  ended: 'bg-gray-200 text-gray-800 border-gray-300',
+  canceled: 'bg-yellow-100 text-yellow-900 border-yellow-400',
 };
 
 function fmtDateTimeLocal(iso: string | undefined | null): string {
@@ -314,7 +314,7 @@ export default function AdminBroadcastsPage() {
                   <td className="px-4 py-3 text-gray-700">
                     {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
                     {b.discountRate ? (
-                      <span className="ml-2 rounded bg-red-50 px-1.5 py-0.5 text-[0.65rem] text-red-600">
+                      <span className="ml-2 rounded border border-red-300 bg-red-100 px-1.5 py-0.5 text-[0.65rem] font-semibold text-red-800">
                         -{b.discountRate}%
                       </span>
                     ) : null}
@@ -327,13 +327,13 @@ export default function AdminBroadcastsPage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => openEdit(b)}
-                      className="mr-2 text-xs text-gold-600 hover:underline"
+                      className="mr-2 inline-flex rounded-md border border-gold-300 bg-gold-50 px-2.5 py-1 text-xs font-medium text-gold-800 hover:bg-gold-100"
                     >
                       수정
                     </button>
                     <button
                       onClick={() => setDeleteTarget(b)}
-                      className="text-xs text-red-600 hover:underline"
+                      className="inline-flex rounded-md border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
                     >
                       삭제
                     </button>

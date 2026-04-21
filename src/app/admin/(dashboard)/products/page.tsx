@@ -452,7 +452,7 @@ export default function AdminProductsPage() {
                     <td className="px-4 py-3 text-gray-600">{product.category}</td>
                     <td className="px-4 py-3 text-gray-900 font-medium">{product.priceDisplay}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-gold-100 text-gold-700">
+                      <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-gold-100 text-gold-900 border border-gold-300">
                         {product.badge}
                       </span>
                     </td>
