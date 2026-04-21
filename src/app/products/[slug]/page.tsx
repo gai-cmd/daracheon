@@ -4,9 +4,22 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
+import JsonLd from '@/components/ui/JsonLd';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
+
+interface ReviewRecord {
+  productSlug?: string;
+  productId?: string;
+  rating?: number;
+  title?: string;
+  body?: string;
+  author?: string;
+  createdAt?: string;
+  verified?: boolean;
+  approved?: boolean;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +46,10 @@ export default async function ProductDetailPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const products = await readDataSafe<Product>('products');
+  const [products, reviews] = await Promise.all([
+    readDataSafe<Product>('products'),
+    readDataSafe<ReviewRecord>('reviews'),
+  ]);
   const product = products.find((p) => p.slug === slug);
   if (!product) notFound();
 
@@ -43,8 +59,73 @@ export default async function ProductDetailPage(
 
   const specEntries = Object.entries(product.specs ?? {});
 
+  // Product JSON-LD (Google 제품 리치 결과 + AI Overview 엔티티 매칭)
+  // AggregateRating / Review 는 reviews.json 에서 동일 제품 slug·id 로 필터.
+  const productReviews = reviews.filter(
+    (r) =>
+      (r.productSlug === product.slug || r.productId === product.id) &&
+      typeof r.rating === 'number' &&
+      r.rating > 0 &&
+      r.approved !== false,
+  );
+  const ratingCount = productReviews.length;
+  const ratingAvg =
+    ratingCount > 0
+      ? productReviews.reduce((s, r) => s + (r.rating ?? 0), 0) / ratingCount
+      : 0;
+
+  const productJsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    ...(product.nameEn ? { alternateName: product.nameEn } : {}),
+    description: product.description,
+    sku: product.id,
+    image: product.gallery?.length ? product.gallery : (product.image ? [product.image] : undefined),
+    brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
+    category: product.category,
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'KRW',
+      availability: product.inStock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      url: `https://www.daracheon.com/products/${product.slug}`,
+    },
+  };
+  if (ratingCount > 0) {
+    productJsonLd.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: Math.round(ratingAvg * 10) / 10,
+      reviewCount: ratingCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+    productJsonLd.review = productReviews.slice(0, 5).map((r) => ({
+      '@type': 'Review',
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+      ...(r.author ? { author: { '@type': 'Person', name: r.author } } : {}),
+      ...(r.title ? { name: r.title } : {}),
+      ...(r.body ? { reviewBody: r.body } : {}),
+      ...(r.createdAt ? { datePublished: r.createdAt.slice(0, 10) } : {}),
+    }));
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://www.daracheon.com/products' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://www.daracheon.com/products/${product.slug}` },
+    ],
+  };
+
   return (
     <main className={styles.page}>
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <div className={styles.wrap}>
         {/* Crumb */}
         <nav className={styles.crumb}>

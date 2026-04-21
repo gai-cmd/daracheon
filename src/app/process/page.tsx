@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { readSingleSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -155,8 +156,54 @@ export default async function ProcessPage() {
   const videos = pagesData?.process?.productionVideos ?? DEFAULT_VIDEOS;
   const certs = pagesData?.process?.certifications ?? DEFAULT_CERTS;
 
+  // HowTo JSON-LD — AI Overview / SGE 가 침향 생산 공정 단계를 직접 인용.
+  const howToJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: '대라천 침향 생산 공정',
+    description:
+      '베트남 하띤 200ha 직영 농장에서 식목부터 수확·검증까지, 25년이 걸리는 대라천 침향의 전 공정.',
+    totalTime: 'P25Y',
+    step: chapters.map((ch, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: ch.title,
+      text: ch.body,
+      ...(ch.imageSrc ? { image: ch.imageSrc } : {}),
+    })),
+  };
+
+  // VideoObject 그룹 — /process 에 embedded Google Drive 영상을 AI 인용 가능하게.
+  const videoJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: videos.title,
+    itemListElement: videos.items.map((v, i) => ({
+      '@type': 'VideoObject',
+      position: i + 1,
+      name: v.title,
+      description: `${videos.title} — ${v.title}`,
+      contentUrl: `https://drive.google.com/file/d/${v.id}/view`,
+      embedUrl: `https://drive.google.com/file/d/${v.id}/preview`,
+      uploadDate: '2026-04-11',
+      thumbnailUrl: `https://lh3.googleusercontent.com/d/${v.id}=w1280`,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+      { '@type': 'ListItem', position: 2, name: '침향 농장 이야기', item: 'https://www.daracheon.com/process' },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={howToJsonLd} />
+      <JsonLd data={videoJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div

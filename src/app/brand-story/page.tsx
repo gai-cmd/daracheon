@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import BrandStoryClient from './BrandStoryClient';
 
 export const dynamic = 'force-dynamic';
@@ -68,5 +69,54 @@ export default async function BrandStoryPage() {
   const pagesData = await readSingleSafe<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
   const data: BrandStoryData | null = pagesData?.brandStory ?? null;
 
-  return <BrandStoryClient data={data} />;
+  // AboutPage JSON-LD — 브랜드 개요 엔티티. AI Overview 가 회사 기원·규모를 직접 인용.
+  const aboutPageJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: "브랜드 스토리 — 대라천 '참'침향",
+    description:
+      "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정.",
+    url: 'https://www.daracheon.com/brand-story',
+    about: {
+      '@type': 'Organization',
+      '@id': 'https://www.daracheon.com/#localbusiness',
+      name: '대라천 ZOEL LIFE Co., Ltd.',
+    },
+  };
+
+  // VideoObject 그룹 — brandStory processTab 영상 (AI 영상 검색 노출)
+  const videoItems = data?.processTab?.videoChapters?.flatMap((ch) => ch.videos) ?? [];
+  const videoJsonLd = videoItems.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '대라천 침향 생산 공정 영상',
+    itemListElement: videoItems.map((v, i) => ({
+      '@type': 'VideoObject',
+      position: i + 1,
+      name: v.title,
+      description: `대라천 침향 생산 공정 — ${v.title}`,
+      contentUrl: `https://drive.google.com/file/d/${v.id}/view`,
+      embedUrl: `https://drive.google.com/file/d/${v.id}/preview`,
+      uploadDate: '2026-04-11',
+      thumbnailUrl: `https://lh3.googleusercontent.com/d/${v.id}=w1280`,
+    })),
+  } : null;
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+      { '@type': 'ListItem', position: 2, name: '브랜드 이야기', item: 'https://www.daracheon.com/brand-story' },
+    ],
+  };
+
+  return (
+    <>
+      <JsonLd data={aboutPageJsonLd} />
+      {videoJsonLd && <JsonLd data={videoJsonLd} />}
+      <JsonLd data={breadcrumbJsonLd} />
+      <BrandStoryClient data={data} />
+    </>
+  );
 }

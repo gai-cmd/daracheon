@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import styles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,65 @@ export const metadata: Metadata = {
   description:
     'ZOEL LIFE(조엘라이프) 회사 소개. 베트남 현지 생산부터 글로벌 유통까지, 완벽한 가치사슬을 구축하는 프리미엄 침향 브랜드.',
   alternates: { canonical: 'https://www.daracheon.com/company' },
+};
+
+// LocalBusiness + Organization + BreadcrumbList 통합 JSON-LD
+// Naver/Google 지식 그래프 카드, "회사 소개 박스" 노출 + AI Overview 엔티티 매칭.
+const companyJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'LocalBusiness',
+      '@id': 'https://www.daracheon.com/#localbusiness',
+      name: '대라천 ZOEL LIFE Co., Ltd.',
+      alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프', '大羅天'],
+      description:
+        '1999년 베트남 하띤 직영 농장에서 시작해 2003년 한국에 본사를 설립한 침향 전문 기업. 원산지·원료·제조·시험 4단계 검증 체계.',
+      url: 'https://www.daracheon.com',
+      logo: 'https://www.daracheon.com/images/logo.png',
+      image: 'https://www.daracheon.com/images/og-default.jpg',
+      telephone: '+82-70-4140-4086',
+      email: 'contact@daracheon.com',
+      foundingDate: '2003',
+      founder: {
+        '@type': 'Person',
+        name: '박병주',
+        jobTitle: '대표',
+        description: '전 식품영양학과 교수, 베트남 농업부 자문위원. 25년간 침향 원목 수확까지 직접 관리.',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '테헤란로 521 파르나스타워 5층',
+        addressLocality: '강남구',
+        addressRegion: '서울특별시',
+        addressCountry: 'KR',
+      },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
+      ],
+      areaServed: ['KR', 'VN'],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: '대라천 침향 제품',
+        url: 'https://www.daracheon.com/products',
+      },
+      sameAs: [
+        'https://www.daracheon.com',
+      ],
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+        { '@type': 'ListItem', position: 2, name: '회사소개', item: 'https://www.daracheon.com/company' },
+      ],
+    },
+  ],
 };
 
 interface CompanyChapter {
@@ -81,6 +141,7 @@ export default async function CompanyPage() {
 
   return (
     <>
+      <JsonLd data={companyJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div

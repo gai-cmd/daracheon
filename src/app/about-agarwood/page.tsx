@@ -47,6 +47,15 @@ const articleJsonLd = {
   image: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
 };
 
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+    { '@type': 'ListItem', position: 2, name: '침향 이야기', item: 'https://www.daracheon.com/about-agarwood' },
+  ],
+};
+
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -89,6 +98,7 @@ export default async function AboutAgarwoodPage() {
     <>
       <JsonLd data={articleJsonLd} />
       <JsonLd data={faqJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <AboutAgarwoodClient data={data} />
     </>
   );

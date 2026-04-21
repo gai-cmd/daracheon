@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
+import JsonLd from '@/components/ui/JsonLd';
 import ProductsClient from './ProductsClient';
 import styles from './page.module.css';
 
@@ -196,6 +197,34 @@ export default async function ProductsPage() {
   const products = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
 
+  // CollectionPage + ItemList — Google/네이버 제품 목록 리치결과, AI 가 "대라천 제품 목록" 질의에 직접 답변 가능.
+  const collectionJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '제품 소개 — 대라천 침향 제품 라인업',
+    url: 'https://www.daracheon.com/products',
+    description: "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업.",
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: products.length,
+      itemListElement: products.slice(0, 20).map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `https://www.daracheon.com/products/${p.slug}`,
+        name: p.name,
+      })),
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
+      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://www.daracheon.com/products' },
+    ],
+  };
+
   const productCategories: ProductCategory[] = [
     { id: 'all', label: '전체', labelEn: 'All' },
     ...sourceCategories.filter((c) => c.id !== 'all'),
@@ -203,6 +232,8 @@ export default async function ProductsPage() {
 
   return (
     <>
+      <JsonLd data={collectionJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* PAGE HERO */}
       <section className={styles.pageHero}>
         <div className={styles.wrap}>
