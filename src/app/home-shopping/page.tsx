@@ -233,7 +233,7 @@ export default async function HomeShoppingPage() {
                   ) : null}
                 </h2>
                 {featured.description && (
-                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 520 }}>
+                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
                     {featured.description}
                   </p>
                 )}
