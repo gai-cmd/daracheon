@@ -52,6 +52,10 @@
   z-index: 2;
   max-width: 900px;
   padding: 0 28px;
+  /* .hero 에 text-align:center 가 걸려있어 h1 · 부제 둘 다 센터정렬
+     되면서 시작점이 서로 다르게 보임. 블록 자체는 flex 로 화면 중앙에
+     배치되게 유지하되, 안의 텍스트는 좌측 기준선으로 통일. */
+  text-align: left;
 }
 
 .heroKicker {
