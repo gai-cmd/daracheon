@@ -69,6 +69,7 @@
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
   max-width: 1400px;
+  word-break: keep-all;
 }
 
 /* ── CHAPTER ── */

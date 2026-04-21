@@ -137,9 +137,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                       <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
                         공식 침향은{' '}
-                        <span style={{ color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                          {(definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)')
-                            .replace(/Aquilaria\s+Agallocha\s+Roxburgh/g, 'Aquilaria\u00A0Agallocha\u00A0Roxburgh')}
+                        <span style={{ color: 'var(--accent)', fontWeight: 500, wordBreak: 'keep-all' }}>
+                          {definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'}
                         </span>
                         입니다.
                       </p>
