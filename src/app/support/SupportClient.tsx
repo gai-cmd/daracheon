@@ -133,10 +133,12 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
         <section className={styles.hero}>
           <div className={styles.wrap}>
             <div className={styles.kicker}>{hero.kicker}</div>
-            <h1>
-              {hero.titleLine1} <em>{hero.titleEmphasis}</em>
-            </h1>
-            <p className={styles.lede}>{hero.lede}</p>
+            <div className={styles.heroMain}>
+              <h1>
+                {hero.titleLine1} <em>{hero.titleEmphasis}</em>
+              </h1>
+              <p className={styles.lede}>{hero.lede}</p>
+            </div>
           </div>
         </section>
       )}

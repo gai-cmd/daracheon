@@ -190,12 +190,14 @@ export default async function MediaPage() {
       <section className={styles.hero}>
         <div className={styles.wrap}>
           <div className={styles.kicker}>Gallery · 미디어</div>
-          <h1>
-            침향 농장
-            <br />
-            <em>이야기</em>
-          </h1>
-          <p className={styles.lede}>영상과 사진으로 만나는 ZOEL LIFE 침향의 생생한 현장.</p>
+          <div className={styles.heroMain}>
+            <h1>
+              침향 농장
+              <br />
+              <em>이야기</em>
+            </h1>
+            <p className={styles.lede}>영상과 사진으로 만나는 ZOEL LIFE 침향의 생생한 현장.</p>
+          </div>
         </div>
       </section>
 

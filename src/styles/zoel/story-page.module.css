@@ -46,12 +46,29 @@
   margin-bottom: 30px;
 }
 
+/* heroMain — /products 히어로와 동일한 좌우 분할 레이아웃.
+   데스크탑(900px+): h1 좌측 1.8fr, .lede 우측 1fr.
+   모바일: 세로 스택. /company /process /media /reviews 등
+   story-page 를 쓰는 페이지에 공통 적용. */
+.heroMain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .heroMain {
+    grid-template-columns: 1.8fr 1fr;
+    gap: 80px;
+  }
+}
+
 .hero h1 {
   font-size: clamp(2.2rem, 5vw, 4.2rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  margin-bottom: 32px;
+  margin-bottom: 0;
   max-width: 18ch;
   color: #fff;
 }
@@ -68,7 +85,9 @@
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
-  max-width: 1400px;
+  /* heroMain 우측 열 내부에 들어가면 자연 너비가 제한되고,
+     단독 렌더링 시에도 한국어 한 줄 가독성을 위해 최대 780px. */
+  max-width: 780px;
   word-break: keep-all;
 }
 

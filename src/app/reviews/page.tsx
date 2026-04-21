@@ -50,23 +50,28 @@ export default async function ReviewsPage() {
     <>
       <JsonLd data={reviewJsonLd} />
 
-      {/* Hero */}
+      {/* Hero — /products 와 동일한 좌우 분할 레이아웃 */}
       <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white">
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-          <p className="section-tag mb-5">TESTIMONIALS</p>
-          <h1 className="section-title-kr text-white mb-5">고객 후기</h1>
-          <p className="text-white/60 text-[0.95rem] leading-8 max-w-2xl mx-auto">
-            ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기
-          </p>
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <div className="flex gap-1 text-gold-500 text-xl">
-              {[...Array(5)].map((_, i) => (
-                <span key={i}>★</span>
-              ))}
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-16">
+          <p className="section-tag mb-6">TESTIMONIALS</p>
+          <div className="grid grid-cols-1 md:grid-cols-[1.8fr_1fr] gap-8 md:gap-20 items-end">
+            <div>
+              <h1 className="section-title-kr text-white mb-5">고객 후기</h1>
+              <div className="flex items-center gap-4">
+                <div className="flex gap-1 text-gold-500 text-xl">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i}>★</span>
+                  ))}
+                </div>
+                <span className="font-display text-3xl text-gold-500">{avgRating}</span>
+              </div>
             </div>
-            <span className="font-display text-3xl text-gold-500">{avgRating}</span>
+            <div>
+              <p className="text-white/70 text-[0.95rem] leading-8 max-w-[780px]">
+                ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기. 인증된 구매 고객 {reviews.length}명의 후기를 모두 공개합니다.
+              </p>
+            </div>
           </div>
-          <p className="text-white/50 text-sm mt-3">인증된 구매 고객 {reviews.length}명의 후기</p>
         </div>
       </section>
 

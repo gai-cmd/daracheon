@@ -54,6 +54,20 @@
   max-width: 780px;
 }
 
+/* heroMain — /products 와 동일한 좌우 분할 (h1 좌 1.8fr · 설명 우 1fr). */
+.heroMain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .heroMain {
+    grid-template-columns: 1.8fr 1fr;
+    gap: 80px;
+  }
+}
+
 /* CHANNELS */
 .channels {
   padding: 20px 0 80px;

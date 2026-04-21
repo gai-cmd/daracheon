@@ -218,25 +218,29 @@ export default async function ProcessPage() {
         />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero.kicker}</div>
-          <h1>
-            {hero.titleLine1}
-            <br />
-            <em>{hero.titleEmphasis}</em>
-          </h1>
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-              fontSize: '0.72rem',
-              letterSpacing: '0.28em',
-              textTransform: 'uppercase',
-              color: 'var(--accent-soft)',
-              marginBottom: 24,
-              maxWidth: 420,
-            }}
-          >
-            {hero.latLabel}
+          <div className={styles.heroMain}>
+            <div>
+              <h1>
+                {hero.titleLine1}
+                <br />
+                <em>{hero.titleEmphasis}</em>
+              </h1>
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.28em',
+                  textTransform: 'uppercase',
+                  color: 'var(--accent-soft)',
+                  marginTop: 18,
+                  maxWidth: 420,
+                }}
+              >
+                {hero.latLabel}
+              </div>
+            </div>
+            <p className={styles.lede}>{hero.lede}</p>
           </div>
-          <p className={styles.lede}>{hero.lede}</p>
         </div>
       </section>
 

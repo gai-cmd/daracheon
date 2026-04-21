@@ -208,12 +208,14 @@ export default async function CompanyPage() {
             </div>
           )}
           <div className={styles.kicker}>{hero.kicker}</div>
-          <h1>
-            {hero.titleLine1}
-            <br />
-            <em>{hero.titleEmphasis}</em>
-          </h1>
-          <p className={styles.lede}>{hero.lede}</p>
+          <div className={styles.heroMain}>
+            <h1>
+              {hero.titleLine1}
+              <br />
+              <em>{hero.titleEmphasis}</em>
+            </h1>
+            <p className={styles.lede}>{hero.lede}</p>
+          </div>
         </div>
       </section>
 
