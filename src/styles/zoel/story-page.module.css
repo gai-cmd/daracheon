@@ -43,7 +43,7 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 /* heroMain — /products 히어로와 동일한 좌우 분할 레이아웃.
@@ -64,7 +64,7 @@
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -85,6 +85,7 @@
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
+  margin-bottom: 36px;
   /* heroMain 우측 열 내부에 들어가면 자연 너비가 제한되고,
      단독 렌더링 시에도 한국어 한 줄 가독성을 위해 최대 780px. */
   max-width: 780px;
@@ -154,6 +155,10 @@
      80ch 정도면 "자연이 수십 년에 걸쳐 빚어낸 신비의 향, …" 같은
      부제 한 줄 출력을 안정적으로 확보. */
   max-width: 80ch;
+  /* 본문에 명시적 줄바꿈(\n) 이 들어오면 그대로 보존. company
+     Chapter 04 처럼 주소·교통·운영·전화 같은 주제별 단순 분리를
+     자연스럽게 표현. 일반 산문은 영향 없음. */
+  white-space: pre-line;
 }
 
 /* 장절 도입부의 이탤릭 부제(<em> 또는 Noto Serif KR italic <p>)는

@@ -52,10 +52,10 @@
 }
 
 .pageHero h1 {
-  font-size: clamp(2rem, 4.2vw, 3.6rem);
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: #fff;
 }
 .pageHero h1 em {
@@ -65,12 +65,13 @@
   font-weight: 400;
 }
 .lede {
-  font-size: 1rem;
-  line-height: 1.85;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
+  margin-bottom: 36px;
   /* 한국어 가독성 — 한 문장이 가능한 한 줄에 들어가도록. */
-  max-width: 720px;
+  max-width: 780px;
 }
 
 /* FILTER BAR */
