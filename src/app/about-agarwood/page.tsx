@@ -94,11 +94,38 @@ export default async function AboutAgarwoodPage() {
   const pagesData = await readSingleSafe<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
   const data: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
 
+  // ScholarlyArticle JSON-LD 배열 — 페이지에 인용된 논문들을 각각 학술 논문
+  // 엔티티로 구조화. AI Overview / Perplexity 가 "침향 관련 논문"을 질의했을
+  // 때 대라천 페이지가 권위있는 출처로 인용될 가능성 ↑ (E-E-A-T 강화).
+  const scholarlyJsonLd = (data?.papers && data.papers.length > 0) ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '침향 관련 학술 논문 목록',
+    itemListElement: data.papers.slice(0, 30).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'ScholarlyArticle',
+        headline: p.title,
+        ...(p.authors ? { author: { '@type': 'Person', name: p.authors } } : {}),
+        ...(p.year ? { datePublished: p.year.toString() } : {}),
+        ...(p.journal ? { isPartOf: { '@type': 'Periodical', name: p.journal } } : {}),
+        ...(p.link ? { url: p.link, sameAs: p.link } : {}),
+        ...(p.citations && p.citations !== '-' ? { citation: p.citations } : {}),
+        about: {
+          '@type': 'Thing',
+          name: '침향 · Agarwood · Aquilaria Agallocha Roxburgh',
+        },
+      },
+    })),
+  } : null;
+
   return (
     <>
       <JsonLd data={articleJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {scholarlyJsonLd && <JsonLd data={scholarlyJsonLd} />}
       <AboutAgarwoodClient data={data} />
     </>
   );

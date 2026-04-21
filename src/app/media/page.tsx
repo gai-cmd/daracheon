@@ -218,7 +218,7 @@ export default async function MediaPage() {
                     marginTop: 30,
                   }}
                 >
-                  {videos.map((item) => (
+                  {videos.map((item, vIdx) => (
                     <Link
                       key={item.id}
                       href={item.url ?? '#'}
@@ -234,7 +234,14 @@ export default async function MediaPage() {
                         }}
                       >
                         {item.image && (
-                          <Image src={item.image} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                            priority={vIdx === 0}
+                            style={{ objectFit: 'cover' }}
+                          />
                         )}
                         <div
                           style={{

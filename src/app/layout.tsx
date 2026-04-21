@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/ui/JsonLd';
@@ -76,6 +76,21 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
+  // Naver 웹마스터 / Google Search Console 인증 메타 — 실제 코드 받으면 교체.
+  // verification: {
+  //   google: '...',
+  //   other: { 'naver-site-verification': '...' },
+  // },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fdfbf7' }, // lx-ivory
+    { media: '(prefers-color-scheme: dark)', color: '#0a0b10' },  // lx-black
+  ],
+  colorScheme: 'light dark',
 };
 
 const organizationJsonLd = {
