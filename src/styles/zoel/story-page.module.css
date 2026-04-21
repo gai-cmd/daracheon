@@ -129,5 +129,18 @@
   line-height: 1.95;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
-  max-width: 62ch;
+  /* 한국어 한 줄에 ~55자 들어가도록 여유 확보.
+     62ch 는 영문 기준 적정 폭이지만, 한국어는 글자 폭이 'ch' 단위보다
+     넓어 실제로 40~45자 만 들어가서 문장이 불필요하게 2행으로 잘림.
+     80ch 정도면 "자연이 수십 년에 걸쳐 빚어낸 신비의 향, …" 같은
+     부제 한 줄 출력을 안정적으로 확보. */
+  max-width: 80ch;
+}
+
+/* 장절 도입부의 이탤릭 부제(<em> 또는 Noto Serif KR italic <p>)는
+   본문보다 약간 더 긴 한 줄을 허용. */
+.chapterBody p em,
+.chapterBody p[style*="italic"],
+.chapterBody > p:first-of-type {
+  max-width: 92ch;
 }

@@ -94,14 +94,17 @@ h1, h2, h3, h4, h5, h6, p, li, a, span, div, button, label, th, td, figcaption, 
   overflow-wrap: break-word;
 }
 
-/* 본문 단락은 text-wrap: pretty 로 마지막 줄 고아 글자(orphan) 방지 */
-p, li, blockquote, figcaption {
+/* ━━━ 한국어 본문·헤드라인 줄바꿈 정책 ━━━
+   한국어는 문장 끝 마침표까지 가능한 한 줄로 이어서 보여주는 편이
+   가독성이 좋고, 어절 중간 분리는 어색. text-wrap: pretty 는:
+   - 마지막 줄 고아 글자(orphan) 방지
+   - 자연스러운 어절 경계에서만 분리
+   - balance 와 달리 각 줄을 균등하게 만들지 않음 (한국어 장문 제목에
+     balance 를 쓰면 짧고 어색한 줄쪼개기가 발생)
+   그래서 본문·헤드라인·인용 모두 pretty 로 통일한다. */
+p, li, blockquote, figcaption, h1, h2, h3, h4, h5, h6,
+.title-kr, .title-en, .lede, .subtitle {
   text-wrap: pretty;
-}
-
-/* 헤드라인은 balance 로 줄별 길이를 균형있게 — 히어로 카피 한국어에 특히 효과적 */
-h1, h2, h3, .title-kr, .title-en {
-  text-wrap: balance;
 }
 
 ::selection { background: rgba(212,168,67,0.28); color: var(--lx-black); }

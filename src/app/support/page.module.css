@@ -50,7 +50,8 @@
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 300;
-  max-width: 600px;
+  /* 한국어 가독성 — 한 문장이 가능한 한 줄에 들어가도록. */
+  max-width: 780px;
 }
 
 /* CHANNELS */
@@ -177,7 +178,7 @@
   line-height: 1.85;
   font-weight: 300;
   margin-bottom: 36px;
-  max-width: 560px;
+  max-width: 720px;
 }
 
 .inq {

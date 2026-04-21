@@ -69,7 +69,8 @@
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 300;
-  max-width: 460px;
+  /* 한국어 가독성 — 한 문장이 가능한 한 줄에 들어가도록. */
+  max-width: 720px;
 }
 
 /* FILTER BAR */
