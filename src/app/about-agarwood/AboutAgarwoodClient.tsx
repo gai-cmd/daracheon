@@ -133,15 +133,16 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       style={{
                         marginTop: 26,
                         padding: '22px 24px',
-                        border: `2px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.35)'}`,
-                        background: hoveredDefinitionBox ? 'rgba(212,168,67,0.12)' : 'rgba(212,168,67,0.05)',
+                        border: `3px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.5)'}`,
+                        background: hoveredDefinitionBox ? 'rgba(212,168,67,0.15)' : 'rgba(212,168,67,0.08)',
                         transition: 'all 300ms ease',
                         transform: hoveredDefinitionBox ? 'scale(1.02)' : 'scale(1)',
                         cursor: 'pointer',
+                        boxShadow: hoveredDefinitionBox ? '0 8px 32px rgba(212,168,67,0.15)' : '0 4px 16px rgba(212,168,67,0.05)',
                       }}
                     >
                       <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 600 }}>
-                        진짜 침향, 이제는 학명을 반드시 확인하세요.
+                        진짜 침향, 이제는 학명/품종을 반드시 확인하세요.
                       </p>
                       <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
                         공식 침향은{' '}
