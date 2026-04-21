@@ -44,15 +44,17 @@ export default function AboutAgarwoodClient({ data }: Props) {
         />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero?.sectionTag ?? 'Agarwood Story · 침향 이야기'}</div>
-          <h1>
-            {hero?.titleKr ?? '이젠 진짜 침향,'}
-            <br />
-            <em>{hero?.titleEn ?? '학명부터 확인하세요'}</em>
-          </h1>
-          <p className={styles.lede}>
-            {hero?.subtitle ??
-              "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh."}
-          </p>
+          <div className={styles.heroMain}>
+            <h1>
+              {hero?.titleKr ?? '이젠 진짜 침향,'}
+              <br />
+              <em>{hero?.titleEn ?? '학명부터 확인하세요'}</em>
+            </h1>
+            <p className={styles.lede}>
+              {hero?.subtitle ??
+                "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh."}
+            </p>
+          </div>
         </div>
       </section>
 
