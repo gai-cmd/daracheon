@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData } from '@/lib/db';
+import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 interface MediaItem {
@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const media = await readData('media');
+    const media = await readDataUncached('media');
     return NextResponse.json({
       media,
       total: media.length,
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const media = await readData('media');
+    const media = await readDataUncached('media');
 
     const newItem: MediaItem = {
       id: body.id || `m-${Date.now()}`,
@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const media = await readData('media');
+    const media = await readDataUncached('media');
     const index = media.findIndex((m) => m.id === body.id);
 
     if (index === -1) {
@@ -129,7 +129,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const media = await readData('media');
+    const media = await readDataUncached('media');
     const index = media.findIndex((m) => m.id === body.id);
 
     if (index === -1) {
