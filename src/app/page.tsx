@@ -73,12 +73,12 @@ const DEFAULT_HERO: HomeHero = {
 const DEFAULT_STATS: HomeStat[] = [
   { value: '25yrs', label: 'Research' },
   { value: '400만+', label: 'Trees' },
-  { value: '20ha', label: 'Farm' },
+  { value: '200ha', label: 'Farm' },
   { value: '8건', label: 'Certifications' },
 ];
 
 const DEFAULT_VERIFICATION = [
-  { num: '01', label: '원산지 — 베트남 하띤 직영 20ha', meta: 'CITES' },
+  { num: '01', label: '원산지 — 베트남 하띤 직영 200ha', meta: 'CITES' },
   { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
@@ -164,7 +164,7 @@ const DEFAULT_PROCESS: HomeProcess = {
   ],
 };
 
-const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 20ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'];
+const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'];
 
 export const metadata: Metadata = {
   title: 'ZOEL LIFE — 25년 검증된 침향, 대라천 참침향',

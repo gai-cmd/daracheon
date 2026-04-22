@@ -96,7 +96,7 @@ const DEFAULT_HERO: HomeHero = {
 const DEFAULT_STATS: HomeStat[] = [
   { value: '25yrs', label: 'Research' },
   { value: '400만+', label: 'Trees' },
-  { value: '20ha', label: 'Farm' },
+  { value: '200ha', label: 'Farm' },
   { value: '8건', label: 'Certifications' },
 ];
 
@@ -156,11 +156,11 @@ const DEFAULT_PROCESS: HomeProcess = {
     '벌목 및 원물 정밀 채취',
     '최고급 제품 가공 및 검수',
   ],
-  durations: ['6 — 12 Months', 'Ha Tinh 20ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'],
+  durations: ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'],
 };
 
 const DEFAULT_VERIFICATION: VerificationRow[] = [
-  { num: '01', label: '원산지 — 베트남 하띤 직영 20ha', meta: 'CITES' },
+  { num: '01', label: '원산지 — 베트남 하띤 직영 200ha', meta: 'CITES' },
   { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
@@ -388,7 +388,7 @@ export default function AdminHomePage() {
           </SectionCard>
 
           {/* Stats */}
-          <SectionCard title="Trust Strip · 4 통계 (25년·400만+·20ha·8건)" onSave={() => saveSection('stats', { stats })} saving={saving === 'stats'}>
+          <SectionCard title="Trust Strip · 4 통계 (25년·400만+·200ha·8건)" onSave={() => saveSection('stats', { stats })} saving={saving === 'stats'}>
             <div className="space-y-3">
               {stats.map((stat, i) => (
                 <div key={i} className="grid grid-cols-[auto_1fr_2fr_auto] items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
@@ -604,7 +604,7 @@ export default function AdminHomePage() {
               {verification.map((r, i) => (
                 <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
                   <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 20ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 200ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
                   <input value={r.meta} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], meta: e.target.value }; setVerification(n); }} placeholder="메타 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
                   <div className="flex gap-1">
                     <button type="button" onClick={() => setVerification(moveItem(verification, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
