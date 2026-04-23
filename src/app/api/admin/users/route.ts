@@ -4,6 +4,7 @@ import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { hashPassword, type AdminUser } from '@/lib/admin-users';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -176,12 +177,32 @@ export async function DELETE(request: Request) {
     if (idx === -1) {
       return NextResponse.json({ success: false, message: '계정을 찾을 수 없습니다.' }, { status: 404 });
     }
+
+    // Lockout 방지: 마지막 super_admin 은 삭제 불가. 시드 계정도 없어진
+    // 상태에서 유일한 super_admin 을 제거하면 어드민 콘솔에 영구 로그인 불가.
+    const target = users[idx];
+    if (target.role === 'super_admin') {
+      const superAdminCount = users.filter((u) => u.role === 'super_admin').length;
+      if (superAdminCount <= 1) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: '마지막 super_admin 계정은 삭제할 수 없습니다. 먼저 다른 super_admin 을 생성하세요.',
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    const snapId = await snapshotBeforeDestructive(undefined, `admin-user delete ${normalized}`);
+
     users.splice(idx, 1);
     await writeData('admin-users', users);
 
     await logAdmin('settings', 'delete', {
       targetId: normalized,
       summary: `관리자 계정 삭제: ${normalized}`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
 
     return NextResponse.json({ success: true, message: '삭제되었습니다.' });

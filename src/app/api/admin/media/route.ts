@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 
 interface MediaItem {
   id: string;
@@ -139,12 +140,15 @@ export async function DELETE(request: Request) {
       );
     }
 
+    const snapId = await snapshotBeforeDestructive(undefined, `media delete ${body.id}`);
+
     const removed = media.splice(index, 1)[0];
     await writeData('media', media);
 
     await logAdmin('media', 'delete', {
       targetId: body.id,
       summary: `미디어 삭제: ${removed?.title ?? body.id}`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
 
     return NextResponse.json({

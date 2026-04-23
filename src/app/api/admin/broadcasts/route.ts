@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 
 function revalidateBroadcasts() {
   revalidatePath('/', 'layout');
@@ -205,12 +206,15 @@ export async function DELETE(request: Request) {
         { status: 404 }
       );
     }
+    const snapId = await snapshotBeforeDestructive(undefined, `broadcasts delete ${body.id}`);
+
     const removed = broadcasts.splice(index, 1)[0];
     await writeData('broadcasts', broadcasts);
     revalidateBroadcasts();
     await logAdmin('broadcasts', 'delete', {
       targetId: body.id,
       summary: `방송 삭제: ${removed?.channel ?? body.id}`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
     return NextResponse.json({ success: true, message: '방송이 삭제되었습니다.' });
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 
 function revalidateFaq() {
   revalidatePath('/support', 'layout');
@@ -154,6 +155,8 @@ export async function DELETE(request: Request) {
       );
     }
 
+    const snapId = await snapshotBeforeDestructive(undefined, `faq delete ${body.id}`);
+
     const removed = faq.splice(index, 1)[0];
     await writeData('faq', faq);
     revalidateFaq();
@@ -161,6 +164,7 @@ export async function DELETE(request: Request) {
     await logAdmin('faq', 'delete', {
       targetId: body.id,
       summary: `FAQ 삭제: ${removed?.question.slice(0, 40) ?? body.id}`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
 
     return NextResponse.json({
