@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
@@ -49,6 +50,7 @@ export async function PUT(req: NextRequest) {
   };
 
   await writeSingle('announcement', updated);
+  revalidatePath('/', 'layout');
   await logAdmin('announcement', 'update', {
     summary: `공지 배너 ${updated.enabled ? '활성화' : '비활성화'}: ${updated.text.slice(0, 30)}`,
   });

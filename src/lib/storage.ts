@@ -17,7 +17,6 @@ const EXT_MAP: Record<string, string> = {
   'image/jpg': 'jpg',
   'image/webp': 'webp',
   'image/gif': 'gif',
-  'image/svg+xml': 'svg',
 };
 
 function safeSubdir(raw: string): string {

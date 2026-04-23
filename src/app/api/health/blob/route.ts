@@ -1,13 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { readSingle, writeSingle } from '@/lib/db';
 import { list, put, del } from '@vercel/blob';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 // 자가진단 — writeSingle/readSingle 경로 전체를 E2E 검증.
 // 실패 원인 분리용으로 "raw blob put→fetch" 경로도 나란히 검증.
-export async function GET() {
+// 인프라/DB 구조 힌트를 공격자에게 주지 않도록 관리자만 접근 가능.
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  const session = await verifySessionToken(token);
+  if (!session) {
+    return NextResponse.json(
+      { success: false, message: '인증이 필요합니다.' },
+      { status: 401 }
+    );
+  }
   const steps: Array<{ step: string; ok: boolean; detail?: string; error?: string }> = [];
   const testKey = '__health_probe__';
   const testValue = { timestamp: new Date().toISOString(), nonce: Math.random().toString(36).slice(2) };

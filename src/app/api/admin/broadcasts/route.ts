@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+
+function revalidateBroadcasts() {
+  revalidatePath('/', 'layout');
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -110,6 +115,7 @@ export async function POST(request: Request) {
     const broadcasts = await readDataUncached('broadcasts');
     broadcasts.push(item);
     await writeData('broadcasts', broadcasts);
+    revalidateBroadcasts();
 
     await logAdmin('broadcasts', 'create', {
       targetId: item.id,
@@ -165,6 +171,7 @@ export async function PUT(request: Request) {
     merged.updatedAt = new Date().toISOString();
     broadcasts[index] = merged as unknown as Broadcast;
     await writeData('broadcasts', broadcasts);
+    revalidateBroadcasts();
 
     await logAdmin('broadcasts', 'update', {
       targetId: id,
@@ -200,6 +207,7 @@ export async function DELETE(request: Request) {
     }
     const removed = broadcasts.splice(index, 1)[0];
     await writeData('broadcasts', broadcasts);
+    revalidateBroadcasts();
     await logAdmin('broadcasts', 'delete', {
       targetId: body.id,
       summary: `방송 삭제: ${removed?.channel ?? body.id}`,

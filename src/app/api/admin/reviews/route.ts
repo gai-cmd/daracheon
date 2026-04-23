@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import type { Review } from '@/data/reviews';
+
+function revalidateReviews() {
+  revalidatePath('/reviews', 'layout');
+  revalidatePath('/', 'layout');
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -70,6 +76,7 @@ export async function PATCH(request: Request) {
     }
 
     await writeData('reviews', reviews);
+    revalidateReviews();
 
     await logAdmin('reviews', 'bulk_update', {
       summary: `리뷰 일괄 ${body.verified ? '승인' : '미승인'}: ${updatedCount}건`,
@@ -112,6 +119,7 @@ export async function PUT(request: Request) {
 
     reviews[index] = { ...reviews[index], ...body };
     await writeData('reviews', reviews);
+    revalidateReviews();
 
     await logAdmin('reviews', 'update', {
       targetId: body.id,
@@ -154,6 +162,7 @@ export async function DELETE(request: Request) {
 
     const removed = reviews.splice(index, 1)[0];
     await writeData('reviews', reviews);
+    revalidateReviews();
 
     await logAdmin('reviews', 'delete', {
       targetId: body.id,

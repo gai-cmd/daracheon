@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+
+function revalidateFaq() {
+  revalidatePath('/support', 'layout');
+}
 
 export type FaqCategory = '제품' | '배송/결제' | '성분' | '기타';
 
@@ -58,6 +63,7 @@ export async function POST(request: Request) {
 
     faq.push(newItem);
     await writeData('faq', faq);
+    revalidateFaq();
 
     await logAdmin('faq', 'create', {
       targetId: newItem.id,
@@ -107,6 +113,7 @@ export async function PUT(request: Request) {
 
     faq[index] = updated;
     await writeData('faq', faq);
+    revalidateFaq();
 
     await logAdmin('faq', 'update', {
       targetId: body.id,
@@ -149,6 +156,7 @@ export async function DELETE(request: Request) {
 
     const removed = faq.splice(index, 1)[0];
     await writeData('faq', faq);
+    revalidateFaq();
 
     await logAdmin('faq', 'delete', {
       targetId: body.id,

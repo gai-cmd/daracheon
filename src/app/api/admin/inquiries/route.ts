@@ -162,10 +162,11 @@ export async function PATCH(request: Request) {
     }
 
     const replyUpdated = typeof body.reply === 'string';
+    // PII (고객 이름) 는 감사 로그 summary 에서 제외. targetId 로 역추적.
     await logAdmin('inquiries', replyUpdated ? 'reply' : 'status_change', {
       targetId: body.id,
       summary: replyUpdated
-        ? `문의 답변 작성: ${updated.name ?? body.id}`
+        ? `문의 답변 작성 (${body.id})`
         : `문의 상태 변경: ${previousStatus} → ${body.status}`,
       meta: { previousStatus, newStatus: body.status },
     });
@@ -205,12 +206,12 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const removed = inquiries.splice(index, 1)[0];
+    inquiries.splice(index, 1);
     await writeData('inquiries', inquiries);
 
     await logAdmin('inquiries', 'delete', {
       targetId: body.id,
-      summary: `문의 삭제: ${removed?.name ?? body.id}`,
+      summary: `문의 삭제 (${body.id})`,
     });
 
     return NextResponse.json({

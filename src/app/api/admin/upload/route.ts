@@ -6,13 +6,13 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+// SVG 는 script 를 포함할 수 있어 stored XSS 경로가 됨. 제거.
 const ALLOWED_MIME = new Set([
   'image/png',
   'image/jpeg',
   'image/jpg',
   'image/webp',
   'image/gif',
-  'image/svg+xml',
 ]);
 
 export async function POST(request: Request) {

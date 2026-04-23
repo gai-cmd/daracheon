@@ -1,7 +1,34 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { readData, writeData } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
+
+// IP 기반 rate limit: 1시간당 5건. process-local 이라 분산/서버리스에선
+// 불완전하지만 단일 인스턴스 기준 자동 봇 투입은 차단. 더 강한 보호는
+// Vercel KV 나 Cloudflare Turnstile 연동 필요.
+const RATE_WINDOW_MS = 60 * 60 * 1000;
+const RATE_MAX = 5;
+const rateBucket = new Map<string, number[]>();
+
+function clientIp(req: NextRequest): string {
+  const fwd = req.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim();
+  const real = req.headers.get('x-real-ip');
+  if (real) return real;
+  return 'unknown';
+}
+
+function checkRate(ip: string): boolean {
+  const now = Date.now();
+  const history = (rateBucket.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (history.length >= RATE_MAX) {
+    rateBucket.set(ip, history);
+    return false;
+  }
+  history.push(now);
+  rateBucket.set(ip, history);
+  return true;
+}
 
 interface Inquiry {
   id: string;
@@ -13,6 +40,7 @@ interface Inquiry {
   message: string;
   date: string;
   status: string;
+  createdAt?: string;
 }
 
 const contactSchema = z.object({
@@ -32,13 +60,37 @@ const categoryLabel: Record<string, string> = {
   other: '기타',
 };
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const ip = clientIp(request);
+    if (!checkRate(ip)) {
+      return NextResponse.json(
+        { success: false, message: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const validated = contactSchema.parse(body);
 
     const inquiries = await readData('inquiries');
 
+    // 동일 이메일 1시간 내 중복 투입 차단 (봇이 이메일만 바꿔가며 공격하면
+    // 막을 수 없으므로 IP rate limit 과 함께 사용)
+    const cutoff = Date.now() - RATE_WINDOW_MS;
+    const recentByEmail = inquiries.filter((inq) => {
+      if (inq.email !== validated.email) return false;
+      const ts = inq.createdAt ? new Date(inq.createdAt).getTime() : NaN;
+      return Number.isFinite(ts) && ts > cutoff;
+    });
+    if (recentByEmail.length > 0) {
+      return NextResponse.json(
+        { success: false, message: '같은 이메일로는 1시간 내 다시 접수할 수 없습니다.' },
+        { status: 429 }
+      );
+    }
+
+    const nowIso = new Date().toISOString();
     const newInquiry: Inquiry = {
       id: `inq-${Date.now()}`,
       name: validated.name,
@@ -47,14 +99,16 @@ export async function POST(request: Request) {
       category: validated.category,
       subject: validated.subject,
       message: validated.message,
-      date: new Date().toISOString().split('T')[0],
+      date: nowIso.split('T')[0],
       status: 'new',
+      createdAt: nowIso,
     };
 
     inquiries.push(newInquiry);
     await writeData('inquiries', inquiries);
 
-    console.log('[Contact Form] 새 문의 접수:', newInquiry.id);
+    // ID 만 로그. 이름/이메일/메시지는 감사 로그/모니터링에 남기지 않음.
+    console.log('[Contact Form] 새 문의 접수 id=%s', newInquiry.id);
 
     // 고객 접수 확인 메일 (dry-run 허용)
     const subjectLine = validated.subject ? `[${validated.subject}] ` : '';

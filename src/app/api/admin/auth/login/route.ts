@@ -9,7 +9,7 @@ import {
 import { readData, writeData } from '@/lib/db';
 import type { AuditEntry } from '@/lib/audit';
 import { verifyPassword, type AdminUser } from '@/lib/admin-users';
-import { verifyTOTP } from '@/lib/totp';
+import { verifyTOTPOnce } from '@/lib/totp';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
                 { status: 401 }
               );
             }
-            const ok = verifyTOTP(user.totpSecret, totp.replace(/\s+/g, ''));
+            const ok = verifyTOTPOnce(normalizedEmail, user.totpSecret, totp.replace(/\s+/g, ''));
             if (!ok) {
               user.failedAttempts = (user.failedAttempts ?? 0) + 1;
               if (user.failedAttempts >= MAX_ATTEMPTS) {
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
     });
     response.cookies.set(SESSION_COOKIE, token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       maxAge: SESSION_MAX_AGE_SECONDS,

@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import type { Product, ProductVariant } from '@/data/products';
+
+function revalidateProducts() {
+  revalidatePath('/products', 'layout');
+  revalidatePath('/products/[slug]', 'layout');
+  revalidatePath('/', 'layout');
+}
 
 function validateAndNormalizeVariants(raw: unknown): ProductVariant[] | undefined {
   if (!Array.isArray(raw)) return undefined;
@@ -87,6 +94,7 @@ export async function POST(request: Request) {
 
     products.push(newProduct);
     await writeData('products', products);
+    revalidateProducts();
 
     await logAdmin('products', 'create', {
       targetId: newProduct.id,
@@ -137,6 +145,7 @@ export async function PUT(request: Request) {
     };
     products[index] = updatedProduct;
     await writeData('products', products);
+    revalidateProducts();
 
     await logAdmin('products', 'update', {
       targetId: body.id,
@@ -179,6 +188,7 @@ export async function DELETE(request: Request) {
 
     const removed = products.splice(index, 1)[0];
     await writeData('products', products);
+    revalidateProducts();
 
     await logAdmin('products', 'delete', {
       targetId: body.id,

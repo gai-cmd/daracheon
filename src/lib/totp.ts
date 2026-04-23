@@ -71,10 +71,12 @@ export function generateTOTP(
   return code;
 }
 
+// window=0 : 현재 period 만 허용(30초). window=1 이면 ±30초 = 총 90초
+// 동안 코드 재사용 가능해 RFC 6238 권장보다 약함.
 export function verifyTOTP(
   secretBase32: string,
   token: string,
-  { window = 1, period = DEFAULT_PERIOD } = {}
+  { window = 0, period = DEFAULT_PERIOD } = {}
 ): boolean {
   const cleaned = token.replace(/\D/g, '');
   if (cleaned.length !== DEFAULT_DIGITS) return false;
@@ -86,6 +88,32 @@ export function verifyTOTP(
     }
   }
   return false;
+}
+
+// 이미 소비된 (email, code) 쌍을 period 간 저장해 replay 공격 차단.
+// process-local 이라 분산 환경에선 불완전하지만 단일 인스턴스 재사용은 막음.
+const usedTotp = new Map<string, number>();
+
+export function verifyTOTPOnce(
+  email: string,
+  secretBase32: string,
+  token: string,
+  opts?: { window?: number; period?: number }
+): boolean {
+  const cleaned = token.replace(/\D/g, '');
+  const key = `${email.toLowerCase()}:${cleaned}`;
+  const now = Date.now();
+  const period = (opts?.period ?? DEFAULT_PERIOD) * 1000;
+
+  // 오래된 항목 청소
+  for (const [k, ts] of usedTotp) {
+    if (now - ts > period * 2) usedTotp.delete(k);
+  }
+
+  if (usedTotp.has(key)) return false;
+  const ok = verifyTOTP(secretBase32, token, opts);
+  if (ok) usedTotp.set(key, now);
+  return ok;
 }
 
 export function buildOtpauthUrl(

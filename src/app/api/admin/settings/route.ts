@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
@@ -6,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const company = readSingle<Record<string, unknown>>('company');
+    const company = await readSingle<Record<string, unknown>>('company');
     if (!company) {
       return NextResponse.json(
         { success: false, message: '회사 정보를 찾을 수 없습니다.' },
@@ -27,9 +28,11 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
 
-    const existing = readSingle<Record<string, unknown>>('company');
+    const existing = (await readSingle<Record<string, unknown>>('company')) ?? {};
     const updated = { ...existing, ...body };
     await writeSingle('company', updated);
+    revalidatePath('/company', 'layout');
+    revalidatePath('/', 'layout');
 
     await logAdmin('settings', 'update', {
       summary: '회사 정보 업데이트',

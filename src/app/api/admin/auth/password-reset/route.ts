@@ -15,7 +15,9 @@ interface ResetToken {
   used?: boolean;
 }
 
-const TOKEN_TTL_MINUTES = 60;
+// 15분으로 축소. 이메일 경유 토큰은 로그/프록시/전달 경로에서 노출될 수
+// 있으므로 공격자가 재사용할 시간을 최소화.
+const TOKEN_TTL_MINUTES = 15;
 
 function hashToken(raw: string): string {
   return crypto.createHash('sha256').update(raw).digest('hex');
@@ -137,7 +139,9 @@ export async function PUT(request: Request) {
     }
     await writeData('admin-users', users);
 
-    tokens[matchIdx] = { ...tokens[matchIdx], used: true };
+    // 사용된 토큰은 used 플래그 대신 즉시 삭제. 공격자가 토큰 DB 를
+    // 훔쳐도 재활용 불가.
+    tokens.splice(matchIdx, 1);
     await writeData('password-reset-tokens', tokens);
 
     await logAdmin('auth', 'update', {

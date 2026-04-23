@@ -33,7 +33,20 @@ import { revalidateTag, unstable_cache } from 'next/cache';
  */
 
 const DB_DIR = path.join(process.cwd(), 'data', 'db');
-const BLOB_PREFIX = 'db/';
+// BLOB_DATA_PREFIX: Vercel Blob 은 public access 만 지원하므로 경로가 예측
+// 가능하면 PII JSON (inquiries, admin-users, password-reset-tokens)이
+// 공개 URL 로 유출됨. 운영에서는 반드시 추측 불가한 긴 랜덤 값으로 설정:
+//   node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
+const BLOB_DATA_PREFIX_RAW = process.env.BLOB_DATA_PREFIX ?? 'db';
+const BLOB_PREFIX = `${BLOB_DATA_PREFIX_RAW.replace(/[^a-zA-Z0-9_-]/g, '')}/`;
+
+if (process.env.VERCEL && BLOB_DATA_PREFIX_RAW === 'db') {
+  console.warn(
+    '[db] WARNING: BLOB_DATA_PREFIX 가 설정되지 않아 db/*.json 파일이 ' +
+      '예측 가능한 공개 URL 로 노출됩니다. PII 유출 위험이 있으므로 ' +
+      'Vercel 환경변수에 랜덤 값을 지정하세요.'
+  );
+}
 
 const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
