@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 
 interface Inquiry {
   id: string;
@@ -206,12 +207,17 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // 고객 PII 삭제 전 자동 스냅샷 — 실수·악의적 삭제 시 즉시 복원 가능.
+    // 실패해도 삭제는 진행 (백업이 데이터 삭제를 막으면 안 됨).
+    const snapId = await snapshotBeforeDestructive(undefined, `inquiries delete ${body.id}`);
+
     inquiries.splice(index, 1);
     await writeData('inquiries', inquiries);
 
     await logAdmin('inquiries', 'delete', {
       targetId: body.id,
       summary: `문의 삭제 (${body.id})`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
 
     return NextResponse.json({

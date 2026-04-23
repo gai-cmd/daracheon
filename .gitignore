@@ -46,21 +46,10 @@ data/db/
 !/public/uploads/misc/
 /public/uploads/**/*
 !/public/uploads/**/.gitkeep
-# misc/ 는 큐레이션된 공개 자산(인증서·브랜드 이미지). 사용자 업로드가
-# 아니라 저장소에 포함되어 모든 배포에 함께 나가야 한다. 파일을 추가할
-# 때는 git add 로 명시적으로 올린다.
-!/public/uploads/misc/*.jpg
-!/public/uploads/misc/*.jpeg
-!/public/uploads/misc/*.png
-!/public/uploads/misc/*.webp
-!/public/uploads/misc/*.svg
-
-.vercel
-.env*.local
+# misc/ 는 큐레이션된 공개 자산(인증서·브랜드 이미지).
+# 사용자 업로드가 아니라 저장소에 포함되어 모든 배포에 함께 나가야 한다.
+!/public/uploads/misc/**
 
 # try-n account credentials (per-project isolation, never commit)
 .vercel-token
 .backup-migration/
-
-.vercel
-.env*.local

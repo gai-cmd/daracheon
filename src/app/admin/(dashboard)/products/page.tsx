@@ -128,13 +128,16 @@ export default function AdminProductsPage() {
   }
 
   function openAdd() {
+    // 카테고리 기본값을 productCategories 첫 항목('all' 제외)로 동적 설정.
+    // 하드코딩('원목')이 실제 등록된 카테고리와 불일치해 렌더 필터에서 누락되는 사고 방지.
+    const firstReal = productCategories.find((c) => c.id !== 'all');
     setEditingProduct({
       id: '',
       slug: '',
       name: '',
       nameEn: '',
-      category: '원목',
-      categoryEn: '',
+      category: firstReal?.id ?? '',
+      categoryEn: firstReal?.labelEn ?? '',
       badge: '',
       price: 0,
       priceDisplay: '',

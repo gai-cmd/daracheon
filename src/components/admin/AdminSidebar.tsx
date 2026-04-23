@@ -34,6 +34,7 @@ const navItems: NavItem[] = [
   { label: '계정 관리', href: '/admin/users', icon: '⦿', superAdminOnly: true },
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },
   { label: 'DB 관리', href: '/admin/db', icon: '▦', superAdminOnly: true },
+  { label: '백업 & 복원', href: '/admin/backup', icon: '⎔', superAdminOnly: true },
   { label: '설정', href: '/admin/settings', icon: '⚙' },
 ];
 

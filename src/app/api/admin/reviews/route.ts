@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { readData, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Review } from '@/data/reviews';
 
 function revalidateReviews() {
@@ -160,6 +161,8 @@ export async function DELETE(request: Request) {
       );
     }
 
+    const snapId = await snapshotBeforeDestructive(undefined, `reviews delete ${body.id}`);
+
     const removed = reviews.splice(index, 1)[0];
     await writeData('reviews', reviews);
     revalidateReviews();
@@ -167,6 +170,7 @@ export async function DELETE(request: Request) {
     await logAdmin('reviews', 'delete', {
       targetId: body.id,
       summary: `리뷰 삭제: ${removed?.author ?? body.id}`,
+      meta: snapId ? { preDeleteSnapshot: snapId } : undefined,
     });
 
     return NextResponse.json({

@@ -103,7 +103,12 @@ export default async function ReviewsPage() {
                         <span className="text-[0.65rem] text-green-600 tracking-wider">✓ 인증 구매</span>
                       )}
                     </div>
-                    <p className="text-sm text-neutral-600">{review.author}</p>
+                    <p className="text-sm text-neutral-600">
+                      {review.author}
+                      {review.age && (
+                        <span className="ml-2 text-xs text-neutral-400">· {review.age}</span>
+                      )}
+                    </p>
                   </div>
                 </article>
               </RevealOnScroll>

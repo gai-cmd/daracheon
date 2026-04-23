@@ -351,6 +351,15 @@ export default async function HomeShoppingPage() {
                         >
                           ● LIVE
                         </a>
+                      ) : b.status === 'ended' && b.vodUrl ? (
+                        <a
+                          href={b.vodUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.btnNotify}
+                        >
+                          다시보기 →
+                        </a>
                       ) : (
                         <span className={styles.schedStatus}>{STATUS_LABEL[b.status]}</span>
                       )}

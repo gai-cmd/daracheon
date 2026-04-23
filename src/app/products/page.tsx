@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readDataSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsClient from './ProductsClient';
@@ -193,6 +193,15 @@ const DEFAULT_PRODUCTS: Product[] = [
 export default async function ProductsPage() {
   const dbProducts = await readDataSafe<Product>('products');
   const dbCategories = await readDataSafe<ProductCategory>('productCategories');
+  // 인증 배지는 관리자 /admin/pages/home 의 certs 섹션과 공유 —
+  // 한 곳에서 편집하면 홈·제품 페이지 모두 반영된다.
+  const pagesData = await readSingleSafe<{
+    home?: { certs?: Array<{ mark: string; name: string; sub: string }> };
+  }>('pages');
+  const homeCerts = pagesData?.home?.certs ?? [];
+  const certs = homeCerts.length > 0
+    ? homeCerts.map((c) => ({ mark: c.mark, k: c.name, v: c.sub }))
+    : CERTS;
 
   const products = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
@@ -272,8 +281,8 @@ export default async function ProductsPage() {
               </h3>
             </div>
             <div className={styles.certsRow}>
-              {CERTS.map((c) => (
-                <div key={c.k} className={styles.cert}>
+              {certs.map((c, i) => (
+                <div key={`${c.k}-${i}`} className={styles.cert}>
                   <div className={styles.certMark}>{c.mark}</div>
                   <div className={styles.certK}>{c.k}</div>
                   <div className={styles.certV}>{c.v}</div>
