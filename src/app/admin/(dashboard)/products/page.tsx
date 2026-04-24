@@ -147,6 +147,7 @@ export default function AdminProductsPage() {
       features: [],
       specs: {},
       inStock: true,
+      published: true,
       variants: [],
     });
     setIsEditOpen(true);
@@ -420,13 +421,14 @@ export default function AdminProductsPage() {
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">가격</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">배지</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">재고상태</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600">공개</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600">관리</th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-16 text-center text-gray-400">
+                  <td colSpan={8} className="px-4 py-16 text-center text-gray-400">
                     <div className="flex flex-col items-center gap-2">
                       <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -469,6 +471,19 @@ export default function AdminProductsPage() {
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-red-600">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                           품절
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {product.published !== false ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          공개
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-500">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                          비공개
                         </span>
                       )}
                     </td>
@@ -673,6 +688,31 @@ export default function AdminProductsPage() {
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
                       editingProduct.inStock ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Published Toggle — undefined/true 는 공개, false 면 관리자에게만 보임 */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">공개 여부</label>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    OFF 면 공개 /products 에서 숨김 (관리자 로그인 상태에서만 /products/[slug] 접근 가능)
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateEditField('published', editingProduct.published === false ? true : false)
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    editingProduct.published !== false ? 'bg-emerald-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
+                      editingProduct.published !== false ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />
                 </button>

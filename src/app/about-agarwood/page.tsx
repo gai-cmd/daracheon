@@ -72,7 +72,7 @@ export interface Benefit { title: string; description: string }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
 export interface MediaItem { outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }
-export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string }
+export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string; link?: string }
 export interface RegistryRow { label: string; value: string }
 export interface RegistrySection { title: string; subtitle?: string; rows: RegistryRow[] }
 

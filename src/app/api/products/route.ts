@@ -19,7 +19,9 @@ export async function GET(request: Request) {
     const products = await readData('products');
     const categories = await readData('productCategories');
 
-    let filtered = products;
+    // 공개 API 는 published === false 인 제품을 제외 (관리자 비공개 처리).
+    // undefined/true 는 후방 호환 차원에서 공개로 간주.
+    let filtered = products.filter((p) => p.published !== false);
 
     if (category && category !== 'all') {
       filtered = filtered.filter((p) => p.category === category);

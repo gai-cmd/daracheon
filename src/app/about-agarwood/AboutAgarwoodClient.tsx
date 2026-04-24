@@ -835,8 +835,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     gap: 20,
                   }}
                 >
-                  {testimonialItems.map((item, i) => (
-                    <RevealOnScroll key={item.name + i} delay={(i % 6) * 60}>
+                  {testimonialItems.map((item, i) => {
+                    const card = (
                       <div
                         style={{
                           padding: 24,
@@ -845,6 +845,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
+                          transition: 'border-color 200ms, background 200ms',
                         }}
                       >
                         {typeof item.rating === 'number' && item.rating > 0 && (
@@ -902,19 +903,48 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             <div
                               style={{
                                 fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                                fontSize: '0.6rem',
+                                fontSize: '0.68rem',
                                 letterSpacing: '0.22em',
                                 color: 'var(--accent-soft)',
                                 textTransform: 'uppercase',
+                                marginBottom: item.link ? 8 : 0,
                               }}
                             >
                               {item.product}
                             </div>
                           )}
+                          {item.link && (
+                            <div
+                              style={{
+                                fontSize: '0.78rem',
+                                color: 'var(--accent)',
+                                fontWeight: 500,
+                                marginTop: 6,
+                              }}
+                            >
+                              원문 보기 →
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </RevealOnScroll>
-                  ))}
+                    );
+                    return (
+                      <RevealOnScroll key={(item.link ?? item.name) + i} delay={(i % 6) * 60}>
+                        {item.link ? (
+                          <a
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+                          >
+                            {card}
+                          </a>
+                        ) : (
+                          card
+                        )}
+                      </RevealOnScroll>
+                    );
+                  })}
                 </div>
               </div>
             </div>

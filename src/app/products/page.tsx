@@ -203,7 +203,9 @@ export default async function ProductsPage() {
     ? homeCerts.map((c) => ({ mark: c.mark, k: c.name, v: c.sub }))
     : CERTS;
 
-  const products = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
+  // 공개 목록은 published === false 인 제품 제외.
+  const allProducts = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
+  const products = allProducts.filter((p) => p.published !== false);
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
 
   // CollectionPage + ItemList — Google/네이버 제품 목록 리치결과, AI 가 "대라천 제품 목록" 질의에 직접 답변 가능.

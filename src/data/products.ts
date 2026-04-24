@@ -24,6 +24,10 @@ export interface Product {
   features: string[];
   specs: Record<string, string>;
   inStock: boolean;
+  /** 공개 여부. undefined 또는 true 면 공개(후방 호환), false 면 관리자 전용.
+   *  관리자 UI 의 "공개" 토글과 1:1 대응. 공개 `/products` / `/api/products`
+   *  는 published === false 를 제외하고 렌더한다. */
+  published?: boolean;
   variants?: ProductVariant[];
 }
 

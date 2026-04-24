@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { readDataSafe } from '@/lib/db';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import VariantSelector from './VariantSelector';
@@ -25,7 +27,8 @@ export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const products = await readDataSafe<Product>('products');
-  return products.map((p) => ({ slug: p.slug }));
+  // 비공개 제품은 sitemap/정적 빌드 대상에서 제외.
+  return products.filter((p) => p.published !== false).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(
@@ -53,8 +56,15 @@ export default async function ProductDetailPage(
   const product = products.find((p) => p.slug === slug);
   if (!product) notFound();
 
+  // 비공개 제품은 관리자 세션이 있을 때만 접근 허용.
+  if (product.published === false) {
+    const token = (await cookies()).get(SESSION_COOKIE)?.value;
+    const session = await verifySessionToken(token);
+    if (!session) notFound();
+  }
+
   const related = products
-    .filter((p) => p.slug !== product.slug && p.category === product.category)
+    .filter((p) => p.slug !== product.slug && p.category === product.category && p.published !== false)
     .slice(0, 3);
 
   const specEntries = Object.entries(product.specs ?? {});

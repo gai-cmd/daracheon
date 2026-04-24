@@ -53,3 +53,6 @@ data/db/
 # try-n account credentials (per-project isolation, never commit)
 .vercel-token
 .backup-migration/
+
+# Drive 자산 로컬 캐시 (마이그레이션 중간 산물)
+scripts/drive-cache/
