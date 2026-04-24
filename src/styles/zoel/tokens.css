@@ -109,11 +109,13 @@ p, li, blockquote, figcaption, h1, h2, h3, h4, h5, h6,
 
 ::selection { background: rgba(212,168,67,0.28); color: var(--lx-black); }
 
-/* ━━━ Primitive type roles ━━━ */
+/* ━━━ Primitive type roles ━━━
+   .tag 은 섹션 상단의 upper-case 소제목. 0.68rem (≈11-12px) 은 40대
+   이상 고객이 읽기 불편하다는 피드백에 따라 0.78rem (≈13-14px) 로 상향. */
 .tag {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.35em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--accent);
 }

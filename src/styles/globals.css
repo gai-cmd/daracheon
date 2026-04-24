@@ -11,6 +11,20 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════
+   40대 이상 주요 고객층을 위한 기본 폰트 크기 상향.
+   브라우저 기본 16px → 17.5px (9.4% 상향) 으로 모든 rem 기반
+   타이포그래피(본문·버튼·라벨) 가 비례적으로 커진다.
+   관리자 영역은 별도로 작게 유지하고 싶지 않으면 같이 커짐.
+   ═══════════════════════════════════════ */
+html {
+  font-size: 17.5px;
+}
+/* 모바일에서는 17px 로 한 단계 내려 과도한 줄바꿈 완화 */
+@media (max-width: 480px) {
+  html { font-size: 17px; }
+}
+
+/* ═══════════════════════════════════════
    Stacking context fix — body > header 가 z-index 1, body > main 도 z-index 1
    인 상황에서 DOM 순서상 main이 header를 덮어 nav가 가려지는 문제 해소.
    header 를 100으로 올리고 main의 stacking context 자체를 해제.

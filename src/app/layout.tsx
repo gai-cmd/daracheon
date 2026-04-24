@@ -3,7 +3,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
-import AdminAIPanel from '@/components/admin/AdminAIPanel';
 import { readSingleSafe } from '@/lib/db';
 import Link from 'next/link';
 import {
@@ -153,7 +152,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header mainNav={mainNav} brandLogo={brandLogo} />
         <main>{children}</main>
         <Footer footerColumns={footerColumns} />
-        <AdminAIPanel />
       </body>
     </html>
   );

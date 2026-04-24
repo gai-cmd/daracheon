@@ -285,7 +285,10 @@ export default async function HomePage() {
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
                 Aquilaria Agallocha Roxburgh(AAR)
               </em>
-              . 대라천은 첫 묘목부터 완제품까지, 품질의 모든 단계를 공개합니다.
+              .
+            </p>
+            <p>
+              대라천은 첫 묘목부터 완제품까지, 품질의 모든 단계를 공개합니다.
             </p>
           </div>
 

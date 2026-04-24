@@ -13,7 +13,6 @@ export type AuditModule =
   | 'auth'
   | 'upload'
   | 'announcement'
-  | 'ai'
   | 'export';
 
 export type AuditAction =
