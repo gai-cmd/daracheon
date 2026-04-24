@@ -154,63 +154,6 @@ export default async function CompanyPage() {
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.wrap}>
-          {(brandLogo || companyLogo) && (
-            <div
-              style={{
-                display: 'flex',
-                gap: 40,
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                marginBottom: 40,
-                paddingBottom: 30,
-                borderBottom: '1px solid rgba(212,168,67,0.18)',
-                flexWrap: 'wrap',
-              }}
-            >
-              {brandLogo && (
-                <div style={{ textAlign: 'center' }}>
-                  <img
-                    src={brandLogo}
-                    alt="대라천 브랜드 로고"
-                    style={{ height: 64, width: 'auto', objectFit: 'contain', display: 'block' }}
-                  />
-                  <div
-                    style={{
-                      marginTop: 10,
-                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                      fontSize: '0.62rem',
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.5)',
-                    }}
-                  >
-                    Brand · 대라천
-                  </div>
-                </div>
-              )}
-              {companyLogo && (
-                <div style={{ textAlign: 'center' }}>
-                  <img
-                    src={companyLogo}
-                    alt="ZOEL LIFE 회사 로고"
-                    style={{ height: 64, width: 'auto', objectFit: 'contain', display: 'block' }}
-                  />
-                  <div
-                    style={{
-                      marginTop: 10,
-                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                      fontSize: '0.62rem',
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.5)',
-                    }}
-                  >
-                    Company · ZOEL LIFE
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
           <div className={styles.kicker}>{hero.kicker}</div>
           <div className={styles.heroMain}>
             <h1>
@@ -223,26 +166,99 @@ export default async function CompanyPage() {
         </div>
       </section>
 
-      {/* CHAPTERS */}
-      {chapters.map((ch, i) => (
-        <section
-          key={`${ch.num}-${i}`}
-          className={`${styles.chapter} ${i % 2 === 1 ? styles.chapterAlt : ''}`}
-        >
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>{ch.num}</div>
-                <div className={styles.chapterTag}>{ch.tag}</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <h3>{ch.title}</h3>
-                <p>{ch.body}</p>
+      {/* CHAPTERS — 01 회사소개 에 브랜드/회사 로고 크게 배치 */}
+      {chapters.map((ch, i) => {
+        const isFirstChapter = i === 0 || ch.num === '01';
+        const showLogos = isFirstChapter && (brandLogo || companyLogo);
+        return (
+          <section
+            key={`${ch.num}-${i}`}
+            className={`${styles.chapter} ${i % 2 === 1 ? styles.chapterAlt : ''}`}
+          >
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div>
+                  <div className={styles.chapterNum}>{ch.num}</div>
+                  <div className={styles.chapterTag}>{ch.tag}</div>
+                </div>
+                <div className={styles.chapterBody}>
+                  <h3>{ch.title}</h3>
+                  {showLogos && (
+                    <div
+                      style={{
+                        margin: '24px 0 36px',
+                        padding: '36px 40px',
+                        background: 'rgba(212,168,67,0.06)',
+                        border: '1px solid rgba(212,168,67,0.22)',
+                        borderRadius: 8,
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 48,
+                        alignItems: 'center',
+                        justifyContent: brandLogo && companyLogo ? 'space-between' : 'center',
+                      }}
+                    >
+                      {brandLogo && (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: '1 1 260px' }}>
+                          <img
+                            src={brandLogo}
+                            alt="대라천 브랜드 로고"
+                            style={{
+                              height: 'clamp(120px, 18vw, 180px)',
+                              width: 'auto',
+                              maxWidth: '100%',
+                              objectFit: 'contain',
+                              display: 'block',
+                            }}
+                          />
+                          <div
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.72rem',
+                              letterSpacing: '0.3em',
+                              textTransform: 'uppercase',
+                              color: 'var(--accent)',
+                            }}
+                          >
+                            Brand · 대라천
+                          </div>
+                        </div>
+                      )}
+                      {companyLogo && (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: '1 1 260px' }}>
+                          <img
+                            src={companyLogo}
+                            alt="ZOEL LIFE 회사 로고"
+                            style={{
+                              height: 'clamp(120px, 18vw, 180px)',
+                              width: 'auto',
+                              maxWidth: '100%',
+                              objectFit: 'contain',
+                              display: 'block',
+                            }}
+                          />
+                          <div
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.72rem',
+                              letterSpacing: '0.3em',
+                              textTransform: 'uppercase',
+                              color: 'var(--accent)',
+                            }}
+                          >
+                            Company · ZOEL LIFE
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <p>{ch.body}</p>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      ))}
+          </section>
+        );
+      })}
     </>
   );
 }
