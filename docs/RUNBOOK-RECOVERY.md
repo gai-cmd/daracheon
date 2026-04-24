@@ -1,7 +1,29 @@
 # 고객 DB 복구 런북 (Recovery Runbook)
 
 > 문의/제품/리뷰/관리자 계정 등 고객 DB 가 손상·삭제·오염되었을 때의 표준 복구 절차.
-> 작성일: 2026-04-24
+> 작성일: 2026-04-24 · 3중 백업 업데이트: 2026-04-25
+
+---
+
+## 3중 백업 티어 요약
+
+| Tier | 저장소 | 주기 | 암호화 | 위치 |
+|---|---|---|---|---|
+| 1 | Vercel Blob `<PREFIX>/_snapshots/` | 매일 · pre-delete · manual · pre-restore | 평문 (Blob 토큰 보호) | 현재 프로젝트 Blob |
+| 2 | GitHub repo `backups` 브랜치 | 매일 (Tier 1 생성 후 미러) | AES-256-GCM | 별도 레포·오프사이트 |
+| 3 | 관리자 이메일 첨부 (Resend) | 매주 일요일 (UTC) | AES-256-GCM + gzip | 관리자 메일 사서함 |
+
+**복구 우선순위**: Tier 1 → Tier 2 (GitHub) → Tier 3 (이메일 첨부). 관리자 `/admin/backup` 에서 Tier 1·2 모두 원클릭 복원 가능.
+
+### 필수 환경변수 (운영)
+| 변수 | 용도 | 없으면 |
+|---|---|---|
+| `BACKUP_ENCRYPTION_KEY` | Tier 2·3 AES-256-GCM 키 (32B hex) | **Tier 2·3 미러링 중단** (평문 전송 금지) |
+| `GITHUB_BACKUP_TOKEN` | Tier 2 커밋 PAT (contents:write) | Tier 2 비활성 |
+| `GITHUB_BACKUP_REPO` | `owner/repo` | Tier 2 비활성 |
+| `GITHUB_BACKUP_BRANCH` | 기본 `backups` | 기본값 사용 |
+| `RESEND_API_KEY` | Tier 3 메일 | Tier 3 비활성 |
+| `BACKUP_EMAIL_RECIPIENT` | Tier 3 수신 (기본 ADMIN_EMAIL) | ADMIN_EMAIL 사용 |
 
 ---
 
@@ -15,6 +37,8 @@
 | 공개 페이지 전체가 빈 화면·에러 | **D: 전면 장애** | §4 |
 | 관리자 계정 전부 로그인 불가 | **E: Lockout** | §5 |
 | Blob URL 에 고객 정보 직접 노출 의심 | **F: 유출 의심** | §6 |
+| **Vercel Blob 전체 리셋/삭제 (Tier 1 전멸)** | **G** | §8 |
+| **Blob + GitHub 둘 다 잃음 (Tier 1·2 전멸)** | **H** | §9 |
 
 ---
 
@@ -142,6 +166,48 @@
 
 ---
 
+## §8. G — Vercel Blob 전체 리셋 / Tier 1 전멸
+
+**증상**: Blob store 를 실수로 삭제했거나 프로젝트를 리셋해 모든 `<PREFIX>/*.json` 가 사라짐. `/api/admin/backup/snapshots` 목록이 비어있음.
+
+### 절차
+1. **당황하지 말 것**. Tier 2 (GitHub) 에 암호화 복사본이 있음.
+2. 관리자 로그인 → `/admin/backup` 접속. 상단 "Tier 2 · GitHub" 카드가 활성(초록) 상태인지 확인.
+   - 비활성이면 → §9 (Tier 3 Email) 로 이동.
+3. "Tier 2 · GitHub 백업" 섹션에서 **목록 불러오기** 클릭
+4. 가장 최근 `daily-...` 항목의 "복원" 버튼 클릭 → 경고창 확인 후 진행
+   - 기본은 관리자 계정 · 감사 로그 제외. Blob 전멸이므로 두 항목도 체크 권장.
+5. 시스템이 자동으로 복호화 + restoreFromPayload 실행 + pre-restore 스냅샷 생성
+6. 공개 페이지 정상 렌더 확인 (`/products`, `/brand-story`, `/about-agarwood`)
+7. `/admin/backup` 에서 수동 스냅샷 1회 생성 (새 Tier 1 기준점)
+
+### 사전 점검 (예방)
+- 월 1회 `/admin/backup` 에서 GitHub 목록 로드 → 최신 커밋일이 24시간 이내인지 확인
+- GitHub repo `backups` 브랜치의 파일 수가 증가 추세인지 확인
+
+---
+
+## §9. H — Tier 1·2 모두 전멸 / Email 최후 복구
+
+**증상**: Blob 삭제 + GitHub 레포도 잃음 (token revoke / repo 삭제 등).
+
+### 절차
+1. 관리자가 Resend 이메일(또는 ADMIN_EMAIL 사서함) 로그인
+2. 제목 `[대라천 백업]` 으로 검색 → 가장 최근 주간 백업 메일 오픈
+3. 첨부 `daracheon-daily-*.json.gz` 다운로드
+4. 로컬에서 `gunzip` 해제 → `.json` 파일 획득
+   - `gunzip daracheon-daily-XXX.json.gz` 또는 `7-Zip` 로 해제
+5. 파일 내용은 암호화 블롭 (`{"cipher":"...","iv":"...","tag":"...","alg":"aes-256-gcm",...}`)
+6. 관리자 로그인 → `/admin/backup` → "업로드 복원" 영역에서 파일 선택 후 복원
+   - 시스템이 `BACKUP_ENCRYPTION_KEY` 로 자동 복호화 후 restoreFromPayload 실행
+7. **BACKUP_ENCRYPTION_KEY 도 잃었다면** → 복구 불가. 이 키는 **Vercel 환경변수 외부에 오프라인 보관** 필수 (패스워드 매니저 권장)
+
+### 예방
+- 매 3개월마다 복호화 연습: 이메일 첨부 → 로컬 파일 → 관리자 업로드 복원 (테스트 환경)
+- `BACKUP_ENCRYPTION_KEY` 를 1Password / LastPass 등 별도 시스템에 복사 보관
+
+---
+
 ## 정기 점검 체크리스트 (주 1회)
 
 - [ ] `/admin/backup` 에서 최근 7일 `daily` 스냅샷 존재 확인
@@ -162,6 +228,10 @@
 | `BLOB_DATA_PREFIX` | DB 경로 이동 | ① 이전 경로 blob 전량 삭제, ② 스냅샷 복원 또는 재입력 |
 | `BLOB_READ_WRITE_TOKEN` | Blob 접근 복구 | 공개 페이지가 fs seed 로 fallback 중이면 재배포로 해소 |
 | `CRON_SECRET` | 일일 백업 수동 트리거 가능 | 새 값을 cron 호출 시 `Authorization: Bearer <값>` 로 전달 |
+| `BACKUP_ENCRYPTION_KEY` | **Tier 2·3 복호화 필수** | ⚠ 바꾸면 **과거 Tier 2·3 스냅샷 복호화 불가**. 절대 분실·교체 금지. |
+| `GITHUB_BACKUP_TOKEN` | Tier 2 commit | 새 PAT 발급 후 교체. 과거 커밋은 그대로 유지됨. |
+| `GITHUB_BACKUP_REPO` | Tier 2 repo 경로 | 레포 이전 시 변경. 이전 레포의 `backups` 브랜치를 새 레포로 복사해야 복구 가능. |
+| `RESEND_API_KEY` | Tier 3 메일 | 새 키 발급 후 교체. |
 
 ---
 
