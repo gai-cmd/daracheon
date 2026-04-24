@@ -532,22 +532,66 @@ export default function BrandStoryClient({ data }: Props) {
                   { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
                   { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
                 ].map((v) => (
-                  <div
+                  <a
                     key={v.id}
+                    href={`https://drive.google.com/file/d/${v.id}/view`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
+                      display: 'block',
                       border: '1px solid rgba(212,168,67,0.25)',
                       background: 'rgba(255,255,255,0.02)',
                       overflow: 'hidden',
+                      textDecoration: 'none',
+                      transition: 'border-color 200ms',
                     }}
                   >
-                    <div style={{ aspectRatio: '16 / 9', position: 'relative', background: '#000' }}>
-                      <iframe
-                        src={`https://drive.google.com/file/d/${v.id}/preview`}
-                        allow="autoplay; encrypted-media; fullscreen"
-                        allowFullScreen
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-                        title={v.title}
+                    <div
+                      style={{
+                        aspectRatio: '16 / 9',
+                        position: 'relative',
+                        background: '#000',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {/* Drive 공개 썸네일 — iframe 은 auth 필요해 빈 화면이 돼 썸네일로 대체,
+                          클릭 시 Drive 뷰어 새 탭으로 열어 실제 영상 재생 */}
+                      <img
+                        src={`https://lh3.googleusercontent.com/d/${v.id}=w1280`}
+                        alt={v.title}
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                       />
+                      {/* Play overlay */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: '50%',
+                            background: 'rgba(212,168,67,0.9)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#0a0b10',
+                            fontSize: '1.6rem',
+                            lineHeight: 1,
+                            paddingLeft: 4,
+                            boxShadow: '0 6px 20px rgba(0,0,0,0.4)',
+                          }}
+                        >
+                          ▶
+                        </div>
+                      </div>
                     </div>
                     <div
                       style={{
@@ -560,7 +604,7 @@ export default function BrandStoryClient({ data }: Props) {
                     >
                       {v.title}
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
