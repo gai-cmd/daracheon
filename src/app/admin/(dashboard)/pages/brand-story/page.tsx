@@ -11,6 +11,7 @@ interface Farm {
   name: string;
   nameVi: string;
   desc: string;
+  image?: string;
 }
 
 interface HistoryEra {
@@ -445,14 +446,22 @@ export default function AdminBrandStoryPage() {
                       <button type="button" onClick={() => setFarms(removeItem(farms, i))} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <input placeholder="농장명 (한글)" value={farm.name} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], name: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                     <input placeholder="농장명 (베트남어)" value={farm.nameVi} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], nameVi: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                     <input placeholder="설명" value={farm.desc} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], desc: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                   </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">농장 사진 (선택)</label>
+                    <ImageUploadField
+                      value={farm.image ?? ''}
+                      onChange={(url) => { const n = [...farms]; n[i] = { ...n[i], image: url }; setFarms(n); }}
+                      subdir="pages"
+                    />
+                  </div>
                 </div>
               ))}
-              <button type="button" onClick={() => setFarms([...farms, { name: '', nameVi: '', desc: '' }])} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+              <button type="button" onClick={() => setFarms([...farms, { name: '', nameVi: '', desc: '', image: '' }])} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
                 + 농장 추가
               </button>
             </div>
