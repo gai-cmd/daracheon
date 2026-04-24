@@ -179,6 +179,21 @@ export default function BrandStoryClient({ data }: Props) {
                       <li key={j}>{it}</li>
                     ))}
                   </ul>
+                  {era.description && (
+                    <p
+                      style={{
+                        marginTop: 14,
+                        paddingTop: 14,
+                        borderTop: '1px solid rgba(212,168,67,0.18)',
+                        fontSize: '0.98rem',
+                        color: 'rgba(255,255,255,0.72)',
+                        lineHeight: 1.9,
+                        fontWeight: 300,
+                      }}
+                    >
+                      {era.description}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -254,6 +269,21 @@ export default function BrandStoryClient({ data }: Props) {
                       <li key={j}>{it}</li>
                     ))}
                   </ul>
+                  {section.body && (
+                    <p
+                      style={{
+                        marginTop: 14,
+                        paddingTop: 14,
+                        borderTop: '1px solid rgba(212,168,67,0.18)',
+                        fontSize: '0.92rem',
+                        color: 'rgba(255,255,255,0.68)',
+                        lineHeight: 1.85,
+                        fontWeight: 300,
+                      }}
+                    >
+                      {section.body}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -307,6 +337,44 @@ export default function BrandStoryClient({ data }: Props) {
                 </div>
               </div>
             </div>
+            {qualityTab?.paragraphs && qualityTab.paragraphs.length > 0 && (
+              <div
+                style={{
+                  marginTop: 36,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gap: 20,
+                }}
+              >
+                {qualityTab.paragraphs.map((p, i) => (
+                  <div
+                    key={p.title + i}
+                    style={{
+                      padding: '22px 26px',
+                      border: '1px solid rgba(212,168,67,0.22)',
+                      background: 'rgba(212,168,67,0.05)',
+                      borderRadius: 4,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        color: 'var(--accent)',
+                        marginBottom: 10,
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')} · {p.title}
+                    </div>
+                    <p style={{ fontSize: '0.98rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.9, fontWeight: 300 }}>
+                      {p.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -382,6 +450,45 @@ export default function BrandStoryClient({ data }: Props) {
                 {processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}
               </div>
             </div>
+
+            {processTab?.paragraphs && processTab.paragraphs.length > 0 && (
+              <div
+                style={{
+                  marginTop: 36,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+                  gap: 20,
+                }}
+              >
+                {processTab.paragraphs.map((p, i) => (
+                  <div
+                    key={p.title + i}
+                    style={{
+                      padding: '22px 26px',
+                      border: '1px solid rgba(212,168,67,0.22)',
+                      background: 'rgba(212,168,67,0.05)',
+                      borderRadius: 4,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        color: 'var(--accent)',
+                        marginBottom: 10,
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')} · {p.title}
+                    </div>
+                    <p style={{ fontSize: '0.98rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.9, fontWeight: 300 }}>
+                      {p.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* 공장 동영상 — Drive mov 폴더 (1t8GYG9Gl4_EleEQBlxmwwntQF662RpNO) */}
             <div style={{ marginTop: 60 }}>

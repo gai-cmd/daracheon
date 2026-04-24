@@ -69,6 +69,8 @@ const faqJsonLd = {
 export interface FormationStep { step: string; title: string; description: string }
 export interface SpecialReason { title: string; description: string }
 export interface Benefit { title: string; description: string }
+export interface DosageItem { num: string; title: string; body: string }
+export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
 export interface MediaItem { outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }
@@ -83,6 +85,7 @@ export interface AboutAgarwoodData {
   formationSteps: FormationStep[];
   specialReasons: SpecialReason[];
   benefits: Benefit[];
+  dosageSection?: DosageSection;
   literatures: Literature[];
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };

@@ -22,6 +22,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const formationSteps = data?.formationSteps ?? [];
   const specialReasons = data?.specialReasons ?? [];
   const benefits = data?.benefits ?? [];
+  const dosageSection = data?.dosageSection;
   const literatures = data?.literatures ?? [];
   const papers = data?.papers ?? [];
   const mediaTab = data?.mediaTab;
@@ -421,6 +422,74 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
             </div>
           </section>
+
+          {/* Chapter VI — Dosage · 하루 적정 복용량 */}
+          {dosageSection && dosageSection.items && dosageSection.items.length > 0 && (
+            <section className={styles.chapter}>
+              <div className={styles.wrap}>
+                <div className={styles.chapterGrid}>
+                  <div>
+                    <div className={styles.chapterNum}>06</div>
+                    <div className={styles.chapterTag}>{dosageSection.tag ?? 'Chapter VI · Dosage'}</div>
+                  </div>
+                  <div className={styles.chapterBody}>
+                    <RevealOnScroll>
+                      <h3>{dosageSection.title}</h3>
+                    </RevealOnScroll>
+                    <div style={{ marginTop: 26, display: 'grid', gap: 20 }}>
+                      {dosageSection.items.map((item, i) => (
+                        <RevealOnScroll key={item.num + i} delay={i * 80}>
+                          <div
+                            style={{
+                              padding: '20px 24px',
+                              border: '1px solid rgba(212,168,67,0.25)',
+                              background: 'rgba(212,168,67,0.04)',
+                              borderRadius: 4,
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.1rem',
+                                color: 'var(--accent)',
+                                fontWeight: 400,
+                                marginBottom: 10,
+                              }}
+                            >
+                              {item.num}
+                            </div>
+                            <h4
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.08rem',
+                                color: '#fff',
+                                marginBottom: 10,
+                                fontWeight: 500,
+                                lineHeight: 1.5,
+                              }}
+                            >
+                              {item.title}
+                            </h4>
+                            <p
+                              style={{
+                                fontSize: '0.94rem',
+                                color: 'rgba(255,255,255,0.72)',
+                                lineHeight: 1.85,
+                                fontWeight: 300,
+                                whiteSpace: 'pre-line',
+                              }}
+                            >
+                              {item.body}
+                            </p>
+                          </div>
+                        </RevealOnScroll>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
         </>
       )}
 
