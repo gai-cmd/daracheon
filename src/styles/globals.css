@@ -404,10 +404,28 @@ html body [data-admin-root="true"] textarea::placeholder {
   background-color: #f3f4f6 !important;
 }
 
-/* Buttons — keep Tailwind colors; just ensure text is not globally
-   overridden to ivory inside gold/red/green solid buttons. */
-[data-admin-root="true"] button {
-  color: inherit;
+/* Buttons — admin 영역 안에서도 Tailwind text-* 가 우선 적용되도록 한다.
+   이전 `button { color: inherit }` 가 text-white 를 덮어써서 솔리드 컬러
+   버튼에서 글자가 안 보이는 문제(gold 배경에 회색 글자)를 일으켰음.
+   admin 라이트 테마 본문 텍스트 회색은 부모 .text-gray-* 가 처리하므로
+   여기서 일괄 inherit 강제는 불필요. 대신 배경색이 솔리드일 때 text-white
+   가 보장되도록 명시적 강제. */
+[data-admin-root="true"] button.text-white,
+[data-admin-root="true"] a.text-white,
+[data-admin-root="true"] button .text-white,
+[data-admin-root="true"] a .text-white {
+  color: #ffffff !important;
+}
+[data-admin-root="true"] button[class*="bg-gold-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-red-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-emerald-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-blue-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-amber-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-rose-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-sage-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-stone-"]:not([class*="text-"]),
+[data-admin-root="true"] button[class*="bg-slate-"]:not([class*="text-"]) {
+  color: #ffffff;
 }
 
 /* Default text color for plain content blocks that rely on body color */
