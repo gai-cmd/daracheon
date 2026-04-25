@@ -174,26 +174,28 @@ export default function BrandStoryClient({ data }: Props) {
               {eras.map((era, i) => (
                 <div key={era.era + i} className={styles.timelineItem}>
                   <div className={styles.timelineEra}>{era.era}</div>
-                  <ul className={styles.timelineList}>
-                    {era.items.map((it, j) => (
-                      <li key={j}>{it}</li>
-                    ))}
-                  </ul>
-                  {era.description && (
-                    <p
-                      style={{
-                        marginTop: 14,
-                        paddingTop: 14,
-                        borderTop: '1px solid rgba(212,168,67,0.18)',
-                        fontSize: '0.98rem',
-                        color: 'rgba(255,255,255,0.72)',
-                        lineHeight: 1.9,
-                        fontWeight: 300,
-                      }}
-                    >
-                      {era.description}
-                    </p>
-                  )}
+                  <div>
+                    <ul className={styles.timelineList}>
+                      {era.items.map((it, j) => (
+                        <li key={j}>{it}</li>
+                      ))}
+                    </ul>
+                    {era.description && (
+                      <p
+                        style={{
+                          marginTop: 14,
+                          paddingTop: 14,
+                          borderTop: '1px solid rgba(212,168,67,0.18)',
+                          fontSize: '0.98rem',
+                          color: 'rgba(255,255,255,0.78)',
+                          lineHeight: 1.95,
+                          fontWeight: 300,
+                        }}
+                      >
+                        {era.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
