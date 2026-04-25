@@ -105,11 +105,13 @@ function VideoModal({ item, onClose }: VideoModalProps) {
         style={{
           width: '100%',
           maxWidth: 1280,
+          maxHeight: '90dvh',
           background: '#000',
           border: '1px solid rgba(212,168,67,0.35)',
           boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
           display: 'flex',
           flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
         <div
@@ -188,29 +190,29 @@ function VideoModal({ item, onClose }: VideoModalProps) {
             </button>
           </div>
         </div>
-        <div style={{ aspectRatio: '16 / 9', width: '100%', background: '#000' }}>
+        <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', background: '#000', overflow: 'hidden' }}>
           {embed?.provider === 'native' ? (
             <video
               src={embed.src}
               controls
               autoPlay
-              style={{ width: '100%', height: '100%' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
             />
           ) : embed ? (
             <iframe
               src={embed.src}
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
               allowFullScreen
-              style={{ width: '100%', height: '100%', border: 0 }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
               title={item.title}
             />
           ) : (
             <div
               style={{
+                position: 'absolute',
+                inset: 0,
                 display: 'grid',
                 placeItems: 'center',
-                width: '100%',
-                height: '100%',
                 color: 'rgba(255,255,255,0.6)',
                 fontSize: '0.92rem',
                 padding: 40,
