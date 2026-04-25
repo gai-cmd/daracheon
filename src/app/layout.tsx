@@ -3,6 +3,8 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { readSingleSafe } from '@/lib/db';
 import Link from 'next/link';
 import {
@@ -68,18 +70,30 @@ export const metadata: Metadata = {
     images: ['/images/og-default.jpg'],
   },
   alternates: {
-    canonical: 'https://www.daracheon.com',
+    canonical: 'https://www.zoellife.com',
   },
   robots: {
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
-  // Naver 웹마스터 / Google Search Console 인증 메타 — 실제 코드 받으면 교체.
-  // verification: {
-  //   google: '...',
-  //   other: { 'naver-site-verification': '...' },
-  // },
+  // 검색엔진 사이트 인증 — env 에 코드를 박으면 자동 적용.
+  //   GOOGLE_SITE_VERIFICATION
+  //   NAVER_SITE_VERIFICATION
+  //   BING_SITE_VERIFICATION
+  // 코드 미설정이면 메타 태그 자체가 출력되지 않음(빈 'undefined' 가짜 신호 방지).
+  verification: (() => {
+    const google = process.env.GOOGLE_SITE_VERIFICATION;
+    const naver = process.env.NAVER_SITE_VERIFICATION;
+    const bing = process.env.BING_SITE_VERIFICATION;
+    const v: { google?: string; other?: Record<string, string | string[]> } = {};
+    if (google) v.google = google;
+    const other: Record<string, string> = {};
+    if (naver) other['naver-site-verification'] = naver;
+    if (bing) other['msvalidate.01'] = bing;
+    if (Object.keys(other).length > 0) v.other = other;
+    return Object.keys(v).length > 0 ? v : undefined;
+  })(),
 };
 
 export const viewport: Viewport = {
@@ -152,6 +166,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header mainNav={mainNav} brandLogo={brandLogo} />
         <main>{children}</main>
         <Footer footerColumns={footerColumns} />
+        {/* Vercel Analytics + Speed Insights — 실제 사용자 LCP/CLS/INP 수집.
+            DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
+        <VercelAnalytics />
+        <SpeedInsights />
       </body>
     </html>
   );
