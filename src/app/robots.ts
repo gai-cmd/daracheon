@@ -1,6 +1,9 @@
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.daracheon.com').replace(/\/$/, '');
+// env 값에 줄바꿈/공백 섞임 방지 — sitemap 라인이 깨지면 색인 실패.
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.zoellife.com')
+  .replace(/\s+/g, '')
+  .replace(/\/$/, '');
 
 // AI 크롤러 정책: 전 공개 페이지 인용 허용 (GEO 대응).
 // 브랜드 인지·세일즈 목적이므로 ChatGPT/Perplexity/Claude/Gemini·
