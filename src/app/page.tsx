@@ -59,9 +59,9 @@ export interface HomeData {
 }
 
 const DEFAULT_HERO: HomeHero = {
-  sectionTag: 'Verified Agarwood · 참침향',
-  titleKr: '확인되는 침향, 대라천 참침향',
-  subtitle: '베트남 직영 농장에서 25년. 원산지·원료·제조·시험까지 4단계로 검증된 침향을 프리미엄이 아니라 근거로 증명합니다.',
+  sectionTag: 'Genuine Only · 진짜 침향만',
+  titleKr: '대라천은, 진짜 침향만 다룹니다',
+  subtitle: '한 품종, 한 나라 — Aquilaria Agallocha Roxburgh, 베트남 직영.\n25년, 한 회사 — 베트남 직영 생산 · 한국 직판. 조엘라이프가 원산지부터 연결합니다.\n프리미엄이 아니라 근거로 증명합니다.',
   heroBg:
     'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg',
   ctaPrimaryLabel: '검증 과정 보기 →',
@@ -75,6 +75,7 @@ const DEFAULT_STATS: HomeStat[] = [
   { value: '400만+', label: 'Trees' },
   { value: '200ha', label: 'Farm' },
   { value: '8건', label: 'Certifications' },
+  { value: '5개', label: '직영 사업장' },
 ];
 
 const DEFAULT_VERIFICATION = [
@@ -160,11 +161,11 @@ const DEFAULT_PROCESS: HomeProcess = {
     '20년 이상 오르가닉 육성',
     '특허 수지유도제 주입',
     '벌목 및 원물 정밀 채취',
-    '최고급 제품 가공 및 검수',
+    '전통 증기 증류 · 최종 검수',
   ],
 };
 
-const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'];
+const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'Steam Distillation · GMP'];
 
 export const metadata: Metadata = {
   title: 'ZOEL LIFE — 25년 검증된 침향, 대라천 참침향',
@@ -229,7 +230,7 @@ export default async function HomePage() {
                     hero.titleKr
                   )}
                 </h1>
-                <p className={styles.heroSub}>{hero.subtitle}</p>
+                <p className={styles.heroSub} style={{ whiteSpace: 'pre-line' }}>{hero.subtitle}</p>
                 <div className={styles.heroCtas}>
                   <Link href={hero.ctaPrimaryHref} className={styles.btnGold}>
                     {hero.ctaPrimaryLabel}
@@ -275,20 +276,20 @@ export default async function HomePage() {
           <div className={styles.verifiedHead}>
             <span className={styles.tag}>Notice — 식약처 고시 기준</span>
             <h2 className={styles.h2}>
-              진짜 침향, 이젠
+              가짜가 많을수록,
               <br />
-              <em>학명부터 확인하세요</em>
+              <em>진짜는 드러난다</em>
             </h2>
             <div className={styles.line} />
             <p>
-              대한민국 국가법령정보센터의 식약처 고시에 등록된 공식 침향은{' '}
+              이젠 학명부터 확인하세요. 식약처 고시에 등록된 공식 침향은{' '}
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
                 Aquilaria Agallocha Roxburgh(AAR)
               </em>
-              .
+              . 인도네시아산 혼합·저가 품종과 명확히 다릅니다.
             </p>
             <p>
-              대라천은 첫 묘목부터 완제품까지, 품질의 모든 단계를 공개합니다.
+              대라천은 첫 묘목부터 완제품까지, 인증서 8종을 포함한 모든 단계를 공개합니다.
             </p>
           </div>
 
@@ -391,12 +392,15 @@ export default async function HomePage() {
       {/* CTA */}
       <section className={styles.section} style={{ textAlign: 'center', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
         <div className={styles.wrap}>
-          <span className={styles.tag}>Order · 지금 만나기</span>
+          <span className={styles.tag}>Direct · 브랜드 직판</span>
           <h2 className={styles.h2}>
             대라천 <em>참침향</em>의 검증된 가치
           </h2>
           <div className={styles.line} />
-          <div className={styles.heroCtas} style={{ justifyContent: 'center', marginTop: 30 }}>
+          <p style={{ fontSize: '0.95rem', color: 'rgba(212,168,67,0.75)', fontWeight: 300, letterSpacing: '0.04em', marginBottom: 8 }}>
+            베트남에서 키우고, 한국에서 직접 팝니다 — 조엘라이프
+          </p>
+          <div className={styles.heroCtas} style={{ justifyContent: 'center', marginTop: 20 }}>
             <Link href="/products" className={styles.btnGold}>제품 보기 →</Link>
             <Link href="/home-shopping" className={styles.btnOutline}>홈쇼핑 편성표</Link>
           </div>
