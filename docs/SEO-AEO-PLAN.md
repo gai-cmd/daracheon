@@ -1,246 +1,194 @@
-# 검색·AI 인용 최적화 종합 계획 (SEO + AEO + GEO)
+# 검색·AI 인용 최적화 작업 리스트 (SEO + AEO)
 
-> 작성일: 2026-04-25
+> 작성일: 2026-04-25 (v2 — 객관적 기술 작업만)
 > 대상 도메인: https://www.zoellife.com
-> 목표: 구글·네이버 자연 노출 + ChatGPT·Perplexity·AI Overview 인용
+>
+> 본 문서는 **검증되지 않은 콘텐츠 주장·가짜 권위 신호를 만들지 않는다**.
+> 코드/설정 레벨의 객관적 SEO 작업과, 운영자가 결정·확인해야 할 외부 등록
+> 절차만 기록한다. 콘텐츠 신뢰도(저자·인증서·인용)는 실제 사실 자료가
+> 확보된 후에 별도로 처리한다.
 
 ---
 
-## 0. 현재 상태 진단
+## 0. 현재 코드/설정 상태 점검
 
-### ✅ 이미 잘 구축된 부분
-- `robots.ts` — 25개 AI 봇 (GPTBot · Claude · Perplexity · Google-Extended · Naver Yeti · Daumoa 등) 명시 허용
-- `sitemap.ts` — 정적 10개 + 제품 상세 동적 포함
-- 페이지별 JSON-LD: WebSite · Organization · LocalBusiness · Article · FAQPage · BreadcrumbList · Product · ItemList · ScholarlyArticle · VideoObject
-- 페이지별 `metadata` (title · description · keywords · openGraph · twitter · canonical)
-- CSP/HSTS/X-Frame-Options 등 보안 헤더 → 신뢰도 신호
-
-### 🔴 즉시 수정 (이번 커밋)
-- **NEXT_PUBLIC_SITE_URL 환경변수 줄바꿈 오류** — sitemap URL `https://daracheon.vercel.app\n` 형태로 깨져 색인 불가. `\s+` 제거 로직 추가 + 기본값 `www.zoellife.com` 으로 변경.
-- **비공개 제품 sitemap 노출** — published=false 제품도 sitemap 에 들어가 검색엔진이 404 만나도록 → 필터 추가.
-- **llms.txt 신규** — LLM 친화 마크다운 요약 (학명·인증·공정·연혁·연락처) 한 번에 흡수.
-
-### 🟡 운영자 액션 필요 (Vercel 환경변수)
-1. `NEXT_PUBLIC_SITE_URL=https://www.zoellife.com` (줄바꿈/공백 없이 단일 라인)
-2. 도메인 연결 확인: zoellife.com → daracheon-tryn.vercel.app (이미 운영 도메인이 zoellife.com 이라고 가정)
-
----
-
-## 1. SEO 기본 — 구글 중심
-
-### 1-1. Google Search Console
-- [ ] https://search.google.com/search-console 에서 `https://www.zoellife.com` 속성 추가
-- [ ] DNS TXT 또는 HTML meta 인증 (메타 인증 코드는 `src/app/layout.tsx` `metadata.verification.google` 에 추가)
-- [ ] sitemap 제출: `https://www.zoellife.com/sitemap.xml`
-- [ ] URL 검사 도구로 주요 페이지 색인 요청
-- [ ] Core Web Vitals · Mobile Usability 보고서 점검 (월 1회)
-
-### 1-2. Bing Webmaster
-- [ ] https://www.bing.com/webmasters — Bing/Copilot 노출 + ChatGPT Search 가 Bing 인덱스 사용
-- [ ] sitemap 제출
-
-### 1-3. 구조화 데이터 점검
-이미 적용 (페이지별):
-- `/` Organization · WebSite
-- `/about-agarwood` Article · FAQPage · BreadcrumbList · ScholarlyArticle (논문)
-- `/brand-story` AboutPage · BreadcrumbList · VideoObject (영상)
-- `/products` CollectionPage · ItemList · BreadcrumbList
-- `/products/[slug]` Product (이름·이미지·설명·SKU·offers·aggregateRating 등)
-- `/company` LocalBusiness · BreadcrumbList
-- `/reviews` Product · AggregateRating · Review
-
-추가 권장:
-- [ ] `/process` 에 **HowTo** schema (14단계 침향 생산 공정) — AI 가 "침향 어떻게 만드나?" 질문에 우리 사이트 인용 가능성 ↑
-- [ ] 모든 제품 상세에 **GTIN/MPN** (있다면) 추가 — 네이버 쇼핑/구글 쇼핑 노출 조건
-
-### 1-4. Core Web Vitals
-이미 양호한 인프라: Next.js 15 RSC + Vercel Edge, 이미지 Vercel Blob CDN. 점검 항목:
-- [ ] LCP < 2.5s — 모바일 hero 이미지 우선순위(`priority` prop) 적용 확인
-- [ ] CLS < 0.1 — 이미지 width/height 명시 또는 `aspect-ratio` 박스 (이미 대부분 적용됨)
-- [ ] INP < 200ms — JS 번들 크기 점검 (next build 결과 100KB 이하 양호)
-
----
-
-## 2. 네이버 SEO 특화
-
-### 2-1. 네이버 서치어드바이저 등록
-- [ ] https://searchadvisor.naver.com 사이트 등록
-- [ ] HTML 메타 태그 인증 (코드 발급 후 `src/app/layout.tsx` `metadata.verification.other['naver-site-verification']` 에 추가)
-- [ ] sitemap 제출: `/sitemap.xml`
-- [ ] RSS 피드 등록 (블로그·뉴스 섹션 추가 시)
-- [ ] 모바일 친화도 검사 통과 확인
-
-### 2-2. 네이버 검색 알고리즘 대응
-네이버는 구글 대비:
-- **체류시간·재방문**을 가중치로 반영 → 풍부한 본문 + 내부 링크 강화
-- **이미지 검색** 비중이 큼 → 이미지 alt 텍스트 한국어 핵심 키워드, 파일명도 의미 있게
-- **문서 구조** (h1·h2·h3) 위계 엄격 → 페이지마다 h1 1개, h2/h3 의미 있게
-
-이미 잘 되어 있는 부분:
-- 한국어 콘텐츠 + 한국어 키워드 (침향·대라천·아갈로차 등)
-- 한국어 FAQ schema
-
-추가 권장:
-- [ ] 페이지마다 `<h1>` 단 1개인지 검사
-- [ ] 모든 `<img>`/`<Image>` 의 `alt` 가 핵심 키워드 포함하도록 (예: "대라천 침향 오일 캡슐 베트남 하띤성 농장")
-- [ ] 본문에 "침향이란", "침향 효능", "Aquilaria Agallocha Roxburgh" 등 핵심 키워드 자연스럽게 반복
-
-### 2-3. 네이버 비즈니스 (외부 신호)
-- [ ] **네이버 플레이스** 등록 (오프라인 본사 주소 기반) — 지역검색 + 지도 노출
-- [ ] **네이버 쇼핑** 입점 (제품 등록) — 쇼핑검색 + 상품 페이지에서 zoellife.com 백링크
-- [ ] **네이버 블로그/카페** 활용 — 외부 인용 = 권위 신호
-  - 이미 `/about-agarwood` 후기 탭에 9건 네이버 블로그 후기 링크 → 양방향 신호 확보
-  - 추가: 자체 네이버 블로그 운영 (제품 사용기·공정 영상 캡처 등)
-
-### 2-4. 네이버 SEO 체크리스트
-- [x] robots.txt 에 `Yeti` · `NaverBot` · `Daumoa` Allow
-- [x] sitemap.xml 정상
-- [ ] `<meta name="naver-site-verification">` 추가
-- [ ] 한국어 메타 description (이미 적용됨, 페이지마다 검수 필요)
-- [ ] 외부 백링크 (네이버 블로그·카페·뉴스)
-- [ ] 모바일 페이지 속도 (LCP 2.5s 이하)
-- [ ] og:image 1200x630 (이미 일부 페이지 설정)
-
----
-
-## 3. AEO/GEO/AAO — AI 인용 최적화
-
-**용어 정리**:
-- **AEO** (Answer Engine Optimization) — Google AI Overview · Perplexity 같은 답변 엔진 인용
-- **GEO** (Generative Engine Optimization) — ChatGPT · Claude · Gemini 학습/검색 인용
-- **AAO** (AI Agent Optimization) — AI 에이전트가 사이트를 탐색·요약·인용 가능하도록
-
-### 3-1. 기술 인프라 (이미 적용)
-- [x] robots.txt 에 25개 AI 봇 명시 Allow
-- [x] sitemap 으로 전 페이지 발견 가능
-- [x] 페이지별 풍부한 JSON-LD (Article · FAQPage · ScholarlyArticle · VideoObject 등)
-- [x] HTTPS · HSTS · CSP — 신뢰 신호
-
-### 3-2. 이번 커밋 추가
-- [x] **`/llms.txt`** — LLM 전용 마크다운 요약. 학명·인증·14단계 공정·연혁·제품·연락처를 한 번에 흡수 가능. ChatGPT/Claude 가 이 파일을 우선 참조하도록 유도.
-  - 위치: `https://www.zoellife.com/llms.txt`
-  - 동적 생성: 제품·회사 정보가 DB 기반이라 항상 최신
-  - 표준: https://llmstxt.org
-
-### 3-3. 콘텐츠 형식 (AI 친화)
-
-#### 답변형 H2/H3 구성
-AI 는 "질문 → 답" 구조를 선호. 현재 페이지를 다음처럼 보강:
-
-| 페이지 | 추가할 H2 패턴 |
-|---|---|
-| /about-agarwood | "침향이란 무엇인가?" / "공식 침향의 학명은?" / "침향의 효능은?" / "하루 적정 복용량은?" — 이미 구조 잡혀있음 ✓ |
-| /brand-story | "대라천 농장은 어디에 있나?" / "200ha 에 몇 그루?" / "어떤 인증을 받았나?" / "생산 공정은 몇 단계?" |
-| /products/[slug] | "이 제품의 학명은?" / "복용법은?" / "보관방법은?" — Product schema + FAQ block |
-| /process | "1단계는?" "수지유도란?" "고온증류 시간은?" — HowTo schema 추가 권장 |
-
-#### E-E-A-T 강화
-Google E-E-A-T (Experience · Expertise · Authoritativeness · Trustworthiness):
-
-| 신호 | 현 상태 | 강화 방법 |
+### 이미 적용된 기술 SEO
+| 항목 | 위치 | 상태 |
 |---|---|---|
-| 저자 정보 | 일부 페이지에 박병주 대표 명시 | 제품·논문 페이지에 "검수자: 박병주 (전 식품영양학과 교수)" 추가 |
-| 출처/인용 | 식약처·논문 인용 일부 | 모든 효능 주장에 출처 (논문 DOI · 식약처 고시 번호) |
-| 인증서 표시 | 페이지에 표시 | JSON-LD `Certification` 또는 `award` 필드 추가 |
-| 외부 백링크 | 네이버 블로그 9건 | 학술지 인용 · 언론 보도 추가 |
-| 회사 정보 | LocalBusiness schema 적용 | sameAs 에 Instagram · YouTube · 네이버 블로그 URL 추가 |
+| robots.txt | `src/app/robots.ts` | 25개 AI 봇 + 일반 크롤러 Allow, /api·/admin Disallow |
+| sitemap.xml | `src/app/sitemap.ts` | 정적 10개 + 제품 상세 동적, 비공개 제품 제외 |
+| 페이지별 metadata | 각 page.tsx | title · description · keywords · canonical · openGraph · twitter |
+| JSON-LD | 각 page.tsx | 페이지별 schema.org 타입 적용 (목록은 §1-3) |
+| 보안 헤더 | `next.config.ts` | CSP · HSTS · X-Frame · Referrer · Permissions-Policy |
+| llms.txt | `src/app/llms.txt/route.ts` | DB 연동 동적 마크다운 |
 
-#### 인용 가능한 사실 단위 콘텐츠
-AI 가 인용하기 쉬운 짧고 명확한 사실:
-- ✓ "1998년 캄보디아에서 시작" → 회사 페이지
-- ✓ "200ha · 400만 그루 · 26년 숙성" → 브랜드 스토리
-- ✓ "CITES 인증번호 IIA-DNI-007" → 인증 섹션
-- ✓ "수지유도 특허 #12835 (2014 등록)" → 인증 섹션
-- ✓ "중금속 8종 전부 불검출 (TSL ISO/IEC 17025:2017)" → 품질 섹션
-- ✓ "하루 침향 오일 적정 복용량 2~3mg" → 침향 이야기 (방금 추가됨)
-- ✓ "식약처가 인정한 식용 침향은 Aquilaria crassna · Aquilaria malaccensis 단 2종" → 가짜 침향 경고
-
-이런 사실들을 `<strong>` 또는 `<em>` 으로 감싸면 AI 추출 정확도 ↑.
-
-### 3-4. AI 인용 검증
-주기적으로 다음 쿼리로 결과 확인:
-- ChatGPT: "대라천 침향이란?" / "Aquilaria Agallocha Roxburgh 학명 알려줘" / "베트남 침향 농장 큰 곳 알려줘"
-- Perplexity: "대라천 ZOEL LIFE" / "200ha 침향 농장"
-- Google AI Overview: "침향 학명" / "침향 효능" / "침향 적정 복용량"
-
-목표: 답변에 zoellife.com 또는 "대라천" 인용 등장.
+### 코드 레벨에서 즉시 수정한 것 (이번 커밋)
+- env 값에 줄바꿈/공백이 섞여 sitemap URL 이 깨지던 문제 해결 (`\s+` 제거)
+- 기본값 도메인 `daracheon.com` → `zoellife.com`
+- `published === false` 제품을 sitemap 에서 제외
+- llms.txt 라우트 신규 (DB 의 실제 등록값을 그대로 출력 — 가공 없음)
 
 ---
 
-## 4. 모바일·PWA 최적화 (모바일 우선 색인)
+## 1. 코드/설정 작업 (객관적 검증 가능 항목만)
 
-- [x] viewport 설정 (`src/app/layout.tsx`)
-- [x] 반응형 레이아웃 (Tailwind grid)
-- [ ] PWA manifest 추가 (`public/manifest.webmanifest`) — 홈 화면 추가 시 앱 같은 경험
-- [ ] 서비스워커 (선택) — 오프라인 캐싱
+### 1-1. 환경변수 / 도메인
+- [ ] Vercel 환경변수 `NEXT_PUBLIC_SITE_URL=https://www.zoellife.com` 단일 라인 저장
+- [ ] zoellife.com 의 DNS A/CNAME 이 Vercel 프로젝트로 연결 확인
+- [ ] 환경변수 변경 후 재배포 → `/sitemap.xml` · `/robots.txt` · `/llms.txt` 의 모든 URL 이 zoellife.com 로 변경됐는지 curl 로 확인
 
----
-
-## 5. 콘텐츠 캘린더 (3개월)
-
-| 주차 | 작업 | 효과 |
-|---|---|---|
-| Week 1 | Search Console + 네이버 서치어드바이저 등록 + sitemap 제출 | 색인 시작 |
-| Week 2 | 네이버 플레이스·쇼핑 입점 | 외부 신호 |
-| Week 3 | /process 페이지에 HowTo schema | AI 인용 |
-| Week 4 | 자체 네이버 블로그 글 5편 작성 (제품 사용기·공정 영상) | 백링크 |
-| Month 2 | 침향 효능 별 단독 페이지 (예: `/효능/숙면`) | 롱테일 키워드 |
-| Month 2 | 외부 언론 보도자료 1건 (한국경제·연합뉴스) | 권위 신호 |
-| Month 3 | AI Overview 등장 모니터링 + 부족한 콘텐츠 보강 | 인용율 ↑ |
-| Month 3 | Core Web Vitals 모바일 LCP 개선 (이미지 최적화 추가) | 순위 가산 |
-
----
-
-## 6. 측정 지표 (월간)
-
-### 검색
-- Google Search Console: 노출 수 · 클릭 수 · CTR · 평균 순위 (월 보고)
-- 네이버 서치어드바이저: 노출 · 클릭 · 검색 키워드
-- 핵심 키워드 순위: "대라천 침향", "침향 학명", "침향 효능", "침향 오일 캡슐", "베트남 침향"
-
-### AI 인용
-- 월 1회 ChatGPT/Perplexity/Google AI Overview 에 핵심 질문 던져 zoellife.com 인용 빈도 카운트
-- llms.txt 접근 로그 (Vercel Analytics)
-
----
-
-## 7. 즉시 실행 체크리스트
-
-### 코드 (이번 커밋)
-- [x] `sitemap.ts` `\s+` 제거 + 기본값 zoellife.com + 비공개 제품 제외
-- [x] `robots.ts` 동일 정리
-- [x] `/llms.txt` 동적 라우트 신규
-
-### 운영자 (Vercel 환경변수)
-- [ ] `NEXT_PUBLIC_SITE_URL=https://www.zoellife.com` (단일 라인, 공백/줄바꿈 없이)
-- [ ] zoellife.com → Vercel 프로젝트 도메인 연결 확인
-- [ ] 도메인 연결 후 재배포
-
-### 운영자 (외부 등록)
-- [ ] Google Search Console 등록 + 인증
-- [ ] 네이버 서치어드바이저 등록 + 인증
-- [ ] Bing Webmaster 등록
-- [ ] 네이버 플레이스 등록
-- [ ] 네이버 쇼핑 입점 (제품)
-- [ ] Google Business Profile 등록
-
-### 인증 메타 추가 (코드)
-인증 코드 받으면 `src/app/layout.tsx` 의 `metadata.verification` 활성화:
+### 1-2. 검색엔진 인증 메타
+운영자가 각 콘솔에서 인증 코드를 받아오면 `src/app/layout.tsx` 의 `metadata.verification` 에 추가:
 ```ts
 verification: {
-  google: '<google-site-verification 코드>',
-  other: {
-    'naver-site-verification': '<naver 코드>',
-  },
+  google: '<코드>',
+  other: { 'naver-site-verification': '<코드>' },
 },
+```
+- [ ] Google Search Console 인증 코드 발급 후 추가
+- [ ] Naver Search Advisor 인증 코드 발급 후 추가
+- [ ] Bing Webmaster (선택) 인증 코드 발급 후 추가
+
+### 1-3. 페이지별 JSON-LD 현황 (이미 적용된 것만 표기)
+| 경로 | 적용된 타입 |
+|---|---|
+| `/` | WebSite, Organization |
+| `/about-agarwood` | Article, FAQPage, BreadcrumbList, ScholarlyArticle (논문 목록 입력 시) |
+| `/brand-story` | AboutPage, BreadcrumbList, ItemList (영상) |
+| `/products` | CollectionPage, ItemList, BreadcrumbList |
+| `/products/[slug]` | Product (offers · 등) |
+| `/company` | LocalBusiness, BreadcrumbList |
+| `/reviews` | Product, AggregateRating, Review |
+| `/process` | (없음) |
+| `/support` | (없음) |
+
+### 1-4. JSON-LD 추가 작업 (코드 가능, 콘텐츠 사실 확인 필요)
+다음은 데이터가 이미 DB 에 들어 있을 때만 의미 있음. 빈 데이터로 schema 만 박는 건 가짜 신호이므로 **DB 입력 확인 후** 처리:
+- [ ] `/process` HowTo schema — `pages.brandStory.processTab.steps` 가 실제 등록되어 있을 때만 출력
+- [ ] `/products/[slug]` 의 Product schema 에 `gtin` · `mpn` 필드 — 관리자에 GTIN/MPN 입력 필드가 추가되고 값이 실제로 들어왔을 때만
+- [ ] `/about-agarwood` ScholarlyArticle 은 `papers` 항목이 실제 논문일 때만 출력 (현재 dummy 면 schema 출력 차단)
+
+### 1-5. 메타·접근성 점검 (그렙으로 검증 가능)
+- [ ] 페이지마다 `<h1>` 1개 — 자동 검사 스크립트 가능
+- [ ] 모든 `<Image>`/`<img>` 의 `alt` 속성 — 비어있는 경우 grep 으로 추출
+- [ ] `lang="ko"` 루트에 설정됨 (`src/app/layout.tsx`) — 확인 ✓
+- [ ] `viewport` width=device-width — 확인 ✓
+- [ ] 모든 페이지 canonical URL 일관성 — `metadata.alternates.canonical` 검사
+
+### 1-6. Core Web Vitals (계측 가능 항목)
+- [ ] Vercel Analytics 활성화 → 실제 사용자 LCP/CLS/INP 수집
+- [ ] PageSpeed Insights / Lighthouse 로 주요 경로 점수 기록 (월 1회 캡처)
+- [ ] LCP 후보 이미지에 `priority` 적용 여부 확인 (각 hero 첫 이미지)
+
+### 1-7. PWA / 모바일 (선택)
+- [ ] `public/manifest.webmanifest` 생성 (실제 운영 정책 결정 후)
+- [ ] 아이콘 192·512 PNG 준비
+- [ ] iOS apple-touch-icon
+
+---
+
+## 2. 외부 등록 (운영자 액션, 코드 외)
+
+코드와 무관하게 운영자가 결정·등록해야 하는 항목. 인증 코드를 받으면 §1-2 에 따라 코드에 박는다.
+
+- [ ] Google Search Console — 사이트 등록 + sitemap 제출
+- [ ] Bing Webmaster — 사이트 등록 + sitemap 제출
+- [ ] Naver Search Advisor — 사이트 등록 + sitemap 제출 + 모바일 친화도 검사
+- [ ] Naver 비즈니스 / 플레이스 (오프라인 사업장 운영 정책에 따라 결정)
+- [ ] Naver 쇼핑 (제품 판매 채널 정책에 따라 결정)
+- [ ] Google Business Profile (오프라인 사업장 운영 정책에 따라 결정)
+
+> 위 외부 채널의 등록 여부·정보 노출 범위·연결 SNS 는 모두 운영자 비즈니스
+> 결정 사항이며, 본 문서가 강제하지 않는다.
+
+---
+
+## 3. AI 크롤러 / LLM 인용 (기술 인프라만)
+
+### 3-1. 이미 적용된 기술 신호
+- robots.txt 에서 GPTBot · ClaudeBot · PerplexityBot · Google-Extended · CCBot · Bytespider · Yeti · NaverBot · Daumoa · Bingbot · Applebot-Extended · Meta-ExternalAgent · cohere-ai · Amazonbot 등 25종 명시 Allow
+- HTTPS · HSTS · CSP — 신뢰 신호 (브라우저·크롤러 동일 적용)
+- 사이트 구조: 정적 라우트 + 동적 RSC + JSON 데이터 — 크롤링 친화적
+- llms.txt 동적 라우트 — DB 등록 사실만 출력
+
+### 3-2. llms.txt 정책
+- 저장된 DB 값(제품·회사·연혁·인증)만 그대로 출력
+- 입증되지 않은 효능 주장·평가어("최고", "유일") 자동 추가 금지
+- 외부 인용 정책 안내 (출처 표기 권장 문구) 만 고정 텍스트로 포함
+
+### 3-3. 측정 가능한 항목
+- [ ] llms.txt 응답 200 + 요청 로그 (Vercel logs) 월 1회 점검
+- [ ] robots.txt User-Agent 별 트래픽 로그 확인 (어느 봇이 실제 크롤하는지)
+
+### 3-4. 측정 불가능한 항목 (목표가 아닌 관찰 항목)
+ChatGPT / Perplexity / Google AI Overview 답변에 사이트가 인용되는지는
+랜덤성·키워드·시점에 의존해 결정론적으로 측정 불가. 본 문서에서는 KPI
+로 잡지 않는다. 운영자가 임의 시점에 검증 쿼리를 던져 트래킹할 수는 있음.
+
+---
+
+## 4. 콘텐츠 작업 (사실 자료가 확보된 후 별도 진행)
+
+다음 항목은 **운영자가 입증 가능한 자료를 제공해야** 코드에 반영. 문서·
+사진·인증서 PDF 등이 없는 상태에서 페이지에 추가하지 않음.
+
+- [ ] 인증서 스캔본 업로드 (CITES · HACCP · OCOP 등 — 실물 인증번호와 발급일 확인)
+- [ ] 논문 목록 입력 (`/about-agarwood` papers 탭) — 실제 DOI/저널/저자/연도 출처
+- [ ] 언론 보도 입력 (`/media` press 탭) — 실제 매체/기사 URL
+- [ ] 회사 연혁 (`/brand-story` historyTab) — 실제 일자·문서/등기 근거
+- [ ] 제품 사양 (GTIN/MPN/SKU·중량·성분) — 패키지 표시 사실
+- [ ] 후기 (`/reviews`) — 실제 구매자 동의 받은 후기, 또는 외부 블로그 후기 링크 (이미 9건 등록)
+
+각 항목은 자료 확보 시점에 단독 PR/커밋으로 처리. 일괄 추가하지 않음.
+
+---
+
+## 5. 즉시 검증 가능한 체크 (배포 후 curl)
+
+```bash
+# 1. sitemap URL 정상화
+curl -s https://www.zoellife.com/sitemap.xml | head -50
+#   - 모든 <loc> 가 https://www.zoellife.com/... 로 시작
+#   - 줄바꿈으로 깨진 라인 0건
+
+# 2. robots.txt 의 sitemap 라인
+curl -s https://www.zoellife.com/robots.txt | grep -i sitemap
+#   - "Sitemap: https://www.zoellife.com/sitemap.xml" 한 줄
+
+# 3. llms.txt 도달 가능
+curl -sI https://www.zoellife.com/llms.txt
+#   - HTTP 200, Content-Type: text/plain
+
+# 4. 비공개 제품 제외 확인
+curl -s https://www.zoellife.com/sitemap.xml | grep -c "/products/"
+#   - 현재 published=true 인 제품 수와 일치 (대부분 1)
 ```
 
 ---
 
-## 8. 참고 문서
+## 6. 본 문서가 다루지 않는 것 (의도적 제외)
 
-- llms.txt 표준: https://llmstxt.org
+다음은 효과는 있을 수 있으나 **검증 없이 만들면 거짓 신호** 가 되므로
+이 문서에서 작업 항목으로 잡지 않는다:
+
+- 미확인 저자/검수자 표기
+- 미확인 인증/수상 표기
+- "1위" / "유일" / "최고" 같은 평가어
+- 출처 없는 효능 주장
+- 양 부풀리기 (예: 작성하지 않은 논문 갯수 표기)
+- 가짜 외부 백링크 / 자체 작성 후 외부인 인용 주장
+- AI 답변 인용 KPI (관찰만 가능, 컨트롤 불가)
+
+이런 신호는 단기적으로 순위·인용을 끌어올릴 수 있으나, 검증 절차에서
+제재되거나 신뢰를 잃을 위험이 더 크다. 사실 자료가 확보된 시점에 §4
+의 절차로 진입한다.
+
+---
+
+## 7. 참고 문서 (외부)
+
+- robots 표준: https://www.rfc-editor.org/rfc/rfc9309
+- llms.txt: https://llmstxt.org
+- schema.org: https://schema.org
 - Google Search Central: https://developers.google.com/search/docs
-- 네이버 서치어드바이저 가이드: https://searchadvisor.naver.com/guide
-- schema.org 타입: https://schema.org/docs/full.html
-- AEO 백서 (Princeton): https://arxiv.org/abs/2311.09735
+- Naver Search Advisor: https://searchadvisor.naver.com/guide
