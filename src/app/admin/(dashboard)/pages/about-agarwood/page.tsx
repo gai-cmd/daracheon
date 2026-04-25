@@ -238,7 +238,7 @@ export default function AdminAboutAgarwoodPage() {
   const [definitionSection, setDefinitionSection] = useState<AboutAgarwoodData['definitionSection']>({
     title: '침향(沈香)이란 무엇인가?',
     subtitle: '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)',
-    body: '침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.',
+    body: '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.',
     officialNameCallout: '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)',
   });
   const [formationSteps, setFormationSteps] = useState<FormationStep[]>([

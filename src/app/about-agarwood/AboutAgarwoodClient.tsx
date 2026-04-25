@@ -124,7 +124,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   <RevealOnScroll delay={200}>
                     <p>
                       {definition?.body ??
-                        '침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.'}
+                        '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.'}
                     </p>
                   </RevealOnScroll>
                   <RevealOnScroll delay={300}>
