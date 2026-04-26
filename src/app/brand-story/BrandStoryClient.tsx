@@ -122,7 +122,7 @@ export default function BrandStoryClient({ data }: Props) {
                       />
                     </div>
                   )}
-                  <div className={styles.cardKicker}>Farm · {String(i + 1).padStart(2, '0')}</div>
+                  <div className={styles.cardKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
                   <div className={styles.cardTitle}>{farm.name}</div>
                   <div className={styles.cardSub}>{farm.nameVi}</div>
                   <div className={styles.cardDesc}>{farm.desc}</div>

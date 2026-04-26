@@ -17,11 +17,11 @@
 /* HERO */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: calc(var(--nav-h) + 60px) 0 80px;
+  padding: var(--nav-h) 0 40px;
   overflow: hidden;
   background:
     radial-gradient(ellipse 60% 70% at 25% 30%, rgba(212, 168, 67, 0.15), transparent 60%),
@@ -83,6 +83,7 @@
   font-style: normal;
   font-family: 'Noto Serif KR', serif;
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .heroSub {
@@ -259,6 +260,43 @@
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 300;
+}
+
+.refGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin: 40px 0 0;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(212, 168, 67, 0.18);
+}
+@media (min-width: 700px) { .refGrid { grid-template-columns: repeat(4, 1fr); } }
+
+.refCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 28px 16px;
+  background: #0a0b10;
+  gap: 10px;
+  transition: background 300ms;
+}
+.refCard:hover { background: rgba(212, 168, 67, 0.06); }
+
+.refNum {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+}
+.refLabel {
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
 }
 
 .verifiedGrid {

@@ -71,10 +71,10 @@ const DEFAULT_HERO: HomeHero = {
 };
 
 const DEFAULT_STATS: HomeStat[] = [
-  { value: '25yrs', label: 'Research' },
-  { value: '400만+', label: 'Trees' },
-  { value: '200ha', label: 'Farm' },
-  { value: '8건', label: 'Certifications' },
+  { value: '25yrs', label: '연구 역사' },
+  { value: '400만+', label: '침향나무' },
+  { value: '200ha', label: '직영 농장' },
+  { value: '8건', label: '인증' },
   { value: '5개', label: '직영 사업장' },
 ];
 
@@ -215,10 +215,6 @@ export default async function HomePage() {
           <div className={styles.wrap}>
             <div className={styles.heroRow}>
               <div>
-                <div className={styles.heroKicker}>
-                  <span>{hero.sectionTag}</span>
-                  <span className="idx">01 — 03</span>
-                </div>
                 <h1>
                   {hero.titleKr.split(',').length > 1 ? (
                     <>
@@ -282,15 +278,33 @@ export default async function HomePage() {
             </h2>
             <div className={styles.line} />
             <p>
-              이젠 학명부터 확인하세요. 식약처 고시에 등록된 공식 침향은{' '}
+              이젠 학명/품종부터 확인하세요! 식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과
+              &lsquo;한약재 관능검사 해설서&rsquo;와 &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에
+              공식 등록된 침향은{' '}
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
-                Aquilaria Agallocha Roxburgh(AAR)
+                &lsquo;Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)&rsquo;
               </em>
-              . 인도네시아산 혼합·저가 품종과 명확히 다릅니다.
+              입니다.
             </p>
             <p>
-              대라천은 첫 묘목부터 완제품까지, 인증서 8종을 포함한 모든 단계를 공개합니다.
+              대라천 &lsquo;참&rsquo;침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.
             </p>
+          </div>
+
+          <div className={styles.refGrid}>
+            {[
+              { num: '01', label: '대한민국약전외한약\n(생약)규격집' },
+              { num: '02', label: '식약처\n식품공전' },
+              { num: '03', label: '한약재 관능검사\n해설서' },
+              { num: '04', label: '한국한의학연구원\n한약자원연구센터' },
+            ].map(({ num, label }) => (
+              <div key={num} className={styles.refCard}>
+                <span className={styles.refNum}>{num}</span>
+                <p className={styles.refLabel}>{label.split('\n').map((line, i) => (
+                  <span key={i}>{line}{i === 0 && <br />}</span>
+                ))}</p>
+              </div>
+            ))}
           </div>
 
           <div className={styles.verifiedGrid}>

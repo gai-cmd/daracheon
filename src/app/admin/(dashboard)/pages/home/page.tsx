@@ -94,10 +94,10 @@ const DEFAULT_HERO: HomeHero = {
 };
 
 const DEFAULT_STATS: HomeStat[] = [
-  { value: '25yrs', label: 'Research' },
-  { value: '400만+', label: 'Trees' },
-  { value: '200ha', label: 'Farm' },
-  { value: '8건', label: 'Certifications' },
+  { value: '25yrs', label: '연구 역사' },
+  { value: '400만+', label: '침향나무' },
+  { value: '200ha', label: '직영 농장' },
+  { value: '8건', label: '인증' },
 ];
 
 const DEFAULT_NOTICE: HomeNotice = {

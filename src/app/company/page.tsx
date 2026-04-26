@@ -113,7 +113,7 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
   },
   {
     num: '03',
-    tag: 'Certifications',
+    tag: '인증',
     title: '공식 인증 · 등록',
     body: 'CITES 등록 VN-2008-AAR-003 · 베트남 농업부 수출허가 EXP-VN-2024-112 · 식약처 건강기능식품 전문제조업 허가 · ISO 22000 식품안전경영시스템 · HACCP 인증 제조시설. 모든 인증서는 본사 또는 홈페이지 〈검증〉 메뉴에서 원본 확인이 가능합니다.',
   },

@@ -718,7 +718,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
             <div className={styles.chapterGrid}>
               <div>
                 <div className={styles.chapterNum}>—</div>
-                <div className={styles.chapterTag}>Research · 논문</div>
+                <div className={styles.chapterTag}>연구 · 논문</div>
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
