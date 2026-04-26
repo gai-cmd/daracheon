@@ -650,53 +650,8 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
-          {/* Quality Tab */}
-          <SectionCard title="탭 5 · 검증된 품질" onSave={() => saveSection('qualityTab', { qualityTab })} saving={saving === 'qualityTab'}>
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <LabeledInput label="태그" value={qualityTab.tag} onChange={(v) => setQualityTab({ ...qualityTab, tag: v })} />
-                <LabeledInput label="제목" value={qualityTab.title} onChange={(v) => setQualityTab({ ...qualityTab, title: v })} />
-                <div className="md:col-span-2">
-                  <LabeledInput label="부제목" value={qualityTab.subtitle} onChange={(v) => setQualityTab({ ...qualityTab, subtitle: v })} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">품질 이미지 (최대 2개)</label>
-                <div className="space-y-3">
-                  {qualityTab.images.map((img, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...qualityTab.images]; n[i] = url; setQualityTab({ ...qualityTab, images: n }); }} subdir="pages" />
-                      </div>
-                      <button type="button" onClick={() => setQualityTab({ ...qualityTab, images: removeItem(qualityTab.images, i) })} className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5">삭제</button>
-                    </div>
-                  ))}
-                  {qualityTab.images.length < 2 && (
-                    <button type="button" onClick={() => setQualityTab({ ...qualityTab, images: [...qualityTab.images, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                      + 이미지 추가
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">중금속 항목</label>
-                <div className="space-y-2">
-                  {qualityTab.heavyMetals.map((metal, i) => (
-                    <div key={i} className="flex gap-2">
-                      <input value={metal} onChange={(e) => { const n = [...qualityTab.heavyMetals]; n[i] = e.target.value; setQualityTab({ ...qualityTab, heavyMetals: n }); }} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <button type="button" onClick={() => setQualityTab({ ...qualityTab, heavyMetals: removeItem(qualityTab.heavyMetals, i) })} className="text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5">삭제</button>
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => setQualityTab({ ...qualityTab, heavyMetals: [...qualityTab.heavyMetals, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                    + 항목 추가
-                  </button>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
           {/* Process Tab */}
-          <SectionCard title="탭 6 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
+          <SectionCard title="탭 5 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={processTab.tag} onChange={(v) => setProcessTab({ ...processTab, tag: v })} />

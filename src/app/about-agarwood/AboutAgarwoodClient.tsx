@@ -11,7 +11,7 @@ interface Props {
   data: AboutAgarwoodData | null;
 }
 
-const TABS = ['침향이란?', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'] as const;
+const TABS = ['침향이란?', '진짜 침향 구별 방법', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'] as const;
 
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -603,8 +603,161 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 1: 문헌에 실린 침향 ════════════ */}
+      {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>—</div>
+                <div className={styles.chapterTag}>Authenticity · 감별법</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>
+                    <em>진짜 침향 구별 방법</em>
+                  </h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 18 }}>
+                    진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.
+                  </p>
+                </RevealOnScroll>
+                <RevealOnScroll delay={150}>
+                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, marginBottom: 36 }}>
+                    한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — <span style={{ color: 'var(--accent)', fontWeight: 600 }}>학명, 산지, 증빙문서</span> — 으로 확인할 수 있습니다.
+                  </p>
+                </RevealOnScroll>
+
+                {/* Check 01 — 학명 */}
+                <RevealOnScroll delay={200}>
+                  <div style={{ marginBottom: 40 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                        CHECK · 01
+                      </span>
+                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
+                    </div>
+                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                      학명을 따져봐야 한다
+                    </h4>
+                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
+                      대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)</span>입니다.
+                    </p>
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      {[
+                        { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria Agallocha Roxburgh로 명확히 정의.' },
+                        { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria Agallocha Roxburgh / Aquilaria Malaccensis Lam.' },
+                        { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
+                        { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
+                      ].map((row, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            gap: 16,
+                            padding: '14px 18px',
+                            border: '1px solid rgba(212,168,67,0.2)',
+                            background: 'rgba(212,168,67,0.03)',
+                          }}
+                        >
+                          <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--accent)', paddingTop: 3, textTransform: 'uppercase' }}>
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <div>
+                            <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
+                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{row.value}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </RevealOnScroll>
+
+                {/* Check 02 — 산지 */}
+                <RevealOnScroll delay={250}>
+                  <div style={{ marginBottom: 40 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                        CHECK · 02
+                      </span>
+                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
+                    </div>
+                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                      산지를 따져봐야 한다
+                    </h4>
+                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
+                      고문헌들이 기록한 최고 산지는 역사적으로 <span style={{ color: 'var(--accent)', fontWeight: 600 }}>베트남산</span>이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.
+                    </p>
+                    <div
+                      style={{
+                        padding: '22px 26px',
+                        border: '1px solid rgba(212,168,67,0.3)',
+                        background: 'rgba(212,168,67,0.05)',
+                        borderLeft: '4px solid var(--accent)',
+                      }}
+                    >
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
+                        향승(香乘) · 명대 1611년
+                      </p>
+                      <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
+                        명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 <strong style={{ color: '#fff' }}>진랍(眞臘)</strong>, 상품은 <strong style={{ color: '#fff' }}>점성(占城)</strong>으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.
+                      </p>
+                    </div>
+                  </div>
+                </RevealOnScroll>
+
+                {/* Check 03 — 증빙문서 */}
+                <RevealOnScroll delay={300}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                        CHECK · 03
+                      </span>
+                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
+                    </div>
+                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                      문서를 따져봐야 한다
+                    </h4>
+                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
+                      진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — <span style={{ color: '#ff6450', fontWeight: 600 }}>가짜 침향은 CITES 통과 불가능</span>합니다.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                      {[
+                        { doc: '원산지 증명서', desc: '베트남 정통 산지임을 확인', highlight: false },
+                        { doc: '정식 수입 증빙 서류', desc: '정상적인 통관·검역·수입 확인', highlight: false },
+                        { doc: '유기농 인증서', desc: '식용 가능 여부, 농약·화학물질 관리 확인', highlight: false },
+                        { doc: 'CITES 인증서', desc: '합법 원료 100% 보증. 가짜 침향은 통과 불가능', highlight: true },
+                        { doc: '성분검사서', desc: '실제 침향 성분 함량 확인', highlight: false },
+                        { doc: '유해물질성적서', desc: '중금속·잔류 농약·미생물 등 확인', highlight: false },
+                      ].map((item, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            padding: '16px 18px',
+                            border: `1px solid ${item.highlight ? 'rgba(255,100,80,0.4)' : 'rgba(212,168,67,0.2)'}`,
+                            background: item.highlight ? 'rgba(255,100,80,0.05)' : 'rgba(255,255,255,0.02)',
+                          }}
+                        >
+                          <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.92rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 6 }}>
+                            {item.doc}
+                          </p>
+                          <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.58)', lineHeight: 1.75, fontWeight: 300 }}>
+                            {item.desc}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </RevealOnScroll>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
+      {activeTab === 2 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -711,8 +864,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </section>
       )}
 
-      {/* ════════════ TAB 2: 논문에 실린 침향 ════════════ */}
-      {activeTab === 2 && (
+      {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
+      {activeTab === 3 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -851,8 +1004,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </section>
       )}
 
-      {/* ════════════ TAB 3: 매체에 실린 침향 ════════════ */}
-      {activeTab === 3 && (
+      {/* ════════════ TAB 4: 매체에 실린 침향 ════════════ */}
+      {activeTab === 4 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -985,8 +1138,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </section>
       )}
 
-      {/* ════════════ TAB 4: 고객이 남긴 침향 ════════════ */}
-      {activeTab === 4 && (
+      {/* ════════════ TAB 5: 고객이 남긴 침향 ════════════ */}
+      {activeTab === 5 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
