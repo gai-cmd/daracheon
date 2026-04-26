@@ -8,7 +8,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { readSingleSafe } from '@/lib/db';
 import Link from 'next/link';
 import {
-  DEFAULT_FOOTER_COLUMNS,
   DEFAULT_MAIN_NAV,
   type NavigationData,
 } from '@/data/navigation';
@@ -137,7 +136,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // seed hasn't been written yet (first deploy, or Blob store empty).
   const nav = await readSingleSafe<NavigationData>('navigation');
   const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
-  const footerColumns = nav?.footerColumns ?? DEFAULT_FOOTER_COLUMNS;
 
   // 브랜드 로고 (좌측 상단) — settings(company)에서 관리
   const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company');
@@ -165,7 +163,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <Header mainNav={mainNav} brandLogo={brandLogo} />
         <main>{children}</main>
-        <Footer footerColumns={footerColumns} />
+        <Footer />
         {/* Vercel Analytics + Speed Insights — 실제 사용자 LCP/CLS/INP 수집.
             DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
         <VercelAnalytics />

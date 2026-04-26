@@ -1,5 +1,3 @@
-/* variation HTML inline footer style — 포팅 */
-
 .footer {
   background: #07080c;
   padding: 80px 0 40px;
@@ -7,32 +5,20 @@
   color: #fdfbf7;
 }
 
-.wrap {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 0 28px;
+.inner {
+  width: 100%;
+  padding: 0 40px;
 }
 @media (min-width: 1024px) {
-  .wrap { padding: 0 64px; }
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-  margin-bottom: 50px;
-}
-@media (min-width: 900px) {
-  .grid {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 60px;
-  }
+  .inner { padding: 0 64px; }
 }
 
 .brandBlock {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
+  margin-bottom: 50px;
 }
 
 .brandLine {
@@ -74,7 +60,7 @@
   font-size: 0.88rem;
   line-height: 1.9;
   font-weight: 300;
-  max-width: 360px;
+  max-width: 640px;
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -98,37 +84,8 @@
   color: var(--accent-soft);
 }
 
-.col h5 {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 20px;
-}
-
-.col ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 0;
-  margin: 0;
-}
-
-.col a {
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  font-size: 0.86rem;
-  font-weight: 300;
-  transition: color 300ms;
-}
-
-.col a:hover {
-  color: var(--accent-soft);
-}
-
 .companyInfo {
+  width: 100%;
   padding-top: 24px;
   padding-bottom: 24px;
   margin-bottom: 20px;
