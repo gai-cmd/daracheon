@@ -71,11 +71,10 @@ const DEFAULT_HERO: HomeHero = {
 };
 
 const DEFAULT_STATS: HomeStat[] = [
-  { value: '25yrs', label: '연구 역사' },
-  { value: '400만+', label: '침향나무' },
-  { value: '200ha', label: '직영 농장' },
-  { value: '8건', label: '인증' },
-  { value: '5개', label: '직영 사업장' },
+  { value: '25년+', label: '연구 및 재배' },
+  { value: '200ha', label: '400만 그루' },
+  { value: '12건+', label: '특허 및 인증' },
+  { value: '5개 지역', label: '직영 농장' },
 ];
 
 const DEFAULT_VERIFICATION = [
@@ -283,8 +282,9 @@ export default async function HomePage() {
             <div className={styles.line} />
             <p>
               이젠 학명/품종부터 확인하세요!<br />
-              식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과
-              &lsquo;한약재 관능검사 해설서&rsquo;와 &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에
+              식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;,
+              &lsquo;식품공전&rsquo;, &lsquo;한약재 관능검사 해설서&rsquo;와
+              &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에
               공식 등록된 침향은{' '}
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
                 &lsquo;Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)&rsquo;
