@@ -278,7 +278,8 @@ export default async function HomePage() {
             </h2>
             <div className={styles.line} />
             <p>
-              이젠 학명/품종부터 확인하세요! 식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과
+              이젠 학명/품종부터 확인하세요!<br />
+              식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;과
               &lsquo;한약재 관능검사 해설서&rsquo;와 &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에
               공식 등록된 침향은{' '}
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
