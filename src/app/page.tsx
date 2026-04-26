@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import JsonLd from '@/components/ui/JsonLd';
 import { readSingleSafe } from '@/lib/db';
@@ -239,14 +238,6 @@ export default async function HomePage() {
                   )}
                 </h1>
                 <p className={styles.heroSub} style={{ whiteSpace: 'pre-line' }}>{hero.subtitle}</p>
-                <div className={styles.heroCtas}>
-                  <Link href={hero.ctaPrimaryHref} className={styles.btnGold}>
-                    {hero.ctaPrimaryLabel}
-                  </Link>
-                  <Link href={hero.ctaSecondaryHref} className={styles.btnOutline}>
-                    {hero.ctaSecondaryLabel}
-                  </Link>
-                </div>
               </div>
 
               {/* 4-Point Verification Card (edit in /admin/pages/home) */}
