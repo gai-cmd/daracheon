@@ -170,6 +170,15 @@ const DEFAULT_PROCESS: HomeProcess = {
 
 const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'Steam Distillation · GMP'];
 
+const PROCESS_IMAGES = [
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-01-seedling.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-02-farm.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-03-growing.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-04-resin.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-05-harvest.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-06-factory.jpg',
+];
+
 export const metadata: Metadata = {
   title: 'ZOEL LIFE — 25년 검증된 침향, 대라천 참침향',
   description:
@@ -391,26 +400,13 @@ export default async function HomePage() {
                 <div className={styles.procIdx}>{String(i + 1).padStart(2, '0')}</div>
                 <h4>{step}</h4>
                 <div className={styles.procDur}>{processDurations[i] ?? '—'}</div>
+                {PROCESS_IMAGES[i] && (
+                  <div className={styles.procImgWrap}>
+                    <img src={PROCESS_IMAGES[i]} alt={step} className={styles.procImg} />
+                  </div>
+                )}
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className={styles.section} style={{ textAlign: 'center', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
-        <div className={styles.wrap}>
-          <span className={styles.tag}>Direct · 브랜드 직판</span>
-          <h2 className={styles.h2}>
-            대라천 <em>참침향</em>의 검증된 가치
-          </h2>
-          <div className={styles.line} />
-          <p style={{ fontSize: '0.95rem', color: 'rgba(212,168,67,0.75)', fontWeight: 300, letterSpacing: '0.04em', marginBottom: 8 }}>
-            베트남에서 키우고, 한국에서 직접 팝니다 — 조엘라이프
-          </p>
-          <div className={styles.heroCtas} style={{ justifyContent: 'center', marginTop: 20 }}>
-            <Link href="/products" className={styles.btnGold}>제품 보기 →</Link>
-            <Link href="/home-shopping" className={styles.btnOutline}>홈쇼핑 편성표</Link>
           </div>
         </div>
       </section>
