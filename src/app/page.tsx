@@ -307,17 +307,6 @@ export default async function HomePage() {
             ))}
           </div>
 
-          <div className={styles.verifiedGrid}>
-            {verifiedCards.map((c, i) => (
-              <div key={`${c.step}-${i}`} className={styles.verifiedCard}>
-                <div className={styles.verifiedStep}>{c.step}</div>
-                <h3>{c.title}</h3>
-                <div className={styles.verifiedEn}>{c.en}</div>
-                <p>{c.body}</p>
-              </div>
-            ))}
-          </div>
-
           <div className={styles.certRow}>
             <span className={styles.tag}>Certifications · {certs.length}개 인증</span>
             <div className={styles.certGrid}>
