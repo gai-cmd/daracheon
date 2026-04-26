@@ -352,8 +352,8 @@
   background: rgba(212, 168, 67, 0.15);
   border: 1px solid rgba(212, 168, 67, 0.15);
 }
-@media (min-width: 700px) { .certGrid { grid-template-columns: repeat(4, 1fr); } }
-@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(8, 1fr); } }
+@media (min-width: 600px) { .certGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(6, 1fr); } }
 .certChip {
   background: #0a0b10;
   padding: 24px 14px;

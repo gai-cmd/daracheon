@@ -110,14 +110,18 @@ const DEFAULT_VERIFIED_CARDS = [
 ];
 
 const DEFAULT_CERTS = [
+  { mark: 'V', name: '원산지 증명', sub: '베트남 100% 원산지' },
   { mark: 'C', name: 'CITES', sub: '국제 보호 수종' },
-  { mark: 'H', name: 'HACCP', sub: '식품 안전' },
-  { mark: 'G', name: 'GMP', sub: '우수 제조' },
-  { mark: 'O', name: 'ORGANIC', sub: '유기농' },
-  { mark: 'V', name: '원산지', sub: '베트남 증명' },
-  { mark: 'D', name: 'DNA', sub: '유전자 검증' },
-  { mark: 'F', name: '식약처', sub: '고시 학명' },
-  { mark: 'S', name: 'SGS', sub: '국제 검사' },
+  { mark: 'O', name: 'OCOP', sub: '베트남 정부 품질' },
+  { mark: 'R', name: '유기농 재배', sub: '무농약 유기 농법' },
+  { mark: 'Z', name: '청정지역', sub: '토양·환경 청정' },
+  { mark: 'P', name: '유기농 완제품', sub: '유기 성분 인증' },
+  { mark: 'T', name: '수지 특허', sub: '식용 수지 특허' },
+  { mark: 'H', name: 'HACCP', sub: '식품 안전 관리' },
+  { mark: 'G', name: 'GMP', sub: '우수 제조 시설' },
+  { mark: 'F', name: 'FDA', sub: '미국 FDA 등록' },
+  { mark: 'S', name: '유해물질', sub: '중금속·잔류농약 0' },
+  { mark: 'L', name: '성분 검사서', sub: '수지 함량 분석' },
 ];
 
 const DEFAULT_AGARWOOD: HomeAgarwood = {
