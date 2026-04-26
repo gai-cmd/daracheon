@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://assets.floot.app https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com",
       "connect-src 'self' https://www.google-analytics.com https://*.public.blob.vercel-storage.com",
-      "frame-src 'self' https://www.youtube.com https://youtube.com",
+      "frame-src 'self' https://www.youtube.com https://youtube.com https://drive.google.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
