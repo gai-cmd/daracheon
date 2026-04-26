@@ -144,7 +144,7 @@ const DEFAULT_AGARWOOD: HomeAgarwood = {
 
 const DEFAULT_BENEFITS: HomeBenefits = {
   tag: 'Benefits · 연구 기반 효능',
-  title: '침향의 가치, 여섯 가지 방향',
+  title: '침향의 가치, 여섯 가지 효능',
   items: [
     { title: '기를 뚫어 순환 효과', description: '침향은 아래로 떨어지는 기운으로 기혈 흐름을 틔워, 막힌 기를 뚫고 오장육부를 바로잡습니다.' },
     { title: '원기 회복 · 자양강장', description: '동의보감이 기록한 대로, 찬 기를 몰아내고 몸을 덥혀 피로를 풀고 활력을 살립니다.' },
@@ -284,7 +284,7 @@ export default async function HomePage() {
               이젠 학명/품종부터 확인하세요!<br />
               식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;,
               &lsquo;식품공전&rsquo;, &lsquo;한약재 관능검사 해설서&rsquo;와
-              &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에
+              &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에<br />
               공식 등록된 침향은{' '}
               <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
                 &lsquo;Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)&rsquo;
@@ -379,7 +379,7 @@ export default async function HomePage() {
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{processData.tag}</span>
-            <h2 className={styles.h2}>{processData.title}</h2>
+            <h2 className={styles.h2} style={{ whiteSpace: 'nowrap' }}>{processData.title}</h2>
             <div className={styles.line} />
             <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
               묘목 발아에서 정밀 채취, 최종 검수까지 — 모든 단계의 책임을 감추지 않고 공개합니다.

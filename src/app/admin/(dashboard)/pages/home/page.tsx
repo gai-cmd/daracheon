@@ -134,7 +134,7 @@ const DEFAULT_AGARWOOD: HomeAgarwood = {
 
 const DEFAULT_BENEFITS: HomeBenefits = {
   tag: 'Benefits · 연구 기반 효능',
-  title: '침향의 가치, 여섯 가지 방향',
+  title: '침향의 가치, 여섯 가지 효능',
   items: [
     { title: '기를 뚫어 순환 효과', description: '침향은 아래로 떨어지는 기운으로 기혈 흐름을 틔워, 막힌 기를 뚫고 오장육부를 바로잡습니다.' },
     { title: '원기 회복 · 자양강장', description: '동의보감이 기록한 대로, 찬 기를 몰아내고 몸을 덥혀 피로를 풀고 활력을 살립니다.' },
