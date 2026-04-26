@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://assets.floot.app https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com",
+      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://assets.floot.app https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com",
       "connect-src 'self' https://www.google-analytics.com https://*.public.blob.vercel-storage.com",
       "frame-src 'self' https://www.youtube.com https://youtube.com",
       "object-src 'none'",

@@ -232,9 +232,10 @@ export default function BrandStoryClient({ data }: Props) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))',
-                gap: 24,
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 190px), 1fr))',
+                gap: 32,
                 margin: '0 0 48px',
+                alignItems: 'start',
               }}
             >
               {certs.map((cert, i) => {
@@ -252,98 +253,141 @@ export default function BrandStoryClient({ data }: Props) {
                     style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }}
                     title={`${cert.name} 원본 보기`}
                   >
-                    {/* 외부 액자 프레임 */}
+                    {/* 액자 최외곽: 프레임 몸체 */}
                     <div
                       style={{
                         position: 'relative',
+                        background: `linear-gradient(160deg, #2e2610 0%, #1a1508 40%, #261f0c 70%, #12100a 100%)`,
                         padding: '10px',
-                        background: 'linear-gradient(145deg, #1c1a12, #110f0a)',
-                        border: `2px solid ${accentColor}88`,
-                        boxShadow: `0 0 0 1px #0a0b1044, inset 0 0 0 1px ${accentColor}22`,
-                        transition: 'transform 220ms ease, box-shadow 220ms ease',
+                        boxShadow: `
+                          0 2px 4px rgba(0,0,0,0.9),
+                          0 8px 28px rgba(0,0,0,0.65),
+                          inset 0 1px 0 ${accentColor}55,
+                          inset 0 -1px 0 rgba(0,0,0,0.6),
+                          inset 1px 0 0 ${accentColor}33,
+                          inset -1px 0 0 ${accentColor}33
+                        `,
+                        outline: `1px solid ${accentColor}66`,
+                        outlineOffset: '-1px',
+                        transition: 'transform 240ms ease, box-shadow 240ms ease',
                       }}
                       onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
-                        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 32px ${accentColor}33, 0 0 0 1px #0a0b10`;
+                        const el = e.currentTarget as HTMLDivElement;
+                        el.style.transform = 'translateY(-6px)';
+                        el.style.boxShadow = `
+                          0 2px 4px rgba(0,0,0,0.9),
+                          0 16px 40px ${accentColor}28,
+                          0 6px 16px rgba(0,0,0,0.7),
+                          inset 0 1px 0 ${accentColor}77,
+                          inset 0 -1px 0 rgba(0,0,0,0.6),
+                          inset 1px 0 0 ${accentColor}44,
+                          inset -1px 0 0 ${accentColor}44
+                        `;
                       }}
                       onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-                        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px #0a0b1044, inset 0 0 0 1px ${accentColor}22`;
+                        const el = e.currentTarget as HTMLDivElement;
+                        el.style.transform = 'translateY(0)';
+                        el.style.boxShadow = `
+                          0 2px 4px rgba(0,0,0,0.9),
+                          0 8px 28px rgba(0,0,0,0.65),
+                          inset 0 1px 0 ${accentColor}55,
+                          inset 0 -1px 0 rgba(0,0,0,0.6),
+                          inset 1px 0 0 ${accentColor}33,
+                          inset -1px 0 0 ${accentColor}33
+                        `;
                       }}
                     >
-                      {/* 네 모서리 장식 */}
+                      {/* 프레임 테두리 선 — 이중 테두리 효과 */}
+                      <div style={{
+                        position: 'absolute', inset: 4,
+                        border: `1px solid ${accentColor}44`,
+                        pointerEvents: 'none',
+                      }} />
+
+                      {/* 네 모서리 L자 장식 */}
                       {(['tl','tr','bl','br'] as const).map((pos) => (
                         <span key={pos} style={{
                           position: 'absolute',
-                          width: 14, height: 14,
-                          top: pos.startsWith('t') ? 3 : undefined,
-                          bottom: pos.startsWith('b') ? 3 : undefined,
-                          left: pos.endsWith('l') ? 3 : undefined,
-                          right: pos.endsWith('r') ? 3 : undefined,
+                          width: 16, height: 16,
+                          top: pos.startsWith('t') ? 2 : undefined,
+                          bottom: pos.startsWith('b') ? 2 : undefined,
+                          left: pos.endsWith('l') ? 2 : undefined,
+                          right: pos.endsWith('r') ? 2 : undefined,
                           borderTop: pos.startsWith('t') ? `2px solid ${accentColor}` : undefined,
                           borderBottom: pos.startsWith('b') ? `2px solid ${accentColor}` : undefined,
                           borderLeft: pos.endsWith('l') ? `2px solid ${accentColor}` : undefined,
                           borderRight: pos.endsWith('r') ? `2px solid ${accentColor}` : undefined,
+                          pointerEvents: 'none',
                         }} />
                       ))}
 
-                      {/* 내부 매트 */}
+                      {/* 내부 매트 (passe-partout) — 크림색 여백 */}
                       <div style={{
-                        border: `1px solid ${accentColor}33`,
-                        padding: '8px',
-                        background: 'rgba(255,255,255,0.02)',
+                        border: `1px solid ${accentColor}55`,
+                        padding: '6px',
+                        background: 'linear-gradient(160deg, #faf7f0, #f2ede3)',
+                        boxShadow: `inset 0 0 12px rgba(0,0,0,0.12)`,
                       }}>
-                        {/* 인증서 이미지 — 원본 비율 유지, 고정 높이 컨테이너 */}
-                        <div style={{ height: 260, background: '#f8f5ec', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, position: 'relative' }}>
-                          <Image
-                            src={cert.thumb}
-                            alt={cert.name}
-                            fill
-                            sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1200px) 22vw, 210px"
-                            style={{ objectFit: 'contain', padding: 8 }}
-                            unoptimized
-                          />
-                        </div>
+                        {/* 인증서 이미지 — 가로세로 비율 자동 유지 */}
+                        <Image
+                          src={cert.thumb}
+                          alt={cert.name}
+                          width={0}
+                          height={0}
+                          sizes="(max-width: 480px) 90vw, (max-width: 768px) 42vw, (max-width: 1200px) 25vw, 220px"
+                          style={{ width: '100%', height: 'auto', display: 'block' }}
+                          unoptimized
+                        />
                       </div>
 
                       {/* 카테고리 배지 */}
                       <div style={{
-                        position: 'absolute', top: 14, right: 14,
+                        position: 'absolute', top: 13, right: 13,
                         padding: '2px 7px',
-                        background: `${accentColor}22`,
-                        border: `1px solid ${accentColor}66`,
+                        background: `rgba(0,0,0,0.7)`,
+                        border: `1px solid ${accentColor}88`,
                         borderRadius: 999,
                         fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: '0.55rem',
+                        fontSize: '0.52rem',
                         letterSpacing: '0.14em',
                         color: accentColor,
+                        backdropFilter: 'blur(4px)',
                       }}>
                         {cert.category}
                       </div>
                     </div>
 
-                    {/* 명판 */}
+                    {/* 명판 (Nameplate) */}
                     <div style={{
-                      marginTop: 10,
+                      marginTop: 0,
+                      background: 'linear-gradient(to bottom, #1a1712, #110f0a)',
+                      border: `1px solid ${accentColor}44`,
+                      borderTop: 'none',
+                      padding: '9px 10px 10px',
                       textAlign: 'center',
-                      padding: '0 4px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
                     }}>
+                      <div style={{
+                        width: 28, height: 1,
+                        background: `linear-gradient(to right, transparent, ${accentColor}88, transparent)`,
+                        margin: '0 auto 7px',
+                      }} />
                       <p style={{
                         fontFamily: "'Noto Serif KR', serif",
-                        fontSize: '0.82rem',
-                        color: '#fff',
+                        fontSize: '0.78rem',
+                        color: '#f0e8d0',
                         fontWeight: 500,
-                        lineHeight: 1.45,
-                        marginBottom: 3,
+                        lineHeight: 1.5,
+                        marginBottom: 4,
                         wordBreak: 'keep-all',
                       }}>
                         {cert.name}
                       </p>
                       <p style={{
                         fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: '0.58rem',
+                        fontSize: '0.55rem',
                         letterSpacing: '0.1em',
-                        color: `${accentColor}99`,
+                        color: `${accentColor}bb`,
                         lineHeight: 1.4,
                       }}>
                         {cert.nameEn}
