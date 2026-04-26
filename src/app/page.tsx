@@ -379,7 +379,7 @@ export default async function HomePage() {
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{processData.tag}</span>
-            <h2 className={styles.h2} style={{ whiteSpace: 'nowrap' }}>{processData.title}</h2>
+            <h2 className={styles.h2} style={{ whiteSpace: 'nowrap', fontSize: 'clamp(1.5rem, 2.8vw, 2.4rem)' }}>{processData.title}</h2>
             <div className={styles.line} />
             <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
               묘목 발아에서 정밀 채취, 최종 검수까지 — 모든 단계의 책임을 감추지 않고 공개합니다.
