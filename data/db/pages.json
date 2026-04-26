@@ -96,7 +96,7 @@
     "certificationsTab": {
       "tag": "CERTIFICATIONS",
       "title": "신뢰의 지표",
-      "subtitle": "국제가 인정하는 대라천의 품질 — 총 13종 인증",
+      "subtitle": "국제가 인정하는 대라천의 품질 — 총 14종 인증",
       "certs": [
         {
           "name": "CITES 국제협약 인증서",
@@ -188,6 +188,13 @@
           "category": "사업등록",
           "thumb": "https://drive.google.com/thumbnail?id=1UzVurmG7uxiAEi49wG2pc03ziBNH97QY&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY/view"
+        },
+        {
+          "name": "OCOP 품질보증서 베트남 동나이 인민위원회",
+          "nameEn": "OCOP 4-Star Certificate — Dong Nai Province 2025",
+          "category": "품질인증",
+          "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
+          "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view"
         }
       ],
       "sections": [
