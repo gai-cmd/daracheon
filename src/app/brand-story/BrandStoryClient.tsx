@@ -14,7 +14,6 @@ const TAB_LIST = [
   '대라천 침향 현장',
   '대라천 침향 역사',
   '다양한 인증',
-  '검증된 품질',
   '생산 공정',
 ] as const;
 
@@ -518,7 +517,7 @@ export default function BrandStoryClient({ data }: Props) {
                         {cert.nameEn}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>

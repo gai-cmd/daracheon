@@ -1018,15 +1018,27 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     const card = (
                       <div
                         style={{
-                          padding: 24,
                           border: '1px solid rgba(212,168,67,0.2)',
                           background: 'rgba(255,255,255,0.02)',
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
                           transition: 'border-color 200ms, background 200ms',
+                          overflow: 'hidden',
                         }}
                       >
+                        {item.image && (
+                          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', flexShrink: 0 }}>
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                            />
+                          </div>
+                        )}
+                        <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                         {typeof item.rating === 'number' && item.rating > 0 && (
                           <div style={{ marginBottom: 14, letterSpacing: '0.1em' }}>
                             {[...Array(5)].map((_, j) => (
@@ -1104,6 +1116,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               원문 보기 →
                             </div>
                           )}
+                        </div>
                         </div>
                       </div>
                     );
