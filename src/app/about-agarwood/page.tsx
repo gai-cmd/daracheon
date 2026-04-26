@@ -78,9 +78,26 @@ export interface TestimonialItem { name: string; role?: string; rating?: number;
 export interface RegistryRow { label: string; value: string }
 export interface RegistrySection { title: string; subtitle?: string; rows: RegistryRow[] }
 
+export interface OfficialSource {
+  num: string;
+  name: string;
+  authority: string;
+  finding: string;
+  detail: string;
+  highlight?: string;
+}
+export interface OfficialSourcesSection {
+  title: string;
+  subtitle: string;
+  sources: OfficialSource[];
+  conclusionTitle: string;
+  conclusionBody: string;
+}
+
 export interface AboutAgarwoodData {
   hero: { sectionTag: string; titleKr: string; titleEn: string; subtitle: string; heroImage: string };
   definitionSection: { title: string; subtitle: string; body: string; officialNameCallout: string };
+  officialSourcesSection?: OfficialSourcesSection;
   registrySection?: RegistrySection;
   formationSteps: FormationStep[];
   specialReasons: SpecialReason[];

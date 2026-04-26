@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
-import type { AboutAgarwoodData } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection } from './page';
 
 interface Props {
   data: AboutAgarwoodData | null;
@@ -34,6 +34,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const registrySubtitle = registry?.subtitle ?? '';
   const registryRows = registry?.rows ?? [];
   const cta = data?.cta;
+  const officialSources = data?.officialSourcesSection;
 
   return (
     <>
@@ -485,6 +486,115 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         </RevealOnScroll>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+          {/* Chapter 07 — 공식 근거 문헌 (한국 공식 4대 기준) */}
+          {officialSources && (
+            <section className={styles.chapter} data-alt="1">
+              <div className={styles.wrap}>
+                <div className={styles.chapterGrid}>
+                  <div>
+                    <div className={styles.chapterNum}>07</div>
+                    <div className={styles.chapterTag}>Chapter VII · Official Proof</div>
+                  </div>
+                  <div className={styles.chapterBody}>
+                    <RevealOnScroll>
+                      <h3>{officialSources.title}</h3>
+                    </RevealOnScroll>
+                    <RevealOnScroll delay={100}>
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 32 }}>
+                        {officialSources.subtitle}
+                      </p>
+                    </RevealOnScroll>
+                    <div style={{ display: 'grid', gap: 20 }}>
+                      {officialSources.sources.map((src, i) => (
+                        <RevealOnScroll key={src.num} delay={i * 80}>
+                          <div
+                            style={{
+                              padding: '24px 28px',
+                              border: `1px solid ${src.highlight ? 'rgba(255,100,80,0.35)' : 'rgba(212,168,67,0.25)'}`,
+                              background: src.highlight ? 'rgba(255,100,80,0.04)' : 'rgba(212,168,67,0.04)',
+                              borderRadius: 4,
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 14 }}>
+                              <span
+                                style={{
+                                  flexShrink: 0,
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: '50%',
+                                  border: '1px solid var(--accent)',
+                                  display: 'grid',
+                                  placeItems: 'center',
+                                  fontFamily: "'Noto Serif KR', serif",
+                                  fontSize: '0.85rem',
+                                  color: 'var(--accent)',
+                                }}
+                              >
+                                {src.num}
+                              </span>
+                              <div>
+                                <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 4, fontWeight: 500 }}>
+                                  {src.name}
+                                </h4>
+                                <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.65rem', letterSpacing: '0.18em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                                  {src.authority}
+                                </p>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                marginBottom: 12,
+                                padding: '10px 14px',
+                                background: 'rgba(212,168,67,0.1)',
+                                borderLeft: '3px solid var(--accent)',
+                              }}
+                            >
+                              <p style={{ fontSize: '0.94rem', color: '#fff', fontWeight: 600, margin: 0 }}>{src.finding}</p>
+                            </div>
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.68)', lineHeight: 1.85, fontWeight: 300 }}>
+                              {src.detail}
+                            </p>
+                            {src.highlight && (
+                              <div
+                                style={{
+                                  marginTop: 12,
+                                  padding: '8px 14px',
+                                  background: 'rgba(255,100,80,0.12)',
+                                  borderLeft: '3px solid rgba(255,100,80,0.7)',
+                                  borderRadius: 2,
+                                }}
+                              >
+                                <p style={{ fontSize: '0.82rem', color: 'rgba(255,150,130,0.9)', fontWeight: 600, margin: 0 }}>
+                                  ⚠ {src.highlight}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </RevealOnScroll>
+                      ))}
+                    </div>
+                    <RevealOnScroll delay={400}>
+                      <div
+                        style={{
+                          marginTop: 32,
+                          padding: '28px 30px',
+                          border: '2px solid var(--accent)',
+                          background: 'rgba(212,168,67,0.06)',
+                        }}
+                      >
+                        <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: 'var(--accent)', marginBottom: 14, fontWeight: 500 }}>
+                          {officialSources.conclusionTitle}
+                        </h4>
+                        <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.78)', lineHeight: 2, fontWeight: 300, whiteSpace: 'pre-line' }}>
+                          {officialSources.conclusionBody}
+                        </p>
+                      </div>
+                    </RevealOnScroll>
                   </div>
                 </div>
               </div>
