@@ -29,8 +29,7 @@ export default function BrandStoryClient({ data }: Props) {
   const historyTab = data?.historyTab;
   const eras = historyTab?.eras ?? [];
   const certificationsTab = data?.certificationsTab;
-  const certImages = certificationsTab?.images ?? [];
-  const certLabels = certificationsTab?.imageLabels ?? [];
+  const certs = certificationsTab?.certs ?? [];
   const certSections = certificationsTab?.sections ?? [];
   const qualityTab = data?.qualityTab;
   const qualityImages = qualityTab?.images ?? [];
@@ -213,51 +212,144 @@ export default function BrandStoryClient({ data }: Props) {
               <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
               <div className={styles.line} />
             </div>
+            {/* 카테고리 범례 */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '28px 0 32px' }}>
+              {(['국제인증', '품질인증', '유기농인증', 'ISO인증', '특허', '수상', '사업등록'] as const).map((cat) => {
+                const COLOR_MAP: Record<string, string> = {
+                  국제인증: '#d4a843', 품질인증: '#6eb5ff', 유기농인증: '#7ecb7e',
+                  ISO인증: '#b8a0e8', 특허: '#ff9a6c', 수상: '#ffd166', 사업등록: '#aaa',
+                };
+                return (
+                  <span key={cat} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', border: `1px solid ${COLOR_MAP[cat]}44`, borderRadius: 999, fontSize: '0.68rem', color: COLOR_MAP[cat], fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.1em' }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: COLOR_MAP[cat], flexShrink: 0 }} />
+                    {cat}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* 인증서 액자 갤러리 */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: 28,
-                margin: '30px 0',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))',
+                gap: 24,
+                margin: '0 0 48px',
               }}
             >
-              {certImages.map((src, i) => {
-                const label = certLabels[i] ?? `인증서 ${i + 1}`;
+              {certs.map((cert, i) => {
+                const COLOR_MAP: Record<string, string> = {
+                  국제인증: '#d4a843', 품질인증: '#6eb5ff', 유기농인증: '#7ecb7e',
+                  ISO인증: '#b8a0e8', 특허: '#ff9a6c', 수상: '#ffd166', 사업등록: '#aaa',
+                };
+                const accentColor = COLOR_MAP[cert.category] ?? '#d4a843';
                 return (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <a
+                    key={i}
+                    href={cert.viewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }}
+                    title={`${cert.name} 원본 보기`}
+                  >
+                    {/* 외부 액자 프레임 */}
                     <div
                       style={{
-                        aspectRatio: '3 / 4',
                         position: 'relative',
-                        overflow: 'hidden',
-                        border: '1px solid rgba(212,168,67,0.28)',
-                        background: '#ffffff',
-                        padding: 16,
+                        padding: '10px',
+                        background: 'linear-gradient(145deg, #1c1a12, #110f0a)',
+                        border: `2px solid ${accentColor}88`,
+                        boxShadow: `0 0 0 1px #0a0b1044, inset 0 0 0 1px ${accentColor}22`,
+                        transition: 'transform 220ms ease, box-shadow 220ms ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
+                        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 32px ${accentColor}33, 0 0 0 1px #0a0b10`;
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
+                        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 1px #0a0b1044, inset 0 0 0 1px ${accentColor}22`;
                       }}
                     >
-                      <Image
-                        src={src}
-                        alt={label}
-                        fill
-                        sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                        style={{ objectFit: 'contain' }}
-                        unoptimized
-                      />
+                      {/* 네 모서리 장식 */}
+                      {(['tl','tr','bl','br'] as const).map((pos) => (
+                        <span key={pos} style={{
+                          position: 'absolute',
+                          width: 14, height: 14,
+                          top: pos.startsWith('t') ? 3 : undefined,
+                          bottom: pos.startsWith('b') ? 3 : undefined,
+                          left: pos.endsWith('l') ? 3 : undefined,
+                          right: pos.endsWith('r') ? 3 : undefined,
+                          borderTop: pos.startsWith('t') ? `2px solid ${accentColor}` : undefined,
+                          borderBottom: pos.startsWith('b') ? `2px solid ${accentColor}` : undefined,
+                          borderLeft: pos.endsWith('l') ? `2px solid ${accentColor}` : undefined,
+                          borderRight: pos.endsWith('r') ? `2px solid ${accentColor}` : undefined,
+                        }} />
+                      ))}
+
+                      {/* 내부 매트 */}
+                      <div style={{
+                        border: `1px solid ${accentColor}33`,
+                        padding: '8px',
+                        background: 'rgba(255,255,255,0.02)',
+                      }}>
+                        {/* 인증서 이미지 — 원본 비율 유지, 고정 높이 컨테이너 */}
+                        <div style={{ height: 260, background: '#f8f5ec', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, position: 'relative' }}>
+                          <Image
+                            src={cert.thumb}
+                            alt={cert.name}
+                            fill
+                            sizes="(max-width: 480px) 45vw, (max-width: 768px) 30vw, (max-width: 1200px) 22vw, 210px"
+                            style={{ objectFit: 'contain', padding: 8 }}
+                            unoptimized
+                          />
+                        </div>
+                      </div>
+
+                      {/* 카테고리 배지 */}
+                      <div style={{
+                        position: 'absolute', top: 14, right: 14,
+                        padding: '2px 7px',
+                        background: `${accentColor}22`,
+                        border: `1px solid ${accentColor}66`,
+                        borderRadius: 999,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: '0.55rem',
+                        letterSpacing: '0.14em',
+                        color: accentColor,
+                      }}>
+                        {cert.category}
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                        fontSize: '0.66rem',
-                        letterSpacing: '0.18em',
-                        textTransform: 'uppercase',
-                        color: 'var(--accent)',
-                        textAlign: 'center',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {label}
+
+                    {/* 명판 */}
+                    <div style={{
+                      marginTop: 10,
+                      textAlign: 'center',
+                      padding: '0 4px',
+                    }}>
+                      <p style={{
+                        fontFamily: "'Noto Serif KR', serif",
+                        fontSize: '0.82rem',
+                        color: '#fff',
+                        fontWeight: 500,
+                        lineHeight: 1.45,
+                        marginBottom: 3,
+                        wordBreak: 'keep-all',
+                      }}>
+                        {cert.name}
+                      </p>
+                      <p style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: '0.58rem',
+                        letterSpacing: '0.1em',
+                        color: `${accentColor}99`,
+                        lineHeight: 1.4,
+                      }}>
+                        {cert.nameEn}
+                      </p>
                     </div>
-                  </div>
+                  </a>
                 );
               })}
             </div>

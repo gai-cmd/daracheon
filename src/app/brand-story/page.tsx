@@ -34,6 +34,7 @@ export const metadata: Metadata = {
 export interface Farm { name: string; nameVi: string; desc: string; image?: string }
 export interface HistoryEra { era: string; items: string[]; description?: string }
 export interface CertSection { title: string; items: string[]; body?: string }
+export interface CertItem { name: string; nameEn: string; category: string; thumb: string; viewUrl: string }
 export interface NarrativeParagraph { title: string; body: string }
 export interface ProcessVideo { id: string; title: string }
 export interface ProcessChapter { title: string; titleEn: string; description: string; videos: ProcessVideo[] }
@@ -47,7 +48,7 @@ export interface BrandStoryData {
   farms: Farm[];
   sceneTab: { tag: string; title: string; subtitle: string; body: string; images: string[] };
   historyTab: { tag: string; title: string; eras: HistoryEra[] };
-  certificationsTab: { tag: string; title: string; subtitle: string; images: string[]; imageLabels?: string[]; sections: CertSection[] };
+  certificationsTab: { tag: string; title: string; subtitle: string; images?: string[]; imageLabels?: string[]; certs?: CertItem[]; sections: CertSection[] };
   qualityTab: { tag: string; title: string; subtitle: string; images: string[]; heavyMetals: string[]; paragraphs?: NarrativeParagraph[] };
   processTab: {
     tag: string;

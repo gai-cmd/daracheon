@@ -96,12 +96,99 @@
     "certificationsTab": {
       "tag": "CERTIFICATIONS",
       "title": "신뢰의 지표",
-      "subtitle": "국제가 인정하는 대라천의 품질",
-      "images": [
-        "/uploads/misc/kfda-doc-1.jpg",
-        "/uploads/misc/kfda-doc-2.jpg",
-        "/uploads/misc/kfda-doc-3.jpg",
-        "/uploads/misc/kfda-doc-4.jpg"
+      "subtitle": "국제가 인정하는 대라천의 품질 — 총 13종 인증",
+      "certs": [
+        {
+          "name": "CITES 국제협약 인증서",
+          "nameEn": "CITES IIA-DNI-007",
+          "category": "국제인증",
+          "thumb": "https://drive.google.com/thumbnail?id=1FGOC76sQFvtmGPDI_kFkqFwWxNPgLcTt&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1FGOC76sQFvtmGPDI_kFkqFwWxNPgLcTt/view"
+        },
+        {
+          "name": "HACCP 식품안전관리 인증서",
+          "nameEn": "HACCP Codex Alimentarius",
+          "category": "품질인증",
+          "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view"
+        },
+        {
+          "name": "유기농 제품 인증서",
+          "nameEn": "Organic Product Certification",
+          "category": "유기농인증",
+          "thumb": "https://drive.google.com/thumbnail?id=1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq/view"
+        },
+        {
+          "name": "유기농 원료 생산지역 인증서",
+          "nameEn": "Organic Raw Material Area Cert.",
+          "category": "유기농인증",
+          "thumb": "https://drive.google.com/thumbnail?id=136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view"
+        },
+        {
+          "name": "수지유도제 특허 인증서",
+          "nameEn": "Resin Inducer Patent #12835",
+          "category": "특허",
+          "thumb": "https://drive.google.com/thumbnail?id=1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw/view"
+        },
+        {
+          "name": "야생동·식물 식재시설 인증서",
+          "nameEn": "Wild Plant Cultivation Facility",
+          "category": "품질인증",
+          "thumb": "https://drive.google.com/thumbnail?id=1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view"
+        },
+        {
+          "name": "ISO 식품안전 경영시스템 인증서",
+          "nameEn": "ISO Food Safety Management",
+          "category": "ISO인증",
+          "thumb": "https://lh3.googleusercontent.com/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0=w600",
+          "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view"
+        },
+        {
+          "name": "ISO 품질경영시스템 인증서",
+          "nameEn": "ISO Quality Management System",
+          "category": "ISO인증",
+          "thumb": "https://lh3.googleusercontent.com/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG=w600",
+          "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view"
+        },
+        {
+          "name": "식품안전규정 준수시설 인증서",
+          "nameEn": "Food Safety Compliance Facility",
+          "category": "품질인증",
+          "thumb": "https://lh3.googleusercontent.com/d/1DmhUByiw5jquCyS3hcQPONa0o_SY7lw1=w600",
+          "viewUrl": "https://drive.google.com/file/d/1DmhUByiw5jquCyS3hcQPONa0o_SY7lw1/view"
+        },
+        {
+          "name": "아시아 선도기업 10대 브랜드",
+          "nameEn": "Asia Top 10 Leading Brand 2025",
+          "category": "수상",
+          "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
+          "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view"
+        },
+        {
+          "name": "베트남 농업총국 황금브랜드 인증서",
+          "nameEn": "Vietnam Golden Brand Award",
+          "category": "수상",
+          "thumb": "https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w600",
+          "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view"
+        },
+        {
+          "name": "NTV 베트남 사업자·생산등록증",
+          "nameEn": "NTV Vietnam Business Registration",
+          "category": "사업등록",
+          "thumb": "https://drive.google.com/thumbnail?id=1FP8g6c0XEGx7qK0KaJRUc9uCGJlFvLIG&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1FP8g6c0XEGx7qK0KaJRUc9uCGJlFvLIG/view"
+        },
+        {
+          "name": "NTV 동나이사업장 사업자·생산등록증",
+          "nameEn": "NTV Dong Nai Plant Registration",
+          "category": "사업등록",
+          "thumb": "https://drive.google.com/thumbnail?id=1UzVurmG7uxiAEi49wG2pc03ziBNH97QY&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY/view"
+        }
       ],
       "sections": [
         {
