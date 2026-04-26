@@ -24,53 +24,14 @@
 .navBrand {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  flex-direction: row;
   text-decoration: none;
-  line-height: 1;
+  line-height: 0;
+  opacity: 1;
+  transition: opacity 300ms;
 }
 
-.brandDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #f5dc8a 0%, #d4a843 55%, #7a5d1d 100%);
-  box-shadow: 0 0 14px rgba(212, 168, 67, 0.45), 0 0 2px rgba(212, 168, 67, 0.7);
-  flex-shrink: 0;
-  transition: transform 600ms cubic-bezier(0.16, 0.9, 0.3, 1), box-shadow 600ms;
-}
-
-.navBrand:hover .brandDot {
-  transform: scale(1.15);
-  box-shadow: 0 0 22px rgba(212, 168, 67, 0.7), 0 0 4px rgba(245, 220, 138, 0.9);
-}
-
-.brandText {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-}
-
-.brandWord {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 500;
-  letter-spacing: 0.32em;
-  color: #fdfbf7;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.brandSub {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 0.62rem;
-  font-weight: 300;
-  letter-spacing: 0.22em;
-  color: var(--accent);
-  white-space: nowrap;
-  text-align: center;
+.navBrand:hover {
+  opacity: 0.85;
 }
 
 .navLinks {

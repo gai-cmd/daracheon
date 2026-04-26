@@ -50,21 +50,11 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
     <header>
       <nav className={styles.nav} style={NAV_INLINE_STYLE} data-zoel-nav="v2">
         <Link href="/" className={styles.navBrand}>
-          {brandLogo ? (
-            <img
-              src={brandLogo}
-              alt="대라천 ZOEL LIFE"
-              style={{ height: 36, width: 'auto', display: 'block', objectFit: 'contain' }}
-            />
-          ) : (
-            <>
-              <span className={styles.brandDot} aria-hidden="true" />
-              <span className={styles.brandText}>
-                <span className={styles.brandWord}>ZOEL LIFE</span>
-                <span className={styles.brandSub}>대라천 · 침향</span>
-              </span>
-            </>
-          )}
+          <img
+            src={brandLogo || '/images/logo-brand.png'}
+            alt="조엘라이프 ZOEL LIFE"
+            style={{ height: 40, width: 'auto', display: 'block', objectFit: 'contain' }}
+          />
         </Link>
 
         <ul className={styles.navLinks}>

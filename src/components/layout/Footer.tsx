@@ -10,11 +10,13 @@ export default function Footer() {
       <div className={styles.inner}>
         {/* Brand */}
         <div className={styles.brandBlock}>
-          <Link href="/" className={styles.brandLine}>
-            <span className={styles.brandDot} aria-hidden="true" />
-            <span className={styles.brandWord}>조엘라이프㈜</span>
+          <Link href="/" className={styles.brandLogoLink}>
+            <img
+              src="/images/logo-brand.png"
+              alt="조엘라이프 ZOEL LIFE"
+              className={styles.brandLogoImg}
+            />
           </Link>
-          <span className={styles.brandSub}>대라천&apos;참&apos;침향</span>
           <p className={styles.brandDesc}>
             조엘라이프의 대라천 &apos;참&apos;침향은 베트남 직영 농장 기반의 침향 전문기업에서
             생산됩니다. 원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시

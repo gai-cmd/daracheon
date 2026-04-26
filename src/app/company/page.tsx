@@ -132,7 +132,7 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
 export default async function CompanyPage() {
   const pagesData = await readSingleSafe<{ company?: CompanyData }>('pages');
   const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company');
-  const brandLogo = settings?.brandLogo ?? '';
+  const brandLogo = settings?.brandLogo || '/images/logo-brand.png';
   const companyLogo = settings?.companyLogo ?? '';
 
   const hero: CompanyHero = pagesData?.company?.hero
