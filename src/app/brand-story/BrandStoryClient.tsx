@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BrandStoryData } from './page';
 import styles from './BrandStoryClient.module.css';
 
@@ -18,8 +18,62 @@ const TAB_LIST = [
   '생산 공정',
 ] as const;
 
+function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 2000,
+        background: 'rgba(0,0,0,0.92)',
+        display: 'grid', placeItems: 'center',
+        padding: 'clamp(12px, 4vw, 40px)',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ position: 'relative', width: '100%', maxWidth: 900 }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="닫기"
+          style={{
+            position: 'absolute', top: -44, right: 0,
+            background: 'none', border: 'none', color: '#fff',
+            fontSize: '1.6rem', cursor: 'pointer', lineHeight: 1,
+          }}
+        >✕</button>
+        <div style={{ aspectRatio: '16/9', background: '#000' }}>
+          <iframe
+            src={`https://drive.google.com/file/d/${driveId}/preview`}
+            title={title}
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+          />
+        </div>
+        <p style={{
+          marginTop: 12, color: 'rgba(255,255,255,0.75)',
+          fontFamily: "'Noto Sans KR', sans-serif", fontSize: '0.9rem', textAlign: 'center',
+        }}>{title}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function BrandStoryClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState(0);
+  const [activeVideo, setActiveVideo] = useState<{ id: string; title: string } | null>(null);
 
   const hero = data?.hero;
   const brandStoryTab = data?.brandStoryTab;
@@ -40,6 +94,13 @@ export default function BrandStoryClient({ data }: Props) {
 
   return (
     <div className={styles.page}>
+      {activeVideo && (
+        <DriveVideoModal
+          driveId={activeVideo.id}
+          title={activeVideo.title}
+          onClose={() => setActiveVideo(null)}
+        />
+      )}
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div
@@ -670,17 +731,18 @@ export default function BrandStoryClient({ data }: Props) {
                   { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
                   { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
                 ].map((v) => (
-                  <a
+                  <div
                     key={v.id}
-                    href={`https://drive.google.com/file/d/${v.id}/view`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setActiveVideo(v)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(v); }}
                     style={{
                       display: 'block',
                       border: '1px solid rgba(212,168,67,0.25)',
                       background: 'rgba(255,255,255,0.02)',
                       overflow: 'hidden',
-                      textDecoration: 'none',
+                      cursor: 'pointer',
                       transition: 'border-color 200ms',
                     }}
                   >
@@ -692,15 +754,12 @@ export default function BrandStoryClient({ data }: Props) {
                         overflow: 'hidden',
                       }}
                     >
-                      {/* Drive 공개 썸네일 — iframe 은 auth 필요해 빈 화면이 돼 썸네일로 대체,
-                          클릭 시 Drive 뷰어 새 탭으로 열어 실제 영상 재생 */}
                       <img
                         src={`https://lh3.googleusercontent.com/d/${v.id}=w1280`}
                         alt={v.title}
                         loading="lazy"
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                       />
-                      {/* Play overlay */}
                       <div
                         style={{
                           position: 'absolute',
@@ -742,7 +801,7 @@ export default function BrandStoryClient({ data }: Props) {
                     >
                       {v.title}
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>
