@@ -94,10 +94,10 @@ const DEFAULT_HERO: HomeHero = {
 };
 
 const DEFAULT_STATS: HomeStat[] = [
-  { value: '25yrs', label: '연구 역사' },
-  { value: '400만+', label: '침향나무' },
-  { value: '200ha', label: '직영 농장' },
-  { value: '8건', label: '인증' },
+  { value: '25년+', label: '연구 및 재배' },
+  { value: '200ha', label: '400만 그루' },
+  { value: '12건+', label: '특허 및 인증' },
+  { value: '5개 지역', label: '직영 농장' },
 ];
 
 const DEFAULT_NOTICE: HomeNotice = {
