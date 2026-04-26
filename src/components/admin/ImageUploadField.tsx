@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 
 interface ImageUploadFieldProps {
   value: string;
@@ -85,6 +85,17 @@ async function resizeImage(
   };
 }
 
+// ── 미러링 대상 판별 ──────────────────────────────────────────────────────────
+
+function needsMirror(url: string): boolean {
+  if (!url.startsWith('http')) return false;
+  return (
+    !url.includes('blob.vercel-storage.com') &&
+    !url.startsWith('/uploads/') &&
+    !url.startsWith('/images/')
+  );
+}
+
 // ── 컴포넌트 ─────────────────────────────────────────────────────────────────
 
 export default function ImageUploadField({
@@ -97,7 +108,28 @@ export default function ImageUploadField({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
+  const [mirrorStatus, setMirrorStatus] = useState<'idle' | 'mirroring' | 'done' | 'error'>('idle');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleMirrorUrl = useCallback(async (url: string) => {
+    if (!needsMirror(url)) return;
+    setMirrorStatus('mirroring');
+    setUploadError(null);
+    try {
+      const res = await fetch('/api/admin/mirror-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, subdir }),
+      });
+      const data = await res.json() as { success: boolean; url?: string; message?: string; alreadyMirrored?: boolean };
+      if (!res.ok || !data.success) throw new Error(data.message || '미러링 실패');
+      if (data.url) onChange(data.url);
+      setMirrorStatus('done');
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : '서버 저장 실패');
+      setMirrorStatus('error');
+    }
+  }, [subdir, onChange]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.files?.[0];
@@ -169,7 +201,12 @@ export default function ImageUploadField({
           onChange={(e) => {
             setUploadError(null);
             setCompressionInfo(null);
+            setMirrorStatus('idle');
             onChange(e.target.value);
+          }}
+          onBlur={(e) => {
+            const url = e.target.value.trim();
+            if (url) handleMirrorUrl(url);
           }}
           placeholder="https:// 또는 /uploads/..."
           className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
@@ -207,6 +244,25 @@ export default function ImageUploadField({
         className="hidden"
         onChange={handleFileChange}
       />
+
+      {/* 미러링 상태 */}
+      {mirrorStatus === 'mirroring' && (
+        <p className="mt-1 text-xs text-blue-500 flex items-center gap-1">
+          <svg className="w-3.5 h-3.5 shrink-0 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+          </svg>
+          이미지를 서버에 저장 중...
+        </p>
+      )}
+      {mirrorStatus === 'done' && !uploadError && (
+        <p className="mt-1 text-xs text-emerald-600 flex items-center gap-1">
+          <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          서버(Blob)에 저장됨 — 원본 URL이 삭제되어도 안전합니다
+        </p>
+      )}
 
       {/* 압축 정보 */}
       {compressionInfo && !uploadError && (
