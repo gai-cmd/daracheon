@@ -71,6 +71,7 @@ function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: 
   );
 }
 
+
 function CertModal({ driveId, name, nameEn, onClose }: { driveId: string; name: string; nameEn: string; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -97,7 +98,6 @@ function CertModal({ driveId, name, nameEn, onClose }: { driveId: string; name: 
         onClick={(e) => e.stopPropagation()}
         style={{ position: 'relative', width: '100%', maxWidth: 780, display: 'flex', flexDirection: 'column', gap: 14 }}
       >
-        {/* 닫기 */}
         <button
           onClick={onClose}
           aria-label="닫기"
@@ -107,38 +107,19 @@ function CertModal({ driveId, name, nameEn, onClose }: { driveId: string; name: 
             color: '#fff', fontSize: '1.2rem', cursor: 'pointer',
             width: 36, height: 36, borderRadius: '50%',
             display: 'grid', placeItems: 'center',
-            transition: 'background 200ms',
           }}
         >✕</button>
-
-        {/* 인증서 뷰어 */}
-        <div style={{
-          background: '#fff',
-          border: '2px solid rgba(212,168,67,0.4)',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
-          overflow: 'hidden',
-        }}>
+        <div style={{ background: '#fff', border: '2px solid rgba(212,168,67,0.4)', boxShadow: '0 20px 60px rgba(0,0,0,0.8)', overflow: 'hidden' }}>
           <iframe
             src={`https://drive.google.com/file/d/${driveId}/preview`}
             title={name}
             allow="autoplay"
-            style={{
-              width: '100%',
-              height: 'min(80vh, 600px)',
-              border: 'none',
-              display: 'block',
-            }}
+            style={{ width: '100%', height: 'min(80vh, 600px)', border: 'none', display: 'block' }}
           />
         </div>
-
-        {/* 명판 */}
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>
-            {name}
-          </p>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.18em', color: 'rgba(212,168,67,0.7)' }}>
-            {nameEn}
-          </p>
+          <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{name}</p>
+          <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.18em', color: 'rgba(212,168,67,0.7)' }}>{nameEn}</p>
         </div>
       </div>
     </div>
@@ -169,19 +150,19 @@ export default function BrandStoryClient({ data }: Props) {
 
   return (
     <div className={styles.page}>
-      {activeVideo && (
-        <DriveVideoModal
-          driveId={activeVideo.id}
-          title={activeVideo.title}
-          onClose={() => setActiveVideo(null)}
-        />
-      )}
       {activeCert && (
         <CertModal
           driveId={activeCert.driveId}
           name={activeCert.name}
           nameEn={activeCert.nameEn}
           onClose={() => setActiveCert(null)}
+        />
+      )}
+      {activeVideo && (
+        <DriveVideoModal
+          driveId={activeVideo.id}
+          title={activeVideo.title}
+          onClose={() => setActiveVideo(null)}
         />
       )}
       {/* HERO */}
@@ -393,8 +374,8 @@ export default function BrandStoryClient({ data }: Props) {
                   <button
                     key={i}
                     type="button"
-                    onClick={() => setActiveCert({ driveId, name: cert.name, nameEn: cert.nameEn })}
-                    style={{ all: 'unset', display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+                    onClick={() => driveId && setActiveCert({ driveId, name: cert.name, nameEn: cert.nameEn })}
+                    style={{ all: 'unset', display: 'flex', flexDirection: 'column', cursor: driveId ? 'pointer' : 'default' }}
                     title={`${cert.name} 보기`}
                   >
                     {/* 액자 최외곽: 프레임 몸체 */}
@@ -537,7 +518,7 @@ export default function BrandStoryClient({ data }: Props) {
                         {cert.nameEn}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>

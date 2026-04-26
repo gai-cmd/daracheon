@@ -598,10 +598,10 @@ export default function AdminHomePage() {
             </div>
           </SectionCard>
 
-          {/* Verification (hero 4-point card) */}
-          <SectionCard title="4-Point Verification · Hero 우측 카드 (01-04)" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
+          {/* Verification (hero 3-point card) */}
+          <SectionCard title="3-Point Verification · Hero 우측 카드 (01-03)" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
             <div className="space-y-3">
-              <p className="text-xs text-gray-500">히어로 오른쪽 "4-Point Verification" 카드의 4줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
+              <p className="text-xs text-gray-500">히어로 오른쪽 "3-Point Verification" 카드의 3줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
               {verification.map((r, i) => (
                 <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
                   <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />

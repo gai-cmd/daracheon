@@ -240,9 +240,9 @@ export default async function HomePage() {
                 <p className={styles.heroSub} style={{ whiteSpace: 'pre-line' }}>{hero.subtitle}</p>
               </div>
 
-              {/* 4-Point Verification Card (edit in /admin/pages/home) */}
+              {/* 3-Point Verification Card (edit in /admin/pages/home) */}
               <div className={styles.heroTrust}>
-                <div className={styles.heroTrustTitle}>4-Point Verification</div>
+                <div className={styles.heroTrustTitle}>3-Point Verification</div>
                 {verification.map((row, i) => (
                   <div key={`${row.num}-${i}`} className={styles.heroTrustRow}>
                     <div className={styles.heroTrustNum}>{row.num}</div>
