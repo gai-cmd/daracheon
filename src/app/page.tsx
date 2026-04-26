@@ -328,7 +328,7 @@ export default async function HomePage() {
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{agarwood.tag}</span>
-            <h2 className={styles.h2}>{agarwood.title}</h2>
+            <h2 className={styles.h2} style={{ whiteSpace: 'nowrap' }}>{agarwood.title}</h2>
             <div className={styles.line} />
           </div>
           <div className={styles.agGrid}>
