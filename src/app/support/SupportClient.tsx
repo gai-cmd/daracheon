@@ -293,15 +293,6 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                 {phoneChannel?.ctaLabel ?? '지금 전화하기 →'}
               </a>
 
-              <div className={styles.sideDivider} />
-
-              <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>위조 · 정품 의심 신고</h3>
-              <p className={styles.desc} style={{ marginBottom: 14 }}>
-                Lot 번호가 조회되지 않거나 정품 여부가 의심스러운 경우 동일 번호로 바로 연락주세요.
-              </p>
-              <a href="tel:070-4140-4086" className={styles.chLink}>
-                위조 의심 신고 · 070-4140-4086 →
-              </a>
             </aside>
           </div>
         </div>
