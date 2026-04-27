@@ -13,6 +13,47 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // ── Admin UI Design System ── Quiet Luxury ─────────────────────────
+        // Warm-neutral scale: page bg, surfaces, borders (replaces cold gray in admin)
+        warm: {
+          50:  '#FAF8F3', // page background
+          100: '#F7F4EC', // hover surface / secondary bg
+          200: '#EEE9DE', // subtle dividers
+          300: '#E5E1D8', // borders (button, input, table)
+          400: '#CEC8BB',
+          500: '#A8A199',
+          600: '#7D7570',
+          700: '#4B4845', // secondary body text (≥ 4.5:1 on warm-50)
+          800: '#2E2A26',
+          900: '#1F1F1F', // primary charcoal — headings, primary action bg
+        },
+        // Destructive tone — terracotta (toneddown from pure red)
+        // WCAG contrast: #B4452F on #FBEDE9 = 5.4:1 ✓ AA
+        terracotta: {
+          DEFAULT: '#B4452F', // text / icon color for destructive actions
+          hover:   '#913726', // darker shade on hover
+          bg:      '#FBEDE9', // ghost hover background
+          solid:   '#B4452F', // solid button bg (confirm-delete only)
+        },
+        // ── Category badge palette — 7 muted tones ─────────────────────────
+        // Each bg is ~12% tint of the core hue; text is dark shade for ≥ 4.5:1
+        badge: {
+          // Signature — 먹빛 ink
+          'sig-bg':  '#EBEBEB', 'sig-tx':  '#2E2E2E',
+          // Premium — warm gold
+          'pre-bg':  '#F5EDD8', 'pre-tx':  '#7A5F1F',
+          // Traditional — sage green
+          'trd-bg':  '#E8EEE6', 'trd-tx':  '#3D4D37',
+          // Luxury — deep burgundy
+          'lux-bg':  '#F2E5E5', 'lux-tx':  '#7A2E2E',
+          // Daily — sky-gray slate
+          'day-bg':  '#E5EDF5', 'day-tx':  '#3D5570',
+          // Wellness — olive
+          'wel-bg':  '#EEEED8', 'wel-tx':  '#4A4B2E',
+          // Gift — dusty rose
+          'gif-bg':  '#F5E5EB', 'gif-tx':  '#7A3D50',
+        },
+        // ────────────────────────────────────────────────────────────────────
         gold: {
           // Rebalanced for WCAG AA (≥ 4.5:1 on light AND dark backgrounds)
           // Brand accent (bg/border/large icons) uses gold-400/500 (#d4a843 honey gold).

@@ -578,7 +578,7 @@ export default function AdminSettingsPage() {
                   <>
                     <button
                       onClick={handleUpdateFarm}
-                      className="bg-gold-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors"
+                      className="adm-btn-primary"
                     >
                       수정 완료
                     </button>
@@ -600,7 +600,7 @@ export default function AdminSettingsPage() {
                 ) : (
                   <button
                     onClick={handleAddFarm}
-                    className="bg-gold-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors"
+                    className="adm-btn-primary"
                   >
                     농장 추가
                   </button>
@@ -731,7 +731,7 @@ export default function AdminSettingsPage() {
                 />
                 <button
                   onClick={handleAddAward}
-                  className="bg-gold-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors"
+                  className="adm-btn-primary"
                 >
                   추가
                 </button>
@@ -948,7 +948,7 @@ function SaveButton({ onClick, loading = false }: { onClick: () => void; loading
     <button
       onClick={onClick}
       disabled={loading}
-      className="bg-gold-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors disabled:opacity-50"
+      className="adm-btn-primary px-6"
     >
       {loading ? '저장 중...' : '저장'}
     </button>

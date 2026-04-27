@@ -39,10 +39,10 @@ const navItems: NavItem[] = [
 ];
 
 const BADGE_COLORS: Record<keyof NotificationCounts, string> = {
-  inquiries_new: 'bg-red-500',
-  reviews_pending: 'bg-amber-500',
-  broadcasts_upcoming: 'bg-blue-500',
-  products_out_of_stock: 'bg-orange-500',
+  inquiries_new:        'bg-[#B4452F]',   // 테라코타 — 신규 문의 (주의 신호)
+  reviews_pending:      'bg-[#7A5F1F]',   // 딥 골드 — 검토 대기
+  broadcasts_upcoming:  'bg-[#3D5570]',   // 스카이그레이 — 예정 방송
+  products_out_of_stock:'bg-[#4B4845]',   // 차콜 — 품절 재고
 };
 
 function isActive(pathname: string, href: string): boolean {

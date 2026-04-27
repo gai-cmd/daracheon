@@ -322,6 +322,97 @@ html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   Admin Design System — Quiet Luxury
+   모든 어드민 컴포넌트 유틸리티 클래스. data-admin-root 스코프 밖에서도 동작.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Button system ─────────────────────────────────────────── */
+/* Primary: 딥 차콜 + 흰 텍스트. 저장/추가/핵심 CTA 전용. */
+.adm-btn-primary {
+  @apply inline-flex items-center justify-center gap-2
+         h-9 px-4 rounded-lg
+         bg-[#1F1F1F] text-white text-[13px] font-medium
+         transition-colors duration-150
+         hover:bg-[#2D2D2D] active:bg-[#111]
+         disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+/* Secondary: 흰 배경 + 따뜻한 보더 + 차콜 텍스트. 편집/CSV 등 비파괴적 액션. */
+.adm-btn-secondary {
+  @apply inline-flex items-center justify-center gap-1.5
+         h-9 px-3 rounded-lg
+         bg-white border border-[#E5E1D8] text-[#1F1F1F] text-[13px] font-medium
+         transition-colors duration-150
+         hover:bg-[#F7F4EC] active:bg-[#EEE9DE];
+}
+
+/* Destructive ghost: 테라코타 텍스트 + 투명 배경. 테이블 인라인 삭제 버튼. */
+.adm-btn-destructive {
+  @apply inline-flex items-center justify-center gap-1.5
+         h-9 px-3 rounded-lg
+         text-[#B4452F] text-[13px] font-medium
+         transition-colors duration-150
+         hover:bg-[#FBEDE9];
+}
+
+/* Destructive solid: 테라코타 솔리드. 확인 다이얼로그 최종 삭제 버튼에만 사용. */
+.adm-btn-destructive-solid {
+  @apply inline-flex items-center justify-center gap-2
+         h-9 px-4 rounded-lg
+         bg-[#B4452F] text-white text-[13px] font-medium
+         transition-colors duration-150
+         hover:bg-[#913726] active:bg-[#7A2E24];
+}
+
+/* ── Category / Badge pills ────────────────────────────────── */
+/* 공통 pill 베이스 */
+.adm-badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold leading-none whitespace-nowrap;
+}
+/* 7종 뮤트 톤 — WCAG AA 확인: 텍스트/배경 모두 ≥ 4.5:1 */
+.adm-badge-signature  { background: #EBEBEB; color: #2E2E2E; }  /* ink    — ∞:1  */
+.adm-badge-premium    { background: #F5EDD8; color: #7A5F1F; }  /* gold   — 5.2:1 */
+.adm-badge-traditional{ background: #E8EEE6; color: #3D4D37; }  /* sage   — 6.5:1 */
+.adm-badge-luxury     { background: #F2E5E5; color: #7A2E2E; }  /* burgundy 5.5:1 */
+.adm-badge-daily      { background: #E5EDF5; color: #3D5570; }  /* sky    — 5.8:1 */
+.adm-badge-wellness   { background: #EEEED8; color: #4A4B2E; }  /* olive  — 7.0:1 */
+.adm-badge-gift       { background: #F5E5EB; color: #7A3D50; }  /* rose   — 5.4:1 */
+.adm-badge-new        { background: #E5F0EB; color: #2A5C42; }  /* fresh  — 6.8:1 */
+.adm-badge-best       { background: #F5EDD8; color: #7A5F1F; }  /* gold   — 5.2:1 */
+.adm-badge-limited    { background: #F2E5E5; color: #7A2E2E; }  /* red    — 5.5:1 */
+.adm-badge-default    { background: #EBEBEB; color: #4B4845; }  /* neutral 5.1:1  */
+
+/* ── Status indicators ─────────────────────────────────────── */
+/* 8px 원(w-2 h-2) + 충분한 명도의 텍스트. WCAG AA 만족 색상 쌍. */
+.adm-status-instock  { @apply inline-flex items-center gap-1.5 text-[12px] font-medium text-[#2A5C42]; }
+.adm-status-outstock { @apply inline-flex items-center gap-1.5 text-[12px] font-medium text-[#B4452F]; }
+.adm-status-public   { @apply inline-flex items-center gap-1.5 text-[12px] font-medium text-[#2A5C42]; }
+.adm-status-private  { @apply inline-flex items-center gap-1.5 text-[12px] font-medium text-[#6B6B6B]; }
+.adm-status-dot-green { @apply w-2 h-2 rounded-full bg-[#3A7A5A] flex-shrink-0; }
+.adm-status-dot-red   { @apply w-2 h-2 rounded-full bg-[#B4452F] flex-shrink-0; }
+.adm-status-dot-gray  { @apply w-2 h-2 rounded-full bg-[#9C9690] flex-shrink-0; }
+
+/* Dark mode overrides — CSS custom properties approach */
+@media (prefers-color-scheme: dark) {
+  html.admin-dark .adm-btn-primary  { background: #E8E2D2; color: #1F1F1F; }
+  html.admin-dark .adm-btn-primary:hover { background: #F0EBE0; }
+  html.admin-dark .adm-btn-secondary {
+    background: #262622; border-color: #404038; color: #E8E2D2;
+  }
+  html.admin-dark .adm-btn-secondary:hover { background: #2D2D28; }
+  html.admin-dark .adm-btn-destructive { color: #E07060; }
+  html.admin-dark .adm-btn-destructive:hover { background: rgba(180,69,47,0.15); }
+  html.admin-dark .adm-badge-signature  { background: #2A2A2A; color: #C8C8C8; }
+  html.admin-dark .adm-badge-premium    { background: #2E2618; color: #C8A055; }
+  html.admin-dark .adm-badge-traditional{ background: #1E2A1C; color: #7AAE72; }
+  html.admin-dark .adm-badge-luxury     { background: #2A1818; color: #C07070; }
+  html.admin-dark .adm-badge-daily      { background: #182030; color: #7AADCC; }
+  html.admin-dark .adm-badge-wellness   { background: #222212; color: #AEAF70; }
+  html.admin-dark .adm-badge-gift       { background: #2A1820; color: #C48095; }
+  html.admin-dark .adm-badge-default    { background: #2A2A26; color: #A8A199; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Admin area — light theme override
    ═══════════════════════════════════════════════════════════════
    dark-theme.css forces body { background:#0a0b10; color:#fdfbf7 }

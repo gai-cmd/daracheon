@@ -192,7 +192,7 @@ export default function AdminDbPage() {
               type="button"
               onClick={handleResync}
               disabled={resyncing || !isSuperAdmin || !status?.hasBlobToken}
-              className="bg-gold-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors disabled:opacity-50"
+              className="adm-btn-primary px-5"
               title={!isSuperAdmin ? 'super_admin 권한 필요' : undefined}
             >
               {resyncing ? '재동기화 중…' : '▶ Blob → Seed 재동기화'}

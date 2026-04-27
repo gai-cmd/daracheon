@@ -134,7 +134,7 @@ function LabeledTextarea({ label, value, onChange, rows = 3 }: { label: string; 
 
 function SaveButton({ onClick, loading }: { onClick: () => void; loading: boolean }) {
   return (
-    <button type="button" onClick={onClick} disabled={loading} className="bg-gold-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors disabled:opacity-50">
+    <button type="button" onClick={onClick} disabled={loading} className="adm-btn-primary px-6">
       {loading ? '저장 중...' : '저장'}
     </button>
   );

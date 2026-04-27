@@ -620,7 +620,7 @@ export default function AdminReviewsPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 px-4 py-2.5 bg-gold-500 text-white rounded-lg font-medium hover:bg-gold-600 transition-colors shadow-sm disabled:opacity-50"
+                className="flex-1 adm-btn-primary"
               >
                 {saving ? '저장 중...' : '저장'}
               </button>

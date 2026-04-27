@@ -4,6 +4,23 @@ import { useState, useEffect, useMemo } from 'react';
 import { productCategories, type Product, type ProductVariant } from '@/data/products';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
+/** Badge text → CSS class 매핑. 대소문자 무관. */
+function getBadgeClass(badge: string): string {
+  if (!badge) return 'adm-badge adm-badge-default';
+  const b = badge.toLowerCase();
+  if (b.includes('signature'))                        return 'adm-badge adm-badge-signature';
+  if (b.includes('premium'))                          return 'adm-badge adm-badge-premium';
+  if (b.includes('traditional') || b.includes('전통')) return 'adm-badge adm-badge-traditional';
+  if (b.includes('luxury'))                           return 'adm-badge adm-badge-luxury';
+  if (b.includes('daily'))                            return 'adm-badge adm-badge-daily';
+  if (b.includes('wellness'))                         return 'adm-badge adm-badge-wellness';
+  if (b.includes('gift') || b.includes('선물'))        return 'adm-badge adm-badge-gift';
+  if (b.includes('new') || b.includes('신상'))         return 'adm-badge adm-badge-new';
+  if (b.includes('best') || b.includes('베스트'))      return 'adm-badge adm-badge-best';
+  if (b.includes('limited') || b.includes('한정'))    return 'adm-badge adm-badge-limited';
+  return 'adm-badge adm-badge-default';
+}
+
 export default function AdminProductsPage() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -349,7 +366,7 @@ export default function AdminProductsPage() {
           </a>
           <button
             onClick={openAdd}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold-500 text-white rounded-lg font-medium hover:bg-gold-600 transition-colors shadow-sm"
+            className="adm-btn-primary px-5"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -414,15 +431,15 @@ export default function AdminProductsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">이미지</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">제품명</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">카테고리</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">가격</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">배지</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">재고상태</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">공개</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">관리</th>
+              <tr className="bg-[#FAF8F3] border-b border-[#E5E1D8]">
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">이미지</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">제품명</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">카테고리</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">가격</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">배지</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">재고상태</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">공개</th>
+                <th className="text-left px-4 py-3 text-[13px] font-semibold text-[#1F1F1F]">관리</th>
               </tr>
             </thead>
             <tbody>
@@ -457,32 +474,32 @@ export default function AdminProductsPage() {
                     <td className="px-4 py-3 text-gray-600">{product.category}</td>
                     <td className="px-4 py-3 text-gray-900 font-medium">{product.priceDisplay}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-gold-700 text-white">
-                        {product.badge}
+                      <span className={getBadgeClass(product.badge)}>
+                        {product.badge || '—'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       {product.inStock ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        <span className="adm-status-instock">
+                          <span className="adm-status-dot-green" />
                           재고 있음
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-red-600">
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                        <span className="adm-status-outstock">
+                          <span className="adm-status-dot-red" />
                           품절
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       {product.published !== false ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="adm-status-public">
+                          <span className="adm-status-dot-green" />
                           공개
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-500">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                        <span className="adm-status-private">
+                          <span className="adm-status-dot-gray" />
                           비공개
                         </span>
                       )}
@@ -491,13 +508,13 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEdit(product)}
-                          className="px-3 py-1.5 text-xs font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 shadow-sm transition-colors"
+                          className="adm-btn-secondary"
                         >
                           편집
                         </button>
                         <button
                           onClick={() => setDeleteTarget(product)}
-                          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
+                          className="adm-btn-destructive"
                         >
                           삭제
                         </button>
@@ -867,7 +884,7 @@ export default function AdminProductsPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 px-4 py-2.5 bg-gold-500 text-white rounded-lg font-medium hover:bg-gold-600 transition-colors shadow-sm disabled:opacity-50"
+                className="flex-1 adm-btn-primary"
               >
                 {saving ? '저장 중...' : isAddMode ? '추가' : '저장'}
               </button>
@@ -888,8 +905,8 @@ export default function AdminProductsPage() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteTarget(null)} />
           <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4">
             <div className="flex flex-col items-center text-center">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 rounded-full bg-[#FBEDE9] flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-[#B4452F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               </div>
@@ -902,13 +919,13 @@ export default function AdminProductsPage() {
               <div className="flex gap-3 w-full">
                 <button
                   onClick={handleDelete}
-                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="flex-1 adm-btn-destructive-solid"
                 >
-                  삭제
+                  삭제 확인
                 </button>
                 <button
                   onClick={() => setDeleteTarget(null)}
-                  className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  className="flex-1 adm-btn-secondary"
                 >
                   취소
                 </button>
