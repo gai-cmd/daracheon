@@ -226,17 +226,31 @@ export default async function CompanyPage() {
                       )}
                       {companyLogo && (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: '1 1 260px' }}>
-                          <img
-                            src={companyLogo}
-                            alt="ZOEL LIFE 회사 로고"
-                            style={{
-                              height: 'clamp(120px, 18vw, 180px)',
-                              width: 'auto',
-                              maxWidth: '100%',
-                              objectFit: 'contain',
-                              display: 'block',
-                            }}
-                          />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                            <img
+                              src={companyLogo}
+                              alt="ZOEL LIFE 회사 로고"
+                              style={{
+                                height: 'clamp(80px, 12vw, 120px)',
+                                width: 'auto',
+                                maxWidth: '100%',
+                                objectFit: 'contain',
+                                display: 'block',
+                              }}
+                            />
+                            <span
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)',
+                                fontWeight: 600,
+                                letterSpacing: '0.12em',
+                                color: 'var(--fg)',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              조엘라이프
+                            </span>
+                          </div>
                           <div
                             style={{
                               fontFamily: "'JetBrains Mono', ui-monospace, monospace",

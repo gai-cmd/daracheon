@@ -77,13 +77,6 @@ interface BrandStoryData {
     imageLabels?: string[];
     sections: CertSection[];
   };
-  qualityTab: {
-    tag: string;
-    title: string;
-    subtitle: string;
-    images: string[];
-    heavyMetals: string[];
-  };
   processTab: {
     tag: string;
     title: string;
@@ -260,16 +253,6 @@ export default function AdminBrandStoryPage() {
       { title: '안전성 시험', items: ['TSL ISO/IEC 17025:2017', '중금속 8종 전부 불검출'] },
     ],
   });
-  const [qualityTab, setQualityTab] = useState<BrandStoryData['qualityTab']>({
-    tag: 'VERIFIED QUALITY',
-    title: '과학으로 입증된 안전',
-    subtitle: '최소 26년의 시간이 만드는 한 방울의 가치',
-    images: [
-      'https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280',
-      'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280',
-    ],
-    heavyMetals: ['납(Pb)', '카드뮴(Cd)', '수은(Hg)', '비소(As)', '구리(Cu)', '주석(Sn)', '안티몬(Sb)', '니켈(Ni)'],
-  });
   const [processTab, setProcessTab] = useState<BrandStoryData['processTab']>({
     tag: 'PRODUCTION PROCESS',
     title: '생산 공정',
@@ -326,7 +309,6 @@ export default function AdminBrandStoryPage() {
         if (d?.sceneTab) setSceneTab(d.sceneTab);
         if (d?.historyTab) setHistoryTab(d.historyTab);
         if (d?.certificationsTab) setCertificationsTab(d.certificationsTab);
-        if (d?.qualityTab) setQualityTab(d.qualityTab);
         if (d?.processTab) setProcessTab(d.processTab);
         if (d?.mediaTab) setMediaTab(d.mediaTab);
         if (d?.testimonialsTab) setTestimonialsTab(d.testimonialsTab);

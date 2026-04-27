@@ -1,0 +1,115 @@
+{
+  "name": "대라천",
+  "nameHanja": "大羅天",
+  "nameEn": "Daracheon",
+  "nameVi": "Đại La Thiên",
+  "slogan": "프리미엄 침향 전문 브랜드",
+  "sloganEn": "Premium Agarwood Since 2003",
+  "description": "대라천(大羅天)은 베트남 최고급 Aquilaria agallocha 침향을 직접 재배·가공·유통하는 프리미엄 침향 전문 브랜드입니다.",
+  "url": "https://www.daracheon.com",
+  "email": "contact@daracheon.com",
+  "logo": "/images/logo.png",
+  "farms": [
+    {
+      "name": "하띤 농장",
+      "nameVi": "Hà Tĩnh",
+      "region": "북부 베트남",
+      "trees": 8000
+    },
+    {
+      "name": "칸호아 농장",
+      "nameVi": "Khánh Hòa",
+      "region": "중부 베트남",
+      "trees": 12000
+    },
+    {
+      "name": "동나이 농장",
+      "nameVi": "Đồng Nai",
+      "region": "남부 베트남",
+      "trees": 10000
+    },
+    {
+      "name": "푸꿕 농장",
+      "nameVi": "Phú Quốc",
+      "region": "남부 베트남",
+      "trees": 5000
+    }
+  ],
+  "stats": {
+    "trees": 35000,
+    "avgAge": 20,
+    "regions": 4,
+    "species": "Aquilaria agallocha",
+    "purity": 100
+  },
+  "certifications": [
+    {
+      "name": "GC-MS 분석 인증",
+      "nameEn": "GC-MS Analysis",
+      "icon": "⬡",
+      "description": "가스 크로마토그래피 질량 분석법으로 β-Selinene 등 주요 성분을 정량 검증합니다."
+    },
+    {
+      "name": "개체 추적 시스템",
+      "nameEn": "Tree Tracking",
+      "icon": "◈",
+      "description": "400만 그루 각각에 고유 번호를 부여하여 원목별 이력을 완전히 관리합니다."
+    },
+    {
+      "name": "베트남 정부 인증",
+      "nameEn": "Vietnam Government",
+      "icon": "◇",
+      "description": "베트남 정부의 공식 A. agallocha 품종 인증을 획득한 농장입니다."
+    },
+    {
+      "name": "대한약전 적합",
+      "nameEn": "Korean Pharmacopoeia",
+      "icon": "▣",
+      "description": "대한약전(KP) 기준을 충족하여 의약품 원료로도 사용 가능한 등급입니다."
+    },
+    {
+      "name": "Asia's 10 Leading Brand",
+      "nameEn": "Asia Leading Brand",
+      "icon": "★",
+      "description": "Asia's 10 Leading Pioneering Brand으로 선정되어 글로벌 인지도를 확보했습니다."
+    }
+  ],
+  "awards": [
+    "Asia's 10 Leading Pioneering Brand",
+    "굿모닝경제 선정 우수 기업",
+    "분당자생한방병원 인증"
+  ],
+  "process": [
+    {
+      "step": 1,
+      "title": "산지 직영 관리",
+      "titleEn": "Farm Management",
+      "description": "베트남 4개 지역 농장에서 A. agallocha만을 전문 재배하며, 개체별 성장 이력을 추적합니다."
+    },
+    {
+      "step": 2,
+      "title": "수확 및 선별",
+      "titleEn": "Harvesting",
+      "description": "20년 이상 숙성된 나무만을 선별하고, 침수 테스트를 통해 진품 등급을 판별합니다."
+    },
+    {
+      "step": 3,
+      "title": "과학적 검증",
+      "titleEn": "Verification",
+      "description": "GC-MS 분석으로 β-Selinene 함량을 확인하고, 대한약전 기준 적합성을 검증합니다."
+    },
+    {
+      "step": 4,
+      "title": "인증 및 배송",
+      "titleEn": "Delivery",
+      "description": "개별 인증서와 추적 번호가 부여된 제품을 안전 포장하여 고객에게 직접 전달합니다."
+    }
+  ],
+  "social": {
+    "instagram": "https://www.instagram.com/daracheon",
+    "youtube": "https://www.youtube.com/@daracheon",
+    "line": "https://line.me/R/ti/p/@daracheon"
+  },
+  "companyLogo": "/images/ZOEL-LIFE-logo.png",
+  "updatedAt": "2026-04-24T12:23:07.625Z"
+}
