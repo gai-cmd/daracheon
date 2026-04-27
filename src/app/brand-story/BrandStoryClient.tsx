@@ -85,9 +85,6 @@ export default function BrandStoryClient({ data }: Props) {
   const certificationsTab = data?.certificationsTab;
   const certs = certificationsTab?.certs ?? [];
   const certSections = certificationsTab?.sections ?? [];
-  const qualityTab = data?.qualityTab;
-  const qualityImages = qualityTab?.images ?? [];
-  const heavyMetals = qualityTab?.heavyMetals ?? [];
   const processTab = data?.processTab;
   const processSteps = processTab?.steps ?? [];
   const processStats = processTab?.stats ?? [];
