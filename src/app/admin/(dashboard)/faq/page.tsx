@@ -195,7 +195,7 @@ export default function FaqAdminPage() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-500">등록된 FAQ</span>
             <span className="text-lg font-bold text-neutral-900">{items.length}</span>
-            <span className="adm-badge adm-badge-default">
+            <span className="adm-badge adm-badge-premium">
               {items.length}개 항목
             </span>
           </div>
@@ -259,7 +259,7 @@ export default function FaqAdminPage() {
                     </span>
 
                     {/* Q Number */}
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#1F1F1F] text-white flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#F5EDD8] text-[#7A5F1F] flex items-center justify-center text-xs font-bold border border-[#E5D9B8]">
                       Q{index + 1}
                     </span>
 
@@ -334,7 +334,7 @@ export default function FaqAdminPage() {
                     <div className="px-5 pb-5 border-t border-neutral-100">
                       <div className="pt-4 pl-12">
                         <div className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-stone-600 text-white flex items-center justify-center text-xs font-bold">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#E8EEE6] text-[#3D4D37] flex items-center justify-center text-xs font-bold border border-[#D0DBC9]">
                             A
                           </span>
                           <p className="text-sm text-neutral-600 leading-relaxed pt-1">
