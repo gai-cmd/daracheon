@@ -85,12 +85,12 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   const companyInfo = supportData?.companyInfo;
   const mapLabel = supportData?.mapLabel;
 
+  const phoneChannel = channels.find((c) => c.label === 'Phone') ?? channels[0];
+
   const [topic, setTopic] = useState<string>(TOPICS[0]);
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [showToast, setShowToast] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [lotNum, setLotNum] = useState('');
-  const [showLotResult, setShowLotResult] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -122,10 +122,6 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
     }
   }
 
-  function checkLot() {
-    setShowLotResult(true);
-  }
-
   return (
     <>
       {/* HERO */}
@@ -146,39 +142,7 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
         </div>
       </section>
 
-      {/* 3 CHANNELS */}
-      {channels.length > 0 && (
-        <section className={styles.channels}>
-          <div className={styles.wrap}>
-            <div className={styles.chGrid}>
-              {channels.map((c, i) => {
-                const isSmall = i !== 0;
-                return (
-                  <div key={i} className={styles.ch}>
-                    <div className={styles.chNum}>{c.num}</div>
-                    <h3>{c.title}</h3>
-                    <p className={styles.chSub}>
-                      {c.sub.split('\n').map((line, j, arr) => (
-                        <span key={j}>
-                          {line}
-                          {j < arr.length - 1 && <br />}
-                        </span>
-                      ))}
-                    </p>
-                    <div className={`${styles.chVal} ${isSmall ? styles.chValSm : ''}`}>{c.value}</div>
-                    <div className={styles.chHint}>{c.hint}</div>
-                    <a href={c.ctaHref} className={styles.chLink}>
-                      {c.ctaLabel}
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FORM + LOT CHECKER */}
+      {/* FORM + PHONE INQUIRY */}
       <section className={styles.main} id="contact">
         <div className={styles.wrap}>
           <div className={styles.mainGrid}>
@@ -286,81 +250,54 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
               </form>
             </div>
 
-            {/* SIDE: lot checker */}
+            {/* SIDE: phone inquiry */}
             <aside className={styles.side}>
               <div className={styles.colHead} style={{ marginBottom: 8 }}>
-                02 · Lot · Certificate
+                02 · Phone Inquiry
               </div>
               <h3>
-                <em>Lot 번호 조회</em>
+                <em>{phoneChannel?.title ?? '전화 문의'}</em>
               </h3>
               <p className={styles.desc}>
-                제품 뒷면 또는 방송 중 안내된 Lot 번호를 입력하시면 원산지·수확일·성분검사 결과·GC-MS
-                크로마토그램을 즉시 확인할 수 있습니다.
+                {(phoneChannel?.sub ?? '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무')
+                  .split('\n')
+                  .map((line, j, arr) => (
+                    <span key={j}>
+                      {line}
+                      {j < arr.length - 1 && <br />}
+                    </span>
+                  ))}
               </p>
 
-              <div className={styles.lotIn}>
-                <input
-                  type="text"
-                  value={lotNum}
-                  onChange={(e) => setLotNum(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && checkLot()}
-                  placeholder="예: DRT-2024-0847"
-                />
-                <button type="button" onClick={checkLot}>
-                  조회
-                </button>
+              <div
+                style={{
+                  fontFamily: "'Noto Serif KR', serif",
+                  fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+                  color: 'var(--accent)',
+                  letterSpacing: '0.02em',
+                  fontWeight: 400,
+                  marginBottom: 10,
+                  lineHeight: 1.2,
+                }}
+              >
+                {phoneChannel?.value ?? '070 · 4140 · 4086'}
+              </div>
+              <div className={styles.chHint} style={{ marginBottom: 32 }}>
+                {phoneChannel?.hint ?? 'Customer · 대표번호'}
               </div>
 
-              {sampleLots.length > 0 && (
-                <div className={styles.samples}>
-                  {sampleLots.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => {
-                        setLotNum(s);
-                        checkLot();
-                      }}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {showLotResult && (
-                <div className={styles.lotResult}>
-                  <div className={styles.ok}>✓ Verified · 정품 인증</div>
-                  <div className={styles.lotProd}>&apos;참&apos;침향 오일 캡슐 60정</div>
-                  <dl>
-                    <dt>Lot 번호</dt>
-                    <dd>
-                      <b>{lotNum || 'DRT-2024-0847'}</b>
-                    </dd>
-                    <dt>원산지</dt>
-                    <dd>베트남 하띤성 대라천 직영 농장 · Plot B-07</dd>
-                    <dt>수확일</dt>
-                    <dd>2024년 7월 · 수령 약 28년생</dd>
-                    <dt>제조일</dt>
-                    <dd>2024년 11월 18일</dd>
-                    <dt>소비기한</dt>
-                    <dd>2027년 11월 18일</dd>
-                    <dt>성분</dt>
-                    <dd>
-                      Agarofuran <b>3.42%</b> · β-Caryophyllene <b>6.18%</b>
-                    </dd>
-                    <dt>인증</dt>
-                    <dd>CITES · HACCP · GMP · GC-MS 크로마토그램 첨부</dd>
-                  </dl>
-                </div>
-              )}
+              <a
+                href={phoneChannel?.ctaHref ?? 'tel:070-4140-4086'}
+                className={styles.chLink}
+              >
+                {phoneChannel?.ctaLabel ?? '지금 전화하기 →'}
+              </a>
 
               <div className={styles.sideDivider} />
 
-              <h3 style={{ fontSize: '1.15rem', marginBottom: 8 }}>도움이 필요하신가요?</h3>
+              <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>위조 · 정품 의심 신고</h3>
               <p className={styles.desc} style={{ marginBottom: 14 }}>
-                Lot 번호를 찾지 못하거나 조회 결과가 의심스러운 경우 아래 번호로 바로 연락주세요.
+                Lot 번호가 조회되지 않거나 정품 여부가 의심스러운 경우 동일 번호로 바로 연락주세요.
               </p>
               <a href="tel:070-4140-4086" className={styles.chLink}>
                 위조 의심 신고 · 070-4140-4086 →
