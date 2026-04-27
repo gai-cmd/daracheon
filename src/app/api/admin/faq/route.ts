@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readData, writeData } from '@/lib/db';
+import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
@@ -21,7 +21,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
     return NextResponse.json({
       faq,
       total: faq.length,
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
 
     const newItem: FaqItem = {
       id: body.id || `faq-${Date.now()}`,
@@ -95,7 +95,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {
@@ -145,7 +145,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readData, writeData } from '@/lib/db';
+import { readData, readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product, ProductVariant } from '@/data/products';
@@ -90,6 +90,7 @@ export async function POST(request: Request) {
       features: Array.isArray(body.features) ? body.features : [],
       specs: typeof body.specs === 'object' && body.specs !== null ? body.specs : {},
       inStock: body.inStock !== false,
+      published: body.published !== false,
       ...(normalizedVariants !== undefined && { variants: normalizedVariants }),
     };
 
@@ -126,7 +127,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const products = await readData('products');
+    const products = await readDataUncached('products');
     const index = products.findIndex((p) => p.id === body.id);
 
     if (index === -1) {
@@ -177,7 +178,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const products = await readData('products');
+    const products = await readDataUncached('products');
     const index = products.findIndex((p) => p.id === body.id);
 
     if (index === -1) {

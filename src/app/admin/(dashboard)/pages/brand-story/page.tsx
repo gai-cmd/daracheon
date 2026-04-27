@@ -305,13 +305,33 @@ export default function AdminBrandStoryPage() {
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
-        if (d?.farms && d.farms.length > 0) setFarms(d.farms);
-        if (d?.sceneTab) setSceneTab(d.sceneTab);
-        if (d?.historyTab) setHistoryTab(d.historyTab);
-        if (d?.certificationsTab) setCertificationsTab(d.certificationsTab);
-        if (d?.processTab) setProcessTab(d.processTab);
-        if (d?.mediaTab) setMediaTab(d.mediaTab);
-        if (d?.testimonialsTab) setTestimonialsTab(d.testimonialsTab);
+        if (d?.farms && Array.isArray(d.farms) && d.farms.length > 0) setFarms(d.farms);
+        if (d?.sceneTab) setSceneTab({
+          ...d.sceneTab,
+          images: Array.isArray(d.sceneTab.images) ? d.sceneTab.images : [],
+        });
+        if (d?.historyTab) setHistoryTab({
+          ...d.historyTab,
+          eras: Array.isArray(d.historyTab.eras) ? d.historyTab.eras : [],
+        });
+        if (d?.certificationsTab) setCertificationsTab({
+          ...d.certificationsTab,
+          images: Array.isArray(d.certificationsTab.images) ? d.certificationsTab.images : [],
+          sections: Array.isArray(d.certificationsTab.sections) ? d.certificationsTab.sections : [],
+        });
+        if (d?.processTab) setProcessTab({
+          ...d.processTab,
+          images: Array.isArray(d.processTab.images) ? d.processTab.images : [],
+          steps: Array.isArray(d.processTab.steps) ? d.processTab.steps : [],
+        });
+        if (d?.mediaTab) setMediaTab({
+          ...d.mediaTab,
+          items: Array.isArray(d.mediaTab.items) ? d.mediaTab.items : [],
+        });
+        if (d?.testimonialsTab) setTestimonialsTab({
+          ...d.testimonialsTab,
+          items: Array.isArray(d.testimonialsTab.items) ? d.testimonialsTab.items : [],
+        });
       } catch (err) {
         console.error('Failed to fetch pages:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
