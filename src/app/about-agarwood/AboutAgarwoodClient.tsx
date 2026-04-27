@@ -5,7 +5,34 @@ import Link from 'next/link';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
-import type { AboutAgarwoodData, OfficialSourcesSection } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab } from './page';
+
+const DEFAULT_AUTHENTICITY: AuthenticityTab = {
+  subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
+  intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
+  check01Title: '학명을 따져봐야 한다',
+  check01Body: '대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)입니다.',
+  check01Sources: [
+    { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria Agallocha Roxburgh로 명확히 정의.' },
+    { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria Agallocha Roxburgh / Aquilaria Malaccensis Lam.' },
+    { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
+    { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
+  ],
+  check02Title: '산지를 따져봐야 한다',
+  check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
+  check02QuoteSource: '향승(香乘) · 명대 1611년',
+  check02QuoteBody: '명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 진랍(眞臘), 상품은 점성(占城)으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.',
+  check03Title: '문서를 따져봐야 한다',
+  check03Body: '진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.',
+  check03Docs: [
+    { doc: '원산지 증명서', desc: '베트남 정통 산지임을 확인', highlight: false },
+    { doc: '정식 수입 증빙 서류', desc: '정상적인 통관·검역·수입 확인', highlight: false },
+    { doc: '유기농 인증서', desc: '식용 가능 여부, 농약·화학물질 관리 확인', highlight: false },
+    { doc: 'CITES 인증서', desc: '합법 원료 100% 보증. 가짜 침향은 통과 불가능', highlight: true },
+    { doc: '성분검사서', desc: '실제 침향 성분 함량 확인', highlight: false },
+    { doc: '유해물질성적서', desc: '중금속·잔류 농약·미생물 등 확인', highlight: false },
+  ],
+};
 
 interface Props {
   data: AboutAgarwoodData | null;
@@ -35,6 +62,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const registryRows = registry?.rows ?? [];
   const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
+  const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
 
   return (
     <>
@@ -620,12 +648,12 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 18 }}>
-                    진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.
+                    {auth.subtitle}
                   </p>
                 </RevealOnScroll>
                 <RevealOnScroll delay={150}>
                   <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, marginBottom: 36 }}>
-                    한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — <span style={{ color: 'var(--accent)', fontWeight: 600 }}>학명, 산지, 증빙문서</span> — 으로 확인할 수 있습니다.
+                    {auth.intro}
                   </p>
                 </RevealOnScroll>
 
@@ -639,18 +667,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
                     </div>
                     <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      학명을 따져봐야 한다
+                      {auth.check01Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)</span>입니다.
+                      {auth.check01Body}
                     </p>
                     <div style={{ display: 'grid', gap: 12 }}>
-                      {[
-                        { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria Agallocha Roxburgh로 명확히 정의.' },
-                        { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria Agallocha Roxburgh / Aquilaria Malaccensis Lam.' },
-                        { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
-                        { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
-                      ].map((row, i) => (
+                      {auth.check01Sources.map((row, i) => (
                         <div
                           key={i}
                           style={{
@@ -684,10 +707,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
                     </div>
                     <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      산지를 따져봐야 한다
+                      {auth.check02Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      고문헌들이 기록한 최고 산지는 역사적으로 <span style={{ color: 'var(--accent)', fontWeight: 600 }}>베트남산</span>이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.
+                      {auth.check02Body}
                     </p>
                     <div
                       style={{
@@ -698,10 +721,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       }}
                     >
                       <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
-                        향승(香乘) · 명대 1611년
+                        {auth.check02QuoteSource}
                       </p>
                       <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
-                        명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 <strong style={{ color: '#fff' }}>진랍(眞臘)</strong>, 상품은 <strong style={{ color: '#fff' }}>점성(占城)</strong>으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.
+                        {auth.check02QuoteBody}
                       </p>
                     </div>
                   </div>
@@ -717,20 +740,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
                     </div>
                     <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      문서를 따져봐야 한다
+                      {auth.check03Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — <span style={{ color: '#ff6450', fontWeight: 600 }}>가짜 침향은 CITES 통과 불가능</span>합니다.
+                      {auth.check03Body}
                     </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-                      {[
-                        { doc: '원산지 증명서', desc: '베트남 정통 산지임을 확인', highlight: false },
-                        { doc: '정식 수입 증빙 서류', desc: '정상적인 통관·검역·수입 확인', highlight: false },
-                        { doc: '유기농 인증서', desc: '식용 가능 여부, 농약·화학물질 관리 확인', highlight: false },
-                        { doc: 'CITES 인증서', desc: '합법 원료 100% 보증. 가짜 침향은 통과 불가능', highlight: true },
-                        { doc: '성분검사서', desc: '실제 침향 성분 함량 확인', highlight: false },
-                        { doc: '유해물질성적서', desc: '중금속·잔류 농약·미생물 등 확인', highlight: false },
-                      ].map((item, i) => (
+                      {auth.check03Docs.map((item, i) => (
                         <div
                           key={i}
                           style={{

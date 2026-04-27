@@ -42,6 +42,23 @@ interface Paper {
   authors?: string;
 }
 
+interface AuthenticitySource { label: string; value: string; }
+interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
+interface AuthenticityTabData {
+  subtitle: string;
+  intro: string;
+  check01Title: string;
+  check01Body: string;
+  check01Sources: AuthenticitySource[];
+  check02Title: string;
+  check02Body: string;
+  check02QuoteSource: string;
+  check02QuoteBody: string;
+  check03Title: string;
+  check03Body: string;
+  check03Docs: AuthenticityDoc[];
+}
+
 interface MediaItem {
   outlet: string;
   date?: string;
@@ -91,6 +108,7 @@ interface AboutAgarwoodData {
     buttonBrand: string;
     buttonBrandHref: string;
   };
+  authenticityTab?: AuthenticityTabData;
   mediaTab?: {
     tag: string;
     title: string;
@@ -261,6 +279,32 @@ export default function AdminAboutAgarwoodPage() {
     { title: '뇌 건강', description: '뇌혈류 개선과 뇌세포 보호.' },
     { title: '소화 · 복통', description: '위를 따뜻하게 하여 소화 기능 개선.' },
   ]);
+  const [authenticityTab, setAuthenticityTab] = useState<AuthenticityTabData>({
+    subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
+    intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
+    check01Title: '학명을 따져봐야 한다',
+    check01Body: '대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)입니다.',
+    check01Sources: [
+      { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria Agallocha Roxburgh로 명확히 정의.' },
+      { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria Agallocha Roxburgh / Aquilaria Malaccensis Lam.' },
+      { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
+      { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
+    ],
+    check02Title: '산지를 따져봐야 한다',
+    check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
+    check02QuoteSource: '향승(香乘) · 명대 1611년',
+    check02QuoteBody: '명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 진랍(眞臘), 상품은 점성(占城)으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.',
+    check03Title: '문서를 따져봐야 한다',
+    check03Body: '진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.',
+    check03Docs: [
+      { doc: '원산지 증명서', desc: '베트남 정통 산지임을 확인', highlight: false },
+      { doc: '정식 수입 증빙 서류', desc: '정상적인 통관·검역·수입 확인', highlight: false },
+      { doc: '유기농 인증서', desc: '식용 가능 여부, 농약·화학물질 관리 확인', highlight: false },
+      { doc: 'CITES 인증서', desc: '합법 원료 100% 보증. 가짜 침향은 통과 불가능', highlight: true },
+      { doc: '성분검사서', desc: '실제 침향 성분 함량 확인', highlight: false },
+      { doc: '유해물질성적서', desc: '중금속·잔류 농약·미생물 등 확인', highlight: false },
+    ],
+  });
   const [literatures, setLiteratures] = useState<Literature[]>([]);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [cta, setCta] = useState<AboutAgarwoodData['cta']>({
@@ -359,6 +403,7 @@ export default function AdminAboutAgarwoodPage() {
         if (d.formationSteps && d.formationSteps.length > 0) setFormationSteps(d.formationSteps);
         if (d.specialReasons && d.specialReasons.length > 0) setSpecialReasons(d.specialReasons);
         if (d.benefits && d.benefits.length > 0) setBenefits(d.benefits);
+        if (d.authenticityTab) setAuthenticityTab(d.authenticityTab);
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
         if (d.cta) setCta(d.cta);
@@ -663,7 +708,139 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={2} label="문헌에 실린 침향" />
+          <TabGroupHeader index={2} label="진짜 침향 구별 방법" />
+
+          {/* Authenticity Tab */}
+          <SectionCard title="진짜 침향 구별 방법 · 감별 3단계" onSave={() => saveSection('authenticityTab', { authenticityTab })} saving={saving === 'authenticityTab'}>
+            <div className="space-y-5">
+              {/* 섹션 인트로 */}
+              <LabeledInput label="소제목 (이탤릭)" value={authenticityTab.subtitle} onChange={(v) => setAuthenticityTab({ ...authenticityTab, subtitle: v })} />
+              <LabeledTextarea label="도입 문단" value={authenticityTab.intro} onChange={(v) => setAuthenticityTab({ ...authenticityTab, intro: v })} rows={3} />
+
+              {/* CHECK 01 — 학명 */}
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm font-semibold text-gold-600 mb-3 uppercase tracking-widest">CHECK · 01 — 학명</p>
+                <div className="space-y-3">
+                  <LabeledInput label="소제목" value={authenticityTab.check01Title} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check01Title: v })} />
+                  <LabeledTextarea label="설명" value={authenticityTab.check01Body} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check01Body: v })} rows={2} />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">공식 출처 목록</label>
+                    <div className="space-y-2">
+                      {authenticityTab.check01Sources.map((row, i) => (
+                        <div key={i} className="flex gap-2 items-start bg-gray-50 rounded-lg p-3">
+                          <input
+                            placeholder="출처명"
+                            value={row.label}
+                            onChange={(e) => {
+                              const n = [...authenticityTab.check01Sources];
+                              n[i] = { ...n[i], label: e.target.value };
+                              setAuthenticityTab({ ...authenticityTab, check01Sources: n });
+                            }}
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                          <textarea
+                            placeholder="설명"
+                            rows={2}
+                            value={row.value}
+                            onChange={(e) => {
+                              const n = [...authenticityTab.check01Sources];
+                              n[i] = { ...n[i], value: e.target.value };
+                              setAuthenticityTab({ ...authenticityTab, check01Sources: n });
+                            }}
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setAuthenticityTab({ ...authenticityTab, check01Sources: authenticityTab.check01Sources.filter((_, ii) => ii !== i) })}
+                            className="text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5 mt-1 flex-shrink-0"
+                          >삭제</button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setAuthenticityTab({ ...authenticityTab, check01Sources: [...authenticityTab.check01Sources, { label: '', value: '' }] })}
+                        className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                      >+ 출처 추가</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CHECK 02 — 산지 */}
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm font-semibold text-gold-600 mb-3 uppercase tracking-widest">CHECK · 02 — 산지</p>
+                <div className="space-y-3">
+                  <LabeledInput label="소제목" value={authenticityTab.check02Title} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02Title: v })} />
+                  <LabeledTextarea label="설명" value={authenticityTab.check02Body} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02Body: v })} rows={2} />
+                  <LabeledInput label="인용 출처 (예: 향승(香乘) · 명대 1611년)" value={authenticityTab.check02QuoteSource} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02QuoteSource: v })} />
+                  <LabeledTextarea label="인용 본문" value={authenticityTab.check02QuoteBody} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02QuoteBody: v })} rows={4} />
+                </div>
+              </div>
+
+              {/* CHECK 03 — 증빙문서 */}
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm font-semibold text-gold-600 mb-3 uppercase tracking-widest">CHECK · 03 — 증빙문서</p>
+                <div className="space-y-3">
+                  <LabeledInput label="소제목" value={authenticityTab.check03Title} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check03Title: v })} />
+                  <LabeledTextarea label="설명" value={authenticityTab.check03Body} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check03Body: v })} rows={2} />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">서류 목록</label>
+                    <div className="space-y-2">
+                      {authenticityTab.check03Docs.map((doc, i) => (
+                        <div key={i} className="flex gap-2 items-start bg-gray-50 rounded-lg p-3">
+                          <input
+                            placeholder="서류명"
+                            value={doc.doc}
+                            onChange={(e) => {
+                              const n = [...authenticityTab.check03Docs];
+                              n[i] = { ...n[i], doc: e.target.value };
+                              setAuthenticityTab({ ...authenticityTab, check03Docs: n });
+                            }}
+                            className="w-36 flex-shrink-0 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                          <input
+                            placeholder="설명"
+                            value={doc.desc}
+                            onChange={(e) => {
+                              const n = [...authenticityTab.check03Docs];
+                              n[i] = { ...n[i], desc: e.target.value };
+                              setAuthenticityTab({ ...authenticityTab, check03Docs: n });
+                            }}
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                          <label className="flex items-center gap-1 flex-shrink-0 text-xs text-gray-600 mt-2">
+                            <input
+                              type="checkbox"
+                              checked={!!doc.highlight}
+                              onChange={(e) => {
+                                const n = [...authenticityTab.check03Docs];
+                                n[i] = { ...n[i], highlight: e.target.checked };
+                                setAuthenticityTab({ ...authenticityTab, check03Docs: n });
+                              }}
+                              className="rounded"
+                            />
+                            강조
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setAuthenticityTab({ ...authenticityTab, check03Docs: authenticityTab.check03Docs.filter((_, ii) => ii !== i) })}
+                            className="text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5 mt-1 flex-shrink-0"
+                          >삭제</button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setAuthenticityTab({ ...authenticityTab, check03Docs: [...authenticityTab.check03Docs, { doc: '', desc: '', highlight: false }] })}
+                        className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                      >+ 서류 추가</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          <TabGroupHeader index={3} label="문헌에 실린 침향" />
 
           {/* Literatures */}
           <SectionCard title="문헌 목록" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
@@ -693,7 +870,7 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={3} label="논문에 실린 침향" />
+          <TabGroupHeader index={4} label="논문에 실린 침향" />
 
           {/* Papers */}
           <SectionCard title="논문 목록" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
@@ -728,7 +905,7 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={4} label="매체에 실린 침향" />
+          <TabGroupHeader index={5} label="매체에 실린 침향" />
 
           {/* Media Tab */}
           <SectionCard title="매체 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
@@ -774,7 +951,7 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={5} label="고객이 남긴 침향" />
+          <TabGroupHeader index={6} label="고객이 남긴 침향" />
 
           {/* Testimonials Tab */}
           <SectionCard title="고객 후기 목록" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>

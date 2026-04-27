@@ -94,6 +94,23 @@ export interface OfficialSourcesSection {
   conclusionBody: string;
 }
 
+export interface AuthenticitySource { label: string; value: string; }
+export interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
+export interface AuthenticityTab {
+  subtitle: string;
+  intro: string;
+  check01Title: string;
+  check01Body: string;
+  check01Sources: AuthenticitySource[];
+  check02Title: string;
+  check02Body: string;
+  check02QuoteSource: string;
+  check02QuoteBody: string;
+  check03Title: string;
+  check03Body: string;
+  check03Docs: AuthenticityDoc[];
+}
+
 export interface AboutAgarwoodData {
   hero: { sectionTag: string; titleKr: string; titleEn: string; subtitle: string; heroImage: string };
   definitionSection: { title: string; subtitle: string; body: string; officialNameCallout: string };
@@ -103,6 +120,7 @@ export interface AboutAgarwoodData {
   specialReasons: SpecialReason[];
   benefits: Benefit[];
   dosageSection?: DosageSection;
+  authenticityTab?: AuthenticityTab;
   literatures: Literature[];
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
