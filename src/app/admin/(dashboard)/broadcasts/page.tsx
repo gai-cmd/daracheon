@@ -234,7 +234,7 @@ export default function AdminBroadcastsPage() {
         <button
           type="button"
           onClick={openAdd}
-          className="inline-flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gold-600"
+          className="adm-btn-primary px-4 inline-flex items-center gap-2"
         >
           + 방송 등록
         </button>
@@ -327,7 +327,7 @@ export default function AdminBroadcastsPage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => openEdit(b)}
-                      className="mr-2 inline-flex rounded-md bg-gold-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-gold-700"
+                      className="adm-btn-secondary mr-2 inline-flex px-3"
                     >
                       수정
                     </button>
@@ -560,7 +560,7 @@ export default function AdminBroadcastsPage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-white hover:bg-gold-600 disabled:opacity-60"
+                className="adm-btn-primary px-4 disabled:opacity-60"
               >
                 {saving ? '저장 중...' : isAddMode ? '등록' : '수정'}
               </button>
@@ -590,7 +590,7 @@ export default function AdminBroadcastsPage() {
                 type="button"
                 onClick={handleDelete}
                 disabled={deleting}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
+                className="adm-btn-destructive-solid px-4 disabled:opacity-60"
               >
                 {deleting ? '삭제 중...' : '삭제'}
               </button>

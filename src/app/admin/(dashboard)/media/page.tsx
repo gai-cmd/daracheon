@@ -28,10 +28,10 @@ const typeLabel: Record<MediaType, string> = {
 };
 
 const typeColor: Record<MediaType, string> = {
-  video: 'bg-red-600 text-white',
-  press: 'bg-gold-500 text-white',
-  article: 'bg-forest-400 text-white',
-  photo: 'bg-neutral-700 text-white',
+  video: 'adm-badge adm-badge-luxury',
+  press: 'adm-badge adm-badge-premium',
+  article: 'adm-badge adm-badge-traditional',
+  photo: 'adm-badge adm-badge-default',
 };
 
 /* ─── Component ─── */
@@ -194,7 +194,7 @@ export default function MediaAdminPage() {
           </div>
           <button
             onClick={openAddModal}
-            className="px-5 py-2.5 bg-gold-500 text-white text-sm font-medium rounded-xl hover:bg-gold-600 transition-colors flex items-center gap-2"
+            className="adm-btn-primary px-5 flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -267,7 +267,7 @@ export default function MediaAdminPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => openEditModal(item)}
-                      className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 shadow-sm transition-colors"
+                      className="adm-btn-secondary flex-1 px-3"
                     >
                       수정
                     </button>
@@ -275,7 +275,7 @@ export default function MediaAdminPage() {
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleDelete(item.id)}
-                          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
+                          className="adm-btn-destructive-solid px-3"
                         >
                           확인
                         </button>
@@ -289,7 +289,7 @@ export default function MediaAdminPage() {
                     ) : (
                       <button
                         onClick={() => setDeleteConfirmId(item.id)}
-                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
+                        className="adm-btn-destructive px-3"
                       >
                         삭제
                       </button>
@@ -413,7 +413,7 @@ export default function MediaAdminPage() {
                 <button
                   onClick={handleSave}
                   disabled={!editingItem.title.trim() || saving}
-                  className="px-5 py-2 text-sm font-medium text-white bg-gold-500 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="adm-btn-primary px-5 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {saving ? '저장 중...' : isAddMode ? '추가' : '저장'}
                 </button>

@@ -15,10 +15,10 @@ interface FaqItem {
 }
 
 const categoryColor: Record<FaqCategory, string> = {
-  '제품': 'bg-gold-700 text-white',
-  '배송/결제': 'bg-slate-600 text-white',
-  '성분': 'bg-sage-700 text-white',
-  '기타': 'bg-stone-500 text-white',
+  '제품':    'adm-badge adm-badge-premium',
+  '배송/결제':'adm-badge adm-badge-daily',
+  '성분':    'adm-badge adm-badge-wellness',
+  '기타':    'adm-badge adm-badge-default',
 };
 
 /* ─── Component ─── */
@@ -181,7 +181,7 @@ export default function FaqAdminPage() {
           </div>
           <button
             onClick={openAddModal}
-            className="px-5 py-2.5 bg-gold-500 text-white text-sm font-medium rounded-xl hover:bg-gold-600 transition-colors flex items-center gap-2"
+            className="adm-btn-primary px-5"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -195,7 +195,7 @@ export default function FaqAdminPage() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-neutral-500">등록된 FAQ</span>
             <span className="text-lg font-bold text-neutral-900">{items.length}</span>
-            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-semibold bg-gold-700 text-white">
+            <span className="adm-badge adm-badge-default">
               {items.length}개 항목
             </span>
           </div>
@@ -209,7 +209,7 @@ export default function FaqAdminPage() {
               onClick={() => setCategoryFilter('all')}
               className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
                 categoryFilter === 'all'
-                  ? 'bg-gold-500 text-white'
+                  ? 'bg-[#1F1F1F] text-white'
                   : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
               }`}
             >
@@ -221,7 +221,7 @@ export default function FaqAdminPage() {
                 onClick={() => setCategoryFilter(cat)}
                 className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
                   categoryFilter === cat
-                    ? 'bg-gold-500 text-white'
+                    ? 'bg-[#1F1F1F] text-white'
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                 }`}
               >
@@ -259,7 +259,7 @@ export default function FaqAdminPage() {
                     </span>
 
                     {/* Q Number */}
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gold-700 text-white flex items-center justify-center text-xs font-bold">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#1F1F1F] text-white flex items-center justify-center text-xs font-bold">
                       Q{index + 1}
                     </span>
 
@@ -269,7 +269,7 @@ export default function FaqAdminPage() {
                     </p>
 
                     {/* Category Badge */}
-                    <span className={`flex-shrink-0 px-2 py-0.5 text-[0.65rem] rounded-full font-medium ${categoryColor[cat as FaqCategory] ?? categoryColor['기타']}`}>
+                    <span className={`flex-shrink-0 ${categoryColor[cat as FaqCategory] ?? categoryColor['기타']}`}>
                       {cat}
                     </span>
 
@@ -289,13 +289,15 @@ export default function FaqAdminPage() {
                         <div className="flex gap-1">
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="px-2 py-1 text-[0.65rem] font-medium text-white bg-red-600 rounded-md hover:bg-red-700 shadow-sm transition-colors"
+                            className="adm-btn-destructive-solid px-2 py-0"
+                            style={{ height: '1.75rem', fontSize: '11px' }}
                           >
                             확인
                           </button>
                           <button
                             onClick={() => setDeleteConfirmId(null)}
-                            className="px-2 py-1 text-[0.65rem] font-medium text-neutral-600 bg-neutral-100 rounded-md hover:bg-neutral-200 transition-colors"
+                            className="adm-btn-secondary px-2"
+                            style={{ height: '1.75rem', fontSize: '11px' }}
                           >
                             취소
                           </button>
@@ -409,14 +411,14 @@ export default function FaqAdminPage() {
               <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-neutral-200">
                 <button
                   onClick={() => { setEditingItem(null); setIsAddMode(false); }}
-                  className="px-6 py-2.5 text-sm font-medium text-neutral-700 bg-neutral-100 rounded-lg hover:bg-neutral-200 transition-colors"
+                  className="adm-btn-secondary px-6"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!editingItem.question.trim() || !editingItem.answer.trim() || saving}
-                  className="px-6 py-2.5 text-sm font-medium text-white bg-gold-500 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="adm-btn-primary px-6"
                 >
                   {saving ? '저장 중...' : isAddMode ? '추가' : '저장'}
                 </button>
