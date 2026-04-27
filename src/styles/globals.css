@@ -323,124 +323,107 @@ html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
 
 /* ═══════════════════════════════════════════════════════════════
    Admin Design System — Quiet Luxury
-   [data-admin-root="true"] 스코프 — 공개 사이트에 절대 영향 없음.
-   @apply 없는 순수 CSS — hover/active/disabled 확실히 동작.
+   adm-* 클래스는 admin JSX에서만 사용 → 공개 사이트 영향 없음
+   순수 CSS, @apply 없음 — hover/active/disabled 확실히 동작
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Buttons ─────────────────────────────────────────────────── */
 
-/* Primary: 딥 차콜. 저장/추가 전용. */
-[data-admin-root="true"] .adm-btn-primary {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.5rem; height: 2.25rem; padding: 0 1rem;
-  border-radius: 0.5rem; border: none; cursor: pointer;
-  background: #1F1F1F; color: #fff;
-  font-size: 13px; font-weight: 500; white-space: nowrap;
-  transition: background 150ms ease;
+.adm-btn-primary {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 0.5rem !important; height: 2.25rem !important; padding: 0 1rem !important;
+  border-radius: 0.5rem !important; border: none !important; cursor: pointer !important;
+  background: #1F1F1F !important; color: #fff !important;
+  font-size: 13px !important; font-weight: 500 !important; white-space: nowrap !important;
+  transition: background 150ms ease !important;
+  text-decoration: none !important;
 }
-[data-admin-root="true"] .adm-btn-primary:hover  { background: #2D2D2D; }
-[data-admin-root="true"] .adm-btn-primary:active { background: #111; }
-[data-admin-root="true"] .adm-btn-primary:disabled,
-[data-admin-root="true"] .adm-btn-primary[disabled] { opacity: 0.4; cursor: not-allowed; }
+.adm-btn-primary:hover  { background: #2D2D2D !important; }
+.adm-btn-primary:active { background: #111111 !important; }
+.adm-btn-primary:disabled,
+.adm-btn-primary[disabled] { opacity: 0.4 !important; cursor: not-allowed !important; }
 
-/* Secondary: 흰 배경 + 따뜻한 보더. 편집/CSV 등 비파괴적 액션. */
-[data-admin-root="true"] .adm-btn-secondary {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.375rem; height: 2.25rem; padding: 0 0.75rem;
-  border-radius: 0.5rem; border: 1px solid #E5E1D8; cursor: pointer;
-  background: #fff; color: #1F1F1F;
-  font-size: 13px; font-weight: 500; white-space: nowrap;
-  transition: background 150ms ease;
+.adm-btn-secondary {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 0.375rem !important; height: 2.25rem !important; padding: 0 0.75rem !important;
+  border-radius: 0.5rem !important; border: 1px solid #E5E1D8 !important; cursor: pointer !important;
+  background: #ffffff !important; color: #1F1F1F !important;
+  font-size: 13px !important; font-weight: 500 !important; white-space: nowrap !important;
+  transition: background 150ms ease !important;
 }
-[data-admin-root="true"] .adm-btn-secondary:hover  { background: #F7F4EC; }
-[data-admin-root="true"] .adm-btn-secondary:active { background: #EEE9DE; }
+.adm-btn-secondary:hover  { background: #F7F4EC !important; }
+.adm-btn-secondary:active { background: #EEE9DE !important; }
 
-/* Destructive ghost: 테라코타 텍스트 + 투명 bg. 테이블 인라인 삭제. */
-[data-admin-root="true"] .adm-btn-destructive {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.375rem; height: 2.25rem; padding: 0 0.75rem;
-  border-radius: 0.5rem; border: none; cursor: pointer;
-  background: transparent; color: #B4452F;
-  font-size: 13px; font-weight: 500; white-space: nowrap;
-  transition: background 150ms ease;
+.adm-btn-destructive {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 0.375rem !important; height: 2.25rem !important; padding: 0 0.75rem !important;
+  border-radius: 0.5rem !important; border: none !important; cursor: pointer !important;
+  background: transparent !important; color: #B4452F !important;
+  font-size: 13px !important; font-weight: 500 !important; white-space: nowrap !important;
+  transition: background 150ms ease !important;
 }
-[data-admin-root="true"] .adm-btn-destructive:hover { background: #FBEDE9; }
+.adm-btn-destructive:hover { background: #FBEDE9 !important; }
 
-/* Destructive solid: 확인 다이얼로그 최종 삭제 버튼에만 사용. */
-[data-admin-root="true"] .adm-btn-destructive-solid {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 0.5rem; height: 2.25rem; padding: 0 1rem;
-  border-radius: 0.5rem; border: none; cursor: pointer;
-  background: #B4452F; color: #fff;
-  font-size: 13px; font-weight: 500; white-space: nowrap;
-  transition: background 150ms ease;
+.adm-btn-destructive-solid {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 0.5rem !important; height: 2.25rem !important; padding: 0 1rem !important;
+  border-radius: 0.5rem !important; border: none !important; cursor: pointer !important;
+  background: #B4452F !important; color: #ffffff !important;
+  font-size: 13px !important; font-weight: 500 !important; white-space: nowrap !important;
+  transition: background 150ms ease !important;
 }
-[data-admin-root="true"] .adm-btn-destructive-solid:hover  { background: #913726; }
-[data-admin-root="true"] .adm-btn-destructive-solid:active { background: #7A2E24; }
+.adm-btn-destructive-solid:hover  { background: #913726 !important; }
+.adm-btn-destructive-solid:active { background: #7A2E24 !important; }
 
 /* ── Badge pills ─────────────────────────────────────────────── */
 
-[data-admin-root="true"] .adm-badge {
-  display: inline-flex; align-items: center;
-  padding: 0.125rem 0.5rem; border-radius: 9999px;
-  font-size: 11px; font-weight: 600; line-height: 1; white-space: nowrap;
+.adm-badge {
+  display: inline-flex !important; align-items: center !important;
+  padding: 0.125rem 0.5rem !important; border-radius: 9999px !important;
+  font-size: 11px !important; font-weight: 600 !important;
+  line-height: 1 !important; white-space: nowrap !important;
 }
-/* 7종 뮤트 톤 — WCAG AA ≥ 4.5:1 */
-[data-admin-root="true"] .adm-badge-signature   { background: #EBEBEB; color: #2E2E2E; }
-[data-admin-root="true"] .adm-badge-premium     { background: #F5EDD8; color: #7A5F1F; }
-[data-admin-root="true"] .adm-badge-traditional { background: #E8EEE6; color: #3D4D37; }
-[data-admin-root="true"] .adm-badge-luxury      { background: #F2E5E5; color: #7A2E2E; }
-[data-admin-root="true"] .adm-badge-daily       { background: #E5EDF5; color: #3D5570; }
-[data-admin-root="true"] .adm-badge-wellness    { background: #EEEED8; color: #4A4B2E; }
-[data-admin-root="true"] .adm-badge-gift        { background: #F5E5EB; color: #7A3D50; }
-[data-admin-root="true"] .adm-badge-new         { background: #E5F0EB; color: #2A5C42; }
-[data-admin-root="true"] .adm-badge-best        { background: #F5EDD8; color: #7A5F1F; }
-[data-admin-root="true"] .adm-badge-limited     { background: #F2E5E5; color: #7A2E2E; }
-[data-admin-root="true"] .adm-badge-default     { background: #EBEBEB; color: #4B4845; }
+.adm-badge-signature   { background: #EBEBEB !important; color: #2E2E2E !important; }
+.adm-badge-premium     { background: #F5EDD8 !important; color: #7A5F1F !important; }
+.adm-badge-traditional { background: #E8EEE6 !important; color: #3D4D37 !important; }
+.adm-badge-luxury      { background: #F2E5E5 !important; color: #7A2E2E !important; }
+.adm-badge-daily       { background: #E5EDF5 !important; color: #3D5570 !important; }
+.adm-badge-wellness    { background: #EEEED8 !important; color: #4A4B2E !important; }
+.adm-badge-gift        { background: #F5E5EB !important; color: #7A3D50 !important; }
+.adm-badge-new         { background: #E5F0EB !important; color: #2A5C42 !important; }
+.adm-badge-best        { background: #F5EDD8 !important; color: #7A5F1F !important; }
+.adm-badge-limited     { background: #F2E5E5 !important; color: #7A2E2E !important; }
+.adm-badge-default     { background: #EBEBEB !important; color: #4B4845 !important; }
 
 /* ── Status indicators ───────────────────────────────────────── */
 
-[data-admin-root="true"] .adm-status-instock,
-[data-admin-root="true"] .adm-status-public {
-  display: inline-flex; align-items: center;
-  gap: 0.375rem; font-size: 12px; font-weight: 500; color: #2A5C42;
+.adm-status-instock,
+.adm-status-public {
+  display: inline-flex !important; align-items: center !important;
+  gap: 0.375rem !important; font-size: 12px !important;
+  font-weight: 500 !important; color: #2A5C42 !important;
 }
-[data-admin-root="true"] .adm-status-outstock {
-  display: inline-flex; align-items: center;
-  gap: 0.375rem; font-size: 12px; font-weight: 500; color: #B4452F;
+.adm-status-outstock {
+  display: inline-flex !important; align-items: center !important;
+  gap: 0.375rem !important; font-size: 12px !important;
+  font-weight: 500 !important; color: #B4452F !important;
 }
-[data-admin-root="true"] .adm-status-private {
-  display: inline-flex; align-items: center;
-  gap: 0.375rem; font-size: 12px; font-weight: 500; color: #6B6B6B;
+.adm-status-private {
+  display: inline-flex !important; align-items: center !important;
+  gap: 0.375rem !important; font-size: 12px !important;
+  font-weight: 500 !important; color: #6B6B6B !important;
 }
-[data-admin-root="true"] .adm-status-dot-green {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #3A7A5A; flex-shrink: 0;
-}
-[data-admin-root="true"] .adm-status-dot-red {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #B4452F; flex-shrink: 0;
-}
-[data-admin-root="true"] .adm-status-dot-gray {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #9C9690; flex-shrink: 0;
-}
+.adm-status-dot-green { width: 8px !important; height: 8px !important; border-radius: 50% !important; background: #3A7A5A !important; flex-shrink: 0 !important; }
+.adm-status-dot-red   { width: 8px !important; height: 8px !important; border-radius: 50% !important; background: #B4452F !important; flex-shrink: 0 !important; }
+.adm-status-dot-gray  { width: 8px !important; height: 8px !important; border-radius: 50% !important; background: #9C9690 !important; flex-shrink: 0 !important; }
 
-/* ── Dark mode (html.admin-dark) ─────────────────────────────── */
-html.admin-dark [data-admin-root="true"] .adm-btn-primary { background: #E8E2D2; color: #1F1F1F; }
-html.admin-dark [data-admin-root="true"] .adm-btn-primary:hover { background: #F0EBE0; }
-html.admin-dark [data-admin-root="true"] .adm-btn-secondary { background: #262622; border-color: #404038; color: #E8E2D2; }
-html.admin-dark [data-admin-root="true"] .adm-btn-secondary:hover { background: #2D2D28; }
-html.admin-dark [data-admin-root="true"] .adm-btn-destructive { color: #E07060; }
-html.admin-dark [data-admin-root="true"] .adm-btn-destructive:hover { background: rgba(180,69,47,0.18); }
-html.admin-dark [data-admin-root="true"] .adm-badge-signature   { background: #2A2A2A; color: #C8C8C8; }
-html.admin-dark [data-admin-root="true"] .adm-badge-premium     { background: #2E2618; color: #C8A055; }
-html.admin-dark [data-admin-root="true"] .adm-badge-traditional { background: #1E2A1C; color: #7AAE72; }
-html.admin-dark [data-admin-root="true"] .adm-badge-luxury      { background: #2A1818; color: #C07070; }
-html.admin-dark [data-admin-root="true"] .adm-badge-daily       { background: #182030; color: #7AADCC; }
-html.admin-dark [data-admin-root="true"] .adm-badge-wellness    { background: #222212; color: #AEAF70; }
-html.admin-dark [data-admin-root="true"] .adm-badge-gift        { background: #2A1820; color: #C48095; }
-html.admin-dark [data-admin-root="true"] .adm-badge-default     { background: #2A2A26; color: #A8A199; }
+/* ── Dark mode ───────────────────────────────────────────────── */
+html.admin-dark .adm-btn-primary  { background: #E8E2D2 !important; color: #1F1F1F !important; }
+html.admin-dark .adm-btn-primary:hover { background: #F0EBE0 !important; }
+html.admin-dark .adm-btn-secondary { background: #262622 !important; border-color: #404038 !important; color: #E8E2D2 !important; }
+html.admin-dark .adm-btn-secondary:hover { background: #2D2D28 !important; }
+html.admin-dark .adm-btn-destructive { color: #E07060 !important; }
+html.admin-dark .adm-btn-destructive:hover { background: rgba(180,69,47,0.18) !important; }
 
 /* ═══════════════════════════════════════════════════════════════
    Admin area — light theme override
