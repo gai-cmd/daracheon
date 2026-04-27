@@ -231,7 +231,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   <RevealOnScroll>
                     <h3>
                       {registryTitle}
-                      <br />
                       <em>{registrySubtitle}</em>
                     </h3>
                   </RevealOnScroll>
