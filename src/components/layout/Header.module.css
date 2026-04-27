@@ -30,14 +30,30 @@
   transition: opacity 300ms;
 }
 
-.navBrandName {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+.navBrandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   line-height: 1;
+}
+
+.navBrandKr {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.navBrandEn {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .navBrand:hover {

@@ -55,7 +55,10 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
             alt="조엘라이프 ZOEL LIFE"
             style={{ height: 40, width: 'auto', display: 'block', objectFit: 'contain' }}
           />
-          <span className={styles.navBrandName}>조엘라이프(주)</span>
+          <span className={styles.navBrandText}>
+            <span className={styles.navBrandKr}>조엘라이프(주)</span>
+            <span className={styles.navBrandEn}>ZOEL LIFE</span>
+          </span>
         </Link>
 
         <ul className={styles.navLinks}>

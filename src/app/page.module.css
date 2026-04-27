@@ -71,6 +71,7 @@
 .heroKicker .idx { color: rgba(255, 255, 255, 0.45); }
 
 .hero h1 {
+  font-family: 'Noto Serif KR', serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -235,6 +236,7 @@
   margin-bottom: 18px;
 }
 .h2 {
+  font-family: 'Noto Serif KR', serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 200;
   letter-spacing: -0.02em;
