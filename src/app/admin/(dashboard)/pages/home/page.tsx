@@ -264,6 +264,7 @@ function removeIndex<T>(arr: T[], i: number): T[] {
 export default function AdminHomePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<HomeHero>(DEFAULT_HERO);
@@ -333,6 +334,8 @@ export default function AdminHomePage() {
     }
   }
 
+  const ADMIN_TABS = ['히어로 & 통계', '검증 & 인증', '침향 소개', '효능 & 공정'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -368,7 +371,26 @@ export default function AdminHomePage() {
         <h1 className="mb-2 text-3xl font-bold text-gray-900">홈 편집</h1>
         <p className="mb-8 text-gray-500">/ (홈) 공개 페이지의 히어로·통계 영역을 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
+          {activeAdminTab === 0 && (<>
+
           {/* Hero */}
           <SectionCard title="Hero · 메인 히어로 (확인되는 침향, 대라천 참침향)" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
@@ -450,6 +472,9 @@ export default function AdminHomePage() {
             </div>
           </SectionCard>
 
+          </>)}
+          {activeAdminTab === 1 && (<>
+
           {/* Notice */}
           <SectionCard title="Notice · 식약처 고시 기준 (4 단계 검증)" onSave={() => saveSection('notice', { notice })} saving={saving === 'notice'}>
             <div className="space-y-5">
@@ -499,6 +524,72 @@ export default function AdminHomePage() {
             </div>
           </SectionCard>
 
+          {/* Verification (hero 3-point card) */}
+          <SectionCard title="3-Point Verification · Hero 우측 카드 (01-03)" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">히어로 오른쪽 "3-Point Verification" 카드의 3줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
+              {verification.map((r, i) => (
+                <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
+                  <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 200ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={r.meta} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], meta: e.target.value }; setVerification(n); }} placeholder="메타 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <div className="flex gap-1">
+                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                    <button type="button" onClick={() => setVerification(removeIndex(verification, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={() => setVerification([...verification, { num: '', label: '', meta: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 행 추가</button>
+            </div>
+          </SectionCard>
+
+          {/* Verified Cards (3-step Notice section) */}
+          <SectionCard title="Verified · 검증 3카드 (Origin/Process/Evidence)" onSave={() => saveSection('verifiedCards', { verifiedCards })} saving={saving === 'verifiedCards'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">히어로 아래 "진짜 침향..." 섹션의 3단 카드. 보통 Origin / Process / Evidence 3개.</p>
+              {verifiedCards.map((c, i) => (
+                <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <input value={c.step} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], step: e.target.value }; setVerifiedCards(n); }} placeholder="스텝 태그 (예: 01 · Origin)" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    <div className="ml-2 flex gap-1">
+                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i - 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i + 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                      <button type="button" onClick={() => setVerifiedCards(removeIndex(verifiedCards, i))} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    </div>
+                  </div>
+                  <input value={c.title} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], title: e.target.value }; setVerifiedCards(n); }} placeholder="한글 제목 (예: 학명 확인된 AAR)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.en} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], en: e.target.value }; setVerifiedCards(n); }} placeholder="영문 부제 (예: Aquilaria Agallocha Roxburgh)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <textarea rows={3} value={c.body} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], body: e.target.value }; setVerifiedCards(n); }} placeholder="본문 설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                </div>
+              ))}
+              <button type="button" onClick={() => setVerifiedCards([...verifiedCards, { step: '', title: '', en: '', body: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
+            </div>
+          </SectionCard>
+
+          {/* Certification Chips */}
+          <SectionCard title="Certifications · 8개 인증 칩 (CITES/HACCP/...)" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">Verified 섹션 하단의 인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제.</p>
+              {certs.map((c, i) => (
+                <div key={i} className="grid grid-cols-[60px_1fr_2fr_auto] items-center gap-2">
+                  <input value={c.mark} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], mark: e.target.value }; setCerts(n); }} placeholder="C" maxLength={3} className="rounded-lg border border-gray-300 px-3 py-2 text-center font-serif text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.name} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], name: e.target.value }; setCerts(n); }} placeholder="이름 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.sub} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], sub: e.target.value }; setCerts(n); }} placeholder="부제 (예: 국제 보호 수종)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <div className="flex gap-1">
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                    <button type="button" onClick={() => setCerts(removeIndex(certs, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
+            </div>
+          </SectionCard>
+
+          </>)}
+          {activeAdminTab === 2 && (<>
+
           {/* Agarwood */}
           <SectionCard title="Agarwood · 신들의 나무" onSave={() => saveSection('agarwood', { agarwood })} saving={saving === 'agarwood'}>
             <div className="space-y-5">
@@ -527,6 +618,9 @@ export default function AdminHomePage() {
               </div>
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 3 && (<>
 
           {/* Benefits */}
           <SectionCard title="Benefits · 연구 기반 효능 (6개)" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
@@ -598,68 +692,7 @@ export default function AdminHomePage() {
             </div>
           </SectionCard>
 
-          {/* Verification (hero 3-point card) */}
-          <SectionCard title="3-Point Verification · Hero 우측 카드 (01-03)" onSave={() => saveSection('verification', { verification })} saving={saving === 'verification'}>
-            <div className="space-y-3">
-              <p className="text-xs text-gray-500">히어로 오른쪽 "3-Point Verification" 카드의 3줄. 번호 / 본문 / 오른쪽 메타(태그).</p>
-              {verification.map((r, i) => (
-                <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
-                  <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 200ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={r.meta} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], meta: e.target.value }; setVerification(n); }} placeholder="메타 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <div className="flex gap-1">
-                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                    <button type="button" onClick={() => setVerification(moveItem(verification, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                    <button type="button" onClick={() => setVerification(removeIndex(verification, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                  </div>
-                </div>
-              ))}
-              <button type="button" onClick={() => setVerification([...verification, { num: '', label: '', meta: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 행 추가</button>
-            </div>
-          </SectionCard>
-
-          {/* Verified Cards (3-step Notice section) */}
-          <SectionCard title="Verified · 검증 3카드 (Origin/Process/Evidence)" onSave={() => saveSection('verifiedCards', { verifiedCards })} saving={saving === 'verifiedCards'}>
-            <div className="space-y-3">
-              <p className="text-xs text-gray-500">히어로 아래 "진짜 침향..." 섹션의 3단 카드. 보통 Origin / Process / Evidence 3개.</p>
-              {verifiedCards.map((c, i) => (
-                <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <input value={c.step} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], step: e.target.value }; setVerifiedCards(n); }} placeholder="스텝 태그 (예: 01 · Origin)" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                    <div className="ml-2 flex gap-1">
-                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i - 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
-                      <button type="button" onClick={() => setVerifiedCards(moveItem(verifiedCards, i, i + 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
-                      <button type="button" onClick={() => setVerifiedCards(removeIndex(verifiedCards, i))} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                    </div>
-                  </div>
-                  <input value={c.title} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], title: e.target.value }; setVerifiedCards(n); }} placeholder="한글 제목 (예: 학명 확인된 AAR)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={c.en} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], en: e.target.value }; setVerifiedCards(n); }} placeholder="영문 부제 (예: Aquilaria Agallocha Roxburgh)" className="mb-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <textarea rows={3} value={c.body} onChange={(e) => { const n = [...verifiedCards]; n[i] = { ...n[i], body: e.target.value }; setVerifiedCards(n); }} placeholder="본문 설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                </div>
-              ))}
-              <button type="button" onClick={() => setVerifiedCards([...verifiedCards, { step: '', title: '', en: '', body: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
-            </div>
-          </SectionCard>
-
-          {/* Certification Chips */}
-          <SectionCard title="Certifications · 8개 인증 칩 (CITES/HACCP/...)" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
-            <div className="space-y-3">
-              <p className="text-xs text-gray-500">Verified 섹션 하단의 인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제.</p>
-              {certs.map((c, i) => (
-                <div key={i} className="grid grid-cols-[60px_1fr_2fr_auto] items-center gap-2">
-                  <input value={c.mark} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], mark: e.target.value }; setCerts(n); }} placeholder="C" maxLength={3} className="rounded-lg border border-gray-300 px-3 py-2 text-center font-serif text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={c.name} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], name: e.target.value }; setCerts(n); }} placeholder="이름 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <input value={c.sub} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], sub: e.target.value }; setCerts(n); }} placeholder="부제 (예: 국제 보호 수종)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                  <div className="flex gap-1">
-                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                    <button type="button" onClick={() => setCerts(removeIndex(certs, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                  </div>
-                </div>
-              ))}
-              <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
-            </div>
-          </SectionCard>
+          </>)}
         </div>
       </div>
     </div>

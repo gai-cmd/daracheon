@@ -119,6 +119,7 @@ function removeIndex<T>(arr: T[], i: number): T[] {
 export default function AdminCompanyPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<CompanyHero>(DEFAULT_HERO);
@@ -192,6 +193,8 @@ export default function AdminCompanyPage() {
     }
   }
 
+  const ADMIN_TABS = ['히어로', '회사 소개'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -227,7 +230,26 @@ export default function AdminCompanyPage() {
         <h1 className="mb-2 text-3xl font-bold text-gray-900">회사소개 편집</h1>
         <p className="mb-8 text-gray-500">/company 공개 페이지의 헤더와 4개 챕터를 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
+          {activeAdminTab === 0 && (<>
+
           {/* HERO */}
           <SectionCard
             title="HERO · 회사소개 헤더"
@@ -241,6 +263,9 @@ export default function AdminCompanyPage() {
               <LabeledTextarea label="lede (헤더 아래 소개 문장)" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 1 && (<>
 
           {/* CHAPTERS */}
           <SectionCard
@@ -339,6 +364,8 @@ export default function AdminCompanyPage() {
               </button>
             </div>
           </SectionCard>
+
+          </>)}
         </div>
       </div>
     </div>

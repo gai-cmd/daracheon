@@ -179,6 +179,7 @@ function removeIndex<T>(arr: T[], i: number): T[] {
 export default function AdminSupportPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<SupportHero>(DEFAULT_HERO);
@@ -248,6 +249,8 @@ export default function AdminSupportPage() {
     }
   }
 
+  const ADMIN_TABS = ['기본 설정', '고객 정보', '회사 정보'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -283,7 +286,26 @@ export default function AdminSupportPage() {
         <h1 className="mb-2 text-3xl font-bold text-gray-900">문의하기 편집</h1>
         <p className="mb-8 text-gray-500">/support 공개 페이지의 히어로·연락 채널·회사 정보·샘플 Lot 등을 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
+          {activeAdminTab === 0 && (<>
+
           {/* HERO */}
           <SectionCard title="HERO · 문의 헤더" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
@@ -338,6 +360,9 @@ export default function AdminSupportPage() {
             </div>
           </SectionCard>
 
+          </>)}
+          {activeAdminTab === 1 && (<>
+
           {/* Sample Lots */}
           <SectionCard title="Sample Lots · Lot 조회 샘플 번호" onSave={() => saveSection('sampleLots', { sampleLots })} saving={saving === 'sampleLots'}>
             <div className="space-y-2">
@@ -379,6 +404,9 @@ export default function AdminSupportPage() {
               <button type="button" onClick={() => setProductOptions([...productOptions, ''])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 옵션 추가</button>
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 2 && (<>
 
           {/* Company Info */}
           <SectionCard title="Company Info · 회사 정보 행" onSave={() => saveSection('companyInfo', { companyInfo })} saving={saving === 'companyInfo'}>
@@ -433,6 +461,8 @@ export default function AdminSupportPage() {
               <LabeledInput label="주소 (예: 서울 금천구 벚꽃로36길 30, 1511호)" value={mapLabel.address} onChange={(v) => setMapLabel({ ...mapLabel, address: v })} />
             </div>
           </SectionCard>
+
+          </>)}
         </div>
       </div>
     </div>

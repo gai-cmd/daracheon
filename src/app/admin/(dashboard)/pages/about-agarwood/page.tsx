@@ -228,6 +228,7 @@ function TabGroupHeader({ index, label }: { index: number; label: string }) {
 export default function AdminAboutAgarwoodPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   /* state — 초기값은 frontend AboutAgarwoodClient.tsx 의 하드코딩 fallback과 동일.
@@ -458,6 +459,8 @@ export default function AdminAboutAgarwoodPage() {
     return arr.filter((_, i) => i !== index);
   }
 
+  const ADMIN_TABS = ['침향이란?', '진짜 침향 구별 방법', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -494,8 +497,25 @@ export default function AdminAboutAgarwoodPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">침향 이야기 편집</h1>
         <p className="text-gray-500 mb-8">/about-agarwood 공개 페이지의 콘텐츠를 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
-          <TabGroupHeader index={1} label="침향이란?" />
+          {activeAdminTab === 0 && (<>
 
           {/* Hero */}
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
@@ -708,7 +728,21 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={2} label="진짜 침향 구별 방법" />
+          {/* CTA */}
+          <SectionCard title="CTA · 하단 콜아웃" onSave={() => saveSection('cta', { cta })} saving={saving === 'cta'}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="md:col-span-2">
+                <LabeledInput label="CTA 제목" value={cta.title} onChange={(v) => setCta({ ...cta, title: v })} />
+              </div>
+              <LabeledInput label="제품 버튼 텍스트" value={cta.buttonProducts} onChange={(v) => setCta({ ...cta, buttonProducts: v })} />
+              <LabeledInput label="제품 버튼 링크" value={cta.buttonProductsHref} onChange={(v) => setCta({ ...cta, buttonProductsHref: v })} />
+              <LabeledInput label="브랜드 버튼 텍스트" value={cta.buttonBrand} onChange={(v) => setCta({ ...cta, buttonBrand: v })} />
+              <LabeledInput label="브랜드 버튼 링크" value={cta.buttonBrandHref} onChange={(v) => setCta({ ...cta, buttonBrandHref: v })} />
+            </div>
+          </SectionCard>
+
+          </>)}
+          {activeAdminTab === 1 && (<>
 
           {/* Authenticity Tab */}
           <SectionCard title="진짜 침향 구별 방법 · 감별 3단계" onSave={() => saveSection('authenticityTab', { authenticityTab })} saving={saving === 'authenticityTab'}>
@@ -840,7 +874,8 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={3} label="문헌에 실린 침향" />
+          </>)}
+          {activeAdminTab === 2 && (<>
 
           {/* Literatures */}
           <SectionCard title="문헌 목록" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
@@ -870,7 +905,8 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={4} label="논문에 실린 침향" />
+          </>)}
+          {activeAdminTab === 3 && (<>
 
           {/* Papers */}
           <SectionCard title="논문 목록" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
@@ -905,7 +941,8 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={5} label="매체에 실린 침향" />
+          </>)}
+          {activeAdminTab === 4 && (<>
 
           {/* Media Tab */}
           <SectionCard title="매체 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
@@ -951,7 +988,8 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          <TabGroupHeader index={6} label="고객이 남긴 침향" />
+          </>)}
+          {activeAdminTab === 5 && (<>
 
           {/* Testimonials Tab */}
           <SectionCard title="고객 후기 목록" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>
@@ -1004,18 +1042,7 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          {/* CTA */}
-          <SectionCard title="CTA · 하단 콜아웃" onSave={() => saveSection('cta', { cta })} saving={saving === 'cta'}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="md:col-span-2">
-                <LabeledInput label="CTA 제목" value={cta.title} onChange={(v) => setCta({ ...cta, title: v })} />
-              </div>
-              <LabeledInput label="제품 버튼 텍스트" value={cta.buttonProducts} onChange={(v) => setCta({ ...cta, buttonProducts: v })} />
-              <LabeledInput label="제품 버튼 링크" value={cta.buttonProductsHref} onChange={(v) => setCta({ ...cta, buttonProductsHref: v })} />
-              <LabeledInput label="브랜드 버튼 텍스트" value={cta.buttonBrand} onChange={(v) => setCta({ ...cta, buttonBrand: v })} />
-              <LabeledInput label="브랜드 버튼 링크" value={cta.buttonBrandHref} onChange={(v) => setCta({ ...cta, buttonBrandHref: v })} />
-            </div>
-          </SectionCard>
+          </>)}
         </div>
       </div>
     </div>

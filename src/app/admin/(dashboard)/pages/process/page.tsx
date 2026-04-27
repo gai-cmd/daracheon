@@ -212,6 +212,7 @@ function removeIndex<T>(arr: T[], i: number): T[] {
 export default function AdminProcessPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<ProcessHero>(DEFAULT_HERO);
@@ -292,6 +293,8 @@ export default function AdminProcessPage() {
     }
   }
 
+  const ADMIN_TABS = ['기본 설정', '영상 & 인증'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -327,7 +330,26 @@ export default function AdminProcessPage() {
         <h1 className="mb-2 text-3xl font-bold text-gray-900">생산 공정 · 농장 편집</h1>
         <p className="mb-8 text-gray-500">/process 공개 페이지의 히어로 · 챕터 · 영상 · 인증서를 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
+          {activeAdminTab === 0 && (<>
+
           {/* HERO */}
           <SectionCard title="HERO · 농장 스토리 헤더" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
@@ -396,6 +418,9 @@ export default function AdminProcessPage() {
               <button type="button" onClick={() => setChapters([...chapters, { num: '', tag: '', title: '', body: '', stats: [], imageSrc: '', imageAlt: '', imageCaption: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 챕터 추가</button>
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 1 && (<>
 
           {/* PRODUCTION VIDEOS */}
           <SectionCard title="Production Videos · 농장 현장 영상" onSave={() => saveSection('productionVideos', { productionVideos: videos })} saving={saving === 'productionVideos'}>
@@ -489,6 +514,8 @@ export default function AdminProcessPage() {
               </div>
             </div>
           </SectionCard>
+
+          </>)}
         </div>
       </div>
     </div>

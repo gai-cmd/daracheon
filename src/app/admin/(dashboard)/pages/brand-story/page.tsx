@@ -158,6 +158,7 @@ function SectionCard({ title, children, onSave, saving }: { title: string; child
 export default function AdminBrandStoryPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   // Frontend fallback 값과 동일 — CMS 데이터가 없을 때 현재 사이트에 노출되는 내용
@@ -382,6 +383,8 @@ export default function AdminBrandStoryPage() {
     return arr.filter((_, i) => i !== index);
   }
 
+  const ADMIN_TABS = ['브랜드 스토리', '대라천 침향 현장', '대라천 침향 역사', '다양한 인증', '생산 공정'];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -413,7 +416,26 @@ export default function AdminBrandStoryPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">브랜드 이야기 편집</h1>
         <p className="text-gray-500 mb-8">/brand-story 공개 페이지의 콘텐츠를 관리합니다.</p>
 
+        {/* Admin Tab Bar */}
+        <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
+          {ADMIN_TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveAdminTab(i)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                activeAdminTab === i
+                  ? 'border-gold-500 text-gold-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
         <div className="space-y-8">
+          {activeAdminTab === 0 && (<>
+
           {/* Hero */}
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
@@ -469,6 +491,9 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
+          </>)}
+          {activeAdminTab === 1 && (<>
+
           {/* Scene Tab */}
           <SectionCard title="탭 2 · 대라천 침향 현장" onSave={() => saveSection('sceneTab', { sceneTab })} saving={saving === 'sceneTab'}>
             <div className="space-y-5">
@@ -496,6 +521,9 @@ export default function AdminBrandStoryPage() {
               </div>
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 2 && (<>
 
           {/* History Tab */}
           <SectionCard title="탭 3 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
@@ -545,6 +573,9 @@ export default function AdminBrandStoryPage() {
               </div>
             </div>
           </SectionCard>
+
+          </>)}
+          {activeAdminTab === 3 && (<>
 
           {/* Certifications Tab */}
           <SectionCard title="탭 4 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
@@ -652,6 +683,9 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
+          </>)}
+          {activeAdminTab === 4 && (<>
+
           {/* Process Tab */}
           <SectionCard title="탭 5 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
@@ -709,6 +743,7 @@ export default function AdminBrandStoryPage() {
             mediaTab / testimonialsTab UI는 /brand-story 페이지에서 더 이상 노출되지 않아 제거.
             (해당 탭은 /about-agarwood 전용. 데이터 계약 유지를 위해 state와 BrandStoryData 인터페이스의 옵셔널 필드는 보존.)
           */}
+          </>)}
         </div>
       </div>
     </div>
