@@ -155,7 +155,7 @@ function SectionCard({ title, children, onSave, saving }: { title: string; child
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="rounded-lg bg-gold-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-gold-600 disabled:opacity-50"
+          className="adm-btn-primary px-6 disabled:opacity-50"
         >
           {saving ? '저장 중...' : '저장'}
         </button>

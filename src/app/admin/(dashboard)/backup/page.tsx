@@ -280,7 +280,7 @@ export default function AdminBackupPage() {
               type="button"
               onClick={handleCreate}
               disabled={creating || !isSuperAdmin}
-              className="rounded-lg bg-gold-500 px-4 py-2 text-sm font-medium text-white hover:bg-gold-600 disabled:opacity-50"
+              className="adm-btn-primary px-4 disabled:opacity-50"
               title={!isSuperAdmin ? 'super_admin 전용' : undefined}
             >
               {creating ? '생성 중…' : '+ 수동 스냅샷'}

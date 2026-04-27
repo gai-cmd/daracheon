@@ -18,10 +18,16 @@ const ROLE_LABELS: Record<Role, string> = {
   editor: 'Editor',
 };
 
+const ROLE_BADGE_SELECT: Record<Role, string> = {
+  super_admin: 'bg-gold-50 text-gold-700 border-gold-200',
+  admin: 'bg-sage-50 text-sage-700 border-sage-200',
+  editor: 'bg-stone-100 text-stone-600 border-stone-300',
+};
+
 const ROLE_BADGE: Record<Role, string> = {
-  super_admin: 'bg-gold-700 text-white border-gold-800',
-  admin: 'bg-sage-700 text-white border-sage-800',
-  editor: 'bg-stone-500 text-white border-stone-600',
+  super_admin: 'adm-badge adm-badge-premium',
+  admin: 'adm-badge adm-badge-traditional',
+  editor: 'adm-badge adm-badge-default',
 };
 
 function formatAt(iso: string | undefined): string {
@@ -195,7 +201,7 @@ export default function AdminUsersPage() {
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="inline-flex items-center gap-2 rounded-md bg-gold-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-gold-600"
+            className="adm-btn-primary px-4 inline-flex items-center gap-2"
           >
             + 계정 추가
           </button>
@@ -247,7 +253,7 @@ export default function AdminUsersPage() {
                         <select
                           value={u.role}
                           onChange={(e) => handleRoleChange(u.email, e.target.value as Role)}
-                          className={`rounded border px-2 py-1 text-xs ${ROLE_BADGE[u.role]}`}
+                          className={`rounded border px-2 py-1 text-xs ${ROLE_BADGE_SELECT[u.role]}`}
                         >
                           {(['super_admin', 'admin', 'editor'] as Role[]).map((r) => (
                             <option key={r} value={r}>{ROLE_LABELS[r]}</option>
@@ -338,7 +344,7 @@ export default function AdminUsersPage() {
                 type="button"
                 onClick={handleAdd}
                 disabled={saving}
-                className="rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-white hover:bg-gold-600 disabled:opacity-60"
+                className="adm-btn-primary px-4 disabled:opacity-60"
               >
                 {saving ? '추가 중...' : '추가'}
               </button>
@@ -368,7 +374,7 @@ export default function AdminUsersPage() {
             </div>
             <div className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
               <button type="button" onClick={() => setPwTarget(null)} className="rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">취소</button>
-              <button type="button" onClick={handleResetPassword} className="rounded-md bg-gold-500 px-4 py-2 text-sm font-medium text-white hover:bg-gold-600">재설정</button>
+              <button type="button" onClick={handleResetPassword} className="adm-btn-primary px-4">재설정</button>
             </div>
           </div>
         </div>
@@ -384,7 +390,7 @@ export default function AdminUsersPage() {
             </p>
             <div className="flex justify-end gap-2">
               <button type="button" onClick={() => setDeleteTarget(null)} className="rounded-md border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">취소</button>
-              <button type="button" onClick={handleDelete} className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">삭제</button>
+              <button type="button" onClick={handleDelete} className="adm-btn-destructive-solid px-4">삭제</button>
             </div>
           </div>
         </div>

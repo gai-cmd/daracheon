@@ -489,13 +489,13 @@ export default function AdminReviewsPage() {
                           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => openEdit(review)}
-                              className="px-3 py-1.5 text-xs font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 shadow-sm transition-colors"
+                              className="adm-btn-secondary px-3"
                             >
                               편집
                             </button>
                             <button
                               onClick={() => setDeleteTarget(review)}
-                              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-sm transition-colors"
+                              className="adm-btn-destructive px-3"
                             >
                               삭제
                             </button>
@@ -655,7 +655,7 @@ export default function AdminReviewsPage() {
               <div className="flex gap-3 w-full">
                 <button
                   onClick={handleDelete}
-                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  className="adm-btn-destructive-solid flex-1 px-4"
                 >
                   삭제
                 </button>

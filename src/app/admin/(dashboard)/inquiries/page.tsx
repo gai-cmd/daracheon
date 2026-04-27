@@ -43,11 +43,11 @@ const categoryLabel: Record<InquiryCategory, string> = {
 };
 
 const categoryColor: Record<InquiryCategory, string> = {
-  product: 'bg-gold-500 text-white',
-  order: 'bg-blue-500 text-white',
-  wholesale: 'bg-violet-500 text-white',
-  media: 'bg-sky-500 text-white',
-  other: 'bg-gray-500 text-white',
+  product: 'adm-badge adm-badge-premium',
+  order: 'adm-badge adm-badge-daily',
+  wholesale: 'adm-badge adm-badge-wellness',
+  media: 'adm-badge adm-badge-signature',
+  other: 'adm-badge adm-badge-default',
 };
 
 /* ─── Next Status ─── */
@@ -360,7 +360,7 @@ export default function InquiriesPage() {
                     onClick={() => setStatusFilter(s)}
                     className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
                       statusFilter === s
-                        ? 'bg-gold-500 text-white'
+                        ? 'bg-[#1F1F1F] text-white'
                         : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                     }`}
                   >
@@ -380,7 +380,7 @@ export default function InquiriesPage() {
                     onClick={() => setCategoryFilter(c)}
                     className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
                       categoryFilter === c
-                        ? 'bg-gold-500 text-white'
+                        ? 'bg-[#1F1F1F] text-white'
                         : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                     }`}
                   >
@@ -410,7 +410,7 @@ export default function InquiriesPage() {
               <button
                 onClick={handleBulkStatusChange}
                 disabled={isBulkLoading}
-                className="px-3 py-1 bg-gold-500 text-white text-xs font-medium rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50"
+                className="adm-btn-primary px-3 disabled:opacity-50"
               >
                 {isBulkLoading ? '변경 중...' : '일괄 변경'}
               </button>
@@ -575,7 +575,7 @@ export default function InquiriesPage() {
                             <button
                               onClick={() => handleSaveReply(inq.id)}
                               disabled={!replyTexts[inq.id]?.trim()}
-                              className="px-4 py-2 bg-gold-500 text-white text-xs font-medium rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                              className="adm-btn-primary px-4 disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                               답변 저장
                             </button>
@@ -590,7 +590,7 @@ export default function InquiriesPage() {
                           )}
                           <button
                             onClick={() => handleDelete(inq.id)}
-                            className="px-4 py-2 bg-red-600 text-xs font-medium text-white rounded-lg hover:bg-red-700 shadow-sm transition-colors ml-auto"
+                            className="adm-btn-destructive-solid px-4 ml-auto"
                           >
                             삭제
                           </button>
