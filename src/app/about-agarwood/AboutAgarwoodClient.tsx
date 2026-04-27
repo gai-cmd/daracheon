@@ -652,6 +652,25 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         </div>
                       ))}
                     </div>
+
+                    {/* 원문 캡처 — VIHECO 성분명세서 (Aquilaria agallocha Roxburgh 학명 실증) */}
+                    <div style={{ marginTop: 28 }}>
+                      <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12 }}>
+                        원문 서류 · 성분명세서
+                      </p>
+                      <div style={{ position: 'relative', border: '1px solid rgba(212,168,67,0.3)', overflow: 'hidden' }}>
+                        <Image
+                          src="/uploads/misc/kfda-doc-1.jpg"
+                          alt="VIHECO 제약사 성분명세서 — Agarwood oil 학명: Aquilaria agallocha Roxburgh"
+                          width={900}
+                          height={1200}
+                          style={{ width: '100%', height: 'auto', display: 'block' }}
+                        />
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 14px', background: 'rgba(10,11,16,0.82)', backdropFilter: 'blur(8px)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>
+                          VIHECO 중앙제약 성분명세서 — Agarwood oil · <em style={{ color: 'var(--accent)', fontStyle: 'normal' }}>Aquilaria agallocha Roxburgh</em> · 2026.03.10
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </RevealOnScroll>
 
@@ -721,6 +740,68 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </p>
                         </div>
                       ))}
+                    </div>
+
+                    {/* 원문 인증서 갤러리 */}
+                    <div style={{ marginTop: 36 }}>
+                      <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 16 }}>
+                        보유 인증서 원본
+                      </p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+                        {[
+                          { src: '/uploads/misc/cert-iso22000.jpg', label: 'ISO 22000:2018', sub: '식품안전 경영시스템 인증' },
+                          { src: '/uploads/misc/cert-gmp.jpg', label: 'GMP 인증', sub: '베트남 식품안전청 · 식품 안전기준 준수시설' },
+                          { src: '/uploads/misc/cert-iso13485.jpg', label: 'ISO 13485:2016', sub: '품질 경영시스템 인증' },
+                          { src: '/uploads/misc/cert-ocop.jpg', label: 'OCOP 4성급', sub: '베트남 동나이 인민위원회 · 2025' },
+                          { src: '/uploads/misc/cert-gold-brand.jpg', label: '황금브랜드 인증', sub: '베트남 농업총국 · 2025' },
+                          { src: '/uploads/misc/cert-asia-brand.jpg', label: 'Asia Excellent Brand', sub: 'Top 10 아시아 우수 브랜드 · 2025' },
+                        ].map((cert) => (
+                          <div key={cert.src} style={{ border: '1px solid rgba(212,168,67,0.2)', overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}>
+                            <div style={{ position: 'relative', aspectRatio: '3/4', background: '#fff' }}>
+                              <Image
+                                src={cert.src}
+                                alt={cert.label}
+                                fill
+                                style={{ objectFit: 'contain', padding: 8 }}
+                              />
+                            </div>
+                            <div style={{ padding: '12px 14px', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
+                              <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 3 }}>{cert.label}</p>
+                              <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{cert.sub}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 식약청 제출 서류 원본 */}
+                    <div style={{ marginTop: 36 }}>
+                      <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 16 }}>
+                        식약청 제출 서류 원본
+                      </p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+                        {[
+                          { src: '/uploads/misc/kfda-doc-1.jpg', label: '성분 명세서', sub: 'Aquilaria agallocha Roxburgh 학명 기재' },
+                          { src: '/uploads/misc/kfda-doc-2.jpg', label: '항산화제 인증서', sub: 'd-α-토코페롤 성분 확인' },
+                          { src: '/uploads/misc/kfda-doc-3.jpg', label: '생산 공정도', sub: '캡슐 제조 전 공정 기록' },
+                          { src: '/uploads/misc/kfda-doc-4.jpg', label: '젤라틴 안전 확인서', sub: 'BSE 안전 돈피 유래 젤라틴' },
+                        ].map((doc) => (
+                          <div key={doc.src} style={{ border: '1px solid rgba(212,168,67,0.2)', overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}>
+                            <div style={{ position: 'relative', aspectRatio: '3/4', background: '#fff' }}>
+                              <Image
+                                src={doc.src}
+                                alt={doc.label}
+                                fill
+                                style={{ objectFit: 'contain', padding: 8 }}
+                              />
+                            </div>
+                            <div style={{ padding: '12px 14px', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
+                              <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 3 }}>{doc.label}</p>
+                              <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{doc.sub}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </RevealOnScroll>
