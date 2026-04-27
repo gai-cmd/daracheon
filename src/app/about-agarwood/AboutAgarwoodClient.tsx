@@ -1,11 +1,36 @@
 'use client';
 
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab } from './page';
+
+/**
+ * 학명(Latin scientific name) 및 괄호 음역을 한 덩어리로 유지.
+ * word-break: keep-all 만으로는 영문 단어 사이 공백에서의 줄바꿈을
+ * 막을 수 없으므로 white-space: nowrap 인라인 span 으로 처리.
+ * 패턴: 대문자 시작 두 단어 이상 + 선택적으로 뒤따르는 (한국어 음역)
+ */
+function renderWithNowrap(text: string): ReactNode {
+  const re = /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+(?:\s*\([^)]+\))?)/g;
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > last) nodes.push(text.slice(last, match.index));
+    nodes.push(
+      <span key={match.index} style={{ whiteSpace: 'nowrap' }}>
+        {match[0]}
+      </span>
+    );
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes.length > 1 ? nodes : text;
+}
 
 const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
@@ -82,8 +107,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
               <em>{hero?.titleEn ?? '학명부터 확인하세요'}</em>
             </h1>
             <p className={styles.lede}>
-              {hero?.subtitle ??
-                "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh."}
+              {renderWithNowrap(
+                hero?.subtitle ??
+                  "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh."
+              )}
             </p>
           </div>
         </div>
@@ -176,8 +203,12 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                       <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
                         공식 침향은{' '}
-                        <span style={{ color: 'var(--accent)', fontWeight: 700, wordBreak: 'keep-all' }}>
-                          {definition?.officialNameCallout ?? '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'}
+                        <span style={{ color: 'var(--accent)', fontWeight: 700 }}>
+                          <span style={{ whiteSpace: 'nowrap' }}>아퀼라리아 아갈로차 록스버그</span>
+                          {' '}
+                          <span style={{ whiteSpace: 'nowrap' }}>
+                            ({definition?.officialNameCallout ?? 'Aquilaria Agallocha Roxburgh'})
+                          </span>
                         </span>
                         입니다.
                       </p>
@@ -670,7 +701,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       {auth.check01Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {auth.check01Body}
+                      {renderWithNowrap(auth.check01Body)}
                     </p>
                     <div style={{ display: 'grid', gap: 12 }}>
                       {auth.check01Sources.map((row, i) => (
@@ -689,7 +720,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </span>
                           <div>
                             <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
-                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{row.value}</p>
+                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderWithNowrap(row.value)}</p>
                           </div>
                         </div>
                       ))}
@@ -710,7 +741,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       {auth.check02Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {auth.check02Body}
+                      {renderWithNowrap(auth.check02Body)}
                     </p>
                     <div
                       style={{
@@ -724,7 +755,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         {auth.check02QuoteSource}
                       </p>
                       <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
-                        {auth.check02QuoteBody}
+                        {renderWithNowrap(auth.check02QuoteBody)}
                       </p>
                     </div>
                   </div>
@@ -743,7 +774,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       {auth.check03Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {auth.check03Body}
+                      {renderWithNowrap(auth.check03Body)}
                     </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
                       {auth.check03Docs.map((item, i) => (

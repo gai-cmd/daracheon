@@ -80,19 +80,28 @@ body {
   overflow-x: hidden;
 
   /* ━━━ 한국어 조판(KR typography) 기본값 ━━━
-     word-break: keep-all      → 어절(공백 단위) 유지, 단어 중간 줄바꿈 금지
-     overflow-wrap: break-word → 정말 긴 URL/영문만 예외적으로 깨짐 허용
-     line-break: strict        → 문장부호 줄 처음/끝 규칙 엄격 적용 */
+     word-break: keep-all          → 어절(공백 단위) 유지, 단어 중간 줄바꿈 금지
+     overflow-wrap: break-word     → 정말 긴 URL/영문만 예외적으로 깨짐 허용
+     line-break: strict            → 문장부호 줄 처음/끝 규칙 엄격 적용
+     hanging-punctuation: allow-end → 마침표·쉼표 등이 줄 끝에 매달려 정렬 유지 */
   word-break: keep-all;
   overflow-wrap: break-word;
   line-break: strict;
+  hanging-punctuation: allow-end;
 }
 
 /* 모든 텍스트 요소에 어절 보존 규칙 상속 강제 */
 h1, h2, h3, h4, h5, h6, p, li, a, span, div, button, label, th, td, figcaption, blockquote {
   word-break: keep-all;
   overflow-wrap: break-word;
+  line-break: strict;
 }
+
+/* ━━━ .nowrap — 학명·외국어 고유명사·괄호 음역을 한 덩어리로 유지 ━━━
+   <span class="nowrap">Aquilaria Agallocha Roxburgh</span> 처럼 사용.
+   word-break: keep-all은 공백 경계 줄바꿈을 막지 못하므로
+   학명처럼 여러 단어로 구성된 고유명사엔 white-space: nowrap 이 필요. */
+.nowrap { white-space: nowrap; }
 
 /* ━━━ 한국어 본문·헤드라인 줄바꿈 정책 ━━━
    한국어는 문장 끝 마침표까지 가능한 한 줄로 이어서 보여주는 편이

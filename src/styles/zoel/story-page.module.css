@@ -142,6 +142,7 @@
   margin-bottom: 24px;
   color: #fff;
   font-family: 'Noto Sans KR', sans-serif;
+  text-wrap: pretty;
 }
 
 .chapterBody p {
@@ -159,6 +160,7 @@
      Chapter 04 처럼 주소·교통·운영·전화 같은 주제별 단순 분리를
      자연스럽게 표현. 일반 산문은 영향 없음. */
   white-space: pre-line;
+  text-wrap: pretty;
 }
 
 /* 장절 도입부의 이탤릭 부제(<em> 또는 Noto Serif KR italic <p>)는
