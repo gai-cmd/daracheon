@@ -26,7 +26,7 @@ export default function FaqAdminPage() {
   const [items, setItems] = useState<FaqItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const [categoryFilter, setCategoryFilter] = useState<FaqCategory | 'all'>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -37,19 +37,19 @@ export default function FaqAdminPage() {
   /* ─── Toast auto-hide ─── */
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => setToast(null), 3000);
+    const t = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(t);
   }, [toast]);
 
   /* ─── Fetch FAQ ─── */
   const fetchFaq = async () => {
     try {
-      const res = await fetch('/api/admin/faq');
+      const res = await fetch(`/api/admin/faq?_=${Date.now()}`);
       const data = await res.json();
       setItems(data.faq || data.items || data || []);
     } catch (err) {
       console.error('Failed to fetch FAQ:', err);
-      setToast('FAQ 목록을 불러오는데 실패했습니다.');
+      setToast({ msg: 'FAQ 목록을 불러오는데 실패했습니다.', ok: false });
     } finally {
       setLoading(false);
     }
@@ -87,14 +87,21 @@ export default function FaqAdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error('Save failed');
-      setToast(isAddMode ? 'FAQ가 추가되었습니다.' : 'FAQ가 수정되었습니다.');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+
+      // 저장 즉시 로컬 state 업데이트 — CDN 전파 대기 없이 즉각 반영
+      if (isAddMode) {
+        setItems(prev => [...prev, data.item]);
+      } else {
+        setItems(prev => prev.map(i => i.id === data.item.id ? data.item : i));
+      }
+      setToast({ msg: isAddMode ? 'FAQ가 추가되었습니다.' : 'FAQ가 수정되었습니다.', ok: true });
       setEditingItem(null);
       setIsAddMode(false);
-      await fetchFaq();
     } catch (err) {
       console.error('Save error:', err);
-      setToast('저장에 실패했습니다.');
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, ok: false });
     } finally {
       setSaving(false);
     }
@@ -107,14 +114,17 @@ export default function FaqAdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
-      if (!res.ok) throw new Error('Delete failed');
-      setToast('FAQ가 삭제되었습니다.');
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || `HTTP ${res.status}`);
+      }
+      setItems(prev => prev.filter(i => i.id !== id));
+      setToast({ msg: 'FAQ가 삭제되었습니다.', ok: true });
       setDeleteConfirmId(null);
       if (expandedId === id) setExpandedId(null);
-      await fetchFaq();
     } catch (err) {
       console.error('Delete error:', err);
-      setToast('삭제에 실패했습니다.');
+      setToast({ msg: `삭제 실패: ${err instanceof Error ? err.message : String(err)}`, ok: false });
     }
   }
 
@@ -167,8 +177,8 @@ export default function FaqAdminPage() {
     <div className="min-h-screen bg-neutral-50 font-body">
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[100] px-5 py-3 bg-emerald-600 text-white text-sm font-medium rounded-xl shadow-lg">
-          {toast}
+        <div className={`fixed bottom-6 right-6 z-[100] px-5 py-3 text-white text-sm font-medium rounded-xl shadow-lg ${toast.ok ? 'bg-emerald-600' : 'bg-red-600'}`}>
+          {toast.msg}
         </div>
       )}
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { readDataUncached, readDataSafe, writeData } from '@/lib/db';
+import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const faq = await readDataSafe('faq');
+    const faq = await readDataUncached('faq');
     return NextResponse.json({
       faq,
       total: faq.length,
