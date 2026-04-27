@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
-import { readData, readDataSafe, writeData } from '@/lib/db';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { readDataUncached, readDataSafe, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
 function revalidateFaq() {
   revalidatePath('/support', 'layout');
+  revalidateTag('db:faq'); // unstable_cache 즉시 무효화 → 프론트 즉시 반영
 }
 
 export type FaqCategory = '제품' | '배송/결제' | '성분' | '기타';
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
 
     const newItem: FaqItem = {
       id: body.id || `faq-${Date.now()}`,
@@ -95,7 +96,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {
@@ -145,7 +146,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const faq = await readData('faq');
+    const faq = await readDataUncached('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {

@@ -267,7 +267,13 @@ export async function readData<T = any>(filename: string): Promise<T[]> {
 export async function readDataUncached<T = any>(filename: string): Promise<T[]> {
   if (hasBlob) {
     const result = await blobReadRawUncached(filename);
-    if (result === NOT_FOUND) return [];
+    if (result === NOT_FOUND) {
+      // Blob에 파일이 명백히 없음(NOT_FOUND) → fs 시드로 fallback.
+      // 일시 장애(throw)와 달리 "아직 한 번도 저장 안 된" 케이스이므로
+      // 시드를 베이스라인으로 사용해도 stale 오염이 발생하지 않는다.
+      const seed = fsReadRaw(filename);
+      return Array.isArray(seed) ? (seed as T[]) : [];
+    }
     if (Array.isArray(result)) {
       lastKnownGood.set(filename, result);
       return result as T[];
