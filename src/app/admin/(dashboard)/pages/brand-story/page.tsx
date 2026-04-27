@@ -243,12 +243,12 @@ export default function AdminBrandStoryPage() {
     title: '신뢰의 지표',
     subtitle: '국제가 인정하는 대라천의 품질',
     certs: [
-      { thumb: 'https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600', name: 'CITES 국제거래 인증서', nameEn: 'CITES', category: '국제인증', viewUrl: '' },
-      { thumb: 'https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600', name: '식약처 건강기능식품 규격 적합', nameEn: 'MFDS Compliance', category: '품질인증', viewUrl: '' },
-      { thumb: 'https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600', name: '베트남 OCOP 품질 인증', nameEn: 'OCOP', category: '품질인증', viewUrl: '' },
-      { thumb: 'https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600', name: 'HACCP 식품안전 인증', nameEn: 'HACCP', category: '품질인증', viewUrl: '' },
-      { thumb: 'https://lh3.googleusercontent.com/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY=w1600', name: '수지유도 특허증 #12835', nameEn: 'Patent #12835', category: '특허', viewUrl: '' },
-      { thumb: 'https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w1600', name: 'TSL ISO/IEC 17025:2017 시험성적서', nameEn: 'ISO/IEC 17025:2017', category: 'ISO인증', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-cites.jpg', name: 'CITES 국제거래 인증서', nameEn: 'CITES', category: '국제인증', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-mfds.jpg', name: '식약처 건강기능식품 규격 적합', nameEn: 'MFDS Compliance', category: '품질인증', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-ocop.jpg', name: '베트남 OCOP 품질 인증', nameEn: 'OCOP', category: '품질인증', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-haccp.jpg', name: 'HACCP 식품안전 인증', nameEn: 'HACCP', category: '품질인증', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-patent-12835.jpg', name: '수지유도 특허증 #12835', nameEn: 'Patent #12835', category: '특허', viewUrl: '' },
+      { thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/certs/cert-iso17025.jpg', name: 'TSL ISO/IEC 17025:2017 시험성적서', nameEn: 'ISO/IEC 17025:2017', category: 'ISO인증', viewUrl: '' },
     ],
     sections: [
       { title: '국제 거래 및 기술 특허', items: ['CITES IIA-DNI-007', '수지유도 특허 #12835'] },
