@@ -16,6 +16,7 @@ export default function Footer() {
               alt="조엘라이프 ZOEL LIFE"
               className={styles.brandLogoImg}
             />
+            <span className={styles.brandLogoName}>조엘라이프(주)</span>
           </Link>
           <p className={styles.brandDesc}>
             조엘라이프의 대라천 &apos;참&apos;침향은 베트남 직영 농장 기반의 침향 전문기업에서
