@@ -187,83 +187,52 @@ export default async function CompanyPage() {
                     <div
                       style={{
                         margin: '24px 0 36px',
-                        padding: '36px 40px',
-                        background: 'rgba(212,168,67,0.06)',
-                        border: '1px solid rgba(212,168,67,0.22)',
-                        borderRadius: 8,
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 48,
+                        padding: '40px 48px',
+                        background: 'rgba(212,168,67,0.05)',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        display: 'inline-flex',
                         alignItems: 'center',
-                        justifyContent: brandLogo && companyLogo ? 'space-between' : 'center',
+                        gap: 28,
                       }}
                     >
-                      {brandLogo && (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: '1 1 260px' }}>
-                          <img
-                            src={brandLogo}
-                            alt="대라천 브랜드 로고"
-                            style={{
-                              height: 'clamp(120px, 18vw, 180px)',
-                              width: 'auto',
-                              maxWidth: '100%',
-                              objectFit: 'contain',
-                              display: 'block',
-                            }}
-                          />
-                          <div
-                            style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.72rem',
-                              letterSpacing: '0.3em',
-                              textTransform: 'uppercase',
-                              color: 'var(--accent)',
-                            }}
-                          >
-                            Brand · 대라천
-                          </div>
-                        </div>
-                      )}
-                      {companyLogo && (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, flex: '1 1 260px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                            <img
-                              src={companyLogo}
-                              alt="ZOEL LIFE 회사 로고"
-                              style={{
-                                height: 'clamp(80px, 12vw, 120px)',
-                                width: 'auto',
-                                maxWidth: '100%',
-                                objectFit: 'contain',
-                                display: 'block',
-                              }}
-                            />
-                            <span
-                              style={{
-                                fontFamily: "'Noto Serif KR', serif",
-                                fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)',
-                                fontWeight: 600,
-                                letterSpacing: '0.12em',
-                                color: 'var(--fg)',
-                                whiteSpace: 'nowrap',
-                              }}
-                            >
-                              조엘라이프
-                            </span>
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.72rem',
-                              letterSpacing: '0.3em',
-                              textTransform: 'uppercase',
-                              color: 'var(--accent)',
-                            }}
-                          >
-                            Company · ZOEL LIFE
-                          </div>
-                        </div>
-                      )}
+                      <img
+                        src={brandLogo}
+                        alt="조엘라이프 ZOEL LIFE"
+                        style={{
+                          height: 'clamp(64px, 10vw, 96px)',
+                          width: 'auto',
+                          objectFit: 'contain',
+                          display: 'block',
+                          flexShrink: 0,
+                        }}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <span
+                          style={{
+                            fontFamily: "'Noto Sans KR', sans-serif",
+                            fontSize: 'clamp(1.2rem, 2.5vw, 1.7rem)',
+                            fontWeight: 500,
+                            letterSpacing: '0.04em',
+                            color: '#fff',
+                            lineHeight: 1,
+                          }}
+                        >
+                          조엘라이프(주)
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                            fontSize: 'clamp(0.7rem, 1.2vw, 0.9rem)',
+                            fontWeight: 400,
+                            letterSpacing: '0.32em',
+                            textTransform: 'uppercase',
+                            color: 'var(--accent)',
+                            lineHeight: 1,
+                          }}
+                        >
+                          ZOEL LIFE
+                        </span>
+                      </div>
                     </div>
                   )}
                   <p>{ch.body}</p>
