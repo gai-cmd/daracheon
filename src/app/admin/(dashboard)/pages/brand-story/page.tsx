@@ -581,7 +581,9 @@ export default function AdminBrandStoryPage() {
 
           {/* Certifications Tab */}
           <SectionCard title="탭 4 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
-            <div className="space-y-5">
+            <div className="space-y-6">
+
+              {/* 섹션 헤더 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={certificationsTab.tag} onChange={(v) => setCertificationsTab({ ...certificationsTab, tag: v })} />
                 <LabeledInput label="제목" value={certificationsTab.title} onChange={(v) => setCertificationsTab({ ...certificationsTab, title: v })} />
@@ -589,69 +591,76 @@ export default function AdminBrandStoryPage() {
                   <LabeledInput label="부제목" value={certificationsTab.subtitle} onChange={(v) => setCertificationsTab({ ...certificationsTab, subtitle: v })} />
                 </div>
               </div>
+
+              {/* 인증서 액자 갤러리 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">인증 이미지 + 인증명 (개수 제한 없음)</label>
-                <div className="space-y-4">
-                  {(certificationsTab.images ?? []).map((img, i) => {
-                    const labels = certificationsTab.imageLabels ?? [];
-                    const label = labels[i] ?? '';
-                    return (
-                      <div key={i} className="flex gap-3 items-start border border-gray-200 rounded-lg p-3 bg-gray-50">
-                        <div className="flex-1 space-y-2">
-                          <ImageUploadField
-                            value={img}
-                            onChange={(url) => {
-                              const n = [...(certificationsTab.images ?? [])];
-                              n[i] = url;
-                              setCertificationsTab({ ...certificationsTab, images: n });
-                            }}
-                            subdir="pages"
-                          />
-                          <input
-                            type="text"
-                            placeholder={`인증명 ${i + 1} (예: CITES 국제거래 인증서)`}
-                            value={label}
-                            onChange={(e) => {
-                              const n = [...labels];
-                              while (n.length <= i) n.push('');
-                              n[i] = e.target.value;
-                              setCertificationsTab({ ...certificationsTab, imageLabels: n });
-                            }}
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                          />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-medium text-gray-700">인증서 갤러리 ({certificationsTab.certs.length}개)</label>
+                  <span className="text-xs text-gray-400">프론트에서 카테고리별 색상 액자로 표시됩니다</span>
+                </div>
+                <div className="space-y-4 mt-2">
+                  {certificationsTab.certs.map((cert, i) => (
+                    <div key={i} className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">인증서 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, certs: moveItem(certificationsTab.certs, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, certs: moveItem(certificationsTab.certs, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, certs: removeItem(certificationsTab.certs, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newImages = removeItem(certificationsTab.images ?? [], i);
-                            const newLabels = labels.length > 0 ? removeItem(labels, i) : labels;
-                            setCertificationsTab({ ...certificationsTab, images: newImages, imageLabels: newLabels });
-                          }}
-                          className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5"
-                        >
-                          삭제
-                        </button>
                       </div>
-                    );
-                  })}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <input
+                          placeholder="인증명 (한글, 예: CITES 국제거래 인증서)"
+                          value={cert.name}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], name: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="인증명 (영문, 예: CITES)"
+                          value={cert.nameEn}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], nameEn: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <select
+                          value={cert.category}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], category: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        >
+                          {['국제인증','품질인증','유기농인증','ISO인증','특허','수상','사업등록'].map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                        <input
+                          placeholder="원본 링크 URL (선택)"
+                          value={cert.viewUrl}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], viewUrl: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">인증서 이미지 (액자에 표시)</label>
+                        <ImageUploadField
+                          value={cert.thumb}
+                          onChange={(url) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], thumb: url }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          subdir="pages"
+                        />
+                      </div>
+                    </div>
+                  ))}
                   <button
                     type="button"
-                    onClick={() => {
-                      const labels = certificationsTab.imageLabels ?? [];
-                      setCertificationsTab({
-                        ...certificationsTab,
-                        images: [...(certificationsTab.images ?? []), ''],
-                        imageLabels: [...labels, ''],
-                      });
-                    }}
+                    onClick={() => setCertificationsTab({ ...certificationsTab, certs: [...certificationsTab.certs, { thumb: '', name: '', nameEn: '', category: '품질인증', viewUrl: '' }] })}
                     className="text-gold-600 hover:text-gold-700 text-sm font-medium"
                   >
                     + 인증서 추가
                   </button>
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">인증 그룹</label>
+
+              {/* 인증 그룹 (하단 카드) */}
+              <div className="border-t border-gray-100 pt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">인증 그룹 카드 (하단 요약)</label>
                 <div className="space-y-4">
                   {certificationsTab.sections.map((section, sIdx) => (
                     <div key={sIdx} className="bg-gray-50 rounded-lg p-4">
@@ -663,7 +672,12 @@ export default function AdminBrandStoryPage() {
                           <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, sections: removeItem(certificationsTab.sections, sIdx) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
                         </div>
                       </div>
-                      <input placeholder="그룹 제목" value={section.title} onChange={(e) => { const n = [...certificationsTab.sections]; n[sIdx] = { ...n[sIdx], title: e.target.value }; setCertificationsTab({ ...certificationsTab, sections: n }); }} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none mb-3" />
+                      <input
+                        placeholder="그룹 제목"
+                        value={section.title}
+                        onChange={(e) => { const n = [...certificationsTab.sections]; n[sIdx] = { ...n[sIdx], title: e.target.value }; setCertificationsTab({ ...certificationsTab, sections: n }); }}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none mb-3"
+                      />
                       <div className="space-y-2">
                         {section.items.map((item, itemIdx) => (
                           <div key={itemIdx} className="flex gap-2">
@@ -675,6 +689,15 @@ export default function AdminBrandStoryPage() {
                           + 항목 추가
                         </button>
                       </div>
+                      <div className="mt-3">
+                        <textarea
+                          placeholder="그룹 설명 (선택)"
+                          rows={2}
+                          value={section.body ?? ''}
+                          onChange={(e) => { const n = [...certificationsTab.sections]; n[sIdx] = { ...n[sIdx], body: e.target.value }; setCertificationsTab({ ...certificationsTab, sections: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
                     </div>
                   ))}
                   <button type="button" onClick={() => setCertificationsTab({ ...certificationsTab, sections: [...certificationsTab.sections, { title: '', items: [''] }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
@@ -682,6 +705,7 @@ export default function AdminBrandStoryPage() {
                   </button>
                 </div>
               </div>
+
             </div>
           </SectionCard>
 
