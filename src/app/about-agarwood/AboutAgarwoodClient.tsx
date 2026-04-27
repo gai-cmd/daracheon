@@ -81,10 +81,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const testimonialsTab = data?.testimonialsTab;
   const mediaItems = mediaTab?.items ?? [];
   const testimonialItems = testimonialsTab?.items ?? [];
-  const registry = data?.registrySection;
-  const registryTitle = registry?.title ?? '';
-  const registrySubtitle = registry?.subtitle ?? '';
-  const registryRows = registry?.rows ?? [];
   const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
@@ -219,81 +215,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </section>
 
-          {/* Chapter 02 — Official Registration (CMS 편집 가능) */}
-          <section className={styles.chapter} data-alt="1">
-            <div className={styles.wrap}>
-              <div className={styles.chapterGrid}>
-                <div>
-                  <div className={styles.chapterNum}>02</div>
-                  <div className={styles.chapterTag}>Chapter II · Registry</div>
-                </div>
-                <div className={styles.chapterBody}>
-                  <RevealOnScroll>
-                    <h3>
-                      {registryTitle}
-                      <em>{registrySubtitle}</em>
-                    </h3>
-                  </RevealOnScroll>
-                  <RevealOnScroll delay={150}>
-                    <div
-                      style={{
-                        marginTop: 20,
-                        padding: '28px 30px',
-                        border: '1px solid rgba(212,168,67,0.25)',
-                        background: 'rgba(255,255,255,0.02)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr',
-                          gap: '18px 30px',
-                        }}
-                      >
-                        {registryRows.map((row) => (
-                          <div
-                            key={row.label}
-                            style={{
-                              display: 'flex',
-                              gap: 18,
-                              paddingBottom: 12,
-                              borderBottom: '1px solid rgba(212,168,67,0.12)',
-                            }}
-                          >
-                            <span
-                              style={{
-                                flexShrink: 0,
-                                width: 70,
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                                fontSize: '0.66rem',
-                                letterSpacing: '0.18em',
-                                color: 'var(--accent)',
-                                textTransform: 'uppercase',
-                                paddingTop: 3,
-                              }}
-                            >
-                              {row.label}
-                            </span>
-                            <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, fontWeight: 300 }}>
-                              {row.value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </RevealOnScroll>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Chapter 03 — Formation */}
+          {/* Chapter 02 — Formation */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
-                  <div className={styles.chapterNum}>03</div>
-                  <div className={styles.chapterTag}>Chapter III · Formation</div>
+                  <div className={styles.chapterNum}>02</div>
+                  <div className={styles.chapterTag}>Chapter II · Formation</div>
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
@@ -354,13 +282,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </section>
 
-          {/* Chapter 04 — Why Special (4가지 이유) */}
+          {/* Chapter 03 — Why Special (4가지 이유) */}
           <section className={styles.chapter} data-alt="1">
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
-                  <div className={styles.chapterNum}>04</div>
-                  <div className={styles.chapterTag}>Chapter IV · Why Special</div>
+                  <div className={styles.chapterNum}>03</div>
+                  <div className={styles.chapterTag}>Chapter III · Why Special</div>
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
@@ -421,13 +349,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </section>
 
-          {/* Chapter 05 — Benefits */}
+          {/* Chapter 04 — Benefits */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
-                  <div className={styles.chapterNum}>05</div>
-                  <div className={styles.chapterTag}>Chapter V · Benefits</div>
+                  <div className={styles.chapterNum}>04</div>
+                  <div className={styles.chapterTag}>Chapter IV · Benefits</div>
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
@@ -482,14 +410,14 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </section>
 
-          {/* Chapter VI — Dosage · 하루 적정 복용량 */}
+          {/* Chapter V — Dosage · 하루 적정 복용량 */}
           {dosageSection && dosageSection.items && dosageSection.items.length > 0 && (
             <section className={styles.chapter}>
               <div className={styles.wrap}>
                 <div className={styles.chapterGrid}>
                   <div>
-                    <div className={styles.chapterNum}>06</div>
-                    <div className={styles.chapterTag}>{dosageSection.tag ?? 'Chapter VI · Dosage'}</div>
+                    <div className={styles.chapterNum}>05</div>
+                    <div className={styles.chapterTag}>{dosageSection.tag ?? 'Chapter V · Dosage'}</div>
                   </div>
                   <div className={styles.chapterBody}>
                     <RevealOnScroll>
@@ -549,14 +477,14 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
             </section>
           )}
-          {/* Chapter 07 — 공식 근거 문헌 (한국 공식 4대 기준) */}
+          {/* Chapter 06 — 공식 근거 문헌 (한국 공식 4대 기준) */}
           {officialSources && (
             <section className={styles.chapter} data-alt="1">
               <div className={styles.wrap}>
                 <div className={styles.chapterGrid}>
                   <div>
-                    <div className={styles.chapterNum}>07</div>
-                    <div className={styles.chapterTag}>Chapter VII · Official Proof</div>
+                    <div className={styles.chapterNum}>06</div>
+                    <div className={styles.chapterTag}>Chapter VI · Official Proof</div>
                   </div>
                   <div className={styles.chapterBody}>
                     <RevealOnScroll>

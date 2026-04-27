@@ -91,11 +91,6 @@ interface AboutAgarwoodData {
     body: string;
     officialNameCallout: string;
   };
-  registrySection?: {
-    title: string;
-    subtitle?: string;
-    rows: Array<{ label: string; value: string }>;
-  };
   formationSteps: FormationStep[];
   specialReasons: SpecialReason[];
   benefits: Benefit[];
@@ -240,19 +235,6 @@ export default function AdminAboutAgarwoodPage() {
     subtitle:
       "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh.",
     heroImage: '',
-  });
-  const [registrySection, setRegistrySection] = useState<NonNullable<AboutAgarwoodData['registrySection']>>({
-    title: '대한민국약전외한약(생약)규격집',
-    subtitle: '공식 등재',
-    rows: [
-      { label: '정식명', value: '침수향(沈水香), AQUILARIAE LIGNUM' },
-      { label: '학명', value: 'Aquilaria Agallocha Roxburgh' },
-      { label: '과명', value: '팥꽃나무과 Thymeleaceae' },
-      { label: '정의', value: '이 약은 침향나무의 수지가 침착된 수간목이다' },
-      { label: '성상', value: '흑갈색을 띠며 수지를 함유하고 많은 평행 섬유질로 되어 있다' },
-      { label: '기준', value: '건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상' },
-      { label: '특징', value: '흑갈색을 띠고 맛은 달고 쓰며 물에 가라앉아야 한다' },
-    ],
   });
   const [definitionSection, setDefinitionSection] = useState<AboutAgarwoodData['definitionSection']>({
     title: '침향(沈香)이란 무엇인가?',
@@ -400,7 +382,6 @@ export default function AdminAboutAgarwoodPage() {
         // CMS 데이터가 있으면 그것 사용, 없으면 초기값(=frontend fallback) 유지
         if (d.hero) setHero(d.hero);
         if (d.definitionSection) setDefinitionSection(d.definitionSection);
-        if (d.registrySection) setRegistrySection(d.registrySection);
         if (d.formationSteps && d.formationSteps.length > 0) setFormationSteps(d.formationSteps);
         if (d.specialReasons && d.specialReasons.length > 0) setSpecialReasons(d.specialReasons);
         if (d.benefits && d.benefits.length > 0) setBenefits(d.benefits);
@@ -549,61 +530,8 @@ export default function AdminAboutAgarwoodPage() {
             </div>
           </SectionCard>
 
-          {/* Registry Section (Chapter II) */}
-          <SectionCard title="Chapter II · Registry · 대한민국약전외한약(생약)규격집 공식 등재" onSave={() => saveSection('registrySection', { registrySection })} saving={saving === 'registrySection'}>
-            <div className="space-y-5">
-              <LabeledInput label="제목 (굵게)" value={registrySection.title} onChange={(v) => setRegistrySection({ ...registrySection, title: v })} />
-              <LabeledInput label="부제목 (이탤릭)" value={registrySection.subtitle ?? ''} onChange={(v) => setRegistrySection({ ...registrySection, subtitle: v })} />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">규격 항목 (label + value)</label>
-                <div className="space-y-3">
-                  {registrySection.rows.map((row, i) => (
-                    <div key={i} className="flex gap-2 items-start bg-gray-50 rounded-lg p-3">
-                      <input
-                        type="text"
-                        placeholder="항목명 (예: 학명)"
-                        value={row.label}
-                        onChange={(e) => {
-                          const n = [...registrySection.rows];
-                          n[i] = { ...n[i], label: e.target.value };
-                          setRegistrySection({ ...registrySection, rows: n });
-                        }}
-                        className="w-28 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none flex-shrink-0"
-                      />
-                      <input
-                        type="text"
-                        placeholder="값 (예: Aquilaria Agallocha Roxburgh)"
-                        value={row.value}
-                        onChange={(e) => {
-                          const n = [...registrySection.rows];
-                          n[i] = { ...n[i], value: e.target.value };
-                          setRegistrySection({ ...registrySection, rows: n });
-                        }}
-                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setRegistrySection({ ...registrySection, rows: registrySection.rows.filter((_, ii) => ii !== i) })}
-                        className="text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5 mt-1"
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setRegistrySection({ ...registrySection, rows: [...registrySection.rows, { label: '', value: '' }] })}
-                    className="text-gold-600 hover:text-gold-700 text-sm font-medium"
-                  >
-                    + 규격 항목 추가
-                  </button>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
           {/* Formation Steps */}
-          <SectionCard title="Chapter III · Formation · 침향은 어떻게 만들어지나요?" onSave={() => saveSection('formationSteps', { formationSteps })} saving={saving === 'formationSteps'}>
+          <SectionCard title="Chapter II · Formation · 침향은 어떻게 만들어지나요?" onSave={() => saveSection('formationSteps', { formationSteps })} saving={saving === 'formationSteps'}>
             <div className="space-y-4">
               {formationSteps.map((step, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4 relative">
@@ -649,7 +577,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Special Reasons */}
-          <SectionCard title="Chapter IV · Why Special · 침향이 특별한 4가지 이유" onSave={() => saveSection('specialReasons', { specialReasons })} saving={saving === 'specialReasons'}>
+          <SectionCard title="Chapter III · Why Special · 침향이 특별한 4가지 이유" onSave={() => saveSection('specialReasons', { specialReasons })} saving={saving === 'specialReasons'}>
             <div className="space-y-4">
               {specialReasons.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -689,7 +617,7 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Benefits */}
-          <SectionCard title="Chapter V · Benefits · 침향의 효능에 주목!" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
+          <SectionCard title="Chapter IV · Benefits · 침향의 효능에 주목!" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
             <div className="space-y-4">
               {benefits.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
