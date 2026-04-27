@@ -153,10 +153,4 @@
   text-wrap: pretty;
 }
 
-/* h3 안 <em>을 block으로 처리 — <br /> 없이도 다음 줄에 배치.
-   globals.css 의 inline-block 을 이 컨텍스트에서만 덮어씀. */
-.chapterBody h3 > em {
-  display: block;
-  margin-top: 6px;
-}
 
