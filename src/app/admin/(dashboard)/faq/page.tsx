@@ -406,17 +406,17 @@ export default function FaqAdminPage() {
               </div>
 
               {/* Modal Actions */}
-              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-neutral-100">
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-neutral-200">
                 <button
                   onClick={() => { setEditingItem(null); setIsAddMode(false); }}
-                  className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 rounded-lg hover:bg-neutral-200 transition-colors"
+                  className="px-6 py-2.5 text-sm font-medium text-neutral-700 bg-neutral-100 rounded-lg hover:bg-neutral-200 transition-colors"
                 >
                   취소
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!editingItem.question.trim() || !editingItem.answer.trim() || saving}
-                  className="px-5 py-2 text-sm font-medium text-white bg-gold-500 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 text-sm font-medium text-white bg-gold-500 rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? '저장 중...' : isAddMode ? '추가' : '저장'}
                 </button>
