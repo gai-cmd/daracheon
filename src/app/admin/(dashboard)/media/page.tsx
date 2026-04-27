@@ -211,7 +211,7 @@ export default function MediaAdminPage() {
               onClick={() => setTypeFilter(t)}
               className={`px-4 py-2 text-sm font-medium rounded-xl transition-colors ${
                 typeFilter === t
-                  ? 'bg-gold-500 text-white'
+                  ? 'bg-[#1F1F1F] text-white'
                   : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100'
               }`}
             >

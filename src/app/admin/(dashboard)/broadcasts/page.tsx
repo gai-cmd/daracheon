@@ -250,7 +250,7 @@ export default function AdminBroadcastsPage() {
               onClick={() => setStatusFilter(s)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
                 statusFilter === s
-                  ? 'border-gold-700 bg-gold-700 text-white'
+                  ? 'border-[#1F1F1F] bg-[#1F1F1F] text-white'
                   : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
               }`}
             >
