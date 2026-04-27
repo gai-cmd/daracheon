@@ -12,7 +12,7 @@
 /* ── HERO ── */
 .hero {
   position: relative;
-  padding: calc(var(--nav-h) + 70px) 0 60px;
+  padding: calc(var(--nav-h) + 60px) 0 60px;
   overflow: hidden;
   background:
     radial-gradient(1200px 600px at 20% 30%, rgba(212, 168, 67, 0.10), transparent 60%),
@@ -54,7 +54,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  align-items: end;
+  align-items: start;
 }
 @media (min-width: 900px) {
   .heroMain {
