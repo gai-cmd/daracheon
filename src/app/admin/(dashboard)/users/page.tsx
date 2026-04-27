@@ -260,7 +260,7 @@ export default function AdminUsersPage() {
                           ))}
                         </select>
                       ) : (
-                        <span className={`inline-flex rounded border px-2 py-0.5 text-xs ${ROLE_BADGE[u.role]}`}>
+                        <span className={`${ROLE_BADGE[u.role]}`}>
                           {ROLE_LABELS[u.role]}
                         </span>
                       )}
