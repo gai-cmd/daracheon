@@ -111,6 +111,10 @@ export default function BrandStoryClient({ data }: Props) {
             <h1>
               {(() => {
                 const t = hero?.titleKr ?? "대라천 '참'침향";
+                const en = hero?.titleEn;
+                if (en) {
+                  return <>{t}<br /><em>{en}</em></>;
+                }
                 const cut = t.indexOf("'참'");
                 if (cut > 0) {
                   return <>{t.slice(0, cut).trim()}<br /><em>{t.slice(cut)}</em></>;

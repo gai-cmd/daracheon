@@ -611,6 +611,10 @@ export default function AdminHomePage() {
                         </div>
                       </div>
                       <textarea rows={3} value={c.description} onChange={(e) => { const n = [...agarwood.cards]; n[i] = { ...n[i], description: e.target.value }; setAgarwood({ ...agarwood, cards: n }); }} placeholder="설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="mt-2">
+                        <label className="block text-xs text-gray-500 mb-1">카드 이미지 (선택)</label>
+                        <ImageUploadField value={(c as any).image ?? ''} onChange={(url) => { const n = [...agarwood.cards]; n[i] = { ...n[i], image: url } as any; setAgarwood({ ...agarwood, cards: n }); }} subdir="pages" />
+                      </div>
                     </div>
                   ))}
                   <button type="button" onClick={() => setAgarwood({ ...agarwood, cards: [...agarwood.cards, { title: '', description: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
@@ -643,6 +647,10 @@ export default function AdminHomePage() {
                         </div>
                       </div>
                       <textarea rows={3} value={it.description} onChange={(e) => { const n = [...benefits.items]; n[i] = { ...n[i], description: e.target.value }; setBenefits({ ...benefits, items: n }); }} placeholder="설명" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="mt-2">
+                        <label className="block text-xs text-gray-500 mb-1">이미지 (선택)</label>
+                        <ImageUploadField value={(it as any).image ?? ''} onChange={(url) => { const n = [...benefits.items]; n[i] = { ...n[i], image: url } as any; setBenefits({ ...benefits, items: n }); }} subdir="pages" />
+                      </div>
                     </div>
                   ))}
                   <button type="button" onClick={() => setBenefits({ ...benefits, items: [...benefits.items, { title: '', description: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 효능 추가</button>

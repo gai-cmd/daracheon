@@ -32,6 +32,19 @@ function renderWithNowrap(text: string): ReactNode {
   return nodes.length > 1 ? nodes : text;
 }
 
+function TabHeroBanner({ src, alt }: { src?: string; alt: string }) {
+  if (!src) return null;
+  return (
+    <div style={{ position: 'relative', width: '100%', height: 'clamp(180px, 28vw, 400px)', overflow: 'hidden' }}>
+      <Image src={src} alt={alt} fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(10,11,16,0.2) 0%, rgba(10,11,16,0.5) 60%, #0a0b10 100%)',
+      }} />
+    </div>
+  );
+}
+
 const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
   intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
@@ -84,6 +97,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
+  const tabHeroes = data?.tabHeroes ?? {};
 
   return (
     <>
@@ -109,53 +123,40 @@ export default function AboutAgarwoodClient({ data }: Props) {
               )}
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* TAB BAR */}
-      <section
-        style={{
-          position: 'sticky',
-          top: 72,
-          zIndex: 40,
-          background: 'rgba(10, 11, 16, 0.92)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderTop: '1px solid rgba(212,168,67,0.15)',
-          borderBottom: '1px solid rgba(212,168,67,0.15)',
-        }}
-      >
-        <div className={styles.wrap} style={{ display: 'flex', gap: 4, justifyContent: 'center', padding: '14px 28px', flexWrap: 'wrap' }}>
-          {TABS.map((tab, i) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(i)}
-              aria-current={activeTab === i ? 'page' : undefined}
-              style={{
-                padding: '10px 20px',
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                fontSize: '0.72rem',
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                background: activeTab === i ? 'var(--accent)' : 'transparent',
-                color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                fontWeight: activeTab === i ? 600 : 400,
-                transition: 'all 300ms',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {tab}
-            </button>
-          ))}
+          {/* TAB BAR — 히어로 내부 하단 */}
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
+            {TABS.map((tab, i) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(i)}
+                aria-current={activeTab === i ? 'page' : undefined}
+                style={{
+                  padding: '10px 20px',
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                  background: activeTab === i ? 'var(--accent)' : 'transparent',
+                  color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                  fontWeight: activeTab === i ? 600 : 400,
+                  transition: 'all 300ms',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (
         <>
+          <TabHeroBanner src={tabHeroes.tab0} alt="침향이란?" />
           {/* Chapter 01 — Definition */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
@@ -185,26 +186,23 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       onMouseLeave={() => setHoveredDefinitionBox(false)}
                       style={{
                         marginTop: 26,
-                        padding: '22px 24px',
-                        border: `3px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.5)'}`,
+                        padding: '20px 20px',
+                        border: `2px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.5)'}`,
                         background: hoveredDefinitionBox ? 'rgba(212,168,67,0.15)' : 'rgba(212,168,67,0.08)',
-                        transition: 'all 300ms ease',
-                        transform: hoveredDefinitionBox ? 'scale(1.02)' : 'scale(1)',
+                        transition: 'border-color 300ms ease, background 300ms ease',
                         cursor: 'pointer',
                         boxShadow: hoveredDefinitionBox ? '0 8px 32px rgba(212,168,67,0.15)' : '0 4px 16px rgba(212,168,67,0.05)',
+                        overflow: 'hidden',
                       }}
                     >
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 600 }}>
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(0.95rem, 3vw, 1.08rem)', color: '#fff', marginBottom: 8, fontWeight: 600, wordBreak: 'keep-all' }}>
                         진짜 침향, 이제는 학명/품종을 반드시 확인하세요.
                       </p>
-                      <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
+                      <p style={{ fontSize: 'clamp(0.82rem, 2.5vw, 0.92rem)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
                         공식 침향은{' '}
                         <span style={{ color: 'var(--accent)', fontWeight: 700 }}>
-                          <span style={{ whiteSpace: 'nowrap' }}>아퀼라리아 아갈로차 록스버그</span>
-                          {' '}
-                          <span style={{ whiteSpace: 'nowrap' }}>
-                            ({definition?.officialNameCallout ?? 'Aquilaria Agallocha Roxburgh'})
-                          </span>
+                          아퀼라리아 아갈로차 록스버그{' '}
+                          ({definition?.officialNameCallout ?? 'Aquilaria Agallocha Roxburgh'})
                         </span>
                         입니다.
                       </p>
@@ -249,30 +247,37 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         ]
                     ).map((item, i) => (
                       <RevealOnScroll key={item.step + i} delay={i * 90}>
-                        <div style={{ textAlign: 'center' }}>
-                          <div
-                            style={{
-                              width: 72,
-                              height: 72,
-                              margin: '0 auto 18px',
-                              borderRadius: '50%',
-                              border: '1px solid var(--accent)',
-                              display: 'grid',
-                              placeItems: 'center',
-                              fontFamily: "'Noto Serif KR', serif",
-                              fontSize: '1.2rem',
-                              fontWeight: 400,
-                              color: 'var(--accent)',
-                            }}
-                          >
-                            {item.step}
+                        <div style={{ textAlign: 'center', border: '1px solid rgba(212,168,67,0.15)', overflow: 'hidden' }}>
+                          {item.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
+                              <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 25vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ padding: '20px 16px' }}>
+                            <div
+                              style={{
+                                width: 72,
+                                height: 72,
+                                margin: '0 auto 18px',
+                                borderRadius: '50%',
+                                border: '1px solid var(--accent)',
+                                display: 'grid',
+                                placeItems: 'center',
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.2rem',
+                                fontWeight: 400,
+                                color: 'var(--accent)',
+                              }}
+                            >
+                              {item.step}
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
+                              {item.title}
+                            </h4>
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
+                              {item.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
-                            {item.title}
-                          </h4>
-                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
-                            {item.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}
@@ -316,30 +321,37 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <RevealOnScroll key={card.title + i} delay={i * 90}>
                         <div
                           style={{
-                            padding: 26,
                             border: '1px solid rgba(212,168,67,0.22)',
                             background: 'rgba(255,255,255,0.02)',
                             height: '100%',
+                            overflow: 'hidden',
                           }}
                         >
-                          <div
-                            style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.62rem',
-                              letterSpacing: '0.26em',
-                              color: 'var(--accent)',
-                              textTransform: 'uppercase',
-                              marginBottom: 14,
-                            }}
-                          >
-                            {String(i + 1).padStart(2, '0')} — Reason
+                          {card.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}>
+                              <Image src={card.image} alt={card.title} fill sizes="(max-width: 768px) 100vw, 25vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ padding: 26 }}>
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.62rem',
+                                letterSpacing: '0.26em',
+                                color: 'var(--accent)',
+                                textTransform: 'uppercase',
+                                marginBottom: 14,
+                              }}
+                            >
+                              {String(i + 1).padStart(2, '0')} — Reason
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
+                              {card.title}
+                            </h4>
+                            <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
+                              {card.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
-                            {card.title}
-                          </h4>
-                          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
-                            {card.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}
@@ -383,24 +395,31 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         ]
                     ).map((b, i) => (
                       <RevealOnScroll key={b.title + i} delay={(i % 6) * 70}>
-                        <div style={{ paddingTop: 18, borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-                          <div
-                            style={{
-                              fontFamily: "'Noto Serif KR', serif",
-                              fontSize: '1.3rem',
-                              color: 'var(--accent)',
-                              fontWeight: 400,
-                              marginBottom: 8,
-                            }}
-                          >
-                            {String(i + 1).padStart(2, '0')}
+                        <div style={{ borderTop: '1px solid rgba(212,168,67,0.2)', overflow: 'hidden' }}>
+                          {b.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', marginBottom: 0 }}>
+                              <Image src={b.image} alt={b.title} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ paddingTop: 18 }}>
+                            <div
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.3rem',
+                                color: 'var(--accent)',
+                                fontWeight: 400,
+                                marginBottom: 8,
+                              }}
+                            >
+                              {String(i + 1).padStart(2, '0')}
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                              {b.title}
+                            </h4>
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
+                              {b.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                            {b.title}
-                          </h4>
-                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
-                            {b.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}
@@ -591,6 +610,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
+        <>
+          <TabHeroBanner src={tabHeroes.tab1} alt="진짜 침향 구별 방법" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -809,10 +830,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab2} alt="문헌에 실린 침향 — 동의보감·본초강목 고문헌" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -917,10 +941,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab3} alt="논문에 실린 침향 — 현대 과학 연구" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1057,10 +1084,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 4: 매체에 실린 침향 ════════════ */}
       {activeTab === 4 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab4} alt="매체에 실린 침향" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1191,10 +1221,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 5: 고객이 남긴 침향 ════════════ */}
       {activeTab === 5 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab5} alt="고객이 남긴 침향 — 실사용 후기" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1350,6 +1383,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* CTA */}

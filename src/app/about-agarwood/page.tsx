@@ -66,9 +66,9 @@ const faqJsonLd = {
   ],
 };
 
-export interface FormationStep { step: string; title: string; description: string }
-export interface SpecialReason { title: string; description: string }
-export interface Benefit { title: string; description: string }
+export interface FormationStep { step: string; title: string; description: string; image?: string }
+export interface SpecialReason { title: string; description: string; image?: string }
+export interface Benefit { title: string; description: string; image?: string }
 export interface DosageItem { num: string; title: string; body: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
@@ -111,8 +111,18 @@ export interface AuthenticityTab {
   check03Docs: AuthenticityDoc[];
 }
 
+export interface TabHeroes {
+  tab0?: string;  // 침향이란?
+  tab1?: string;  // 진짜 침향 구별 방법
+  tab2?: string;  // 문헌에 실린 침향
+  tab3?: string;  // 논문에 실린 침향
+  tab4?: string;  // 매체에 실린 침향
+  tab5?: string;  // 고객이 남긴 침향
+}
+
 export interface AboutAgarwoodData {
   hero: { sectionTag: string; titleKr: string; titleEn: string; subtitle: string; heroImage: string };
+  tabHeroes?: TabHeroes;
   definitionSection: { title: string; subtitle: string; body: string; officialNameCallout: string };
   officialSourcesSection?: OfficialSourcesSection;
   registrySection?: RegistrySection;
