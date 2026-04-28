@@ -41,7 +41,7 @@ const PROCESS_TAB = {
       title: '침향 오일 생산과정',
       titleEn: 'OIL PRODUCTION',
       description: '',
-      image: 'https://lh3.googleusercontent.com/d/1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I=w1280',
+      image: 'https://lh3.googleusercontent.com/d/1WkcqWc_4d2GJJepNlEynXaJ-d4OZiS6j=w1280',
       steps: [
         { step: '01', name: '원목 입고', duration: '—', desc: '수지가 앉혀진 벌목한 침향목을 동나이 직영 공장으로 입고. 로트(Lot) 번호 부여 시작.' },
         { step: '02', name: '세척', duration: '—', desc: '표피 제거 및 표면 이물질 제거. 흙·먼지·외부 오염물 완전 제거.' },
