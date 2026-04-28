@@ -204,18 +204,18 @@ export default function AdminSettingsPage() {
   const handleSaveCertifications = () => saveSection('certs', { certifications, awards });
   const handleSaveSeo = () => saveSection('seo', { seo });
 
-  const handleSaveAnnouncement = async () => {
+  async function saveAnnouncement(data: AnnouncementData) {
     setSavingAnnouncement(true);
     try {
       const res = await fetch('/api/admin/announcement', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          enabled: announcement.enabled,
-          text: announcement.text,
-          link: announcement.link,
-          linkLabel: announcement.linkLabel,
-          variant: announcement.variant,
+          enabled: data.enabled,
+          text: data.text,
+          link: data.link,
+          linkLabel: data.linkLabel,
+          variant: data.variant,
         }),
       });
       if (!res.ok) throw new Error('Save failed');
@@ -228,6 +228,14 @@ export default function AdminSettingsPage() {
     } finally {
       setSavingAnnouncement(false);
     }
+  }
+
+  const handleSaveAnnouncement = () => saveAnnouncement(announcement);
+
+  const handleToggleEnabled = () => {
+    const next = { ...announcement, enabled: !announcement.enabled };
+    setAnnouncement(next);
+    saveAnnouncement(next);
   };
 
   // Farm CRUD
@@ -812,7 +820,7 @@ export default function AdminSettingsPage() {
                   type="button"
                   role="switch"
                   aria-checked={announcement.enabled}
-                  onClick={() => setAnnouncement({ ...announcement, enabled: !announcement.enabled })}
+                  onClick={handleToggleEnabled}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
                     announcement.enabled ? 'bg-gold-500' : 'bg-gray-200'
                   }`}

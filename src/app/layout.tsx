@@ -28,65 +28,31 @@ const BANNER_STYLES: Record<Announcement['variant'], string> = {
   red: 'bg-red-600 text-white',
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.daracheon.com'),
-  icons: {
-    icon: '/images/ZOEL-LIFE-logo.png',
-    shortcut: '/images/ZOEL-LIFE-logo.png',
-    apple: '/images/ZOEL-LIFE-logo.png',
-  },
-  title: {
-    default: '대라천 — 프리미엄 침향 전문 브랜드',
-    template: '%s | 대라천',
-  },
-  description:
-    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드 대라천. 400만 그루 직접 관리, GC-MS 인증, 대한약전 적합. 프리미엄 침향 원목, 에센셜 오일, 건강차.',
-  keywords: [
-    '침향', '대라천', 'agarwood', '沈香', '침향 효능', '침향 구매',
-    '프리미엄 침향', 'Aquilaria agallocha', '침향차', '침향 오일',
-    '베트남 침향', '대한약전', 'GC-MS',
-  ],
-  authors: [{ name: '대라천 (Daracheon)', url: 'https://www.daracheon.com' }],
-  creator: '대라천',
-  publisher: '대라천',
-  openGraph: {
-    type: 'website',
-    locale: 'ko_KR',
-    url: 'https://www.daracheon.com',
-    siteName: '대라천',
-    title: '대라천 — 프리미엄 침향 전문 브랜드',
-    description:
-      '베트남 최고급 A. agallocha 침향. 400만 그루, 20년 이상 수령. 대라천이 엄선한 프리미엄 침향을 만나보세요.',
-    images: [
-      {
-        url: '/images/og-default.jpg',
-        width: 1200,
-        height: 630,
-        alt: '대라천 프리미엄 침향',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '대라천 — 프리미엄 침향 전문 브랜드',
-    description:
-      '베트남 최고급 A. agallocha 침향. 400만 그루, 20년 이상 수령.',
-    images: ['/images/og-default.jpg'],
-  },
-  alternates: {
-    canonical: 'https://www.zoellife.com',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
-  },
-  // 검색엔진 사이트 인증 — env 에 코드를 박으면 자동 적용.
-  //   GOOGLE_SITE_VERIFICATION
-  //   NAVER_SITE_VERIFICATION
-  //   BING_SITE_VERIFICATION
-  // 코드 미설정이면 메타 태그 자체가 출력되지 않음(빈 'undefined' 가짜 신호 방지).
-  verification: (() => {
+const DEFAULT_TITLE = '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE';
+const DEFAULT_DESCRIPTION =
+  '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.';
+const DEFAULT_KEYWORDS = [
+  '침향', '대라천', 'ZOEL LIFE', '조엘라이프',
+  '침향 효능', '침향 오일', '침향환', '침향 캡슐', '침향단', '침향 선향',
+  '침향수', '침향차', '베트남 침향', '프리미엄 침향',
+  'Aquilaria Agallocha Roxburgh', '침향 구매',
+];
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png';
+
+interface SeoData { metaTitle?: string; metaDescription?: string; keywords?: string; ogImage?: string }
+
+export async function generateMetadata(): Promise<Metadata> {
+  const company = await readSingleSafe<{ seo?: SeoData }>('company');
+  const seo = company?.seo;
+
+  const title = seo?.metaTitle || DEFAULT_TITLE;
+  const description = seo?.metaDescription || DEFAULT_DESCRIPTION;
+  const keywords = seo?.keywords
+    ? seo.keywords.split(',').map((k) => k.trim()).filter(Boolean)
+    : DEFAULT_KEYWORDS;
+  const ogImage = seo?.ogImage || DEFAULT_OG_IMAGE;
+
+  const verificationEntries = (() => {
     const google = process.env.GOOGLE_SITE_VERIFICATION;
     const naver = process.env.NAVER_SITE_VERIFICATION;
     const bing = process.env.BING_SITE_VERIFICATION;
@@ -97,8 +63,45 @@ export const metadata: Metadata = {
     if (bing) other['msvalidate.01'] = bing;
     if (Object.keys(other).length > 0) v.other = other;
     return Object.keys(v).length > 0 ? v : undefined;
-  })(),
-};
+  })();
+
+  return {
+    metadataBase: new URL('https://www.daracheon.com'),
+    icons: {
+      icon: '/images/ZOEL-LIFE-logo.png',
+      shortcut: '/images/ZOEL-LIFE-logo.png',
+      apple: '/images/ZOEL-LIFE-logo.png',
+    },
+    title: { default: title, template: '%s | 대라천' },
+    description,
+    keywords,
+    authors: [{ name: '대라천 (Daracheon)', url: 'https://www.daracheon.com' }],
+    creator: '대라천',
+    publisher: '대라천',
+    openGraph: {
+      type: 'website',
+      locale: 'ko_KR',
+      url: 'https://www.daracheon.com',
+      siteName: '대라천',
+      title,
+      description,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: '대라천 프리미엄 침향' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+    alternates: { canonical: 'https://www.zoellife.com' },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    },
+    verification: verificationEntries,
+  };
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
