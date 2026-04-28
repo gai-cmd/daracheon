@@ -55,6 +55,7 @@ interface BrandStoryData {
   hero: {
     sectionTag: string;
     titleKr: string;
+    titleEn: string;
     subtitle: string;
     heroBg: string;
   };
@@ -180,6 +181,7 @@ export default function AdminBrandStoryPage() {
   const [hero, setHero] = useState<BrandStoryData['hero']>({
     sectionTag: 'Agarwood Story',
     titleKr: "대라천 '참'침향",
+    titleEn: '',
     subtitle: "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다.",
     heroBg: DEFAULT_HERO_BG,
   });
@@ -456,7 +458,10 @@ export default function AdminBrandStoryPage() {
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
               <LabeledInput label="섹션 태그" value={hero.sectionTag} onChange={(v) => setHero({ ...hero, sectionTag: v })} />
-              <LabeledInput label="제목 (한글)" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="제목 (한글)" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
+                <LabeledInput label="제목 (영문)" value={hero.titleEn} onChange={(v) => setHero({ ...hero, titleEn: v })} />
+              </div>
               <LabeledTextarea label="부제목" value={hero.subtitle} onChange={(v) => setHero({ ...hero, subtitle: v })} />
               <ImageUploadField label="배경 이미지" value={hero.heroBg} onChange={(url) => setHero({ ...hero, heroBg: url })} subdir="pages" />
             </div>

@@ -43,7 +43,7 @@ export interface MediaItem { outlet: string; date?: string; title: string; summa
 export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string }
 
 export interface BrandStoryData {
-  hero: { sectionTag: string; titleKr: string; subtitle: string; heroBg: string };
+  hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
   brandStoryTab: { headlineTitle: string; headlineSubtitle: string; sourceTag: string; sourceTitle: string; sourceBody: string };
   farms: Farm[];
   sceneTab: { tag: string; title: string; subtitle: string; body: string; images: string[] };
