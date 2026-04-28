@@ -56,3 +56,9 @@ data/db/
 
 # Drive 자산 로컬 캐시 (마이그레이션 중간 산물)
 scripts/drive-cache/
+.claude/
+HANDOFF.md
+docs/
+new design/
+scripts/
+zoel-app.js
