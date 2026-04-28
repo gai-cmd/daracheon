@@ -32,24 +32,6 @@ function renderWithNowrap(text: string): ReactNode {
   return nodes.length > 1 ? nodes : text;
 }
 
-function TabHeroBanner({ src }: { src?: string }) {
-  if (!src) return null;
-  return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      height: 'clamp(180px, 28vw, 400px)',
-      backgroundImage: `url('${src}')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }}>
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(10,11,16,0.2) 0%, rgba(10,11,16,0.5) 60%, #0a0b10 100%)',
-      }} />
-    </div>
-  );
-}
 
 const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
@@ -186,7 +168,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (
         <>
-          <TabHeroBanner src={tabHeroes.tab0} />
           {/* Chapter 01 — Definition */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
@@ -641,7 +622,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
         <>
-          <TabHeroBanner src={tabHeroes.tab1} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -866,7 +846,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab2} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -977,7 +956,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab3} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1120,7 +1098,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
       {activeTab === 4 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab4} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
