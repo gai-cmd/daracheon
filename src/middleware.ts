@@ -11,6 +11,7 @@ const PUBLIC_ADMIN_API_PREFIXES = [
   '/api/admin/auth/logout',
   '/api/admin/auth/password-reset',
   '/api/admin/revalidate-pages',
+  '/api/admin/seed-process-tab',
 ];
 
 function isPublicAdminPath(pathname: string): boolean {
