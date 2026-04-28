@@ -29,9 +29,9 @@ export interface HomeNotice {
   ctaHref: string;
 }
 
-export interface AgarwoodCard { title: string; description: string; kicker?: string; image?: string }
+export interface AgarwoodCard { title: string; description: string; kicker?: string }
 export interface HomeAgarwood { tag: string; title: string; cards: AgarwoodCard[] }
-export interface BenefitItem { title: string; description: string; kicker?: string; image?: string }
+export interface BenefitItem { title: string; description: string; kicker?: string }
 export interface HomeBenefits { tag: string; title: string; items: BenefitItem[] }
 export interface ProcessStepItem { title: string; duration?: string }
 export interface HomeProcess {
@@ -170,12 +170,12 @@ const DEFAULT_PROCESS: HomeProcess = {
 const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'Steam Distillation · GMP'];
 
 const PROCESS_IMAGES = [
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-01-seedling.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-02-farm.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-03-organic.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-04-resin.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-05-harvest.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg',
+  'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-',
+  'https://lh3.googleusercontent.com/d/17EiU_mn7SNlRR6h1GPfdJygQNCQc2DQj',
+  'https://lh3.googleusercontent.com/d/1OPsfkpIen9VDFUBgnsyfMYA-EM-yHb-Z',
+  'https://lh3.googleusercontent.com/d/1W8szQeZMqdeeaLXhw0P51RrFQ5Ks4bjh',
+  'https://lh3.googleusercontent.com/d/1CKYOtnu0fETBnp9nUQnsBSxqE8QxKh4u',
+  'https://lh3.googleusercontent.com/d/10I1fjc7rC3oXo5g9cynXFLwMj2lpAwuR',
 ];
 
 export const metadata: Metadata = {
@@ -339,17 +339,10 @@ export default async function HomePage() {
             {agarwood.cards.map((c, i) => {
               const kicker = c.kicker ?? (['Heritage', 'Time', 'Research'][i] ?? 'Insight');
               return (
-                <div key={`${c.title}-${i}`} className={styles.agCard} style={{ overflow: 'hidden', padding: 0 }}>
-                  {c.image && (
-                    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img src={c.image} alt={c.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                    </div>
-                  )}
-                  <div style={{ padding: 26 }}>
-                    <div className={styles.agNum}>{String(i + 1).padStart(2, '0')} · {kicker}</div>
-                    <h3>{c.title}</h3>
-                    <p>{c.description}</p>
-                  </div>
+                <div key={`${c.title}-${i}`} className={styles.agCard}>
+                  <div className={styles.agNum}>{String(i + 1).padStart(2, '0')} · {kicker}</div>
+                  <h3>{c.title}</h3>
+                  <p>{c.description}</p>
                 </div>
               );
             })}
@@ -369,18 +362,11 @@ export default async function HomePage() {
             {benefits.items.map((b, i) => {
               const kicker = b.kicker ?? (['Qi Circulation', 'Vitality', 'Relaxation', 'Anti-inflammatory', 'Brain Health', 'Digestion'][i] ?? 'Benefit');
               return (
-                <div key={`${b.title}-${i}`} className={styles.benItem} style={{ borderTop: 'none', overflow: 'hidden', padding: 0 }}>
-                  {b.image && (
-                    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img src={b.image} alt={b.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                    </div>
-                  )}
-                  <div style={{ padding: '18px 0 0', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-                    <div className={styles.benIdx}>{String(i + 1).padStart(2, '0')}</div>
-                    <div className={styles.benKo}>{kicker}</div>
-                    <h4>{b.title}</h4>
-                    <p>{b.description}</p>
-                  </div>
+                <div key={`${b.title}-${i}`} className={styles.benItem}>
+                  <div className={styles.benIdx}>{String(i + 1).padStart(2, '0')}</div>
+                  <div className={styles.benKo}>{kicker}</div>
+                  <h4>{b.title}</h4>
+                  <p>{b.description}</p>
                 </div>
               );
             })}

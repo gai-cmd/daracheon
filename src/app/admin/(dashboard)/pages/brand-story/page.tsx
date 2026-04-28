@@ -55,7 +55,6 @@ interface BrandStoryData {
   hero: {
     sectionTag: string;
     titleKr: string;
-    titleEn: string;
     subtitle: string;
     heroBg: string;
   };
@@ -93,12 +92,10 @@ interface BrandStoryData {
     title: string;
     subtitle: string;
     images: string[];
-    stats: { value: string; label: string }[];
     steps: string[];
     totalTimeLabel: string;
     totalTimeValue: string;
     totalTimeDesc: string;
-    paragraphs: { title: string; body: string }[];
   };
   mediaTab?: {
     tag: string;
@@ -181,7 +178,6 @@ export default function AdminBrandStoryPage() {
   const [hero, setHero] = useState<BrandStoryData['hero']>({
     sectionTag: 'Agarwood Story',
     titleKr: "대라천 '참'침향",
-    titleEn: '',
     subtitle: "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다.",
     heroBg: DEFAULT_HERO_BG,
   });
@@ -263,14 +259,8 @@ export default function AdminBrandStoryPage() {
   const [processTab, setProcessTab] = useState<BrandStoryData['processTab']>({
     tag: 'PRODUCTION PROCESS',
     title: '생산 공정',
-    subtitle: '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록',
+    subtitle: '총 소요 시간: 최소 26년',
     images: [],
-    stats: [
-      { value: '400만+', label: '하띤 직영 농장 침향나무' },
-      { value: '#12835', label: '수지유도 특허' },
-      { value: '72h', label: '고온 증류 공정' },
-      { value: '26+', label: '식목부터 출고까지' },
-    ],
     steps: [
       '식목',
       '수지앉힘(특허#12835)',
@@ -290,12 +280,6 @@ export default function AdminBrandStoryPage() {
     totalTimeLabel: 'TOTAL PROCESS TIME',
     totalTimeValue: '26+ Years',
     totalTimeDesc: '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치',
-    paragraphs: [
-      { title: '14단계 공정의 흐름', body: '침향오일은 14단계의 엄격한 생산공정을 거쳐 탄생합니다. 1. 식목, 2. 수지앉힘(특허#12835 식용가능수도제), 3. 침향검사, 4. 침향수확, 5. 원목입고, 6. 세척(표피제거), 7. 절단(10-20cm), 8. 수지목분리, 9. 이물질제거, 10. 세척(3회), 11. 건조(자연광), 12. 분쇄(1-2mm), 13. 고온증류(72시간), 14. 수지채취후숙성검사출고.' },
-      { title: '시간과 기술', body: "총 소요 시간은 최소 26년입니다. 각 단계는 침향의 순수함과 효능을 유지하기 위해 정교하게 설계되었습니다. 수지앉힘 단계에서 사용하는 특허받은 식용가능 수도제는 대라천 '참'침향만의 핵심 기술입니다." },
-      { title: '품질 및 소요', body: "고온증류 과정은 72시간 동안 지속되며, 이 과정에서 침향의 깊은 향과 성분이 추출됩니다. 이후 숙성 및 검사 과정을 거쳐 최종 제품으로 출고됩니다. 이러한 철저한 공정은 대라천 '참'침향이 왜 프리미엄인지를 보여줍니다." },
-      { title: '기후와 시간의 조합', body: "우리는 자연의 시간을 존중하며, 그 시간을 제품에 담아냅니다. 26년의 기다림 끝에 얻은 침향오일은 고객에게 최고의 경험을 선사하기 위한 대라천 '참'침향의 결정체입니다." },
-    ],
   });
   // mediaTab / testimonialsTab: /about-agarwood 전용. brand-story UI에서는 노출 안 함
   // (데이터 계약 유지를 위해 state는 보존)
@@ -458,10 +442,7 @@ export default function AdminBrandStoryPage() {
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
               <LabeledInput label="섹션 태그" value={hero.sectionTag} onChange={(v) => setHero({ ...hero, sectionTag: v })} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <LabeledInput label="제목 (한글)" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
-                <LabeledInput label="제목 (영문)" value={hero.titleEn} onChange={(v) => setHero({ ...hero, titleEn: v })} />
-              </div>
+              <LabeledInput label="제목 (한글)" value={hero.titleKr} onChange={(v) => setHero({ ...hero, titleKr: v })} />
               <LabeledTextarea label="부제목" value={hero.subtitle} onChange={(v) => setHero({ ...hero, subtitle: v })} />
               <ImageUploadField label="배경 이미지" value={hero.heroBg} onChange={(url) => setHero({ ...hero, heroBg: url })} subdir="pages" />
             </div>

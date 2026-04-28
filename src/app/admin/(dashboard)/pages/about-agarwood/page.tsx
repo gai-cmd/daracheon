@@ -77,15 +77,6 @@ interface TestimonialItem {
   image?: string;
 }
 
-interface TabHeroes {
-  tab0?: string;
-  tab1?: string;
-  tab2?: string;
-  tab3?: string;
-  tab4?: string;
-  tab5?: string;
-}
-
 interface AboutAgarwoodData {
   hero: {
     sectionTag: string;
@@ -112,7 +103,6 @@ interface AboutAgarwoodData {
     buttonBrand: string;
     buttonBrandHref: string;
   };
-  tabHeroes?: TabHeroes;
   authenticityTab?: AuthenticityTabData;
   mediaTab?: {
     tag: string;
@@ -235,8 +225,6 @@ export default function AdminAboutAgarwoodPage() {
   const [saving, setSaving] = useState<string | null>(null);
   const [activeAdminTab, setActiveAdminTab] = useState(0);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
-
-  const [tabHeroes, setTabHeroes] = useState<TabHeroes>({});
 
   /* state — 초기값은 frontend AboutAgarwoodClient.tsx 의 하드코딩 fallback과 동일.
      CMS 데이터가 있으면 fetchData 에서 덮어씁니다. */
@@ -397,7 +385,6 @@ export default function AdminAboutAgarwoodPage() {
         if (d.formationSteps && d.formationSteps.length > 0) setFormationSteps(d.formationSteps);
         if (d.specialReasons && d.specialReasons.length > 0) setSpecialReasons(d.specialReasons);
         if (d.benefits && d.benefits.length > 0) setBenefits(d.benefits);
-        if (d.tabHeroes) setTabHeroes(d.tabHeroes);
         if (d.authenticityTab) setAuthenticityTab(d.authenticityTab);
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
@@ -511,12 +498,6 @@ export default function AdminAboutAgarwoodPage() {
         <div className="space-y-8">
           {activeAdminTab === 0 && (<>
 
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 0 히어로 이미지 · 침향이란?" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">탭 전환 시 콘텐츠 상단에 표시되는 와이드 배너 이미지입니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab0 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab0: url })} subdir="pages" />
-          </SectionCard>
-
           {/* Hero */}
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -582,10 +563,6 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...formationSteps]; n[i] = { ...n[i], description: e.target.value }; setFormationSteps(n); }}
                       className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
-                    <div className="sm:col-span-3">
-                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
-                      <ImageUploadField value={(step as any).image ?? ''} onChange={(url) => { const n = [...formationSteps]; n[i] = { ...n[i], image: url } as any; setFormationSteps(n); }} subdir="pages" />
-                    </div>
                   </div>
                 </div>
               ))}
@@ -626,10 +603,6 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...specialReasons]; n[i] = { ...n[i], description: e.target.value }; setSpecialReasons(n); }}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
-                      <ImageUploadField value={(item as any).image ?? ''} onChange={(url) => { const n = [...specialReasons]; n[i] = { ...n[i], image: url } as any; setSpecialReasons(n); }} subdir="pages" />
-                    </div>
                   </div>
                 </div>
               ))}
@@ -670,10 +643,6 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...benefits]; n[i] = { ...n[i], description: e.target.value }; setBenefits(n); }}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
-                      <ImageUploadField value={(item as any).image ?? ''} onChange={(url) => { const n = [...benefits]; n[i] = { ...n[i], image: url } as any; setBenefits(n); }} subdir="pages" />
-                    </div>
                   </div>
                 </div>
               ))}
@@ -702,12 +671,6 @@ export default function AdminAboutAgarwoodPage() {
 
           </>)}
           {activeAdminTab === 1 && (<>
-
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 1 히어로 이미지 · 진짜 침향 구별 방법" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">탭 상단 와이드 배너 이미지. 진위감별·검증 느낌의 이미지를 권장합니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab1 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab1: url })} subdir="pages" />
-          </SectionCard>
 
           {/* Authenticity Tab */}
           <SectionCard title="진짜 침향 구별 방법 · 감별 3단계" onSave={() => saveSection('authenticityTab', { authenticityTab })} saving={saving === 'authenticityTab'}>
@@ -842,12 +805,6 @@ export default function AdminAboutAgarwoodPage() {
           </>)}
           {activeAdminTab === 2 && (<>
 
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 2 히어로 이미지 · 문헌에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">동의보감·본초강목 등 고문헌 느낌의 이미지를 권장합니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab2 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab2: url })} subdir="pages" />
-          </SectionCard>
-
           {/* Literatures */}
           <SectionCard title="문헌 목록" onSave={() => saveSection('literatures', { literatures })} saving={saving === 'literatures'}>
             <div className="space-y-4">
@@ -878,12 +835,6 @@ export default function AdminAboutAgarwoodPage() {
 
           </>)}
           {activeAdminTab === 3 && (<>
-
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 3 히어로 이미지 · 논문에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">연구실·분자구조 등 과학적 이미지를 권장합니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab3 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab3: url })} subdir="pages" />
-          </SectionCard>
 
           {/* Papers */}
           <SectionCard title="논문 목록" onSave={() => saveSection('papers', { papers })} saving={saving === 'papers'}>
@@ -920,12 +871,6 @@ export default function AdminAboutAgarwoodPage() {
 
           </>)}
           {activeAdminTab === 4 && (<>
-
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 4 히어로 이미지 · 매체에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">뉴스·방송·매체 느낌의 이미지를 권장합니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab4 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab4: url })} subdir="pages" />
-          </SectionCard>
 
           {/* Media Tab */}
           <SectionCard title="매체 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
@@ -973,12 +918,6 @@ export default function AdminAboutAgarwoodPage() {
 
           </>)}
           {activeAdminTab === 5 && (<>
-
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 5 히어로 이미지 · 고객이 남긴 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">일상·선물·라이프스타일 이미지를 권장합니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab5 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab5: url })} subdir="pages" />
-          </SectionCard>
 
           {/* Testimonials Tab */}
           <SectionCard title="고객 후기 목록" onSave={() => saveSection('testimonialsTab', { testimonialsTab })} saving={saving === 'testimonialsTab'}>

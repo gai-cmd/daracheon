@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import ImageUploadField from '@/components/admin/ImageUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
 
 interface CompanyChapter {
@@ -9,7 +8,6 @@ interface CompanyChapter {
   tag: string;
   title: string;
   body: string;
-  image?: string;
 }
 
 interface CompanyHero {
@@ -350,10 +348,6 @@ export default function AdminCompanyPage() {
                     placeholder="본문"
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
                   />
-                  <div className="mt-3">
-                    <label className="block text-xs text-gray-500 mb-1">챕터 이미지 (선택 — 본문 위에 표시, 01번 제외)</label>
-                    <ImageUploadField value={ch.image ?? ''} onChange={(url) => { const n = [...chapters]; n[i] = { ...n[i], image: url }; setChapters(n); }} subdir="pages" />
-                  </div>
                 </div>
               ))}
               <button
