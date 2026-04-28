@@ -37,6 +37,16 @@
   z-index: 1;
 }
 
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
 .kicker {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.72rem;

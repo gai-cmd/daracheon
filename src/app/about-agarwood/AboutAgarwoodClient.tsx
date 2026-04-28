@@ -32,11 +32,17 @@ function renderWithNowrap(text: string): ReactNode {
   return nodes.length > 1 ? nodes : text;
 }
 
-function TabHeroBanner({ src, alt }: { src?: string; alt: string }) {
+function TabHeroBanner({ src }: { src?: string }) {
   if (!src) return null;
   return (
-    <div style={{ position: 'relative', width: '100%', height: 'clamp(180px, 28vw, 400px)', overflow: 'hidden' }}>
-      <Image src={src} alt={alt} fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: 'clamp(180px, 28vw, 400px)',
+      backgroundImage: `url('${src}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}>
       <div style={{
         position: 'absolute', inset: 0,
         background: 'linear-gradient(to bottom, rgba(10,11,16,0.2) 0%, rgba(10,11,16,0.5) 60%, #0a0b10 100%)',
@@ -120,6 +126,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
     <>
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        {hero?.heroImage && (
+          <div
+            className={styles.heroBg}
+            style={{ backgroundImage: `url('${hero.heroImage}')` }}
+            aria-hidden
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden
@@ -173,7 +186,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (
         <>
-          <TabHeroBanner src={tabHeroes.tab0} alt="침향이란?" />
+          <TabHeroBanner src={tabHeroes.tab0} />
           {/* Chapter 01 — Definition */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
@@ -628,7 +641,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
         <>
-          <TabHeroBanner src={tabHeroes.tab1} alt="진짜 침향 구별 방법" />
+          <TabHeroBanner src={tabHeroes.tab1} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -696,13 +709,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12 }}>
                         원문 서류 · 성분명세서
                       </p>
-                      <div style={{ position: 'relative', border: '1px solid rgba(212,168,67,0.3)', overflow: 'hidden' }}>
+                      <div style={{ position: 'relative', border: '1px solid rgba(212,168,67,0.3)', overflow: 'hidden', maxHeight: 280 }}>
                         <Image
                           src="/uploads/misc/kfda-doc-1.jpg"
                           alt="VIHECO 제약사 성분명세서 — Agarwood oil 학명: Aquilaria agallocha Roxburgh"
                           width={900}
                           height={1200}
-                          style={{ width: '100%', height: 'auto', display: 'block' }}
+                          style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover', objectPosition: 'top' }}
                         />
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 14px', background: 'rgba(10,11,16,0.82)', backdropFilter: 'blur(8px)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>
                           VIHECO 중앙제약 성분명세서 — Agarwood oil · <em style={{ color: 'var(--accent)', fontStyle: 'normal' }}>Aquilaria agallocha Roxburgh</em> · 2026.03.10
@@ -853,7 +866,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab2} alt="문헌에 실린 침향 — 동의보감·본초강목 고문헌" />
+        <TabHeroBanner src={tabHeroes.tab2} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -964,7 +977,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab3} alt="논문에 실린 침향 — 현대 과학 연구" />
+        <TabHeroBanner src={tabHeroes.tab3} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1107,7 +1120,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
       {activeTab === 4 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab4} alt="복용 및 사용법" />
+        <TabHeroBanner src={tabHeroes.tab4} />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
