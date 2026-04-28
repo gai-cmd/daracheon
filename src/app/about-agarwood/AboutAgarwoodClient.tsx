@@ -200,26 +200,23 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       onMouseLeave={() => setHoveredDefinitionBox(false)}
                       style={{
                         marginTop: 26,
-                        padding: '22px 24px',
-                        border: `3px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.5)'}`,
+                        padding: '20px 20px',
+                        border: `2px solid ${hoveredDefinitionBox ? 'var(--accent)' : 'rgba(212,168,67,0.5)'}`,
                         background: hoveredDefinitionBox ? 'rgba(212,168,67,0.15)' : 'rgba(212,168,67,0.08)',
-                        transition: 'all 300ms ease',
-                        transform: hoveredDefinitionBox ? 'scale(1.02)' : 'scale(1)',
+                        transition: 'border-color 300ms ease, background 300ms ease',
                         cursor: 'pointer',
                         boxShadow: hoveredDefinitionBox ? '0 8px 32px rgba(212,168,67,0.15)' : '0 4px 16px rgba(212,168,67,0.05)',
+                        overflow: 'hidden',
                       }}
                     >
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 8, fontWeight: 600 }}>
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(0.95rem, 3vw, 1.08rem)', color: '#fff', marginBottom: 8, fontWeight: 600, wordBreak: 'keep-all' }}>
                         진짜 침향, 이제는 학명/품종을 반드시 확인하세요.
                       </p>
-                      <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85 }}>
+                      <p style={{ fontSize: 'clamp(0.82rem, 2.5vw, 0.92rem)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
                         공식 침향은{' '}
                         <span style={{ color: 'var(--accent)', fontWeight: 700 }}>
-                          <span style={{ whiteSpace: 'nowrap' }}>아퀼라리아 아갈로차 록스버그</span>
-                          {' '}
-                          <span style={{ whiteSpace: 'nowrap' }}>
-                            ({definition?.officialNameCallout ?? 'Aquilaria Agallocha Roxburgh'})
-                          </span>
+                          아퀼라리아 아갈로차 록스버그{' '}
+                          ({definition?.officialNameCallout ?? 'Aquilaria Agallocha Roxburgh'})
                         </span>
                         입니다.
                       </p>
