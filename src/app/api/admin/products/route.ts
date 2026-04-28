@@ -38,7 +38,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const products = await readData('products');
+    const products = await readDataUncached('products');
     return NextResponse.json({
       products,
       total: products.length,
