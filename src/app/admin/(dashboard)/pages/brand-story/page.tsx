@@ -359,14 +359,24 @@ export default function AdminBrandStoryPage() {
           certs: Array.isArray((d.certificationsTab as any).certs) ? (d.certificationsTab as any).certs : certificationsTab.certs,
           sections: Array.isArray(d.certificationsTab.sections) ? d.certificationsTab.sections : [],
         });
-        if (d?.processTab) setProcessTab({
-          ...d.processTab,
-          images: Array.isArray(d.processTab.images) ? d.processTab.images : [],
-          steps: Array.isArray(d.processTab.steps) ? d.processTab.steps : [],
-          processGroups: Array.isArray((d.processTab as any).processGroups) && (d.processTab as any).processGroups.length > 0
-            ? (d.processTab as any).processGroups
-            : processTab.processGroups,
-        });
+        if (d?.processTab) {
+          const pt = d.processTab as any;
+          setProcessTab((prev) => ({
+            tag: pt.tag || prev.tag,
+            title: pt.title || prev.title,
+            subtitle: pt.subtitle || prev.subtitle,
+            images: Array.isArray(pt.images) ? pt.images : prev.images,
+            stats: Array.isArray(pt.stats) && pt.stats.length > 0 ? pt.stats : prev.stats,
+            steps: Array.isArray(pt.steps) ? pt.steps : prev.steps,
+            processGroups: Array.isArray(pt.processGroups) && pt.processGroups.length > 0
+              ? pt.processGroups
+              : prev.processGroups,
+            totalTimeLabel: pt.totalTimeLabel || prev.totalTimeLabel,
+            totalTimeValue: pt.totalTimeValue || prev.totalTimeValue,
+            totalTimeDesc: pt.totalTimeDesc || prev.totalTimeDesc,
+            paragraphs: Array.isArray(pt.paragraphs) ? pt.paragraphs : prev.paragraphs,
+          }));
+        }
       } catch (err) {
         console.error('Failed to fetch pages:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
