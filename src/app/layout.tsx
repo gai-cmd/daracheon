@@ -30,6 +30,11 @@ const BANNER_STYLES: Record<Announcement['variant'], string> = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.daracheon.com'),
+  icons: {
+    icon: '/images/ZOEL-LIFE-logo.png',
+    shortcut: '/images/ZOEL-LIFE-logo.png',
+    apple: '/images/ZOEL-LIFE-logo.png',
+  },
   title: {
     default: '대라천 — 프리미엄 침향 전문 브랜드',
     template: '%s | 대라천',
