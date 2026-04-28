@@ -154,42 +154,45 @@ export default function BrandStoryClient({ data }: Props) {
       {activeTab === 0 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{brandStoryTab?.sourceTag ?? 'THE SOURCE'}</div>
-              <h2 className={styles.chapterTitle}>
-                {brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!'}
-              </h2>
-              <p className={styles.chapterSubtitle}>
-                {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
-              </p>
-              <div className={styles.line} />
-            </div>
-            <div className={styles.chapterBody}>
-              <p style={{ whiteSpace: 'pre-line' }}>
-                {brandStoryTab?.sourceBody ??
-                  '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.'}
-              </p>
-            </div>
-            <div className={styles.gridAuto}>
-              {farms.map((farm, i) => (
-                <div key={farm.nameVi + i} className={styles.card}>
-                  {farm.image && (
-                    <div className={styles.imgFrame} style={{ marginBottom: 14, aspectRatio: '4/3' }}>
-                      <Image
-                        src={farm.image}
-                        alt={`${farm.name} (${farm.nameVi}) 농장`}
-                        fill
-                        sizes="(max-width: 1024px) 50vw, 25vw"
-                        style={{ objectFit: 'cover' }}
-                      />
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>01</div>
+                <div className={styles.chapterTag}>{brandStoryTab?.sourceTag ?? 'THE SOURCE'}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>
+                  {brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!'}
+                </h2>
+                <p className={styles.chapterSubtitle}>
+                  {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
+                </p>
+                <div className={styles.line} style={{ margin: '24px 0' }} />
+                <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
+                  {brandStoryTab?.sourceBody ??
+                    '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.'}
+                </p>
+                <div className={styles.gridAuto}>
+                  {farms.map((farm, i) => (
+                    <div key={farm.nameVi + i} className={styles.card}>
+                      {farm.image && (
+                        <div className={styles.imgFrame} style={{ marginBottom: 14, aspectRatio: '4/3' }}>
+                          <Image
+                            src={farm.image}
+                            alt={`${farm.name} (${farm.nameVi}) 농장`}
+                            fill
+                            sizes="(max-width: 1024px) 50vw, 25vw"
+                            style={{ objectFit: 'cover' }}
+                          />
+                        </div>
+                      )}
+                      <div className={styles.cardKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
+                      <div className={styles.cardTitle}>{farm.name}</div>
+                      <div className={styles.cardSub}>{farm.nameVi}</div>
+                      <div className={styles.cardDesc}>{farm.desc}</div>
                     </div>
-                  )}
-                  <div className={styles.cardKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
-                  <div className={styles.cardTitle}>{farm.name}</div>
-                  <div className={styles.cardSub}>{farm.nameVi}</div>
-                  <div className={styles.cardDesc}>{farm.desc}</div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
@@ -199,25 +202,28 @@ export default function BrandStoryClient({ data }: Props) {
       {activeTab === 1 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{sceneTab?.tag ?? 'THE FIELD'}</div>
-              <h2 className={styles.chapterTitle}>{sceneTab?.title ?? '대라천 침향 현장'}</h2>
-              <p className={styles.chapterSubtitle}>
-                {sceneTab?.subtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
-              </p>
-              <div className={styles.line} />
-            </div>
-            <div className={styles.imgGrid}>
-              {sceneImages.map((src, i) => (
-                <div key={i} className={styles.imgFrame}>
-                  <Image src={src} alt={`현장 ${i + 1}`} fill sizes="(max-width: 1024px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>02</div>
+                <div className={styles.chapterTag}>{sceneTab?.tag ?? 'THE FIELD'}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>{sceneTab?.title ?? '대라천 침향 현장'}</h2>
+                <p className={styles.chapterSubtitle}>
+                  {sceneTab?.subtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
+                </p>
+                <div className={styles.line} style={{ margin: '24px 0' }} />
+                <div className={styles.imgGrid}>
+                  {sceneImages.map((src, i) => (
+                    <div key={i} className={styles.imgFrame}>
+                      <Image src={src} alt={`현장 ${i + 1}`} fill sizes="(max-width: 1024px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div className={styles.chapterBody}>
-              <p style={{ whiteSpace: 'pre-line' }}>
-                {sceneTab?.body ?? ''}
-              </p>
+                <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginTop: 24 }}>
+                  {sceneTab?.body ?? ''}
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -227,12 +233,15 @@ export default function BrandStoryClient({ data }: Props) {
       {activeTab === 2 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{historyTab?.tag ?? 'HISTORY'}</div>
-              <h2 className={styles.chapterTitle}>{historyTab?.title ?? '대라천 침향 역사'}</h2>
-              <div className={styles.line} />
-            </div>
-            <div className={styles.timeline}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>03</div>
+                <div className={styles.chapterTag}>{historyTab?.tag ?? 'HISTORY'}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>{historyTab?.title ?? '대라천 침향 역사'}</h2>
+                <div className={styles.line} style={{ margin: '24px 0' }} />
+                <div className={styles.timeline}>
               {eras.map((era, i) => (
                 <div key={era.era + i} className={styles.timelineItem}>
                   <div className={styles.timelineEra}>{era.era}</div>
@@ -260,6 +269,8 @@ export default function BrandStoryClient({ data }: Props) {
                   </div>
                 </div>
               ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -269,12 +280,15 @@ export default function BrandStoryClient({ data }: Props) {
       {activeTab === 3 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{certificationsTab?.tag ?? 'CERTIFICATIONS'}</div>
-              <h2 className={styles.chapterTitle}>{certificationsTab?.title ?? '신뢰의 지표'}</h2>
-              <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
-              <div className={styles.line} />
-            </div>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>04</div>
+                <div className={styles.chapterTag}>{certificationsTab?.tag ?? 'CERTIFICATIONS'}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>{certificationsTab?.title ?? '신뢰의 지표'}</h2>
+                <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
+                <div className={styles.line} style={{ margin: '24px 0' }} />
             {/* 카테고리 범례 */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '28px 0 32px' }}>
               {(['국제인증', '품질인증', '유기농인증', 'ISO인증', '특허', '수상', '사업등록'] as const).map((cat) => {
@@ -483,6 +497,8 @@ export default function BrandStoryClient({ data }: Props) {
                   )}
                 </div>
               ))}
+            </div>
+              </div>
             </div>
           </div>
         </section>

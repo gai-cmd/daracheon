@@ -149,12 +149,34 @@
   text-align: center;
 }
 .chapterTag {
+  margin-top: 16px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 2-column chapter layout (story-page style) */
+.chapterGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+@media (min-width: 900px) {
+  .chapterGrid {
+    grid-template-columns: 220px 1fr;
+    gap: 80px;
+  }
+}
+
+.chapterNum {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 3.2rem;
+  font-weight: 300;
   color: var(--accent);
-  margin-bottom: 14px;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 .chapterTitle {
   font-family: 'Noto Serif KR', serif;
