@@ -249,30 +249,37 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         ]
                     ).map((item, i) => (
                       <RevealOnScroll key={item.step + i} delay={i * 90}>
-                        <div style={{ textAlign: 'center' }}>
-                          <div
-                            style={{
-                              width: 72,
-                              height: 72,
-                              margin: '0 auto 18px',
-                              borderRadius: '50%',
-                              border: '1px solid var(--accent)',
-                              display: 'grid',
-                              placeItems: 'center',
-                              fontFamily: "'Noto Serif KR', serif",
-                              fontSize: '1.2rem',
-                              fontWeight: 400,
-                              color: 'var(--accent)',
-                            }}
-                          >
-                            {item.step}
+                        <div style={{ textAlign: 'center', border: '1px solid rgba(212,168,67,0.15)', overflow: 'hidden' }}>
+                          {item.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
+                              <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 25vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ padding: '20px 16px' }}>
+                            <div
+                              style={{
+                                width: 72,
+                                height: 72,
+                                margin: '0 auto 18px',
+                                borderRadius: '50%',
+                                border: '1px solid var(--accent)',
+                                display: 'grid',
+                                placeItems: 'center',
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.2rem',
+                                fontWeight: 400,
+                                color: 'var(--accent)',
+                              }}
+                            >
+                              {item.step}
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
+                              {item.title}
+                            </h4>
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
+                              {item.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
-                            {item.title}
-                          </h4>
-                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
-                            {item.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}
@@ -316,30 +323,37 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <RevealOnScroll key={card.title + i} delay={i * 90}>
                         <div
                           style={{
-                            padding: 26,
                             border: '1px solid rgba(212,168,67,0.22)',
                             background: 'rgba(255,255,255,0.02)',
                             height: '100%',
+                            overflow: 'hidden',
                           }}
                         >
-                          <div
-                            style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.62rem',
-                              letterSpacing: '0.26em',
-                              color: 'var(--accent)',
-                              textTransform: 'uppercase',
-                              marginBottom: 14,
-                            }}
-                          >
-                            {String(i + 1).padStart(2, '0')} — Reason
+                          {card.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}>
+                              <Image src={card.image} alt={card.title} fill sizes="(max-width: 768px) 100vw, 25vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ padding: 26 }}>
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.62rem',
+                                letterSpacing: '0.26em',
+                                color: 'var(--accent)',
+                                textTransform: 'uppercase',
+                                marginBottom: 14,
+                              }}
+                            >
+                              {String(i + 1).padStart(2, '0')} — Reason
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
+                              {card.title}
+                            </h4>
+                            <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
+                              {card.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
-                            {card.title}
-                          </h4>
-                          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
-                            {card.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}
@@ -383,24 +397,31 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         ]
                     ).map((b, i) => (
                       <RevealOnScroll key={b.title + i} delay={(i % 6) * 70}>
-                        <div style={{ paddingTop: 18, borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-                          <div
-                            style={{
-                              fontFamily: "'Noto Serif KR', serif",
-                              fontSize: '1.3rem',
-                              color: 'var(--accent)',
-                              fontWeight: 400,
-                              marginBottom: 8,
-                            }}
-                          >
-                            {String(i + 1).padStart(2, '0')}
+                        <div style={{ borderTop: '1px solid rgba(212,168,67,0.2)', overflow: 'hidden' }}>
+                          {b.image && (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', marginBottom: 0 }}>
+                              <Image src={b.image} alt={b.title} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <div style={{ paddingTop: 18 }}>
+                            <div
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.3rem',
+                                color: 'var(--accent)',
+                                fontWeight: 400,
+                                marginBottom: 8,
+                              }}
+                            >
+                              {String(i + 1).padStart(2, '0')}
+                            </div>
+                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                              {b.title}
+                            </h4>
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
+                              {b.description}
+                            </p>
                           </div>
-                          <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                            {b.title}
-                          </h4>
-                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
-                            {b.description}
-                          </p>
                         </div>
                       </RevealOnScroll>
                     ))}

@@ -563,6 +563,10 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...formationSteps]; n[i] = { ...n[i], description: e.target.value }; setFormationSteps(n); }}
                       className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
+                    <div className="sm:col-span-3">
+                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
+                      <ImageUploadField value={(step as any).image ?? ''} onChange={(url) => { const n = [...formationSteps]; n[i] = { ...n[i], image: url } as any; setFormationSteps(n); }} subdir="pages" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -603,6 +607,10 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...specialReasons]; n[i] = { ...n[i], description: e.target.value }; setSpecialReasons(n); }}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
+                      <ImageUploadField value={(item as any).image ?? ''} onChange={(url) => { const n = [...specialReasons]; n[i] = { ...n[i], image: url } as any; setSpecialReasons(n); }} subdir="pages" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -643,6 +651,10 @@ export default function AdminAboutAgarwoodPage() {
                       onChange={(e) => { const n = [...benefits]; n[i] = { ...n[i], description: e.target.value }; setBenefits(n); }}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                     />
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
+                      <ImageUploadField value={(item as any).image ?? ''} onChange={(url) => { const n = [...benefits]; n[i] = { ...n[i], image: url } as any; setBenefits(n); }} subdir="pages" />
+                    </div>
                   </div>
                 </div>
               ))}

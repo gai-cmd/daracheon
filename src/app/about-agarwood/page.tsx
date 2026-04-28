@@ -66,9 +66,9 @@ const faqJsonLd = {
   ],
 };
 
-export interface FormationStep { step: string; title: string; description: string }
-export interface SpecialReason { title: string; description: string }
-export interface Benefit { title: string; description: string }
+export interface FormationStep { step: string; title: string; description: string; image?: string }
+export interface SpecialReason { title: string; description: string; image?: string }
+export interface Benefit { title: string; description: string; image?: string }
 export interface DosageItem { num: string; title: string; body: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }

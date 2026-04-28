@@ -170,12 +170,12 @@ const DEFAULT_PROCESS: HomeProcess = {
 const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'Steam Distillation · GMP'];
 
 const PROCESS_IMAGES = [
-  'https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-',
-  'https://lh3.googleusercontent.com/d/17EiU_mn7SNlRR6h1GPfdJygQNCQc2DQj',
-  'https://lh3.googleusercontent.com/d/1OPsfkpIen9VDFUBgnsyfMYA-EM-yHb-Z',
-  'https://lh3.googleusercontent.com/d/1W8szQeZMqdeeaLXhw0P51RrFQ5Ks4bjh',
-  'https://lh3.googleusercontent.com/d/1CKYOtnu0fETBnp9nUQnsBSxqE8QxKh4u',
-  'https://lh3.googleusercontent.com/d/10I1fjc7rC3oXo5g9cynXFLwMj2lpAwuR',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-01-seedling.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-02-farm.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-03-organic.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-04-resin.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-05-harvest.jpg',
+  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg',
 ];
 
 export const metadata: Metadata = {
