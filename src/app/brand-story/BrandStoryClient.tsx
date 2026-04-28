@@ -204,7 +204,7 @@ export default function BrandStoryClient({ data }: Props) {
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
-                <div className={styles.chapterNum}>02</div>
+                <div className={styles.chapterNum}>01</div>
                 <div className={styles.chapterTag}>{sceneTab?.tag ?? 'THE FIELD'}</div>
               </div>
               <div>
@@ -235,7 +235,7 @@ export default function BrandStoryClient({ data }: Props) {
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
-                <div className={styles.chapterNum}>03</div>
+                <div className={styles.chapterNum}>01</div>
                 <div className={styles.chapterTag}>{historyTab?.tag ?? 'HISTORY'}</div>
               </div>
               <div>
@@ -282,7 +282,7 @@ export default function BrandStoryClient({ data }: Props) {
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
-                <div className={styles.chapterNum}>04</div>
+                <div className={styles.chapterNum}>01</div>
                 <div className={styles.chapterTag}>{certificationsTab?.tag ?? 'CERTIFICATIONS'}</div>
               </div>
               <div>
@@ -510,7 +510,7 @@ export default function BrandStoryClient({ data }: Props) {
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
-                <div className={styles.chapterNum}>05</div>
+                <div className={styles.chapterNum}>01</div>
                 <div className={styles.chapterTag}>{processTab?.tag ?? 'PRODUCTION PROCESS'}</div>
               </div>
               <div>
