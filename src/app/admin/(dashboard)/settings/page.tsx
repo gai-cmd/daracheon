@@ -101,10 +101,10 @@ export default function AdminSettingsPage() {
 
   // Section 5: SEO
   const [seo, setSeo] = useState<SeoSettings>({
-    metaTitle: '',
-    metaDescription: '',
-    keywords: '',
-    ogImage: '',
+    metaTitle: '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE',
+    metaDescription: '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.',
+    keywords: '침향, 대라천, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향환, 침향 캡슐, 침향단, 침향 선향, 침향수, 침향차, 베트남 침향, 프리미엄 침향, Aquilaria Agallocha Roxburgh, 침향 구매',
+    ogImage: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
   });
 
   // Section 6: Announcement Banner
@@ -162,11 +162,11 @@ export default function AdminSettingsPage() {
           }))
         );
         setAwards(data.awards || []);
-        setSeo(data.seo || {
-          metaTitle: '',
-          metaDescription: '',
-          keywords: '',
-          ogImage: '',
+        setSeo({
+          metaTitle: data.seo?.metaTitle || '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE',
+          metaDescription: data.seo?.metaDescription || '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.',
+          keywords: data.seo?.keywords || '침향, 대라천, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향환, 침향 캡슐, 침향단, 침향 선향, 침향수, 침향차, 베트남 침향, 프리미엄 침향, Aquilaria Agallocha Roxburgh, 침향 구매',
+          ogImage: data.seo?.ogImage || 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
         });
       } catch (err) {
         console.error('Failed to fetch settings:', err);
