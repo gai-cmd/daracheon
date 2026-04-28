@@ -65,12 +65,18 @@
 
 .hero h1 {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-size: clamp(1.7rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.2;
   margin-bottom: 0;
   color: #fff;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+/* 소형 모바일(480px 이하) — 넘침 방지 추가 보정 */
+@media (max-width: 480px) {
+  .hero h1 { font-size: clamp(1.5rem, 7vw, 2.2rem); }
 }
 
 .hero h1 em {
@@ -78,6 +84,8 @@
   color: var(--accent);
   font-family: 'Noto Serif KR', serif;
   font-weight: 400;
+  display: inline;
+  white-space: normal;
 }
 
 .lede {
@@ -94,10 +102,13 @@
 
 /* ── CHAPTER ── */
 .chapter {
-  padding: 90px 0;
+  padding: 60px 0;
   border-bottom: 1px solid rgba(212, 168, 67, 0.10);
   background: #0a0b10;
   color: #fdfbf7;
+}
+@media (min-width: 768px) {
+  .chapter { padding: 90px 0; }
 }
 
 .chapterAlt {

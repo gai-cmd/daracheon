@@ -32,6 +32,19 @@ function renderWithNowrap(text: string): ReactNode {
   return nodes.length > 1 ? nodes : text;
 }
 
+function TabHeroBanner({ src, alt }: { src?: string; alt: string }) {
+  if (!src) return null;
+  return (
+    <div style={{ position: 'relative', width: '100%', height: 'clamp(180px, 28vw, 400px)', overflow: 'hidden' }}>
+      <Image src={src} alt={alt} fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(10,11,16,0.2) 0%, rgba(10,11,16,0.5) 60%, #0a0b10 100%)',
+      }} />
+    </div>
+  );
+}
+
 const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
   intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
@@ -85,19 +98,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
   const tabHeroes = data?.tabHeroes ?? {};
-
-  function TabHeroBanner({ src, alt }: { src?: string; alt: string }) {
-    if (!src) return null;
-    return (
-      <div style={{ position: 'relative', width: '100%', height: 'clamp(200px, 32vw, 420px)', overflow: 'hidden' }}>
-        <Image src={src} alt={alt} fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(10,11,16,0.25) 0%, rgba(10,11,16,0.55) 60%, #0a0b10 100%)',
-        }} />
-      </div>
-    );
-  }
 
   return (
     <>
