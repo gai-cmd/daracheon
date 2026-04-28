@@ -6,10 +6,6 @@
   right: 0;
   left: var(--ai-panel-width, 0px);
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 28px;
   background: rgba(10, 11, 16, 0.96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -17,8 +13,19 @@
   box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.6);
   height: var(--nav-h, 72px);
 }
+
+.navInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 @media (min-width: 1024px) {
-  .nav { padding: 20px 64px; }
+  .navInner { padding: 0 64px; }
 }
 
 .navBrand {
@@ -89,30 +96,6 @@
 .navLinks a:global(.active) {
   color: var(--accent);
   border-bottom-color: var(--accent);
-}
-
-.navCta {
-  display: none;
-  padding: 10px 20px;
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 300ms;
-}
-@media (min-width: 768px) {
-  .navCta { display: inline-flex; }
-}
-
-.navCta:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
 }
 
 /* Mobile hamburger + overlay */

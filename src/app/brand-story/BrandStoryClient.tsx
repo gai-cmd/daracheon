@@ -88,6 +88,7 @@ export default function BrandStoryClient({ data }: Props) {
   const processTab = data?.processTab;
   const processSteps = processTab?.steps ?? [];
   const processStats = processTab?.stats ?? [];
+  const processGroups = processTab?.processGroups ?? [];
 
   return (
     <div className={styles.page}>
@@ -494,144 +495,86 @@ export default function BrandStoryClient({ data }: Props) {
             <div className={styles.chapterHead}>
               <div className={styles.chapterTag}>{processTab?.tag ?? 'PRODUCTION PROCESS'}</div>
               <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
-              <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '총 소요 시간: 최소 26년'}</p>
+              <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
               <div className={styles.line} />
             </div>
+
             {/* Stats */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                gap: 14,
-                margin: '30px 0 40px',
-              }}
-            >
-              {processStats.map((s) => (
-                <div
-                  key={s.label}
-                  style={{
-                    padding: '20px 16px',
-                    border: '1px solid rgba(212,168,67,0.25)',
-                    background: 'rgba(255,255,255,0.02)',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "'Noto Serif KR', serif",
-                      fontSize: '1.6rem',
-                      color: 'var(--accent)',
-                      fontWeight: 400,
-                      lineHeight: 1,
-                      marginBottom: 8,
-                    }}
-                  >
-                    {s.value}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                      fontSize: '0.6rem',
-                      letterSpacing: '0.22em',
-                      color: 'rgba(255,255,255,0.55)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {s.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.stepGrid}>
-              {processSteps.map((step, i) => (
-                <div key={i} className={styles.stepCard}>
-                  <div className={styles.stepNum}>{i + 1}</div>
-                  <div className={styles.stepTxt}>{step}</div>
-                </div>
-              ))}
-            </div>
-            <div className={styles.totalTime}>
-              <div className={styles.totalLabel}>{processTab?.totalTimeLabel ?? 'TOTAL PROCESS TIME'}</div>
-              <div className={styles.totalValue}>{processTab?.totalTimeValue ?? '26+ Years'}</div>
-              <div className={styles.totalDesc}>
-                {processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}
-              </div>
-            </div>
-
-            {processTab?.paragraphs && processTab.paragraphs.length > 0 && (
-              <div
-                style={{
-                  marginTop: 36,
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-                  gap: 20,
-                }}
-              >
-                {processTab.paragraphs.map((p, i) => (
-                  <div
-                    key={p.title + i}
-                    style={{
-                      padding: '22px 26px',
-                      border: '1px solid rgba(212,168,67,0.22)',
-                      background: 'rgba(212,168,67,0.05)',
-                      borderRadius: 4,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.22em',
-                        textTransform: 'uppercase',
-                        color: 'var(--accent)',
-                        marginBottom: 10,
-                      }}
-                    >
-                      {String(i + 1).padStart(2, '0')} · {p.title}
-                    </div>
-                    <p style={{ fontSize: '0.98rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.9, fontWeight: 300 }}>
-                      {p.body}
-                    </p>
+            {processStats.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, margin: '0 0 64px' }}>
+                {processStats.map((s) => (
+                  <div key={s.label} style={{ padding: '20px 16px', border: '1px solid rgba(212,168,67,0.25)', background: 'rgba(255,255,255,0.02)', textAlign: 'center' }}>
+                    <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.6rem', color: 'var(--accent)', fontWeight: 400, lineHeight: 1, marginBottom: 8 }}>{s.value}</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }}>{s.label}</div>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* 공장 동영상 — Drive mov 폴더 (1t8GYG9Gl4_EleEQBlxmwwntQF662RpNO) */}
+            {/* 두 개 공정 섹션 */}
+            {processGroups.length > 0 ? (
+              processGroups.map((group, gi) => (
+                <div key={gi} className={styles.processGroupSection}>
+                  {/* 그룹 헤더 */}
+                  <div className={styles.processGroupHeaderRow}>
+                    <span className={styles.processGroupBadge}>{String(gi + 1).padStart(2, '0')}</span>
+                    <h3 className={styles.processGroupTitle}>{group.title}</h3>
+                    {group.titleEn && <span className={styles.processGroupTitleEn}>{group.titleEn}</span>}
+                  </div>
+
+                  {/* 설명 */}
+                  {group.description && (
+                    <p className={styles.processGroupDesc}>{group.description}</p>
+                  )}
+
+                  {/* 이미지 + 스텝 그리드 */}
+                  <div className={styles.processGroupLayout}>
+                    <div className={styles.stepGridDetailed}>
+                      {group.steps.map((step, si) => (
+                        <div key={si} className={styles.stepCardDetailed}>
+                          <div className={styles.stepNum} style={{ margin: '0 0 8px' }}>{String(si + 1).padStart(2, '0')}</div>
+                          <div className={styles.stepCardName}>{step.name}</div>
+                          {step.duration && <div className={styles.stepCardDuration}>{step.duration}</div>}
+                          {step.desc && <div className={styles.stepCardDesc}>{step.desc}</div>}
+                        </div>
+                      ))}
+                    </div>
+                    {group.image && (
+                      <div className={styles.processGroupImg}>
+                        <Image src={group.image} alt={group.title} fill sizes="(max-width: 960px) 100vw, 220px" style={{ objectFit: 'cover' }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              /* fallback: processGroups 미설정 시 기존 단순 스텝 그리드 */
+              <div className={styles.stepGrid}>
+                {processSteps.map((step, i) => (
+                  <div key={i} className={styles.stepCard}>
+                    <div className={styles.stepNum}>{i + 1}</div>
+                    <div className={styles.stepTxt}>{step}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Total time */}
+            <div className={styles.totalTime}>
+              <div className={styles.totalLabel}>{processTab?.totalTimeLabel ?? 'TOTAL PROCESS TIME'}</div>
+              <div className={styles.totalValue}>{processTab?.totalTimeValue ?? '26+ Years'}</div>
+              <div className={styles.totalDesc}>{processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}</div>
+            </div>
+
+            {/* 공장 현장 영상 */}
             <div style={{ marginTop: 60 }}>
-              <div
-                style={{
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.3em',
-                  color: 'var(--accent)',
-                  textTransform: 'uppercase',
-                  marginBottom: 14,
-                  textAlign: 'center',
-                }}
-              >
+              <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.7rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 14, textAlign: 'center' }}>
                 Factory Footage · 공장 현장 영상
               </div>
-              <h3
-                style={{
-                  textAlign: 'center',
-                  fontFamily: "'Noto Sans KR', sans-serif",
-                  fontSize: 'clamp(1.4rem, 2.8vw, 2rem)',
-                  fontWeight: 200,
-                  color: '#fff',
-                  marginBottom: 30,
-                }}
-              >
+              <h3 style={{ textAlign: 'center', fontFamily: "'Noto Sans KR', sans-serif", fontSize: 'clamp(1.4rem, 2.8vw, 2rem)', fontWeight: 200, color: '#fff', marginBottom: 30 }}>
                 베트남 직영 공장 <em style={{ color: 'var(--accent)', fontFamily: "'Noto Serif KR', serif", fontStyle: 'normal', fontWeight: 400 }}>실측 영상</em>
               </h3>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: 16,
-                }}
-              >
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
                 {[
                   { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '농장 현장 — 식목·관수' },
                   { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '수확 현장 — 침향 채취' },
@@ -646,70 +589,15 @@ export default function BrandStoryClient({ data }: Props) {
                     tabIndex={0}
                     onClick={() => setActiveVideo(v)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(v); }}
-                    style={{
-                      display: 'block',
-                      border: '1px solid rgba(212,168,67,0.25)',
-                      background: 'rgba(255,255,255,0.02)',
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      transition: 'border-color 200ms',
-                    }}
+                    style={{ display: 'block', border: '1px solid rgba(212,168,67,0.25)', background: 'rgba(255,255,255,0.02)', overflow: 'hidden', cursor: 'pointer', transition: 'border-color 200ms' }}
                   >
-                    <div
-                      style={{
-                        aspectRatio: '16 / 9',
-                        position: 'relative',
-                        background: '#000',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <img
-                        src={`https://lh3.googleusercontent.com/d/${v.id}=w1280`}
-                        alt={v.title}
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                      <div
-                        style={{
-                          position: 'absolute',
-                          inset: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: '50%',
-                            background: 'rgba(212,168,67,0.9)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#0a0b10',
-                            fontSize: '1.6rem',
-                            lineHeight: 1,
-                            paddingLeft: 4,
-                            boxShadow: '0 6px 20px rgba(0,0,0,0.4)',
-                          }}
-                        >
-                          ▶
-                        </div>
+                    <div style={{ aspectRatio: '16 / 9', position: 'relative', background: '#000', overflow: 'hidden' }}>
+                      <img src={`https://lh3.googleusercontent.com/d/${v.id}=w1280`} alt={v.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)' }}>
+                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(212,168,67,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0a0b10', fontSize: '1.6rem', lineHeight: 1, paddingLeft: 4, boxShadow: '0 6px 20px rgba(0,0,0,0.4)' }}>▶</div>
                       </div>
                     </div>
-                    <div
-                      style={{
-                        padding: '14px 16px',
-                        fontFamily: "'Noto Sans KR', sans-serif",
-                        fontSize: '0.88rem',
-                        color: '#fff',
-                        fontWeight: 400,
-                      }}
-                    >
-                      {v.title}
-                    </div>
+                    <div style={{ padding: '14px 16px', fontFamily: "'Noto Sans KR', sans-serif", fontSize: '0.88rem', color: '#fff', fontWeight: 400 }}>{v.title}</div>
                   </div>
                 ))}
               </div>

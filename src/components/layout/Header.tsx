@@ -19,11 +19,7 @@ const NAV_INLINE_STYLE: React.CSSProperties = {
   right: 0,
   left: 'var(--ai-panel-width, 0px)',
   zIndex: 9999,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
   height: 72,
-  padding: '0 28px',
   background: 'rgba(10, 11, 16, 0.96)',
   backdropFilter: 'blur(24px)',
   WebkitBackdropFilter: 'blur(24px)',
@@ -49,46 +45,44 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
   return (
     <header>
       <nav className={styles.nav} style={NAV_INLINE_STYLE} data-zoel-nav="v2">
-        <Link href="/" className={styles.navBrand}>
-          <img
-            src={brandLogo || '/images/logo-brand.png'}
-            alt="조엘라이프 ZOEL LIFE"
-            style={{ height: 40, width: 'auto', display: 'block', objectFit: 'contain' }}
-          />
-          <span className={styles.navBrandText}>
-            <span className={styles.navBrandKr}>조엘라이프(주)</span>
-            <span className={styles.navBrandEn}>ZOEL LIFE</span>
-          </span>
-        </Link>
+        <div className={styles.navInner}>
+          <Link href="/" className={styles.navBrand}>
+            <img
+              src={brandLogo || '/images/logo-brand.png'}
+              alt="조엘라이프 ZOEL LIFE"
+              style={{ height: 40, width: 'auto', display: 'block', objectFit: 'contain' }}
+            />
+            <span className={styles.navBrandText}>
+              <span className={styles.navBrandKr}>조엘라이프(주)</span>
+              <span className={styles.navBrandEn}>ZOEL LIFE</span>
+            </span>
+          </Link>
 
-        <ul className={styles.navLinks}>
-          {mainNav.map((item) => {
-            const active = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
-            return (
-              <li key={item.href}>
-                <Link href={item.href} className={active ? 'active' : ''} aria-current={active ? 'page' : undefined}>
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          <ul className={styles.navLinks}>
+            {mainNav.map((item) => {
+              const active = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+              return (
+                <li key={item.href}>
+                  <Link href={item.href} className={active ? 'active' : ''} aria-current={active ? 'page' : undefined}>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-        <Link href="/home-shopping" className={styles.navCta}>
-          Shop Live
-        </Link>
-
-        <button
-          type="button"
-          className={`${styles.hamburger} ${mobileOpen ? styles.open : ''}`}
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="메뉴 열기"
-          aria-expanded={mobileOpen}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+          <button
+            type="button"
+            className={`${styles.hamburger} ${mobileOpen ? styles.open : ''}`}
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="메뉴 열기"
+            aria-expanded={mobileOpen}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
       </nav>
 
       {mobileOpen && (
