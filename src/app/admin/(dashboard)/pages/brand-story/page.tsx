@@ -33,22 +33,20 @@ interface CertSection {
   body?: string;
 }
 
-interface MediaItem {
-  outlet: string;
-  date?: string;
-  title: string;
-  summary?: string;
+interface ProcessStep {
+  step: string;
+  name: string;
+  duration?: string;
+  desc: string;
   image?: string;
-  link?: string;
 }
 
-interface TestimonialItem {
-  name: string;
-  role?: string;
-  rating?: number;
-  body: string;
-  product?: string;
+interface ProcessGroup {
+  title: string;
+  titleEn: string;
+  description: string;
   image?: string;
+  steps: ProcessStep[];
 }
 
 interface BrandStoryData {
@@ -95,22 +93,11 @@ interface BrandStoryData {
     images: string[];
     stats: { value: string; label: string }[];
     steps: string[];
+    processGroups: ProcessGroup[];
     totalTimeLabel: string;
     totalTimeValue: string;
     totalTimeDesc: string;
     paragraphs: { title: string; body: string }[];
-  };
-  mediaTab?: {
-    tag: string;
-    title: string;
-    subtitle: string;
-    items: MediaItem[];
-  };
-  testimonialsTab?: {
-    tag: string;
-    title: string;
-    subtitle: string;
-    items: TestimonialItem[];
   };
 }
 
@@ -296,12 +283,8 @@ export default function AdminBrandStoryPage() {
       { title: '품질 및 소요', body: "고온증류 과정은 72시간 동안 지속되며, 이 과정에서 침향의 깊은 향과 성분이 추출됩니다. 이후 숙성 및 검사 과정을 거쳐 최종 제품으로 출고됩니다. 이러한 철저한 공정은 대라천 '참'침향이 왜 프리미엄인지를 보여줍니다." },
       { title: '기후와 시간의 조합', body: "우리는 자연의 시간을 존중하며, 그 시간을 제품에 담아냅니다. 26년의 기다림 끝에 얻은 침향오일은 고객에게 최고의 경험을 선사하기 위한 대라천 '참'침향의 결정체입니다." },
     ],
+    processGroups: [],
   });
-  // mediaTab / testimonialsTab: /about-agarwood 전용. brand-story UI에서는 노출 안 함
-  // (데이터 계약 유지를 위해 state는 보존)
-  const [mediaTab, setMediaTab] = useState<NonNullable<BrandStoryData['mediaTab']>>({ tag: 'In the Press', title: '언론에 소개된 대라천', subtitle: '주요 매체와 보도자료에서 다룬 대라천의 소식을 확인하세요.', items: [] });
-  const [testimonialsTab, setTestimonialsTab] = useState<NonNullable<BrandStoryData['testimonialsTab']>>({ tag: 'Customer Voices', title: '고객이 전하는 대라천', subtitle: '실제 사용자분들이 들려주는 진솔한 후기입니다.', items: [] });
-
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -342,14 +325,7 @@ export default function AdminBrandStoryPage() {
           ...d.processTab,
           images: Array.isArray(d.processTab.images) ? d.processTab.images : [],
           steps: Array.isArray(d.processTab.steps) ? d.processTab.steps : [],
-        });
-        if (d?.mediaTab) setMediaTab({
-          ...d.mediaTab,
-          items: Array.isArray(d.mediaTab.items) ? d.mediaTab.items : [],
-        });
-        if (d?.testimonialsTab) setTestimonialsTab({
-          ...d.testimonialsTab,
-          items: Array.isArray(d.testimonialsTab.items) ? d.testimonialsTab.items : [],
+          processGroups: Array.isArray((d.processTab as any).processGroups) ? (d.processTab as any).processGroups : [],
         });
       } catch (err) {
         console.error('Failed to fetch pages:', err);
@@ -734,6 +710,7 @@ export default function AdminBrandStoryPage() {
           {/* Process Tab */}
           <SectionCard title="탭 5 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
+              {/* 헤더 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={processTab.tag} onChange={(v) => setProcessTab({ ...processTab, tag: v })} />
                 <LabeledInput label="제목" value={processTab.title} onChange={(v) => setProcessTab({ ...processTab, title: v })} />
@@ -746,48 +723,120 @@ export default function AdminBrandStoryPage() {
                   <LabeledInput label="총 시간 설명" value={processTab.totalTimeDesc} onChange={(v) => setProcessTab({ ...processTab, totalTimeDesc: v })} />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">공정 이미지 (최대 2개)</label>
-                <div className="space-y-3">
-                  {processTab.images.map((img, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...processTab.images]; n[i] = url; setProcessTab({ ...processTab, images: n }); }} subdir="pages" />
-                      </div>
-                      <button type="button" onClick={() => setProcessTab({ ...processTab, images: removeItem(processTab.images, i) })} className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5">삭제</button>
-                    </div>
-                  ))}
-                  {processTab.images.length < 2 && (
-                    <button type="button" onClick={() => setProcessTab({ ...processTab, images: [...processTab.images, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                      + 이미지 추가
-                    </button>
-                  )}
+
+              {/* 공정 그룹 (침향 생산과정 / 침향 오일 생산과정) */}
+              <div className="border-t border-gray-100 pt-5">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-gray-700">공정 그룹 ({processTab.processGroups.length}개)</label>
+                  <span className="text-xs text-gray-400">각 그룹 안에 단계를 추가하세요</span>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">생산 공정 단계</label>
-                <div className="space-y-2">
-                  {processTab.steps.map((step, i) => (
-                    <div key={i} className="flex gap-2 items-center">
-                      <span className="w-8 text-center text-xs text-gray-400 shrink-0">{i + 1}</span>
-                      <input value={step} onChange={(e) => { const n = [...processTab.steps]; n[i] = e.target.value; setProcessTab({ ...processTab, steps: n }); }} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <button type="button" onClick={() => setProcessTab({ ...processTab, steps: moveItem(processTab.steps, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
-                      <button type="button" onClick={() => setProcessTab({ ...processTab, steps: moveItem(processTab.steps, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
-                      <button type="button" onClick={() => setProcessTab({ ...processTab, steps: removeItem(processTab.steps, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                <div className="space-y-6">
+                  {processTab.processGroups.map((group, gi) => (
+                    <div key={gi} className="border border-gray-200 rounded-xl p-5 bg-gray-50">
+                      {/* 그룹 헤더 제어 */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-gray-600">공정 그룹 {gi + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, processGroups: moveItem(processTab.processGroups, gi, gi - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, processGroups: moveItem(processTab.processGroups, gi, gi + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, processGroups: removeItem(processTab.processGroups, gi) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+
+                      {/* 그룹 기본 정보 */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <input
+                          placeholder="그룹 제목 (예: 침향 생산과정)"
+                          value={group.title}
+                          onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], title: e.target.value }; setProcessTab({ ...processTab, processGroups: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="영문 제목 (예: AGARWOOD PRODUCTION)"
+                          value={group.titleEn}
+                          onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], titleEn: e.target.value }; setProcessTab({ ...processTab, processGroups: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <div className="sm:col-span-2">
+                          <textarea
+                            placeholder="공정 소개 설명 (선택)"
+                            rows={3}
+                            value={group.description}
+                            onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], description: e.target.value }; setProcessTab({ ...processTab, processGroups: n }); }}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 그룹 대표 이미지 */}
+                      <div className="mb-4">
+                        <label className="block text-xs text-gray-500 mb-1">대표 이미지 (우측 세로 이미지, 선택)</label>
+                        <ImageUploadField
+                          value={group.image ?? ''}
+                          onChange={(url) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], image: url }; setProcessTab({ ...processTab, processGroups: n }); }}
+                          subdir="pages"
+                        />
+                      </div>
+
+                      {/* 단계 목록 */}
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-2">단계 목록 ({group.steps.length}개)</label>
+                        <div className="space-y-3">
+                          {group.steps.map((step, si) => (
+                            <div key={si} className="bg-white border border-gray-200 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-gray-400 font-mono">{String(si + 1).padStart(2, '0')}</span>
+                                <div className="flex gap-1">
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: moveItem(n[gi].steps, si, si - 1) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: moveItem(n[gi].steps, si, si + 1) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: removeItem(n[gi].steps, si) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 mb-2">
+                                <input
+                                  placeholder="단계명 (예: 식목)"
+                                  value={step.name}
+                                  onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: n[gi].steps.map((s, ii) => ii === si ? { ...s, name: e.target.value } : s) }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                                />
+                                <input
+                                  placeholder="소요 시간 (예: 5~20년 이상)"
+                                  value={step.duration ?? ''}
+                                  onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: n[gi].steps.map((s, ii) => ii === si ? { ...s, duration: e.target.value } : s) }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                                />
+                              </div>
+                              <input
+                                placeholder="단계 설명 (선택)"
+                                value={step.desc}
+                                onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: n[gi].steps.map((s, ii) => ii === si ? { ...s, desc: e.target.value } : s) }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: [...n[gi].steps, { step: String(n[gi].steps.length + 1).padStart(2, '0'), name: '', desc: '' }] }; setProcessTab({ ...processTab, processGroups: n }); }}
+                            className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                          >
+                            + 단계 추가
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setProcessTab({ ...processTab, steps: [...processTab.steps, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                    + 단계 추가
+                  <button
+                    type="button"
+                    onClick={() => setProcessTab({ ...processTab, processGroups: [...processTab.processGroups, { title: '', titleEn: '', description: '', image: '', steps: [] }] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+                  >
+                    + 공정 그룹 추가
                   </button>
                 </div>
               </div>
             </div>
           </SectionCard>
 
-          {/*
-            mediaTab / testimonialsTab UI는 /brand-story 페이지에서 더 이상 노출되지 않아 제거.
-            (해당 탭은 /about-agarwood 전용. 데이터 계약 유지를 위해 state와 BrandStoryData 인터페이스의 옵셔널 필드는 보존.)
-          */}
           </>)}
         </div>
       </div>

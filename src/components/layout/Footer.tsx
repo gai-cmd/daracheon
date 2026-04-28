@@ -38,7 +38,7 @@ export default function Footer() {
         {/* Company Info */}
         <div className={styles.companyInfo}>
           <p className={styles.companyInfoRow}>
-            <span className={styles.infoBlock}>ZOEL LIFE 주식회사 | 대표: {company.ceo} | 사업자등록번호: {company.businessReg}</span>
+            <span className={styles.infoBlock}>조엘라이프 주식회사 | 대표: {company.ceo} | 사업자등록번호: {company.businessReg}</span>
             <span className={styles.infoSep} aria-hidden>·</span>
             <span className={styles.infoBlock}>주소: {company.address}</span>
             <span className={styles.infoSep} aria-hidden>·</span>

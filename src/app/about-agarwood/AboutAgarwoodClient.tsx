@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
-import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab } from './page';
 
 /**
  * 학명(Latin scientific name) 및 괄호 음역을 한 덩어리로 유지.
@@ -72,11 +72,31 @@ const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   ],
 };
 
+const DEFAULT_USAGE: UsageTab = {
+  tag: 'Dosage & Usage · 복용법',
+  title: '복용 및 사용법',
+  subtitle: '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.',
+  introLines: [
+    '침향의 하루 섭취량은 아퀼라리아 아갈로차 록스버그(AAR)에서 추출한 정품일 경우, 오일 기준 3mg, 분말 기준 0.5g이고, 오일은 아침 공복에, 분말은 저녁에 복용하시는 게 좋습니다.',
+    '채취된 침향은 그 모양 그대로 사용되는 게 가장 좋기에, 고객의 요청이 있기 전까지는 형태를 변형시키거나 가공하지 않습니다.',
+    "대라천 '참'침향은 제품이력제를 도입, 생산부터 유통까지 품질을 보증합니다.",
+  ],
+  items: [
+    { product: '침향캡슐', instruction: '1일 1회 아침식사 후 1캡슐(1일 적정 침향오일 복용량은 3mg)을 권장합니다.' },
+    { product: '침향오일(수지)', instruction: '1일 1~2회 손목이나 인중 또는 목 뒷부분에 발라주거나 소량을 복용합니다.' },
+    { product: '침향수', instruction: '1일 1회 20ml씩 음용하거나 가습기 등을 이용해 취수 및 취향해도 좋습니다.' },
+    { product: '침향스틱', instruction: "조금씩 조각 내 온열판에 올려 취향하시고, 그런 후 '차'처럼 다시 사용해도 좋습니다." },
+    { product: '침향차', instruction: '1일 1회 25~30개의 조각을 뜨거운 물에 우려 마십니다. 재탕 삼탕해도 좋습니다. (뜨거운 물을 붓고 처음 올라오는 향은 반드시 취향하시길 권장합니다)' },
+    { product: '침향단', instruction: '하루 1회 저녁식사 후 침향단을 천천히 씹어서 복용합니다.' },
+    { product: '침향선향', instruction: '취향실을 정해 선향을 충분히 발향시키고 약 30분 후에 들어가 명상하며 취향합니다.' },
+  ],
+};
+
 interface Props {
   data: AboutAgarwoodData | null;
 }
 
-const TABS = ['침향이란?', '진짜 침향 구별 방법', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'] as const;
+const TABS = ['침향이란?', '진짜 침향 구별', '문헌에 실린 침향', '논문에 실린 침향', '복용 및 사용법'] as const;
 
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -90,10 +110,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const dosageSection = data?.dosageSection;
   const literatures = data?.literatures ?? [];
   const papers = data?.papers ?? [];
-  const mediaTab = data?.mediaTab;
-  const testimonialsTab = data?.testimonialsTab;
-  const mediaItems = mediaTab?.items ?? [];
-  const testimonialItems = testimonialsTab?.items ?? [];
+  const usageTab = data?.usageTab ?? DEFAULT_USAGE;
   const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
@@ -1087,297 +1104,71 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 4: 매체에 실린 침향 ════════════ */}
+      {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
       {activeTab === 4 && (
         <>
-        <TabHeroBanner src={tabHeroes.tab4} alt="매체에 실린 침향" />
+        <TabHeroBanner src={tabHeroes.tab4} alt="복용 및 사용법" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
                 <div className={styles.chapterNum}>—</div>
-                <div className={styles.chapterTag}>{mediaTab?.tag ?? 'In the Media · 매체'}</div>
+                <div className={styles.chapterTag}>{usageTab.tag ?? 'Dosage & Usage · 복용법'}</div>
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
                   <h3>
-                    <em>{mediaTab?.title ?? '매체에 실린 침향'}</em>
+                    <em>{usageTab.title ?? '복용 및 사용법'}</em>
                   </h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p>
-                    {mediaTab?.subtitle ??
-                      '주요 매체와 기관에서 조명한 대라천 침향의 이야기. 25년의 기록과 공식 인증을 확인하세요.'}
+                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 18 }}>
+                    {usageTab.subtitle ?? '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.'}
                   </p>
                 </RevealOnScroll>
-                <div
-                  style={{
-                    marginTop: 30,
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    gap: 20,
-                  }}
-                >
-                  {mediaItems.map((item, i) => {
-                    const CardInner = (
+                <div style={{ marginTop: 10, marginBottom: 36, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {(usageTab.introLines ?? DEFAULT_USAGE.introLines!).map((line, i) => (
+                    <RevealOnScroll key={i} delay={i * 80}>
+                      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, paddingLeft: 14, borderLeft: '2px solid rgba(212,168,67,0.35)' }}>
+                        {line}
+                      </p>
+                    </RevealOnScroll>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {(usageTab.items ?? DEFAULT_USAGE.items).map((item, i) => (
+                    <RevealOnScroll key={item.product + i} delay={(i % 7) * 60}>
                       <div
                         style={{
-                          padding: 22,
-                          border: '1px solid rgba(212,168,67,0.2)',
-                          background: 'rgba(255,255,255,0.02)',
-                          height: '100%',
+                          display: 'flex',
+                          gap: 20,
+                          padding: '20px 0',
+                          borderBottom: '1px solid rgba(212,168,67,0.15)',
+                          alignItems: 'flex-start',
                         }}
                       >
-                        {item.image && (
-                          <div
-                            style={{
-                              position: 'relative',
-                              width: '100%',
-                              aspectRatio: '16/9',
-                              marginBottom: 16,
-                              overflow: 'hidden',
-                              border: '1px solid rgba(212,168,67,0.15)',
-                            }}
-                          >
-                            <Image
-                              src={item.image}
-                              alt={item.title}
-                              fill
-                              sizes="(max-width: 1024px) 50vw, 33vw"
-                              style={{ objectFit: 'cover' }}
-                            />
-                          </div>
-                        )}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14, gap: 10 }}>
+                        <div style={{ flexShrink: 0, minWidth: 100 }}>
                           <span
                             style={{
-                              padding: '4px 10px',
-                              border: '1px solid rgba(212,168,67,0.35)',
+                              display: 'inline-block',
+                              padding: '5px 12px',
+                              border: '1px solid rgba(212,168,67,0.4)',
                               fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.62rem',
-                              letterSpacing: '0.22em',
+                              fontSize: '0.65rem',
+                              letterSpacing: '0.12em',
                               color: 'var(--accent)',
-                              textTransform: 'uppercase',
+                              whiteSpace: 'nowrap',
                             }}
                           >
-                            {item.outlet}
+                            {item.product}
                           </span>
-                          {item.date && (
-                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{item.date}</span>
-                          )}
                         </div>
-                        <h4
-                          style={{
-                            fontFamily: "'Noto Serif KR', serif",
-                            fontSize: '1.05rem',
-                            color: '#fff',
-                            marginBottom: 10,
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          {item.title}
-                        </h4>
-                        {item.summary && (
-                          <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, fontWeight: 300 }}>
-                            {item.summary}
-                          </p>
-                        )}
-                        {item.link && (
-                          <p
-                            style={{
-                              marginTop: 14,
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.64rem',
-                              letterSpacing: '0.22em',
-                              color: 'var(--accent)',
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            원문 보기 →
-                          </p>
-                        )}
-                      </div>
-                    );
-                    return (
-                      <RevealOnScroll key={item.title + i} delay={(i % 6) * 60}>
-                        {item.link ? (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: 'none', display: 'block', height: '100%' }}
-                          >
-                            {CardInner}
-                          </a>
-                        ) : (
-                          CardInner
-                        )}
-                      </RevealOnScroll>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        </>
-      )}
-
-      {/* ════════════ TAB 5: 고객이 남긴 침향 ════════════ */}
-      {activeTab === 5 && (
-        <>
-        <TabHeroBanner src={tabHeroes.tab5} alt="고객이 남긴 침향 — 실사용 후기" />
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>—</div>
-                <div className={styles.chapterTag}>{testimonialsTab?.tag ?? 'Testimonials · 후기'}</div>
-              </div>
-              <div className={styles.chapterBody}>
-                <RevealOnScroll>
-                  <h3>
-                    <em>{testimonialsTab?.title ?? '고객이 남긴 침향'}</em>
-                  </h3>
-                </RevealOnScroll>
-                <RevealOnScroll delay={100}>
-                  <p>
-                    {testimonialsTab?.subtitle ??
-                      '대라천 침향을 경험한 고객들의 진솔한 이야기. 세월이 빚어낸 향이 일상에 남긴 흔적입니다.'}
-                  </p>
-                </RevealOnScroll>
-                <div
-                  style={{
-                    marginTop: 30,
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    gap: 20,
-                  }}
-                >
-                  {testimonialItems.map((item, i) => {
-                    const card = (
-                      <div
-                        style={{
-                          border: '1px solid rgba(212,168,67,0.2)',
-                          background: 'rgba(255,255,255,0.02)',
-                          height: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          transition: 'border-color 200ms, background 200ms',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {item.image && (
-                          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', flexShrink: 0 }}>
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              fill
-                              style={{ objectFit: 'cover' }}
-                              sizes="(max-width: 768px) 100vw, 33vw"
-                            />
-                          </div>
-                        )}
-                        <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                        {typeof item.rating === 'number' && item.rating > 0 && (
-                          <div style={{ marginBottom: 14, letterSpacing: '0.1em' }}>
-                            {[...Array(5)].map((_, j) => (
-                              <span
-                                key={j}
-                                style={{
-                                  color: j < item.rating! ? 'var(--accent)' : 'rgba(212,168,67,0.2)',
-                                  fontSize: '0.95rem',
-                                }}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <p
-                          style={{
-                            fontFamily: "'Noto Serif KR', serif",
-                            fontSize: '0.95rem',
-                            color: 'rgba(255,255,255,0.82)',
-                            lineHeight: 1.85,
-                            fontWeight: 300,
-                            flexGrow: 1,
-                            marginBottom: 18,
-                          }}
-                        >
-                          &ldquo;{item.body}&rdquo;
+                        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.85, fontWeight: 300, wordBreak: 'keep-all' }}>
+                          {item.instruction}
                         </p>
-                        <div style={{ paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.15)' }}>
-                          <div
-                            style={{
-                              fontFamily: "'Noto Serif KR', serif",
-                              fontSize: '1rem',
-                              color: '#fff',
-                              fontWeight: 400,
-                              marginBottom: 4,
-                            }}
-                          >
-                            {item.name}
-                          </div>
-                          {item.role && (
-                            <div
-                              style={{
-                                fontSize: '0.72rem',
-                                color: 'rgba(255,255,255,0.55)',
-                                marginBottom: 6,
-                              }}
-                            >
-                              {item.role}
-                            </div>
-                          )}
-                          {item.product && (
-                            <div
-                              style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                                fontSize: '0.68rem',
-                                letterSpacing: '0.22em',
-                                color: 'var(--accent-soft)',
-                                textTransform: 'uppercase',
-                                marginBottom: item.link ? 8 : 0,
-                              }}
-                            >
-                              {item.product}
-                            </div>
-                          )}
-                          {item.link && (
-                            <div
-                              style={{
-                                fontSize: '0.78rem',
-                                color: 'var(--accent)',
-                                fontWeight: 500,
-                                marginTop: 6,
-                              }}
-                            >
-                              원문 보기 →
-                            </div>
-                          )}
-                        </div>
-                        </div>
                       </div>
-                    );
-                    return (
-                      <RevealOnScroll key={(item.link ?? item.name) + i} delay={(i % 6) * 60}>
-                        {item.link ? (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: 'none', display: 'block', height: '100%' }}
-                          >
-                            {card}
-                          </a>
-                        ) : (
-                          card
-                        )}
-                      </RevealOnScroll>
-                    );
-                  })}
+                    </RevealOnScroll>
+                  ))}
                 </div>
               </div>
             </div>

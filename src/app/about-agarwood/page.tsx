@@ -73,10 +73,16 @@ export interface DosageItem { num: string; title: string; body: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
-export interface MediaItem { outlet: string; date?: string; title: string; summary?: string; image?: string; link?: string }
-export interface TestimonialItem { name: string; role?: string; rating?: number; body: string; product?: string; image?: string; link?: string }
 export interface RegistryRow { label: string; value: string }
 export interface RegistrySection { title: string; subtitle?: string; rows: RegistryRow[] }
+export interface UsageItem { product: string; instruction: string; }
+export interface UsageTab {
+  tag?: string;
+  title?: string;
+  subtitle?: string;
+  introLines?: string[];
+  items: UsageItem[];
+}
 
 export interface OfficialSource {
   num: string;
@@ -116,8 +122,7 @@ export interface TabHeroes {
   tab1?: string;  // 진짜 침향 구별 방법
   tab2?: string;  // 문헌에 실린 침향
   tab3?: string;  // 논문에 실린 침향
-  tab4?: string;  // 매체에 실린 침향
-  tab5?: string;  // 고객이 남긴 침향
+  tab4?: string;  // 복용 및 사용법
 }
 
 export interface AboutAgarwoodData {
@@ -134,8 +139,7 @@ export interface AboutAgarwoodData {
   literatures: Literature[];
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
-  mediaTab?: { tag: string; title: string; subtitle?: string; items: MediaItem[] };
-  testimonialsTab?: { tag: string; title: string; subtitle?: string; items: TestimonialItem[] };
+  usageTab?: UsageTab;
 }
 
 export default async function AboutAgarwoodPage() {
