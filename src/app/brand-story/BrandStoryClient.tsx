@@ -508,12 +508,15 @@ export default function BrandStoryClient({ data }: Props) {
       {activeTab === 4 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
-            <div className={styles.chapterHead}>
-              <div className={styles.chapterTag}>{processTab?.tag ?? 'PRODUCTION PROCESS'}</div>
-              <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
-              <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
-              <div className={styles.line} />
-            </div>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>05</div>
+                <div className={styles.chapterTag}>{processTab?.tag ?? 'PRODUCTION PROCESS'}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
+                <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
+                <div className={styles.line} style={{ margin: '24px 0' }} />
 
             {/* Stats */}
             {processStats.length > 0 && (
@@ -616,6 +619,8 @@ export default function BrandStoryClient({ data }: Props) {
                     <div style={{ padding: '14px 16px', fontFamily: "'Noto Sans KR', sans-serif", fontSize: '0.88rem', color: '#fff', fontWeight: 400 }}>{v.title}</div>
                   </div>
                 ))}
+              </div>
+            </div>
               </div>
             </div>
           </div>
