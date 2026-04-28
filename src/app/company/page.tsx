@@ -76,6 +76,7 @@ interface CompanyChapter {
   tag: string;
   title: string;
   body: string;
+  image?: string;
 }
 
 interface CompanyHero {
@@ -233,6 +234,11 @@ export default async function CompanyPage() {
                           ZOEL LIFE
                         </span>
                       </div>
+                    </div>
+                  )}
+                  {ch.image && !showLogos && (
+                    <div style={{ margin: '24px 0', position: 'relative', width: '100%', maxWidth: 560, aspectRatio: '16/9', overflow: 'hidden' }}>
+                      <img src={ch.image} alt={ch.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </div>
                   )}
                   <p>{ch.body}</p>
