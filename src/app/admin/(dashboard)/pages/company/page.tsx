@@ -17,6 +17,7 @@ interface CompanyHero {
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
+  heroImage?: string;
 }
 
 interface CompanyData {
@@ -25,7 +26,7 @@ interface CompanyData {
 }
 
 const DEFAULT_HERO: CompanyHero = {
-  kicker: '회사소개',
+  kicker: '회사 소개 · About Us',
   titleLine1: '진짜를 증명하는 일에',
   titleEmphasis: '25년을 쓰다',
   lede:
@@ -263,6 +264,12 @@ export default function AdminCompanyPage() {
               <LabeledInput label="제목 1행" value={hero.titleLine1} onChange={(v) => setHero({ ...hero, titleLine1: v })} />
               <LabeledInput label="제목 강조 (이탤릭 em 태그로 렌더)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
               <LabeledTextarea label="lede (헤더 아래 소개 문장)" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
+              <ImageUploadField
+                label="히어로 배경 이미지"
+                value={hero.heroImage ?? ''}
+                onChange={(url) => setHero({ ...hero, heroImage: url })}
+                subdir="pages"
+              />
             </div>
           </SectionCard>
 

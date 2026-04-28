@@ -207,6 +207,9 @@ export default async function ProcessPage() {
       <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        {hero.heroImage && (
+          <div className={styles.heroBg} style={{ backgroundImage: `url(${hero.heroImage})` }} />
+        )}
         <div
           className="orn-plume"
           aria-hidden

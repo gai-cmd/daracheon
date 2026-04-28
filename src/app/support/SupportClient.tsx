@@ -9,6 +9,7 @@ export interface SupportHero {
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
+  heroImage?: string;
 }
 
 export interface SupportChannel {
@@ -126,6 +127,9 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
     <>
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        {hero?.heroImage && (
+          <div className={styles.heroBg} style={{ backgroundImage: `url(${hero.heroImage})` }} />
+        )}
         <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>

@@ -38,6 +38,12 @@ export default function AdminPagesPage() {
       desc: '/support 연락 채널 · 회사정보 · 샘플 Lot 편집',
       icon: '○',
     },
+    {
+      href: '/admin/pages/products',
+      title: '제품 소개',
+      desc: '/products 히어로 키커 · 제목 · 배경 이미지 편집',
+      icon: '◑',
+    },
   ];
 
   return (

@@ -4,6 +4,7 @@ import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsClient from './ProductsClient';
 import styles from './page.module.css';
+import storyStyles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,21 @@ interface ProductCategory {
   label: string;
   labelEn: string;
 }
+
+interface ProductsHero {
+  kicker: string;
+  titleLine1: string;
+  titleEmphasis: string;
+  lede: string;
+  heroImage?: string;
+}
+
+const DEFAULT_PRODUCTS_HERO: ProductsHero = {
+  kicker: '제품 소개 · Products',
+  titleLine1: '수십 년 숙성의 시간을',
+  titleEmphasis: '담은 고귀한 제품',
+  lede: '베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업. 모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.',
+};
 
 const CERTS = [
   { mark: 'C', k: 'CITES', v: '국제협약 인증' },
@@ -197,7 +213,9 @@ export default async function ProductsPage() {
   // 한 곳에서 편집하면 홈·제품 페이지 모두 반영된다.
   const pagesData = await readSingleSafe<{
     home?: { certs?: Array<{ mark: string; name: string; sub: string }> };
+    products?: { hero?: ProductsHero };
   }>('pages');
+  const productsHero: ProductsHero = { ...DEFAULT_PRODUCTS_HERO, ...pagesData?.products?.hero };
   const homeCerts = pagesData?.home?.certs ?? [];
   const certs = homeCerts.length > 0
     ? homeCerts.map((c) => ({ mark: c.mark, k: c.name, v: c.sub }))
@@ -246,25 +264,20 @@ export default async function ProductsPage() {
       <JsonLd data={collectionJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       {/* PAGE HERO */}
-      <section className={styles.pageHero}>
-        <div className={styles.wrap}>
-          <div className={styles.crumb}>
-            <a href="/">Home</a>
-            <span className={styles.crumbSep}>/</span>
-            <b>Products</b>
-          </div>
-          <div className={styles.pageHeroMain}>
-            <div>
-              <h1>
-                수십 년 숙성의 시간을
-                <br />
-                담은 <em>고귀한 제품</em>
-              </h1>
-            </div>
-            <p className={styles.lede}>
-              베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업.
-              모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.
-            </p>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+        {productsHero.heroImage && (
+          <div className={storyStyles.heroBg} style={{ backgroundImage: `url(${productsHero.heroImage})` }} />
+        )}
+        <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
+        <div className={storyStyles.wrap}>
+          <div className={storyStyles.kicker}>{productsHero.kicker}</div>
+          <div className={storyStyles.heroMain}>
+            <h1>
+              {productsHero.titleLine1}
+              <br />
+              <em>{productsHero.titleEmphasis}</em>
+            </h1>
+            <p className={storyStyles.lede}>{productsHero.lede}</p>
           </div>
         </div>
       </section>

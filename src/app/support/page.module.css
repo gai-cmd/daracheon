@@ -10,6 +10,16 @@
 }
 
 /* HERO */
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
 .hero {
   padding: calc(var(--nav-h) + 70px) 0 60px;
   position: relative;

@@ -84,6 +84,7 @@ interface CompanyHero {
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
+  heroImage?: string;
 }
 
 interface CompanyData {
@@ -92,7 +93,7 @@ interface CompanyData {
 }
 
 const DEFAULT_HERO: CompanyHero = {
-  kicker: '회사소개',
+  kicker: '회사 소개 · About Us',
   titleLine1: '진짜를 증명하는 일에',
   titleEmphasis: '25년을 쓰다',
   lede:
@@ -149,6 +150,9 @@ export default async function CompanyPage() {
       <JsonLd data={companyJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+        {hero.heroImage && (
+          <div className={styles.heroBg} style={{ backgroundImage: `url(${hero.heroImage})` }} />
+        )}
         <div
           className="orn-plume"
           aria-hidden

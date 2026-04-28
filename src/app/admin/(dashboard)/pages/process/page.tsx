@@ -10,6 +10,7 @@ interface ProcessHero {
   titleEmphasis: string;
   latLabel: string;
   lede: string;
+  heroImage?: string;
 }
 
 interface ChapterStat {
@@ -63,7 +64,7 @@ interface ProcessData {
 }
 
 const DEFAULT_HERO: ProcessHero = {
-  kicker: '침향 농장 이야기',
+  kicker: '침향 농장 이야기 · Farm Story',
   titleLine1: '베트남 하띤의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
@@ -360,6 +361,12 @@ export default function AdminProcessPage() {
               </div>
               <LabeledInput label="좌표 라벨 (예: Lat 18° N · Ha Tinh, Vietnam)" value={hero.latLabel} onChange={(v) => setHero({ ...hero, latLabel: v })} />
               <LabeledTextarea label="리드 본문 (lede)" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={4} />
+              <ImageUploadField
+                label="히어로 배경 이미지"
+                value={hero.heroImage ?? ''}
+                onChange={(url) => setHero({ ...hero, heroImage: url })}
+                subdir="pages"
+              />
             </div>
           </SectionCard>
 

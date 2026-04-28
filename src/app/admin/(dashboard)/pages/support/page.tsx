@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import ImageUploadField from '@/components/admin/ImageUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
 
 interface SupportHero {
@@ -8,6 +9,7 @@ interface SupportHero {
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
+  heroImage?: string;
 }
 
 interface SupportChannel {
@@ -46,7 +48,7 @@ interface SupportData {
 }
 
 const DEFAULT_HERO: SupportHero = {
-  kicker: '문의하기',
+  kicker: '문의하기 · Support',
   titleLine1: '무엇을',
   titleEmphasis: '도와드릴까요',
   lede:
@@ -315,6 +317,12 @@ export default function AdminSupportPage() {
                 <LabeledInput label="제목 강조 문구 (예: 도와드릴까요)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
               </div>
               <LabeledTextarea label="Lede 설명문" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
+              <ImageUploadField
+                label="히어로 배경 이미지"
+                value={hero.heroImage ?? ''}
+                onChange={(url) => setHero({ ...hero, heroImage: url })}
+                subdir="pages"
+              />
             </div>
           </SectionCard>
 
