@@ -35,6 +35,11 @@ interface SeoSettings {
   ogImage: string;
 }
 
+interface SocialLink {
+  label: string;
+  url: string;
+}
+
 interface SettingsData {
   name: string;
   nameHanja: string;
@@ -45,14 +50,10 @@ interface SettingsData {
   description: string;
   email: string;
   url: string;
-  logo: string;          // legacy 단일 로고 (호환 유지)
-  brandLogo: string;     // 대라천 브랜드 로고 (Header 좌측 상단)
-  companyLogo: string;   // ZOEL LIFE 회사 로고 (Company 페이지)
-  social: {
-    instagram: string;
-    youtube: string;
-    line: string;
-  };
+  logo: string;
+  brandLogo: string;
+  companyLogo: string;
+  socialLinks?: SocialLink[];
   farms: Farm[];
   certifications: Certification[];
   awards: string[];
@@ -80,12 +81,8 @@ export default function AdminSettingsPage() {
     companyLogo: '',
   });
 
-  // Section 2: Social
-  const [social, setSocial] = useState({
-    instagram: '',
-    youtube: '',
-    line: '',
-  });
+  // Section 2: Social Links
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
   // Section 3: Farms
   const [farms, setFarms] = useState<Farm[]>([]);
@@ -154,11 +151,7 @@ export default function AdminSettingsPage() {
           brandLogo: data.brandLogo || '',
           companyLogo: data.companyLogo || '',
         });
-        setSocial({
-          instagram: data.social?.instagram || '',
-          youtube: data.social?.youtube || '',
-          line: data.social?.line || '',
-        });
+        setSocialLinks(Array.isArray(data.socialLinks) ? data.socialLinks : []);
         setFarms(data.farms || []);
         setCertifications(
           (data.certifications || []).map((c) => ({
@@ -206,7 +199,7 @@ export default function AdminSettingsPage() {
 
   // Save handlers
   const handleSaveBasicInfo = () => saveSection('basic', { ...basicInfo });
-  const handleSaveSocial = () => saveSection('social', { social });
+  const handleSaveSocial = () => saveSection('social', { socialLinks });
   const handleSaveFarms = () => saveSection('farms', { farms });
   const handleSaveCertifications = () => saveSection('certs', { certifications, awards });
   const handleSaveSeo = () => saveSection('seo', { seo });
@@ -442,28 +435,48 @@ export default function AdminSettingsPage() {
 
           {/* Section 2: Social Media */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              소셜 미디어
-            </h2>
-            <div className="space-y-4">
-              <LabeledInput
-                label="Instagram URL"
-                type="url"
-                value={social.instagram}
-                onChange={(v) => setSocial({ ...social, instagram: v })}
-              />
-              <LabeledInput
-                label="YouTube URL"
-                type="url"
-                value={social.youtube}
-                onChange={(v) => setSocial({ ...social, youtube: v })}
-              />
-              <LabeledInput
-                label="LINE URL"
-                type="url"
-                value={social.line}
-                onChange={(v) => setSocial({ ...social, line: v })}
-              />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">소셜 미디어</h2>
+            <p className="text-xs text-gray-400 mb-6">URL이 비어있으면 프론트에서 자동으로 숨겨집니다.</p>
+            <div className="space-y-3">
+              {socialLinks.map((item, i) => (
+                <div key={i} className="flex gap-2 items-start">
+                  <input
+                    placeholder="이름 (예: Instagram)"
+                    value={item.label}
+                    onChange={(e) => {
+                      const next = [...socialLinks];
+                      next[i] = { ...next[i], label: e.target.value };
+                      setSocialLinks(next);
+                    }}
+                    className="w-32 shrink-0 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500"
+                  />
+                  <input
+                    type="url"
+                    placeholder="URL"
+                    value={item.url}
+                    onChange={(e) => {
+                      const next = [...socialLinks];
+                      next[i] = { ...next[i], url: e.target.value };
+                      setSocialLinks(next);
+                    }}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setSocialLinks(socialLinks.filter((_, j) => j !== i))}
+                    className="shrink-0 text-red-400 hover:text-red-600 px-2 py-2 text-sm border border-red-200 rounded-lg"
+                  >
+                    삭제
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setSocialLinks([...socialLinks, { label: '', url: '' }])}
+                className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+              >
+                + 항목 추가
+              </button>
             </div>
             <div className="mt-6 flex justify-end">
               <SaveButton onClick={handleSaveSocial} loading={saving === 'social'} />

@@ -107,7 +107,7 @@ export default function BrandStoryClient({ data }: Props) {
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.wrap}>
-          <div className={styles.kicker}>{hero?.sectionTag ?? 'Brand Story'}</div>
+          <div className={styles.kicker}>{hero?.sectionTag ?? '브랜드 스토리 · Brand Story'}</div>
           <div className={styles.heroMain}>
             <h1>
               {(() => {

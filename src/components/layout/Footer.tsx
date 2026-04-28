@@ -2,9 +2,12 @@ import Link from 'next/link';
 import { company } from '@/data/company';
 import styles from './Footer.module.css';
 
-const socialEntries = Object.entries(company.social).filter(([, url]) => url.trim() !== '');
+interface Props {
+  socialLinks?: Array<{ label: string; url: string }>;
+}
 
-export default function Footer() {
+export default function Footer({ socialLinks = [] }: Props) {
+  const activeSocial = socialLinks.filter((s) => s.url.trim() !== '');
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -24,11 +27,11 @@ export default function Footer() {
           <p className={styles.brandDesc}>
             조엘라이프의 대라천 &apos;참&apos;침향은 베트남 직영 농장 기반의 침향 전문기업에서 생산됩니다. 원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시 &apos;대한민국약전외한약(생약)규격집&apos;과 식약처 &apos;식품공전&apos;에 등록된 공식 침향만을 다룹니다.
           </p>
-          {socialEntries.length > 0 && (
+          {activeSocial.length > 0 && (
             <div className={styles.social}>
-              {socialEntries.map(([platform, url]) => (
-                <a key={platform} href={url} target="_blank" rel="noopener noreferrer">
-                  {platform}
+              {activeSocial.map((s) => (
+                <a key={s.label} href={s.url} target="_blank" rel="noopener noreferrer">
+                  {s.label}
                 </a>
               ))}
             </div>

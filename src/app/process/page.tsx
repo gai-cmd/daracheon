@@ -19,6 +19,7 @@ interface ProcessHero {
   titleEmphasis: string;
   latLabel: string;
   lede: string;
+  heroImage?: string;
 }
 
 interface ProcessChapter {
@@ -50,7 +51,7 @@ interface ProcessData {
 }
 
 const DEFAULT_HERO: ProcessHero = {
-  kicker: '침향 농장 이야기',
+  kicker: '침향 농장 이야기 · Farm Story',
   titleLine1: '베트남 하띤의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',

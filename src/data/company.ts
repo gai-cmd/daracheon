@@ -125,11 +125,7 @@ export const company = {
     'OCOP 베트남 정부 품질보증',
   ],
 
-  social: {
-    instagram: 'https://www.instagram.com/daracheon',
-    youtube: 'https://www.youtube.com/@daracheon',
-    line: 'https://line.me/R/ti/p/@daracheon',
-  },
+  socialLinks: [] as Array<{ label: string; url: string }>,
 
   timeline: [
     { year: '1999', event: '베트남 침향 연구 시작' },

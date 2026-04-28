@@ -111,5 +111,19 @@
     "line": "https://line.me/R/ti/p/@daracheon"
   },
   "companyLogo": "/images/ZOEL-LIFE-logo.png",
-  "updatedAt": "2026-04-24T12:23:07.625Z"
+  "updatedAt": "2026-04-24T12:23:07.625Z",
+  "socialLinks": [
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/daracheon"
+    },
+    {
+      "label": "Youtube",
+      "url": "https://www.youtube.com/@daracheon"
+    },
+    {
+      "label": "Line",
+      "url": "https://line.me/R/ti/p/@daracheon"
+    }
+  ]
 }
