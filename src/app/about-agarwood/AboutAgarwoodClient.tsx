@@ -84,6 +84,20 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
+  const tabHeroes = data?.tabHeroes ?? {};
+
+  function TabHeroBanner({ src, alt }: { src?: string; alt: string }) {
+    if (!src) return null;
+    return (
+      <div style={{ position: 'relative', width: '100%', height: 'clamp(200px, 32vw, 420px)', overflow: 'hidden' }}>
+        <Image src={src} alt={alt} fill sizes="100vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(10,11,16,0.25) 0%, rgba(10,11,16,0.55) 60%, #0a0b10 100%)',
+        }} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -156,6 +170,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (
         <>
+          <TabHeroBanner src={tabHeroes.tab0} alt="침향이란?" />
           {/* Chapter 01 — Definition */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
@@ -612,6 +627,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
+        <>
+          <TabHeroBanner src={tabHeroes.tab1} alt="진짜 침향 구별 방법" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -830,10 +847,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab2} alt="문헌에 실린 침향 — 동의보감·본초강목 고문헌" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -938,10 +958,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab3} alt="논문에 실린 침향 — 현대 과학 연구" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1078,10 +1101,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 4: 매체에 실린 침향 ════════════ */}
       {activeTab === 4 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab4} alt="매체에 실린 침향" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1212,10 +1238,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* ════════════ TAB 5: 고객이 남긴 침향 ════════════ */}
       {activeTab === 5 && (
+        <>
+        <TabHeroBanner src={tabHeroes.tab5} alt="고객이 남긴 침향 — 실사용 후기" />
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1371,6 +1400,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </div>
           </div>
         </section>
+        </>
       )}
 
       {/* CTA */}
