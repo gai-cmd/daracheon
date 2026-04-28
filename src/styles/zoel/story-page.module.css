@@ -12,6 +12,7 @@
 /* ── HERO ── */
 .hero {
   position: relative;
+  padding: calc(var(--nav-h) + 20px) 0 20px;
   overflow: hidden;
   background:
     radial-gradient(1200px 600px at 20% 30%, rgba(212, 168, 67, 0.10), transparent 60%),
