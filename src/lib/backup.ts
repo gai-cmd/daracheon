@@ -256,6 +256,7 @@ export async function pruneSnapshots(
 export { listGitHubBackups, fetchGitHubBackup, isGitHubBackupConfigured } from './backup-github';
 export { isEmailBackupConfigured } from './backup-email';
 export { isEncryptionConfigured, decryptString, looksEncrypted } from './backup-crypto';
+export { isBlobEnabled } from './db';
 export type { GitHubBackupEntry } from './backup-github';
 
 /**
@@ -294,16 +295,23 @@ export function parseBackupString(raw: string): SnapshotPayload | null {
 export async function restoreFromPayload(
   payload: SnapshotPayload,
   options: { restoreUsers?: boolean; restoreAuditLog?: boolean; sourceNote?: string } = {}
-): Promise<{ restored: string[]; skipped: string[]; preRestoreId: string | null }> {
-  // 현재 상태를 pre-restore 로 백업
+): Promise<{ restored: string[]; skipped: string[]; missingInBackup: string[]; preRestoreId: string | null }> {
+  // 복원 전 현재 상태 스냅샷 — Blob 활성 시 실패하면 복원 중단 (롤백 포인트 없는 상태에서 덮어쓰기 방지)
   const preRestore = await createSnapshot('pre-restore', {
     source: options.sourceNote ?? 'payload',
     originalLabel: payload.label,
     originalCreatedAt: payload.createdAt,
   });
 
+  if (!preRestore && isBlobEnabled()) {
+    throw new Error(
+      '복원 전 안전 스냅샷(pre-restore) 생성에 실패했습니다. 롤백 포인트 없이 복원할 수 없습니다. Blob 상태를 확인하세요.'
+    );
+  }
+
   const restored: string[] = [];
   const skipped: string[] = [];
+  const missingInBackup: string[] = [];
 
   for (const key of DB_FILES) {
     if (key === 'admin-users' && !options.restoreUsers) {
@@ -318,8 +326,11 @@ export async function restoreFromPayload(
     if (Array.isArray(value)) {
       await writeData(key, value);
       restored.push(key);
+    } else if (value === undefined || value === null) {
+      missingInBackup.push(key);
     } else {
-      skipped.push(key);
+      // 배열이 아닌 타입 — 백업 손상
+      missingInBackup.push(key);
     }
   }
   for (const key of SINGLETON_FILES) {
@@ -327,18 +338,20 @@ export async function restoreFromPayload(
     if (value !== null && value !== undefined && typeof value === 'object') {
       await writeSingle(key, value);
       restored.push(key);
+    } else if (value === undefined) {
+      missingInBackup.push(key);
     } else {
       skipped.push(key);
     }
   }
 
-  return { restored, skipped, preRestoreId: preRestore?.id ?? null };
+  return { restored, skipped, missingInBackup, preRestoreId: preRestore?.id ?? null };
 }
 
 export async function restoreSnapshot(
   id: string,
   options: { restoreUsers?: boolean; restoreAuditLog?: boolean } = {}
-): Promise<{ restored: string[]; skipped: string[]; preRestoreId: string | null }> {
+): Promise<{ restored: string[]; skipped: string[]; missingInBackup: string[]; preRestoreId: string | null }> {
   const payload = await fetchSnapshot(id);
   if (!payload) throw new Error(`스냅샷을 찾을 수 없습니다: ${id}`);
   return restoreFromPayload(payload, { ...options, sourceNote: `blob:${id}` });

@@ -173,8 +173,9 @@ export default function AdminBackupPage() {
       if (!res.ok || !body.success) {
         setToast({ msg: `GitHub 복원 실패: ${body?.message ?? 'unknown'}`, type: 'error' });
       } else {
+        const missing = body.missingInBackup?.length ?? 0;
         setToast({
-          msg: `GitHub 복원 완료 — ${body.restored?.length ?? 0}개 · 롤백용: ${body.preRestoreId ?? '없음'}`,
+          msg: `GitHub 복원 완료 — ${body.restored?.length ?? 0}개${missing > 0 ? ` · ⚠ 백업에 누락된 항목 ${missing}개 (미복원)` : ''} · 롤백용: ${body.preRestoreId ?? '없음'}`,
           type: 'success',
         });
         await fetchList();
@@ -232,8 +233,9 @@ export default function AdminBackupPage() {
       if (!res.ok || !body.success) {
         setToast({ msg: `복원 실패: ${body?.message ?? 'unknown'}`, type: 'error' });
       } else {
+        const missing = body.missingInBackup?.length ?? 0;
         setToast({
-          msg: `복원 완료 — ${body.restored?.length ?? 0}개 복원 · 롤백용: ${body.preRestoreId ?? '없음'}`,
+          msg: `복원 완료 — ${body.restored?.length ?? 0}개 복원${missing > 0 ? ` · ⚠ 백업에 누락된 항목 ${missing}개 (미복원)` : ''} · 롤백용: ${body.preRestoreId ?? '없음'}`,
           type: 'success',
         });
         await fetchList();
@@ -301,7 +303,9 @@ export default function AdminBackupPage() {
             <TierBadge
               title="Tier 1 · Vercel Blob"
               desc="매일 자동 스냅샷 · 즉시 복원 가능"
-              on
+              on={!!tierStatus.tier1_blob}
+              envHint="BLOB_READ_WRITE_TOKEN"
+              required
             />
             <TierBadge
               title="Tier 2 · GitHub"
@@ -323,6 +327,12 @@ export default function AdminBackupPage() {
               required
             />
           </div>
+          {!tierStatus.tier1_blob && (
+            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800">
+              🚨 <strong>BLOB_READ_WRITE_TOKEN 미설정</strong> — Tier 1 백업이 완전히 비활성화되어 있습니다.
+              백업이 전혀 저장되지 않고 있습니다. Vercel 대시보드 → Storage → Blob → 프로젝트 연결 후 환경변수를 추가하세요.
+            </div>
+          )}
           {!tierStatus.encryption && (
             <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
               ⚠ BACKUP_ENCRYPTION_KEY 가 설정되지 않아 Tier 2 · Tier 3 미러링이 중단되어 있습니다

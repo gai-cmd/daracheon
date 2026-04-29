@@ -31,24 +31,34 @@ export async function GET(request: NextRequest) {
     // Tier 1 — Blob snapshot
     const snap = await createSnapshot('daily', { trigger: isVercelCron ? 'vercel-cron' : 'external' });
 
+    // Blob 비활성 또는 생성 실패 → 명확한 에러. success:true 로 감추지 않음
+    if (!snap) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Tier 1 백업 실패: BLOB_READ_WRITE_TOKEN 미설정 또는 Blob 스토리지 오류. 백업이 저장되지 않았습니다.',
+          tier1: null,
+          at: new Date().toISOString(),
+        },
+        { status: 500 }
+      );
+    }
+
     // Tier 2/3 — 외부 미러링 (암호화). 일요일(UTC getDay()===0)엔 이메일도.
-    // createSnapshot 의 body 는 새로 추가된 필드. null 방어.
     const isWeekly = new Date().getUTCDay() === 0;
-    const mirror = snap?.body
-      ? await mirrorSnapshot('daily', snap.body, {
-          sendEmail: isWeekly,
-          meta: { snapshotId: snap.id, trigger: isVercelCron ? 'vercel-cron' : 'external' },
-        })
-      : null;
+    const mirror = await mirrorSnapshot('daily', snap.body, {
+      sendEmail: isWeekly,
+      meta: { snapshotId: snap.id, trigger: isVercelCron ? 'vercel-cron' : 'external' },
+    });
 
     // 오래된 blob 스냅샷 정리
     const prune = await pruneSnapshots();
 
     return NextResponse.json({
       success: true,
-      tier1: snap ? { id: snap.id, size: snap.size, url: snap.url } : null,
-      tier2_github: mirror?.tier2Github,
-      tier3_email: mirror?.tier3Email,
+      tier1: { id: snap.id, size: snap.size, url: snap.url },
+      tier2_github: mirror.tier2Github,
+      tier3_email: mirror.tier3Email,
       prune,
       at: new Date().toISOString(),
     });

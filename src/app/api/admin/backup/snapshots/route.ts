@@ -12,6 +12,7 @@ import {
   isGitHubBackupConfigured,
   isEmailBackupConfigured,
   isEncryptionConfigured,
+  isBlobEnabled,
 } from '@/lib/backup';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { logAdmin } from '@/lib/audit';
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
     success: true,
     snapshots,
     status: {
-      tier1_blob: true,
+      tier1_blob: isBlobEnabled(),
       tier2_github: isGitHubBackupConfigured(),
       tier3_email: isEmailBackupConfigured(),
       encryption: isEncryptionConfigured(),
@@ -110,9 +111,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const snap = await createSnapshot('manual', { actor: gate.session!.email });
+    if (!snap) {
+      return NextResponse.json(
+        { success: false, message: 'Blob 미설정 또는 스토리지 오류 — BLOB_READ_WRITE_TOKEN 확인' },
+        { status: 500 }
+      );
+    }
     await logAdmin('settings', 'update', {
-      summary: `수동 스냅샷 생성: ${snap?.id ?? 'skipped'}`,
-      meta: { id: snap?.id, size: snap?.size },
+      summary: `수동 스냅샷 생성: ${snap.id}`,
+      meta: { id: snap.id, size: snap.size },
     }).catch(() => {});
     return NextResponse.json({ success: true, snapshot: snap });
   } catch (err) {
@@ -143,7 +150,7 @@ export async function PUT(request: NextRequest) {
     if (typeof body.id === 'string' && body.id) {
       const result = await restoreSnapshot(body.id, opts);
       await logAdmin('settings', 'update', {
-        summary: `스냅샷 복원 (Tier1 Blob): ${body.id} (${result.restored.length}개 테이블)`,
+        summary: `스냅샷 복원 (Tier1 Blob): ${body.id} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'tier1_blob', id: body.id, ...result, actor: gate.session!.email },
       }).catch(() => {});
       return NextResponse.json({ success: true, source: 'tier1_blob', ...result });
@@ -159,7 +166,7 @@ export async function PUT(request: NextRequest) {
       }
       const result = await restoreFromPayload(payload, { ...opts, sourceNote: `github:${body.path}` });
       await logAdmin('settings', 'update', {
-        summary: `스냅샷 복원 (Tier2 GitHub): ${body.path} (${result.restored.length}개 테이블)`,
+        summary: `스냅샷 복원 (Tier2 GitHub): ${body.path} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'tier2_github', path: body.path, ...result, actor: gate.session!.email },
       }).catch(() => {});
       return NextResponse.json({ success: true, source: 'tier2_github', path: body.path, ...result });
@@ -175,7 +182,7 @@ export async function PUT(request: NextRequest) {
       }
       const result = await restoreFromPayload(payload, { ...opts, sourceNote: 'upload' });
       await logAdmin('settings', 'update', {
-        summary: `스냅샷 복원 (업로드): ${payload.label} ${payload.createdAt}`,
+        summary: `스냅샷 복원 (업로드): ${payload.label} ${payload.createdAt} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'upload', ...result, actor: gate.session!.email },
       }).catch(() => {});
       return NextResponse.json({ success: true, source: 'upload', ...result });
