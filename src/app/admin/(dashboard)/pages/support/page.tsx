@@ -52,7 +52,7 @@ const DEFAULT_HERO: SupportHero = {
   titleLine1: '무엇을',
   titleEmphasis: '도와드릴까요',
   lede:
-    '제품에 대한 질문, Lot 번호 조회, 대량 주문 · B2B 문의까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
+    '제품에 대한 질문, 대량 주문 · B2B 문의까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
 };
 
 const DEFAULT_CHANNELS: SupportChannel[] = [

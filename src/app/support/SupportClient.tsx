@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import type { FaqItem } from '@/data/company';
+import NaverMap from '@/components/NaverMap';
 import styles from './page.module.css';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 
@@ -127,10 +128,17 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   return (
     <>
       {/* HERO */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '108px' }}>
-        {hero?.heroImage && (
-          <div className={storyStyles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${hero.heroImage}")` }} />
-        )}
+      <section
+        className={`${storyStyles.hero} orn-grain orn-grain--faint`}
+        style={{
+          paddingBottom: '108px',
+          ...(hero?.heroImage ? {
+            backgroundImage: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.72) 0%, rgba(20,22,31,.78) 100%), url("${hero.heroImage}")`,
+            backgroundSize: 'auto, auto, cover',
+            backgroundPosition: '20% 30%, 0 0, center',
+          } : {}),
+        }}
+      >
         <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
         <div className={storyStyles.wrap}>
           <div className={storyStyles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>
@@ -326,23 +334,23 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                     오시는 <em>길</em>
                   </h2>
                   <div className={styles.map}>
-                    <div className={styles.mapPin} />
-                    <div className={styles.mapLabel}>
-                      {mapLabel.title}
-                      <small>{mapLabel.address}</small>
-                    </div>
+                    <NaverMap title={mapLabel.title} address={mapLabel.address} />
                   </div>
-                  <p
+                  <a
+                    href={`https://map.naver.com/v5/search/${encodeURIComponent(mapLabel.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
-                      marginTop: 18,
-                      fontSize: '0.85rem',
-                      color: 'rgba(255,255,255,0.55)',
-                      lineHeight: 1.8,
-                      fontWeight: 300,
+                      display: 'inline-block',
+                      marginTop: 14,
+                      fontSize: '0.8rem',
+                      color: 'var(--accent)',
+                      textDecoration: 'none',
+                      letterSpacing: '0.05em',
                     }}
                   >
-                    지하철 및 도보 안내는 사전 예약 시 별도 안내드립니다.
-                  </p>
+                    네이버 지도에서 보기 →
+                  </a>
                 </div>
               )}
             </div>
@@ -374,9 +382,11 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
       )}
 
       {/* TOAST */}
-      <div className={`${styles.toast} ${showToast ? styles.toastShow : ''}`}>
-        ✓ 문의가 정상 접수되었습니다
-      </div>
+      {showToast && (
+        <div className={styles.toast}>
+          ✓ 문의가 정상 접수되었습니다
+        </div>
+      )}
     </>
   );
 }
