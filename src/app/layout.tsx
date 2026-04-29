@@ -5,7 +5,7 @@ import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { readSingleSafe } from '@/lib/db';
+import { readSingleSafe, readSingleUncached } from '@/lib/db';
 import Link from 'next/link';
 import {
   DEFAULT_MAIN_NAV,
@@ -136,7 +136,7 @@ const organizationJsonLd = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const announcement = await readSingleSafe<Announcement>('announcement');
+  const announcement = await readSingleUncached<Announcement>('announcement');
   const showBanner = !!(announcement?.enabled && announcement.text);
 
   // Navigation lives in the DB so admins can edit labels / order / links

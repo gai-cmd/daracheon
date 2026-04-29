@@ -296,6 +296,30 @@ export async function readSingle<T = any>(filename: string): Promise<T | null> {
   return data as T;
 }
 
+// unstable_cache 를 우회해 blob 에서 직접 읽는다 (단일 객체 버전).
+// 배너·알림 등 즉시 반영이 필요한 데이터에 사용.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readSingleUncached<T = any>(filename: string): Promise<T | null> {
+  if (hasBlob) {
+    try {
+      const result = await blobReadRawUncached(filename);
+      if (result === NOT_FOUND) return fsReadRaw(filename) as T | null;
+      if (result !== null && !Array.isArray(result)) {
+        lastKnownGood.set(filename, result);
+        return result as T;
+      }
+      return null;
+    } catch {
+      const lkg = lastKnownGood.get(filename);
+      if (lkg && !Array.isArray(lkg)) return lkg as T;
+      return fsReadRaw(filename) as T | null;
+    }
+  }
+  const data = fsReadRaw(filename);
+  if (data === null || Array.isArray(data)) return null;
+  return data as T;
+}
+
 // 프론트엔드 RSC 용: blob 일시 장애 시 LKG → fs seed 순으로 최후 수단 제공.
 // Failure ladder:
 //   1. blob read (with 3x retry inside blobReadRawUncached)
