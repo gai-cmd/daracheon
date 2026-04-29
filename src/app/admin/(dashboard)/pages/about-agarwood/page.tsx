@@ -23,6 +23,35 @@ interface Benefit {
   description: string;
 }
 
+interface DosageItem {
+  num: string;
+  title: string;
+  body: string;
+}
+
+interface DosageSection {
+  tag?: string;
+  title: string;
+  items: DosageItem[];
+}
+
+interface OfficialSource {
+  num: string;
+  name: string;
+  authority: string;
+  finding: string;
+  detail: string;
+  highlight?: string;
+}
+
+interface OfficialSourcesSection {
+  title: string;
+  subtitle: string;
+  sources: OfficialSource[];
+  conclusionTitle: string;
+  conclusionBody: string;
+}
+
 interface Literature {
   title: string;
   author: string;
@@ -102,7 +131,12 @@ interface AboutAgarwoodData {
   };
   formationSteps: FormationStep[];
   specialReasons: SpecialReason[];
+  formationSectionTitle?: string;
   benefits: Benefit[];
+  specialReasonsSectionTitle?: string;
+  benefitsSectionTitle?: string;
+  dosageSection?: DosageSection;
+  officialSourcesSection?: OfficialSourcesSection;
   literatures: Literature[];
   papers: Paper[];
   cta: {
@@ -274,6 +308,21 @@ export default function AdminAboutAgarwoodPage() {
     { title: '뇌 건강', description: '뇌혈류 개선과 뇌세포 보호.' },
     { title: '소화 · 복통', description: '위를 따뜻하게 하여 소화 기능 개선.' },
   ]);
+  const [formationSectionTitle, setFormationSectionTitle] = useState('침향은 어떻게 만들어지나요?');
+  const [specialReasonsSectionTitle, setSpecialReasonsSectionTitle] = useState('침향이 특별한 4가지 이유');
+  const [benefitsSectionTitle, setBenefitsSectionTitle] = useState('침향의 효능에 주목!');
+  const [dosageSection, setDosageSection] = useState<DosageSection>({
+    tag: 'Chapter V · Dosage',
+    title: '침향, 어떻게 복용할까요?',
+    items: [],
+  });
+  const [officialSourcesSection, setOfficialSourcesSection] = useState<OfficialSourcesSection>({
+    title: '공식 기관이 인정한 침향',
+    subtitle: '대한민국 정부가 공식 등재한 침향의 기록',
+    sources: [],
+    conclusionTitle: '',
+    conclusionBody: '',
+  });
   const [authenticityTab, setAuthenticityTab] = useState<AuthenticityTabData>({
     subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
     intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
@@ -397,6 +446,11 @@ export default function AdminAboutAgarwoodPage() {
         if (d.formationSteps && d.formationSteps.length > 0) setFormationSteps(d.formationSteps);
         if (d.specialReasons && d.specialReasons.length > 0) setSpecialReasons(d.specialReasons);
         if (d.benefits && d.benefits.length > 0) setBenefits(d.benefits);
+        if (d.formationSectionTitle) setFormationSectionTitle(d.formationSectionTitle);
+        if (d.specialReasonsSectionTitle) setSpecialReasonsSectionTitle(d.specialReasonsSectionTitle);
+        if (d.benefitsSectionTitle) setBenefitsSectionTitle(d.benefitsSectionTitle);
+        if (d.dosageSection) setDosageSection(d.dosageSection);
+        if (d.officialSourcesSection) setOfficialSourcesSection(d.officialSourcesSection);
         if (d.tabHeroes) setTabHeroes(d.tabHeroes);
         if (d.authenticityTab) setAuthenticityTab(d.authenticityTab);
         setLiteratures(d.literatures ?? []);
@@ -511,12 +565,6 @@ export default function AdminAboutAgarwoodPage() {
         <div className="space-y-8">
           {activeAdminTab === 0 && (<>
 
-          {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 0 히어로 이미지 · 침향이란?" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">탭 전환 시 콘텐츠 상단에 표시되는 와이드 배너 이미지입니다.</p>
-            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab0 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab0: url })} subdir="pages" />
-          </SectionCard>
-
           {/* Hero */}
           <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -550,8 +598,9 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Formation Steps */}
-          <SectionCard title="Chapter II · Formation · 침향은 어떻게 만들어지나요?" onSave={() => saveSection('formationSteps', { formationSteps })} saving={saving === 'formationSteps'}>
+          <SectionCard title="Chapter II · Formation · 침향은 어떻게 만들어지나요?" onSave={() => saveSection('formationSteps', { formationSteps, formationSectionTitle })} saving={saving === 'formationSteps'}>
             <div className="space-y-4">
+              <LabeledInput label="섹션 제목" value={formationSectionTitle} onChange={(v) => setFormationSectionTitle(v)} />
               {formationSteps.map((step, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4 relative">
                   <div className="flex items-center justify-between mb-3">
@@ -600,8 +649,9 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Special Reasons */}
-          <SectionCard title="Chapter III · Why Special · 침향이 특별한 4가지 이유" onSave={() => saveSection('specialReasons', { specialReasons })} saving={saving === 'specialReasons'}>
+          <SectionCard title="Chapter III · Why Special · 침향이 특별한 4가지 이유" onSave={() => saveSection('specialReasons', { specialReasons, specialReasonsSectionTitle })} saving={saving === 'specialReasons'}>
             <div className="space-y-4">
+              <LabeledInput label="섹션 제목" value={specialReasonsSectionTitle} onChange={(v) => setSpecialReasonsSectionTitle(v)} />
               {specialReasons.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
@@ -644,8 +694,9 @@ export default function AdminAboutAgarwoodPage() {
           </SectionCard>
 
           {/* Benefits */}
-          <SectionCard title="Chapter IV · Benefits · 침향의 효능에 주목!" onSave={() => saveSection('benefits', { benefits })} saving={saving === 'benefits'}>
+          <SectionCard title="Chapter IV · Benefits · 침향의 효능에 주목!" onSave={() => saveSection('benefits', { benefits, benefitsSectionTitle })} saving={saving === 'benefits'}>
             <div className="space-y-4">
+              <LabeledInput label="섹션 제목" value={benefitsSectionTitle} onChange={(v) => setBenefitsSectionTitle(v)} />
               {benefits.map((item, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
@@ -684,6 +735,149 @@ export default function AdminAboutAgarwoodPage() {
               >
                 + 효능 추가
               </button>
+            </div>
+          </SectionCard>
+
+          {/* Dosage Section — Chapter V */}
+          <SectionCard title="Chapter V · Dosage · 복용 및 사용법" onSave={() => saveSection('dosageSection', { dosageSection })} saving={saving === 'dosageSection'}>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <LabeledInput label="섹션 태그 (선택)" value={dosageSection.tag ?? ''} onChange={(v) => setDosageSection({ ...dosageSection, tag: v })} />
+                <LabeledInput label="섹션 제목" value={dosageSection.title} onChange={(v) => setDosageSection({ ...dosageSection, title: v })} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">복용 항목 ({dosageSection.items.length})</label>
+                <div className="space-y-3">
+                  {dosageSection.items.map((item, i) => (
+                    <div key={i} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-600">항목 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setDosageSection({ ...dosageSection, items: moveItem(dosageSection.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setDosageSection({ ...dosageSection, items: moveItem(dosageSection.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setDosageSection({ ...dosageSection, items: removeItem(dosageSection.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input
+                          placeholder="번호 (예: 01)"
+                          value={item.num}
+                          onChange={(e) => { const n = [...dosageSection.items]; n[i] = { ...n[i], num: e.target.value }; setDosageSection({ ...dosageSection, items: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="복용법 제목"
+                          value={item.title}
+                          onChange={(e) => { const n = [...dosageSection.items]; n[i] = { ...n[i], title: e.target.value }; setDosageSection({ ...dosageSection, items: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <textarea
+                          placeholder="상세 설명"
+                          rows={2}
+                          value={item.body}
+                          onChange={(e) => { const n = [...dosageSection.items]; n[i] = { ...n[i], body: e.target.value }; setDosageSection({ ...dosageSection, items: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setDosageSection({ ...dosageSection, items: [...dosageSection.items, { num: String(dosageSection.items.length + 1).padStart(2, '0'), title: '', body: '' }] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                  >
+                    + 항목 추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Official Sources Section — Chapter VI */}
+          <SectionCard title="Chapter VI · Official Proof · 공식 기관 인증" onSave={() => saveSection('officialSourcesSection', { officialSourcesSection })} saving={saving === 'officialSourcesSection'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <LabeledInput label="섹션 제목" value={officialSourcesSection.title} onChange={(v) => setOfficialSourcesSection({ ...officialSourcesSection, title: v })} />
+                </div>
+                <div className="md:col-span-2">
+                  <LabeledTextarea label="섹션 부제목" value={officialSourcesSection.subtitle} onChange={(v) => setOfficialSourcesSection({ ...officialSourcesSection, subtitle: v })} rows={2} />
+                </div>
+              </div>
+
+              {/* Sources List */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">공식 출처 목록 ({officialSourcesSection.sources.length})</label>
+                <div className="space-y-4">
+                  {officialSourcesSection.sources.map((src, i) => (
+                    <div key={i} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-600">출처 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setOfficialSourcesSection({ ...officialSourcesSection, sources: moveItem(officialSourcesSection.sources, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setOfficialSourcesSection({ ...officialSourcesSection, sources: moveItem(officialSourcesSection.sources, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setOfficialSourcesSection({ ...officialSourcesSection, sources: removeItem(officialSourcesSection.sources, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                        <input
+                          placeholder="번호 (예: 01)"
+                          value={src.num}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], num: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="기관명"
+                          value={src.name}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], name: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="권위 (예: 식품의약품안전처)"
+                          value={src.authority}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], authority: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <input
+                          placeholder="핵심 인정 내용 (finding)"
+                          value={src.finding}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], finding: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <textarea
+                          placeholder="상세 설명 (detail)"
+                          rows={2}
+                          value={src.detail}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], detail: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="강조 텍스트 (highlight, 선택)"
+                          value={src.highlight ?? ''}
+                          onChange={(e) => { const n = [...officialSourcesSection.sources]; n[i] = { ...n[i], highlight: e.target.value }; setOfficialSourcesSection({ ...officialSourcesSection, sources: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setOfficialSourcesSection({ ...officialSourcesSection, sources: [...officialSourcesSection.sources, { num: String(officialSourcesSection.sources.length + 1).padStart(2, '0'), name: '', authority: '', finding: '', detail: '' }] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                  >
+                    + 출처 추가
+                  </button>
+                </div>
+              </div>
+
+              {/* Conclusion */}
+              <div className="pt-4 border-t border-gray-200 space-y-3">
+                <p className="text-sm font-semibold text-gold-600 uppercase tracking-widest">결론 문단</p>
+                <LabeledInput label="결론 제목" value={officialSourcesSection.conclusionTitle} onChange={(v) => setOfficialSourcesSection({ ...officialSourcesSection, conclusionTitle: v })} />
+                <LabeledTextarea label="결론 본문" value={officialSourcesSection.conclusionBody} onChange={(v) => setOfficialSourcesSection({ ...officialSourcesSection, conclusionBody: v })} rows={3} />
+              </div>
             </div>
           </SectionCard>
 

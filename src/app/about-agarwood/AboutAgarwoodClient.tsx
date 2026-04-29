@@ -232,7 +232,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>침향은 어떻게 만들어지나요?</h3>
+                    <h3>{data?.formationSectionTitle ?? '침향은 어떻게 만들어지나요?'}</h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
                     <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.08rem', marginBottom: 26 }}>
@@ -306,9 +306,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>
-                      침향이 <em>특별한 4가지 이유</em>
-                    </h3>
+                    <h3>{data?.specialReasonsSectionTitle ?? '침향이 특별한 4가지 이유'}</h3>
                   </RevealOnScroll>
                   <div
                     style={{
@@ -380,9 +378,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>
-                      침향의 <em>효능에 주목!</em>
-                    </h3>
+                    <h3>{data?.benefitsSectionTitle ?? '침향의 효능에 주목!'}</h3>
                   </RevealOnScroll>
                   <div
                     style={{

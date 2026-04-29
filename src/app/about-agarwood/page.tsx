@@ -132,8 +132,11 @@ export interface AboutAgarwoodData {
   officialSourcesSection?: OfficialSourcesSection;
   registrySection?: RegistrySection;
   formationSteps: FormationStep[];
+  formationSectionTitle?: string;
   specialReasons: SpecialReason[];
+  specialReasonsSectionTitle?: string;
   benefits: Benefit[];
+  benefitsSectionTitle?: string;
   dosageSection?: DosageSection;
   authenticityTab?: AuthenticityTab;
   literatures: Literature[];
