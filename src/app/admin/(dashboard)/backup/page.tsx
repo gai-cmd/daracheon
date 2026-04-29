@@ -100,6 +100,8 @@ export default function AdminBackupPage() {
   const [role, setRole] = useState<string | null>(null);
   const [restoreUsers, setRestoreUsers] = useState(false);
   const [restoreAuditLog, setRestoreAuditLog] = useState(false);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -150,6 +152,33 @@ export default function AdminBackupPage() {
       setToast({ msg: `GitHub 로드 오류: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setGithubLoading(false);
+    }
+  }
+
+  async function handleUploadRestore() {
+    if (!uploadFile) return;
+    if (!confirm(`'${uploadFile.name}' 파일로 DB를 복원합니다.\n복원 전 현재 상태는 pre-restore 스냅샷에 보관됩니다.\n계속할까요?`)) return;
+
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append('file', uploadFile);
+      form.append('restoreUsers', String(restoreUsers));
+      form.append('restoreAuditLog', String(restoreAuditLog));
+
+      const res = await fetch('/api/admin/backup', { method: 'POST', body: form });
+      const body = await res.json();
+      if (!res.ok || !body.success) {
+        setToast({ msg: `복원 실패: ${body?.message ?? 'unknown'}`, type: 'error' });
+      } else {
+        setToast({ msg: `파일 복원 완료 — ${body.restored?.length ?? 0}개 테이블 복원됨`, type: 'success' });
+        setUploadFile(null);
+        await fetchList();
+      }
+    } catch (err) {
+      setToast({ msg: `업로드 오류: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -366,6 +395,49 @@ export default function AdminBackupPage() {
               <span className="text-gray-700">감사 로그도 덮어쓰기</span>
               <span className="text-xs text-gray-500">(기본: 유지)</span>
             </label>
+          </div>
+        </section>
+
+        {/* 로컬 파일로 복원 */}
+        <section className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/40 p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">로컬 파일로 복원</h2>
+          <p className="mb-4 text-xs text-gray-500">
+            로컬 PC에 저장된 <code>backup-YYYY-MM-DD-*.json</code> 파일을 업로드하면 DB 전체가 복원됩니다.
+            복원 전 현재 상태가 자동으로 <strong>pre-restore</strong> 스냅샷에 저장됩니다.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:border-emerald-400 hover:bg-emerald-50">
+              <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              {uploadFile ? uploadFile.name : 'JSON 파일 선택…'}
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            {uploadFile && (
+              <>
+                <span className="text-xs text-gray-400">{(uploadFile.size / 1024).toFixed(0)} KB</span>
+                <button
+                  type="button"
+                  onClick={handleUploadRestore}
+                  disabled={uploading || !isSuperAdmin}
+                  className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {uploading ? '복원 중…' : '이 파일로 복원 →'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUploadFile(null)}
+                  className="text-xs text-gray-400 hover:text-gray-600"
+                >
+                  취소
+                </button>
+              </>
+            )}
           </div>
         </section>
 

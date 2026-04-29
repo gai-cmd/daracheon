@@ -333,24 +333,7 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
                   <h2>
                     오시는 <em>길</em>
                   </h2>
-                  <div className={styles.map}>
-                    <NaverMap title={mapLabel.title} address={mapLabel.address} />
-                  </div>
-                  <a
-                    href={`https://map.naver.com/v5/search/${encodeURIComponent(mapLabel.address)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'inline-block',
-                      marginTop: 14,
-                      fontSize: '0.8rem',
-                      color: 'var(--accent)',
-                      textDecoration: 'none',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    네이버 지도에서 보기 →
-                  </a>
+                  <NaverMap title={mapLabel.title} address={mapLabel.address} />
                 </div>
               )}
             </div>
