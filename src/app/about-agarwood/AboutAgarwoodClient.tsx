@@ -107,7 +107,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   return (
     <>
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '64px' }}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero?.heroImage && (
           <Image
             src={hero.heroImage}
@@ -190,7 +190,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {activeTab === 0 && (
         <>
           {/* Chapter 01 — Definition */}
-          <section className={styles.chapter}>
+          <section className={styles.chapter} style={{ paddingTop: '32px' }}>
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
@@ -639,7 +639,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
         <>
-        <section className={styles.chapter}>
+        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -863,7 +863,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
         <>
-        <section className={styles.chapter}>
+        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -973,7 +973,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
         <>
-        <section className={styles.chapter}>
+        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1115,7 +1115,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
       {activeTab === 4 && (
         <>
-        <section className={styles.chapter}>
+        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
