@@ -107,14 +107,14 @@ export default function AboutAgarwoodClient({ data }: Props) {
   return (
     <>
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
-        {hero?.heroImage && (
-          <div
-            className={styles.heroBg}
-            style={{ backgroundImage: `url('${hero.heroImage}')` }}
-            aria-hidden
-          />
-        )}
+      <section
+        className={`${styles.hero} orn-grain orn-grain--faint`}
+        style={hero?.heroImage ? {
+          backgroundImage: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.72) 0%, rgba(20,22,31,.78) 100%), url("${hero.heroImage}")`,
+          backgroundSize: 'auto, auto, cover',
+          backgroundPosition: '20% 30%, 0 0, center',
+        } : undefined}
+      >
         <div
           className="orn-plume"
           aria-hidden
