@@ -139,7 +139,7 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
             priority
             unoptimized
             aria-hidden
-            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}
         <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />

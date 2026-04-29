@@ -111,7 +111,7 @@ export default function BrandStoryClient({ data }: Props) {
             priority
             unoptimized
             aria-hidden
-            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}
         <div
