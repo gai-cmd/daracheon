@@ -24,11 +24,8 @@ export interface NavigationData {
 export const DEFAULT_MAIN_NAV: NavItem[] = [
   { label: '침향 이야기', href: '/about-agarwood' },
   { label: '브랜드 이야기', href: '/brand-story' },
-  { label: '침향 농장 이야기', href: '/media' },
-  { label: '제품 소개', href: '/products' },
   { label: '홈쇼핑 특별관', href: '/home-shopping' },
   { label: '회사소개', href: '/company' },
-  { label: '문의하기', href: '/support' },
 ];
 
 export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [

@@ -12,18 +12,12 @@ interface CompanyChapter {
   image?: string;
 }
 
-interface NavLink {
-  label: string;
-  href: string;
-}
-
 interface CompanyHero {
   kicker: string;
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
   heroImage?: string;
-  navLinks?: NavLink[];
 }
 
 interface CompanyData {
@@ -37,11 +31,6 @@ const DEFAULT_HERO: CompanyHero = {
   titleEmphasis: '25년을 쓰다',
   lede:
     '대라천 ZOEL LIFE Co., Ltd. — 베트남 직영 농장 기반의 침향 전문 기업. 원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시 규격집에 등재된 공식 침향만을 다룹니다.',
-  navLinks: [
-    { label: '침향 농장 이야기', href: '/media' },
-    { label: '제품 소개', href: '/products' },
-    { label: '문의하기', href: '/support' },
-  ],
 };
 
 const DEFAULT_CHAPTERS: CompanyChapter[] = [
@@ -273,51 +262,6 @@ export default function AdminCompanyPage() {
                 onChange={(url) => setHero({ ...hero, heroImage: url })}
                 subdir="pages"
               />
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
-                  하단 네비게이션 링크 ({(hero.navLinks ?? []).length}개)
-                </label>
-                <div className="space-y-2">
-                  {(hero.navLinks ?? []).map((link, i) => (
-                    <div key={i} className="flex gap-2 items-center">
-                      <input
-                        placeholder="링크 텍스트 (예: 침향 농장 이야기)"
-                        value={link.label}
-                        onChange={(e) => {
-                          const n = [...(hero.navLinks ?? [])];
-                          n[i] = { ...n[i], label: e.target.value };
-                          setHero({ ...hero, navLinks: n });
-                        }}
-                        className="w-40 flex-shrink-0 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
-                      />
-                      <input
-                        placeholder="URL (예: /media)"
-                        value={link.href}
-                        onChange={(e) => {
-                          const n = [...(hero.navLinks ?? [])];
-                          n[i] = { ...n[i], href: e.target.value };
-                          setHero({ ...hero, navLinks: n });
-                        }}
-                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setHero({ ...hero, navLinks: (hero.navLinks ?? []).filter((_, ii) => ii !== i) })}
-                        className="flex-shrink-0 rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50"
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => setHero({ ...hero, navLinks: [...(hero.navLinks ?? []), { label: '', href: '' }] })}
-                    className="text-sm font-medium text-gold-600 hover:text-gold-700"
-                  >
-                    + 링크 추가
-                  </button>
-                </div>
-              </div>
             </div>
           </SectionCard>
 
