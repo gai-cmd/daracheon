@@ -206,15 +206,19 @@ export default async function ProcessPage() {
       <JsonLd data={videoJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
-      <section
-        className={`${styles.hero} orn-grain orn-grain--faint`}
-        style={{
-          paddingBottom: '108px',
-          ...(hero.heroImage ? {
-            background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroImage}") center/cover no-repeat`,
-          } : {}),
-        }}
-      >
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '108px' }}>
+        {hero.heroImage && (
+          <Image
+            src={hero.heroImage}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized
+            aria-hidden
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden

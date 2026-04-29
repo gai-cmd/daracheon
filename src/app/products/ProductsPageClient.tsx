@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import NextImage from 'next/image';
 import type { Product } from '@/data/products';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 import ProductsClient from './ProductsClient';
@@ -31,12 +32,19 @@ export default function ProductsPageClient({ products, productCategories, hero }
   return (
     <>
       {/* HERO — 침향이야기와 동일한 구성 */}
-      <section
-        className={`${storyStyles.hero} orn-grain orn-grain--faint`}
-        style={hero.heroImage ? {
-          background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroImage}") center/cover no-repeat`,
-        } : undefined}
-      >
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+        {hero.heroImage && (
+          <NextImage
+            src={hero.heroImage}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized
+            aria-hidden
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import styles from '@/styles/zoel/story-page.module.css';
@@ -79,12 +81,18 @@ interface CompanyChapter {
   image?: string;
 }
 
+interface NavLink {
+  label: string;
+  href: string;
+}
+
 interface CompanyHero {
   kicker: string;
   titleLine1: string;
   titleEmphasis: string;
   lede: string;
   heroImage?: string;
+  navLinks?: NavLink[];
 }
 
 interface CompanyData {
@@ -98,6 +106,11 @@ const DEFAULT_HERO: CompanyHero = {
   titleEmphasis: '25년을 쓰다',
   lede:
     '대라천 ZOEL LIFE Co., Ltd. — 베트남 직영 농장 기반의 침향 전문 기업. 원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시 규격집에 등재된 공식 침향만을 다룹니다.',
+  navLinks: [
+    { label: '침향 농장 이야기', href: '/media' },
+    { label: '제품 소개', href: '/products' },
+    { label: '문의하기', href: '/support' },
+  ],
 };
 
 const DEFAULT_CHAPTERS: CompanyChapter[] = [
@@ -149,15 +162,19 @@ export default async function CompanyPage() {
     <>
       <JsonLd data={companyJsonLd} />
       {/* HERO */}
-      <section
-        className={`${styles.hero} orn-grain orn-grain--faint`}
-        style={{
-          paddingBottom: '108px',
-          ...(hero.heroImage ? {
-            background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroImage}") center/cover no-repeat`,
-          } : {}),
-        }}
-      >
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '108px' }}>
+        {hero.heroImage && (
+          <Image
+            src={hero.heroImage}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized
+            aria-hidden
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden
@@ -173,6 +190,33 @@ export default async function CompanyPage() {
             </h1>
             <p className={styles.lede}>{hero.lede}</p>
           </div>
+          {hero.navLinks && hero.navLinks.length > 0 && (
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
+              {hero.navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  style={{
+                    padding: '10px 20px',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: '1px solid rgba(212,168,67,0.25)',
+                    background: 'transparent',
+                    color: 'rgba(255,255,255,0.7)',
+                    fontWeight: 400,
+                    textDecoration: 'none',
+                    transition: 'all 300ms',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -101,12 +101,19 @@ export default function BrandStoryClient({ data }: Props) {
         />
       )}
       {/* HERO */}
-      <section
-        className={`${storyStyles.hero} orn-grain orn-grain--faint`}
-        style={hero?.heroBg ? {
-          background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroBg}") center/cover no-repeat`,
-        } : undefined}
-      >
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+        {hero?.heroBg && (
+          <Image
+            src={hero.heroBg}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized
+            aria-hidden
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.45, zIndex: 0 }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden
