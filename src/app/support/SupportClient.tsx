@@ -127,7 +127,7 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   return (
     <>
       {/* HERO */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '108px' }}>
         {hero?.heroImage && (
           <div className={storyStyles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${hero.heroImage}")` }} />
         )}

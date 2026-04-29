@@ -2,9 +2,8 @@ import type { Metadata } from 'next';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
-import ProductsClient from './ProductsClient';
+import ProductsPageClient from './ProductsPageClient';
 import styles from './page.module.css';
-import storyStyles from '@/styles/zoel/story-page.module.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -263,27 +262,8 @@ export default async function ProductsPage() {
     <>
       <JsonLd data={collectionJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      {/* PAGE HERO */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
-        {productsHero.heroImage && (
-          <div className={storyStyles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${productsHero.heroImage}")` }} />
-        )}
-        <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
-        <div className={storyStyles.wrap}>
-          <div className={storyStyles.kicker}>{productsHero.kicker}</div>
-          <div className={storyStyles.heroMain}>
-            <h1>
-              {productsHero.titleLine1}
-              <br />
-              <em>{productsHero.titleEmphasis}</em>
-            </h1>
-            <p className={storyStyles.lede}>{productsHero.lede}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Client: filter + sort + grid */}
-      <ProductsClient products={products} productCategories={productCategories} />
+      {/* Hero(탭 포함) + 제품 그리드 — 클라이언트 컴포넌트 */}
+      <ProductsPageClient products={products} productCategories={productCategories} hero={productsHero} />
 
       {/* CERTIFICATIONS */}
       <section className={styles.certs}>

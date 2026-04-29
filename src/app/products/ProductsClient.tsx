@@ -35,13 +35,18 @@ interface ProductCategory {
 interface ProductsClientProps {
   products: Product[];
   productCategories: ProductCategory[];
+  activeCategory?: string;
+  onCategoryChange?: (cat: string) => void;
 }
 
 type SortMode = 'featured' | 'new' | 'price-asc' | 'price-desc';
 
-export default function ProductsClient({ products, productCategories }: ProductsClientProps) {
-  const [activeCategory, setActiveCategory] = useState('all');
+export default function ProductsClient({ products, productCategories, activeCategory: controlledCategory, onCategoryChange }: ProductsClientProps) {
+  const [internalCategory, setInternalCategory] = useState('all');
   const [sortMode, setSortMode] = useState<SortMode>('featured');
+  const isControlled = controlledCategory !== undefined;
+  const activeCategory = isControlled ? controlledCategory : internalCategory;
+  const setActiveCategory = isControlled ? (onCategoryChange ?? (() => {})) : setInternalCategory;
 
   const filtered = useMemo(() => {
     const list = activeCategory === 'all' ? products : products.filter((p) => p.category === activeCategory);
@@ -54,21 +59,23 @@ export default function ProductsClient({ products, productCategories }: Products
 
   return (
     <>
-      {/* FILTER BAR */}
+      {/* FILTER BAR — controlled 모드(hero 탭 사용)에서는 정렬만 표시 */}
       <section className={styles.filters}>
         <div className={styles.wrap}>
-          <div className={styles.filterGroup}>
-            {productCategories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={activeCategory === cat.id ? styles.active : ''}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
+          {!isControlled && (
+            <div className={styles.filterGroup}>
+              {productCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={activeCategory === cat.id ? styles.active : ''}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          )}
           <div className={styles.sortGroup}>
             <span className={styles.count}>
               총 <b>{filtered.length}</b>개 제품
