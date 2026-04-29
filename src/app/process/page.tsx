@@ -208,7 +208,7 @@ export default async function ProcessPage() {
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         {hero.heroImage && (
-          <div className={styles.heroBg} style={{ backgroundImage: `url(${hero.heroImage})` }} />
+          <div className={styles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${hero.heroImage}")` }} />
         )}
         <div
           className="orn-plume"

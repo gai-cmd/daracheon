@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { BrandStoryData } from './page';
 import styles from './BrandStoryClient.module.css';
+import storyStyles from '@/styles/zoel/story-page.module.css';
 
 interface Props {
   data: BrandStoryData | null;
@@ -100,15 +101,22 @@ export default function BrandStoryClient({ data }: Props) {
         />
       )}
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+        {hero?.heroBg && (
+          <div
+            className={storyStyles.heroBg}
+            aria-hidden="true"
+            style={{ backgroundImage: `url("${hero.heroBg}")` }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden
           style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
-        <div className={styles.wrap}>
-          <div className={styles.kicker}>{hero?.sectionTag ?? '브랜드 스토리 · Brand Story'}</div>
-          <div className={styles.heroMain}>
+        <div className={storyStyles.wrap}>
+          <div className={storyStyles.kicker}>{hero?.sectionTag ?? '브랜드 스토리 · Brand Story'}</div>
+          <div className={storyStyles.heroMain}>
             <h1>
               {(() => {
                 const t = hero?.titleKr ?? "대라천 '참'침향";
@@ -123,25 +131,33 @@ export default function BrandStoryClient({ data }: Props) {
                 return t;
               })()}
             </h1>
-            <p className={styles.lede}>
+            <p className={storyStyles.lede}>
               {hero?.subtitle ??
                 "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* TAB BAR */}
-      <section className={styles.tabBar}>
-        <div className={styles.wrap}>
-          <div className={styles.tabRow}>
+          {/* TAB BAR — hero 내부 (침향이야기와 동일 구성) */}
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
             {TAB_LIST.map((tab, i) => (
               <button
                 key={tab}
                 type="button"
-                className={`${styles.tabBtn} ${activeTab === i ? styles.tabActive : ''}`}
                 onClick={() => setActiveTab(i)}
                 aria-current={activeTab === i ? 'page' : undefined}
+                style={{
+                  padding: '10px 20px',
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                  background: activeTab === i ? 'var(--accent)' : 'transparent',
+                  color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                  fontWeight: activeTab === i ? 600 : 400,
+                  transition: 'all 300ms',
+                  whiteSpace: 'nowrap',
+                }}
               >
                 {tab}
               </button>

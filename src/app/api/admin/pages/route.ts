@@ -14,6 +14,7 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   company: ['/company'],
   process: ['/process'],
   support: ['/support'],
+  products: ['/products'],
 };
 
 const VALID_KEYS = Object.keys(PAGE_PUBLIC_PATHS);

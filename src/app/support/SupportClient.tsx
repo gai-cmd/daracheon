@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import type { FaqItem } from '@/data/company';
 import styles from './page.module.css';
+import storyStyles from '@/styles/zoel/story-page.module.css';
 
 export interface SupportHero {
   kicker: string;
@@ -126,20 +127,20 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
   return (
     <>
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
         {hero?.heroImage && (
-          <div className={styles.heroBg} style={{ backgroundImage: `url(${hero.heroImage})` }} />
+          <div className={storyStyles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${hero.heroImage}")` }} />
         )}
         <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
-        <div className={styles.wrap}>
-          <div className={styles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>
-          <div className={styles.heroMain}>
+        <div className={storyStyles.wrap}>
+          <div className={storyStyles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>
+          <div className={storyStyles.heroMain}>
             <h1>
               {hero?.titleLine1 ?? '무엇을'}
               <br />
               <em>{hero?.titleEmphasis ?? '도와드릴까요'}</em>
             </h1>
-            <p className={styles.lede}>
+            <p className={storyStyles.lede}>
               {hero?.lede ?? '제품 상담부터 Lot 인증서 조회까지. 대라천이 직접 답변드립니다.'}
             </p>
           </div>

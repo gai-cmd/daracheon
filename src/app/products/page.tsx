@@ -266,7 +266,7 @@ export default async function ProductsPage() {
       {/* PAGE HERO */}
       <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
         {productsHero.heroImage && (
-          <div className={storyStyles.heroBg} style={{ backgroundImage: `url(${productsHero.heroImage})` }} />
+          <div className={storyStyles.heroBg} aria-hidden="true" style={{ backgroundImage: `url("${productsHero.heroImage}")` }} />
         )}
         <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
         <div className={storyStyles.wrap}>
