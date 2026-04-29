@@ -741,10 +741,8 @@ export default function AdminAboutAgarwoodPage() {
           {/* Dosage Section — Chapter V */}
           <SectionCard title="Chapter V · Dosage · 복용 및 사용법" onSave={() => saveSection('dosageSection', { dosageSection })} saving={saving === 'dosageSection'}>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <LabeledInput label="섹션 태그 (선택)" value={dosageSection.tag ?? ''} onChange={(v) => setDosageSection({ ...dosageSection, tag: v })} />
-                <LabeledInput label="섹션 제목" value={dosageSection.title} onChange={(v) => setDosageSection({ ...dosageSection, title: v })} />
-              </div>
+              <LabeledInput label="섹션 제목" value={dosageSection.title} onChange={(v) => setDosageSection({ ...dosageSection, title: v })} />
+              <LabeledInput label="섹션 태그 (선택)" value={dosageSection.tag ?? ''} onChange={(v) => setDosageSection({ ...dosageSection, tag: v })} />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">복용 항목 ({dosageSection.items.length})</label>
                 <div className="space-y-3">
