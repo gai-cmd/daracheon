@@ -176,17 +176,9 @@ export default function AdminCompanyPage() {
         setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
         return;
       }
-      // 저장된 서버 진실을 UI 에 다시 반영 — 실제로 무엇이 영속화되었는지
-      // 즉시 보여줘 사용자 기대와 서버 상태가 어긋나는 것을 드러낸다.
-      try {
-        const verifyRes = await fetch('/api/admin/pages', { cache: 'no-store' });
-        if (verifyRes.ok) {
-          const verify = (await verifyRes.json()) as { pages?: { company?: CompanyData } };
-          applyCompanyData(verify.pages?.company);
-        }
-      } catch (verifyErr) {
-        console.warn('post-save verify fetch failed', verifyErr);
-      }
+      // verify fetch 제거 — Blob 쓰기 직후 바로 읽으면 eventual consistency로
+      // stale 데이터를 반환해 UI가 이전 상태(defaults)로 되돌아가는 버그 있었음.
+      // 저장 성공 시 React state(사용자가 편집한 값)를 그대로 유지한다.
       setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
