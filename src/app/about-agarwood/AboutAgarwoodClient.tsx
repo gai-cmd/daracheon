@@ -107,7 +107,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   return (
     <>
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '64px' }}>
         {hero?.heroImage && (
           <Image
             src={hero.heroImage}
@@ -140,35 +140,51 @@ export default function AboutAgarwoodClient({ data }: Props) {
               )}
             </p>
           </div>
-          {/* TAB BAR — 히어로 내부 하단 */}
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
-            {TABS.map((tab, i) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(i)}
-                aria-current={activeTab === i ? 'page' : undefined}
-                style={{
-                  padding: '10px 20px',
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                  background: activeTab === i ? 'var(--accent)' : 'transparent',
-                  color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                  fontWeight: activeTab === i ? 600 : 400,
-                  transition: 'all 300ms',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
+
+      {/* STICKY TAB NAV */}
+      <nav
+        style={{
+          position: 'sticky',
+          top: 'var(--nav-h)',
+          zIndex: 10,
+          background: 'rgba(10,11,16,0.96)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(212,168,67,0.15)',
+        }}
+      >
+        <div
+          className={styles.wrap}
+          style={{ display: 'flex', gap: 4, flexWrap: 'wrap', paddingTop: 14, paddingBottom: 14 }}
+        >
+          {TABS.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(i)}
+              aria-current={activeTab === i ? 'page' : undefined}
+              style={{
+                padding: '10px 20px',
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontSize: '0.72rem',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                background: activeTab === i ? 'var(--accent)' : 'transparent',
+                color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                fontWeight: activeTab === i ? 600 : 400,
+                transition: 'all 300ms',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </nav>
 
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (
