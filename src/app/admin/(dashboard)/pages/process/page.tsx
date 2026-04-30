@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
+import VideoUploadField from '@/components/admin/VideoUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
 
 interface ProcessHero {
@@ -30,7 +31,7 @@ interface ProcessChapter {
 }
 
 interface ProductionVideo {
-  id: string;
+  src: string;
   title: string;
 }
 
@@ -100,7 +101,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     num: '03',
     tag: 'Partnership',
     title: '현지 공동체와의 25년',
-    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 한국 본사와 동일한 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다" — 박병주 대표의 원칙.',
+    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 베트남 현지 최고의 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다"',
     stats: [{ value: '62', label: 'families' }],
     imageSrc: 'https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280',
     imageAlt: '냐짱(Nha Trang) 고품질 원료 산지',
@@ -121,16 +122,9 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
 const DEFAULT_VIDEOS: ProductionVideos = {
   num: '05',
   tag: 'Videos',
-  title: '생산 영상 — 농장 현장',
+  title: '생산과정 — 농장 현장',
   body: '베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
-  items: [
-    { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '하띤성 대규모 재배지 드론 촬영' },
-    { id: '1oKXg0SyCbFy63C8hzQrPBs7THV4xIROE', title: '침향나무 식목·관수 루틴' },
-    { id: '1p8OQBwzt57lH6mF8zZFDMuAGttqNATze', title: '동나이성 전략 재배 거점' },
-    { id: '1IuUk2qrtyhE831wIZhFZkGngDx_hfON7', title: '냐짱 고품질 원료 산지' },
-    { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '푸국 해양성 기후 재배지' },
-    { id: '13zJY7WQ6rVNQVAROdcgle4M5FQhvQ1fJ', title: '람동 고산지대 특화 농장' },
-  ],
+  items: [],
 };
 
 const DEFAULT_CERTS: Certifications = {
@@ -252,7 +246,14 @@ export default function AdminProcessPage() {
           );
         }
         if (d?.productionVideos) {
-          setVideos({ ...DEFAULT_VIDEOS, ...d.productionVideos, items: d.productionVideos.items ?? [] });
+          setVideos({
+            ...DEFAULT_VIDEOS,
+            ...d.productionVideos,
+            items: (d.productionVideos.items ?? []).map((item) => ({
+              src: (item as { src?: string; id?: string }).src ?? '',
+              title: item.title ?? '',
+            })),
+          });
         }
         if (d?.certifications) {
           setCerts({
@@ -441,20 +442,33 @@ export default function AdminProcessPage() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">영상 항목 ({videos.items.length})</label>
-                <p className="mb-2 text-xs text-gray-500">Google Drive file id + 제목. 임베드 URL: drive.google.com/file/d/&lt;id&gt;/preview</p>
-                <div className="space-y-2">
+                <p className="mb-2 text-xs text-gray-500">영상 파일을 업로드하거나 URL을 직접 입력하세요. (mp4 / webm / mov)</p>
+                <div className="space-y-4">
                   {videos.items.map((v, i) => (
-                    <div key={i} className="grid grid-cols-[1fr_2fr_auto] items-center gap-2">
-                      <input value={v.id} onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], id: e.target.value }; setVideos({ ...videos, items: n }); }} placeholder="Drive file id" className="rounded-md border border-gray-300 px-3 py-2 font-mono text-xs focus:border-gold-500 focus:outline-none" />
-                      <input value={v.title} onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], title: e.target.value }; setVideos({ ...videos, items: n }); }} placeholder="영상 제목" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                      <div className="flex gap-1">
-                        <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                        <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                        <button type="button" onClick={() => setVideos({ ...videos, items: removeIndex(videos.items, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs font-medium text-gray-600">영상 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                          <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                          <button type="button" onClick={() => setVideos({ ...videos, items: removeIndex(videos.items, i) })} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <input
+                          value={v.title}
+                          onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], title: e.target.value }; setVideos({ ...videos, items: n }); }}
+                          placeholder="영상 제목"
+                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                        <VideoUploadField
+                          value={v.src}
+                          onChange={(url) => { const n = [...videos.items]; n[i] = { ...n[i], src: url }; setVideos({ ...videos, items: n }); }}
+                        />
                       </div>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setVideos({ ...videos, items: [...videos.items, { id: '', title: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 영상 추가</button>
+                  <button type="button" onClick={() => setVideos({ ...videos, items: [...videos.items, { src: '', title: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 영상 추가</button>
                 </div>
               </div>
             </div>

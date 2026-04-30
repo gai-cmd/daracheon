@@ -49,7 +49,7 @@ const DEFAULT_CHAPTERS: FarmStoryData['chapters'] = [
     num: '03',
     tag: 'Partnership',
     title: '현지 공동체와의 25년',
-    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 한국 본사와 동일한 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다" — 박병주 대표의 원칙.',
+    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 베트남 현지 최고의 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다"',
     stats: [{ value: '62', label: 'families' }],
     imageSrc: 'https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280',
     imageAlt: '냐짱(Nha Trang) 고품질 원료 산지',
@@ -70,15 +70,14 @@ const DEFAULT_CHAPTERS: FarmStoryData['chapters'] = [
 const DEFAULT_PROCESS_VIDEOS: FarmStoryData['processVideos'] = {
   num: '05',
   tag: 'Videos',
-  title: '생산 영상 — 농장 현장',
+  title: '생산과정 — 농장 현장',
   body: '베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
   items: [
-    { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '하띤성 대규모 재배지 드론 촬영' },
-    { id: '1oKXg0SyCbFy63C8hzQrPBs7THV4xIROE', title: '침향나무 식목·관수 루틴' },
-    { id: '1p8OQBwzt57lH6mF8zZFsDMuAGttqNATze', title: '동나이성 전략 재배 거점' },
-    { id: '1IuUk2qrtyhE831wIZhFZkGngDx_hfON7', title: '냐짱 고품질 원료 산지' },
-    { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '푸국 해양성 기후 재배지' },
-    { id: '13zJY7WQ6rVNQVAROdcgle4M5FQhvQ1fJ', title: '람동 고산지대 특화 농장' },
+    { src: '/uploads/media/farm-video-01.mp4', title: '하띤성 대규모 재배지 드론 촬영' },
+    { src: '/uploads/media/farm-video-02.mp4', title: '침향나무 식목·관수 루틴' },
+    { src: '/uploads/media/farm-video-03.mp4', title: '동나이성 전략 재배 거점' },
+    { src: '/uploads/media/farm-video-04.mp4', title: '냐짱 고품질 원료 산지' },
+    { src: '/uploads/media/farm-video-05.mp4', title: '푸국 해양성 기후 재배지' },
   ],
 };
 
@@ -256,10 +255,19 @@ export default async function MediaPage() {
   ]);
 
   const process = pagesData?.process;
+  const rawVideos = process?.productionVideos;
   const farmStory: FarmStoryData = {
     hero: process?.hero ?? DEFAULT_HERO,
     chapters: process?.chapters?.length ? process.chapters : DEFAULT_CHAPTERS,
-    processVideos: process?.productionVideos ?? DEFAULT_PROCESS_VIDEOS,
+    processVideos: rawVideos
+      ? {
+          ...rawVideos,
+          items: (rawVideos.items ?? []).map((item) => ({
+            src: (item as { src?: string; id?: string }).src ?? '',
+            title: item.title ?? '',
+          })),
+        }
+      : DEFAULT_PROCESS_VIDEOS,
     certifications: process?.certifications ?? DEFAULT_CERTIFICATIONS,
   };
 

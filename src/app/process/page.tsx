@@ -87,7 +87,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     num: '03',
     tag: 'Partnership',
     title: '현지 공동체와의 25년',
-    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 한국 본사와 동일한 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다" — 박병주 대표의 원칙.',
+    body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 베트남 현지 최고의 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다"',
     stats: [{ value: '62', label: 'families' }],
     imageSrc: 'https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280',
     imageAlt: '냐짱(Nha Trang) 고품질 원료 산지',
