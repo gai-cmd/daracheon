@@ -40,7 +40,7 @@ export default function robots(): MetadataRoute.Robots {
   const aiRules = AI_CRAWLERS.map((ua) => ({
     userAgent: ua,
     allow: '/',
-    disallow: ['/api/', '/admin/'],
+    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition'],
   }));
 
   return {
@@ -48,7 +48,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/'],
+        disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition'],
       },
       ...aiRules,
     ],

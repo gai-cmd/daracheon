@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import ChromeGate from '@/components/layout/ChromeGate';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
@@ -175,22 +176,26 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <GoogleAnalytics />
       </head>
       <body data-palette="gold">
-        {showBanner && (
-          <div className={`w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}>
-            <span>{announcement.text}</span>
-            {announcement.link && (
-              <Link
-                href={announcement.link}
-                className="ml-2 underline underline-offset-2 opacity-90 hover:opacity-100"
-              >
-                {announcement.linkLabel || '자세히 보기'}
-              </Link>
-            )}
-          </div>
-        )}
-        <Header mainNav={mainNav} brandLogo={brandLogo} />
+        <ChromeGate>
+          {showBanner && (
+            <div className={`w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}>
+              <span>{announcement.text}</span>
+              {announcement.link && (
+                <Link
+                  href={announcement.link}
+                  className="ml-2 underline underline-offset-2 opacity-90 hover:opacity-100"
+                >
+                  {announcement.linkLabel || '자세히 보기'}
+                </Link>
+              )}
+            </div>
+          )}
+          <Header mainNav={mainNav} brandLogo={brandLogo} />
+        </ChromeGate>
         <main>{children}</main>
-        <Footer socialLinks={socialLinks} company={footerCompany} />
+        <ChromeGate>
+          <Footer socialLinks={socialLinks} company={footerCompany} />
+        </ChromeGate>
         {/* Vercel Analytics + Speed Insights — 실제 사용자 LCP/CLS/INP 수집.
             DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
         <VercelAnalytics />
