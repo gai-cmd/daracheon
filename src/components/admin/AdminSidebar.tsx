@@ -25,6 +25,8 @@ const navItems: NavItem[] = [
   { label: '브랜드 이야기', href: '/admin/pages/brand-story', icon: '◈' },
   { label: '침향 농장 이야기', href: '/admin/media', icon: '▣' },
   { label: '제품 소개', href: '/admin/products', icon: '◈', badgeKey: 'products_out_of_stock' },
+  { label: '디지털 에디션', href: '/admin/pages/edition-agarwood', icon: '◐' },
+  { label: '에디션 리드', href: '/admin/leads', icon: '✉' },
   { label: '홈쇼핑 특별관', href: '/admin/broadcasts', icon: '▶', badgeKey: 'broadcasts_upcoming' },
   { label: '회사소개', href: '/admin/pages/company', icon: '▦' },
   { label: '문의하기', href: '/admin/inquiries', icon: '◆', badgeKey: 'inquiries_new' },

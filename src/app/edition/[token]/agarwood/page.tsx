@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { recordView } from '@/lib/leads';
+import { readSingleSafe } from '@/lib/db';
 import { agarwoodEditionKo } from '@/content/edition/agarwood.ko';
+import type { EditionContent } from '@/content/edition/types';
 import EditionClient from './EditionClient';
 
 export const metadata: Metadata = {
@@ -39,9 +41,13 @@ export default async function EditionPage({ params }: PageProps) {
     notFound();
   }
 
+  // pages.json 의 editionAgarwood 키를 우선 사용. 없으면 컴파일된 ko 시드.
+  const pages = await readSingleSafe<{ editionAgarwood?: EditionContent }>('pages');
+  const content: EditionContent = pages?.editionAgarwood ?? agarwoodEditionKo;
+
   return (
     <EditionClient
-      content={agarwoodEditionKo}
+      content={content}
       reader={{ name: result.name, company: result.company }}
     />
   );
