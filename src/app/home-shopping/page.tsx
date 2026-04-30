@@ -1,18 +1,8 @@
 import type { Metadata } from 'next';
-import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { readDataSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import styles from './page.module.css';
-
-interface WarningBanner {
-  enabled?: boolean;
-  alertLabel?: string;
-  title?: string;
-  body?: string;
-  bullets?: string[];
-  newsQuote?: string;
-  newsNote?: string;
-}
 
 export const dynamic = 'force-dynamic';
 
@@ -199,8 +189,6 @@ function formatDate(iso: string) {
 
 export default async function HomeShoppingPage() {
   const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
-  const pagesData = await readSingleSafe<{ homeShopping?: { warningBanner?: WarningBanner } }>('pages');
-  const warning = pagesData?.homeShopping?.warningBanner;
   const all = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
   const sorted = [...all].sort(
     (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
@@ -214,126 +202,6 @@ export default async function HomeShoppingPage() {
 
   return (
     <>
-      {/* Consumer Alert — 가짜 침향 경고 (DB: pages.homeShopping.warningBanner) */}
-      {warning?.enabled !== false && warning?.title && (
-        <section
-          style={{
-            padding: '48px 24px',
-            background: 'linear-gradient(180deg, rgba(212,168,67,0.08) 0%, rgba(10,11,16,0) 100%)',
-            borderBottom: '1px solid rgba(212,168,67,0.2)',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ maxWidth: 960, margin: '0 auto' }}>
-            {warning.alertLabel && (
-              <div
-                style={{
-                  display: 'inline-block',
-                  padding: '6px 16px',
-                  marginBottom: 24,
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  color: '#0a0b10',
-                  background: 'var(--accent)',
-                  borderRadius: 999,
-                }}
-              >
-                {warning.alertLabel}
-              </div>
-            )}
-            <h2
-              style={{
-                fontFamily: "'Noto Serif KR', serif",
-                fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
-                fontWeight: 300,
-                color: '#fff',
-                marginBottom: 20,
-                lineHeight: 1.4,
-              }}
-            >
-              {warning.title}
-            </h2>
-            {warning.body && (
-              <p
-                style={{
-                  fontSize: '1.02rem',
-                  color: 'rgba(255,255,255,0.72)',
-                  fontWeight: 300,
-                  lineHeight: 1.85,
-                  whiteSpace: 'pre-line',
-                  marginBottom: warning.bullets?.length ? 32 : 0,
-                }}
-              >
-                {warning.body}
-              </p>
-            )}
-            {warning.bullets && warning.bullets.length > 0 && (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: 16,
-                  marginTop: 24,
-                  maxWidth: 820,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-              >
-                {warning.bullets.map((b, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 8,
-                      color: '#fff',
-                      fontSize: '0.92rem',
-                      fontWeight: 500,
-                    }}
-                  >
-                    <span style={{ color: 'var(--accent)' }}>✓</span>
-                    {b}
-                  </div>
-                ))}
-              </div>
-            )}
-            {warning.newsQuote && (
-              <div
-                style={{
-                  marginTop: 36,
-                  padding: '18px 24px',
-                  border: '1px solid rgba(212,168,67,0.2)',
-                  borderRadius: 12,
-                  background: 'rgba(10,11,16,0.6)',
-                  maxWidth: 720,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '0.98rem',
-                    color: 'rgba(255,255,255,0.9)',
-                    marginBottom: warning.newsNote ? 8 : 0,
-                    fontWeight: 500,
-                  }}
-                >
-                  &ldquo;{warning.newsQuote}&rdquo;
-                </p>
-                {warning.newsNote && (
-                  <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-                    {warning.newsNote}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       {/* HERO + LIVE CARD */}
       <section className={styles.hero} id="live">
         <div className={styles.wrap}>
