@@ -101,7 +101,7 @@ export default function BrandStoryClient({ data }: Props) {
         />
       )}
       {/* HERO */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero?.heroBg && (
           <Image
             src={hero.heroBg}
@@ -141,35 +141,53 @@ export default function BrandStoryClient({ data }: Props) {
                 "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
             </p>
           </div>
-          {/* TAB BAR — hero 내부 (침향이야기와 동일 구성) */}
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
-            {TAB_LIST.map((tab, i) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(i)}
-                aria-current={activeTab === i ? 'page' : undefined}
-                style={{
-                  padding: '10px 20px',
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                  background: activeTab === i ? 'var(--accent)' : 'transparent',
-                  color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                  fontWeight: activeTab === i ? 600 : 400,
-                  transition: 'all 300ms',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
+
+      {/* STICKY TAB NAV — 침향이야기와 동일 */}
+      <nav
+        style={{
+          position: 'sticky',
+          top: 'var(--nav-h)',
+          zIndex: 10,
+          background: 'rgba(10,11,16,0.96)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(212,168,67,0.15)',
+        }}
+      >
+        <div className={storyStyles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
+          <div className={styles.chapterGrid}>
+            <div aria-hidden />
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {TAB_LIST.map((tab, i) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(i)}
+                  aria-current={activeTab === i ? 'page' : undefined}
+                  style={{
+                    padding: '10px 20px',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                    background: activeTab === i ? 'var(--accent)' : 'transparent',
+                    color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                    fontWeight: activeTab === i ? 600 : 400,
+                    transition: 'all 300ms',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* TAB 0 — Brand Story */}
       {activeTab === 0 && (

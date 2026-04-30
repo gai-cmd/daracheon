@@ -17,7 +17,7 @@ interface ProcessChapter {
 }
 
 interface ProcessVideo {
-  id: string;
+  src: string;
   title: string;
 }
 
@@ -80,7 +80,7 @@ export default function MediaPageClient({
       <section
         className={`${styles.hero} orn-grain orn-grain--faint`}
         style={{
-          paddingBottom: '108px',
+          paddingBottom: '40px',
           ...(hero.heroImage
             ? {
                 background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroImage}") center/cover no-repeat`,
@@ -122,46 +122,51 @@ export default function MediaPageClient({
         </div>
       </section>
 
-      {/* TAB NAV */}
+      {/* STICKY TAB NAV — 침향이야기와 동일 */}
       <nav
         aria-label="페이지 탭"
         style={{
-          borderBottom: '1px solid rgba(212,168,67,0.18)',
-          background: '#0a0b10',
           position: 'sticky',
           top: 'var(--nav-h)',
           zIndex: 10,
+          background: 'rgba(10,11,16,0.96)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(212,168,67,0.15)',
         }}
       >
-        <div className={styles.wrap}>
-          <div style={{ display: 'flex' }}>
-            {TABS.map(({ key, label }) => {
-              const isActive = activeTab === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setActiveTab(key)}
-                  style={{
-                    padding: '18px 24px',
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: isActive ? '2px solid var(--accent)' : '2px solid transparent',
-                    color: isActive ? 'var(--accent)' : 'rgba(255,255,255,0.5)',
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                    fontSize: '0.78rem',
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'color 200ms, border-color 200ms',
-                    whiteSpace: 'nowrap',
-                    marginBottom: '-1px',
-                  }}
-                >
-                  {label}
-                </button>
-              );
-            })}
+        <div className={styles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
+          <div className={styles.chapterGrid}>
+            <div aria-hidden />
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {TABS.map(({ key, label }) => {
+                const isActive = activeTab === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setActiveTab(key)}
+                    aria-current={isActive ? 'page' : undefined}
+                    style={{
+                      padding: '10px 20px',
+                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                      fontSize: '0.72rem',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                      border: `1px solid ${isActive ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                      background: isActive ? 'var(--accent)' : 'transparent',
+                      color: isActive ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                      fontWeight: isActive ? 600 : 400,
+                      transition: 'all 300ms',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </nav>
@@ -287,23 +292,23 @@ export default function MediaPageClient({
                       marginTop: 30,
                     }}
                   >
-                    {processVideos.items.map((v) => (
-                      <figure key={v.id} style={{ margin: 0 }}>
+                    {processVideos.items.filter((v) => v.src).map((v, i) => (
+                      <figure key={v.src || i} style={{ margin: 0 }}>
                         <div
                           style={{
                             position: 'relative',
                             aspectRatio: '16/9',
                             overflow: 'hidden',
-                            background: '#1a1d29',
+                            background: '#000',
                             border: '1px solid rgba(212,168,67,0.18)',
                           }}
                         >
-                          <iframe
-                            src={`https://drive.google.com/file/d/${v.id}/preview`}
-                            title={v.title}
-                            allow="autoplay"
-                            allowFullScreen
-                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                          <video
+                            src={v.src}
+                            controls
+                            playsInline
+                            preload="metadata"
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                           />
                         </div>
                         <figcaption

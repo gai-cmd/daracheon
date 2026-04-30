@@ -32,7 +32,7 @@ export default function ProductsPageClient({ products, productCategories, hero }
   return (
     <>
       {/* HERO — 침향이야기와 동일한 구성 */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`}>
+      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero.heroImage && (
           <NextImage
             src={hero.heroImage}
@@ -60,35 +60,53 @@ export default function ProductsPageClient({ products, productCategories, hero }
             </h1>
             <p className={storyStyles.lede}>{hero.lede}</p>
           </div>
-          {/* 카테고리 탭 — hero 내부 (침향이야기 탭과 동일 스타일) */}
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 48 }}>
-            {productCategories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                aria-current={activeCategory === cat.id ? 'page' : undefined}
-                style={{
-                  padding: '10px 20px',
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  border: `1px solid ${activeCategory === cat.id ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                  background: activeCategory === cat.id ? 'var(--accent)' : 'transparent',
-                  color: activeCategory === cat.id ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                  fontWeight: activeCategory === cat.id ? 600 : 400,
-                  transition: 'all 300ms',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
+
+      {/* STICKY TAB NAV — 침향이야기와 동일 */}
+      <nav
+        style={{
+          position: 'sticky',
+          top: 'var(--nav-h)',
+          zIndex: 10,
+          background: 'rgba(10,11,16,0.96)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(212,168,67,0.15)',
+        }}
+      >
+        <div className={storyStyles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
+          <div className={storyStyles.chapterGrid}>
+            <div aria-hidden />
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {productCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setActiveCategory(cat.id)}
+                  aria-current={activeCategory === cat.id ? 'page' : undefined}
+                  style={{
+                    padding: '10px 20px',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: `1px solid ${activeCategory === cat.id ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                    background: activeCategory === cat.id ? 'var(--accent)' : 'transparent',
+                    color: activeCategory === cat.id ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                    fontWeight: activeCategory === cat.id ? 600 : 400,
+                    transition: 'all 300ms',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* 제품 그리드 — 선택된 카테고리 전달 */}
       <ProductsClient
