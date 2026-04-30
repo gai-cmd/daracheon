@@ -1,13 +1,23 @@
 import Link from 'next/link';
-import { company } from '@/data/company';
 import styles from './Footer.module.css';
+
+interface CompanyInfo {
+  name: string;
+  ceo: string;
+  businessReg: string;
+  address: string;
+  phone: string;
+  email: string;
+}
 
 interface Props {
   socialLinks?: Array<{ label: string; url: string }>;
+  company: CompanyInfo;
 }
 
-export default function Footer({ socialLinks = [] }: Props) {
+export default function Footer({ socialLinks = [], company }: Props) {
   const activeSocial = socialLinks.filter((s) => s.url.trim() !== '');
+  const companyName = company.name || '조엘라이프 주식회사';
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -41,11 +51,27 @@ export default function Footer({ socialLinks = [] }: Props) {
         {/* Company Info */}
         <div className={styles.companyInfo}>
           <p className={styles.companyInfoRow}>
-            <span className={styles.infoBlock}>조엘라이프 주식회사 | 대표: {company.ceo} | 사업자등록번호: {company.businessReg}</span>
-            <span className={styles.infoSep} aria-hidden>·</span>
-            <span className={styles.infoBlock}>주소: {company.address}</span>
-            <span className={styles.infoSep} aria-hidden>·</span>
-            <span className={styles.infoBlock}>전화: {company.phone} | 이메일: {company.email}</span>
+            <span className={styles.infoBlock}>
+              {companyName}
+              {company.ceo && ` | 대표: ${company.ceo}`}
+              {company.businessReg && ` | 사업자등록번호: ${company.businessReg}`}
+            </span>
+            {company.address && (
+              <>
+                <span className={styles.infoSep} aria-hidden>·</span>
+                <span className={styles.infoBlock}>주소: {company.address}</span>
+              </>
+            )}
+            {(company.phone || company.email) && (
+              <>
+                <span className={styles.infoSep} aria-hidden>·</span>
+                <span className={styles.infoBlock}>
+                  {company.phone && `전화: ${company.phone}`}
+                  {company.phone && company.email && ' | '}
+                  {company.email && `이메일: ${company.email}`}
+                </span>
+              </>
+            )}
           </p>
         </div>
 

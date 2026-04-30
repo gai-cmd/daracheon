@@ -14,20 +14,6 @@ interface AnnouncementData {
   updatedAt: string;
 }
 
-interface Farm {
-  name: string;
-  nameVi: string;
-  region: string;
-  trees: number;
-}
-
-interface Certification {
-  name: string;
-  nameEn: string;
-  icon: string;
-  description: string;
-}
-
 interface SeoSettings {
   metaTitle: string;
   metaDescription: string;
@@ -42,21 +28,16 @@ interface SocialLink {
 
 interface SettingsData {
   name: string;
-  nameHanja: string;
-  nameEn: string;
-  nameVi: string;
-  slogan: string;
-  sloganEn: string;
   description: string;
   email: string;
-  url: string;
-  logo: string;
+  phone: string;
+  address: string;
+  ceo: string;
+  businessReg: string;
+  foundingDate: string;
   brandLogo: string;
   companyLogo: string;
   socialLinks?: SocialLink[];
-  farms: Farm[];
-  certifications: Certification[];
-  awards: string[];
   seo: SeoSettings;
 }
 
@@ -68,46 +49,33 @@ export default function AdminSettingsPage() {
   // Section 1: Basic Info
   const [basicInfo, setBasicInfo] = useState({
     name: '',
-    nameHanja: '',
-    nameEn: '',
-    nameVi: '',
-    slogan: '',
-    sloganEn: '',
     description: '',
-    email: '',
-    url: '',
-    logo: '',
     brandLogo: '',
     companyLogo: '',
   });
 
-  // Section 2: Social Links
+  // Section 2: Footer / Company Info
+  const [footerInfo, setFooterInfo] = useState({
+    ceo: '',
+    businessReg: '',
+    address: '',
+    phone: '',
+    email: '',
+    foundingDate: '',
+  });
+
+  // Section 3: Social Links
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
-  // Section 3: Farms
-  const [farms, setFarms] = useState<Farm[]>([]);
-  const [editingFarmIndex, setEditingFarmIndex] = useState<number | null>(null);
-  const [farmForm, setFarmForm] = useState<Farm>({
-    name: '',
-    nameVi: '',
-    region: '',
-    trees: 0,
-  });
-
-  // Section 4: Certifications & Awards
-  const [certifications, setCertifications] = useState<Certification[]>([]);
-  const [awards, setAwards] = useState<string[]>([]);
-  const [newAward, setNewAward] = useState('');
-
-  // Section 5: SEO
+  // Section 4: SEO
   const [seo, setSeo] = useState<SeoSettings>({
-    metaTitle: '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE',
-    metaDescription: '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.',
-    keywords: '침향, 대라천, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향환, 침향 캡슐, 침향단, 침향 선향, 침향수, 침향차, 베트남 침향, 프리미엄 침향, Aquilaria Agallocha Roxburgh, 침향 구매',
-    ogImage: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
+    metaTitle: '',
+    metaDescription: '',
+    keywords: '',
+    ogImage: '',
   });
 
-  // Section 6: Announcement Banner
+  // Section 5: Announcement Banner
   const [announcement, setAnnouncement] = useState<AnnouncementData>({
     enabled: false,
     text: '',
@@ -139,34 +107,24 @@ export default function AdminSettingsPage() {
 
         setBasicInfo({
           name: data.name || '',
-          nameHanja: data.nameHanja || '',
-          nameEn: data.nameEn || '',
-          nameVi: data.nameVi || '',
-          slogan: data.slogan || '',
-          sloganEn: data.sloganEn || '',
           description: data.description || '',
-          email: data.email || '',
-          url: data.url || '',
-          logo: data.logo || '',
           brandLogo: data.brandLogo || '',
           companyLogo: data.companyLogo || '',
         });
+        setFooterInfo({
+          ceo: data.ceo || '',
+          businessReg: data.businessReg || '',
+          address: data.address || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          foundingDate: data.foundingDate || '',
+        });
         setSocialLinks(Array.isArray(data.socialLinks) ? data.socialLinks : []);
-        setFarms(data.farms || []);
-        setCertifications(
-          (data.certifications || []).map((c) => ({
-            name: c.name,
-            nameEn: c.nameEn,
-            icon: c.icon,
-            description: c.description,
-          }))
-        );
-        setAwards(data.awards || []);
         setSeo({
-          metaTitle: data.seo?.metaTitle || '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE',
-          metaDescription: data.seo?.metaDescription || '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.',
-          keywords: data.seo?.keywords || '침향, 대라천, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향환, 침향 캡슐, 침향단, 침향 선향, 침향수, 침향차, 베트남 침향, 프리미엄 침향, Aquilaria Agallocha Roxburgh, 침향 구매',
-          ogImage: data.seo?.ogImage || 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
+          metaTitle: data.seo?.metaTitle || '',
+          metaDescription: data.seo?.metaDescription || '',
+          keywords: data.seo?.keywords || '',
+          ogImage: data.seo?.ogImage || '',
         });
       } catch (err) {
         console.error('Failed to fetch settings:', err);
@@ -199,9 +157,8 @@ export default function AdminSettingsPage() {
 
   // Save handlers
   const handleSaveBasicInfo = () => saveSection('basic', { ...basicInfo });
+  const handleSaveFooterInfo = () => saveSection('footer', { ...footerInfo });
   const handleSaveSocial = () => saveSection('social', { socialLinks });
-  const handleSaveFarms = () => saveSection('farms', { farms });
-  const handleSaveCertifications = () => saveSection('certs', { certifications, awards });
   const handleSaveSeo = () => saveSection('seo', { seo });
 
   async function saveAnnouncement(data: AnnouncementData) {
@@ -236,66 +193,6 @@ export default function AdminSettingsPage() {
     const next = { ...announcement, enabled: !announcement.enabled };
     setAnnouncement(next);
     saveAnnouncement(next);
-  };
-
-  // Farm CRUD
-  const handleAddFarm = () => {
-    if (!farmForm.name || !farmForm.region) return;
-    setFarms([...farms, { ...farmForm }]);
-    setFarmForm({ name: '', nameVi: '', region: '', trees: 0 });
-  };
-
-  const handleEditFarm = (index: number) => {
-    setEditingFarmIndex(index);
-    setFarmForm({ ...farms[index] });
-  };
-
-  const handleUpdateFarm = () => {
-    if (editingFarmIndex === null) return;
-    const updated = [...farms];
-    updated[editingFarmIndex] = { ...farmForm };
-    setFarms(updated);
-    setEditingFarmIndex(null);
-    setFarmForm({ name: '', nameVi: '', region: '', trees: 0 });
-  };
-
-  const handleRemoveFarm = (index: number) => {
-    if (!confirm('이 농장을 삭제하시겠습니까?')) return;
-    setFarms(farms.filter((_, i) => i !== index));
-  };
-
-  // Certification CRUD
-  const handleAddCertification = () => {
-    setCertifications([
-      ...certifications,
-      { name: '', nameEn: '', icon: '', description: '' },
-    ]);
-  };
-
-  const handleUpdateCertification = (
-    index: number,
-    field: keyof Certification,
-    value: string
-  ) => {
-    const updated = [...certifications];
-    updated[index] = { ...updated[index], [field]: value };
-    setCertifications(updated);
-  };
-
-  const handleRemoveCertification = (index: number) => {
-    if (!confirm('이 인증을 삭제하시겠습니까?')) return;
-    setCertifications(certifications.filter((_, i) => i !== index));
-  };
-
-  // Award CRUD
-  const handleAddAward = () => {
-    if (!newAward.trim()) return;
-    setAwards([...awards, newAward.trim()]);
-    setNewAward('');
-  };
-
-  const handleRemoveAward = (index: number) => {
-    setAwards(awards.filter((_, i) => i !== index));
   };
 
   /* ─── Loading skeleton ─── */
@@ -343,39 +240,13 @@ export default function AdminSettingsPage() {
         <div className="space-y-8">
           {/* Section 1: Basic Info */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              기본 정보
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">기본 정보</h2>
+            <p className="text-xs text-gray-400 mb-6">사이트 메타·홈페이지 등에 사용되는 회사 기본 정보입니다.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <LabeledInput
-                label="회사명 (한글)"
+                label="회사명"
                 value={basicInfo.name}
                 onChange={(v) => setBasicInfo({ ...basicInfo, name: v })}
-              />
-              <LabeledInput
-                label="회사명 (한자)"
-                value={basicInfo.nameHanja}
-                onChange={(v) => setBasicInfo({ ...basicInfo, nameHanja: v })}
-              />
-              <LabeledInput
-                label="회사명 (영문)"
-                value={basicInfo.nameEn}
-                onChange={(v) => setBasicInfo({ ...basicInfo, nameEn: v })}
-              />
-              <LabeledInput
-                label="회사명 (베트남어)"
-                value={basicInfo.nameVi}
-                onChange={(v) => setBasicInfo({ ...basicInfo, nameVi: v })}
-              />
-              <LabeledInput
-                label="슬로건 (한글)"
-                value={basicInfo.slogan}
-                onChange={(v) => setBasicInfo({ ...basicInfo, slogan: v })}
-              />
-              <LabeledInput
-                label="슬로건 (영문)"
-                value={basicInfo.sloganEn}
-                onChange={(v) => setBasicInfo({ ...basicInfo, sloganEn: v })}
               />
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -390,32 +261,9 @@ export default function AdminSettingsPage() {
                   }
                 />
               </div>
-              <LabeledInput
-                label="이메일"
-                type="email"
-                value={basicInfo.email}
-                onChange={(v) => setBasicInfo({ ...basicInfo, email: v })}
-              />
-              <LabeledInput
-                label="웹사이트 URL"
-                type="url"
-                value={basicInfo.url}
-                onChange={(v) => setBasicInfo({ ...basicInfo, url: v })}
-              />
               <div className="md:col-span-2">
                 <ImageUploadField
-                  label="로고 이미지 (legacy)"
-                  value={basicInfo.logo}
-                  onChange={(url) => setBasicInfo({ ...basicInfo, logo: url })}
-                  subdir="settings"
-                />
-                <p className="mt-1 text-xs text-gray-400">
-                  하위 호환용 단일 로고 필드. 신규 사이트에서는 아래 두 로고를 사용합니다.
-                </p>
-              </div>
-              <div className="md:col-span-2">
-                <ImageUploadField
-                  label="브랜드 로고 (좌측 상단 Header — 대라천)"
+                  label="브랜드 로고 (좌측 상단 Header)"
                   value={basicInfo.brandLogo}
                   onChange={(url) => setBasicInfo({ ...basicInfo, brandLogo: url })}
                   subdir="settings"
@@ -441,7 +289,63 @@ export default function AdminSettingsPage() {
             </div>
           </section>
 
-          {/* Section 2: Social Media */}
+          {/* Section 2: Footer / Company Info */}
+          <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">푸터 회사 정보</h2>
+            <p className="text-xs text-gray-400 mb-6">
+              사이트 하단(footer) 및 llms.txt 에 표시되는 회사 사업자 정보를 관리합니다.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <LabeledInput
+                label="대표"
+                value={footerInfo.ceo}
+                onChange={(v) => setFooterInfo({ ...footerInfo, ceo: v })}
+              />
+              <LabeledInput
+                label="사업자등록번호"
+                value={footerInfo.businessReg}
+                onChange={(v) => setFooterInfo({ ...footerInfo, businessReg: v })}
+              />
+              <div className="md:col-span-2">
+                <LabeledInput
+                  label="주소"
+                  value={footerInfo.address}
+                  onChange={(v) => setFooterInfo({ ...footerInfo, address: v })}
+                />
+              </div>
+              <LabeledInput
+                label="전화"
+                value={footerInfo.phone}
+                onChange={(v) => setFooterInfo({ ...footerInfo, phone: v })}
+              />
+              <LabeledInput
+                label="이메일"
+                type="email"
+                value={footerInfo.email}
+                onChange={(v) => setFooterInfo({ ...footerInfo, email: v })}
+              />
+              <LabeledInput
+                label="설립일 (선택)"
+                value={footerInfo.foundingDate}
+                onChange={(v) => setFooterInfo({ ...footerInfo, foundingDate: v })}
+              />
+            </div>
+            <div className="mt-6 rounded-lg bg-gray-50 border border-gray-100 p-4 text-xs text-gray-600 leading-relaxed">
+              <p className="font-medium text-gray-700 mb-1.5">미리보기</p>
+              <p>
+                {basicInfo.name || '회사명'} | 대표: {footerInfo.ceo || '대표자명'} | 사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
+                <span className="mx-1.5 text-gray-400">·</span>
+                주소: {footerInfo.address || '주소'}
+                <span className="mx-1.5 text-gray-400">·</span>
+                전화: {footerInfo.phone || '전화번호'} | 이메일: {footerInfo.email || 'email@example.com'}
+              </p>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <SaveButton onClick={handleSaveFooterInfo} loading={saving === 'footer'} />
+            </div>
+          </section>
+
+          {/* Section 3: Social Media */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">소셜 미디어</h2>
             <p className="text-xs text-gray-400 mb-6">URL이 비어있으면 프론트에서 자동으로 숨겨집니다.</p>
@@ -491,280 +395,7 @@ export default function AdminSettingsPage() {
             </div>
           </section>
 
-          {/* Section 3: Farm Management */}
-          <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              농장 관리
-            </h2>
-
-            {/* Farm Table */}
-            <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-3 font-medium text-gray-600">
-                      농장명
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-gray-600">
-                      베트남어명
-                    </th>
-                    <th className="text-left py-3 px-3 font-medium text-gray-600">
-                      지역
-                    </th>
-                    <th className="text-right py-3 px-3 font-medium text-gray-600">
-                      나무 수
-                    </th>
-                    <th className="text-right py-3 px-3 font-medium text-gray-600">
-                      관리
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {farms.map((farm, index) => (
-                    <tr
-                      key={index}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="py-3 px-3 text-gray-900">{farm.name}</td>
-                      <td className="py-3 px-3 text-gray-600">{farm.nameVi}</td>
-                      <td className="py-3 px-3 text-gray-600">{farm.region}</td>
-                      <td className="py-3 px-3 text-right text-gray-900">
-                        {farm.trees.toLocaleString()}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <button
-                          onClick={() => handleEditFarm(index)}
-                          className="text-gold-600 hover:text-gold-700 text-sm mr-3"
-                        >
-                          수정
-                        </button>
-                        <button
-                          onClick={() => handleRemoveFarm(index)}
-                          className="text-red-500 hover:text-red-600 text-sm"
-                        >
-                          삭제
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Farm Form */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
-                {editingFarmIndex !== null ? '농장 수정' : '농장 추가'}
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <input
-                  placeholder="농장명"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                  value={farmForm.name}
-                  onChange={(e) =>
-                    setFarmForm({ ...farmForm, name: e.target.value })
-                  }
-                />
-                <input
-                  placeholder="베트남어명"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                  value={farmForm.nameVi}
-                  onChange={(e) =>
-                    setFarmForm({ ...farmForm, nameVi: e.target.value })
-                  }
-                />
-                <input
-                  placeholder="지역"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                  value={farmForm.region}
-                  onChange={(e) =>
-                    setFarmForm({ ...farmForm, region: e.target.value })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="나무 수"
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                  value={farmForm.trees || ''}
-                  onChange={(e) =>
-                    setFarmForm({
-                      ...farmForm,
-                      trees: parseInt(e.target.value) || 0,
-                    })
-                  }
-                />
-              </div>
-              <div className="mt-3 flex gap-2">
-                {editingFarmIndex !== null ? (
-                  <>
-                    <button
-                      onClick={handleUpdateFarm}
-                      className="adm-btn-primary"
-                    >
-                      수정 완료
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditingFarmIndex(null);
-                        setFarmForm({
-                          name: '',
-                          nameVi: '',
-                          region: '',
-                          trees: 0,
-                        });
-                      }}
-                      className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
-                    >
-                      취소
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={handleAddFarm}
-                    className="adm-btn-primary"
-                  >
-                    농장 추가
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <SaveButton onClick={handleSaveFarms} loading={saving === 'farms'} />
-            </div>
-          </section>
-
-          {/* Section 4: Certifications & Awards */}
-          <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              인증 및 수상
-            </h2>
-
-            {/* Certifications */}
-            <div className="mb-8">
-              <h3 className="text-base font-medium text-gray-800 mb-4">
-                인증 목록
-              </h3>
-              <div className="space-y-4">
-                {certifications.map((cert, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 rounded-lg p-4 relative"
-                  >
-                    <button
-                      onClick={() => handleRemoveCertification(index)}
-                      className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-sm"
-                    >
-                      삭제
-                    </button>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-                      <input
-                        placeholder="아이콘"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                        value={cert.icon}
-                        onChange={(e) =>
-                          handleUpdateCertification(
-                            index,
-                            'icon',
-                            e.target.value
-                          )
-                        }
-                      />
-                      <input
-                        placeholder="인증명 (한글)"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                        value={cert.name}
-                        onChange={(e) =>
-                          handleUpdateCertification(
-                            index,
-                            'name',
-                            e.target.value
-                          )
-                        }
-                      />
-                      <input
-                        placeholder="인증명 (영문)"
-                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                        value={cert.nameEn}
-                        onChange={(e) =>
-                          handleUpdateCertification(
-                            index,
-                            'nameEn',
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                    <textarea
-                      placeholder="설명"
-                      rows={2}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                      value={cert.description}
-                      onChange={(e) =>
-                        handleUpdateCertification(
-                          index,
-                          'description',
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={handleAddCertification}
-                className="mt-3 text-gold-600 hover:text-gold-700 text-sm font-medium"
-              >
-                + 인증 추가
-              </button>
-            </div>
-
-            {/* Awards */}
-            <div>
-              <h3 className="text-base font-medium text-gray-800 mb-4">
-                수상 내역
-              </h3>
-              <ul className="space-y-2 mb-4">
-                {awards.map((award, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2.5"
-                  >
-                    <span className="text-sm text-gray-800">{award}</span>
-                    <button
-                      onClick={() => handleRemoveAward(index)}
-                      className="text-red-400 hover:text-red-600 text-sm ml-4 shrink-0"
-                    >
-                      삭제
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex gap-2">
-                <input
-                  placeholder="수상 내역 입력"
-                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
-                  value={newAward}
-                  onChange={(e) => setNewAward(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleAddAward();
-                  }}
-                />
-                <button
-                  onClick={handleAddAward}
-                  className="adm-btn-primary"
-                >
-                  추가
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              <SaveButton onClick={handleSaveCertifications} loading={saving === 'certs'} />
-            </div>
-          </section>
-
-          {/* Section 5: SEO Settings */}
+          {/* Section 4: SEO Settings */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               SEO 설정
@@ -805,7 +436,7 @@ export default function AdminSettingsPage() {
             </div>
           </section>
 
-          {/* Section 6: Announcement Banner */}
+          {/* Section 5: Announcement Banner */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">공지 배너</h2>
             <p className="text-sm text-gray-500 mb-6">
@@ -908,7 +539,7 @@ export default function AdminSettingsPage() {
             </div>
           </section>
 
-          {/* Section 7: Data Backup */}
+          {/* Section 6: Data Backup */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">데이터 백업 / 복원</h2>
             <p className="text-sm text-gray-500 mb-6">

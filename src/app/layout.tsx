@@ -145,10 +145,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const nav = await readSingleSafe<NavigationData>('navigation');
   const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
 
-  // 브랜드 로고 (좌측 상단) — settings(company)에서 관리
-  const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string; socialLinks?: Array<{ label: string; url: string }> }>('company');
+  // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리
+  const settings = await readSingleSafe<{
+    name?: string;
+    ceo?: string;
+    businessReg?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    brandLogo?: string;
+    companyLogo?: string;
+    socialLinks?: Array<{ label: string; url: string }>;
+  }>('company');
   const brandLogo = settings?.brandLogo ?? '';
   const socialLinks = settings?.socialLinks ?? [];
+  const footerCompany = {
+    name: settings?.name ?? '',
+    ceo: settings?.ceo ?? '',
+    businessReg: settings?.businessReg ?? '',
+    address: settings?.address ?? '',
+    phone: settings?.phone ?? '',
+    email: settings?.email ?? '',
+  };
 
   return (
     <html lang="ko">
@@ -172,7 +190,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <Header mainNav={mainNav} brandLogo={brandLogo} />
         <main>{children}</main>
-        <Footer socialLinks={socialLinks} />
+        <Footer socialLinks={socialLinks} company={footerCompany} />
         {/* Vercel Analytics + Speed Insights — 실제 사용자 LCP/CLS/INP 수집.
             DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
         <VercelAnalytics />

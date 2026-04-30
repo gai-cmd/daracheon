@@ -1,14 +1,11 @@
 {
-  "name": "대라천",
-  "nameHanja": "大羅天",
-  "nameEn": "Daracheon",
-  "nameVi": "Đại La Thiên",
-  "slogan": "프리미엄 침향 전문 브랜드",
-  "sloganEn": "Premium Agarwood Since 2003",
-  "description": "대라천(大羅天)은 베트남 최고급 Aquilaria agallocha 침향을 직접 재배·가공·유통하는 프리미엄 침향 전문 브랜드입니다.",
-  "url": "https://www.daracheon.com",
-  "email": "contact@daracheon.com",
-  "logo": "/images/logo.png",
+  "name": "조엘라이프 주식회사",
+  "description": "조엘라이프의 대라천 '참'침향은 베트남 직영 농장 기반의 침향 전문기업에서 생산됩니다. 원산지부터 제품까지 전 과정을 자체 운영합니다.",
+  "ceo": "박병주",
+  "businessReg": "749-86-03668",
+  "address": "서울특별시 금천구 벚꽃로36길 30, 1511호",
+  "phone": "070-4140-4086",
+  "email": "bj0202@gmail.com",
   "farms": [
     {
       "name": "하띤 농장",
