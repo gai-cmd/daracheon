@@ -12,7 +12,6 @@ interface Props {
 
 const TAB_LIST = [
   '브랜드 스토리',
-  '대라천 침향 현장',
   '대라천 침향 역사',
   '다양한 인증',
   '생산 공정',
@@ -79,8 +78,6 @@ export default function BrandStoryClient({ data }: Props) {
   const hero = data?.hero;
   const brandStoryTab = data?.brandStoryTab;
   const farms = data?.farms ?? [];
-  const sceneTab = data?.sceneTab;
-  const sceneImages = sceneTab?.images ?? [];
   const historyTab = data?.historyTab;
   const eras = historyTab?.eras ?? [];
   const certificationsTab = data?.certificationsTab;
@@ -237,39 +234,8 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 1 — Scene */}
+      {/* TAB 1 — History */}
       {activeTab === 1 && (
-        <section className={`${styles.chapter} ${styles.chapterAlt}`}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>01</div>
-                <div className={styles.chapterTag}>{sceneTab?.tag ?? 'THE FIELD'}</div>
-              </div>
-              <div>
-                <h2 className={styles.chapterTitle}>{sceneTab?.title ?? '대라천 침향 현장'}</h2>
-                <p className={styles.chapterSubtitle}>
-                  {sceneTab?.subtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
-                </p>
-                <div className={styles.line} style={{ margin: '24px 0' }} />
-                <div className={styles.imgGrid}>
-                  {sceneImages.map((src, i) => (
-                    <div key={i} className={styles.imgFrame}>
-                      <Image src={src} alt={`현장 ${i + 1}`} fill sizes="(max-width: 1024px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
-                    </div>
-                  ))}
-                </div>
-                <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginTop: 24 }}>
-                  {sceneTab?.body ?? ''}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* TAB 2 — History */}
-      {activeTab === 2 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -315,8 +281,8 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 3 — Certifications */}
-      {activeTab === 3 && (
+      {/* TAB 2 — Certifications */}
+      {activeTab === 2 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -543,8 +509,8 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 4 — Process */}
-      {activeTab === 4 && (
+      {/* TAB 3 — Process */}
+      {activeTab === 3 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>

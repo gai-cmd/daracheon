@@ -65,13 +65,6 @@ interface BrandStoryData {
     sourceBody: string;
   };
   farms: Farm[];
-  sceneTab: {
-    tag: string;
-    title: string;
-    subtitle: string;
-    body: string;
-    images: string[];
-  };
   historyTab: {
     tag: string;
     title: string;
@@ -187,18 +180,6 @@ export default function AdminBrandStoryPage() {
     { name: '푸국', nameVi: 'Phu Quoc', desc: '해양성 기후 재배지' },
     { name: '람동', nameVi: 'Lam Dong', desc: '고산지대 특화 농장' },
   ]);
-  const [sceneTab, setSceneTab] = useState<BrandStoryData['sceneTab']>({
-    tag: 'THE FIELD',
-    title: '대라천 침향 현장',
-    subtitle: '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전',
-    body:
-      '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
-    images: [
-      'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
-      'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
-      'https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280',
-    ],
-  });
   const [historyTab, setHistoryTab] = useState<BrandStoryData['historyTab']>({
     tag: 'HISTORY',
     title: '대라천 침향 역사',
@@ -346,10 +327,6 @@ export default function AdminBrandStoryPage() {
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
         if (d?.farms && Array.isArray(d.farms) && d.farms.length > 0) setFarms(d.farms);
-        if (d?.sceneTab) setSceneTab({
-          ...d.sceneTab,
-          images: Array.isArray(d.sceneTab.images) ? d.sceneTab.images : [],
-        });
         if (d?.historyTab) setHistoryTab({
           ...d.historyTab,
           eras: Array.isArray(d.historyTab.eras) ? d.historyTab.eras : [],
@@ -427,7 +404,7 @@ export default function AdminBrandStoryPage() {
     return arr.filter((_, i) => i !== index);
   }
 
-  const ADMIN_TABS = ['브랜드 스토리', '대라천 침향 현장', '대라천 침향 역사', '다양한 인증', '생산 공정'];
+  const ADMIN_TABS = ['브랜드 스토리', '대라천 침향 역사', '다양한 인증', '생산 공정'];
 
   if (loading) {
     return (
@@ -541,39 +518,8 @@ export default function AdminBrandStoryPage() {
           </>)}
           {activeAdminTab === 1 && (<>
 
-          {/* Scene Tab */}
-          <SectionCard title="탭 2 · 대라천 침향 현장" onSave={() => saveSection('sceneTab', { sceneTab })} saving={saving === 'sceneTab'}>
-            <div className="space-y-5">
-              <LabeledInput label="태그" value={sceneTab.tag} onChange={(v) => setSceneTab({ ...sceneTab, tag: v })} />
-              <LabeledInput label="제목" value={sceneTab.title} onChange={(v) => setSceneTab({ ...sceneTab, title: v })} />
-              <LabeledInput label="부제목" value={sceneTab.subtitle} onChange={(v) => setSceneTab({ ...sceneTab, subtitle: v })} />
-              <LabeledTextarea label="본문" value={sceneTab.body} onChange={(v) => setSceneTab({ ...sceneTab, body: v })} rows={4} />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">현장 이미지 (최대 3개)</label>
-                <div className="space-y-3">
-                  {sceneTab.images.map((img, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...sceneTab.images]; n[i] = url; setSceneTab({ ...sceneTab, images: n }); }} subdir="pages" />
-                      </div>
-                      <button type="button" onClick={() => setSceneTab({ ...sceneTab, images: removeItem(sceneTab.images, i) })} className="mt-2 text-red-400 hover:text-red-600 text-xs border border-red-200 rounded px-1.5 py-0.5">삭제</button>
-                    </div>
-                  ))}
-                  {sceneTab.images.length < 3 && (
-                    <button type="button" onClick={() => setSceneTab({ ...sceneTab, images: [...sceneTab.images, ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                      + 이미지 추가
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
-          </>)}
-          {activeAdminTab === 2 && (<>
-
           {/* History Tab */}
-          <SectionCard title="탭 3 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
+          <SectionCard title="탭 2 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
             <div className="space-y-5">
               <LabeledInput label="태그" value={historyTab.tag} onChange={(v) => setHistoryTab({ ...historyTab, tag: v })} />
               <LabeledInput label="제목" value={historyTab.title} onChange={(v) => setHistoryTab({ ...historyTab, title: v })} />
@@ -622,10 +568,10 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           </>)}
-          {activeAdminTab === 3 && (<>
+          {activeAdminTab === 2 && (<>
 
           {/* Certifications Tab */}
-          <SectionCard title="탭 4 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
+          <SectionCard title="탭 3 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
             <div className="space-y-6">
 
               {/* 섹션 헤더 */}
@@ -755,10 +701,10 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           </>)}
-          {activeAdminTab === 4 && (<>
+          {activeAdminTab === 3 && (<>
 
           {/* Process Tab */}
-          <SectionCard title="탭 5 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
+          <SectionCard title="탭 4 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
               {/* 헤더 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

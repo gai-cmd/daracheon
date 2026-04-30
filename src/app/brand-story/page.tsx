@@ -45,7 +45,6 @@ export interface BrandStoryData {
   hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
   brandStoryTab: { headlineTitle: string; headlineSubtitle: string; sourceTag: string; sourceTitle: string; sourceBody: string };
   farms: Farm[];
-  sceneTab: { tag: string; title: string; subtitle: string; body: string; images: string[] };
   historyTab: { tag: string; title: string; eras: HistoryEra[] };
   certificationsTab: { tag: string; title: string; subtitle: string; images?: string[]; imageLabels?: string[]; certs?: CertItem[]; sections: CertSection[] };
   qualityTab: { tag: string; title: string; subtitle: string; images: string[]; heavyMetals: string[]; paragraphs?: NarrativeParagraph[] };

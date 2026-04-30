@@ -26,6 +26,15 @@ interface CertSection {
   items: string[];
 }
 
+export interface SceneSection {
+  num: string;
+  tag: string;
+  title: string;
+  subtitle: string;
+  body: string;
+  images: string[];
+}
+
 export interface FarmStoryData {
   hero: {
     kicker: string;
@@ -35,6 +44,7 @@ export interface FarmStoryData {
     lede: string;
     heroImage?: string;
   };
+  sceneSection?: SceneSection;
   chapters: ProcessChapter[];
   processVideos: {
     num: string;
@@ -72,7 +82,7 @@ export default function MediaPageClient({
   gallery: GalleryData;
 }) {
   const [activeTab, setActiveTab] = useState<'story' | 'gallery'>('story');
-  const { hero, chapters, processVideos, certifications } = farmStory;
+  const { hero, sceneSection, chapters, processVideos, certifications } = farmStory;
 
   return (
     <>
@@ -174,12 +184,78 @@ export default function MediaPageClient({
       {/* TAB CONTENT */}
       {activeTab === 'story' ? (
         <>
+          {/* SCENE SECTION (대라천 침향 현장) */}
+          {sceneSection && (
+            <section className={styles.chapter}>
+              <div className={styles.wrap}>
+                <div className={styles.chapterGrid}>
+                  <div>
+                    <div className={styles.chapterNum}>{sceneSection.num}</div>
+                    <div className={styles.chapterTag}>{sceneSection.tag}</div>
+                  </div>
+                  <div className={styles.chapterBody}>
+                    <h3>{sceneSection.title}</h3>
+                    {sceneSection.subtitle && (
+                      <p
+                        style={{
+                          fontFamily: "'Noto Serif KR', serif",
+                          fontStyle: 'italic',
+                          color: 'var(--accent)',
+                          fontSize: '0.98rem',
+                          lineHeight: 1.7,
+                          marginBottom: 18,
+                        }}
+                      >
+                        {sceneSection.subtitle}
+                      </p>
+                    )}
+                    {sceneSection.images.length > 0 && (
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                          gap: 12,
+                          margin: '20px 0 24px',
+                        }}
+                      >
+                        {sceneSection.images.map((src, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              position: 'relative',
+                              aspectRatio: '4/3',
+                              overflow: 'hidden',
+                              background: '#1a1d29',
+                              border: '1px solid rgba(212,168,67,0.18)',
+                            }}
+                          >
+                            <Image
+                              src={src}
+                              alt={`현장 ${i + 1}`}
+                              fill
+                              sizes="(max-width: 900px) 50vw, 33vw"
+                              style={{ objectFit: 'cover' }}
+                              unoptimized
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {sceneSection.body && (
+                      <p style={{ whiteSpace: 'pre-line' }}>{sceneSection.body}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* CHAPTERS */}
           {chapters.map((ch, i) => (
             <section
               key={ch.num}
               className={styles.chapter}
-              data-alt={i % 2 === 1 ? '1' : undefined}
+              data-alt={(i + (sceneSection ? 1 : 0)) % 2 === 1 ? '1' : undefined}
             >
               <div className={styles.wrap}>
                 <div className={styles.chapterGrid}>

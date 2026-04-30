@@ -19,6 +19,15 @@ interface ChapterStat {
   label: string;
 }
 
+interface SceneSection {
+  num: string;
+  tag: string;
+  title: string;
+  subtitle: string;
+  body: string;
+  images: string[];
+}
+
 interface ProcessChapter {
   num: string;
   tag: string;
@@ -59,6 +68,7 @@ interface Certifications {
 
 interface ProcessData {
   hero: ProcessHero;
+  sceneSection: SceneSection;
   chapters: ProcessChapter[];
   productionVideos: ProductionVideos;
   certifications: Certifications;
@@ -73,9 +83,23 @@ const DEFAULT_HERO: ProcessHero = {
     '호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
 };
 
+const DEFAULT_SCENE_SECTION: SceneSection = {
+  num: '01',
+  tag: 'THE FIELD',
+  title: '대라천 침향 현장',
+  subtitle: '하띤, 냐짱, 람동, 동나이, 푸꾸옥의 200ha 부지에 400만 그루',
+  body:
+    "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 '진정한 침향'이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 냐짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허 받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
+  images: [
+    'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
+    'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
+    'https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280',
+  ],
+};
+
 const DEFAULT_CHAPTERS: ProcessChapter[] = [
   {
-    num: '01',
+    num: '02',
     tag: 'Location',
     title: '북위 18° — 침향의 마지막 기후대',
     body: '아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
@@ -85,7 +109,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     imageCaption: '하띤 · Ha Tinh · 메인 대규모 농장 (200ha)',
   },
   {
-    num: '02',
+    num: '03',
     tag: 'Scale',
     title: '직영 200ha · 약 400만 그루',
     body: '농장은 CITES(멸종위기종 국제거래협약) 번호 VN-2008-AAR-003으로 등록된 공식 조림지. 평균 수령 18년 이상의 성숙목 400만 그루가 자연 침착 환경에서 자라고 있으며, 매년 평균 180그루만 수확합니다.',
@@ -98,7 +122,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     imageCaption: '동나이 · Dong Nai · 전략 재배 거점',
   },
   {
-    num: '03',
+    num: '04',
     tag: 'Partnership',
     title: '현지 공동체와의 25년',
     body: '농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 베트남 현지 최고의 의료·교육 복지를 제공합니다. "진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다"',
@@ -108,7 +132,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     imageCaption: '냐짱 · Nha Trang · 고품질 원료 산지',
   },
   {
-    num: '04',
+    num: '05',
     tag: 'Verification',
     title: '4단계 원산지 검증',
     body: 'GPS 좌표로 나무마다 위치를 기록하고, 수확할 때 나무 ID·수지 함량을 DB에 입력합니다. 베트남 농업부 검사증을 받은 뒤 한국 식약처 수입 통관 시 한 번 더 검증합니다. 제품 Lot 번호로 이 모든 이력을 누구나 조회할 수 있습니다.',
@@ -120,7 +144,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
 ];
 
 const DEFAULT_VIDEOS: ProductionVideos = {
-  num: '05',
+  num: '06',
   tag: 'Videos',
   title: '생산과정 — 농장 현장',
   body: '베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
@@ -128,7 +152,7 @@ const DEFAULT_VIDEOS: ProductionVideos = {
 };
 
 const DEFAULT_CERTS: Certifications = {
-  num: '06',
+  num: '07',
   tag: 'Certifications',
   title: '신뢰의 지표 — 국제가 인정하는 품질',
   body: 'CITES 국제거래 인증부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지. 대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.',
@@ -211,6 +235,7 @@ export default function AdminProcessPage() {
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<ProcessHero>(DEFAULT_HERO);
+  const [sceneSection, setSceneSection] = useState<SceneSection>(DEFAULT_SCENE_SECTION);
   const [chapters, setChapters] = useState<ProcessChapter[]>(DEFAULT_CHAPTERS);
   const [videos, setVideos] = useState<ProductionVideos>(DEFAULT_VIDEOS);
   const [certs, setCerts] = useState<Certifications>(DEFAULT_CERTS);
@@ -231,6 +256,13 @@ export default function AdminProcessPage() {
         const data = (await res.json()) as { pages?: { process?: Partial<ProcessData> } };
         const d = data.pages?.process;
         if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
+        if (d?.sceneSection) {
+          setSceneSection({
+            ...DEFAULT_SCENE_SECTION,
+            ...d.sceneSection,
+            images: Array.isArray(d.sceneSection.images) ? d.sceneSection.images : [],
+          });
+        }
         if (Array.isArray(d?.chapters) && d.chapters.length > 0) {
           setChapters(
             d.chapters.map((c) => ({
@@ -278,7 +310,7 @@ export default function AdminProcessPage() {
     try {
       const res = await fetch('/api/admin/pages');
       const body = res.ok ? ((await res.json()) as { pages?: { process?: ProcessData } }) : { pages: {} };
-      const currentProcess = body.pages?.process ?? { hero: DEFAULT_HERO, chapters: DEFAULT_CHAPTERS, productionVideos: DEFAULT_VIDEOS, certifications: DEFAULT_CERTS };
+      const currentProcess = body.pages?.process ?? { hero: DEFAULT_HERO, sceneSection: DEFAULT_SCENE_SECTION, chapters: DEFAULT_CHAPTERS, productionVideos: DEFAULT_VIDEOS, certifications: DEFAULT_CERTS };
       const merged = { ...currentProcess, ...payload };
 
       const result = await saveAdminPage('process', merged);
@@ -368,6 +400,37 @@ export default function AdminProcessPage() {
                 onChange={(url) => setHero({ ...hero, heroImage: url })}
                 subdir="pages"
               />
+            </div>
+          </SectionCard>
+
+          {/* SCENE SECTION */}
+          <SectionCard title="01 · 대라천 침향 현장 (Scene)" onSave={() => saveSection('sceneSection', { sceneSection })} saving={saving === 'sceneSection'}>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                <LabeledInput label="번호 (예: 01)" value={sceneSection.num} onChange={(v) => setSceneSection({ ...sceneSection, num: v })} />
+                <LabeledInput label="태그 (예: THE FIELD)" value={sceneSection.tag} onChange={(v) => setSceneSection({ ...sceneSection, tag: v })} />
+                <LabeledInput label="제목" value={sceneSection.title} onChange={(v) => setSceneSection({ ...sceneSection, title: v })} />
+              </div>
+              <LabeledInput label="부제목" value={sceneSection.subtitle} onChange={(v) => setSceneSection({ ...sceneSection, subtitle: v })} />
+              <LabeledTextarea label="본문" value={sceneSection.body} onChange={(v) => setSceneSection({ ...sceneSection, body: v })} rows={6} />
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">현장 이미지 ({sceneSection.images.length})</label>
+                <div className="space-y-3">
+                  {sceneSection.images.map((img, i) => (
+                    <div key={i} className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3">
+                      <div className="flex-1">
+                        <ImageUploadField value={img} onChange={(url) => { const n = [...sceneSection.images]; n[i] = url; setSceneSection({ ...sceneSection, images: n }); }} subdir="pages" />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: moveItem(sceneSection.images, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: moveItem(sceneSection.images, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: removeIndex(sceneSection.images, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: [...sceneSection.images, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 이미지 추가</button>
+                </div>
+              </div>
             </div>
           </SectionCard>
 
