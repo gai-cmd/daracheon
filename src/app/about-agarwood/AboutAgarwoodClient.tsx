@@ -155,34 +155,36 @@ export default function AboutAgarwoodClient({ data }: Props) {
           borderBottom: '1px solid rgba(212,168,67,0.15)',
         }}
       >
-        <div
-          className={styles.wrap}
-          style={{ display: 'flex', gap: 4, flexWrap: 'wrap', paddingTop: 14, paddingBottom: 14 }}
-        >
-          {TABS.map((tab, i) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(i)}
-              aria-current={activeTab === i ? 'page' : undefined}
-              style={{
-                padding: '10px 20px',
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                fontSize: '0.72rem',
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                background: activeTab === i ? 'var(--accent)' : 'transparent',
-                color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                fontWeight: activeTab === i ? 600 : 400,
-                transition: 'all 300ms',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className={styles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
+          <div className={styles.chapterGrid}>
+            <div aria-hidden />
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {TABS.map((tab, i) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(i)}
+                  aria-current={activeTab === i ? 'page' : undefined}
+                  style={{
+                    padding: '10px 20px',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
+                    background: activeTab === i ? 'var(--accent)' : 'transparent',
+                    color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
+                    fontWeight: activeTab === i ? 600 : 400,
+                    transition: 'all 300ms',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </nav>
 
