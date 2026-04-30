@@ -703,23 +703,13 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       ))}
                     </div>
 
-                    {/* 원문 캡처 — VIHECO 성분명세서 (Aquilaria agallocha Roxburgh 학명 실증) */}
-                    <div style={{ marginTop: 28 }}>
-                      <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12 }}>
-                        원문 서류 · 성분명세서
+                    {/* 성분명세서 텍스트 요약 */}
+                    <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
+                      <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
+                        VIHECO 중앙제약 성분명세서에는 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>Aquilaria agallocha Roxburgh</em> 학명이 명시되어 있습니다.
+                        <br />
+                        제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.
                       </p>
-                      <div style={{ position: 'relative', border: '1px solid rgba(212,168,67,0.3)', overflow: 'hidden', maxHeight: 280 }}>
-                        <Image
-                          src="/uploads/misc/kfda-doc-1.jpg"
-                          alt="VIHECO 제약사 성분명세서 — Agarwood oil 학명: Aquilaria agallocha Roxburgh"
-                          width={900}
-                          height={1200}
-                          style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover', objectPosition: 'top' }}
-                        />
-                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 14px', background: 'rgba(10,11,16,0.82)', backdropFilter: 'blur(8px)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)' }}>
-                          VIHECO 중앙제약 성분명세서 — Agarwood oil · <em style={{ color: 'var(--accent)', fontStyle: 'normal' }}>Aquilaria agallocha Roxburgh</em> · 2026.03.10
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </RevealOnScroll>
@@ -831,7 +821,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
                         {[
-                          { src: '/uploads/misc/kfda-doc-1.jpg', label: '성분 명세서', sub: 'Aquilaria agallocha Roxburgh 학명 기재' },
                           { src: '/uploads/misc/kfda-doc-2.jpg', label: '항산화제 인증서', sub: 'd-α-토코페롤 성분 확인' },
                           { src: '/uploads/misc/kfda-doc-3.jpg', label: '생산 공정도', sub: '캡슐 제조 전 공정 기록' },
                           { src: '/uploads/misc/kfda-doc-4.jpg', label: '젤라틴 안전 확인서', sub: 'BSE 안전 돈피 유래 젤라틴' },
