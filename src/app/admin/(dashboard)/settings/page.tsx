@@ -26,6 +26,15 @@ interface SocialLink {
   url: string;
 }
 
+const SEO_DEFAULTS: SeoSettings = {
+  metaTitle: "대라천 '참'침향 — 식약처 공식 등재 Aquilaria Agallocha Roxburgh 전문 브랜드 | ZOEL LIFE",
+  metaDescription:
+    "조엘라이프의 대라천 '참'침향. 베트남 5개 성 200ha 직영 농장에서 25년 직접 재배한 진짜 침향. 식약처 '대한민국약전외한약(생약)규격집'·'식품공전' 공식 등재 학명 Aquilaria Agallocha Roxburgh 보증. CITES·ISO 22000·GMP 인증. 침향 오일·캡슐·침향단·침향차·선향 한국 직판.",
+  keywords:
+    "침향, 대라천, 참침향, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향 캡슐, 침향환, 침향단, 침향 선향, 침향수, 침향차, 침향 스틱, 베트남 침향, 베트남 직영 침향, 프리미엄 침향, 진짜 침향, 정품 침향, Aquilaria Agallocha Roxburgh, 아퀼라리아 아갈로차 록스버그, 식약처 침향, 약전 침향, CITES 침향, 침향 구매, 침향 도매, 침향 B2B, 침향 OEM, 하띤 침향, 동나이 침향, 냐짱 침향",
+  ogImage: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
+};
+
 interface SettingsData {
   name: string;
   description: string;
@@ -123,11 +132,13 @@ export default function AdminSettingsPage() {
           foundingDate: data.foundingDate || '',
         });
         setSocialLinks(Array.isArray(data.socialLinks) ? data.socialLinks : []);
+        // 비어있는 SEO 필드는 권장 기본값으로 자동 채움.
+        // 사용자가 저장 버튼을 누르면 그 값이 blob에 영구 저장됨.
         setSeo({
-          metaTitle: data.seo?.metaTitle || '',
-          metaDescription: data.seo?.metaDescription || '',
-          keywords: data.seo?.keywords || '',
-          ogImage: data.seo?.ogImage || '',
+          metaTitle: data.seo?.metaTitle || SEO_DEFAULTS.metaTitle,
+          metaDescription: data.seo?.metaDescription || SEO_DEFAULTS.metaDescription,
+          keywords: data.seo?.keywords || SEO_DEFAULTS.keywords,
+          ogImage: data.seo?.ogImage || SEO_DEFAULTS.ogImage,
         });
       } catch (err) {
         console.error('Failed to fetch settings:', err);
@@ -417,39 +428,83 @@ export default function AdminSettingsPage() {
 
           {/* Section 4: SEO Settings */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              SEO 설정
-            </h2>
-            <div className="space-y-4">
-              <LabeledInput
-                label="메타 타이틀"
-                value={seo.metaTitle}
-                onChange={(v) => setSeo({ ...seo, metaTitle: v })}
-              />
+            <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  메타 설명
-                </label>
+                <h2 className="text-xl font-semibold text-gray-900">SEO 설정</h2>
+                <p className="mt-1 text-xs text-gray-400">
+                  사이트 메타 태그·검색 결과·SNS 공유 카드(OG)에 사용됩니다.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSeo({ ...SEO_DEFAULTS })}
+                className="shrink-0 rounded-lg border border-gold-300 bg-white px-3 py-1.5 text-xs font-medium text-gold-700 hover:bg-gold-50"
+              >
+                권장 기본값으로 채우기
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <LabeledInput
+                  label="메타 타이틀"
+                  value={seo.metaTitle}
+                  onChange={(v) => setSeo({ ...seo, metaTitle: v })}
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  검색 결과 제목·브라우저 탭 제목. 권장 50–60자. 현재 {seo.metaTitle.length}자
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">메타 설명</label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-colors"
                   value={seo.metaDescription}
                   onChange={(e) =>
                     setSeo({ ...seo, metaDescription: e.target.value })
                   }
                 />
+                <p className="mt-1 text-xs text-gray-400">
+                  검색 결과 본문 발췌. 권장 150–160자. 현재 {seo.metaDescription.length}자
+                </p>
               </div>
-              <LabeledInput
-                label="키워드 (쉼표로 구분)"
-                value={seo.keywords}
-                onChange={(v) => setSeo({ ...seo, keywords: v })}
-              />
-              <ImageUploadField
-                label="OG 이미지"
-                value={seo.ogImage}
-                onChange={(url) => setSeo({ ...seo, ogImage: url })}
-                subdir="settings"
-              />
+              <div>
+                <LabeledInput
+                  label="키워드 (쉼표로 구분)"
+                  value={seo.keywords}
+                  onChange={(v) => setSeo({ ...seo, keywords: v })}
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  현재 {seo.keywords.split(',').filter((k) => k.trim()).length}개 키워드
+                </p>
+              </div>
+              <div>
+                <ImageUploadField
+                  label="OG 이미지 (SNS 공유 카드)"
+                  value={seo.ogImage}
+                  onChange={(url) => setSeo({ ...seo, ogImage: url })}
+                  subdir="settings"
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  카카오톡·페이스북·트위터 공유 시 노출. 권장 1200×630.
+                </p>
+              </div>
+
+              {/* 검색 결과 미리보기 */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p className="mb-3 text-xs font-medium text-gray-500">Google 검색 결과 미리보기</p>
+                <div className="space-y-1">
+                  <p className="truncate text-xs text-emerald-700">
+                    https://www.zoellife.com › ko
+                  </p>
+                  <p className="truncate text-base text-blue-700 hover:underline">
+                    {seo.metaTitle || '메타 타이틀'}
+                  </p>
+                  <p className="text-xs leading-relaxed text-gray-600 line-clamp-2">
+                    {seo.metaDescription || '메타 설명이 여기에 표시됩니다.'}
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="mt-6 flex justify-end">
               <SaveButton onClick={handleSaveSeo} loading={saving === 'seo'} />
