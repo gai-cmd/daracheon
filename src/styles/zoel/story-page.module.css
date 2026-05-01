@@ -187,15 +187,12 @@
 }
 
 /* 소제목 — 브랜드 이야기 chapterSubtitle 표준.
-   inline 스타일 대신 이 클래스 한 곳에서 관리. */
+   BrandStoryClient.module.css 와 4-속성 동일하게 유지. */
 .chapterSubtitle {
   font-family: 'Noto Serif KR', serif;
   font-style: italic;
   font-size: 1.05rem;
-  line-height: 1.7;
   color: var(--accent-soft);
-  margin-bottom: 18px;
-  word-break: keep-all;
 }
 
 .chapterBody p {
