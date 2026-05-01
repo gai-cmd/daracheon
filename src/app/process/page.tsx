@@ -206,7 +206,7 @@ export default async function ProcessPage() {
       <JsonLd data={videoJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '108px' }}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero.heroImage && (
           <Image
             src={hero.heroImage}

@@ -107,13 +107,18 @@ export default function MediaPageClient({
         />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero.kicker}</div>
-          <div className={styles.heroMain}>
+          <div
+            className={styles.heroMain}
+            style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 3.4fr)' }}
+          >
             <h1>
               {hero.titleLine1}
               <br />
               <em>{hero.titleEmphasis}</em>
             </h1>
-            <p className={styles.lede}>{hero.lede}</p>
+            <p className={styles.lede} style={{ maxWidth: 'none' }}>
+              {hero.lede}
+            </p>
           </div>
         </div>
       </section>

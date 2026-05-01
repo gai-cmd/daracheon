@@ -42,7 +42,7 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
   return (
     <>
       {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: 36 }}>
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         <div className={styles.wrap}>
           <div className={styles.kicker}>
             <Link href="/media" style={{ color: 'inherit', textDecoration: 'none' }}>
