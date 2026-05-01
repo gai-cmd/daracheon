@@ -86,23 +86,24 @@ export default function MediaPageClient({
 
   return (
     <>
-      {/* HERO */}
-      <section
-        className={`${styles.hero} orn-grain orn-grain--faint`}
-        style={{
-          paddingBottom: '40px',
-          ...(hero.heroImage
-            ? {
-                background: `radial-gradient(1200px 600px at 20% 30%, rgba(212,168,67,.10), transparent 60%), linear-gradient(180deg, rgba(10,11,16,.50) 0%, rgba(20,22,31,.58) 100%), url("${hero.heroImage}") center/cover no-repeat`,
-              }
-            : {}),
-        }}
-      >
-        <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-60px', opacity: 0.45, zIndex: 1 }} />
+      {/* HERO — brand-story / about-agarwood 와 완전 동일 구조 */}
+      <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
+        {hero.heroImage && (
+          <Image
+            src={hero.heroImage}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            unoptimized
+            aria-hidden
+            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
+          />
+        )}
         <div
           className="orn-plume"
           aria-hidden
-          style={{ left: '8%', bottom: '-120px', opacity: 0.22, transform: 'scaleX(-1)', width: 240, height: 320, zIndex: 1 }}
+          style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
         />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero.kicker}</div>
@@ -112,17 +113,7 @@ export default function MediaPageClient({
               <br />
               <em>{hero.titleEmphasis}</em>
             </h1>
-            <p
-              className={styles.lede}
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
-              {hero.lede}
-            </p>
+            <p className={styles.lede}>{hero.lede}</p>
           </div>
         </div>
       </section>
