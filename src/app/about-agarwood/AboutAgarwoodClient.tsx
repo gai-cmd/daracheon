@@ -197,7 +197,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {activeTab === 0 && (
         <>
           {/* Chapter 01 — Definition */}
-          <section className={styles.chapter} style={{ paddingTop: '32px' }}>
+          <section className={styles.chapter}>
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
@@ -209,7 +209,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     <h3>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
-                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.08rem', marginBottom: 18 }}>
+                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
                       {definition?.subtitle ?? '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)'}
                     </p>
                   </RevealOnScroll>
@@ -265,7 +265,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     <h3>{data?.formationSectionTitle ?? '침향은 어떻게 만들어지나요?'}</h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
-                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.08rem', marginBottom: 26 }}>
+                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 26 }}>
                       자연의 치유 본능이 만든 기적의 향
                     </p>
                   </RevealOnScroll>
@@ -545,7 +545,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <h3>{officialSources.title}</h3>
                     </RevealOnScroll>
                     <RevealOnScroll delay={100}>
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 32 }}>
+                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 32 }}>
                         {officialSources.subtitle}
                       </p>
                     </RevealOnScroll>
@@ -646,7 +646,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
       {activeTab === 1 && (
         <>
-        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
+        <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -660,7 +660,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 18 }}>
+                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
                     {auth.subtitle}
                   </p>
                 </RevealOnScroll>
@@ -859,7 +859,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
       {activeTab === 2 && (
         <>
-        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
+        <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -969,7 +969,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
       {activeTab === 3 && (
         <>
-        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
+        <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1111,7 +1111,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
       {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
       {activeTab === 4 && (
         <>
-        <section className={styles.chapter} style={{ paddingTop: '32px' }}>
+        <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1125,7 +1125,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.04rem', marginBottom: 18 }}>
+                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
                     {usageTab.subtitle ?? '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.'}
                   </p>
                 </RevealOnScroll>

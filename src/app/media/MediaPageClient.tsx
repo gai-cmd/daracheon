@@ -182,16 +182,7 @@ export default function MediaPageClient({
                   <div className={styles.chapterBody}>
                     <h3>{sceneSection.title}</h3>
                     {sceneSection.subtitle && (
-                      <p
-                        style={{
-                          fontFamily: "'Noto Serif KR', serif",
-                          fontStyle: 'italic',
-                          color: 'var(--accent)',
-                          fontSize: '0.98rem',
-                          lineHeight: 1.7,
-                          marginBottom: 18,
-                        }}
-                      >
+                      <p className={styles.chapterSubtitle}>
                         {sceneSection.subtitle}
                       </p>
                     )}

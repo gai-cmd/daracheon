@@ -349,7 +349,7 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
         <section className={styles.faqSection} id="faq">
           <div className={styles.wrap}>
             <div className={styles.colHead}>FAQ · 자주 묻는 질문</div>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2rem)', fontWeight: 200, color: '#fff' }}>
+            <h2 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#fff', marginBottom: 16 }}>
               자주 묻는 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>질문</em>
             </h2>
             <div className={styles.faqList}>

@@ -461,10 +461,14 @@
 @media (min-width: 900px) {
   .infoGrid { grid-template-columns: 1fr 1fr; gap: 60px; }
 }
+/* 제목 — 브랜드 이야기 표준과 동일. */
 .info h2 {
-  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   font-weight: 200;
-  margin-bottom: 30px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
   color: #fff;
 }
 .info h2 em {

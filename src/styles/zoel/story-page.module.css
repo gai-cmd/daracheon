@@ -164,17 +164,38 @@
   overflow-wrap: break-word;
 }
 
+/* 제목 — 브랜드 이야기(BrandStoryClient chapterTitle) 표준과 동일.
+   Noto Serif KR · clamp(1.8rem, 3.5vw, 2.6rem) · weight 200.
+   chapterBody 를 사용하는 모든 페이지(about-agarwood, media, company …)에 공통 적용. */
 .chapterBody h3 {
-  font-size: clamp(1.4rem, 2.6vw, 2rem);
-  font-weight: 300;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  margin-bottom: 24px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 16px;
   color: #fff;
-  font-family: 'Noto Sans KR', sans-serif;
   text-wrap: pretty;
   word-break: keep-all;
   overflow-wrap: break-word;
+}
+.chapterBody h3 em {
+  color: var(--accent);
+  font-style: normal;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
+}
+
+/* 소제목 — 브랜드 이야기 chapterSubtitle 표준.
+   inline 스타일 대신 이 클래스 한 곳에서 관리. */
+.chapterSubtitle {
+  font-family: 'Noto Serif KR', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--accent-soft);
+  margin-bottom: 18px;
+  word-break: keep-all;
 }
 
 .chapterBody p {
