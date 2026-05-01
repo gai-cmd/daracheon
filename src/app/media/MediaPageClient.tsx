@@ -112,7 +112,17 @@ export default function MediaPageClient({
               <br />
               <em>{hero.titleEmphasis}</em>
             </h1>
-            <p className={styles.lede}>{hero.lede}</p>
+            <p
+              className={styles.lede}
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {hero.lede}
+            </p>
           </div>
         </div>
       </section>
