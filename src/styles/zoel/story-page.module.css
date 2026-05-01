@@ -187,7 +187,9 @@
 }
 
 /* 소제목 — 브랜드 이야기 chapterSubtitle 표준.
-   BrandStoryClient.module.css 와 4-속성 동일하게 유지. */
+   .chapterBody p (specificity 0,0,1,1) 를 이기도록
+   .chapterBody .chapterSubtitle (0,0,2,0) 컴파운드 셀렉터 병기. */
+.chapterBody .chapterSubtitle,
 .chapterSubtitle {
   font-family: 'Noto Serif KR', serif;
   font-style: italic;
