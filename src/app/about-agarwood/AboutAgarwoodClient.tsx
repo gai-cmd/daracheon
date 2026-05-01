@@ -209,7 +209,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     <h3>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
-                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
+                    <p className={styles.chapterSubtitle}>
                       {definition?.subtitle ?? '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)'}
                     </p>
                   </RevealOnScroll>
@@ -265,7 +265,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     <h3>{data?.formationSectionTitle ?? '침향은 어떻게 만들어지나요?'}</h3>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
-                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 26 }}>
+                    <p className={styles.chapterSubtitle}>
                       자연의 치유 본능이 만든 기적의 향
                     </p>
                   </RevealOnScroll>
@@ -545,7 +545,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       <h3>{officialSources.title}</h3>
                     </RevealOnScroll>
                     <RevealOnScroll delay={100}>
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 32 }}>
+                      <p className={styles.chapterSubtitle}>
                         {officialSources.subtitle}
                       </p>
                     </RevealOnScroll>
@@ -655,19 +655,15 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>
-                    <em>진짜 침향 구별 방법</em>
-                  </h3>
+                  <h3>진짜 침향 구별 방법</h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
+                  <p className={styles.chapterSubtitle}>
                     {auth.subtitle}
                   </p>
                 </RevealOnScroll>
                 <RevealOnScroll delay={150}>
-                  <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, marginBottom: 36 }}>
-                    {auth.intro}
-                  </p>
+                  <p>{auth.intro}</p>
                 </RevealOnScroll>
 
                 {/* Check 01 — 학명 */}
@@ -868,12 +864,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>
-                    <em>문헌에 실린 침향</em>
-                  </h3>
+                  <h3>문헌에 실린 침향</h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p>
+                  <p className={styles.chapterSubtitle}>
                     침향(沈香)은 수천 년간 동서양의 의학 문헌에서 그 가치를 인정받아 온 귀중한 약재입니다.
                   </p>
                 </RevealOnScroll>
@@ -978,12 +972,12 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>
-                    <em>논문에 실린 침향</em>
-                  </h3>
+                  <h3>논문에 실린 침향</h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p>현대 과학 논문에서 그 가치를 인정받아 온 귀중한 약재입니다.</p>
+                  <p className={styles.chapterSubtitle}>
+                    현대 과학 논문에서 그 가치를 인정받아 온 귀중한 약재입니다.
+                  </p>
                 </RevealOnScroll>
                 {papers.length > 0 ? (
                   <>
@@ -1120,12 +1114,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>
-                    <em>{usageTab.title ?? '복용 및 사용법'}</em>
-                  </h3>
+                  <h3>{usageTab.title ?? '복용 및 사용법'}</h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
-                  <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)', fontSize: '1.05rem', marginBottom: 18 }}>
+                  <p className={styles.chapterSubtitle}>
                     {usageTab.subtitle ?? '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.'}
                   </p>
                 </RevealOnScroll>
