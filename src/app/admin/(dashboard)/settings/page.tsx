@@ -364,7 +364,9 @@ export default function AdminSettingsPage() {
             <div className="mt-6 rounded-lg bg-gray-50 border border-gray-100 p-4 text-xs text-gray-600 leading-relaxed">
               <p className="font-medium text-gray-700 mb-1.5">미리보기</p>
               <p>
-                대표: {footerInfo.ceo || '대표자명'} | 사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
+                대표: {footerInfo.ceo || '대표자명'}
+                <span className="mx-1.5 text-gray-400">·</span>
+                사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
                 <span className="mx-1.5 text-gray-400">·</span>
                 주소: {footerInfo.address || '주소'}
                 <span className="mx-1.5 text-gray-400">·</span>

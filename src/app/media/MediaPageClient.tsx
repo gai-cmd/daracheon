@@ -107,26 +107,11 @@ export default function MediaPageClient({
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero.kicker}</div>
           <div className={styles.heroMain}>
-            <div>
-              <h1>
-                {hero.titleLine1}
-                <br />
-                <em>{hero.titleEmphasis}</em>
-              </h1>
-              <div
-                style={{
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.28em',
-                  textTransform: 'uppercase',
-                  color: 'var(--accent-soft)',
-                  marginTop: 18,
-                  maxWidth: 420,
-                }}
-              >
-                {hero.latLabel}
-              </div>
-            </div>
+            <h1>
+              {hero.titleLine1}
+              <br />
+              <em>{hero.titleEmphasis}</em>
+            </h1>
             <p className={styles.lede}>{hero.lede}</p>
           </div>
         </div>

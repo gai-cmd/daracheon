@@ -53,11 +53,15 @@ export default function Footer({ socialLinks = [], company }: Props) {
         {/* Company Info */}
         <div className={styles.companyInfo}>
           <p className={styles.companyInfoRow}>
-            <span className={styles.infoBlock}>
-              {company.ceo && `대표: ${company.ceo}`}
-              {company.ceo && company.businessReg && ' | '}
-              {company.businessReg && `사업자등록번호: ${company.businessReg}`}
-            </span>
+            {company.ceo && (
+              <span className={styles.infoBlock}>대표: {company.ceo}</span>
+            )}
+            {company.ceo && company.businessReg && (
+              <span className={styles.infoSep} aria-hidden>·</span>
+            )}
+            {company.businessReg && (
+              <span className={styles.infoBlock}>사업자등록번호: {company.businessReg}</span>
+            )}
             {company.address && (
               <>
                 <span className={styles.infoSep} aria-hidden>·</span>

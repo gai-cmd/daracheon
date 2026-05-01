@@ -149,6 +149,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리
   const settings = await readSingleSafe<{
     name?: string;
+    description?: string;
     ceo?: string;
     businessReg?: string;
     address?: string;
@@ -161,6 +162,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }>('company');
   const brandLogo = settings?.brandLogo ?? '';
   const socialLinks = settings?.socialLinks ?? [];
+  // 푸터 브랜드 설명 fallback: brandDesc(전용) → description(회사 소개) → 빈 문자열.
+  // Footer 컴포넌트가 빈 값일 때 hardcoded DEFAULT 로 최종 fallback.
+  const footerBrandDesc =
+    settings?.brandDesc?.trim() || settings?.description?.trim() || '';
   const footerCompany = {
     name: settings?.name ?? '',
     ceo: settings?.ceo ?? '',
@@ -168,7 +173,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     address: settings?.address ?? '',
     phone: settings?.phone ?? '',
     email: settings?.email ?? '',
-    brandDesc: settings?.brandDesc ?? '',
+    brandDesc: footerBrandDesc,
   };
 
   return (
