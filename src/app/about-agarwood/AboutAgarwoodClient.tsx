@@ -4,9 +4,14 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab } from './page';
+
+// 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
+// 외부 호환을 위해 동일 시그니처를 유지하지만 단순 wrapper 로 동작.
+function RevealOnScroll({ children }: { children: ReactNode; direction?: string; delay?: number; className?: string }) {
+  return <>{children}</>;
+}
 
 /**
  * 학명(Latin scientific name) 및 괄호 음역을 한 덩어리로 유지.
