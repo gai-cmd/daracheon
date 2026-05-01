@@ -156,6 +156,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     email?: string;
     brandLogo?: string;
     companyLogo?: string;
+    brandDesc?: string;
     socialLinks?: Array<{ label: string; url: string }>;
   }>('company');
   const brandLogo = settings?.brandLogo ?? '';
@@ -167,6 +168,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     address: settings?.address ?? '',
     phone: settings?.phone ?? '',
     email: settings?.email ?? '',
+    brandDesc: settings?.brandDesc ?? '',
   };
 
   return (

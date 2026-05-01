@@ -37,6 +37,7 @@ interface SettingsData {
   foundingDate: string;
   brandLogo: string;
   companyLogo: string;
+  brandDesc?: string;
   socialLinks?: SocialLink[];
   seo: SeoSettings;
 }
@@ -52,6 +53,7 @@ export default function AdminSettingsPage() {
     description: '',
     brandLogo: '',
     companyLogo: '',
+    brandDesc: '',
   });
 
   // Section 2: Footer / Company Info
@@ -110,6 +112,7 @@ export default function AdminSettingsPage() {
           description: data.description || '',
           brandLogo: data.brandLogo || '',
           companyLogo: data.companyLogo || '',
+          brandDesc: data.brandDesc || '',
         });
         setFooterInfo({
           ceo: data.ceo || '',
@@ -262,6 +265,23 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  푸터 브랜드 설명
+                </label>
+                <textarea
+                  rows={5}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none transition-colors"
+                  value={basicInfo.brandDesc}
+                  onChange={(e) =>
+                    setBasicInfo({ ...basicInfo, brandDesc: e.target.value })
+                  }
+                  placeholder="조엘라이프의 대라천 '참'침향은 ..."
+                />
+                <p className="mt-1 text-xs text-gray-400">
+                  사이트 하단 푸터의 브랜드 로고 아래에 표시되는 회사 소개 문단. 비어있으면 기본 문구가 노출됩니다.
+                </p>
+              </div>
+              <div className="md:col-span-2">
                 <ImageUploadField
                   label="브랜드 로고 (좌측 상단 Header)"
                   value={basicInfo.brandLogo}
@@ -333,7 +353,7 @@ export default function AdminSettingsPage() {
             <div className="mt-6 rounded-lg bg-gray-50 border border-gray-100 p-4 text-xs text-gray-600 leading-relaxed">
               <p className="font-medium text-gray-700 mb-1.5">미리보기</p>
               <p>
-                {basicInfo.name || '회사명'} | 대표: {footerInfo.ceo || '대표자명'} | 사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
+                대표: {footerInfo.ceo || '대표자명'} | 사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
                 <span className="mx-1.5 text-gray-400">·</span>
                 주소: {footerInfo.address || '주소'}
                 <span className="mx-1.5 text-gray-400">·</span>
