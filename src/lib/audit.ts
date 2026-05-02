@@ -14,7 +14,8 @@ export type AuditModule =
   | 'auth'
   | 'upload'
   | 'announcement'
-  | 'export';
+  | 'export'
+  | 'leads';
 
 export type AuditAction =
   | 'create'
@@ -28,7 +29,8 @@ export type AuditAction =
   | 'logout'
   | 'reply'
   | 'status_change'
-  | 'test';
+  | 'test'
+  | 'resend';
 
 export interface AuditEntry {
   id: string;
