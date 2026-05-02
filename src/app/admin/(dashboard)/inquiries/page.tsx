@@ -2,6 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import CsvImportButton from '@/components/admin/CsvImportButton';
+import PageHeroEditor from '@/components/admin/PageHeroEditor';
+
+const SUPPORT_DEFAULT_HERO = {
+  kicker: '문의하기 · Support',
+  titleLine1: '무엇을',
+  titleEmphasis: '도와드릴까요',
+  lede: '제품에 대한 질문, 대량 주문 · B2B 문의까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
+};
 
 /* ─── Types ─── */
 type InquiryStatus = 'new' | 'replied' | 'resolved';
@@ -284,6 +292,16 @@ export default function InquiriesPage() {
       )}
 
       <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* HERO EDITOR — 공개 /support 페이지 상단 히어로(섹션 태그·제목·부제목·배경 이미지) */}
+        <div className="mb-8">
+          <PageHeroEditor
+            pageKey="support"
+            publicPath="/support"
+            defaultHero={SUPPORT_DEFAULT_HERO}
+            title="Hero · /support 히어로"
+          />
+        </div>
+
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>

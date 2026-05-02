@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import VideoUploadField from '@/components/admin/VideoUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
+import { agarwoodEditionKo } from '@/content/edition/agarwood.ko';
 import type {
   EditionContent,
   EditionChapter,
@@ -12,6 +13,11 @@ import type {
 } from '@/content/edition/types';
 
 const SUBDIR = 'edition';
+
+// DB(pages.editionAgarwood) 가 비어있으면 기본 시드(/src/content/edition/agarwood.ko.ts)를
+// 에디터에 로드해, 어드민이 빈 폼이 아닌 실제 카탈로그 콘텐츠를 편집점으로 사용한다.
+// 공개 카탈로그(/edition/[token]/agarwood)도 동일 시드를 fallback 으로 쓰므로 기준이 같다.
+const DEFAULT_CONTENT: EditionContent = agarwoodEditionKo;
 
 const EMPTY_CONTENT: EditionContent = {
   cover: {
@@ -52,9 +58,10 @@ function removeIndex<T>(arr: T[], i: number): T[] {
 }
 
 export default function EditionContentEditor() {
-  const [content, setContent] = useState<EditionContent>(EMPTY_CONTENT);
+  const [content, setContent] = useState<EditionContent>(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [seeded, setSeeded] = useState(false);
   const [toast, setToast] = useState<{ kind: 'ok' | 'err'; msg: string } | null>(null);
 
   useEffect(() => {
@@ -62,6 +69,7 @@ export default function EditionContentEditor() {
       try {
         const res = await fetch('/api/admin/pages', { cache: 'no-store' });
         if (!res.ok) {
+          setSeeded(true);
           setLoading(false);
           return;
         }
@@ -78,14 +86,29 @@ export default function EditionContentEditor() {
             lineup: ed.lineup ?? EMPTY_CONTENT.lineup,
             closing: { ...EMPTY_CONTENT.closing, ...ed.closing, cta: ed.closing?.cta ?? [], contact: ed.closing?.contact ?? [] },
           });
+        } else {
+          // DB 비어있음 — 기본 시드로 출발(이미 useState 초기값) + 안내 배너 노출.
+          setSeeded(true);
         }
       } catch (e) {
         console.error(e);
+        setSeeded(true);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
+
+  function loadDefaults() {
+    setContent(DEFAULT_CONTENT);
+    setSeeded(true);
+    setToast({ kind: 'ok', msg: '기본 시드 콘텐츠를 에디터에 로드했습니다. 저장 시 DB 에 반영됩니다.' });
+  }
+  function clearAll() {
+    if (!confirm('현재 편집 중인 모든 콘텐츠를 빈 폼으로 초기화할까요? (저장 전까지 DB 반영 안 됨)')) return;
+    setContent(EMPTY_CONTENT);
+    setSeeded(false);
+  }
 
   async function onSave() {
     if (saving) return;
@@ -108,22 +131,46 @@ export default function EditionContentEditor() {
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">디지털 에디션 — 침향 카탈로그</h1>
           <p className="mt-1 text-sm text-gray-500">
             /agarwood-edition 신청 → 인증 메일 → /edition/[token]/agarwood 에서 노출되는 콘텐츠.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={saving}
-          className="rounded-lg bg-gold-500 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-gold-600 disabled:opacity-50"
-        >
-          {saving ? '저장 중...' : '저장'}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={loadDefaults}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-xs font-semibold text-gray-700 hover:border-gold-500 hover:text-gold-600"
+            title="src/content/edition/agarwood.ko.ts 의 기본 시드를 에디터에 다시 로드"
+          >
+            기본 시드 불러오기
+          </button>
+          <button
+            type="button"
+            onClick={clearAll}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-xs font-semibold text-gray-600 hover:border-red-400 hover:text-red-600"
+          >
+            빈 폼 초기화
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className="rounded-lg bg-gold-500 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-gold-600 disabled:opacity-50"
+          >
+            {saving ? '저장 중...' : '저장'}
+          </button>
+        </div>
       </div>
+
+      {seeded && (
+        <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-200">
+          DB 에 저장된 카탈로그 콘텐츠가 없어 <code className="font-mono text-xs">src/content/edition/agarwood.ko.ts</code> 의
+          기본 시드(표지·머리말·8개 챕터·갤러리·라인업·마무리)를 에디터에 로드했습니다. 수정 후 <strong>저장</strong> 을 눌러야 DB 에 반영됩니다.
+        </div>
+      )}
 
       {toast && (
         <div

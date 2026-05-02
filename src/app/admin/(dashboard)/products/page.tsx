@@ -3,6 +3,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { productCategories, type Product, type ProductVariant } from '@/data/products';
 import ImageUploadField from '@/components/admin/ImageUploadField';
+import PageHeroEditor from '@/components/admin/PageHeroEditor';
+
+const PRODUCTS_DEFAULT_HERO = {
+  kicker: '제품 소개 · Products',
+  titleLine1: '수십 년 숙성의 시간을',
+  titleEmphasis: '담은 고귀한 제품',
+  lede: '베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업. 모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.',
+};
 
 /** Badge text → CSS class 매핑. 대소문자 무관. */
 function getBadgeClass(badge: string): string {
@@ -339,6 +347,16 @@ export default function AdminProductsPage() {
           {toast}
         </div>
       )}
+
+      {/* HERO EDITOR — 공개 /products 페이지의 히어로 (섹션 태그·제목·부제목·배경 이미지) */}
+      <div className="mb-6">
+        <PageHeroEditor
+          pageKey="products"
+          publicPath="/products"
+          defaultHero={PRODUCTS_DEFAULT_HERO}
+          title="Hero · /products 히어로"
+        />
+      </div>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
