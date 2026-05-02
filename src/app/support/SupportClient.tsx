@@ -108,11 +108,19 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
         body: JSON.stringify({
           name: data.get('name'),
           email: data.get('email'),
+          phone: data.get('phone') || '',
           subject: `[${topic}] ${data.get('subject') || '문의'}`,
           message: data.get('message'),
         }),
       });
       if (res.ok) {
+        const body = await res.json().catch(() => ({}));
+        // 메일 발송 실패 시에도 문의는 DB 에 저장됨 — 사용자에겐 접수 완료로 표시,
+        // 콘솔에는 발송 실패 사유 노출(어드민이 settings 에서 SMTP 재확인 가능).
+        const mail = body?.mailSent;
+        if (mail && (!mail.customer || !mail.admin)) {
+          console.warn('[Contact Form] 메일 일부 발송 실패', mail);
+        }
         setFormState('sent');
         setShowToast(true);
         setTimeout(() => setShowToast(false), 2800);

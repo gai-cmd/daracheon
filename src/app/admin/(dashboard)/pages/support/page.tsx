@@ -309,16 +309,16 @@ export default function AdminSupportPage() {
           {activeAdminTab === 0 && (<>
 
           {/* HERO */}
-          <SectionCard title="HERO · 문의 헤더" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
+          <SectionCard title="Hero · 히어로" onSave={() => saveSection('hero', { hero })} saving={saving === 'hero'}>
             <div className="space-y-5">
-              <LabeledInput label="상단 키커 (예: 문의하기)" value={hero.kicker} onChange={(v) => setHero({ ...hero, kicker: v })} />
+              <LabeledInput label="섹션 태그" value={hero.kicker} onChange={(v) => setHero({ ...hero, kicker: v })} />
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <LabeledInput label="제목 앞 문구 (예: 무엇을)" value={hero.titleLine1} onChange={(v) => setHero({ ...hero, titleLine1: v })} />
-                <LabeledInput label="제목 강조 문구 (예: 도와드릴까요)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
+                <LabeledInput label="제목 (한글)" value={hero.titleLine1} onChange={(v) => setHero({ ...hero, titleLine1: v })} />
+                <LabeledInput label="제목 (영문)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
               </div>
-              <LabeledTextarea label="Lede 설명문" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
+              <LabeledTextarea label="부제목" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
               <ImageUploadField
-                label="히어로 배경 이미지"
+                label="배경 이미지"
                 value={hero.heroImage ?? ''}
                 onChange={(url) => setHero({ ...hero, heroImage: url })}
                 subdir="pages"

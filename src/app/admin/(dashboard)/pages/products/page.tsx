@@ -156,16 +156,16 @@ export default function AdminProductsHeroPage() {
         <p className="mb-8 text-gray-500">/products 공개 페이지의 히어로를 관리합니다.</p>
 
         <div className="space-y-8">
-          <SectionCard title="HERO · 제품 소개 헤더" onSave={saveHero} saving={saving}>
+          <SectionCard title="Hero · 히어로" onSave={saveHero} saving={saving}>
             <div className="space-y-5">
-              <LabeledInput label="키커 (상단 태그, 예: 제품 소개 · Products)" value={hero.kicker} onChange={(v) => setHero({ ...hero, kicker: v })} />
+              <LabeledInput label="섹션 태그" value={hero.kicker} onChange={(v) => setHero({ ...hero, kicker: v })} />
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <LabeledInput label="제목 1행" value={hero.titleLine1} onChange={(v) => setHero({ ...hero, titleLine1: v })} />
-                <LabeledInput label="제목 강조 (em)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
+                <LabeledInput label="제목 (한글)" value={hero.titleLine1} onChange={(v) => setHero({ ...hero, titleLine1: v })} />
+                <LabeledInput label="제목 (영문)" value={hero.titleEmphasis} onChange={(v) => setHero({ ...hero, titleEmphasis: v })} />
               </div>
-              <LabeledTextarea label="리드 본문 (lede)" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
+              <LabeledTextarea label="부제목" value={hero.lede} onChange={(v) => setHero({ ...hero, lede: v })} rows={3} />
               <ImageUploadField
-                label="히어로 배경 이미지"
+                label="배경 이미지"
                 value={hero.heroImage ?? ''}
                 onChange={(url) => setHero({ ...hero, heroImage: url })}
                 subdir="pages"

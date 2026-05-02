@@ -112,9 +112,14 @@ export async function POST(request: NextRequest) {
     // ID 만 로그. 이름/이메일/메시지는 감사 로그/모니터링에 남기지 않음.
     console.log('[Contact Form] 새 문의 접수 id=%s', newInquiry.id);
 
-    // 고객 접수 확인 메일 (dry-run 허용)
+    // 고객 접수 확인 메일 + 관리자 알림 메일을 병렬로 발송.
+    // .catch 로 무시하던 기존 fire-and-forget 패턴은 SMTP 오류가 silent 였음 →
+    // await 로 결과를 받아 응답에 mailSent 상태를 포함, 어드민 디버깅 가능.
     const subjectLine = validated.subject ? `[${validated.subject}] ` : '';
-    sendEmail({
+    const mailSettings = await readSingleSafe<MailSettingsLite>('mail-settings');
+    const adminEmail = mailSettings?.adminEmail?.trim() || process.env.ADMIN_EMAIL;
+
+    const customerMailPromise = sendEmail({
       to: validated.email,
       subject: `[대라천] ${subjectLine}문의가 접수되었습니다.`,
       text: `안녕하세요, ${validated.name}님.\n\n문의해 주셔서 감사합니다.\n문의 내용이 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 답변 드리겠습니다.\n\n─────────────────────────\n[문의 유형] ${categoryLabel[validated.category] ?? validated.category}${validated.subject ? `\n[제목] ${validated.subject}` : ''}\n[문의 내용]\n${validated.message}\n─────────────────────────\n\n대라천 고객지원팀 드림`,
@@ -125,17 +130,14 @@ export async function POST(request: NextRequest) {
 <strong>문의 내용:</strong><br>${validated.message.replace(/\n/g, '<br>')}</p>
 <hr>
 <p>대라천 고객지원팀 드림</p>`,
-    }).catch((err) => console.error('[Contact Form] 고객 메일 발송 오류:', err));
+    });
 
-    // 관리자 알림 메일 — 어드민 UI 설정 우선, 없으면 ENV
-    const mailSettings = await readSingleSafe<MailSettingsLite>('mail-settings');
-    const adminEmail = mailSettings?.adminEmail?.trim() || process.env.ADMIN_EMAIL;
-    if (adminEmail && adminEmail.includes('@')) {
-      sendEmail({
-        to: adminEmail,
-        subject: `[대라천 관리자] 새 문의 접수 — ${validated.name} (${categoryLabel[validated.category] ?? validated.category})${validated.subject ? ` / ${validated.subject}` : ''}`,
-        text: `새 문의가 접수되었습니다.\n\n이름: ${validated.name}\n이메일: ${validated.email}\n전화: ${validated.phone || '없음'}\n유형: ${categoryLabel[validated.category] ?? validated.category}${validated.subject ? `\n제목: ${validated.subject}` : ''}\n내용:\n${validated.message}`,
-        html: `<p><strong>새 문의가 접수되었습니다.</strong></p>
+    const adminMailPromise = adminEmail && adminEmail.includes('@')
+      ? sendEmail({
+          to: adminEmail,
+          subject: `[대라천 관리자] 새 문의 접수 — ${validated.name} (${categoryLabel[validated.category] ?? validated.category})${validated.subject ? ` / ${validated.subject}` : ''}`,
+          text: `새 문의가 접수되었습니다.\n\n이름: ${validated.name}\n이메일: ${validated.email}\n전화: ${validated.phone || '없음'}\n유형: ${categoryLabel[validated.category] ?? validated.category}${validated.subject ? `\n제목: ${validated.subject}` : ''}\n내용:\n${validated.message}`,
+          html: `<p><strong>새 문의가 접수되었습니다.</strong></p>
 <ul>
   <li><strong>이름:</strong> ${validated.name}</li>
   <li><strong>이메일:</strong> ${validated.email}</li>
@@ -143,11 +145,28 @@ export async function POST(request: NextRequest) {
   <li><strong>유형:</strong> ${categoryLabel[validated.category] ?? validated.category}</li>
 ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\n` : ''}</ul>
 <p><strong>내용:</strong><br>${validated.message.replace(/\n/g, '<br>')}</p>`,
-      }).catch((err) => console.error('[Contact Form] 관리자 메일 발송 오류:', err));
-    }
+        })
+      : Promise.resolve({ ok: false, error: 'admin email not configured' } as const);
+
+    const [customerResult, adminResult] = await Promise.all([
+      customerMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
+      adminMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
+    ]);
+
+    if (!customerResult.ok) console.error('[Contact Form] 고객 메일 발송 오류:', customerResult.error);
+    if (!adminResult.ok) console.error('[Contact Form] 관리자 메일 발송 오류:', adminResult.error);
 
     return NextResponse.json(
-      { success: true, message: '문의가 성공적으로 접수되었습니다.' },
+      {
+        success: true,
+        message: '문의가 성공적으로 접수되었습니다.',
+        mailSent: {
+          customer: customerResult.ok,
+          admin: adminResult.ok,
+          customerError: customerResult.ok ? undefined : customerResult.error,
+          adminError: adminResult.ok ? undefined : adminResult.error,
+        },
+      },
       { status: 200 }
     );
   } catch (error) {
