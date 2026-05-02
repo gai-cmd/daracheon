@@ -10,20 +10,75 @@ interface SendEmailResult {
   error?: string;
 }
 
+// 우선순위:
+// 1) SMTP_HOST 가 있으면 → nodemailer (Gmail/Workspace/Naver/Daum 등 SMTP)
+// 2) RESEND_API_KEY 가 있으면 → Resend HTTP API
+// 3) 둘 다 없으면 → dry-run (콘솔 로그만)
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
-  const apiKey = process.env.RESEND_API_KEY;
+  const smtpHost = process.env.SMTP_HOST;
+  const resendKey = process.env.RESEND_API_KEY;
+  const fromAddr =
+    process.env.MAIL_FROM ?? process.env.SMTP_USER ?? 'noreply@daracheon.com';
 
-  if (!apiKey) {
-    // Dry-run mode: log only
-    console.log('[mail:dry-run] sendEmail called (no RESEND_API_KEY)');
-    console.log(`  to:      ${options.to}`);
-    console.log(`  subject: ${options.subject}`);
-    if (options.text) {
-      console.log(`  text:    ${options.text.slice(0, 200)}`);
-    }
-    return { ok: true };
+  if (smtpHost) {
+    return sendViaSmtp(options, smtpHost, fromAddr);
   }
 
+  if (resendKey) {
+    return sendViaResend(options, resendKey, fromAddr);
+  }
+
+  // Dry-run mode
+  console.log('[mail:dry-run] sendEmail called (no SMTP_HOST or RESEND_API_KEY)');
+  console.log(`  to:      ${options.to}`);
+  console.log(`  subject: ${options.subject}`);
+  if (options.text) {
+    console.log(`  text:    ${options.text.slice(0, 200)}`);
+  }
+  return { ok: true };
+}
+
+async function sendViaSmtp(
+  options: SendEmailOptions,
+  smtpHost: string,
+  fromAddr: string,
+): Promise<SendEmailResult> {
+  try {
+    const { default: nodemailer } = await import('nodemailer');
+    const port = Number(process.env.SMTP_PORT ?? 465);
+    const secure = process.env.SMTP_SECURE
+      ? process.env.SMTP_SECURE === 'true'
+      : port === 465;
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port,
+      secure,
+      auth: {
+        user: process.env.SMTP_USER ?? '',
+        pass: process.env.SMTP_PASS ?? '',
+      },
+    });
+    await transporter.sendMail({
+      from: fromAddr,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      ...(options.text ? { text: options.text } : {}),
+    });
+    console.log('[mail:smtp] Email sent to:', options.to, '|', options.subject);
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[mail:smtp] sendEmail failed:', message);
+    return { ok: false, error: message };
+  }
+}
+
+async function sendViaResend(
+  options: SendEmailOptions,
+  apiKey: string,
+  fromAddr: string,
+): Promise<SendEmailResult> {
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -32,7 +87,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.MAIL_FROM ?? 'noreply@daerachoen.com',
+        from: fromAddr,
         to: [options.to],
         subject: options.subject,
         html: options.html,
@@ -42,15 +97,15 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
 
     if (!res.ok) {
       const body = await res.text();
-      console.error('[mail] Resend API error:', res.status, body);
+      console.error('[mail:resend] Resend API error:', res.status, body);
       return { ok: false, error: `Resend API error ${res.status}: ${body}` };
     }
 
-    console.log('[mail] Email sent to:', options.to, '|', options.subject);
+    console.log('[mail:resend] Email sent to:', options.to, '|', options.subject);
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error('[mail] sendEmail failed:', message);
+    console.error('[mail:resend] sendEmail failed:', message);
     return { ok: false, error: message };
   }
 }
