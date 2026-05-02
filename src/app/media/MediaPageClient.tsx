@@ -107,10 +107,7 @@ export default function MediaPageClient({
         />
         <div className={styles.wrap}>
           <div className={styles.kicker}>{hero.kicker}</div>
-          <div
-            className={styles.heroMain}
-            style={{ gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)' }}
-          >
+          <div className={styles.heroMainNarrow}>
             <h1>
               {hero.titleLine1}
               <br />

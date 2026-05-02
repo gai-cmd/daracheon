@@ -10,9 +10,13 @@
 }
 
 /* ── HERO ── */
+/* min-height 로 6개 페이지(브랜드이야기·침향이야기·침향농장이야기·
+   제품소개·회사소개·문의하기) 히어로 세로 높이 통일.
+   content 가 짧은 페이지(products / support 등)도 침향이야기 기준으로 정렬. */
 .hero {
   position: relative;
   padding: var(--nav-h) 0 40px;
+  min-height: calc(var(--nav-h) + 360px);
   overflow: hidden;
   background:
     radial-gradient(1200px 600px at 20% 30%, rgba(212, 168, 67, 0.10), transparent 60%),
@@ -69,6 +73,22 @@
 @media (min-width: 900px) {
   .heroMain {
     grid-template-columns: 1.8fr 1fr;
+    gap: 80px;
+  }
+}
+
+/* media(/process) 페이지 전용 — 좌측 h1 컬럼이 lede 5줄 wrap 과
+   균형 맞도록 데스크톱에서만 1.4fr/1fr 비율 사용.
+   모바일은 .heroMain 과 동일하게 1열 세로 스택. */
+.heroMainNarrow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .heroMainNarrow {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
     gap: 80px;
   }
 }
