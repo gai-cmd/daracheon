@@ -139,6 +139,15 @@ export default function EditionContentEditor() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <a
+            href="/edition/preview/agarwood"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border border-gold-500 bg-white px-4 py-2.5 text-xs font-semibold text-gold-700 hover:bg-gold-50"
+            title="DB 에 저장된 콘텐츠로 카탈로그 미리보기 (새 탭)"
+          >
+            미리보기 ↗
+          </a>
           <button
             type="button"
             onClick={loadDefaults}

@@ -131,7 +131,19 @@ function OverviewTab({ stats }: { stats: LeadsStats | null }) {
       {/* Quick actions */}
       <section className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">빠른 작업</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <a
+            href="/edition/preview/agarwood"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-start gap-3 rounded-lg border-2 border-gold-500 bg-gold-50/40 p-4 hover:bg-gold-50"
+          >
+            <span className="text-xl text-gold-600">◐</span>
+            <div>
+              <div className="text-sm font-semibold text-gray-900">카탈로그 미리보기</div>
+              <div className="text-xs text-gray-500 mt-0.5">어드민 전용 — 토큰 없이 카탈로그 페이지 직접 확인</div>
+            </div>
+          </a>
           <a
             href="/agarwood-edition"
             target="_blank"
@@ -140,7 +152,7 @@ function OverviewTab({ stats }: { stats: LeadsStats | null }) {
           >
             <span className="text-xl text-gold-500">↗</span>
             <div>
-              <div className="text-sm font-semibold text-gray-900">공개 신청 페이지 미리보기</div>
+              <div className="text-sm font-semibold text-gray-900">공개 신청 페이지</div>
               <div className="text-xs text-gray-500 mt-0.5">/agarwood-edition — 새 탭으로 열림</div>
             </div>
           </a>
