@@ -1,10 +1,22 @@
 import type { Metadata } from 'next';
-import { readDataSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
+
+interface HomeShoppingHero {
+  titleLine1: string;
+  titleEmphasis: string;
+  lede: string;
+}
+
+const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
+  titleLine1: 'TV 홈쇼핑',
+  titleEmphasis: '편성표 · 다시보기',
+  lede: '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.',
+};
 
 export const metadata: Metadata = {
   title: '홈쇼핑 특별관 - TV 편성표 · 다시보기 | ZOEL LIFE',
@@ -189,6 +201,8 @@ function formatDate(iso: string) {
 
 export default async function HomeShoppingPage() {
   const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
+  const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
+  const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
   const all = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
   const sorted = [...all].sort(
     (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
@@ -207,12 +221,12 @@ export default async function HomeShoppingPage() {
         <div className={styles.wrap}>
           <div className={styles.heroHead}>
             <h1>
-              TV 홈쇼핑
+              {hero.titleLine1}
               <br />
-              <em>편성표 · 다시보기</em>
+              <em>{hero.titleEmphasis}</em>
             </h1>
             <p className={styles.lede}>
-              롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.
+              {hero.lede}
             </p>
           </div>
 

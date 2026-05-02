@@ -58,7 +58,6 @@ interface SupportClientProps {
 const TOPICS = [
   '제품 상담',
   '주문·배송',
-  'Lot·인증서',
   '대량 주문',
   '미디어 취재',
   '기타',

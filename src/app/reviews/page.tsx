@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import JsonLd from '@/components/ui/JsonLd';
-import { readDataSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Review } from '@/data/reviews';
 import { formatDate } from '@/lib/utils';
 import ReviewFormModal from './ReviewFormModal';
@@ -16,9 +16,23 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.daracheon.com/reviews' },
 };
 
+interface ReviewsHero {
+  kicker: string;
+  titleKr: string;
+  lede: string;
+}
+
+const DEFAULT_REVIEWS_HERO: ReviewsHero = {
+  kicker: 'TESTIMONIALS',
+  titleKr: '고객 후기',
+  lede: 'ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기. 인증된 구매 고객의 후기를 모두 공개합니다.',
+};
+
 export default async function ReviewsPage() {
   // 공개 페이지: 인증된(verified) 리뷰만 표시
   const reviews = (await readDataSafe<Review>('reviews')).filter((r) => r.verified === true);
+  const pagesData = await readSingleSafe<{ reviews?: { hero?: ReviewsHero } }>('pages');
+  const hero: ReviewsHero = { ...DEFAULT_REVIEWS_HERO, ...pagesData?.reviews?.hero };
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
@@ -53,10 +67,10 @@ export default async function ReviewsPage() {
       {/* Hero — /products 와 동일한 좌우 분할 레이아웃 */}
       <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white">
         <div className="relative z-10 max-w-[1440px] mx-auto px-6 md:px-16">
-          <p className="section-tag mb-6">TESTIMONIALS</p>
+          <p className="section-tag mb-6">{hero.kicker}</p>
           <div className="grid grid-cols-1 md:grid-cols-[1.8fr_1fr] gap-8 md:gap-20 items-end">
             <div>
-              <h1 className="section-title-kr text-white mb-5">고객 후기</h1>
+              <h1 className="section-title-kr text-white mb-5">{hero.titleKr}</h1>
               <div className="flex items-center gap-4">
                 <div className="flex gap-1 text-gold-500 text-xl">
                   {[...Array(5)].map((_, i) => (
@@ -68,7 +82,7 @@ export default async function ReviewsPage() {
             </div>
             <div>
               <p className="text-white/70 text-[0.95rem] leading-8 max-w-[780px]">
-                ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기. 인증된 구매 고객 {reviews.length}명의 후기를 모두 공개합니다.
+                {hero.lede}
               </p>
             </div>
           </div>

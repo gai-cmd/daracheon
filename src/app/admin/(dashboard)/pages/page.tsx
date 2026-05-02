@@ -44,6 +44,18 @@ export default function AdminPagesPage() {
       desc: '/products 히어로 키커 · 제목 · 배경 이미지 편집',
       icon: '◑',
     },
+    {
+      href: '/admin/pages/reviews',
+      title: '고객 후기',
+      desc: '/reviews 히어로 키커 · 제목 · 부제목 편집',
+      icon: '◐',
+    },
+    {
+      href: '/admin/pages/home-shopping',
+      title: '홈쇼핑 특별관',
+      desc: '/home-shopping 히어로 제목 · 부제목 편집',
+      icon: '◒',
+    },
   ];
 
   return (

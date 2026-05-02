@@ -15,6 +15,8 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   process: ['/process'],
   support: ['/support'],
   products: ['/products'],
+  reviews: ['/reviews'],
+  homeShopping: ['/home-shopping'],
   // /edition/[token]/agarwood — 토큰 가변 경로라 prefix 자체로 revalidate 불가.
   // 빈 배열로 등록만 하고 카탈로그 페이지는 force-dynamic 으로 매 요청마다 fresh.
   editionAgarwood: [],
