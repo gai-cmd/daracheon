@@ -32,8 +32,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# JSON file database
+# JSON file database (PII 포함 가능 — 절대 커밋 금지)
 data/db/
+data/backups/
 
 # Uploaded assets (keep directory structure, ignore actual uploads)
 /public/uploads/*
