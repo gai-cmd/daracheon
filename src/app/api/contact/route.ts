@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readData, writeData } from '@/lib/db';
+import { readData, writeData, readSingleSafe } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
+
+interface MailSettingsLite { adminEmail?: string }
 
 // IP 기반 rate limit: 1시간당 5건. process-local 이라 분산/서버리스에선
 // 불완전하지만 단일 인스턴스 기준 자동 봇 투입은 차단. 더 강한 보호는
@@ -125,9 +127,10 @@ export async function POST(request: NextRequest) {
 <p>대라천 고객지원팀 드림</p>`,
     }).catch((err) => console.error('[Contact Form] 고객 메일 발송 오류:', err));
 
-    // 관리자 알림 메일 (dry-run 허용)
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail) {
+    // 관리자 알림 메일 — 어드민 UI 설정 우선, 없으면 ENV
+    const mailSettings = await readSingleSafe<MailSettingsLite>('mail-settings');
+    const adminEmail = mailSettings?.adminEmail?.trim() || process.env.ADMIN_EMAIL;
+    if (adminEmail && adminEmail.includes('@')) {
       sendEmail({
         to: adminEmail,
         subject: `[대라천 관리자] 새 문의 접수 — ${validated.name} (${categoryLabel[validated.category] ?? validated.category})${validated.subject ? ` / ${validated.subject}` : ''}`,

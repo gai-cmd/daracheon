@@ -616,6 +616,13 @@ export default function AdminSettingsPage() {
             </div>
           </section>
 
+          {/* Section 5.5: Mail Settings */}
+          <MailSettingsSection
+            onToast={setToast}
+            saving={saving === 'mail'}
+            setSaving={(v) => setSaving(v ? 'mail' : null)}
+          />
+
           {/* Section 6: Data Backup */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">데이터 백업 / 복원</h2>
@@ -681,6 +688,192 @@ function SaveButton({ onClick, loading = false }: { onClick: () => void; loading
     >
       {loading ? '저장 중...' : '저장'}
     </button>
+  );
+}
+
+interface MailSettingsForm {
+  smtpHost: string;
+  smtpPort: number | '';
+  smtpUser: string;
+  smtpPass: string;
+  mailFrom: string;
+  adminEmail: string;
+  resendApiKey: string;
+}
+
+function MailSettingsSection({
+  onToast,
+  saving,
+  setSaving,
+}: {
+  onToast: (msg: string) => void;
+  saving: boolean;
+  setSaving: (v: boolean) => void;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [testing, setTesting] = useState(false);
+  const [form, setForm] = useState<MailSettingsForm>({
+    smtpHost: '',
+    smtpPort: 465,
+    smtpUser: '',
+    smtpPass: '',
+    mailFrom: '',
+    adminEmail: '',
+    resendApiKey: '',
+  });
+
+  useEffect(() => {
+    fetch('/api/admin/mail-settings')
+      .then((r) => r.json())
+      .then((data) => {
+        setForm({
+          smtpHost: data.smtpHost ?? '',
+          smtpPort: data.smtpPort ?? 465,
+          smtpUser: data.smtpUser ?? '',
+          smtpPass: data.smtpPass ?? '',
+          mailFrom: data.mailFrom ?? '',
+          adminEmail: data.adminEmail ?? '',
+          resendApiKey: data.resendApiKey ?? '',
+        });
+      })
+      .catch(() => onToast('메일 설정 로드 실패'))
+      .finally(() => setLoading(false));
+  }, [onToast]);
+
+  async function save() {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/mail-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          smtpPort: typeof form.smtpPort === 'number' ? form.smtpPort : Number(form.smtpPort) || 465,
+        }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      const data = await res.json();
+      // 서버가 마스킹된 비밀 필드를 돌려보냄 — UI 동기화
+      setForm((f) => ({
+        ...f,
+        smtpPass: data.settings?.smtpPass ?? '',
+        resendApiKey: data.settings?.resendApiKey ?? '',
+      }));
+      onToast('메일 설정 저장 완료');
+    } catch {
+      onToast('메일 설정 저장 실패');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function sendTest() {
+    setTesting(true);
+    try {
+      const res = await fetch('/api/admin/mail-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      onToast(data.success ? data.message : `테스트 실패: ${data.message}`);
+    } catch (err) {
+      onToast(`테스트 실패: ${err instanceof Error ? err.message : '오류'}`);
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+        <div className="h-6 w-32 bg-gray-200 rounded mb-6" />
+        <div className="h-32 bg-gray-100 rounded" />
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">메일 발송 설정</h2>
+      <p className="text-xs text-gray-500 mb-6 leading-relaxed">
+        문의 폼 등 사이트에서 발송하는 메일의 SMTP 설정. <br />
+        <span className="text-gray-700 font-medium">Gmail / Workspace 권장</span>:
+        2단계 인증 활성화 후{' '}
+        <a
+          href="https://myaccount.google.com/apppasswords"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gold-700 underline"
+        >
+          앱 비밀번호
+        </a>{' '}
+        16자를 발급해 SMTP_PASS 에 입력. <br />
+        값을 비워두면 Vercel 환경변수(<code className="text-xs bg-gray-100 px-1">SMTP_*</code>)를 사용합니다.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <LabeledInput label="SMTP Host" value={form.smtpHost} onChange={(v) => setForm({ ...form, smtpHost: v })} />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">SMTP Port</label>
+          <input
+            type="number"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+            value={form.smtpPort}
+            onChange={(e) => setForm({ ...form, smtpPort: e.target.value === '' ? '' : Number(e.target.value) })}
+          />
+          <p className="mt-1 text-xs text-gray-400">Gmail: 465 (SSL) 또는 587 (STARTTLS)</p>
+        </div>
+        <LabeledInput label="SMTP User (발송 계정)" value={form.smtpUser} onChange={(v) => setForm({ ...form, smtpUser: v })} />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">SMTP Password (앱 비밀번호)</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+            value={form.smtpPass}
+            onChange={(e) => setForm({ ...form, smtpPass: e.target.value })}
+          />
+          <p className="mt-1 text-xs text-gray-400">저장 후 ●●●● 로 마스킹 표시. 변경 시에만 새로 입력.</p>
+        </div>
+        <LabeledInput
+          label="발신 주소 (MAIL_FROM)"
+          value={form.mailFrom}
+          onChange={(v) => setForm({ ...form, mailFrom: v })}
+        />
+        <LabeledInput
+          label="관리자 수신 이메일 (ADMIN_EMAIL)"
+          value={form.adminEmail}
+          onChange={(v) => setForm({ ...form, adminEmail: v })}
+        />
+        <div className="md:col-span-2 border-t border-gray-100 pt-5 mt-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Resend API Key <span className="text-xs font-normal text-gray-400">(SMTP 미사용 시 대안)</span>
+          </label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+            value={form.resendApiKey}
+            onChange={(e) => setForm({ ...form, resendApiKey: e.target.value })}
+            placeholder="re_xxxxxxxxxxxxxxxx"
+          />
+          <p className="mt-1 text-xs text-gray-400">SMTP Host 가 비어있고 이 값이 설정되면 Resend HTTP API 사용.</p>
+        </div>
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={sendTest}
+          disabled={testing}
+          className="px-5 py-2.5 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
+        >
+          {testing ? '발송 중...' : '테스트 메일 발송'}
+        </button>
+        <SaveButton onClick={save} loading={saving} />
+      </div>
+    </section>
   );
 }
 

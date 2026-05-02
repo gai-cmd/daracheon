@@ -1,3 +1,5 @@
+import { readSingleSafe } from '@/lib/db';
+
 interface SendEmailOptions {
   to: string;
   subject: string;
@@ -10,22 +12,42 @@ interface SendEmailResult {
   error?: string;
 }
 
+interface MailConfig {
+  smtpHost?: string;
+  smtpPort?: number;
+  smtpUser?: string;
+  smtpPass?: string;
+  mailFrom?: string;
+  resendApiKey?: string;
+}
+
+// DB(어드민 UI 저장값) → ENV 순으로 fallback. 어드민에서 비워두면 ENV 사용.
+async function resolveMailConfig(): Promise<MailConfig> {
+  const stored = (await readSingleSafe<MailConfig>('mail-settings')) ?? {};
+  return {
+    smtpHost: stored.smtpHost?.trim() || process.env.SMTP_HOST,
+    smtpPort: stored.smtpPort || (process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined),
+    smtpUser: stored.smtpUser?.trim() || process.env.SMTP_USER,
+    smtpPass: stored.smtpPass?.trim() || process.env.SMTP_PASS,
+    mailFrom: stored.mailFrom?.trim() || process.env.MAIL_FROM,
+    resendApiKey: stored.resendApiKey?.trim() || process.env.RESEND_API_KEY,
+  };
+}
+
 // 우선순위:
 // 1) SMTP_HOST 가 있으면 → nodemailer (Gmail/Workspace/Naver/Daum 등 SMTP)
 // 2) RESEND_API_KEY 가 있으면 → Resend HTTP API
 // 3) 둘 다 없으면 → dry-run (콘솔 로그만)
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
-  const smtpHost = process.env.SMTP_HOST;
-  const resendKey = process.env.RESEND_API_KEY;
-  const fromAddr =
-    process.env.MAIL_FROM ?? process.env.SMTP_USER ?? 'noreply@daracheon.com';
+  const cfg = await resolveMailConfig();
+  const fromAddr = cfg.mailFrom || cfg.smtpUser || 'noreply@daracheon.com';
 
-  if (smtpHost) {
-    return sendViaSmtp(options, smtpHost, fromAddr);
+  if (cfg.smtpHost) {
+    return sendViaSmtp(options, cfg, fromAddr);
   }
 
-  if (resendKey) {
-    return sendViaResend(options, resendKey, fromAddr);
+  if (cfg.resendApiKey) {
+    return sendViaResend(options, cfg.resendApiKey, fromAddr);
   }
 
   // Dry-run mode
@@ -40,22 +62,22 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
 
 async function sendViaSmtp(
   options: SendEmailOptions,
-  smtpHost: string,
+  cfg: MailConfig,
   fromAddr: string,
 ): Promise<SendEmailResult> {
   try {
     const { default: nodemailer } = await import('nodemailer');
-    const port = Number(process.env.SMTP_PORT ?? 465);
+    const port = cfg.smtpPort ?? 465;
     const secure = process.env.SMTP_SECURE
       ? process.env.SMTP_SECURE === 'true'
       : port === 465;
     const transporter = nodemailer.createTransport({
-      host: smtpHost,
+      host: cfg.smtpHost,
       port,
       secure,
       auth: {
-        user: process.env.SMTP_USER ?? '',
-        pass: process.env.SMTP_PASS ?? '',
+        user: cfg.smtpUser ?? '',
+        pass: cfg.smtpPass ?? '',
       },
     });
     await transporter.sendMail({

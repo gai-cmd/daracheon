@@ -9,6 +9,7 @@ export type AuditModule =
   | 'media'
   | 'faq'
   | 'settings'
+  | 'mail-settings'
   | 'broadcasts'
   | 'auth'
   | 'upload'
@@ -26,7 +27,8 @@ export type AuditAction =
   | 'login_locked'
   | 'logout'
   | 'reply'
-  | 'status_change';
+  | 'status_change'
+  | 'test';
 
 export interface AuditEntry {
   id: string;
