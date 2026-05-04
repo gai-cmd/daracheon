@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { saveAdminPage } from '@/lib/adminSave';
 
 interface Broadcast {
   id: string;
@@ -26,6 +27,18 @@ interface ProductLite {
   id: string;
   name: string;
 }
+
+interface HomeShoppingHero {
+  titleLine1: string;
+  titleEmphasis: string;
+  lede: string;
+}
+
+const DEFAULT_HERO: HomeShoppingHero = {
+  titleLine1: 'TV 홈쇼핑',
+  titleEmphasis: '편성표 · 다시보기',
+  lede: '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.',
+};
 
 const STATUS_LABELS: Record<Broadcast['status'], string> = {
   scheduled: '편성 예정',
@@ -89,6 +102,10 @@ export default function AdminBroadcastsPage() {
   const [deleteTarget, setDeleteTarget] = useState<Broadcast | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  const [hero, setHero] = useState<HomeShoppingHero>(DEFAULT_HERO);
+  const [heroLoading, setHeroLoading] = useState(true);
+  const [heroSaving, setHeroSaving] = useState(false);
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -119,9 +136,47 @@ export default function AdminBroadcastsPage() {
     }
   }
 
+  async function loadHero() {
+    try {
+      const res = await fetch('/api/admin/pages', { cache: 'no-store' });
+      if (res.status === 404) return;
+      const data = (await res.json()) as { pages?: { homeShopping?: { hero?: HomeShoppingHero } } };
+      const h = data.pages?.homeShopping?.hero;
+      if (h) setHero({ ...DEFAULT_HERO, ...h });
+    } catch (err) {
+      console.error('[Admin Broadcasts] hero fetch error:', err);
+    } finally {
+      setHeroLoading(false);
+    }
+  }
+
+  async function saveHero() {
+    setHeroSaving(true);
+    try {
+      const res = await fetch('/api/admin/pages', { cache: 'no-store' });
+      const body = res.ok
+        ? ((await res.json()) as { pages?: { homeShopping?: { hero?: HomeShoppingHero } } })
+        : { pages: {} };
+      const current = body.pages?.homeShopping ?? {};
+      const merged = { ...current, hero };
+      const result = await saveAdminPage('homeShopping', merged);
+      if (!result.ok) {
+        setToast(`히어로 저장 실패: ${result.msg}`);
+        return;
+      }
+      setToast(`히어로 저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`);
+    } catch (err) {
+      console.error('[Admin Broadcasts] hero save error:', err);
+      setToast(`히어로 저장 실패: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setHeroSaving(false);
+    }
+  }
+
   useEffect(() => {
     refresh();
     loadProducts();
+    loadHero();
   }, []);
 
   const filtered = useMemo(() => {
@@ -225,6 +280,67 @@ export default function AdminBroadcastsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Hero text editor (inline) */}
+      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">HERO · 홈쇼핑 페이지 헤더</h2>
+          <span className="text-xs text-gray-400">/home-shopping 상단 텍스트</span>
+        </div>
+        <p className="mb-5 text-sm text-gray-500">제목 · 강조 · 부제목을 수정하면 공개 페이지에 즉시 반영됩니다.</p>
+
+        {heroLoading ? (
+          <div className="space-y-3">
+            <div className="h-10 w-full animate-pulse rounded-lg bg-gray-100" />
+            <div className="h-10 w-full animate-pulse rounded-lg bg-gray-100" />
+            <div className="h-20 w-full animate-pulse rounded-lg bg-gray-100" />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">제목 1행</label>
+                <input
+                  type="text"
+                  value={hero.titleLine1}
+                  onChange={(e) => setHero({ ...hero, titleLine1: e.target.value })}
+                  placeholder="TV 홈쇼핑"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">제목 강조 (em)</label>
+                <input
+                  type="text"
+                  value={hero.titleEmphasis}
+                  onChange={(e) => setHero({ ...hero, titleEmphasis: e.target.value })}
+                  placeholder="편성표 · 다시보기"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">부제목 (lede)</label>
+              <textarea
+                rows={3}
+                value={hero.lede}
+                onChange={(e) => setHero({ ...hero, lede: e.target.value })}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+              />
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={saveHero}
+                disabled={heroSaving}
+                className="adm-btn-primary px-6 disabled:opacity-50"
+              >
+                {heroSaving ? '저장 중...' : '히어로 저장'}
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
