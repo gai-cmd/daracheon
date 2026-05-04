@@ -198,6 +198,7 @@
   font-style: italic;
   font-size: 1.05rem;
   color: var(--accent-soft);
+  margin-bottom: 28px;
 }
 
 .line {
