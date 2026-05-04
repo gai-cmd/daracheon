@@ -47,9 +47,7 @@
   --t-slow:      900ms;
 
   /* Layout */
-  --nav-bar-h: 72px;
-  --banner-h: 0px;
-  --nav-h: calc(var(--nav-bar-h) + var(--banner-h));
+  --nav-h: 72px;
   --max-w: 1440px;
 
   /* ━━━ Curvature tokens ━━━ (유기적 라인 시스템) */
@@ -68,13 +66,6 @@
 [data-palette="bronze"] { --accent:#8a5a30; --accent-soft:#b07a44; --accent-deep:#5c3d2e; }
 [data-palette="sage"]   { --accent:#4a6741; --accent-soft:#7a9c70; --accent-deep:#2c3e28; }
 [data-palette="ivory"]  { --accent:#9c8a5a; --accent-soft:#c4b48a; --accent-deep:#5a4415; }
-
-/* 상단 공지 배너 활성 시 — banner 높이만큼 nav/콘텐츠 아래로 밀어내기.
-   모바일은 2~3줄 감안 64px, PC는 1줄 40px. */
-body[data-banner="on"] { --banner-h: 64px; }
-@media (min-width: 768px) {
-  body[data-banner="on"] { --banner-h: 40px; }
-}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 

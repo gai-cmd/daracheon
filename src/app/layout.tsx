@@ -7,27 +7,11 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { readSingleSafe, readSingleUncached } from '@/lib/db';
-import Link from 'next/link';
 import {
   DEFAULT_MAIN_NAV,
   type NavigationData,
 } from '@/data/navigation';
 import '@/styles/globals.css';
-
-interface Announcement {
-  enabled: boolean;
-  text: string;
-  link: string;
-  linkLabel: string;
-  variant: 'gold' | 'dark' | 'red';
-  updatedAt: string;
-}
-
-const BANNER_STYLES: Record<Announcement['variant'], string> = {
-  gold: 'bg-amber-600 text-white',
-  dark: 'bg-gray-900 text-white',
-  red: 'bg-red-600 text-white',
-};
 
 const DEFAULT_TITLE = '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE';
 const DEFAULT_DESCRIPTION =
@@ -137,9 +121,6 @@ const organizationJsonLd = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const announcement = await readSingleUncached<Announcement>('announcement');
-  const showBanner = !!(announcement?.enabled && announcement.text);
-
   // Navigation lives in the DB so admins can edit labels / order / links
   // without a code deploy. Fall back to the compiled-in defaults if the
   // seed hasn't been written yet (first deploy, or Blob store empty).
@@ -184,24 +165,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLd data={organizationJsonLd} />
         <GoogleAnalytics />
       </head>
-      <body data-palette="gold" data-banner={showBanner ? 'on' : 'off'}>
+      <body data-palette="gold">
         <ChromeGate>
-          {showBanner && (
-            <div
-              className={`fixed top-0 left-0 right-0 w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}
-              style={{ zIndex: 10000, minHeight: 'var(--banner-h, 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '4px 8px' }}
-            >
-              <span>{announcement.text}</span>
-              {announcement.link && (
-                <Link
-                  href={announcement.link}
-                  className="ml-2 underline underline-offset-2 opacity-90 hover:opacity-100"
-                >
-                  {announcement.linkLabel || '자세히 보기'}
-                </Link>
-              )}
-            </div>
-          )}
           <Header mainNav={mainNav} brandLogo={brandLogo} />
         </ChromeGate>
         <main>{children}</main>

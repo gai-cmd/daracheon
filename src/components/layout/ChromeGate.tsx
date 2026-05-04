@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-const IMMERSIVE_PREFIXES = ['/edition', '/agarwood-edition'];
+const IMMERSIVE_PREFIXES = ['/edition', '/agarwood-edition', '/admin'];
 
 export default function ChromeGate({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '';
