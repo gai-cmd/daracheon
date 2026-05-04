@@ -82,7 +82,7 @@
 /* TAB BAR — about-agarwood 와 동일한 컨셉 (사각형 chip 버튼) */
 .tabBar {
   position: sticky;
-  top: var(--nav-h);
+  top: var(--nav-bar-h);
   z-index: 40;
   background: rgba(10, 11, 16, 0.92);
   backdrop-filter: blur(24px);

@@ -47,7 +47,9 @@
   --t-slow:      900ms;
 
   /* Layout */
-  --nav-h: 72px;
+  --nav-bar-h: 72px;
+  --hero-pad-extra: 64px;
+  --nav-h: calc(var(--nav-bar-h) + var(--hero-pad-extra));
   --max-w: 1440px;
 
   /* ━━━ Curvature tokens ━━━ (유기적 라인 시스템) */

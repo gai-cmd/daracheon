@@ -67,7 +67,7 @@ export default function ProductsPageClient({ products, productCategories, hero }
       <nav
         style={{
           position: 'sticky',
-          top: 'var(--nav-h)',
+          top: 'var(--nav-bar-h)',
           zIndex: 10,
           background: 'rgba(10,11,16,0.96)',
           backdropFilter: 'blur(12px)',

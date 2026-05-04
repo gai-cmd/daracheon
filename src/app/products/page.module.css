@@ -80,7 +80,7 @@
   border-bottom: 1px solid rgba(212, 168, 67, 0.15);
   background: rgba(10, 11, 16, 0.92);
   position: sticky;
-  top: var(--nav-h);
+  top: var(--nav-bar-h);
   z-index: 40;
   backdrop-filter: blur(20px);
 }
