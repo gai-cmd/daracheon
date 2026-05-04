@@ -120,29 +120,59 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
 
   return (
     <>
-      {/* INFO + MAP — 회사 정보 / 오시는 길 (문의 양식 앞) */}
+      {/* IDENTITY — 회사 정보 + 본사 + 오시는 길을 단일 챕터 톤으로 통합 */}
       {(companyInfo || mapLabel) && (
-        <section className={styles.info}>
+        <section className={styles.identity}>
           <div className={styles.wrap}>
-            <div className={styles.infoGrid}>
-              {companyInfo && companyInfo.rows.length > 0 && (
-                <div>
-                  <h2>
-                    회사 <em>정보</em>
-                  </h2>
-                  <dl>
-                    {companyInfo.rows.map((row, i) => (
-                      <FragmentRow key={i} row={row} />
-                    ))}
-                  </dl>
-                </div>
-              )}
+            <div className={styles.identityHead}>
+              <div className={styles.identityKicker}>04 · Identity</div>
+              <h2 className={styles.identityTitle}>
+                회사 <em>정체성</em>
+              </h2>
+            </div>
+
+            <div className={styles.identityGrid}>
+              {/* 좌: 텍스트 정보 (Identity / Contact 두 그룹) */}
+              {companyInfo && companyInfo.rows.length > 0 && (() => {
+                const labels = companyInfo.rows.map((r) => r.dt);
+                const phoneIdx = labels.findIndex((l) => l.includes('전화'));
+                const emailIdx = labels.findIndex((l) => l.includes('이메일'));
+                const contactIdxs = new Set([phoneIdx, emailIdx].filter((i) => i >= 0));
+                const identityRows = companyInfo.rows.filter((_, i) => !contactIdxs.has(i));
+                const contactRows = companyInfo.rows.filter((_, i) => contactIdxs.has(i));
+                return (
+                  <div className={styles.identityCol}>
+                    <div className={styles.identityGroup}>
+                      <div className={styles.identityGroupLabel}>Identity</div>
+                      <dl className={styles.identityDl}>
+                        {identityRows.map((row, i) => (
+                          <FragmentRow key={`id-${i}`} row={row} />
+                        ))}
+                      </dl>
+                    </div>
+                    {contactRows.length > 0 && (
+                      <div className={styles.identityGroup}>
+                        <div className={styles.identityGroupLabel}>Contact</div>
+                        <dl className={styles.identityDl}>
+                          {contactRows.map((row, i) => (
+                            <FragmentRow key={`co-${i}`} row={row} />
+                          ))}
+                        </dl>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* 우: 본사 + 지도 (지도의 NaverMap 컴포넌트가 자체적으로 지하철 안내 footer 제공) */}
               {mapLabel && (
-                <div>
-                  <h2>
-                    오시는 <em>길</em>
-                  </h2>
-                  <NaverMap title={mapLabel.title} address={mapLabel.address} />
+                <div className={styles.identityCol}>
+                  <div className={styles.identityGroup}>
+                    <div className={styles.identityGroupLabel}>Headquarters</div>
+                    <div className={styles.identityMap}>
+                      <NaverMap title={mapLabel.title} address={mapLabel.address} />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

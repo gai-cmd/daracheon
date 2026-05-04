@@ -446,54 +446,116 @@
   background: rgba(212, 168, 67, 0.12);
 }
 
-/* INFO + MAP */
-.info {
-  padding: 80px 0;
+/* IDENTITY — 회사 정보 + 본사 + 오시는 길 단일 챕터 톤 */
+.identity {
+  padding: 80px 0 96px;
   background: #06070c;
   border-top: 1px solid rgba(212, 168, 67, 0.15);
   color: #fdfbf7;
 }
-.infoGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
+.identityHead {
+  margin-bottom: 56px;
+  max-width: 760px;
 }
-@media (min-width: 900px) {
-  .infoGrid { grid-template-columns: 1fr 1fr; gap: 60px; }
+.identityKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
 }
-/* 제목 — 브랜드 이야기 표준과 동일. */
-.info h2 {
+.identityTitle {
   font-family: 'Noto Serif KR', serif;
   font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.2;
-  margin-bottom: 16px;
   color: #fff;
+  margin: 0;
 }
-.info h2 em {
+.identityTitle em {
   color: var(--accent);
   font-style: normal;
   font-family: 'Noto Serif KR', serif;
   font-weight: 400;
 }
-.info dl {
+
+.identityGrid {
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 20px 30px;
-  font-size: 0.92rem;
+  grid-template-columns: 1fr;
+  gap: 56px;
 }
-.info dt {
+@media (min-width: 960px) {
+  .identityGrid {
+    grid-template-columns: 1.05fr 1fr;
+    gap: 0;
+  }
+  .identityGrid > .identityCol:first-child {
+    padding-right: 64px;
+    border-right: 1px solid rgba(212, 168, 67, 0.18);
+  }
+  .identityGrid > .identityCol:last-child {
+    padding-left: 64px;
+  }
+}
+
+.identityCol {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.identityGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.identityGroupLabel {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  color: rgba(212, 168, 67, 0.7);
+  text-transform: uppercase;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+}
+
+.identityDl {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px 24px;
+  font-size: 0.92rem;
+  margin: 0;
+}
+.identityDl dt {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
   letter-spacing: 0.22em;
-  color: var(--accent);
+  color: rgba(212, 168, 67, 0.85);
+  text-transform: uppercase;
+  align-self: start;
+  padding-top: 4px;
+}
+.identityDl dd {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 300;
+  line-height: 1.65;
+}
+.identityDl dd b {
+  display: block;
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: rgba(212, 168, 67, 0.7);
+  font-weight: 400;
   text-transform: uppercase;
 }
-.info dd { color: rgba(255, 255, 255, 0.8); font-weight: 300; line-height: 1.7; }
-.info dd b { color: var(--accent-soft); font-weight: 500; }
 
-.map {
+.identityMap {
   border: 1px solid rgba(212, 168, 67, 0.2);
   overflow: hidden;
 }
