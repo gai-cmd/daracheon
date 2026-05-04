@@ -15,7 +15,7 @@ interface HeaderProps {
 // even if CSS Module loading is delayed/failed for any reason.
 const NAV_INLINE_STYLE: React.CSSProperties = {
   position: 'fixed',
-  top: 0,
+  top: 'var(--banner-h, 0px)',
   right: 0,
   left: 'var(--ai-panel-width, 0px)',
   zIndex: 9999,

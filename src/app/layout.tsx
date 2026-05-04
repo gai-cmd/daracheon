@@ -184,10 +184,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLd data={organizationJsonLd} />
         <GoogleAnalytics />
       </head>
-      <body data-palette="gold">
+      <body data-palette="gold" data-banner={showBanner ? 'on' : 'off'}>
         <ChromeGate>
           {showBanner && (
-            <div className={`w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}>
+            <div
+              className={`fixed top-0 left-0 right-0 w-full py-2 px-4 text-center text-xs font-bold ${BANNER_STYLES[announcement.variant]}`}
+              style={{ zIndex: 10000, minHeight: 'var(--banner-h, 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '4px 8px' }}
+            >
               <span>{announcement.text}</span>
               {announcement.link && (
                 <Link
