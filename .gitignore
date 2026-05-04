@@ -63,3 +63,4 @@ docs/
 new design/
 scripts/
 zoel-app.js
+.env.vercel.production
