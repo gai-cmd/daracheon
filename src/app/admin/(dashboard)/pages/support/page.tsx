@@ -285,8 +285,8 @@ export default function AdminSupportPage() {
       )}
 
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">문의하기 편집</h1>
-        <p className="mb-8 text-gray-500">/support 공개 페이지의 히어로·연락 채널·회사 정보·샘플 Lot 등을 관리합니다.</p>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">문의·연락 채널 편집</h1>
+        <p className="mb-8 text-gray-500">/company 회사소개 페이지의 문의 양식·연락 채널·회사 정보·지도 데이터를 관리합니다.</p>
 
         {/* Admin Tab Bar */}
         <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">

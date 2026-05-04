@@ -87,7 +87,7 @@ export async function GET() {
   lines.push(`- 고객 후기: ${SITE_URL}/reviews`);
   lines.push(`- 홈쇼핑 편성: ${SITE_URL}/home-shopping`);
   lines.push(`- 미디어 갤러리: ${SITE_URL}/media`);
-  lines.push(`- 고객 지원·FAQ: ${SITE_URL}/support`);
+  lines.push(`- 고객 지원·FAQ: ${SITE_URL}/company#contact`);
   lines.push('');
 
   /* ── 인용 정책 ── */

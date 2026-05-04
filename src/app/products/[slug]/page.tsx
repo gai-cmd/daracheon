@@ -187,7 +187,7 @@ export default async function ProductDetailPage(
             )}
 
             <div className={styles.ctas}>
-              <Link href="/support" className={styles.btnGold}>
+              <Link href="/company#contact" className={styles.btnGold}>
                 제품 문의 →
               </Link>
               <Link href="/home-shopping" className={styles.btnOutline}>

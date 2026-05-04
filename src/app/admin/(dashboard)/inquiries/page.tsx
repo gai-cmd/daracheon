@@ -292,13 +292,13 @@ export default function InquiriesPage() {
       )}
 
       <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* HERO EDITOR — 공개 /support 페이지 상단 히어로(섹션 태그·제목·부제목·배경 이미지) */}
+        {/* HERO EDITOR — /company 통합 후 회사소개 페이지 컨택트 영역과 연결된 support 데이터 (히어로는 별도 사용 안 함) */}
         <div className="mb-8">
           <PageHeroEditor
             pageKey="support"
-            publicPath="/support"
+            publicPath="/company"
             defaultHero={SUPPORT_DEFAULT_HERO}
-            title="Hero · /support 히어로"
+            title="Hero · 문의 데이터 (참고용)"
           />
         </div>
 

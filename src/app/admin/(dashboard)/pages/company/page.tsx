@@ -52,12 +52,6 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
     title: '공식 인증 · 등록',
     body: 'CITES 등록 VN-2008-AAR-003 · 베트남 농업부 수출허가 EXP-VN-2024-112 · 식약처 건강기능식품 전문제조업 허가 · ISO 22000 식품안전경영시스템 · HACCP 인증 제조시설. 모든 인증서는 본사 또는 홈페이지 〈검증〉 메뉴에서 원본 확인이 가능합니다.',
   },
-  {
-    num: '04',
-    tag: 'Contact',
-    title: '본사 · 찾아오시는 길',
-    body: '서울특별시 강남구 테헤란로 521, 파르나스타워 5층 · 지하철 2호선 삼성역 5번 출구 도보 3분. 평일 09:00~18:00 · 전화 070-4140-4086. 베트남 생산 현황은 브랜드 스토리에서 확인하실 수 있습니다.',
-  },
 ];
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {

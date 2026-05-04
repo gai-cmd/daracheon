@@ -147,7 +147,7 @@ export default async function ReviewsPage() {
           <p className="text-sm text-neutral-500 mb-6 max-w-md mx-auto">
             ZOEL LIFE 제품을 구매하신 후 경험을 공유해 주시면, 다른 고객분들의 선택에 큰 도움이 됩니다.
           </p>
-          <Link href="/support#contact" className="btn btn-gold">후기 작성하기</Link>
+          <Link href="/company#contact" className="btn btn-gold">후기 작성하기</Link>
         </RevealOnScroll>
       </section>
 

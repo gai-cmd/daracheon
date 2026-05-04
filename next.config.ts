@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
     ],
   },
+  async redirects() {
+    // /support 가 /company 로 통합됨. 외부 캐시·검색엔진 인덱스의 구 링크 보전.
+    return [
+      { source: '/support', destination: '/company#contact', permanent: true },
+      { source: '/support/:path*', destination: '/company#contact', permanent: true },
+    ];
+  },
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
     // img-src: Next.config 의 remotePatterns 와 일치시켜야 이미지 깨지지 않음.

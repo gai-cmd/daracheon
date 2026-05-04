@@ -1,15 +1,22 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { readSingleSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import type { FaqItem } from '@/data/company';
 import styles from '@/styles/zoel/story-page.module.css';
+import CompanyContactSection, { type SupportData } from './CompanyContactSection';
 
 export const dynamic = 'force-dynamic';
+
+interface FaqItemWithMeta extends FaqItem {
+  id?: string;
+  category?: string;
+}
 
 export const metadata: Metadata = {
   title: '회사소개 - ZOEL LIFE(조엘라이프) | ZOEL LIFE',
   description:
-    'ZOEL LIFE(조엘라이프) 회사 소개. 베트남 현지 생산부터 글로벌 유통까지, 완벽한 가치사슬을 구축하는 프리미엄 침향 브랜드.',
+    'ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·찾아오시는 길. 베트남 현지 생산부터 글로벌 유통까지, 완벽한 가치사슬을 구축하는 프리미엄 침향 브랜드.',
   alternates: { canonical: 'https://www.daracheon.com/company' },
 };
 
@@ -120,21 +127,15 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
     title: '공식 인증 · 등록',
     body: 'CITES 등록 VN-2008-AAR-003 · 베트남 농업부 수출허가 EXP-VN-2024-112 · 식약처 건강기능식품 전문제조업 허가 · ISO 22000 식품안전경영시스템 · HACCP 인증 제조시설. 모든 인증서는 본사 또는 홈페이지 〈검증〉 메뉴에서 원본 확인이 가능합니다.',
   },
-  {
-    num: '04',
-    tag: 'Contact',
-    title: '본사 · 찾아오시는 길',
-    body:
-      '주소 · 서울특별시 강남구 테헤란로 521, 파르나스타워 5층\n' +
-      '교통 · 지하철 2호선 삼성역 5번 출구 도보 3분\n' +
-      '운영 · 평일 09:00~18:00 (토·일·공휴일 휴무)\n' +
-      '전화 · 070-4140-4086',
-  },
 ];
 
 export default async function CompanyPage() {
-  const pagesData = await readSingleSafe<{ company?: CompanyData }>('pages');
-  const settings = await readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company');
+  const [pagesData, settings, faqItems] = await Promise.all([
+    readSingleSafe<{ company?: CompanyData; support?: SupportData }>('pages'),
+    readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company'),
+    readDataSafe<FaqItemWithMeta>('faq'),
+  ]);
+
   const brandLogo = settings?.brandLogo || '/images/logo-brand.png';
   const companyLogo = settings?.companyLogo ?? '';
 
@@ -145,10 +146,27 @@ export default async function CompanyPage() {
     pagesData?.company?.chapters && pagesData.company.chapters.length > 0
       ? pagesData.company.chapters
       : DEFAULT_CHAPTERS;
+  const supportData = pagesData?.support ?? null;
+
+  // FAQPage JSON-LD — 실제 DB 데이터 기반 동적 생성.
+  // /support 통합으로 회사소개 페이지가 FAQ 의 정식 위치가 됨.
+  const faqJsonLd =
+    faqItems.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqItems.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        }
+      : null;
 
   return (
     <>
       <JsonLd data={companyJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero.heroImage && (
@@ -262,6 +280,9 @@ export default async function CompanyPage() {
           </section>
         );
       })}
+
+      {/* CONTACT — 문의 양식 + 전화 + 회사 정보 + 지도 + FAQ (구 /support 통합) */}
+      <CompanyContactSection faqItems={faqItems} supportData={supportData} />
     </>
   );
 }

@@ -1,19 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import NextImage from 'next/image';
 import type { FaqItem } from '@/data/company';
 import NaverMap from '@/components/NaverMap';
-import styles from './page.module.css';
-import storyStyles from '@/styles/zoel/story-page.module.css';
-
-export interface SupportHero {
-  kicker: string;
-  titleLine1: string;
-  titleEmphasis: string;
-  lede: string;
-  heroImage?: string;
-}
+import styles from './contact.module.css';
 
 export interface SupportChannel {
   num: string;
@@ -42,7 +32,6 @@ export interface SupportMapLabel {
 }
 
 export interface SupportData {
-  hero?: SupportHero;
   channels?: SupportChannel[];
   sampleLots?: string[];
   productOptions?: string[];
@@ -50,7 +39,7 @@ export interface SupportData {
   mapLabel?: SupportMapLabel;
 }
 
-interface SupportClientProps {
+interface CompanyContactSectionProps {
   faqItems: FaqItem[];
   supportData: SupportData | null;
 }
@@ -80,10 +69,8 @@ function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
   );
 }
 
-export default function SupportClient({ faqItems, supportData }: SupportClientProps) {
-  const hero = supportData?.hero;
+export default function CompanyContactSection({ faqItems, supportData }: CompanyContactSectionProps) {
   const channels = supportData?.channels ?? [];
-  const sampleLots = supportData?.sampleLots ?? [];
   const productOptions = supportData?.productOptions ?? [];
   const companyInfo = supportData?.companyInfo;
   const mapLabel = supportData?.mapLabel;
@@ -115,8 +102,6 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
       });
       if (res.ok) {
         const body = await res.json().catch(() => ({}));
-        // 메일 발송 실패 시에도 문의는 DB 에 저장됨 — 사용자에겐 접수 완료로 표시,
-        // 콘솔에는 발송 실패 사유 노출(어드민이 settings 에서 SMTP 재확인 가능).
         const mail = body?.mailSent;
         if (mail && (!mail.customer || !mail.admin)) {
           console.warn('[Contact Form] 메일 일부 발송 실패', mail);
@@ -135,36 +120,6 @@ export default function SupportClient({ faqItems, supportData }: SupportClientPr
 
   return (
     <>
-      {/* HERO */}
-      <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
-        {hero?.heroImage && (
-          <NextImage
-            src={hero.heroImage}
-            alt=""
-            fill
-            sizes="100vw"
-            priority
-            unoptimized
-            aria-hidden
-            style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
-          />
-        )}
-        <div className="orn-plume" aria-hidden style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }} />
-        <div className={storyStyles.wrap}>
-          <div className={storyStyles.kicker}>{hero?.kicker ?? '문의하기 · Support'}</div>
-          <div className={storyStyles.heroMain}>
-            <h1>
-              {hero?.titleLine1 ?? '무엇을'}
-              <br />
-              <em>{hero?.titleEmphasis ?? '도와드릴까요'}</em>
-            </h1>
-            <p className={storyStyles.lede}>
-              {hero?.lede ?? '제품 상담부터 Lot 인증서 조회까지. 대라천이 직접 답변드립니다.'}
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* FORM + PHONE INQUIRY */}
       <section className={styles.main} id="contact">
         <div className={styles.wrap}>

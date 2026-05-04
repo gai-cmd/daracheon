@@ -32,7 +32,7 @@ export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: '고객 지원',
     links: [
-      { label: '문의하기', href: '/support' },
+      { label: '문의하기', href: '/company#contact' },
       { label: '고객 후기', href: '/reviews' },
     ],
   },

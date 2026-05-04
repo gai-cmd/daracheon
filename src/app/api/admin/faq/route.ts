@@ -5,7 +5,7 @@ import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
 function revalidateFaq() {
-  revalidatePath('/support', 'layout');
+  revalidatePath('/company', 'layout');
   revalidateTag('db:faq'); // unstable_cache 즉시 무효화 → 프론트 즉시 반영
 }
 

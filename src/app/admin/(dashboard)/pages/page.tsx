@@ -23,7 +23,7 @@ export default function AdminPagesPage() {
     {
       href: '/admin/pages/company',
       title: '회사소개',
-      desc: '/company 회사 개요 · 4 챕터 편집',
+      desc: '/company 회사 개요 · 챕터 편집',
       icon: '◇',
     },
     {
@@ -34,8 +34,8 @@ export default function AdminPagesPage() {
     },
     {
       href: '/admin/pages/support',
-      title: '문의하기',
-      desc: '/support 연락 채널 · 회사정보 · 샘플 Lot 편집',
+      title: '문의·연락 채널 (회사소개 통합)',
+      desc: '/company 의 문의 양식 · 연락 채널 · 회사정보 · 지도 데이터 편집',
       icon: '○',
     },
     {
