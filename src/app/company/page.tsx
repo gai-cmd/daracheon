@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe, readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import type { FaqItem } from '@/data/company';
 import styles from '@/styles/zoel/story-page.module.css';
@@ -131,7 +131,8 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
 
 export default async function CompanyPage() {
   const [pagesData, settings, faqItems] = await Promise.all([
-    readSingleSafe<{ company?: CompanyData; support?: SupportData }>('pages'),
+    // unstable_cache 우회 — blob 외부 변경 즉시 반영. force-dynamic 라우트라 매 요청 fresh.
+    readSingleUncached<{ company?: CompanyData; support?: SupportData }>('pages'),
     readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company'),
     readDataSafe<FaqItemWithMeta>('faq'),
   ]);

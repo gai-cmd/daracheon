@@ -143,7 +143,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // Navigation lives in the DB so admins can edit labels / order / links
   // without a code deploy. Fall back to the compiled-in defaults if the
   // seed hasn't been written yet (first deploy, or Blob store empty).
-  const nav = await readSingleSafe<NavigationData>('navigation');
+  // unstable_cache 우회 — 외부 스크립트로 blob 을 업데이트했을 때도 즉시 반영.
+  // 네비게이션은 페이지마다 한 번 호출되며 blob 1 회 read 라 비용 부담 작음.
+  const nav = await readSingleUncached<NavigationData>('navigation');
   const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
 
   // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리
