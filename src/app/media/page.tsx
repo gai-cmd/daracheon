@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readSingleSafe, readDataSafe } from '@/lib/db';
+import { readSingleUncached, readDataSafe } from '@/lib/db';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
 
@@ -269,7 +269,8 @@ interface RawProcessData {
 
 export default async function MediaPage() {
   const [pagesData, dbMedia] = await Promise.all([
-    readSingleSafe<{ process?: RawProcessData }>('pages'),
+    // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
+    readSingleUncached<{ process?: RawProcessData }>('pages'),
     readDataSafe<MediaItem>('media'),
   ]);
 

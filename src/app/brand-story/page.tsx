@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readSingleSafe } from '@/lib/db';
+import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import BrandStoryClient from './BrandStoryClient';
 
@@ -66,7 +66,8 @@ export interface BrandStoryData {
 }
 
 export default async function BrandStoryPage() {
-  const pagesData = await readSingleSafe<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
+  // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
+  const pagesData = await readSingleUncached<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
   const data: BrandStoryData | null = pagesData?.brandStory ?? null;
 
   // AboutPage JSON-LD — 브랜드 개요 엔티티. AI Overview 가 회사 기원·규모를 직접 인용.

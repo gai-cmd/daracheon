@@ -215,15 +215,17 @@ export const products: Product[] = [
   },
 ];
 
+// 폴백 카테고리. 실제 운영 데이터는 data/db/productCategories.json (어드민 편집).
+// 이 상수는 어드민 첫 렌더 / 시드 / 백업 경로에서 빈 DB 일 때만 사용된다.
 export const productCategories = [
   { id: 'all', label: '전체', labelEn: 'All' },
-  { id: '캡슐', label: '캡슐', labelEn: 'Capsule' },
-  { id: '오일', label: '오일', labelEn: 'Oil' },
-  { id: '침향수', label: '침향수', labelEn: 'Water' },
+  { id: '오일', label: '오일', labelEn: 'Essential Oil' },
   { id: '환', label: '환', labelEn: 'Pill' },
-  { id: '비누', label: '비누', labelEn: 'Soap' },
+  { id: '수', label: '침향수', labelEn: 'Water' },
+  { id: '차', label: '건강차', labelEn: 'Tea' },
   { id: '스틱', label: '스틱', labelEn: 'Stick' },
-  { id: '선물세트', label: '선물세트', labelEn: 'Gift Set' },
+  { id: '향', label: '향', labelEn: 'Incense' },
+  { id: '염주', label: '염주', labelEn: 'Prayer Beads' },
 ];
 
 export type ProductCategory = (typeof productCategories)[number];

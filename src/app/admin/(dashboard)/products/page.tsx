@@ -1,9 +1,16 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { productCategories, type Product, type ProductVariant } from '@/data/products';
+import { productCategories as fallbackCategories, type Product, type ProductVariant } from '@/data/products';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import PageHeroEditor from '@/components/admin/PageHeroEditor';
+import ProductCategoryEditor from '@/components/admin/ProductCategoryEditor';
+
+interface ProductCategory {
+  id: string;
+  label: string;
+  labelEn: string;
+}
 
 const PRODUCTS_DEFAULT_HERO = {
   kicker: '제품 소개 · Products',
@@ -31,6 +38,7 @@ function getBadgeClass(badge: string): string {
 
 export default function AdminProductsPage() {
   const [productList, setProductList] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<ProductCategory[]>(fallbackCategories);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -124,8 +132,25 @@ export default function AdminProductsPage() {
     }
   };
 
+  /* ─── Fetch categories (live, replaces hardcoded fallback) ─── */
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/admin/product-categories', { cache: 'no-store' });
+      const data = await res.json();
+      const list: ProductCategory[] = Array.isArray(data?.categories) ? data.categories : [];
+      if (list.length > 0) {
+        const withoutAll = list.filter((c) => c.id !== 'all');
+        const all = list.find((c) => c.id === 'all') ?? { id: 'all', label: '전체', labelEn: 'All' };
+        setCategories([all, ...withoutAll]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch product categories:', err);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -153,9 +178,9 @@ export default function AdminProductsPage() {
   }
 
   function openAdd() {
-    // 카테고리 기본값을 productCategories 첫 항목('all' 제외)로 동적 설정.
-    // 하드코딩('원목')이 실제 등록된 카테고리와 불일치해 렌더 필터에서 누락되는 사고 방지.
-    const firstReal = productCategories.find((c) => c.id !== 'all');
+    // 카테고리 기본값을 라이브 categories 첫 항목('all' 제외)로 동적 설정.
+    // 하드코딩이 실제 등록된 카테고리와 불일치해 렌더 필터에서 누락되는 사고 방지.
+    const firstReal = categories.find((c) => c.id !== 'all');
     setEditingProduct({
       id: '',
       slug: '',
@@ -358,6 +383,19 @@ export default function AdminProductsPage() {
         />
       </div>
 
+      {/* CATEGORY EDITOR — 제품 분류 탭의 라벨·순서·추가/삭제 */}
+      <ProductCategoryEditor
+        onSaved={(saved) => {
+          const withoutAll = saved.filter((c) => c.id !== 'all');
+          const all = saved.find((c) => c.id === 'all') ?? { id: 'all', label: '전체', labelEn: 'All' };
+          setCategories([all, ...withoutAll]);
+          // 기존 필터가 사라진 카테고리를 가리키면 'all' 로 리셋.
+          if (categoryFilter !== 'all' && !saved.some((c) => c.id === categoryFilter)) {
+            setCategoryFilter('all');
+          }
+        }}
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">제품 관리</h1>
@@ -402,7 +440,7 @@ export default function AdminProductsPage() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
           >
-            {productCategories.map((cat) => (
+            {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.label}
               </option>
@@ -601,7 +639,7 @@ export default function AdminProductsPage() {
                   onChange={(e) => updateEditField('category', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
                 >
-                  {productCategories
+                  {categories
                     .filter((c) => c.id !== 'all')
                     .map((cat) => (
                       <option key={cat.id} value={cat.id}>
