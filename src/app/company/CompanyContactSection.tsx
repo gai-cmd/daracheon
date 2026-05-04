@@ -120,6 +120,36 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
 
   return (
     <>
+      {/* INFO + MAP — 회사 정보 / 오시는 길 (문의 양식 앞) */}
+      {(companyInfo || mapLabel) && (
+        <section className={styles.info}>
+          <div className={styles.wrap}>
+            <div className={styles.infoGrid}>
+              {companyInfo && companyInfo.rows.length > 0 && (
+                <div>
+                  <h2>
+                    회사 <em>정보</em>
+                  </h2>
+                  <dl>
+                    {companyInfo.rows.map((row, i) => (
+                      <FragmentRow key={i} row={row} />
+                    ))}
+                  </dl>
+                </div>
+              )}
+              {mapLabel && (
+                <div>
+                  <h2>
+                    오시는 <em>길</em>
+                  </h2>
+                  <NaverMap title={mapLabel.title} address={mapLabel.address} />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* FORM + PHONE INQUIRY */}
       <section className={styles.main} id="contact">
         <div className={styles.wrap}>
@@ -275,36 +305,6 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
           </div>
         </div>
       </section>
-
-      {/* INFO + MAP */}
-      {(companyInfo || mapLabel) && (
-        <section className={styles.info}>
-          <div className={styles.wrap}>
-            <div className={styles.infoGrid}>
-              {companyInfo && companyInfo.rows.length > 0 && (
-                <div>
-                  <h2>
-                    회사 <em>정보</em>
-                  </h2>
-                  <dl>
-                    {companyInfo.rows.map((row, i) => (
-                      <FragmentRow key={i} row={row} />
-                    ))}
-                  </dl>
-                </div>
-              )}
-              {mapLabel && (
-                <div>
-                  <h2>
-                    오시는 <em>길</em>
-                  </h2>
-                  <NaverMap title={mapLabel.title} address={mapLabel.address} />
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* FAQ (DB-driven) */}
       {faqItems.length > 0 && (
