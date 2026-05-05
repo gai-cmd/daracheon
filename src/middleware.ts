@@ -20,6 +20,16 @@ function isPublicAdminPath(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  // www → apex 정규화. 네이버 지도 Web 서비스 URL 등록이 apex 만 허용해서
+  // www 도메인에서 인증 실패. 모든 트래픽을 apex 로 영구 이동.
+  const host = request.headers.get('host');
+  if (host === 'www.zoellife.com') {
+    const url = request.nextUrl.clone();
+    url.host = 'zoellife.com';
+    url.protocol = 'https:';
+    return NextResponse.redirect(url, 308);
+  }
+
   const pathname = request.nextUrl.pathname.toLowerCase();
 
   const isAdminPage = pathname.startsWith('/admin');
@@ -50,5 +60,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*', '/api/admin/:path*'],
+  // www→apex 리다이렉트 + 어드민 인증을 모두 처리. 정적 파일·이미지 최적화는 제외.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|images/|uploads/).*)'],
 };
