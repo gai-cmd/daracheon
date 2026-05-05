@@ -527,7 +527,17 @@ export default function AdminProductsPage() {
                       <div className="font-medium text-gray-900">{product.name}</div>
                       <div className="text-xs text-gray-400">{product.nameEn}</div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{product.category}</td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {(() => {
+                        const cat = categories.find((c) => c.id === product.category);
+                        if (cat) return cat.label;
+                        return (
+                          <span className="inline-flex items-center gap-1 text-amber-700" title="카테고리 사전에 없는 값입니다. '카테고리 관리'에서 추가하거나 제품의 카테고리를 변경하세요.">
+                            ⚠ {product.category || '(없음)'}
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td className="px-4 py-3 text-gray-900 font-medium">{product.priceDisplay}</td>
                     <td className="px-4 py-3">
                       <span className={getBadgeClass(product.badge)}>
@@ -639,6 +649,13 @@ export default function AdminProductsPage() {
                   onChange={(e) => updateEditField('category', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
                 >
+                  {/* 현재 값이 카테고리 사전에 없으면 옵션을 임시 추가 — 저장 시 손실 방지 */}
+                  {editingProduct.category &&
+                    !categories.some((c) => c.id === editingProduct.category) && (
+                      <option value={editingProduct.category}>
+                        ⚠ {editingProduct.category} (사전에 없음 — 카테고리 관리에서 추가 필요)
+                      </option>
+                    )}
                   {categories
                     .filter((c) => c.id !== 'all')
                     .map((cat) => (
@@ -647,6 +664,9 @@ export default function AdminProductsPage() {
                       </option>
                     ))}
                 </select>
+                <p className="mt-1 text-[11px] text-gray-400">
+                  옵션 목록은 상단 <strong>카테고리 관리</strong> 패널에서 추가/편집할 수 있습니다.
+                </p>
               </div>
 
               {/* Badge */}

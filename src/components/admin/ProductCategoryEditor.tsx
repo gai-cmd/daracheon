@@ -19,7 +19,7 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
   const [items, setItems] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const [toast, setToast] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
 
   /* ─── Fetch ─── */
