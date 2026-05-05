@@ -43,9 +43,9 @@ function MapFooter({ address }: { address: string }) {
     <div style={{ background: 'rgba(10,11,16,0.8)', border: '1px solid rgba(212,168,67,0.15)', borderTop: 'none', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,168,67,0.65)', marginBottom: 2 }}>지하철 안내</div>
       <SubwayRow color="#747F00" line="7" station="가산디지털단지역" exit="6번 출구" walk="도보 약 2분 (100m)" />
-      <SubwayRow color="#0052A4" line="1" station="가산디지털단지역" exit="6번 출구" walk="도보 약 2분 (100m)" />
-      <a href={NAVER_SEARCH_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 4, padding: '8px 14px', background: '#03C75A', color: '#fff', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.06em', textDecoration: 'none', fontWeight: 700, width: 'fit-content' }}>
-        N 네이버 지도에서 보기 →
+      <SubwayRow color="#0052A4" line="1" station="가산디지털단지역" exit="2번 출구" walk="도보 약 4분 (230m)" />
+      <a href={NAVER_SEARCH_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 4, padding: '8px 14px', background: '#000', color: '#fff', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.06em', textDecoration: 'none', fontWeight: 700, width: 'fit-content', border: '1px solid rgba(255,255,255,0.15)' }}>
+        <span style={{ color: '#03C75A' }}>N</span> 네이버 지도에서 보기 →
       </a>
     </div>
   );
