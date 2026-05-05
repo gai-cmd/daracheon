@@ -13,7 +13,6 @@ interface Broadcast {
   specialPrice?: number | null;
   regularPrice?: number | null;
   discountRate?: number | null;
-  livestreamUrl?: string | null;
   vodUrl?: string | null;
   description?: string | null;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
