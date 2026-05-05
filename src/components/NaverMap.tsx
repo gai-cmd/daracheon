@@ -73,7 +73,9 @@ function NaverJsMap({ title, address }: Required<MapProps>) {
 
   return (
     <>
-      <Script strategy="afterInteractive" src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${clientId}`} onLoad={initMap} />
+      {/* 신규 Naver Cloud Maps 는 ncpKeyId, 구버전은 ncpClientId.
+          신버전이 더 이상 ncpClientId 를 받지 않아 401 → ncpKeyId 로 전환. */}
+      <Script strategy="afterInteractive" src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`} onLoad={initMap} />
       <div ref={mapRef} style={{ width: '100%', aspectRatio: '4/3', display: 'block' }} />
       <MapFooter address={address} />
     </>
