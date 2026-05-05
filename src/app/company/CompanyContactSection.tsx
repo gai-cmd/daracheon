@@ -121,18 +121,18 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
 
   return (
     <>
-      {/* IDENTITY — 다른 챕터(01·About, 02·Leadership, 03·인증)와 동일한 연번 레이아웃 */}
+      {/* 02 · About — 회사 개요 (회사 정보 + 본사 + 오시는 길 통합) */}
       {(companyInfo || mapLabel) && (
         <section className={`${storyStyles.chapter} ${storyStyles.chapterAlt}`}>
           <div className={storyStyles.wrap}>
             <div className={storyStyles.chapterGrid}>
               <div>
-                <div className={storyStyles.chapterNum}>04</div>
-                <div className={storyStyles.chapterTag}>Identity</div>
+                <div className={storyStyles.chapterNum}>02</div>
+                <div className={storyStyles.chapterTag}>About</div>
               </div>
               <div className={storyStyles.chapterBody}>
                 <h3>
-                  회사 <em>정체성</em>
+                  회사 <em>개요</em>
                 </h3>
 
                 {companyInfo && companyInfo.rows.length > 0 && (() => {
@@ -169,17 +169,19 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
         </section>
       )}
 
-      {/* FORM + PHONE INQUIRY */}
-      <section className={styles.main} id="contact">
-        <div className={styles.wrap}>
-          <div className={styles.mainGrid}>
-            {/* Inquiry form */}
-            <div className={styles.col}>
-              <div className={styles.colHead}>01 · General Inquiry</div>
-              <h2>
-                문의 양식으로 <em>보내주세요</em>
-              </h2>
-              <p className={styles.intro}>
+      {/* 03 · General Inquiry — 문의 양식 + 전화 CTA (하단) */}
+      <section className={storyStyles.chapter} id="contact">
+        <div className={storyStyles.wrap}>
+          <div className={storyStyles.chapterGrid}>
+            <div>
+              <div className={storyStyles.chapterNum}>03</div>
+              <div className={storyStyles.chapterTag}>General Inquiry</div>
+            </div>
+            <div className={storyStyles.chapterBody}>
+              <h3>
+                문의 <em>양식</em>
+              </h3>
+              <p style={{ marginBottom: 36 }}>
                 아래 양식을 작성해 주시면 담당 팀원이 내용을 확인하고 영업일 24시간 내 회신드립니다.
                 의료·약리 문의는 의약품이 아닌 건강기능식품 기준으로 답변드립니다.
               </p>
@@ -275,74 +277,69 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                   <span className={styles.hintTxt}>* 필수 항목 · 24시간 내 회신</span>
                 </div>
               </form>
+
+              {/* Phone CTA — 폼 하단 카드. 부가 채널 위계로 격하. */}
+              <div className={styles.phoneCard}>
+                <div className={styles.phoneCardLabel}>Phone Inquiry</div>
+                <div className={styles.phoneCardGrid}>
+                  <div>
+                    <div className={styles.phoneCardTitle}>
+                      {phoneChannel?.title ?? '전화 문의'}
+                    </div>
+                    <div className={styles.phoneCardSub}>
+                      {(phoneChannel?.sub ?? '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무')
+                        .split('\n')
+                        .map((line, j, arr) => (
+                          <span key={j}>
+                            {line}
+                            {j < arr.length - 1 && <br />}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                  <div className={styles.phoneCardRight}>
+                    <div className={styles.phoneCardNumber}>
+                      {phoneChannel?.value ?? '070 · 4140 · 4086'}
+                    </div>
+                    <a
+                      href={phoneChannel?.ctaHref ?? 'tel:070-4140-4086'}
+                      className={styles.phoneCardCta}
+                    >
+                      {phoneChannel?.ctaLabel ?? '지금 전화하기 →'}
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* SIDE: phone inquiry */}
-            <aside className={styles.side}>
-              <div className={styles.colHead} style={{ marginBottom: 8 }}>
-                02 · Phone Inquiry
-              </div>
-              <h3>
-                <em>{phoneChannel?.title ?? '전화 문의'}</em>
-              </h3>
-              <p className={styles.desc}>
-                {(phoneChannel?.sub ?? '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무')
-                  .split('\n')
-                  .map((line, j, arr) => (
-                    <span key={j}>
-                      {line}
-                      {j < arr.length - 1 && <br />}
-                    </span>
-                  ))}
-              </p>
-
-              <div
-                style={{
-                  fontFamily: "'Noto Serif KR', serif",
-                  fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-                  color: 'var(--accent)',
-                  letterSpacing: '0.02em',
-                  fontWeight: 400,
-                  marginBottom: 10,
-                  lineHeight: 1.2,
-                }}
-              >
-                {phoneChannel?.value ?? '070 · 4140 · 4086'}
-              </div>
-              <div className={styles.chHint} style={{ marginBottom: 32 }}>
-                {phoneChannel?.hint ?? 'Customer · 대표번호'}
-              </div>
-
-              <a
-                href={phoneChannel?.ctaHref ?? 'tel:070-4140-4086'}
-                className={styles.chLink}
-              >
-                {phoneChannel?.ctaLabel ?? '지금 전화하기 →'}
-              </a>
-
-            </aside>
           </div>
         </div>
       </section>
 
-      {/* FAQ (DB-driven) */}
+      {/* 04 · FAQ — 자주 묻는 질문 */}
       {faqItems.length > 0 && (
-        <section className={styles.faqSection} id="faq">
-          <div className={styles.wrap}>
-            <div className={styles.colHead}>FAQ · 자주 묻는 질문</div>
-            <h2 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2, color: '#fff', marginBottom: 16 }}>
-              자주 묻는 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>질문</em>
-            </h2>
-            <div className={styles.faqList}>
-              {faqItems.map((item, i) => (
-                <div key={i} className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}>
-                  <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
-                    <span>{item.question}</span>
-                    <span className={styles.chevron}>▼</span>
-                  </button>
-                  {openFaq === i && <div className={styles.faqAnswer}>{item.answer}</div>}
+        <section className={`${storyStyles.chapter} ${storyStyles.chapterAlt}`} id="faq">
+          <div className={storyStyles.wrap}>
+            <div className={storyStyles.chapterGrid}>
+              <div>
+                <div className={storyStyles.chapterNum}>04</div>
+                <div className={storyStyles.chapterTag}>FAQ</div>
+              </div>
+              <div className={storyStyles.chapterBody}>
+                <h3>
+                  자주 묻는 <em>질문</em>
+                </h3>
+                <div className={styles.faqList} style={{ marginTop: 28 }}>
+                  {faqItems.map((item, i) => (
+                    <div key={i} className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}>
+                      <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
+                        <span>{item.question}</span>
+                        <span className={styles.chevron}>▼</span>
+                      </button>
+                      {openFaq === i && <div className={styles.faqAnswer}>{item.answer}</div>}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>

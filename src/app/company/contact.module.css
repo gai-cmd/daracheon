@@ -507,6 +507,92 @@
   overflow: hidden;
 }
 
+/* PHONE CARD — 문의 양식 하단 부가 채널 카드 */
+.phoneCard {
+  margin-top: 56px;
+  padding: 28px 32px;
+  border: 1px solid rgba(212, 168, 67, 0.22);
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.05), transparent);
+  position: relative;
+}
+.phoneCard::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 28px;
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+.phoneCardLabel {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  color: rgba(212, 168, 67, 0.75);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.phoneCardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+}
+@media (min-width: 720px) {
+  .phoneCardGrid {
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+  }
+}
+.phoneCardTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.phoneCardSub {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+}
+.phoneCardRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+@media (min-width: 720px) {
+  .phoneCardRight {
+    align-items: flex-end;
+  }
+}
+.phoneCardNumber {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+.phoneCardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--accent);
+  transition: gap 300ms;
+}
+.phoneCardCta:hover { gap: 14px; }
+
 /* FAQ */
 .faqSection {
   padding: 80px 0;
