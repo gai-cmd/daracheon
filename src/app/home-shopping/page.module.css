@@ -131,15 +131,14 @@
 .liveMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 20px 28px;
   margin: 20px 0 28px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  font-weight: 300;
   color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
 }
-.liveMeta b { color: var(--accent-soft); font-weight: 500; }
+.liveMeta b { color: var(--accent-soft); font-weight: 500; margin-right: 4px; }
 
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 .btnLive {

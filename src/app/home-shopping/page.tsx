@@ -190,12 +190,16 @@ function formatChannelLogo(channel: string): string {
   return c.slice(0, 1);
 }
 
+const KST = 'Asia/Seoul';
+
 function formatDate(iso: string) {
   const d = new Date(iso);
   return {
-    day: d.getDate().toString().padStart(2, '0'),
-    monthYear: d.toLocaleDateString('ko-KR', { year: '2-digit', month: 'short' }).toUpperCase(),
-    time: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+    day: new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: KST }).format(d),
+    monthYear: new Intl.DateTimeFormat('ko-KR', { year: '2-digit', month: 'short', timeZone: KST })
+      .format(d)
+      .toUpperCase(),
+    time: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: KST }),
   };
 }
 
@@ -254,7 +258,8 @@ export default async function HomeShoppingPage() {
                 <div className={styles.liveMeta}>
                   {featured.host && <span><b>MC</b> · {featured.host}</span>}
                   <span>
-                    <b>일시</b> · {new Date(featured.scheduledAt).toLocaleString('ko-KR')}
+                    <b>일시</b> ·{' '}
+                    {new Date(featured.scheduledAt).toLocaleString('ko-KR', { timeZone: KST })}
                   </span>
                   {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>

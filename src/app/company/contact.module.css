@@ -447,59 +447,6 @@
 }
 
 /* IDENTITY — 회사 정보 + 본사 + 오시는 길 단일 챕터 톤 */
-.identity {
-  padding: 80px 0 96px;
-  background: #06070c;
-  border-top: 1px solid rgba(212, 168, 67, 0.15);
-  color: #fdfbf7;
-}
-.identityHead {
-  margin-bottom: 56px;
-  max-width: 760px;
-}
-.identityKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.32em;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 18px;
-}
-.identityTitle {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-  font-weight: 200;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: #fff;
-  margin: 0;
-}
-.identityTitle em {
-  color: var(--accent);
-  font-style: normal;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 400;
-}
-
-.identityGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 56px;
-}
-@media (min-width: 960px) {
-  .identityGrid {
-    grid-template-columns: 1.05fr 1fr;
-    gap: 0;
-  }
-  .identityGrid > .identityCol:first-child {
-    padding-right: 64px;
-    border-right: 1px solid rgba(212, 168, 67, 0.18);
-  }
-  .identityGrid > .identityCol:last-child {
-    padding-left: 64px;
-  }
-}
-
 .identityCol {
   display: flex;
   flex-direction: column;

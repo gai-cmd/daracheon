@@ -463,8 +463,8 @@ export default function AdminBroadcastsPage() {
 
       {/* Edit Modal */}
       {draft && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" style={{ colorScheme: 'light' }}>
+          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white text-gray-900 shadow-2xl">
             <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
               <h2 className="text-lg font-semibold">{isAddMode ? '방송 등록' : '방송 수정'}</h2>
               <button type="button" onClick={closeEdit} className="text-2xl text-gray-400 hover:text-gray-600">
@@ -509,7 +509,8 @@ export default function AdminBroadcastsPage() {
                       const v = e.target.value;
                       setDraft({ ...draft, scheduledAt: v ? new Date(v).toISOString() : '' });
                     }}
-                    className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                    style={{ colorScheme: 'light' }}
+                    className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900"
                   />
                 </div>
                 <div>
