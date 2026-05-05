@@ -179,8 +179,7 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 문의 <em>양식</em>
               </h3>
               <p style={{ marginBottom: 36 }}>
-                아래 양식을 작성해 주시면 담당 팀원이 내용을 확인하고 영업일 24시간 내 회신드립니다.
-                의료·약리 문의는 의약품이 아닌 건강기능식품 기준으로 답변드립니다.
+                아래 양식을 작성해 주시면 담당자가 내용을 확인하고 24시간 내 회신드립니다.
               </p>
 
               <form className={styles.inq} onSubmit={handleSubmit}>

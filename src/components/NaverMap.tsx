@@ -27,10 +27,10 @@ interface MapProps {
   address?: string;
 }
 
-function SubwayRow({ color, station, exit, walk }: { color: string; station: string; exit: string; walk: string }) {
+function SubwayRow({ color, line, station, exit, walk }: { color: string; line: string; station: string; exit: string; walk: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.85rem' }}>
-      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: color, color: '#fff', fontFamily: 'monospace', fontSize: '0.62rem', fontWeight: 700, flexShrink: 0 }}>1</span>
+      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: color, color: '#fff', fontFamily: 'monospace', fontSize: '0.62rem', fontWeight: 700, flexShrink: 0 }}>{line}</span>
       <span style={{ color: '#fff' }}>{station}</span>
       <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.78rem' }}>{exit}</span>
       <span style={{ color: 'rgba(212,168,67,0.85)', fontSize: '0.78rem', marginLeft: 'auto' }}>{walk}</span>
@@ -42,8 +42,8 @@ function MapFooter({ address }: { address: string }) {
   return (
     <div style={{ background: 'rgba(10,11,16,0.8)', border: '1px solid rgba(212,168,67,0.15)', borderTop: 'none', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,168,67,0.65)', marginBottom: 2 }}>지하철 안내</div>
-      <SubwayRow color="#0052A4" station="금천구청역" exit="2번 출구" walk="도보 약 10분" />
-      <SubwayRow color="#0052A4" station="독산역" exit="1번 출구" walk="도보 약 15분" />
+      <SubwayRow color="#747F00" line="7" station="가산디지털단지역" exit="6번 출구" walk="도보 약 2분 (100m)" />
+      <SubwayRow color="#0052A4" line="1" station="가산디지털단지역" exit="6번 출구" walk="도보 약 2분 (100m)" />
       <a href={NAVER_SEARCH_URL} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 4, padding: '8px 14px', background: '#03C75A', color: '#fff', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.06em', textDecoration: 'none', fontWeight: 700, width: 'fit-content' }}>
         N 네이버 지도에서 보기 →
       </a>
