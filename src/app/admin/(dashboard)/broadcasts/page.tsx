@@ -566,27 +566,18 @@ export default function AdminBroadcastsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-700">라이브 스트림 URL</label>
-                  <input
-                    type="url"
-                    value={draft.livestreamUrl ?? ''}
-                    onChange={(e) => setDraft({ ...draft, livestreamUrl: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-700">VOD URL</label>
-                  <input
-                    type="url"
-                    value={draft.vodUrl ?? ''}
-                    onChange={(e) => setDraft({ ...draft, vodUrl: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
-                  />
-                </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 영상 URL (YouTube / Vimeo)</label>
+                <input
+                  type="url"
+                  value={draft.vodUrl ?? ''}
+                  onChange={(e) => setDraft({ ...draft, vodUrl: e.target.value })}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                />
+                <p className="mt-1 text-[11px] text-gray-400">
+                  공개 페이지 라이브 카드 우측 16:9 프레임에 임베드됩니다. 예정·라이브·종료 모두 동일하게 사용.
+                </p>
               </div>
 
               <div>

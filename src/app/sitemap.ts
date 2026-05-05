@@ -5,7 +5,7 @@ import type { Product } from '@/data/products';
 // env 값에 줄바꿈/공백 섞이면 sitemap URL 이 깨져 검색엔진 색인 실패.
 // 모든 공백·제어문자 제거 + trailing slash 정리.
 function getBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.zoellife.com')
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
     .replace(/\s+/g, '')
     .replace(/\/$/, '');
 }

@@ -34,7 +34,6 @@ export interface Broadcast {
   specialPrice?: number;
   regularPrice?: number;
   discountRate?: number;
-  livestreamUrl?: string;
   vodUrl?: string;
   description?: string;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
@@ -56,7 +55,6 @@ const baseSchema = z.object({
   specialPrice: z.coerce.number().int().min(0).optional().nullable(),
   regularPrice: z.coerce.number().int().min(0).optional().nullable(),
   discountRate: z.coerce.number().min(0).max(100).optional().nullable(),
-  livestreamUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
   vodUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
   status: z.enum(statusValues).default('scheduled'),
@@ -133,7 +131,6 @@ export async function POST(request: Request) {
       ...(data.specialPrice !== undefined ? { specialPrice: data.specialPrice as number } : {}),
       ...(data.regularPrice !== undefined ? { regularPrice: data.regularPrice as number } : {}),
       ...(data.discountRate !== undefined ? { discountRate: data.discountRate as number } : {}),
-      ...(data.livestreamUrl ? { livestreamUrl: data.livestreamUrl as string } : {}),
       ...(data.vodUrl ? { vodUrl: data.vodUrl as string } : {}),
       ...(data.description ? { description: data.description as string } : {}),
       ...(data.salesCount !== undefined ? { salesCount: data.salesCount as number } : {}),

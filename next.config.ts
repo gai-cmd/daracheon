@@ -17,10 +17,18 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    // /support 가 /company 로 통합됨. 외부 캐시·검색엔진 인덱스의 구 링크 보전.
     return [
+      // /support 가 /company 로 통합됨. 외부 캐시·검색엔진 인덱스의 구 링크 보전.
       { source: '/support', destination: '/company#contact', permanent: true },
       { source: '/support/:path*', destination: '/company#contact', permanent: true },
+      // www → apex 정규화. 네이버 지도 Web 서비스 URL 등록이 apex 만 허용해서
+      // www 도메인에서는 인증 실패. 모든 트래픽을 apex 로 영구 이동.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.zoellife.com' }],
+        destination: 'https://zoellife.com/:path*',
+        permanent: true,
+      },
     ];
   },
   async headers() {

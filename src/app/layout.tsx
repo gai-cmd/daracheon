@@ -78,7 +78,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [ogImage],
     },
-    alternates: { canonical: 'https://www.zoellife.com' },
+    alternates: { canonical: 'https://zoellife.com' },
     robots: {
       index: true,
       follow: true,
