@@ -264,9 +264,9 @@
 }
 @media (min-width: 900px) {
   .schedRow {
-    grid-template-columns: 110px 200px 1fr 160px 160px;
+    grid-template-columns: 88px 168px minmax(0, 2.4fr) 130px 130px;
     align-items: center;
-    gap: 28px;
+    gap: 24px;
   }
 }
 .schedRow:last-child { border-bottom: none; }
@@ -315,7 +315,16 @@
 .schedChName { color: #fff; font-weight: 500; }
 .schedChTime { color: rgba(255, 255, 255, 0.55); font-size: 0.64rem; letter-spacing: 0.18em; }
 
-.schedProdTitle { font-size: 1.05rem; font-weight: 400; color: #fff; margin-bottom: 6px; }
+.schedProdTitle {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.55;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
 .schedProdOffer {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.65rem;
