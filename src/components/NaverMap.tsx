@@ -16,8 +16,9 @@ declare global {
   }
 }
 
-const LAT = 37.4579;
-const LNG = 126.8983;
+// 가산KS타워 정확 좌표 (서울 금천구 벚꽃로36길 30) — OSM nominatim 검증.
+const LAT = 37.4806940;
+const LNG = 126.8851319;
 const NAVER_SEARCH_URL =
   'https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B8%88%EC%B2%9C%EA%B5%AC%20%EB%B2%9A%EA%BD%83%EB%A1%9C36%EA%B8%B8%2030?searchType=address';
 
@@ -76,7 +77,7 @@ function NaverJsMap({ title, address }: Required<MapProps>) {
       {/* 신규 Naver Cloud Maps 는 ncpKeyId, 구버전은 ncpClientId.
           신버전이 더 이상 ncpClientId 를 받지 않아 401 → ncpKeyId 로 전환. */}
       <Script strategy="afterInteractive" src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}`} onLoad={initMap} />
-      <div ref={mapRef} style={{ width: '100%', aspectRatio: '8/3', display: 'block' }} />
+      <div ref={mapRef} style={{ width: '100%', aspectRatio: '16/9', display: 'block' }} />
       <MapFooter address={address} />
     </>
   );
@@ -90,7 +91,7 @@ function NaverIframeMap({ address }: { address: string }) {
         title="오시는 길"
         src={NAVER_SEARCH_URL}
         width="100%"
-        style={{ aspectRatio: '8/3', border: 0, display: 'block' }}
+        style={{ aspectRatio: '16/9', border: 0, display: 'block' }}
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
