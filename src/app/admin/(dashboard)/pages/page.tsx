@@ -52,7 +52,7 @@ export default function AdminPagesPage() {
     },
     {
       href: '/admin/pages/home-shopping',
-      title: '홈쇼핑 특별관',
+      title: 'On-Air 특별관',
       desc: '/home-shopping 히어로 제목 · 부제목 편집',
       icon: '◒',
     },

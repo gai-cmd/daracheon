@@ -24,7 +24,7 @@
 - [브랜드 이야기](https://www.daracheon.com/brand-story): 대라천 '참'침향 25년 여정. 농장 네트워크(하띤·동나이·냐짱·푸꿕·람동) / 역사 / 인증 / 품질 / 생산 공정 영상 (총 6개 탭)
 - [침향 농장 이야기](https://www.daracheon.com/media): 영상·보도·사진 갤러리
 - [제품 소개](https://www.daracheon.com/products): 오일·환·침향수·건강차·스틱·향·염주 라인업
-- [홈쇼핑 특별관](https://www.daracheon.com/home-shopping): 라이브 방송 + 편성표
+- [On-Air 특별관](https://www.daracheon.com/home-shopping): 라이브 방송 + 편성표 (홈쇼핑 · 협찬방송)
 - [회사소개](https://www.daracheon.com/company): 회사 개요·창립자·인증·찾아오시는 길
 - [생산 공정](https://www.daracheon.com/process): 베트남 하띤 200ha 농장 4단계 검증 공정
 - [고객 후기](https://www.daracheon.com/reviews): 검증된 고객 후기

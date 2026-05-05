@@ -148,7 +148,7 @@ export default function AdminHomeShoppingHeroPage() {
       )}
 
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">홈쇼핑 특별관 편집</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">On-Air 특별관 편집</h1>
         <p className="mb-8 text-gray-500">/home-shopping 공개 페이지의 히어로(제목·부제목)를 관리합니다.</p>
 
         <div className="space-y-8">

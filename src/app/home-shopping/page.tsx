@@ -19,7 +19,7 @@ const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
 };
 
 export const metadata: Metadata = {
-  title: '홈쇼핑 특별관 - TV 편성표 · 다시보기 | ZOEL LIFE',
+  title: 'On-Air 특별관 - TV 편성표 · 다시보기 | ZOEL LIFE',
   description:
     '롯데·현대·CJ·GS 홈쇼핑 정규 편성. ZOEL LIFE 침향 라이브 방송과 다시보기, Lot 인증서를 실시간으로 확인하세요.',
   alternates: { canonical: 'https://www.daracheon.com/home-shopping' },

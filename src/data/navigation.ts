@@ -26,7 +26,7 @@ export const DEFAULT_MAIN_NAV: NavItem[] = [
   { label: '브랜드 이야기', href: '/brand-story' },
   { label: '침향 농장 이야기', href: '/media' },
   { label: '제품 소개', href: '/products' },
-  { label: '홈쇼핑 특별관', href: '/home-shopping' },
+  { label: 'On-Air 특별관', href: '/home-shopping' },
   { label: '회사소개', href: '/company' },
 ];
 
