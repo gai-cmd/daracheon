@@ -45,7 +45,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 218000,
     regularPrice: 248000,
     discountRate: 12,
-    livestreamUrl: '',
     description: "대라천 '참'침향 오일 캡슐 런칭 방송 — 지난 방송 다시보기.",
     status: 'ended',
     salesCount: 0,
@@ -63,7 +62,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 398000,
     regularPrice: 480000,
     discountRate: 17,
-    livestreamUrl: '',
     description: '기보단(氣寶丹) — 25년산 침향·동충하초·제비집 최고급 환.',
     status: 'ended',
     salesCount: 0,
@@ -81,7 +79,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 198000,
     regularPrice: 248000,
     discountRate: 20,
-    livestreamUrl: '',
     description: "대라천 '참'침향 오일 캡슐 30캡슐 기프트박스 — 첫 방송 기념 20% 할인.",
     status: 'scheduled',
     salesCount: 0,
@@ -99,7 +96,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 398000,
     regularPrice: 498000,
     discountRate: 20,
-    livestreamUrl: '',
     description: "대라천 '참'침향 오일 캡슐 + 침향단(沈香丹) 더블 세트 한정 구성.",
     status: 'scheduled',
     salesCount: 0,
@@ -117,7 +113,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 168000,
     regularPrice: 215000,
     discountRate: 22,
-    livestreamUrl: '',
     description: '25년산 침향수 500ml + 베트남 전통 파라미냐차 30포 데일리 웰니스 세트.',
     status: 'scheduled',
     salesCount: 0,
@@ -135,7 +130,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 588000,
     regularPrice: 650000,
     discountRate: 10,
-    livestreamUrl: '',
     description: '25년산 침향 에센셜 오일 1ml — 72시간 고온증류 추출 프리미엄 라인.',
     status: 'scheduled',
     salesCount: 0,
@@ -153,7 +147,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 438000,
     regularPrice: 480000,
     discountRate: 9,
-    livestreamUrl: '',
     description: '기보단(氣寶丹) — 25년산 침향·동충하초·제비집 복합 환 한정 방송.',
     status: 'scheduled',
     salesCount: 0,
@@ -171,7 +164,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
     specialPrice: 188000,
     regularPrice: 215000,
     discountRate: 13,
-    livestreamUrl: '',
     description: '파라미냐차 + 침향수 데일리 웰니스 세트 — 선물용 프리미엄 구성.',
     status: 'scheduled',
     salesCount: 0,
@@ -291,35 +283,9 @@ export default async function HomeShoppingPage({
                   {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>
                 <div className={styles.ctas}>
-                  {featured.status === 'ended' ? (
-                    featured.vodUrl ? (
-                      <a
-                        href={featured.vodUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.btnLive}
-                      >
-                        ▶ 다시보기 열기 →
-                      </a>
-                    ) : (
-                      <a href="tel:070-4140-4086" className={styles.btnLive}>
-                        ● 전화 주문 070-4140-4086
-                      </a>
-                    )
-                  ) : featured.livestreamUrl ? (
-                    <a
-                      href={featured.livestreamUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.btnLive}
-                    >
-                      ● 라이브 시청 →
-                    </a>
-                  ) : (
-                    <a href="tel:070-4140-4086" className={styles.btnLive}>
-                      ● 전화 주문 070-4140-4086
-                    </a>
-                  )}
+                  <a href="tel:070-4140-4086" className={styles.btnLive}>
+                    ● 전화 주문 070-4140-4086
+                  </a>
                   <a href="#sched" className={styles.btnNotify}>
                     편성표 보기 →
                   </a>
@@ -483,22 +449,12 @@ export default async function HomeShoppingPage({
                       )}
                     </div>
                     <div className={styles.schedAction}>
-                      {b.status === 'live' && b.livestreamUrl ? (
-                        <a
-                          href={b.livestreamUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.btnLive}
-                        >
+                      {b.status === 'live' && b.vodUrl ? (
+                        <a href="#live" className={styles.btnLive}>
                           ● LIVE
                         </a>
                       ) : b.status === 'ended' && b.vodUrl ? (
-                        <a
-                          href={b.vodUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.btnNotify}
-                        >
+                        <a href="#live" className={styles.btnNotify}>
                           다시보기 →
                         </a>
                       ) : (
