@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { readDataSafe, readSingleUncached } from '@/lib/db';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
@@ -210,7 +210,8 @@ export default async function ProductsPage() {
   const dbCategories = await readDataSafe<ProductCategory>('productCategories');
   // 인증 배지는 관리자 /admin/pages/home 의 certs 섹션과 공유 —
   // 한 곳에서 편집하면 홈·제품 페이지 모두 반영된다.
-  const pagesData = await readSingleSafe<{
+  // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
+  const pagesData = await readSingleUncached<{
     home?: { certs?: Array<{ mark: string; name: string; sub: string }> };
     products?: { hero?: ProductsHero };
   }>('pages');
