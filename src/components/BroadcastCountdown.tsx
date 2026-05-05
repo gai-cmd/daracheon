@@ -6,6 +6,21 @@ interface Props {
   scheduledAt: string;
   channel: string;
   status: string;
+  vodUrl?: string;
+}
+
+/** YouTube watch/youtu.be/embed URL → 11자 video id 추출. 실패 시 null. */
+function extractYouTubeId(url: string): string | null {
+  const m = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([\w-]{11})/
+  );
+  return m ? m[1] : null;
+}
+
+/** Vimeo URL → 숫자 id. 실패 시 null. */
+function extractVimeoId(url: string): string | null {
+  const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return m ? m[1] : null;
 }
 
 interface Parts {
@@ -29,8 +44,9 @@ function computeParts(target: Date): Parts | null {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-export default function BroadcastCountdown({ scheduledAt, channel, status }: Props) {
+export default function BroadcastCountdown({ scheduledAt, channel, status, vodUrl }: Props) {
   const isLive = status === 'live';
+  const isEnded = status === 'ended';
   const targetDate = new Date(scheduledAt);
 
   const [parts, setParts] = useState<Parts | null>(() =>
@@ -63,6 +79,70 @@ export default function BroadcastCountdown({ scheduledAt, channel, status }: Pro
     hour: '2-digit',
     minute: '2-digit',
   }).format(targetDate);
+
+  /* ─── ENDED state — VOD 플레이어 또는 외부 링크 카드 ─── */
+  if (isEnded) {
+    const ytId = vodUrl ? extractYouTubeId(vodUrl) : null;
+    const vmId = !ytId && vodUrl ? extractVimeoId(vodUrl) : null;
+    const embedSrc = ytId
+      ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`
+      : vmId
+        ? `https://player.vimeo.com/video/${vmId}?title=0&byline=0`
+        : null;
+
+    return (
+      <div className="cd-shell cd-shell--ended" aria-label={`${channel} 다시보기`}>
+        <div className="cd-caption cd-caption--ended">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="cd-icon">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
+          </svg>
+          REPLAY · 지난 방송 다시보기
+        </div>
+
+        {embedSrc ? (
+          <div className="cd-video">
+            <iframe
+              src={embedSrc}
+              title={`${channel} 다시보기`}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        ) : vodUrl ? (
+          <a className="cd-vod-link" href={vodUrl} target="_blank" rel="noopener noreferrer">
+            <div className="cd-vod-thumb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
+                <circle cx="12" cy="12" r="10" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 8.5l5 3.5-5 3.5v-7z" />
+              </svg>
+            </div>
+            <div className="cd-vod-cta">
+              <span className="cd-vod-cta-label">외부 링크에서 시청</span>
+              <span className="cd-vod-cta-arrow">→</span>
+            </div>
+          </a>
+        ) : (
+          <div className="cd-vod-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
+              <rect x="3" y="6" width="18" height="12" rx="1.5" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 10l5 2-5 2v-4z" />
+            </svg>
+            <p>다시보기가 곧 업로드됩니다</p>
+            <span>VOD 준비 중 · 잠시만 기다려 주세요</span>
+          </div>
+        )}
+
+        <div className="cd-meta">
+          <span className="cd-meta-channel">{channel}</span>
+          <span className="cd-meta-sep" />
+          <span>{dateLabel} · {timeLabel} 방영</span>
+        </div>
+
+        <style jsx>{styles}</style>
+      </div>
+    );
+  }
 
   /* ─── LIVE state ─── */
   if (isLive) {
@@ -254,5 +334,115 @@ const styles = `
     color: #fff;
     margin-bottom: 14px;
     line-height: 1.2;
+  }
+
+  /* ─── ENDED · VOD ─── */
+  .cd-shell--ended {
+    border-color: rgba(180, 200, 220, 0.18);
+    background:
+      radial-gradient(ellipse 80% 60% at 100% 0%, rgba(180, 200, 220, 0.06), transparent 60%),
+      linear-gradient(180deg, rgba(8, 9, 13, 0.92), rgba(10, 11, 16, 0.7));
+  }
+  .cd-shell--ended::before {
+    background:
+      linear-gradient(90deg, transparent 0, rgba(180, 200, 220, 0.32) 50%, transparent 100%) top / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent 0, rgba(180, 200, 220, 0.32) 50%, transparent 100%) bottom / 100% 1px no-repeat;
+  }
+  .cd-caption--ended { color: rgba(212, 168, 67, 0.78); }
+
+  .cd-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 1px solid rgba(212, 168, 67, 0.22);
+    background: #000;
+    margin-bottom: 18px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset, 0 12px 30px rgba(0, 0, 0, 0.45);
+  }
+  .cd-video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .cd-vod-link {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 22px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(212, 168, 67, 0.22);
+    background: rgba(10, 11, 16, 0.55);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 300ms, background 300ms, transform 300ms;
+  }
+  .cd-vod-link:hover {
+    border-color: var(--accent);
+    background: rgba(212, 168, 67, 0.06);
+  }
+  .cd-vod-link:hover .cd-vod-cta-arrow { transform: translateX(6px); }
+  .cd-vod-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 168, 67, 0.45);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: radial-gradient(circle at 35% 35%, rgba(212, 168, 67, 0.18), transparent 70%);
+  }
+  .cd-vod-thumb svg { width: 30px; height: 30px; }
+  .cd-vod-cta { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .cd-vod-cta-label {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.15rem;
+    color: #fff;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+  .cd-vod-cta-arrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.28em;
+    color: var(--accent);
+    text-transform: uppercase;
+    transition: transform 300ms;
+  }
+
+  .cd-vod-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 38px 22px;
+    margin-bottom: 18px;
+    border: 1px dashed rgba(212, 168, 67, 0.22);
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .cd-vod-empty svg {
+    width: 38px;
+    height: 38px;
+    color: rgba(212, 168, 67, 0.55);
+    margin-bottom: 4px;
+  }
+  .cd-vod-empty p {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.05rem;
+    color: #fff;
+    margin: 0;
+  }
+  .cd-vod-empty span {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.24em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
   }
 `;

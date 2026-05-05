@@ -203,7 +203,12 @@ function formatDate(iso: string) {
   };
 }
 
-export default async function HomeShoppingPage() {
+export default async function HomeShoppingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
+  const { preview } = await searchParams;
   const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
   const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
@@ -216,7 +221,22 @@ export default async function HomeShoppingPage() {
   const upcoming = sorted.filter(
     (b) => b.status === 'scheduled' && new Date(b.scheduledAt).getTime() >= now
   );
-  const featured = sorted.find((b) => b.status === 'live') ?? upcoming[0];
+  // 우선순위: 라이브 → 다음 예정 → 가장 최근 종료(다시보기 노출용)
+  const live = sorted.find((b) => b.status === 'live');
+  const recentEnded = [...sorted]
+    .reverse()
+    .find((b) => b.status === 'ended');
+  let featured = live ?? upcoming[0] ?? recentEnded;
+
+  // 디자인 미리보기 — ?preview=ended 쿼리로 다시보기 UI 강제 노출.
+  // 임시 데이터를 주입하므로 실제 DB 는 변경하지 않음.
+  if (preview === 'ended' && featured) {
+    featured = {
+      ...featured,
+      status: 'ended',
+      vodUrl: featured.vodUrl ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    };
+  }
 
   return (
     <>
@@ -239,7 +259,11 @@ export default async function HomeShoppingPage() {
               <div>
                 <div className={styles.liveTag}>
                   <span className={styles.liveDot} />
-                  {featured.status === 'live' ? 'ON AIR · 지금 방송 중' : 'NEXT LIVE · 다음 방송'}
+                  {featured.status === 'live'
+                    ? 'ON AIR · 지금 방송 중'
+                    : featured.status === 'ended'
+                      ? 'REPLAY · 지난 방송 다시보기'
+                      : 'NEXT LIVE · 다음 방송'}
                 </div>
                 <h2>
                   {featured.channel}
@@ -271,7 +295,22 @@ export default async function HomeShoppingPage() {
                   {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>
                 <div className={styles.ctas}>
-                  {featured.livestreamUrl ? (
+                  {featured.status === 'ended' ? (
+                    featured.vodUrl ? (
+                      <a
+                        href={featured.vodUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.btnLive}
+                      >
+                        ▶ 다시보기 열기 →
+                      </a>
+                    ) : (
+                      <a href="tel:070-4140-4086" className={styles.btnLive}>
+                        ● 전화 주문 070-4140-4086
+                      </a>
+                    )
+                  ) : featured.livestreamUrl ? (
                     <a
                       href={featured.livestreamUrl}
                       target="_blank"
@@ -295,6 +334,7 @@ export default async function HomeShoppingPage() {
                   scheduledAt={featured.scheduledAt}
                   channel={featured.channel}
                   status={featured.status}
+                  vodUrl={featured.vodUrl}
                 />
               </div>
             </div>
