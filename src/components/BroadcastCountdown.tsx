@@ -33,18 +33,6 @@ interface Parts {
   seconds: number;
 }
 
-function computeParts(target: Date): Parts | null {
-  const diff = target.getTime() - Date.now();
-  if (diff <= 0) return null;
-  const total = Math.floor(diff / 1000);
-  return {
-    days: Math.floor(total / 86400),
-    hours: Math.floor((total % 86400) / 3600),
-    minutes: Math.floor((total % 3600) / 60),
-    seconds: total % 60,
-  };
-}
-
 const pad = (n: number) => String(n).padStart(2, '0');
 
 export default function BroadcastCountdown({
@@ -60,23 +48,35 @@ export default function BroadcastCountdown({
   const isEnded = status === 'ended';
   const targetDate = new Date(scheduledAt);
 
-  const [parts, setParts] = useState<Parts | null>(() =>
-    isLive ? null : computeParts(targetDate)
-  );
+  const [now, setNow] = useState<number | null>(null);
   const [pulseDot, setPulseDot] = useState(true);
 
   useEffect(() => {
-    if (isLive) return;
-    const interval = setInterval(() => setParts(computeParts(targetDate)), 1000);
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheduledAt, isLive]);
+  }, [scheduledAt]);
 
   useEffect(() => {
     if (!isLive) return;
     const blink = setInterval(() => setPulseDot((v) => !v), 600);
     return () => clearInterval(blink);
   }, [isLive]);
+
+  const parts: Parts | null =
+    !isLive && now !== null
+      ? (() => {
+          const diff = targetDate.getTime() - now;
+          if (diff <= 0) return null;
+          const total = Math.floor(diff / 1000);
+          return {
+            days: Math.floor(total / 86400),
+            hours: Math.floor((total % 86400) / 3600),
+            minutes: Math.floor((total % 3600) / 60),
+            seconds: total % 60,
+          };
+        })()
+      : null;
 
   const dateLabel = new Intl.DateTimeFormat('ko-KR', {
     timeZone: 'Asia/Seoul',
@@ -110,7 +110,7 @@ export default function BroadcastCountdown({
       : '다음 방송까지';
 
   // 카운트다운 라벨링 — ended 는 "방영 후 경과", live 는 "00:00 SINCE", upcoming 은 정상
-  const elapsedMs = Date.now() - targetDate.getTime();
+  const elapsedMs = now !== null ? now - targetDate.getTime() : 0;
   const elapsedDays = Math.max(0, Math.floor(elapsedMs / 86400000));
   const elapsedHours = Math.max(0, Math.floor((elapsedMs % 86400000) / 3600000));
   const elapsedMin = Math.max(0, Math.floor((elapsedMs % 3600000) / 60000));
