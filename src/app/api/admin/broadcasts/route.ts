@@ -11,6 +11,19 @@ function revalidateBroadcasts() {
 
 export const dynamic = 'force-dynamic';
 
+export interface BroadcastShowInfo {
+  title?: string;       // 예: "퍼펙트 라이프"
+  episode?: string;     // 예: "287회 구성안"
+  logo?: string;        // 프로그램 로고 이미지 URL — 영상 미입력 시 포스터 자리에 노출
+  hosts?: string[];     // 진행
+  panels?: string[];    // 패널
+  guests?: string[];    // 게스트
+  experts?: string[];   // 전문가
+  recordingAt?: string; // 녹화일시 (자유 텍스트)
+  vcrAt?: string;       // VCR 촬영일시
+  synopsis?: string;    // 방송 개요 요약문
+}
+
 export interface Broadcast {
   id: string;
   channel: string;
@@ -27,6 +40,7 @@ export interface Broadcast {
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
   salesCount?: number;
   feedback?: string;
+  showInfo?: BroadcastShowInfo;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,6 +62,21 @@ const baseSchema = z.object({
   status: z.enum(statusValues).default('scheduled'),
   salesCount: z.coerce.number().int().min(0).optional().nullable(),
   feedback: z.string().max(4000).optional().nullable(),
+  showInfo: z
+    .object({
+      title: z.string().max(80).optional().nullable(),
+      episode: z.string().max(80).optional().nullable(),
+      logo: z.string().optional().nullable(),
+      hosts: z.array(z.string()).optional().nullable(),
+      panels: z.array(z.string()).optional().nullable(),
+      guests: z.array(z.string()).optional().nullable(),
+      experts: z.array(z.string()).optional().nullable(),
+      recordingAt: z.string().max(120).optional().nullable(),
+      vcrAt: z.string().max(120).optional().nullable(),
+      synopsis: z.string().max(4000).optional().nullable(),
+    })
+    .optional()
+    .nullable(),
 });
 
 const createSchema = baseSchema;
@@ -109,6 +138,7 @@ export async function POST(request: Request) {
       ...(data.description ? { description: data.description as string } : {}),
       ...(data.salesCount !== undefined ? { salesCount: data.salesCount as number } : {}),
       ...(data.feedback ? { feedback: data.feedback as string } : {}),
+      ...(data.showInfo ? { showInfo: data.showInfo as BroadcastShowInfo } : {}),
       createdAt: now,
       updatedAt: now,
     };

@@ -229,13 +229,9 @@ export default async function HomeShoppingPage({
   let featured = live ?? upcoming[0] ?? recentEnded;
 
   // 디자인 미리보기 — ?preview=ended 쿼리로 다시보기 UI 강제 노출.
-  // 임시 데이터를 주입하므로 실제 DB 는 변경하지 않음.
+  // 임시 데이터 주입(상태만 변경, 더미 URL 은 넣지 않음 — 실제 VOD 가 입력될 때까지 포스터 풀백 사용).
   if (preview === 'ended' && featured) {
-    featured = {
-      ...featured,
-      status: 'ended',
-      vodUrl: featured.vodUrl ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    };
+    featured = { ...featured, status: 'ended' };
   }
 
   return (
@@ -335,6 +331,9 @@ export default async function HomeShoppingPage({
                   channel={featured.channel}
                   status={featured.status}
                   vodUrl={featured.vodUrl}
+                  showTitle={featured.showInfo?.title}
+                  showEpisode={featured.showInfo?.episode}
+                  showLogo={featured.showInfo?.logo || undefined}
                 />
               </div>
             </div>
@@ -354,6 +353,82 @@ export default async function HomeShoppingPage({
           )}
         </div>
       </section>
+
+      {/* SHOW SYNOPSIS — 다음 방송의 프로그램 개요 (showInfo 가 있는 경우만) */}
+      {featured?.showInfo && (
+        (() => {
+          const si = featured.showInfo!;
+          const hasCast = (si.hosts?.length || 0) + (si.panels?.length || 0) + (si.guests?.length || 0) + (si.experts?.length || 0) > 0;
+          if (!si.title && !si.synopsis && !hasCast && !si.recordingAt && !si.vcrAt) return null;
+          return (
+            <section className={styles.synopsis}>
+              <div className={styles.wrap}>
+                <div className={styles.synopsisHead}>
+                  <div className={styles.synopsisKicker}>Programme · 방송 개요</div>
+                  <h2>
+                    {si.title ?? '프로그램 안내'}
+                    {si.episode && <em> · {si.episode}</em>}
+                  </h2>
+                </div>
+
+                <div className={styles.synopsisGrid}>
+                  {si.synopsis && (
+                    <div className={styles.synopsisBody}>
+                      <p>{si.synopsis}</p>
+                    </div>
+                  )}
+
+                  {hasCast && (
+                    <dl className={styles.synopsisCast}>
+                      {si.hosts && si.hosts.length > 0 && (
+                        <div className={styles.synopsisRow}>
+                          <dt>진행</dt>
+                          <dd>{si.hosts.join(' · ')}</dd>
+                        </div>
+                      )}
+                      {si.panels && si.panels.length > 0 && (
+                        <div className={styles.synopsisRow}>
+                          <dt>패널</dt>
+                          <dd>{si.panels.join(' · ')}</dd>
+                        </div>
+                      )}
+                      {si.guests && si.guests.length > 0 && (
+                        <div className={styles.synopsisRow}>
+                          <dt>게스트</dt>
+                          <dd>{si.guests.join(' · ')}</dd>
+                        </div>
+                      )}
+                      {si.experts && si.experts.length > 0 && (
+                        <div className={styles.synopsisRow}>
+                          <dt>전문가</dt>
+                          <dd>{si.experts.join(' · ')}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
+
+                  {(si.recordingAt || si.vcrAt) && (
+                    <dl className={styles.synopsisDates}>
+                      {si.recordingAt && (
+                        <div className={styles.synopsisRow}>
+                          <dt>녹화일시</dt>
+                          <dd>{si.recordingAt}</dd>
+                        </div>
+                      )}
+                      {si.vcrAt && (
+                        <div className={styles.synopsisRow}>
+                          <dt>VCR 촬영일시</dt>
+                          <dd>{si.vcrAt}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
+                </div>
+              </div>
+            </section>
+          );
+        })()
+      )}
 
       {/* SCHEDULE */}
       <section className={styles.sched} id="sched">

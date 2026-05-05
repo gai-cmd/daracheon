@@ -7,6 +7,9 @@ interface Props {
   channel: string;
   status: string;
   vodUrl?: string;
+  showTitle?: string;
+  showEpisode?: string;
+  showLogo?: string;
 }
 
 /** YouTube watch/youtu.be/embed URL → 11자 video id 추출. 실패 시 null. */
@@ -44,7 +47,15 @@ function computeParts(target: Date): Parts | null {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-export default function BroadcastCountdown({ scheduledAt, channel, status, vodUrl }: Props) {
+export default function BroadcastCountdown({
+  scheduledAt,
+  channel,
+  status,
+  vodUrl,
+  showTitle,
+  showEpisode,
+  showLogo,
+}: Props) {
   const isLive = status === 'live';
   const isEnded = status === 'ended';
   const targetDate = new Date(scheduledAt);
@@ -169,23 +180,31 @@ export default function BroadcastCountdown({ scheduledAt, channel, status, vodUr
           <div className="cd-poster">
             <div className="cd-poster-bg" aria-hidden />
             <div className="cd-poster-content">
-              <div className="cd-poster-icon">
-                {isEnded ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
-                    <rect x="3" y="6" width="18" height="12" rx="1.5" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 10l5 2-5 2v-4z" />
-                  </svg>
-                ) : isLive ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
-                    <rect x="3" y="5" width="18" height="16" rx="1.5" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9h18M8 3v4M16 3v4" />
-                  </svg>
-                )}
-              </div>
+              {showLogo ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={showLogo} alt={showTitle ?? channel} className="cd-poster-logo" />
+              ) : showTitle ? (
+                <div className="cd-poster-show-title">{showTitle}</div>
+              ) : (
+                <div className="cd-poster-icon">
+                  {isEnded ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                      <rect x="3" y="6" width="18" height="12" rx="1.5" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 10l5 2-5 2v-4z" />
+                    </svg>
+                  ) : isLive ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                      <rect x="3" y="5" width="18" height="16" rx="1.5" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 9h18M8 3v4M16 3v4" />
+                    </svg>
+                  )}
+                </div>
+              )}
+              {showEpisode && <div className="cd-poster-episode">— {showEpisode} —</div>}
               <div className="cd-poster-channel">{channel}</div>
               <div className="cd-poster-status">
                 {isEnded ? '다시보기가 곧 업로드됩니다' : isLive ? '라이브 스트림 연결 대기 중' : '방송 예정'}
@@ -455,6 +474,34 @@ const styles = `
     color: rgba(255, 255, 255, 0.45);
     text-transform: uppercase;
     margin-top: 2px;
+  }
+  .cd-poster-logo {
+    max-width: 60%;
+    max-height: 42%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
+    margin-bottom: 6px;
+  }
+  .cd-poster-show-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(135deg, #b6cdf2 0%, #4f84d9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cd-poster-episode {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.02em;
+    margin-top: -2px;
   }
   .cd-poster-cta {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
