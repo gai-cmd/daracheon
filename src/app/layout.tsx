@@ -127,7 +127,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // unstable_cache 우회 — 외부 스크립트로 blob 을 업데이트했을 때도 즉시 반영.
   // 네비게이션은 페이지마다 한 번 호출되며 blob 1 회 read 라 비용 부담 작음.
   const nav = await readSingleUncached<NavigationData>('navigation');
-  const mainNav = nav?.main ?? DEFAULT_MAIN_NAV;
+  const rawMainNav = nav?.main ?? DEFAULT_MAIN_NAV;
+  // 라벨 마이그레이션: '홈쇼핑 특별관' → 'On-Air 특별관' (URL 동일).
+  // blob 의 사용자 커스텀 라벨이 있어도 어드민 재저장 없이 즉시 반영.
+  const mainNav = rawMainNav.map((item) =>
+    item.href === '/home-shopping' && item.label === '홈쇼핑 특별관'
+      ? { ...item, label: 'On-Air 특별관' }
+      : item
+  );
 
   // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리
   const settings = await readSingleSafe<{
