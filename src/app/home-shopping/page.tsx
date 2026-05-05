@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
+import { autoSplitMixed } from '@/lib/broadcasts';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import styles from './page.module.css';
 
@@ -204,7 +205,10 @@ export default async function HomeShoppingPage({
   const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
   const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
-  const allRaw = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
+  const allRawBeforeSplit = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
+  // mixed 레코드(홈쇼핑+협찬방송 동거)를 in-memory 로 분리. 어드민 GET 에서
+  // 영구 저장하므로 첫 어드민 방문 후엔 멱등 no-op.
+  const { list: allRaw } = autoSplitMixed(allRawBeforeSplit);
   // 비공개 제외. published 미설정은 공개로 간주(기존 데이터 호환).
   const all = allRaw.filter((b) => b.published !== false);
   // 홈쇼핑(가격 카드) vs 협찬방송(프로그램 카드) 분리. 미지정 → 'home-shopping'.

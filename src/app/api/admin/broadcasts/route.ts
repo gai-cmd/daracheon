@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
+import { autoSplitMixed, type Broadcast as SharedBroadcast } from '@/lib/broadcasts';
 
 function revalidateBroadcasts() {
   revalidatePath('/', 'layout');
@@ -105,9 +106,18 @@ function normalize(input: Record<string, unknown>): Record<string, unknown> {
 
 export async function GET() {
   try {
-    const broadcasts = await readDataUncached('broadcasts');
-    broadcasts.sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
-    return NextResponse.json({ broadcasts, total: broadcasts.length });
+    const raw = (await readDataUncached<Broadcast>('broadcasts')) as SharedBroadcast[];
+    const { migrated, list } = autoSplitMixed(raw);
+    if (migrated) {
+      await writeData('broadcasts', list);
+      revalidateBroadcasts();
+      await logAdmin('broadcasts', 'update', {
+        targetId: 'auto-split',
+        summary: `mixed 레코드 자동 분리 — ${raw.length}건 → ${list.length}건`,
+      });
+    }
+    list.sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
+    return NextResponse.json({ broadcasts: list, total: list.length, migrated });
   } catch (error) {
     console.error('[Admin Broadcasts] GET error:', error);
     return NextResponse.json(
