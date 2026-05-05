@@ -8,23 +8,46 @@ interface ProductCategory {
   labelEn: string;
 }
 
+/** 편집 행. originalId 는 최초 로드 시점의 id 로, rename 감지에 쓰인다. */
+interface EditableCategory extends ProductCategory {
+  /** 새로 추가된 행이면 undefined. 기존 행이면 DB 의 원래 id. */
+  originalId?: string;
+}
+
+interface ConflictProduct {
+  id: string;
+  name: string;
+  slug?: string;
+}
+
+interface ConflictTarget {
+  id: string;
+  label: string;
+}
+
+interface ConflictState {
+  inUse: Record<string, ConflictProduct[]>;
+  targets: ConflictTarget[];
+  /** 마지막 저장 시도에서 보낸 categories — 매핑 후 재시도에 그대로 사용. */
+  pendingCategories: Array<EditableCategory>;
+  /** 카테고리별 사용자가 선택한 이동 대상. */
+  selection: Record<string, string>;
+}
+
 interface Props {
   /** 카테고리가 저장될 때 호출. 부모(/admin/products)가 필터/기본값을 갱신할 수 있도록 한다. */
   onSaved?: (categories: ProductCategory[]) => void;
 }
 
-const ALL_ENTRY: ProductCategory = { id: 'all', label: '전체', labelEn: 'All' };
+const ALL_ENTRY: EditableCategory = { id: 'all', label: '전체', labelEn: 'All', originalId: 'all' };
 
 export default function ProductCategoryEditor({ onSaved }: Props) {
-  const [items, setItems] = useState<ProductCategory[]>([]);
+  const [items, setItems] = useState<EditableCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [toast, setToast] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
-  const [conflict, setConflict] = useState<Record<
-    string,
-    Array<{ id: string; name: string; slug?: string }>
-  > | null>(null);
+  const [conflict, setConflict] = useState<ConflictState | null>(null);
 
   /* ─── Fetch ─── */
   async function fetchCategories() {
@@ -32,9 +55,12 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
       const res = await fetch('/api/admin/product-categories', { cache: 'no-store' });
       const data = await res.json();
       const list: ProductCategory[] = Array.isArray(data?.categories) ? data.categories : [];
-      // 'all' 보장 + 첫 위치.
-      const withoutAll = list.filter((c) => c.id !== 'all');
-      const all = list.find((c) => c.id === 'all') ?? ALL_ENTRY;
+      // 'all' 보장 + 첫 위치. 모든 행에 originalId = 현재 id 부여 (기존 행 표시).
+      const withoutAll = list.filter((c) => c.id !== 'all').map((c) => ({ ...c, originalId: c.id }));
+      const allRaw = list.find((c) => c.id === 'all');
+      const all: EditableCategory = allRaw
+        ? { ...allRaw, originalId: 'all' }
+        : ALL_ENTRY;
       setItems([all, ...withoutAll]);
     } catch (err) {
       console.error('[ProductCategoryEditor] fetch failed', err);
@@ -89,12 +115,84 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
   }
 
   /* ─── Save ─── */
+  async function performSave(
+    payloadCategories: EditableCategory[],
+    reassign?: Record<string, string>
+  ) {
+    setSaving(true);
+    try {
+      const body: Record<string, unknown> = { categories: payloadCategories };
+      if (reassign && Object.keys(reassign).length > 0) body.reassign = reassign;
+
+      const res = await fetch('/api/admin/product-categories', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        if (
+          res.status === 409 &&
+          data?.inUse &&
+          typeof data.inUse === 'object' &&
+          Array.isArray(data?.targets)
+        ) {
+          // 첫 사용 가능한 타겟을 기본 선택값으로 깔아준다.
+          const firstTarget = (data.targets as ConflictTarget[])[0]?.id ?? '';
+          const selection: Record<string, string> = {};
+          for (const oldId of Object.keys(data.inUse)) selection[oldId] = firstTarget;
+          setConflict({
+            inUse: data.inUse as Record<string, ConflictProduct[]>,
+            targets: data.targets as ConflictTarget[],
+            pendingCategories: payloadCategories,
+            selection,
+          });
+        } else {
+          setToast({
+            kind: 'err',
+            text: data?.message ?? '저장에 실패했습니다.',
+          });
+        }
+        return;
+      }
+      const saved: ProductCategory[] = Array.isArray(data?.categories)
+        ? data.categories
+        : payloadCategories;
+      // 저장 성공 → 새 originalId 를 현재 id 로 리셋해서 다음 편집 사이클을 준비.
+      const refreshed: EditableCategory[] = saved.map((c) => ({ ...c, originalId: c.id }));
+      const allRaw = refreshed.find((c) => c.id === 'all') ?? ALL_ENTRY;
+      const withoutAll = refreshed.filter((c) => c.id !== 'all');
+      setItems([allRaw, ...withoutAll]);
+      setConflict(null);
+
+      const renamedCount = data?.renamed ? Object.keys(data.renamed).length : 0;
+      const reassignCount = reassign ? Object.keys(reassign).length : 0;
+      const okMsg =
+        renamedCount > 0 || reassignCount > 0
+          ? `저장됨 — ${[
+              renamedCount > 0 ? `이름 변경 ${renamedCount}건` : null,
+              reassignCount > 0 ? `제품 이동 ${reassignCount}건` : null,
+            ]
+              .filter(Boolean)
+              .join(' · ')} 자동 반영`
+          : '카테고리가 저장되었습니다.';
+      setToast({ kind: 'ok', text: okMsg });
+      onSaved?.(saved);
+    } catch (err) {
+      console.error('[ProductCategoryEditor] save error', err);
+      setToast({ kind: 'err', text: '네트워크 오류가 발생했습니다.' });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function handleSave() {
     // 클라이언트 사전 검증.
-    const trimmed = items.map((c) => ({
+    const trimmed: EditableCategory[] = items.map((c) => ({
       id: c.id.trim(),
       label: c.label.trim(),
       labelEn: c.labelEn.trim(),
+      originalId: c.originalId,
     }));
     const ids = trimmed.filter((c) => c.id !== 'all').map((c) => c.id);
     const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
@@ -114,37 +212,21 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
       return;
     }
 
-    setSaving(true);
-    try {
-      const res = await fetch('/api/admin/product-categories', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ categories: trimmed }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data?.success) {
-        if (res.status === 409 && data?.inUse && typeof data.inUse === 'object') {
-          setConflict(data.inUse);
-        } else {
-          setToast({
-            kind: 'err',
-            text: data?.message ?? '저장에 실패했습니다.',
-          });
-        }
+    await performSave(trimmed);
+  }
+
+  async function handleConfirmReassign() {
+    if (!conflict) return;
+    const { selection, targets, inUse, pendingCategories } = conflict;
+    const validIds = new Set(targets.map((t) => t.id));
+    for (const oldId of Object.keys(inUse)) {
+      const picked = selection[oldId];
+      if (!picked || !validIds.has(picked)) {
+        setToast({ kind: 'err', text: `"${oldId}" 의 이동 대상을 선택해 주세요.` });
         return;
       }
-      const saved: ProductCategory[] = Array.isArray(data?.categories)
-        ? data.categories
-        : trimmed;
-      setItems(saved);
-      setToast({ kind: 'ok', text: '카테고리가 저장되었습니다.' });
-      onSaved?.(saved);
-    } catch (err) {
-      console.error('[ProductCategoryEditor] save error', err);
-      setToast({ kind: 'err', text: '네트워크 오류가 발생했습니다.' });
-    } finally {
-      setSaving(false);
     }
+    await performSave(pendingCategories, selection);
   }
 
   /* ─── Render ─── */
@@ -194,20 +276,30 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
               <div className="space-y-2">
                 {items.map((c, i) => {
                   const isAll = c.id === 'all';
+                  const renamed = !!c.originalId && c.originalId !== c.id;
                   return (
                     <div
-                      key={`${c.id}-${i}`}
+                      key={c.originalId ?? `new-${i}`}
                       className="grid grid-cols-[28px_1fr_1fr_1fr_auto_auto] gap-2 items-center"
                     >
                       <span className="text-xs text-gray-300 text-center">{i + 1}</span>
-                      <input
-                        type="text"
-                        value={c.id}
-                        onChange={(e) => updateField(i, 'id', e.target.value)}
-                        disabled={isAll}
-                        placeholder="예: 오일"
-                        className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 disabled:bg-gray-50 disabled:text-gray-400"
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={c.id}
+                          onChange={(e) => updateField(i, 'id', e.target.value)}
+                          disabled={isAll}
+                          placeholder="예: 오일"
+                          className={`w-full px-2.5 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 disabled:bg-gray-50 disabled:text-gray-400 ${
+                            renamed ? 'border-amber-400 bg-amber-50/60' : 'border-gray-200'
+                          }`}
+                        />
+                        {renamed && (
+                          <span className="absolute -top-2 right-1 px-1.5 py-0.5 rounded bg-amber-500 text-white text-[10px] font-medium leading-none">
+                            {c.originalId} → 자동반영
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
                         value={c.label}
@@ -294,8 +386,8 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
 
               <p className="mt-3 text-[11px] text-gray-400 leading-5">
                 · <strong>전체</strong> 항목은 자동으로 첫 번째에 고정되며 편집/삭제할 수 없습니다.<br />
-                · <strong>id</strong> 는 제품 데이터의 <code>category</code> 필드와 정확히 일치해야 합니다 (예: <code>오일</code>, <code>환</code>).<br />
-                · 현재 사용 중인 id 를 삭제하려고 하면 저장이 차단됩니다 — 먼저 해당 제품들의 카테고리를 변경하세요.
+                · <strong>이름 변경</strong>: id 를 수정하면 해당 카테고리를 쓰는 제품들도 자동으로 새 id 로 갱신됩니다.<br />
+                · <strong>삭제</strong>: 사용 중인 카테고리를 삭제하면 어떤 카테고리로 옮길지 묻는 창이 뜹니다.
               </p>
             </>
           )}
@@ -315,25 +407,50 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
       {conflict && (
         <div
           className="fixed inset-0 z-[110] bg-black/40 flex items-center justify-center p-4"
-          onClick={() => setConflict(null)}
+          onClick={() => !saving && setConflict(null)}
         >
           <div
-            className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6"
+            className="bg-white rounded-xl shadow-xl max-w-xl w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-base font-semibold text-gray-900 mb-2">
-              카테고리를 삭제할 수 없습니다
+            <h3 className="text-base font-semibold text-gray-900 mb-1">
+              제품을 어디로 옮길까요?
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              아래 제품들이 여전히 해당 카테고리를 사용 중입니다. 먼저 제품 편집에서
-              카테고리를 변경한 뒤 다시 시도해 주세요.
+              삭제한 카테고리에 속한 제품들이 있어요. 이동할 카테고리를 선택하면 제품
+              데이터에 자동 반영됩니다.
             </p>
-            <div className="space-y-3 max-h-72 overflow-y-auto">
-              {Object.entries(conflict).map(([cat, list]) => (
-                <div key={cat} className="border border-rose-100 rounded-lg p-3 bg-rose-50/40">
-                  <div className="text-xs font-medium text-rose-700 mb-2">
-                    카테고리 id: <code className="px-1.5 py-0.5 rounded bg-white">{cat}</code> ·{' '}
-                    {list.length}개 제품
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {Object.entries(conflict.inUse).map(([cat, list]) => (
+                <div key={cat} className="border border-amber-200 rounded-lg p-3 bg-amber-50/50">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <div className="text-xs font-medium text-amber-800">
+                      <code className="px-1.5 py-0.5 rounded bg-white">{cat}</code>{' '}
+                      <span className="text-gray-500">· {list.length}개 제품</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <span className="text-gray-500">→</span>
+                      <select
+                        value={conflict.selection[cat] ?? ''}
+                        onChange={(e) =>
+                          setConflict((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  selection: { ...prev.selection, [cat]: e.target.value },
+                                }
+                              : prev
+                          )
+                        }
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                      >
+                        {conflict.targets.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.label} ({t.id})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <ul className="space-y-1">
                     {list.map((p) => (
@@ -348,13 +465,22 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex justify-end">
+            <div className="mt-5 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setConflict(null)}
-                className="px-4 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800"
+                disabled={saving}
+                className="px-4 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               >
-                확인
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReassign}
+                disabled={saving}
+                className="px-4 py-1.5 rounded-lg bg-gold-500 text-white text-xs font-medium hover:bg-gold-600 disabled:opacity-50"
+              >
+                {saving ? '적용 중...' : '이동하고 저장'}
               </button>
             </div>
           </div>
