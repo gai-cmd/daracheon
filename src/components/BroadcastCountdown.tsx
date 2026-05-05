@@ -80,131 +80,155 @@ export default function BroadcastCountdown({ scheduledAt, channel, status, vodUr
     minute: '2-digit',
   }).format(targetDate);
 
-  /* ─── ENDED state — VOD 플레이어 또는 외부 링크 카드 ─── */
-  if (isEnded) {
-    const ytId = vodUrl ? extractYouTubeId(vodUrl) : null;
-    const vmId = !ytId && vodUrl ? extractVimeoId(vodUrl) : null;
-    const embedSrc = ytId
-      ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`
-      : vmId
-        ? `https://player.vimeo.com/video/${vmId}?title=0&byline=0`
-        : null;
+  /* ─── 통합 — 모든 상태가 동일한 4단 구조: 캡션 → 미디어 → 카운트다운 → 메타 ─── */
+  const ytId = vodUrl ? extractYouTubeId(vodUrl) : null;
+  const vmId = !ytId && vodUrl ? extractVimeoId(vodUrl) : null;
+  const embedSrc = ytId
+    ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`
+    : vmId
+      ? `https://player.vimeo.com/video/${vmId}?title=0&byline=0`
+      : null;
+  const externalVod = !embedSrc && vodUrl ? vodUrl : null;
 
-    return (
-      <div className="cd-shell cd-shell--ended" aria-label={`${channel} 다시보기`}>
-        <div className="cd-caption cd-caption--ended">
+  // 상태별 톤
+  const tone: 'live' | 'ended' | 'upcoming' = isLive ? 'live' : isEnded ? 'ended' : 'upcoming';
+  const captionText = isLive
+    ? 'ON AIR · 지금 방송 중'
+    : isEnded
+      ? 'REPLAY · 지난 방송 다시보기'
+      : '다음 방송까지';
+
+  // 카운트다운 라벨링 — ended 는 "방영 후 경과", live 는 "00:00 SINCE", upcoming 은 정상
+  const elapsedMs = Date.now() - targetDate.getTime();
+  const elapsedDays = Math.max(0, Math.floor(elapsedMs / 86400000));
+  const elapsedHours = Math.max(0, Math.floor((elapsedMs % 86400000) / 3600000));
+  const elapsedMin = Math.max(0, Math.floor((elapsedMs % 3600000) / 60000));
+  const elapsedSec = Math.max(0, Math.floor((elapsedMs % 60000) / 1000));
+
+  const showCountdown = !!parts || isLive || isEnded;
+  const cdValues = isEnded
+    ? { d: elapsedDays, h: elapsedHours, m: elapsedMin, s: elapsedSec }
+    : isLive
+      ? { d: 0, h: elapsedHours, m: elapsedMin, s: elapsedSec }
+      : parts
+        ? { d: parts.days, h: parts.hours, m: parts.minutes, s: parts.seconds }
+        : { d: 0, h: 0, m: 0, s: 0 };
+  const cdDayLabel = isEnded ? 'Days Ago' : isLive ? 'Live' : 'Days';
+
+  return (
+    <div className={`cd-shell cd-shell--${tone}`} aria-label={`${channel} ${captionText}`}>
+      {/* 1. 캡션 */}
+      <div className="cd-caption">
+        {isLive ? (
+          <span className="cd-live-dot" style={{ opacity: pulseDot ? 1 : 0.2 }} />
+        ) : isEnded ? (
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="cd-icon">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
           </svg>
-          REPLAY · 지난 방송 다시보기
-        </div>
+        ) : (
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="cd-icon">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )}
+        {captionText}
+      </div>
 
+      {/* 2. 미디어 프레임 (16:9) — 실제 비디오 / 외부 링크 카드 / 상태 포스터 */}
+      <div className="cd-video">
         {embedSrc ? (
-          <div className="cd-video">
-            <iframe
-              src={embedSrc}
-              title={`${channel} 다시보기`}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                border: 0,
-                display: 'block',
-              }}
-            />
-          </div>
-        ) : vodUrl ? (
-          <a className="cd-vod-link" href={vodUrl} target="_blank" rel="noopener noreferrer">
-            <div className="cd-vod-thumb">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
-                <circle cx="12" cy="12" r="10" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10 8.5l5 3.5-5 3.5v-7z" />
-              </svg>
-            </div>
-            <div className="cd-vod-cta">
-              <span className="cd-vod-cta-label">외부 링크에서 시청</span>
-              <span className="cd-vod-cta-arrow">→</span>
+          <iframe
+            src={embedSrc}
+            title={`${channel} ${isEnded ? '다시보기' : '라이브'}`}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              border: 0,
+              display: 'block',
+            }}
+          />
+        ) : externalVod ? (
+          <a className="cd-poster cd-poster--link" href={externalVod} target="_blank" rel="noopener noreferrer">
+            <div className="cd-poster-bg" aria-hidden />
+            <div className="cd-poster-content">
+              <div className="cd-poster-play">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 8.5l5 3.5-5 3.5v-7z" />
+                </svg>
+              </div>
+              <div className="cd-poster-channel">{channel}</div>
+              <div className="cd-poster-cta">외부 링크에서 시청 →</div>
             </div>
           </a>
         ) : (
-          <div className="cd-vod-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
-              <rect x="3" y="6" width="18" height="12" rx="1.5" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 10l5 2-5 2v-4z" />
-            </svg>
-            <p>다시보기가 곧 업로드됩니다</p>
-            <span>VOD 준비 중 · 잠시만 기다려 주세요</span>
+          <div className="cd-poster">
+            <div className="cd-poster-bg" aria-hidden />
+            <div className="cd-poster-content">
+              <div className="cd-poster-icon">
+                {isEnded ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                    <rect x="3" y="6" width="18" height="12" rx="1.5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 10l5 2-5 2v-4z" />
+                  </svg>
+                ) : isLive ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.3}>
+                    <rect x="3" y="5" width="18" height="16" rx="1.5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9h18M8 3v4M16 3v4" />
+                  </svg>
+                )}
+              </div>
+              <div className="cd-poster-channel">{channel}</div>
+              <div className="cd-poster-status">
+                {isEnded ? '다시보기가 곧 업로드됩니다' : isLive ? '라이브 스트림 연결 대기 중' : '방송 예정'}
+              </div>
+              <div className="cd-poster-time">{dateLabel} · {timeLabel}</div>
+            </div>
           </div>
         )}
-
-        <div className="cd-meta">
-          <span className="cd-meta-channel">{channel}</span>
-          <span className="cd-meta-sep" />
-          <span>{dateLabel} · {timeLabel} 방영</span>
-        </div>
-
-        <style jsx>{styles}</style>
-      </div>
-    );
-  }
-
-  /* ─── LIVE state ─── */
-  if (isLive) {
-    return (
-      <div className="cd-shell cd-shell--live" aria-label="현재 방송 중">
-        <div className="cd-caption">
-          <span className="cd-live-dot" style={{ opacity: pulseDot ? 1 : 0.2 }} />
-          ON AIR
-        </div>
-        <div className="cd-live-title">{channel}</div>
-        <div className="cd-meta">{dateLabel} · {timeLabel}</div>
-        <style jsx>{styles}</style>
-      </div>
-    );
-  }
-
-  if (!parts) return null;
-
-  /* ─── Countdown state ─── */
-  return (
-    <div className="cd-shell" aria-label={`${channel} 방송까지 D-${parts.days} ${parts.hours}시간 ${parts.minutes}분`}>
-      <div className="cd-caption">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="cd-icon">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        다음 방송까지
       </div>
 
-      <div className="cd-grid">
-        <div className="cd-box">
-          <div className="cd-num">{pad(parts.days)}</div>
-          <div className="cd-label">Days</div>
+      {/* 3. 카운트다운 박스 — 모든 상태에서 동일한 골격 */}
+      {showCountdown && (
+        <div className="cd-grid">
+          <div className="cd-box">
+            <div className="cd-num">{pad(cdValues.d)}</div>
+            <div className="cd-label">{cdDayLabel}</div>
+          </div>
+          <div className="cd-sep">:</div>
+          <div className="cd-box">
+            <div className="cd-num">{pad(cdValues.h)}</div>
+            <div className="cd-label">Hours</div>
+          </div>
+          <div className="cd-sep">:</div>
+          <div className="cd-box">
+            <div className="cd-num">{pad(cdValues.m)}</div>
+            <div className="cd-label">Min</div>
+          </div>
+          <div className="cd-sep cd-sep--dim">:</div>
+          <div className="cd-box cd-box--sm">
+            <div className="cd-num cd-num--sm">{pad(cdValues.s)}</div>
+            <div className="cd-label">Sec</div>
+          </div>
         </div>
-        <div className="cd-sep">:</div>
-        <div className="cd-box">
-          <div className="cd-num">{pad(parts.hours)}</div>
-          <div className="cd-label">Hours</div>
-        </div>
-        <div className="cd-sep">:</div>
-        <div className="cd-box">
-          <div className="cd-num">{pad(parts.minutes)}</div>
-          <div className="cd-label">Min</div>
-        </div>
-        <div className="cd-sep cd-sep--dim">:</div>
-        <div className="cd-box cd-box--sm">
-          <div className="cd-num cd-num--sm">{pad(parts.seconds)}</div>
-          <div className="cd-label">Sec</div>
-        </div>
-      </div>
+      )}
 
+      {/* 4. 메타 푸터 */}
       <div className="cd-meta">
         <span className="cd-meta-channel">{channel}</span>
         <span className="cd-meta-sep" />
-        <span>{dateLabel} · {timeLabel}</span>
+        <span>
+          {dateLabel} · {timeLabel}
+          {isEnded ? ' 방영' : ''}
+        </span>
       </div>
 
       <style jsx>{styles}</style>
@@ -233,6 +257,7 @@ const styles = `
       linear-gradient(90deg, transparent 0, rgba(212, 168, 67, 0.4) 50%, transparent 100%) top / 100% 1px no-repeat,
       linear-gradient(90deg, transparent 0, rgba(212, 168, 67, 0.4) 50%, transparent 100%) bottom / 100% 1px no-repeat;
   }
+  .cd-shell--upcoming { /* 기본 골드 톤 (cd-shell 기본값 사용) */ }
   .cd-shell--live {
     border-color: rgba(255, 60, 60, 0.45);
     background:
@@ -244,6 +269,7 @@ const styles = `
       linear-gradient(90deg, transparent 0, rgba(255, 60, 60, 0.5) 50%, transparent 100%) top / 100% 1px no-repeat,
       linear-gradient(90deg, transparent 0, rgba(255, 60, 60, 0.5) 50%, transparent 100%) bottom / 100% 1px no-repeat;
   }
+  .cd-shell--live .cd-caption { color: #ff5252; }
 
   .cd-caption {
     display: inline-flex;
@@ -254,9 +280,8 @@ const styles = `
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
-  .cd-shell--live .cd-caption { color: #ff5252; }
   .cd-icon { opacity: 0.85; }
   .cd-live-dot {
     width: 8px;
@@ -335,28 +360,7 @@ const styles = `
     background: rgba(212, 168, 67, 0.5);
   }
 
-  .cd-live-title {
-    font-family: 'Noto Serif KR', serif;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    font-weight: 400;
-    color: #fff;
-    margin-bottom: 14px;
-    line-height: 1.2;
-  }
-
-  /* ─── ENDED · VOD ─── */
-  .cd-shell--ended {
-    border-color: rgba(180, 200, 220, 0.18);
-    background:
-      radial-gradient(ellipse 80% 60% at 100% 0%, rgba(180, 200, 220, 0.06), transparent 60%),
-      linear-gradient(180deg, rgba(8, 9, 13, 0.92), rgba(10, 11, 16, 0.7));
-  }
-  .cd-shell--ended::before {
-    background:
-      linear-gradient(90deg, transparent 0, rgba(180, 200, 220, 0.32) 50%, transparent 100%) top / 100% 1px no-repeat,
-      linear-gradient(90deg, transparent 0, rgba(180, 200, 220, 0.32) 50%, transparent 100%) bottom / 100% 1px no-repeat;
-  }
-  .cd-caption--ended { color: rgba(212, 168, 67, 0.78); }
+  .cd-shell--ended .cd-caption { color: rgba(212, 168, 67, 0.85); }
 
   .cd-video {
     position: relative;
@@ -366,85 +370,105 @@ const styles = `
     overflow: hidden;
     border: 1px solid rgba(212, 168, 67, 0.22);
     background: #000;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
     box-sizing: border-box;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset, 0 12px 30px rgba(0, 0, 0, 0.45);
   }
+  .cd-shell--live .cd-video { border-color: rgba(255, 60, 60, 0.32); }
 
-  .cd-vod-link {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 22px 22px;
-    margin-bottom: 18px;
-    border: 1px solid rgba(212, 168, 67, 0.22);
-    background: rgba(10, 11, 16, 0.55);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 300ms, background 300ms, transform 300ms;
-  }
-  .cd-vod-link:hover {
-    border-color: var(--accent);
-    background: rgba(212, 168, 67, 0.06);
-  }
-  .cd-vod-link:hover .cd-vod-cta-arrow { transform: translateX(6px); }
-  .cd-vod-thumb {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 1px solid rgba(212, 168, 67, 0.45);
-    color: var(--accent);
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    background: radial-gradient(circle at 35% 35%, rgba(212, 168, 67, 0.18), transparent 70%);
-  }
-  .cd-vod-thumb svg { width: 30px; height: 30px; }
-  .cd-vod-cta { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .cd-vod-cta-label {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 1.15rem;
-    color: #fff;
-    font-weight: 400;
-    letter-spacing: -0.005em;
-  }
-  .cd-vod-cta-arrow {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.66rem;
-    letter-spacing: 0.28em;
-    color: var(--accent);
-    text-transform: uppercase;
-    transition: transform 300ms;
-  }
-
-  .cd-vod-empty {
+  /* 미디어 프레임 안 — 비디오 없을 때 대체 포스터 */
+  .cd-poster {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    justify-content: center;
     gap: 10px;
-    padding: 38px 22px;
-    margin-bottom: 18px;
-    border: 1px dashed rgba(212, 168, 67, 0.22);
-    color: rgba(255, 255, 255, 0.65);
+    text-align: center;
+    padding: 24px 22px;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    overflow: hidden;
   }
-  .cd-vod-empty svg {
-    width: 38px;
-    height: 38px;
-    color: rgba(212, 168, 67, 0.55);
+  .cd-poster-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212, 168, 67, 0.18), transparent 60%),
+      radial-gradient(ellipse 40% 50% at 50% 100%, rgba(212, 168, 67, 0.08), transparent 60%),
+      repeating-linear-gradient(
+        135deg,
+        rgba(212, 168, 67, 0.04) 0px,
+        rgba(212, 168, 67, 0.04) 1px,
+        transparent 1px,
+        transparent 8px
+      ),
+      linear-gradient(180deg, #0d0e15, #06070b);
+    pointer-events: none;
+  }
+  .cd-poster-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .cd-poster-icon,
+  .cd-poster-play {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 168, 67, 0.4);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
     margin-bottom: 4px;
+    background: radial-gradient(circle at 35% 35%, rgba(212, 168, 67, 0.18), transparent 70%);
   }
-  .cd-vod-empty p {
+  .cd-poster-icon svg,
+  .cd-poster-play svg { width: 24px; height: 24px; }
+  .cd-poster-play {
+    width: 60px;
+    height: 60px;
+    border-color: rgba(212, 168, 67, 0.6);
+  }
+  .cd-poster-play svg { width: 28px; height: 28px; }
+  .cd-poster-channel {
     font-family: 'Noto Serif KR', serif;
-    font-size: 1.05rem;
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    font-weight: 400;
     color: #fff;
-    margin: 0;
+    letter-spacing: -0.005em;
   }
-  .cd-vod-empty span {
+  .cd-poster-status {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.6rem;
     letter-spacing: 0.24em;
-    color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
+    color: rgba(212, 168, 67, 0.75);
   }
+  .cd-poster-time {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .cd-poster-cta {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--accent);
+    transition: gap 300ms;
+  }
+  .cd-poster--link { transition: background 300ms; }
+  .cd-poster--link:hover .cd-poster-bg {
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212, 168, 67, 0.28), transparent 60%),
+      linear-gradient(180deg, #11121b, #08090d);
+  }
+  .cd-shell--live .cd-poster-icon { color: #ff5252; border-color: rgba(255, 60, 60, 0.4); }
 `;
