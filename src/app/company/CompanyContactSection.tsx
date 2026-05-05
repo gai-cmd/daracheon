@@ -71,12 +71,9 @@ function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
 }
 
 export default function CompanyContactSection({ faqItems, supportData }: CompanyContactSectionProps) {
-  const channels = supportData?.channels ?? [];
   const productOptions = supportData?.productOptions ?? [];
   const companyInfo = supportData?.companyInfo;
   const mapLabel = supportData?.mapLabel;
-
-  const phoneChannel = channels.find((c) => c.label === 'Phone') ?? channels[0];
 
   const [topic, setTopic] = useState<string>(TOPICS[0]);
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -278,38 +275,6 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 </div>
               </form>
 
-              {/* Phone CTA — 폼 하단 카드. 부가 채널 위계로 격하. */}
-              <div className={styles.phoneCard}>
-                <div className={styles.phoneCardLabel}>Phone Inquiry</div>
-                <div className={styles.phoneCardGrid}>
-                  <div>
-                    <div className={styles.phoneCardTitle}>
-                      {phoneChannel?.title ?? '전화 문의'}
-                    </div>
-                    <div className={styles.phoneCardSub}>
-                      {(phoneChannel?.sub ?? '평일 09:00 – 18:00 (점심 12:00 – 13:00)\n주말 및 공휴일 휴무')
-                        .split('\n')
-                        .map((line, j, arr) => (
-                          <span key={j}>
-                            {line}
-                            {j < arr.length - 1 && <br />}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                  <div className={styles.phoneCardRight}>
-                    <div className={styles.phoneCardNumber}>
-                      {phoneChannel?.value ?? '070 · 4140 · 4086'}
-                    </div>
-                    <a
-                      href={phoneChannel?.ctaHref ?? 'tel:070-4140-4086'}
-                      className={styles.phoneCardCta}
-                    >
-                      {phoneChannel?.ctaLabel ?? '지금 전화하기 →'}
-                    </a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
