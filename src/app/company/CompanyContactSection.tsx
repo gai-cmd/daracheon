@@ -132,12 +132,12 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                   회사 <em>개요</em>
                 </h3>
 
-                {companyInfo && companyInfo.rows.length > 0 && (() => {
+                {(() => {
                   const KEEP_IDENTITY = ['상호', '브랜드', '대표자', '주소'];
                   const isIdentity = (dt: string) => KEEP_IDENTITY.some((k) => dt.includes(k));
-                  const identityRows = companyInfo.rows.filter((r) => isIdentity(r.dt));
+                  const identityRows = companyInfo?.rows.filter((r) => isIdentity(r.dt)) ?? [];
                   return (
-                    <div className={styles.identityCol} style={{ marginTop: 24 }}>
+                    <div className={styles.identityRow} style={{ marginTop: 24 }}>
                       {identityRows.length > 0 && (
                         <div className={styles.identityGroup}>
                           <div className={styles.identityGroupLabel}>Identity</div>
@@ -148,18 +148,18 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                           </dl>
                         </div>
                       )}
+
+                      {mapLabel && (
+                        <div className={styles.identityGroup}>
+                          <div className={styles.identityGroupLabel}>Headquarters</div>
+                          <div className={styles.identityMap}>
+                            <NaverMap title={mapLabel.title} address={mapLabel.address} />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
-
-                {mapLabel && (
-                  <div className={styles.identityGroup} style={{ marginTop: 44 }}>
-                    <div className={styles.identityGroupLabel}>Headquarters</div>
-                    <div className={styles.identityMap}>
-                      <NaverMap title={mapLabel.title} address={mapLabel.address} />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>

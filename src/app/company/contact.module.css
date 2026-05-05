@@ -453,10 +453,25 @@
   gap: 44px;
 }
 
+/* 2열 레이아웃: 좌 Identity (정보 dl) · 우 Headquarters (지도). */
+.identityRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .identityRow {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 48px;
+  }
+}
+
 .identityGroup {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .identityGroupLabel {
