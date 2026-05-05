@@ -259,7 +259,14 @@ export default async function HomeShoppingPage() {
                   {featured.host && <span><b>MC</b> · {featured.host}</span>}
                   <span>
                     <b>일시</b> ·{' '}
-                    {new Date(featured.scheduledAt).toLocaleString('ko-KR', { timeZone: KST })}
+                    {new Date(featured.scheduledAt).toLocaleString('ko-KR', {
+                      timeZone: KST,
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
+                    })}
                   </span>
                   {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>
