@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { readDataUncached, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import { autoSplitMixed } from '@/lib/broadcasts';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
@@ -202,7 +202,9 @@ export default async function HomeShoppingPage({
   searchParams: Promise<{ preview?: string }>;
 }) {
   const { preview } = await searchParams;
-  const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
+  // Uncached read — 어드민에서 vodUrl 등을 비웠을 때 즉시 반영. 캐시 태그
+  // 전파 지연으로 stale 가 보이는 사고를 막는다. 트래픽 낮으니 OK.
+  const dbBroadcasts = await readDataUncached<Broadcast>('broadcasts');
   const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
   const allRawBeforeSplit = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
@@ -465,7 +467,8 @@ export default async function HomeShoppingPage({
         </div>
       </section>
 
-      {/* SPONSORED · 협찬방송 — 가격이 아닌 프로그램·출연진 중심 카드 */}
+      {/* SPONSORED · 협찬방송 — 한 행 2열(설명 좌 · 영상 우) 으로 정렬,
+          홈쇼핑의 LIVE 카드 골격을 차용하되 보라 액센트로 차별화. */}
       {sponsoredSorted.length > 0 && (
         <section className={styles.sponsored} id="sponsored">
           <div className={styles.wrap}>
@@ -480,7 +483,7 @@ export default async function HomeShoppingPage({
               </p>
             </div>
 
-            <div className={styles.sponsoredGrid}>
+            <div className={styles.spList}>
               {sponsoredSorted.map((b) => {
                 const si = b.showInfo ?? {};
                 const cast: Array<{ label: string; names: string[] }> = [];
@@ -491,7 +494,45 @@ export default async function HomeShoppingPage({
 
                 const yt = b.vodUrl ? extractEmbed(b.vodUrl) : null;
                 return (
-                  <article key={b.id} className={styles.spCard}>
+                  <article key={b.id} className={styles.spRow}>
+                    <div className={styles.spInfo}>
+                      <div className={styles.spChannelTag}>
+                        <span className={styles.spChannelDot} />
+                        {b.channel}
+                      </div>
+                      <h3 className={styles.spTitle}>
+                        {si.title ?? b.channel}
+                        {si.episode && <em> · {si.episode}</em>}
+                      </h3>
+                      {si.synopsis && <p className={styles.spSynopsis}>{si.synopsis}</p>}
+                      {cast.length > 0 && (
+                        <dl className={styles.spCast}>
+                          {cast.map((c) => (
+                            <div key={c.label} className={styles.spCastRow}>
+                              <dt>{c.label}</dt>
+                              <dd>{c.names.join(' · ')}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      )}
+                      <div className={styles.spMeta}>
+                        <span>
+                          <b>방송</b> ·{' '}
+                          {new Date(b.scheduledAt).toLocaleString('ko-KR', {
+                            timeZone: KST,
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            weekday: 'short',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                        <span className={styles.spStatus} data-status={b.status}>
+                          {STATUS_LABEL[b.status]}
+                        </span>
+                      </div>
+                    </div>
                     <div className={styles.spVideo}>
                       {yt ? (
                         <iframe
@@ -507,40 +548,6 @@ export default async function HomeShoppingPage({
                           영상 준비 중
                         </div>
                       )}
-                      <span className={styles.spChannelTag}>{b.channel}</span>
-                    </div>
-                    <div className={styles.spBody}>
-                      <div className={styles.spProgramLine}>
-                        <h3>
-                          {si.title ?? b.channel}
-                          {si.episode && <em> · {si.episode}</em>}
-                        </h3>
-                        <span className={styles.spStatus} data-status={b.status}>
-                          {STATUS_LABEL[b.status]}
-                        </span>
-                      </div>
-                      {si.synopsis && <p className={styles.spSynopsis}>{si.synopsis}</p>}
-                      {cast.length > 0 && (
-                        <dl className={styles.spCast}>
-                          {cast.map((c) => (
-                            <div key={c.label} className={styles.spCastRow}>
-                              <dt>{c.label}</dt>
-                              <dd>{c.names.join(' · ')}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      )}
-                      <div className={styles.spDate}>
-                        {new Date(b.scheduledAt).toLocaleString('ko-KR', {
-                          timeZone: KST,
-                          year: 'numeric',
-                          month: 'numeric',
-                          day: 'numeric',
-                          weekday: 'short',
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
-                      </div>
                     </div>
                   </article>
                 );

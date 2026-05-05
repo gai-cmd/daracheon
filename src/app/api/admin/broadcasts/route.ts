@@ -56,19 +56,22 @@ const statusValues = ['scheduled', 'live', 'ended', 'canceled'] as const;
 const broadcastTypeValues = ['home-shopping', 'sponsored'] as const;
 
 const baseSchema = z.object({
-  broadcastType: z.enum(broadcastTypeValues).default('home-shopping'),
-  published: z.coerce.boolean().default(true),
+  // default 를 두면 partial PUT 에서 부분 업데이트가 다른 필드를 덮어쓴다.
+  // → optional 로 두고 POST 핸들러에서 명시적으로 기본값을 보강.
+  broadcastType: z.enum(broadcastTypeValues).optional(),
+  published: z.coerce.boolean().optional(),
   channel: z.string().min(1, '방송사는 필수입니다.').max(60),
   scheduledAt: z.string().min(1, '방송 일시는 필수입니다.'),
-  durationMinutes: z.coerce.number().int().min(5).max(480).default(60),
+  // default 제거 — partial PUT 에서 미전송 필드가 덮어써지는 사고 방지.
+  durationMinutes: z.coerce.number().int().min(5).max(480).optional(),
   host: z.string().max(80).optional().nullable(),
-  productIds: z.array(z.string()).default([]),
+  productIds: z.array(z.string()).optional(),
   specialPrice: z.coerce.number().int().min(0).optional().nullable(),
   regularPrice: z.coerce.number().int().min(0).optional().nullable(),
   discountRate: z.coerce.number().min(0).max(100).optional().nullable(),
   vodUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
-  status: z.enum(statusValues).default('scheduled'),
+  status: z.enum(statusValues).optional(),
   salesCount: z.coerce.number().int().min(0).optional().nullable(),
   feedback: z.string().max(4000).optional().nullable(),
   showInfo: z
