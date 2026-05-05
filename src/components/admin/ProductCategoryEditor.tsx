@@ -21,6 +21,10 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
   const [saving, setSaving] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [toast, setToast] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
+  const [conflict, setConflict] = useState<Record<
+    string,
+    Array<{ id: string; name: string; slug?: string }>
+  > | null>(null);
 
   /* ─── Fetch ─── */
   async function fetchCategories() {
@@ -119,10 +123,14 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
       });
       const data = await res.json();
       if (!res.ok || !data?.success) {
-        setToast({
-          kind: 'err',
-          text: data?.message ?? '저장에 실패했습니다.',
-        });
+        if (res.status === 409 && data?.inUse && typeof data.inUse === 'object') {
+          setConflict(data.inUse);
+        } else {
+          setToast({
+            kind: 'err',
+            text: data?.message ?? '저장에 실패했습니다.',
+          });
+        }
         return;
       }
       const saved: ProductCategory[] = Array.isArray(data?.categories)
@@ -301,6 +309,55 @@ export default function ProductCategoryEditor({ onSaved }: Props) {
           }`}
         >
           {toast.text}
+        </div>
+      )}
+
+      {conflict && (
+        <div
+          className="fixed inset-0 z-[110] bg-black/40 flex items-center justify-center p-4"
+          onClick={() => setConflict(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-semibold text-gray-900 mb-2">
+              카테고리를 삭제할 수 없습니다
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              아래 제품들이 여전히 해당 카테고리를 사용 중입니다. 먼저 제품 편집에서
+              카테고리를 변경한 뒤 다시 시도해 주세요.
+            </p>
+            <div className="space-y-3 max-h-72 overflow-y-auto">
+              {Object.entries(conflict).map(([cat, list]) => (
+                <div key={cat} className="border border-rose-100 rounded-lg p-3 bg-rose-50/40">
+                  <div className="text-xs font-medium text-rose-700 mb-2">
+                    카테고리 id: <code className="px-1.5 py-0.5 rounded bg-white">{cat}</code> ·{' '}
+                    {list.length}개 제품
+                  </div>
+                  <ul className="space-y-1">
+                    {list.map((p) => (
+                      <li key={p.id} className="text-sm text-gray-800">
+                        · {p.name}
+                        {p.slug ? (
+                          <span className="text-xs text-gray-400 ml-1.5">({p.slug})</span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setConflict(null)}
+                className="px-4 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800"
+              >
+                확인
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -87,21 +87,25 @@ export async function PUT(request: Request) {
     // 사용 중 카테고리 삭제 차단.
     const products = await readData<Product>('products');
     const finalIds = new Set(finalList.map((c) => c.id));
-    const inUse = new Map<string, number>();
+    const inUseProducts = new Map<string, Array<{ id: string; name: string; slug?: string }>>();
     for (const p of products) {
       if (!p.category) continue;
       if (finalIds.has(p.category)) continue;
-      inUse.set(p.category, (inUse.get(p.category) ?? 0) + 1);
+      const list = inUseProducts.get(p.category) ?? [];
+      list.push({ id: p.id, name: p.name ?? p.id, slug: p.slug });
+      inUseProducts.set(p.category, list);
     }
-    if (inUse.size > 0) {
-      const detail = Array.from(inUse.entries())
-        .map(([id, n]) => `${id} (${n}개 제품)`)
-        .join(', ');
+    if (inUseProducts.size > 0) {
+      const detail = Array.from(inUseProducts.entries())
+        .map(([id, list]) => `${id} (${list.length}개: ${list.map((x) => x.name).join(', ')})`)
+        .join(' / ');
       return NextResponse.json(
         {
           success: false,
-          message: `사용 중인 카테고리는 삭제할 수 없습니다: ${detail}. 먼저 해당 제품들의 카테고리를 변경해 주세요.`,
-          inUse: Object.fromEntries(inUse),
+          message: `사용 중인 카테고리는 삭제할 수 없습니다 — ${detail}. 먼저 해당 제품의 카테고리를 변경해 주세요.`,
+          inUse: Object.fromEntries(
+            Array.from(inUseProducts.entries()).map(([id, list]) => [id, list])
+          ),
         },
         { status: 409 }
       );
