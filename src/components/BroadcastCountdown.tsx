@@ -361,20 +361,14 @@ const styles = `
   .cd-video {
     position: relative;
     width: 100%;
+    max-width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border: 1px solid rgba(212, 168, 67, 0.22);
     background: #000;
     margin-bottom: 18px;
+    box-sizing: border-box;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset, 0 12px 30px rgba(0, 0, 0, 0.45);
-  }
-  .cd-video :global(iframe) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
   }
 
   .cd-vod-link {
