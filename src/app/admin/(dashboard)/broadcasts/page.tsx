@@ -3,8 +3,25 @@
 import { useEffect, useMemo, useState } from 'react';
 import { saveAdminPage } from '@/lib/adminSave';
 
+type BroadcastType = 'home-shopping' | 'sponsored';
+
+interface BroadcastShowInfo {
+  title?: string | null;
+  episode?: string | null;
+  logo?: string | null;
+  hosts?: string[] | null;
+  panels?: string[] | null;
+  guests?: string[] | null;
+  experts?: string[] | null;
+  recordingAt?: string | null;
+  vcrAt?: string | null;
+  synopsis?: string | null;
+}
+
 interface Broadcast {
   id: string;
+  broadcastType?: BroadcastType;
+  published?: boolean;
   channel: string;
   scheduledAt: string;
   durationMinutes: number;
@@ -18,8 +35,33 @@ interface Broadcast {
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
   salesCount?: number | null;
   feedback?: string | null;
+  showInfo?: BroadcastShowInfo | null;
   createdAt: string;
   updatedAt: string;
+}
+
+const TYPE_LABELS: Record<BroadcastType, string> = {
+  'home-shopping': '홈쇼핑',
+  sponsored: '협찬방송',
+};
+
+function getType(b: { broadcastType?: BroadcastType }): BroadcastType {
+  return b.broadcastType ?? 'home-shopping';
+}
+
+function isPublished(b: { published?: boolean }): boolean {
+  return b.published !== false;
+}
+
+function csvToArr(s: string): string[] {
+  return s
+    .split(/[,·、\n]/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function arrToCsv(a: string[] | null | undefined): string {
+  return Array.isArray(a) ? a.join(', ') : '';
 }
 
 interface ProductLite {
@@ -73,9 +115,11 @@ function fmtDisplay(iso: string): string {
   });
 }
 
-function emptyDraft(): Broadcast {
+function emptyDraft(type: BroadcastType = 'home-shopping'): Broadcast {
   return {
     id: '',
+    broadcastType: type,
+    published: true,
     channel: '',
     scheduledAt: new Date().toISOString(),
     durationMinutes: 60,
@@ -94,6 +138,7 @@ export default function AdminBroadcastsPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   const [statusFilter, setStatusFilter] = useState<'all' | Broadcast['status']>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | BroadcastType>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [draft, setDraft] = useState<Broadcast | null>(null);
@@ -181,18 +226,20 @@ export default function AdminBroadcastsPage() {
   const filtered = useMemo(() => {
     return items.filter((b) => {
       if (statusFilter !== 'all' && b.status !== statusFilter) return false;
+      if (typeFilter !== 'all' && getType(b) !== typeFilter) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         if (
           !b.channel.toLowerCase().includes(q) &&
           !(b.host ?? '').toLowerCase().includes(q) &&
-          !(b.description ?? '').toLowerCase().includes(q)
+          !(b.description ?? '').toLowerCase().includes(q) &&
+          !(b.showInfo?.title ?? '').toLowerCase().includes(q)
         )
           return false;
       }
       return true;
     });
-  }, [items, statusFilter, searchQuery]);
+  }, [items, statusFilter, typeFilter, searchQuery]);
 
   function openAdd() {
     setDraft(emptyDraft());
@@ -277,6 +324,34 @@ export default function AdminBroadcastsPage() {
     });
   }
 
+  /** 리스트 행에서 직접 공개/비공개 즉시 토글. PUT 으로 published 만 갱신. */
+  async function togglePublished(b: Broadcast) {
+    const next = !isPublished(b);
+    try {
+      const res = await fetch('/api/admin/broadcasts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: b.id, published: next }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setToast(data.message ?? '공개 상태 변경에 실패했습니다.');
+        return;
+      }
+      setItems((prev) => prev.map((it) => (it.id === b.id ? { ...it, published: next } : it)));
+      setToast(next ? '공개로 전환되었습니다.' : '비공개로 전환되었습니다.');
+    } catch (err) {
+      console.error('[Admin Broadcasts] toggle published error:', err);
+      setToast('공개 상태 변경 중 오류가 발생했습니다.');
+    }
+  }
+
+  function updateShowInfo(patch: Partial<BroadcastShowInfo>) {
+    if (!draft) return;
+    const cur = draft.showInfo ?? {};
+    setDraft({ ...draft, showInfo: { ...cur, ...patch } });
+  }
+
   return (
     <div className="space-y-6">
       {/* Hero text editor (inline) */}
@@ -356,8 +431,34 @@ export default function AdminBroadcastsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap gap-2">
+            {(['all', 'home-shopping', 'sponsored'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTypeFilter(t)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                  typeFilter === t
+                    ? 'border-[#7c5b1c] bg-[#7c5b1c] text-white'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {t === 'all' ? '유형 전체' : TYPE_LABELS[t]}
+              </button>
+            ))}
+          </div>
+          <div className="flex-1" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="방송사/MC/설명/프로그램명 검색..."
+            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm sm:w-72"
+          />
+        </div>
+        <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-3">
           {(['all', 'scheduled', 'live', 'ended', 'canceled'] as const).map((s) => (
             <button
               key={s}
@@ -369,18 +470,10 @@ export default function AdminBroadcastsPage() {
                   : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
               }`}
             >
-              {s === 'all' ? '전체' : STATUS_LABELS[s]}
+              {s === 'all' ? '상태 전체' : STATUS_LABELS[s]}
             </button>
           ))}
         </div>
-        <div className="flex-1" />
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="방송사/MC/설명 검색..."
-          className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm sm:w-64"
-        />
       </div>
 
       {/* List */}
@@ -404,57 +497,112 @@ export default function AdminBroadcastsPage() {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50 text-[0.72rem] uppercase tracking-wider text-gray-500">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">방송사</th>
+                <th className="px-3 py-3 text-left font-medium">유형</th>
+                <th className="px-4 py-3 text-left font-medium">방송사 / 프로그램</th>
                 <th className="px-4 py-3 text-left font-medium">일시</th>
-                <th className="px-4 py-3 text-left font-medium">MC</th>
+                <th className="px-4 py-3 text-left font-medium">진행</th>
                 <th className="px-4 py-3 text-left font-medium">특가</th>
                 <th className="px-4 py-3 text-left font-medium">상태</th>
+                <th className="px-3 py-3 text-center font-medium">공개</th>
                 <th className="px-4 py-3 text-right font-medium">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((b) => (
-                <tr key={b.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{b.channel}</div>
-                    {b.description && (
-                      <div className="mt-0.5 line-clamp-1 max-w-xs text-xs text-gray-400">{b.description}</div>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {fmtDisplay(b.scheduledAt)}
-                    <div className="text-xs text-gray-400">{b.durationMinutes}분</div>
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{b.host || '-'}</td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
-                    {b.discountRate ? (
-                      <span className="ml-2 rounded bg-red-700 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
-                        -{b.discountRate}%
+              {filtered.map((b) => {
+                const t = getType(b);
+                const pub = isPublished(b);
+                const isSponsored = t === 'sponsored';
+                return (
+                  <tr key={b.id} className={`hover:bg-gray-50 ${pub ? '' : 'bg-gray-50/60'}`}>
+                    <td className="px-3 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-[0.7rem] font-semibold ${
+                          isSponsored
+                            ? 'bg-violet-100 text-violet-800 ring-1 ring-violet-200'
+                            : 'bg-amber-100 text-amber-800 ring-1 ring-amber-200'
+                        }`}
+                      >
+                        {TYPE_LABELS[t]}
                       </span>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[b.status]}`}>
-                      {STATUS_LABELS[b.status]}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => openEdit(b)}
-                      className="adm-btn-secondary mr-2 inline-flex px-3"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => setDeleteTarget(b)}
-                      className="inline-flex rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-800"
-                    >
-                      삭제
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium text-gray-900">
+                        {isSponsored && b.showInfo?.title ? b.showInfo.title : b.channel}
+                        {isSponsored && b.showInfo?.episode && (
+                          <span className="ml-1.5 text-xs text-gray-500">· {b.showInfo.episode}</span>
+                        )}
+                      </div>
+                      {(b.description || (isSponsored && b.channel)) && (
+                        <div className="mt-0.5 line-clamp-1 max-w-xs text-xs text-gray-400">
+                          {isSponsored && b.channel ? `[${b.channel}] ` : ''}
+                          {b.description ?? ''}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {fmtDisplay(b.scheduledAt)}
+                      <div className="text-xs text-gray-400">{b.durationMinutes}분</div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {isSponsored
+                        ? (b.showInfo?.hosts?.join(' · ') || b.host || '-')
+                        : (b.host || '-')}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {isSponsored ? (
+                        <span className="text-xs text-gray-400">— (협찬방송)</span>
+                      ) : (
+                        <>
+                          {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
+                          {b.discountRate ? (
+                            <span className="ml-2 rounded bg-red-700 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
+                              -{b.discountRate}%
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[b.status]}`}>
+                        {STATUS_LABELS[b.status]}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() => togglePublished(b)}
+                        title={pub ? '공개 — 클릭 시 비공개' : '비공개 — 클릭 시 공개'}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                          pub ? 'bg-emerald-500' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                            pub ? 'translate-x-4' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                      <div className={`mt-0.5 text-[0.6rem] font-medium ${pub ? 'text-emerald-700' : 'text-gray-400'}`}>
+                        {pub ? '공개' : '비공개'}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() => openEdit(b)}
+                        className="adm-btn-secondary mr-2 inline-flex px-3"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(b)}
+                        className="inline-flex rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-800"
+                      >
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -472,25 +620,81 @@ export default function AdminBroadcastsPage() {
             </div>
 
             <div className="space-y-5 px-6 py-5">
+              {/* 유형 + 공개 토글 */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-gray-700">유형 *</span>
+                    {(['home-shopping', 'sponsored'] as const).map((t) => {
+                      const active = getType(draft) === t;
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setDraft({ ...draft, broadcastType: t })}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                            active
+                              ? t === 'sponsored'
+                                ? 'bg-violet-600 text-white'
+                                : 'bg-amber-500 text-white'
+                              : 'bg-white text-gray-700 ring-1 ring-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          {TYPE_LABELS[t]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <label className="flex cursor-pointer items-center gap-2 text-xs text-gray-700">
+                    <span className="font-medium">공개</span>
+                    <button
+                      type="button"
+                      onClick={() => setDraft({ ...draft, published: !isPublished(draft) })}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                        isPublished(draft) ? 'bg-emerald-500' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                          isPublished(draft) ? 'translate-x-4' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </button>
+                    <span className={`font-semibold ${isPublished(draft) ? 'text-emerald-700' : 'text-gray-400'}`}>
+                      {isPublished(draft) ? 'ON' : 'OFF'}
+                    </span>
+                  </label>
+                </div>
+                <p className="mt-2 text-[11px] text-gray-500">
+                  {getType(draft) === 'sponsored'
+                    ? '협찬방송: 프로그램명·회차·출연진·시놉시스 중심으로 노출됩니다. 가격 입력은 선택.'
+                    : '홈쇼핑: 정가·특가·할인율을 강조한 카드로 노출됩니다.'}
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-gray-700">
-                    방송사 <span className="text-red-500">*</span>
+                    {getType(draft) === 'sponsored' ? '협찬 채널 (방송사) ' : '방송사 '}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={draft.channel}
                     onChange={(e) => setDraft({ ...draft, channel: e.target.value })}
-                    placeholder="롯데홈쇼핑"
+                    placeholder={getType(draft) === 'sponsored' ? 'KBS · MBC · TV조선 ...' : '롯데홈쇼핑'}
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-gray-700">MC / 호스트</label>
+                  <label className="mb-1.5 block text-xs font-medium text-gray-700">
+                    {getType(draft) === 'sponsored' ? '대표 진행자 (요약)' : 'MC / 호스트'}
+                  </label>
                   <input
                     type="text"
                     value={draft.host ?? ''}
                     onChange={(e) => setDraft({ ...draft, host: e.target.value })}
+                    placeholder={getType(draft) === 'sponsored' ? '현영' : '박미선'}
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
                 </div>
@@ -503,6 +707,7 @@ export default function AdminBroadcastsPage() {
                   </label>
                   <input
                     type="datetime-local"
+                    step={60}
                     value={fmtDateTimeLocal(draft.scheduledAt)}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -516,15 +721,30 @@ export default function AdminBroadcastsPage() {
                   <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 시간(분)</label>
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={5}
                     max={480}
-                    value={draft.durationMinutes}
-                    onChange={(e) => setDraft({ ...draft, durationMinutes: Number(e.target.value) })}
+                    step={5}
+                    value={Number.isFinite(draft.durationMinutes) ? draft.durationMinutes : ''}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      // 빈 문자열은 잠시 허용해서 입력 중간 단계가 막히지 않도록.
+                      const next = raw === '' ? Number.NaN : Number(raw);
+                      setDraft({ ...draft, durationMinutes: next });
+                    }}
+                    onBlur={() => {
+                      // blur 시 유효 범위로 클램프 (NaN/0 → 60).
+                      const v = Number(draft.durationMinutes);
+                      const safe = Number.isFinite(v) && v >= 5 ? Math.min(480, Math.floor(v)) : 60;
+                      if (safe !== draft.durationMinutes) setDraft({ ...draft, durationMinutes: safe });
+                    }}
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
                 </div>
               </div>
 
+              {/* 가격 (홈쇼핑 전용) */}
+              {getType(draft) === 'home-shopping' && (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-gray-700">정가</label>
@@ -564,6 +784,104 @@ export default function AdminBroadcastsPage() {
                   />
                 </div>
               </div>
+              )}
+
+              {/* 협찬방송 전용: 프로그램 정보 + 출연진 + 시놉시스 */}
+              {getType(draft) === 'sponsored' && (
+                <div className="space-y-4 rounded-lg border border-violet-200 bg-violet-50/40 p-4">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-violet-700">
+                    프로그램 정보 (협찬방송 전용)
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="md:col-span-2">
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">프로그램명</label>
+                      <input
+                        type="text"
+                        value={draft.showInfo?.title ?? ''}
+                        onChange={(e) => updateShowInfo({ title: e.target.value })}
+                        placeholder="퍼펙트 라이프"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">회차</label>
+                      <input
+                        type="text"
+                        value={draft.showInfo?.episode ?? ''}
+                        onChange={(e) => updateShowInfo({ episode: e.target.value })}
+                        placeholder="287회"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-gray-700">프로그램 로고 URL (선택)</label>
+                    <input
+                      type="url"
+                      value={draft.showInfo?.logo ?? ''}
+                      onChange={(e) => updateShowInfo({ logo: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">진행 (쉼표 구분)</label>
+                      <input
+                        type="text"
+                        value={arrToCsv(draft.showInfo?.hosts)}
+                        onChange={(e) => updateShowInfo({ hosts: csvToArr(e.target.value) })}
+                        placeholder="현영, 오지호"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">패널</label>
+                      <input
+                        type="text"
+                        value={arrToCsv(draft.showInfo?.panels)}
+                        onChange={(e) => updateShowInfo({ panels: csvToArr(e.target.value) })}
+                        placeholder="이성미, 신승환"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">게스트</label>
+                      <input
+                        type="text"
+                        value={arrToCsv(draft.showInfo?.guests)}
+                        onChange={(e) => updateShowInfo({ guests: csvToArr(e.target.value) })}
+                        placeholder="배동성♥전진주 부부"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-gray-700">전문가</label>
+                      <input
+                        type="text"
+                        value={arrToCsv(draft.showInfo?.experts)}
+                        onChange={(e) => updateShowInfo({ experts: csvToArr(e.target.value) })}
+                        placeholder="유병욱, 선재광, 안태환, 심선아"
+                        className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-gray-700">시놉시스 (방송 개요)</label>
+                    <textarea
+                      rows={3}
+                      value={draft.showInfo?.synopsis ?? ''}
+                      onChange={(e) => updateShowInfo({ synopsis: e.target.value })}
+                      placeholder="건강한 중장년의 라이프스타일을 다루는 정보·교양 프로그램..."
+                      className="w-full resize-y rounded-md border border-gray-200 px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 영상 URL (YouTube / Vimeo)</label>

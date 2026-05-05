@@ -204,9 +204,18 @@ export default async function HomeShoppingPage({
   const dbBroadcasts = await readDataSafe<Broadcast>('broadcasts');
   const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
-  const all = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
-  const sorted = [...all].sort(
+  const allRaw = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
+  // 비공개 제외. published 미설정은 공개로 간주(기존 데이터 호환).
+  const all = allRaw.filter((b) => b.published !== false);
+  // 홈쇼핑(가격 카드) vs 협찬방송(프로그램 카드) 분리. 미지정 → 'home-shopping'.
+  const hs = all.filter((b) => (b.broadcastType ?? 'home-shopping') === 'home-shopping');
+  const sponsored = all.filter((b) => b.broadcastType === 'sponsored');
+
+  const sorted = [...hs].sort(
     (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+  );
+  const sponsoredSorted = [...sponsored].sort(
+    (a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
   );
 
   const now = Date.now();
@@ -325,7 +334,7 @@ export default async function HomeShoppingPage({
         (() => {
           const si = featured.showInfo!;
           const hasCast = (si.hosts?.length || 0) + (si.panels?.length || 0) + (si.guests?.length || 0) + (si.experts?.length || 0) > 0;
-          if (!si.title && !si.synopsis && !hasCast && !si.recordingAt && !si.vcrAt) return null;
+          if (!si.title && !si.synopsis && !hasCast) return null;
           return (
             <section className={styles.synopsis}>
               <div className={styles.wrap}>
@@ -368,23 +377,6 @@ export default async function HomeShoppingPage({
                         <div className={styles.synopsisRow}>
                           <dt>전문가</dt>
                           <dd>{si.experts.join(' · ')}</dd>
-                        </div>
-                      )}
-                    </dl>
-                  )}
-
-                  {(si.recordingAt || si.vcrAt) && (
-                    <dl className={styles.synopsisDates}>
-                      {si.recordingAt && (
-                        <div className={styles.synopsisRow}>
-                          <dt>녹화일시</dt>
-                          <dd>{si.recordingAt}</dd>
-                        </div>
-                      )}
-                      {si.vcrAt && (
-                        <div className={styles.synopsisRow}>
-                          <dt>VCR 촬영일시</dt>
-                          <dd>{si.vcrAt}</dd>
                         </div>
                       )}
                     </dl>
@@ -468,6 +460,118 @@ export default async function HomeShoppingPage({
           </div>
         </div>
       </section>
+
+      {/* SPONSORED · 협찬방송 — 가격이 아닌 프로그램·출연진 중심 카드 */}
+      {sponsoredSorted.length > 0 && (
+        <section className={styles.sponsored} id="sponsored">
+          <div className={styles.wrap}>
+            <div className={styles.sponsoredHead}>
+              <div className={styles.sponsoredKicker}>SPONSORED · 협찬방송</div>
+              <h2>
+                대라천이 <em>출연한 방송</em>
+              </h2>
+              <p className={styles.sponsoredLede}>
+                협찬·정보교양 프로그램에 등장한 대라천 침향. 진행자·전문가 패널이 직접
+                소개한 회차를 모아 보세요.
+              </p>
+            </div>
+
+            <div className={styles.sponsoredGrid}>
+              {sponsoredSorted.map((b) => {
+                const si = b.showInfo ?? {};
+                const cast: Array<{ label: string; names: string[] }> = [];
+                if (si.hosts?.length) cast.push({ label: '진행', names: si.hosts });
+                if (si.panels?.length) cast.push({ label: '패널', names: si.panels });
+                if (si.guests?.length) cast.push({ label: '게스트', names: si.guests });
+                if (si.experts?.length) cast.push({ label: '전문가', names: si.experts });
+
+                const yt = b.vodUrl ? extractEmbed(b.vodUrl) : null;
+                return (
+                  <article key={b.id} className={styles.spCard}>
+                    <div className={styles.spVideo}>
+                      {yt ? (
+                        <iframe
+                          src={yt}
+                          title={si.title ?? b.channel}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className={styles.spVideoEmpty}>
+                          <span className={styles.spVideoEmptyDot}>●</span>
+                          영상 준비 중
+                        </div>
+                      )}
+                      <span className={styles.spChannelTag}>{b.channel}</span>
+                    </div>
+                    <div className={styles.spBody}>
+                      <div className={styles.spProgramLine}>
+                        <h3>
+                          {si.title ?? b.channel}
+                          {si.episode && <em> · {si.episode}</em>}
+                        </h3>
+                        <span className={styles.spStatus} data-status={b.status}>
+                          {STATUS_LABEL[b.status]}
+                        </span>
+                      </div>
+                      {si.synopsis && <p className={styles.spSynopsis}>{si.synopsis}</p>}
+                      {cast.length > 0 && (
+                        <dl className={styles.spCast}>
+                          {cast.map((c) => (
+                            <div key={c.label} className={styles.spCastRow}>
+                              <dt>{c.label}</dt>
+                              <dd>{c.names.join(' · ')}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      )}
+                      <div className={styles.spDate}>
+                        {new Date(b.scheduledAt).toLocaleString('ko-KR', {
+                          timeZone: KST,
+                          year: 'numeric',
+                          month: 'numeric',
+                          day: 'numeric',
+                          weekday: 'short',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
+}
+
+/** YouTube/Vimeo URL 을 임베드 가능한 src 로 변환. 실패 시 null. */
+function extractEmbed(url: string): string | null {
+  try {
+    const u = new URL(url);
+    // youtu.be/<id>
+    if (u.hostname === 'youtu.be') {
+      const id = u.pathname.replace(/^\//, '').split('?')[0];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    // youtube.com/watch?v=<id> / shorts/<id> / embed/<id>
+    if (u.hostname.endsWith('youtube.com') || u.hostname.endsWith('youtube-nocookie.com')) {
+      const v = u.searchParams.get('v');
+      if (v) return `https://www.youtube.com/embed/${v}`;
+      const m = u.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/);
+      if (m) return `https://www.youtube.com/embed/${m[1]}`;
+    }
+    // vimeo.com/<id>
+    if (u.hostname.endsWith('vimeo.com')) {
+      const id = u.pathname.split('/').filter(Boolean)[0];
+      if (id && /^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }

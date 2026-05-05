@@ -24,8 +24,15 @@ export interface BroadcastShowInfo {
   synopsis?: string;    // 방송 개요 요약문
 }
 
+export type BroadcastType = 'home-shopping' | 'sponsored';
+
 export interface Broadcast {
   id: string;
+  /** 'home-shopping' = TV 홈쇼핑(가격 강조) / 'sponsored' = 협찬방송(프로그램·출연진 강조).
+   *  미지정 시 'home-shopping' 으로 처리(기존 데이터 호환). */
+  broadcastType?: BroadcastType;
+  /** 공개 여부. undefined/true → 공개, false → 비공개. 비공개는 어드민에서만 보임. */
+  published?: boolean;
   channel: string;
   scheduledAt: string;
   durationMinutes: number;
@@ -45,8 +52,11 @@ export interface Broadcast {
 }
 
 const statusValues = ['scheduled', 'live', 'ended', 'canceled'] as const;
+const broadcastTypeValues = ['home-shopping', 'sponsored'] as const;
 
 const baseSchema = z.object({
+  broadcastType: z.enum(broadcastTypeValues).default('home-shopping'),
+  published: z.coerce.boolean().default(true),
   channel: z.string().min(1, '방송사는 필수입니다.').max(60),
   scheduledAt: z.string().min(1, '방송 일시는 필수입니다.'),
   durationMinutes: z.coerce.number().int().min(5).max(480).default(60),
@@ -122,6 +132,8 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
     const item: Broadcast = {
       id: genId(),
+      broadcastType: (data.broadcastType as BroadcastType) ?? 'home-shopping',
+      published: data.published === undefined ? true : Boolean(data.published),
       channel: data.channel as string,
       scheduledAt: data.scheduledAt as string,
       durationMinutes: (data.durationMinutes as number) ?? 60,
