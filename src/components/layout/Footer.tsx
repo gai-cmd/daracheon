@@ -5,6 +5,9 @@ interface CompanyInfo {
   name: string;
   ceo: string;
   businessReg: string;
+  mailOrderReg?: string;
+  importBizReg?: string;
+  privacyOfficer?: string;
   address: string;
   phone: string;
   email: string;
@@ -61,6 +64,24 @@ export default function Footer({ socialLinks = [], company }: Props) {
             )}
             {company.businessReg && (
               <span className={styles.infoBlock}>사업자등록번호: {company.businessReg}</span>
+            )}
+            {company.mailOrderReg && (
+              <>
+                <span className={styles.infoSep} aria-hidden>·</span>
+                <span className={styles.infoBlock}>통신판매업신고번호: {company.mailOrderReg}</span>
+              </>
+            )}
+            {company.importBizReg && (
+              <>
+                <span className={styles.infoSep} aria-hidden>·</span>
+                <span className={styles.infoBlock}>수입・판매업 영업등록증: {company.importBizReg}</span>
+              </>
+            )}
+            {company.privacyOfficer && (
+              <>
+                <span className={styles.infoSep} aria-hidden>·</span>
+                <span className={styles.infoBlock}>개인정보보호책임자: {company.privacyOfficer}</span>
+              </>
             )}
             {company.address && (
               <>

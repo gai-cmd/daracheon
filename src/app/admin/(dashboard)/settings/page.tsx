@@ -43,6 +43,9 @@ interface SettingsData {
   address: string;
   ceo: string;
   businessReg: string;
+  mailOrderReg?: string;
+  importBizReg?: string;
+  privacyOfficer?: string;
   foundingDate: string;
   brandLogo: string;
   companyLogo: string;
@@ -69,6 +72,9 @@ export default function AdminSettingsPage() {
   const [footerInfo, setFooterInfo] = useState({
     ceo: '',
     businessReg: '',
+    mailOrderReg: '',
+    importBizReg: '',
+    privacyOfficer: '',
     address: '',
     phone: '',
     email: '',
@@ -126,6 +132,9 @@ export default function AdminSettingsPage() {
         setFooterInfo({
           ceo: data.ceo || '',
           businessReg: data.businessReg || '',
+          mailOrderReg: data.mailOrderReg || '',
+          importBizReg: data.importBizReg || '',
+          privacyOfficer: data.privacyOfficer || '',
           address: data.address || '',
           phone: data.phone || '',
           email: data.email || '',
@@ -337,6 +346,21 @@ export default function AdminSettingsPage() {
                 value={footerInfo.businessReg}
                 onChange={(v) => setFooterInfo({ ...footerInfo, businessReg: v })}
               />
+              <LabeledInput
+                label="통신판매업신고번호"
+                value={footerInfo.mailOrderReg}
+                onChange={(v) => setFooterInfo({ ...footerInfo, mailOrderReg: v })}
+              />
+              <LabeledInput
+                label="수입・판매업 영업등록증"
+                value={footerInfo.importBizReg}
+                onChange={(v) => setFooterInfo({ ...footerInfo, importBizReg: v })}
+              />
+              <LabeledInput
+                label="개인정보보호책임자"
+                value={footerInfo.privacyOfficer}
+                onChange={(v) => setFooterInfo({ ...footerInfo, privacyOfficer: v })}
+              />
               <div className="md:col-span-2">
                 <LabeledInput
                   label="주소"
@@ -367,6 +391,24 @@ export default function AdminSettingsPage() {
                 대표: {footerInfo.ceo || '대표자명'}
                 <span className="mx-1.5 text-gray-400">·</span>
                 사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
+                {footerInfo.mailOrderReg && (
+                  <>
+                    <span className="mx-1.5 text-gray-400">·</span>
+                    통신판매업신고번호: {footerInfo.mailOrderReg}
+                  </>
+                )}
+                {footerInfo.importBizReg && (
+                  <>
+                    <span className="mx-1.5 text-gray-400">·</span>
+                    수입・판매업 영업등록증: {footerInfo.importBizReg}
+                  </>
+                )}
+                {footerInfo.privacyOfficer && (
+                  <>
+                    <span className="mx-1.5 text-gray-400">·</span>
+                    개인정보보호책임자: {footerInfo.privacyOfficer}
+                  </>
+                )}
                 <span className="mx-1.5 text-gray-400">·</span>
                 주소: {footerInfo.address || '주소'}
                 <span className="mx-1.5 text-gray-400">·</span>
