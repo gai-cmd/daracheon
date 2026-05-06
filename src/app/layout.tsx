@@ -303,8 +303,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       : item
   );
 
-  // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리
-  const settings = await readSingleSafe<{
+  // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리.
+  // unstable_cache 우회 — 어드민 저장 후 즉시 반영 보장.
+  // (Navigation 과 동일한 패턴; blob 1 회 read 라 비용 부담 작음.)
+  const settings = await readSingleUncached<{
     name?: string;
     description?: string;
     ceo?: string;
