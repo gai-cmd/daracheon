@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData } from '@/lib/db';
+import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
@@ -25,7 +25,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const inquiries = await readData('inquiries');
+    // 어드민 화면은 항상 최신 상태를 봐야 한다. unstable_cache 우회.
+    // 5분 캐시 지연 때문에 새 문의가 즉시 안 보이는 문제 회피.
+    const inquiries = await readDataUncached('inquiries');
     return NextResponse.json({
       inquiries,
       total: inquiries.length,
@@ -60,7 +62,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const inquiries = await readData('inquiries');
+    const inquiries = await readDataUncached('inquiries');
     const index = inquiries.findIndex((inq) => inq.id === body.id);
 
     if (index === -1) {
@@ -197,7 +199,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const inquiries = await readData('inquiries');
+    const inquiries = await readDataUncached('inquiries');
     const index = inquiries.findIndex((inq) => inq.id === body.id);
 
     if (index === -1) {

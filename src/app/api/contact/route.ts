@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readData, writeData, readSingleSafe } from '@/lib/db';
+import { readDataUncached, writeData, readSingleSafe } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
 import { appendToGoogleSheet, notifyTelegram, type InquiryPayload } from '@/lib/integrations';
 
@@ -76,7 +76,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validated = contactSchema.parse(body);
 
-    const inquiries = await readData('inquiries');
+    // 캐시 우회 — 다른 Lambda 인스턴스가 막 쓴 데이터를 stale 캐시로 읽어
+    // 새 문의가 누락된 배열을 덮어쓰는 데이터 유실 방지.
+    const inquiries = await readDataUncached('inquiries');
 
     // 동일 이메일 1시간 내 중복 투입 차단 (봇이 이메일만 바꿔가며 공격하면
     // 막을 수 없으므로 IP rate limit 과 함께 사용)
