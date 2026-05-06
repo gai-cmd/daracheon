@@ -372,17 +372,44 @@ export async function listTelegramChats(): Promise<TelegramChatsResult> {
     }
 
     const seen = new Map<string, TelegramChatHint>();
+    // 업그레이드된 옛 그룹 ID 수집 (텔레그램 업데이트가 명시적으로 알려주는 케이스).
+    const migrated = new Set<string>();
     for (const update of body.result ?? []) {
       const chat = (update.message?.chat ?? update.channel_post?.chat ?? update.my_chat_member?.chat) as
         | { id?: number; title?: string; type?: string; username?: string; first_name?: string }
         | undefined;
       if (!chat || chat.id === undefined) continue;
       const id = String(chat.id);
+
+      // message.migrate_from_chat_id: 이 새 슈퍼그룹이 어느 옛 ID 에서 왔는지.
+      const fromId = (update.message as { migrate_from_chat_id?: number } | undefined)?.migrate_from_chat_id;
+      if (typeof fromId === 'number') migrated.add(String(fromId));
+      // message.migrate_to_chat_id: 이 옛 그룹이 어느 새 ID 로 갔는지 — 옛 ID 자체를 무효로 표시.
+      const toId = (update.message as { migrate_to_chat_id?: number } | undefined)?.migrate_to_chat_id;
+      if (typeof toId === 'number') migrated.add(id);
+
       if (seen.has(id)) continue;
       const title =
         chat.title || (chat.username ? `@${chat.username}` : '') || chat.first_name || '(이름 없음)';
       seen.set(id, { chatId: id, title, type: chat.type ?? '' });
     }
+
+    // 휴리스틱: 같은 자릿수(magnitude) 의 일반 그룹 ↔ 슈퍼그룹(-100 prefix) 쌍이
+    // 보이면 일반 그룹은 업그레이드된 죽은 ID 로 간주하고 숨긴다.
+    // (텔레그램이 그룹을 슈퍼그룹으로 자동 승격할 때 같은 magnitude 를 유지)
+    const supergroupMagnitudes = new Set<string>();
+    for (const c of seen.values()) {
+      const m = c.chatId.match(/^-100(\d+)$/);
+      if (m) supergroupMagnitudes.add(m[1]);
+    }
+    for (const c of Array.from(seen.values())) {
+      const m = c.chatId.match(/^-(\d+)$/);
+      if (c.type === 'group' && m && supergroupMagnitudes.has(m[1])) {
+        seen.delete(c.chatId);
+      }
+    }
+    // 명시적 migrate 신호로 무효화된 옛 ID 도 제거.
+    for (const id of migrated) seen.delete(id);
 
     const chats = Array.from(seen.values());
     if (chats.length === 0) {
