@@ -17,6 +17,7 @@ interface Farm {
 interface HistoryEra {
   era: string;
   items: string[];
+  description?: string;
 }
 
 interface CertItem {
@@ -191,6 +192,8 @@ export default function AdminBrandStoryPage() {
           '2000 베트남 5개 성 농장 조성',
           '2001 동나이성 대규모 식재',
         ],
+        description:
+          "1998년 캄보디아에서 침향사업을 시작한 이래, 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년에는 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했습니다. 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다.",
       },
       {
         era: '2014-2019',
@@ -199,6 +202,8 @@ export default function AdminBrandStoryPage() {
           '2018 NTV Vietnam 통합법인 + Organic/HACCP 인증 + 식용가능 수지유도제 재개발',
           '2019 OCOP 품질보증',
         ],
+        description:
+          '2014년 노니발효 시스템을 개발하며 기술력을 축적했고, 2018년에는 NTV Vietnam 통합법인을 설립하고 Organic/HACCP 인증을 획득하며 식용가능 수지유도제를 재개발했습니다. 2019년에는 OCOP 베트남 정부 품질보증을 받았습니다.',
       },
       {
         era: '2023-2025',
@@ -207,6 +212,8 @@ export default function AdminBrandStoryPage() {
           '2024 조엘라이프 한국 시장 진출',
           '2025 아시아 10대 선도 브랜드 선정 + 특허 출원',
         ],
+        description:
+          '2023년 침향캡슐 건강기능성 재인증을 통해 18품목을 생산하게 되었고, 2024년에는 조엘라이프를 통해 한국 시장에 본격적으로 진출했습니다. 2025년에는 아시아 10대 선도 브랜드로 선정되었으며, 유기 바나듐·셀레늄·게르마늄 특허를 출원하며 기술 혁신을 이어가고 있습니다.',
       },
     ],
   });
@@ -557,9 +564,19 @@ export default function AdminBrandStoryPage() {
                           + 항목 추가
                         </button>
                       </div>
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-500 mb-1">시대 설명 문단 (선택) — 항목 아래에 단락으로 표시됩니다</label>
+                        <textarea
+                          rows={4}
+                          placeholder="예: 1998년 캄보디아에서 침향사업을 시작한 이래, 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다..."
+                          value={era.description ?? ''}
+                          onChange={(e) => { const n = [...historyTab.eras]; n[eraIdx] = { ...n[eraIdx], description: e.target.value }; setHistoryTab({ ...historyTab, eras: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setHistoryTab({ ...historyTab, eras: [...historyTab.eras, { era: '', items: [''] }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                  <button type="button" onClick={() => setHistoryTab({ ...historyTab, eras: [...historyTab.eras, { era: '', items: [''], description: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
                     + 시대 추가
                   </button>
                 </div>
