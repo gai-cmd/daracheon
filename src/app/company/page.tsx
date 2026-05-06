@@ -14,7 +14,7 @@ interface FaqItemWithMeta extends FaqItem {
 }
 
 export const metadata: Metadata = {
-  title: '회사소개 — 대라천 ZOEL LIFE(조엘라이프)',
+  title: '회사소개 — 조엘라이프(주)',
   description:
     '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 1998년 캄보디아에서 시작, 베트남 하띤성 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지 완벽한 가치사슬을 구축한 프리미엄 침향 전문 브랜드.',
   keywords: [

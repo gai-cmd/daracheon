@@ -157,7 +157,7 @@ export default function AdminBrandStoryPage() {
 
   // Frontend fallback 값과 동일 — CMS 데이터가 없을 때 현재 사이트에 노출되는 내용
   const DEFAULT_HERO_BG =
-    'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg';
+    'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg';
 
   const [hero, setHero] = useState<BrandStoryData['hero']>({
     sectionTag: 'Agarwood Story',

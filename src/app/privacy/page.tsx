@@ -6,7 +6,7 @@ import { DEFAULT_PRIVACY, type LegalDoc } from '@/data/legal';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '개인정보처리방침 — 대라천 ZOEL LIFE',
+  title: '개인정보처리방침',
   description:
     '조엘라이프 주식회사(대라천 ZOEL LIFE)의 개인정보처리방침. zoellife.com 이용자의 개인정보 수집·이용·보관·파기에 관한 사항을 안내합니다.',
   robots: { index: true, follow: true },

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { readDataUncached, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
-import { autoSplitMixed } from '@/lib/broadcasts';
+import { autoSplitMixed, formatBroadcastDateTime } from '@/lib/broadcasts';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
+import JsonLd from '@/components/ui/JsonLd';
 import styles from './page.module.css';
+
+const SITE_URL = 'https://zoellife.com';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +23,7 @@ const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
 };
 
 export const metadata: Metadata = {
-  title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기 | 대라천 ZOEL LIFE',
+  title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
   description:
     '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 대라천 ZOEL LIFE 침향 라이브 방송 시간표, 다시보기, Lot 인증서를 실시간으로 확인하세요.',
   keywords: [
@@ -30,7 +33,94 @@ export const metadata: Metadata = {
     '침향 라이브 방송', '침향 생방송',
   ],
   alternates: { canonical: 'https://zoellife.com/home-shopping' },
+  openGraph: {
+    type: 'website',
+    url: 'https://zoellife.com/home-shopping',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
+    description: '롯데·현대·CJ·GS 정규 편성. 침향 라이브 방송 시간표·다시보기·Lot 인증서 실시간 확인.',
+    images: ['/opengraph-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'On-Air 특별관 — TV 홈쇼핑 편성표',
+    description: '롯데·현대·CJ·GS 침향 편성표·다시보기.',
+    images: ['/twitter-image.jpg'],
+  },
 };
+
+/** 방송 일정을 BroadcastEvent + ItemList 로 직렬화.
+ *  AI 검색이 "오늘 침향 홈쇼핑 편성" 류 질의에 즉답 가능하게 한다. */
+function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
+  const items = broadcasts.slice(0, 30).map((b, i) => {
+    const start = b.scheduledAt;
+    const end = new Date(
+      new Date(b.scheduledAt).getTime() + (b.durationMinutes ?? 60) * 60_000
+    ).toISOString();
+    return {
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'BroadcastEvent',
+        name: `${b.channel} — ${b.description ?? '침향 방송'}`,
+        startDate: start,
+        endDate: end,
+        eventStatus:
+          b.status === 'canceled'
+            ? 'https://schema.org/EventCancelled'
+            : b.status === 'ended'
+              ? 'https://schema.org/EventCompleted'
+              : 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+        publishedOn: { '@type': 'BroadcastService', name: b.channel },
+        ...(b.host ? { actor: { '@type': 'Person', name: b.host } } : {}),
+        url: `${SITE_URL}/home-shopping`,
+        ...(b.specialPrice
+          ? {
+              offers: {
+                '@type': 'Offer',
+                price: b.specialPrice,
+                priceCurrency: 'KRW',
+                availability:
+                  b.status === 'live' || b.status === 'scheduled'
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/Discontinued',
+                url: `${SITE_URL}/home-shopping`,
+              },
+            }
+          : {}),
+      },
+    };
+  });
+
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': `${SITE_URL}/home-shopping#page`,
+      name: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
+      url: `${SITE_URL}/home-shopping`,
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': `${SITE_URL}/home-shopping#schedule`,
+      name: '대라천 침향 홈쇼핑 편성표',
+      itemListElement: items,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'On-Air 특별관', item: `${SITE_URL}/home-shopping` },
+      ],
+    },
+  ];
+}
 
 const STATUS_LABEL: Record<Broadcast['status'], string> = {
   scheduled: '예정',
@@ -247,8 +337,13 @@ export default async function HomeShoppingPage({
     featured = { ...featured, status: 'ended' };
   }
 
+  const broadcastJsonLd = buildBroadcastJsonLd(all);
+
   return (
     <>
+      {broadcastJsonLd.map((d, i) => (
+        <JsonLd key={i} data={d} />
+      ))}
       {/* HERO + LIVE CARD */}
       <section className={styles.hero} id="live">
         <div className={styles.wrap}>
@@ -291,15 +386,7 @@ export default async function HomeShoppingPage({
                 <div className={styles.liveMeta}>
                   {featured.host && <span><b>MC</b> · {featured.host}</span>}
                   <span>
-                    <b>일시</b> ·{' '}
-                    {new Date(featured.scheduledAt).toLocaleString('ko-KR', {
-                      timeZone: KST,
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit',
-                    })}
+                    <b>일시</b> · {formatBroadcastDateTime(featured.scheduledAt)}
                   </span>
                   {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>
@@ -526,16 +613,7 @@ export default async function HomeShoppingPage({
                       )}
                       <div className={styles.spMeta}>
                         <span>
-                          <b>방송</b> ·{' '}
-                          {new Date(b.scheduledAt).toLocaleString('ko-KR', {
-                            timeZone: KST,
-                            year: 'numeric',
-                            month: 'numeric',
-                            day: 'numeric',
-                            weekday: 'short',
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
+                          <b>방송</b> · {formatBroadcastDateTime(b.scheduledAt)}
                         </span>
                         <span className={styles.spStatus} data-status={b.status}>
                           {STATUS_LABEL[b.status]}

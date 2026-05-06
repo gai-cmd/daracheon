@@ -11,8 +11,9 @@
     "googleDrive": {
       "count": 15
     },
-    "flootApp": {
-      "count": 2
+    "legacyExternal": {
+      "count": 0,
+      "note": "기존 외부 CDN 이미지는 모두 Vercel Blob 으로 마이그레이션됨"
     },
     "unsplash": {
       "count": 7,
@@ -27,13 +28,13 @@
     "imgProcess": "27_ch1.png",
     "imgFarm": "18_ch1_gift_tradition.png",
     "aboutAgarwoodBenefit": "27_ch1.png",
-    "brandStoryHero": "floot-brand-story-hero.jpg",
+    "brandStoryHero": "brand-story-hero.jpg",
     "processHero": "27_ch1.png",
     "mediaHero": "27_ch1.png",
-    "heroImage1": "floot-hero-image.jpg",
-    "heroImage2": "floot-brand-story-hero.jpg",
+    "heroImage1": "hero-image-secondary.jpg",
+    "heroImage2": "brand-story-hero.jpg",
     "aboutAgarwoodHero": "18_ch1_gift_tradition.png",
-    "companyHero": "floot-hero-image.jpg"
+    "companyHero": "hero-image-secondary.jpg"
   },
   "brandImages": {
     "description": "Google Drive brand photos used in About/Brand Story sections",
@@ -163,6 +164,6 @@
   "notes": {
     "productImages": "Product images (침향환, 침향수, etc.) are stored in Firestore 'products' collection and loaded dynamically. They are NOT hardcoded in the JS bundle. The fallback products in code have empty image fields.",
     "siteImages": "Site-wide images are stored in Firestore 'siteImages/main' document and loaded dynamically via real-time listener (onSnapshot). The KO constant provides defaults.",
-    "videoHero": "A hero video exists at https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06e/data/d40dc46f-82f5-4e47-8cb3-2b4e1d81a19c.mp4 (not downloaded)"
+    "videoHero": "removed (legacy external CDN reference)"
   }
 }

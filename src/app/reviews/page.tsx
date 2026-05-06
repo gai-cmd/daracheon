@@ -10,7 +10,7 @@ import ReviewFormModal from './ReviewFormModal';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '고객 리뷰·후기 — 대라천 침향 실사용기 | ZOEL LIFE',
+  title: '고객 리뷰·후기 — 대라천 침향 실사용기',
   description:
     '대라천 ZOEL LIFE 프리미엄 침향 제품을 실제 구매·복용한 고객들의 생생한 후기. 침향 오일·캡슐·침향단·선향·침향수·침향차 효능 리뷰, 복용 경험담, 별점 평가.',
   keywords: [
@@ -21,7 +21,24 @@ export const metadata: Metadata = {
     '침향 별점', '침향 추천 후기',
   ],
   alternates: { canonical: 'https://zoellife.com/reviews' },
+  openGraph: {
+    type: 'website',
+    url: 'https://zoellife.com/reviews',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    title: '고객 리뷰·후기 — 대라천 침향 실사용기',
+    description: '인증 구매 고객의 침향 오일·캡슐·환·선향·차 실사용기와 별점 평가.',
+    images: ['/opengraph-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '고객 리뷰·후기 — 대라천 침향 실사용기',
+    description: '인증 구매 고객의 침향 별점·실사용기.',
+    images: ['/twitter-image.jpg'],
+  },
 };
+
+const SITE_URL = 'https://zoellife.com';
 
 interface ReviewsHero {
   kicker: string;
@@ -67,9 +84,19 @@ export default async function ReviewsPage() {
     })),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: '고객 후기', item: `${SITE_URL}/reviews` },
+    ],
+  };
+
   return (
     <>
       <JsonLd data={reviewJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       {/* Hero — /products 와 동일한 좌우 분할 레이아웃 */}
       <section className="relative pt-40 pb-28 bg-[#0a0b10] text-white">

@@ -15,9 +15,22 @@ import '@/styles/globals.css';
 
 // 사이트 단일 정규 도메인 — 모든 메타/JSON-LD/sitemap 이 이 값을 기준.
 // 환경변수로 오버라이드 가능 (스테이징/프리뷰 대응).
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
-  .replace(/\s+/g, '')
-  .replace(/\/$/, '');
+//
+// .env 에 따옴표·줄바꿈이 섞여 들어와도 SEO 신호가 깨지지 않도록 정규화:
+//   1) 실제 whitespace (\n / \r / \t / 공백) 제거
+//   2) dotenv 가 해석 못 한 리터럴 \n / \r / \t 시퀀스 제거
+//   3) 따옴표 strip
+//   4) trailing slash 제거
+function normalizeSiteUrl(raw: string): string {
+  return raw
+    .replace(/\\[nrt]/g, '')
+    .replace(/\s+/g, '')
+    .replace(/^['"]+|['"]+$/g, '')
+    .replace(/\/+$/, '');
+}
+const SITE_URL = normalizeSiteUrl(
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com'
+);
 
 const DEFAULT_TITLE = '대라천 ZOEL LIFE — 베트남 직영 프리미엄 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드';
 const DEFAULT_DESCRIPTION =
@@ -349,7 +362,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             은 dns-prefetch 만 (지연 로딩이라 TLS 까지 미리 잡을 필요 없음). */}
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://assets.floot.app" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         {/* hreflang — 단일 한국어 사이트지만 검색엔진 신호 차원에서 명시 */}

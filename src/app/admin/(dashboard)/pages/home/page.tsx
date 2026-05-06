@@ -87,7 +87,7 @@ const DEFAULT_HERO: HomeHero = {
   subtitle:
     '베트남 직영 농장에서 25년. 원산지·원료·제조·시험까지 4단계로 검증된 침향을 프리미엄이 아니라 근거로 증명합니다.',
   heroBg:
-    'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg',
+    'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg',
   ctaPrimaryLabel: '검증 과정 보기 →',
   ctaPrimaryHref: '/brand-story',
   ctaSecondaryLabel: '제품 보기',

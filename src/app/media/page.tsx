@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import { readSingleUncached, readDataSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
+
+const SITE_URL = 'https://zoellife.com';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장 | 대라천 ZOEL LIFE',
+  title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장',
   description:
     '베트남 하띤 200ha 대라천 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정을 미디어로 공개. 침향 영상, 침향 농장 다큐, 침향 인증 자료.',
   keywords: [
@@ -16,7 +19,93 @@ export const metadata: Metadata = {
     '침향 미디어', '침향 갤러리', '침향 보도자료',
   ],
   alternates: { canonical: 'https://zoellife.com/media' },
+  openGraph: {
+    type: 'website',
+    url: 'https://zoellife.com/media',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장',
+    description: '베트남 하띤 200ha 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정 미디어 공개.',
+    images: ['/opengraph-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '침향 영상·사진 미디어 — 하띤 농장 현장',
+    description: '대라천 직영 침향 농장의 영상·사진 갤러리.',
+    images: ['/twitter-image.jpg'],
+  },
 };
+
+function ytIdFromUrl(url: string): string | null {
+  const m = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(url);
+  return m ? m[1] : null;
+}
+
+/** /media 페이지의 영상·사진·기사를 JSON-LD 로 직렬화.
+ *  AI 검색·Google AI Overview·Naver 검색이 "침향 농장 영상" 류 질의에 직접
+ *  인용 가능하도록 ImageGallery + ItemList(VideoObject) + BreadcrumbList 구성. */
+function buildMediaJsonLd(media: MediaItem[]) {
+  const videos = media.filter((m) => m.type === 'video');
+  const photos = media.filter((m) => m.type === 'photo');
+
+  const videoItems = videos.map((v, i) => {
+    const id = v.url ? ytIdFromUrl(v.url) : null;
+    const watchUrl = v.url ?? (id ? `https://www.youtube.com/watch?v=${id}` : `${SITE_URL}/media`);
+    const item: Record<string, unknown> = {
+      '@type': 'VideoObject',
+      position: i + 1,
+      name: v.title,
+      description: v.excerpt ?? v.title,
+      thumbnailUrl: v.image,
+      uploadDate: v.date,
+      contentUrl: watchUrl,
+      ...(id ? { embedUrl: `https://www.youtube.com/embed/${id}` } : {}),
+      publisher: { '@type': 'Organization', name: '대라천 ZOEL LIFE' },
+    };
+    return item;
+  });
+
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': `${SITE_URL}/media#page`,
+      name: '침향 영상·사진 미디어',
+      url: `${SITE_URL}/media`,
+      description: '베트남 하띤 200ha 직영 농장 영상·사진 갤러리.',
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': `${SITE_URL}/media#videos`,
+      name: '침향 농장 영상',
+      itemListElement: videoItems,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      '@id': `${SITE_URL}/media#photos`,
+      name: '침향 농장 사진',
+      image: photos.map((p) => ({
+        '@type': 'ImageObject',
+        contentUrl: p.image,
+        name: p.title,
+        creditText: p.source ?? '대라천 ZOEL LIFE',
+        datePublished: p.date,
+      })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: '미디어', item: `${SITE_URL}/media` },
+      ],
+    },
+  ];
+}
 
 // ── process 기본값 (pages.json 없을 때 fallback) ──
 
@@ -307,5 +396,14 @@ export default async function MediaPage() {
     articles: allMedia.filter((m) => m.type === 'article' || m.type === 'press'),
   };
 
-  return <MediaPageClient farmStory={farmStory} gallery={gallery} />;
+  const mediaJsonLd = buildMediaJsonLd(allMedia);
+
+  return (
+    <>
+      {mediaJsonLd.map((d, i) => (
+        <JsonLd key={i} data={d} />
+      ))}
+      <MediaPageClient farmStory={farmStory} gallery={gallery} />
+    </>
+  );
 }

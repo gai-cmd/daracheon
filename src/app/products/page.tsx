@@ -8,7 +8,7 @@ import styles from './page.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '제품 소개 — 수십 년 숙성의 고귀한 침향 제품 | 대라천 ZOEL LIFE',
+  title: '제품 소개 — 수십 년 숙성의 고귀한 침향 제품',
   description:
     "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria Agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
   keywords: [
@@ -32,11 +32,13 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/products',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
+    images: ['/opengraph-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: '제품 소개 — 대라천 침향 제품',
     description: '25년 숙성 Aquilaria Agallocha Roxburgh 정품 라인업.',
+    images: ['/twitter-image.jpg'],
   },
 };
 
@@ -251,7 +253,25 @@ export default async function ProductsPage() {
         '@type': 'ListItem',
         position: i + 1,
         url: `https://zoellife.com/products/${p.slug}`,
-        name: p.name,
+        item: {
+          '@type': 'Product',
+          name: p.name,
+          url: `https://zoellife.com/products/${p.slug}`,
+          ...(p.image ? { image: p.image } : {}),
+          ...(p.shortDescription ? { description: p.shortDescription } : {}),
+          brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
+          ...(typeof p.price === 'number'
+            ? {
+                offers: {
+                  '@type': 'Offer',
+                  price: p.price,
+                  priceCurrency: 'KRW',
+                  availability: 'https://schema.org/InStock',
+                  url: `https://zoellife.com/products/${p.slug}`,
+                },
+              }
+            : {}),
+        },
       })),
     },
   };

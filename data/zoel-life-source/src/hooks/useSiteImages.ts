@@ -3,20 +3,20 @@ import { db } from '../firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 const DEFAULT_IMAGES: Record<string, string> = {
-  videoHero: "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06e/data/d40dc46f-82f5-4e47-8cb3-2b4e1d81a19c.mp4",
+  videoHero: "",
   imgBrand1: "https://picsum.photos/seed/agarwood1/800/1000",
   imgBrand2: "https://picsum.photos/seed/agarwood2/800/800",
   imgAgarwood: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png",
   imgProcess: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png",
   imgFarm: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png",
   aboutAgarwoodBenefit: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png",
-  brandStoryHero: "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg",
+  brandStoryHero: "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg",
   processHero: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png",
   mediaHero: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png",
-  heroImage1: "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/6ac650af-e832-4e80-a058-999e73ba5a81.jpg",
-  heroImage2: "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg",
+  heroImage1: "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg",
+  heroImage2: "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg",
   aboutAgarwoodHero: "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png",
-  companyHero: "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/6ac650af-e832-4e80-a058-999e73ba5a81.jpg",
+  companyHero: "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg",
 };
 
 export const useSiteImages = () => {

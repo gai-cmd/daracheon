@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { formatBroadcastDateTime } from '@/lib/broadcasts';
 
 interface Props {
   scheduledAt: string;
@@ -78,18 +79,7 @@ export default function BroadcastCountdown({
         })()
       : null;
 
-  const dateLabel = new Intl.DateTimeFormat('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    weekday: 'short',
-  }).format(targetDate);
-  const timeLabel = new Intl.DateTimeFormat('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(targetDate);
+  const dateTimeLabel = formatBroadcastDateTime(scheduledAt);
 
   /* ─── 통합 — 모든 상태가 동일한 4단 구조: 캡션 → 미디어 → 카운트다운 → 메타 ─── */
   const ytId = vodUrl ? extractYouTubeId(vodUrl) : null;
@@ -209,7 +199,7 @@ export default function BroadcastCountdown({
               <div className="cd-poster-status">
                 {isEnded ? '다시보기가 곧 업로드됩니다' : isLive ? '라이브 스트림 연결 대기 중' : '방송 예정'}
               </div>
-              <div className="cd-poster-time">{dateLabel} · {timeLabel}</div>
+              <div className="cd-poster-time">{dateTimeLabel}</div>
             </div>
           </div>
         )}
@@ -245,7 +235,7 @@ export default function BroadcastCountdown({
         <span className="cd-meta-channel">{channel}</span>
         <span className="cd-meta-sep" />
         <span>
-          {dateLabel} · {timeLabel}
+          {dateTimeLabel}
           {isEnded ? ' 방영' : ''}
         </span>
       </div>

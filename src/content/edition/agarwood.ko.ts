@@ -13,7 +13,7 @@ export const agarwoodEditionKo: EditionContent = {
     subtitle:
       "베트남 5개 성, 200ha의 직영 농장, 25년의 시간. 학명 Aquilaria Agallocha Roxburgh의 진짜 이야기.",
     edition: 'Edition 01 · 2026 Spring',
-    backgroundImage: '/images/floot-hero-image.jpg',
+    backgroundImage: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg',
   },
   foreword: {
     greeting: '귀한 시간을 내어 이 에디션을 펼쳐 주셔서 감사합니다.',

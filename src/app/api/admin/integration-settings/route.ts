@@ -8,6 +8,8 @@ import {
   getServiceAccountEmail,
   listTelegramChats,
 } from '@/lib/integrations';
+import { sendDailyReport } from '@/lib/daily-report';
+import { getGa4Config } from '@/lib/ga4';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +23,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const stored = (await readSingle<IntegrationSettings>('integration-settings')) ?? {};
+    const ga4 = getGa4Config();
     return NextResponse.json({
       googleSheetsUrl: stored.googleSheetsUrl ?? '',
       googleSheetsTab: stored.googleSheetsTab ?? '',
@@ -29,6 +32,9 @@ export async function GET() {
       updatedAt: stored.updatedAt ?? '',
       serviceAccountEmail: getServiceAccountEmail() ?? '',
       serviceAccountReady: !!getServiceAccountEmail() && !!process.env.GOOGLE_PRIVATE_KEY,
+      ga4Ready: ga4.ready,
+      ga4PropertyId: ga4.propertyId ?? '',
+      ga4ServiceAccountEmail: ga4.serviceAccountEmail ?? '',
     });
   } catch (error) {
     console.error('[Admin IntegrationSettings] GET Error:', error);
@@ -85,11 +91,11 @@ export async function PUT(request: Request) {
   }
 }
 
-// target: 'sheets' | 'telegram' | 'telegram-chats'
+// target: 'sheets' | 'telegram' | 'telegram-chats' | 'ga4-report'
 export async function POST(request: Request) {
   try {
     const body = (await request.json().catch(() => ({}))) as {
-      target?: 'sheets' | 'telegram' | 'telegram-chats';
+      target?: 'sheets' | 'telegram' | 'telegram-chats' | 'ga4-report';
     };
     const target = body.target;
 
@@ -105,9 +111,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, chats: result.chats ?? [], hint: result.hint });
     }
 
+    if (target === 'ga4-report') {
+      const result = await sendDailyReport();
+      await logAdmin('integration-settings', 'test', {
+        summary: 'GA4 데일리 리포트 테스트 발송',
+        meta: { ok: result.ok, error: result.error, dateLabel: result.dateLabel },
+      });
+      if (result.skipped) {
+        return NextResponse.json(
+          { success: false, message: result.error ?? 'GA4 또는 텔레그램 설정이 없습니다.' },
+          { status: 400 },
+        );
+      }
+      if (!result.ok) {
+        return NextResponse.json(
+          { success: false, message: result.error ?? '실패' },
+          { status: 500 },
+        );
+      }
+      return NextResponse.json({
+        success: true,
+        message: `GA4 데일리 리포트 발송 완료 (${result.dateLabel ?? '-'})`,
+      });
+    }
+
     if (target !== 'sheets' && target !== 'telegram') {
       return NextResponse.json(
-        { success: false, message: 'target 은 sheets · telegram · telegram-chats' },
+        { success: false, message: 'target 은 sheets · telegram · telegram-chats · ga4-report' },
         { status: 400 },
       );
     }

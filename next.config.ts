@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: 'assets.floot.app' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'img.youtube.com' },
       { protocol: 'https', hostname: 'i.ytimg.com' },
@@ -42,7 +41,7 @@ const nextConfig: NextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://openapi.map.naver.com https://oapi.map.naver.com https://*.pstatic.net",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://assets.floot.app https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net",
+      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net",
       "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
       "connect-src 'self' https://www.google-analytics.com https://*.public.blob.vercel-storage.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.navercorp.com",
       "frame-src 'self' https://www.youtube.com https://youtube.com https://drive.google.com https://map.naver.com https://*.map.naver.com",

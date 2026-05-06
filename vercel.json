@@ -13,6 +13,7 @@
     }
   ],
   "crons": [
-    { "path": "/api/cron/daily-backup", "schedule": "0 15 * * *" }
+    { "path": "/api/cron/daily-backup", "schedule": "0 15 * * *" },
+    { "path": "/api/cron/ga4-daily-report", "schedule": "0 0 * * *" }
   ]
 }

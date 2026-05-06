@@ -4,8 +4,10 @@ import JsonLd from '@/components/ui/JsonLd';
 import styles from './page.module.css';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
+  .replace(/\\[nrt]/g, '')
   .replace(/\s+/g, '')
-  .replace(/\/$/, '');
+  .replace(/^['"]+|['"]+$/g, '')
+  .replace(/\/+$/, '');
 
 export const dynamic = 'force-dynamic';
 
@@ -66,7 +68,7 @@ const DEFAULT_HERO: HomeHero = {
   titleKr: '대라천은, 진짜 침향만 다룹니다',
   subtitle: '한 품종, 한 나라 — Aquilaria Agallocha Roxburgh, 베트남 직영.\n25년, 한 회사 — 베트남 직영 생산 · 한국 직판. 조엘라이프가 원산지부터 연결합니다.\n프리미엄이 아니라 근거로 증명합니다.',
   heroBg:
-    'https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg',
+    'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg',
   ctaPrimaryLabel: '검증 과정 보기 →',
   ctaPrimaryHref: '/brand-story',
   ctaSecondaryLabel: '제품 보기',

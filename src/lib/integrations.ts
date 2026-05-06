@@ -212,6 +212,32 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/** 일반 텔레그램 메시지 전송. 봇 토큰·chat_id 는 통합 설정/ENV 에서 자동 해결. */
+export async function sendTelegramMessage(text: string): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.telegramBotToken || !cfg.telegramChatId) {
+    return { ok: false, skipped: true, error: 'telegram not configured' };
+  }
+  try {
+    const url = `https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: cfg.telegramChatId,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      }),
+    });
+    const body = (await res.json().catch(() => ({}))) as { ok?: boolean; description?: string };
+    if (!res.ok || !body.ok) return { ok: false, error: body.description ?? `HTTP ${res.status}` };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 export async function notifyTelegram(inquiry: InquiryPayload): Promise<IntegrationResult> {
   const cfg = await resolveIntegrationSettings();
   if (!cfg.telegramBotToken || !cfg.telegramChatId) {

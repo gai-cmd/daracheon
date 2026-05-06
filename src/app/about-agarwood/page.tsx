@@ -9,7 +9,7 @@ import AboutAgarwoodClient from './AboutAgarwoodClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh | 대라천 ZOEL LIFE',
+  title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
   description:
     '식약처 공식 등재 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [

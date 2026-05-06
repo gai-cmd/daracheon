@@ -6,7 +6,7 @@ import BrandStoryClient from './BrandStoryClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "브랜드 스토리 — 대라천 '참'침향 | ZOEL LIFE",
+  title: "브랜드 스토리 — 대라천 '참'침향",
   description:
     "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
   keywords: [
@@ -32,11 +32,13 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/brand-story',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
+    images: ['/opengraph-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: "대라천 '참'침향 — 25년 여정",
     description: '1998년 캄보디아에서 시작된 대라천 침향의 농장·공정·역사 이야기.',
+    images: ['/twitter-image.jpg'],
   },
 };
 
@@ -121,8 +123,26 @@ export default async function BrandStoryPage() {
     ],
   };
 
+  // Article — 브랜드 스토리는 long-form 콘텐츠 → Article 로 추가 노출.
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: "대라천 '참'침향 — 25년 브랜드 스토리",
+    description:
+      "1998년 캄보디아 시작, 베트남 하띤성 200ha · 약 400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정.",
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': 'https://zoellife.com/#website' },
+    author: { '@type': 'Organization', name: '대라천 ZOEL LIFE', url: 'https://zoellife.com' },
+    publisher: { '@id': 'https://zoellife.com/#organization' },
+    mainEntityOfPage: 'https://zoellife.com/brand-story',
+    about: { '@id': 'https://zoellife.com/#brand' },
+    keywords:
+      '대라천, ZOEL LIFE, 조엘라이프, 침향 브랜드, 베트남 침향, 25년 침향, Aquilaria Agallocha Roxburgh',
+  };
+
   return (
     <>
+      <JsonLd data={articleJsonLd} />
       <JsonLd data={aboutPageJsonLd} />
       {videoJsonLd && <JsonLd data={videoJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />

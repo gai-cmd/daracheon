@@ -6,8 +6,10 @@ import type { Product } from '@/data/products';
 // 모든 공백·제어문자 제거 + trailing slash 정리.
 function getBaseUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
+    .replace(/\\[nrt]/g, '')
     .replace(/\s+/g, '')
-    .replace(/\/$/, '');
+    .replace(/^['"]+|['"]+$/g, '')
+    .replace(/\/+$/, '');
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

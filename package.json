@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "init-db": "tsx scripts/init-db.ts",
     "products:inspect": "tsx scripts/inspect-products-gallery.ts",
-    "products:strip-vn": "tsx scripts/strip-vn-pack-from-products.ts"
+    "products:strip-vn": "tsx scripts/strip-vn-pack-from-products.ts",
+    "proposal:pptx": "node scripts/build-proposal-pptx.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.52.0",
@@ -31,6 +32,7 @@
     "autoprefixer": "^10.4.20",
     "dotenv": "^17.4.2",
     "postcss": "^8.4.49",
+    "pptxgenjs": "^4.0.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0"
   }

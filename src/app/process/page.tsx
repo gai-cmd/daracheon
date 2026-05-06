@@ -7,7 +7,7 @@ import styles from '@/styles/zoel/story-page.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영 | 대라천 ZOEL LIFE',
+  title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
   description:
     '베트남 하띤(Ha Tinh) 북위 18°의 대라천 직영 침향 농장 200ha·약 400만 그루. 62가구 현지 공동체 파트너십, 4단계 원산지 검증, HACCP·GMP 6단계 생산 공정 — 묘목부터 완제품까지 모든 과정 공개.',
   keywords: [
@@ -18,6 +18,21 @@ export const metadata: Metadata = {
     '원산지 침향', 'CITES 침향', 'Aquilaria Agallocha Roxburgh 농장',
   ],
   alternates: { canonical: 'https://zoellife.com/process' },
+  openGraph: {
+    type: 'article',
+    url: 'https://zoellife.com/process',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
+    description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증 · HACCP·GMP 6단계 공정.',
+    images: ['/opengraph-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
+    description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증.',
+    images: ['/twitter-image.jpg'],
+  },
 };
 
 interface ProcessHero {
@@ -207,8 +222,26 @@ export default async function ProcessPage() {
     ],
   };
 
+  // Article — 콘텐츠 자체를 권위 있는 출판물로 선언 → AI 답변에서 단독 인용 가능.
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
+    description: hero.lede,
+    image: hero.heroImage ?? chapters[0]?.imageSrc,
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': 'https://zoellife.com/#website' },
+    author: { '@type': 'Organization', name: '대라천 ZOEL LIFE', url: 'https://zoellife.com' },
+    publisher: { '@id': 'https://zoellife.com/#organization' },
+    mainEntityOfPage: 'https://zoellife.com/process',
+    about: { '@id': 'https://zoellife.com/#brand' },
+    keywords:
+      '침향 농장, 베트남 침향, 하띤 침향, 침향 생산 공정, HACCP, GMP, CITES, Aquilaria Agallocha Roxburgh',
+  };
+
   return (
     <>
+      <JsonLd data={articleJsonLd} />
       <JsonLd data={howToJsonLd} />
       <JsonLd data={videoJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />

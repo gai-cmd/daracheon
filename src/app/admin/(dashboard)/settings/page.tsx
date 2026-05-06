@@ -963,7 +963,7 @@ function IntegrationSettingsSection({
   setSaving: (v: boolean) => void;
 }) {
   const [loading, setLoading] = useState(true);
-  const [testing, setTesting] = useState<'sheets' | 'telegram' | null>(null);
+  const [testing, setTesting] = useState<'sheets' | 'telegram' | 'ga4-report' | null>(null);
   const [form, setForm] = useState<IntegrationSettingsForm>({
     googleSheetsUrl: '',
     googleSheetsTab: '',
@@ -973,6 +973,9 @@ function IntegrationSettingsSection({
   const [serviceAccountEmail, setServiceAccountEmail] = useState('');
   const [serviceAccountReady, setServiceAccountReady] = useState(false);
   const [hasTelegramToken, setHasTelegramToken] = useState(false);
+  const [ga4Ready, setGa4Ready] = useState(false);
+  const [ga4PropertyId, setGa4PropertyId] = useState('');
+  const [ga4ServiceAccountEmail, setGa4ServiceAccountEmail] = useState('');
   const [chatHints, setChatHints] = useState<Array<{ chatId: string; title: string; type: string }> | null>(null);
   const [chatHintMsg, setChatHintMsg] = useState('');
   const [findingChats, setFindingChats] = useState(false);
@@ -990,6 +993,9 @@ function IntegrationSettingsSection({
         setHasTelegramToken(!!data.hasTelegramToken);
         setServiceAccountEmail(data.serviceAccountEmail ?? '');
         setServiceAccountReady(!!data.serviceAccountReady);
+        setGa4Ready(!!data.ga4Ready);
+        setGa4PropertyId(data.ga4PropertyId ?? '');
+        setGa4ServiceAccountEmail(data.ga4ServiceAccountEmail ?? '');
       })
       .catch(() => onToast('연동 설정 로드 실패'))
       .finally(() => setLoading(false));
@@ -1039,7 +1045,7 @@ function IntegrationSettingsSection({
     }
   }
 
-  async function runTest(target: 'sheets' | 'telegram') {
+  async function runTest(target: 'sheets' | 'telegram' | 'ga4-report') {
     setTesting(target);
     try {
       const res = await fetch('/api/admin/integration-settings', {
@@ -1242,6 +1248,56 @@ function IntegrationSettingsSection({
             className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
           >
             {testing === 'telegram' ? '발송 중...' : '텔레그램 테스트 메시지'}
+          </button>
+        </div>
+      </div>
+
+      {/* GA4 Daily Report */}
+      <div className="border-t border-gray-100 pt-6 mt-8">
+        <h3 className="text-base font-semibold text-gray-900 mb-2">📊 GA4 데일리 리포트 (텔레그램 자동 발송)</h3>
+        <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+          매일 <span className="font-medium text-gray-700">KST 09:00</span> 에 어제 GA4 통계(활성 사용자·세션·페이지뷰·인기 페이지·트래픽 소스·디바이스)를 위 텔레그램 채널로 자동 발송합니다.
+          Vercel Cron 으로 동작하며 별도 설정은 필요 없습니다 — 환경변수만 설정되면 즉시 활성화.
+        </p>
+
+        <div className={`rounded-lg border p-3 mb-4 text-xs ${ga4Ready ? 'border-emerald-200 bg-emerald-50' : 'border-amber-200 bg-amber-50'}`}>
+          {ga4Ready ? (
+            <div className="space-y-1">
+              <p className="font-semibold text-emerald-800">✓ GA4 연결됨</p>
+              <p className="text-emerald-700">
+                Property ID: <code className="bg-white px-1.5 py-0.5 rounded border border-emerald-200">{ga4PropertyId}</code>
+              </p>
+              <p className="text-emerald-700 break-all">
+                서비스 계정: <code className="bg-white px-1.5 py-0.5 rounded border border-emerald-200">{ga4ServiceAccountEmail}</code>
+              </p>
+            </div>
+          ) : (
+            <div>
+              <p className="font-semibold text-amber-800">⚠ GA4 환경변수가 설정되지 않았습니다.</p>
+              <p className="mt-1 text-amber-700 leading-relaxed">
+                Vercel 환경변수에 다음 3개 추가 후 재배포:
+              </p>
+              <ul className="mt-1.5 ml-4 list-disc text-amber-700 leading-relaxed">
+                <li><code className="bg-white px-1 rounded border border-amber-200">GA4_PROPERTY_ID</code> (숫자 9자리)</li>
+                <li><code className="bg-white px-1 rounded border border-amber-200">GA4_SERVICE_ACCOUNT_EMAIL</code></li>
+                <li><code className="bg-white px-1 rounded border border-amber-200">GA4_PRIVATE_KEY</code> (서비스 계정 JSON 의 private_key 그대로)</li>
+              </ul>
+              <p className="mt-1.5 text-amber-700">
+                서비스 계정은 GA4 속성 액세스 관리에서 <span className="font-medium">뷰어</span> 권한 부여 필수.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => runTest('ga4-report')}
+            disabled={testing !== null || !ga4Ready || !hasTelegramToken}
+            title={!ga4Ready ? 'GA4 환경변수를 먼저 설정하세요' : !hasTelegramToken ? '텔레그램 봇 토큰을 먼저 저장하세요' : ''}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-medium hover:bg-gray-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {testing === 'ga4-report' ? '발송 중...' : '데일리 리포트 테스트 발송'}
           </button>
         </div>
       </div>
