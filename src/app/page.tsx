@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import JsonLd from '@/components/ui/JsonLd';
 import { readSingleSafe } from '@/lib/db';
 import styles from './page.module.css';
 
@@ -178,18 +177,13 @@ const PROCESS_IMAGES = [
   'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg',
 ];
 
+// 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
+// (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
-  title: 'ZOEL LIFE — 25년 검증된 침향, 대라천 참침향',
+  title: '대라천 ZOEL LIFE — 25년 검증된 베트남 직영 프리미엄 침향',
   description:
-    '베트남 직영 농장에서 25년 연구 끝에 탄생한 명품 침향. Aquilaria Agallocha Roxburgh 정품, HACCP·GMP·CITES 인증.',
-  alternates: { canonical: 'https://www.daracheon.com' },
-};
-
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'ZOEL LIFE - 대라천 참침향',
-  url: 'https://www.daracheon.com',
+    '식약처 등재 침향(Aquilaria Agallocha Roxburgh) 전문. 베트남 하띤성 200ha 직영 농장 25년, HACCP·GMP·CITES·FDA 인증, Lot별 시험성적서 공개. 침향 오일·캡슐·침향단·선향 한국 직판.',
+  alternates: { canonical: '/' },
 };
 
 export default async function HomePage() {
@@ -207,8 +201,6 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page}>
-      <JsonLd data={websiteJsonLd} />
-
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div className="hero-bg-agarwood" aria-hidden />

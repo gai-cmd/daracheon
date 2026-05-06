@@ -101,7 +101,7 @@ export default async function ProductDetailPage(
       availability: product.inStock
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      url: `https://www.daracheon.com/products/${product.slug}`,
+      url: `https://zoellife.com/products/${product.slug}`,
     },
   };
   if (ratingCount > 0) {
@@ -126,9 +126,9 @@ export default async function ProductDetailPage(
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://www.daracheon.com/products' },
-      { '@type': 'ListItem', position: 3, name: product.name, item: `https://www.daracheon.com/products/${product.slug}` },
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://zoellife.com/products' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://zoellife.com/products/${product.slug}` },
     ],
   };
 

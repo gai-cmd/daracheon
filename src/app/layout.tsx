@@ -13,14 +13,48 @@ import {
 } from '@/data/navigation';
 import '@/styles/globals.css';
 
-const DEFAULT_TITLE = '대라천 — 베트남 직영 프리미엄 침향 전문 브랜드 | ZOEL LIFE';
+// 사이트 단일 정규 도메인 — 모든 메타/JSON-LD/sitemap 이 이 값을 기준.
+// 환경변수로 오버라이드 가능 (스테이징/프리뷰 대응).
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
+  .replace(/\s+/g, '')
+  .replace(/\/$/, '');
+
+const DEFAULT_TITLE = '대라천 ZOEL LIFE — 베트남 직영 프리미엄 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드';
 const DEFAULT_DESCRIPTION =
-  '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장, 25년 재배 노하우. 침향 오일·캡슐·침향단·선향 한국 직판. 학명 보증 정품 침향만 취급.';
+  '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드 대라천 ZOEL LIFE. 베트남 하띤성 200ha 직영 농장에서 25년간 재배·연구한 정품 침향만 취급합니다. 침향 오일·캡슐·침향단(환)·선향(스틱)·침향수·침향차 한국 직판. HACCP·GMP·CITES·FDA 인증, Lot별 시험성적서 공개.';
+
+// 검색 의도별로 키워드 카테고리화 — Title/Description 으로 잡기 어려운 long-tail
+// 까지 metadata.keywords 로 보강. (Google 자체는 keywords 가중치 낮지만
+// Naver/Bing/AI 크롤러가 토픽 분류에 활용.)
+const KW_BRAND = ['대라천', 'ZOEL LIFE', '조엘라이프', '대라천 침향', '조엘라이프 침향', '大羅天', 'Đại La Thiên'];
+const KW_PRODUCT = [
+  '침향 오일', '침향오일', '침향 캡슐', '침향캡슐', '참 침향 캡슐',
+  '침향환', '침향단', '침향 선향', '침향 스틱', '침향수', '침향차',
+  '침향 보석함', '침향 선물세트', '침향 명절선물',
+];
+const KW_BENEFIT = [
+  '침향 효능', '침향 효과', '침향 부작용', '침향 복용법',
+  '침향 자양강장', '침향 숙면', '침향 항염', '침향 혈관',
+  '침향 신경 안정', '침향 소화', '침향 뇌 건강', '아가로스피롤',
+];
+const KW_ORIGIN = [
+  '베트남 침향', '하띤 침향', '베트남 하띤성 침향', '직영 농장 침향',
+  'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+  '식약처 등재 침향', '대한민국약전외한약 침향', 'CITES 침향',
+];
+const KW_COMPARE = [
+  '진짜 침향', '정품 침향', '프리미엄 침향', '명품 침향',
+  '침향 가짜 구별', '침향 구매', '침향 직구', '침향 한국 직판',
+  '국산 침향 vs 베트남 침향', '침향 추천',
+];
+const KW_AUTHORITY = [
+  'HACCP 침향', 'GMP 침향', 'FDA 등록 침향', 'OCOP 침향',
+  '침향 시험성적서', '침향 중금속 검사', '침향 학명 보증',
+];
 const DEFAULT_KEYWORDS = [
-  '침향', '대라천', 'ZOEL LIFE', '조엘라이프',
-  '침향 효능', '침향 오일', '침향환', '침향 캡슐', '침향단', '침향 선향',
-  '침향수', '침향차', '베트남 침향', '프리미엄 침향',
-  'Aquilaria Agallocha Roxburgh', '침향 구매',
+  '침향',
+  ...KW_BRAND, ...KW_PRODUCT, ...KW_BENEFIT,
+  ...KW_ORIGIN, ...KW_COMPARE, ...KW_AUTHORITY,
 ];
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png';
 
@@ -37,8 +71,12 @@ export async function generateMetadata(): Promise<Metadata> {
     : DEFAULT_KEYWORDS;
   const ogImage = seo?.ogImage || DEFAULT_OG_IMAGE;
 
+  // Google Search Console 인증 토큰 — zoellife.com 등록용.
+  // env 미설정 시에도 기본값으로 인증이 유지되도록 하드코딩 fallback.
+  // (다른 GSC 속성에서 재발급 시 GOOGLE_SITE_VERIFICATION env 로 덮어쓰기.)
+  const GSC_DEFAULT = 'RvjwX2kdcOYXh_k3fkUKGQc-r_N_Yby-kb2Vb3lywpM';
   const verificationEntries = (() => {
-    const google = process.env.GOOGLE_SITE_VERIFICATION;
+    const google = process.env.GOOGLE_SITE_VERIFICATION || GSC_DEFAULT;
     const naver = process.env.NAVER_SITE_VERIFICATION;
     const bing = process.env.BING_SITE_VERIFICATION;
     const v: { google?: string; other?: Record<string, string | string[]> } = {};
@@ -51,26 +89,26 @@ export async function generateMetadata(): Promise<Metadata> {
   })();
 
   return {
-    metadataBase: new URL('https://www.daracheon.com'),
+    metadataBase: new URL(SITE_URL),
     icons: {
       icon: '/images/ZOEL-LIFE-logo.png',
       shortcut: '/images/ZOEL-LIFE-logo.png',
       apple: '/images/ZOEL-LIFE-logo.png',
     },
-    title: { default: title, template: '%s | 대라천' },
+    title: { default: title, template: '%s | 대라천 ZOEL LIFE' },
     description,
     keywords,
-    authors: [{ name: '대라천 (Daracheon)', url: 'https://www.daracheon.com' }],
-    creator: '대라천',
-    publisher: '대라천',
+    authors: [{ name: '대라천 ZOEL LIFE (Daracheon)', url: SITE_URL }],
+    creator: '대라천 ZOEL LIFE',
+    publisher: '대라천 ZOEL LIFE',
     openGraph: {
       type: 'website',
       locale: 'ko_KR',
-      url: 'https://www.daracheon.com',
-      siteName: '대라천',
+      url: SITE_URL,
+      siteName: '대라천 ZOEL LIFE',
       title,
       description,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: '대라천 프리미엄 침향' }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: '대라천 ZOEL LIFE — 베트남 직영 프리미엄 침향' }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -78,7 +116,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [ogImage],
     },
-    alternates: { canonical: 'https://zoellife.com' },
+    alternates: { canonical: SITE_URL },
     robots: {
       index: true,
       follow: true,
@@ -98,26 +136,68 @@ export const viewport: Viewport = {
   colorScheme: 'light dark',
 };
 
-const organizationJsonLd = {
+// @graph 로 Organization + Brand + WebSite 를 한번에 선언.
+// Google 의 Knowledge Panel / Sitelinks Searchbox / Brand Card 후보로 진입.
+const siteJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: '대라천',
-  alternateName: ['Daracheon', '大羅天', 'Đại La Thiên'],
-  url: 'https://www.daracheon.com',
-  logo: 'https://www.daracheon.com/images/logo.png',
-  description:
-    '베트남 최고급 Aquilaria agallocha 침향 전문 브랜드. 400만 그루 직접 관리.',
-  foundingDate: '2003',
-  sameAs: [
-    'https://www.instagram.com/daracheon',
-    'https://www.youtube.com/@daracheon',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: '대라천 ZOEL LIFE',
+      alternateName: ['대라천', 'Daracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
+      },
+      description:
+        '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장에서 25년간 400만 그루를 직접 관리.',
+      foundingDate: '2003',
+      knowsAbout: [
+        '침향', 'Agarwood', 'Aquilaria Agallocha Roxburgh',
+        '침향 효능', '한약재', '천연 향료', '베트남 침향',
+      ],
+      areaServed: ['KR', 'JP', 'VN'],
+      sameAs: [
+        'https://www.instagram.com/daracheon',
+        'https://www.youtube.com/@daracheon',
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'contact@daracheon.com',
+        contactType: 'customer service',
+        availableLanguage: ['Korean', 'Japanese', 'English'],
+      },
+    },
+    {
+      '@type': 'Brand',
+      '@id': `${SITE_URL}/#brand`,
+      name: '대라천 ZOEL LIFE',
+      alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프'],
+      logo: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
+      slogan: 'Genuine Only · 진짜 침향만',
+      description:
+        '베트남 직영 25년, 학명 보증 정품 침향 전문 브랜드. Aquilaria Agallocha Roxburgh.',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: '대라천 ZOEL LIFE',
+      alternateName: '조엘라이프',
+      inLanguage: 'ko-KR',
+      publisher: { '@id': `${SITE_URL}/#organization` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${SITE_URL}/products?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
   ],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    email: 'contact@daracheon.com',
-    contactType: 'customer service',
-    availableLanguage: ['Korean', 'Japanese', 'English'],
-  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -169,7 +249,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko">
       <head>
-        <JsonLd data={organizationJsonLd} />
+        <JsonLd data={siteJsonLd} />
         <GoogleAnalytics />
       </head>
       <body data-palette="gold">

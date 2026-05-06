@@ -18,7 +18,7 @@ export async function generateMetadata(
   return {
     title: `${item.title} — ${item.source} | ZOEL LIFE`,
     description: item.excerpt ?? `${item.source} (${item.date})`,
-    alternates: { canonical: `https://www.daracheon.com/media/${id}` },
+    alternates: { canonical: `https://zoellife.com/media/${id}` },
     openGraph: item.image ? { images: [item.image] } : undefined,
   };
 }

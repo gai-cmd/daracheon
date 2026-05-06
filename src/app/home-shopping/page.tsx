@@ -20,10 +20,16 @@ const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
 };
 
 export const metadata: Metadata = {
-  title: 'On-Air 특별관 - TV 편성표 · 다시보기 | ZOEL LIFE',
+  title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기 | 대라천 ZOEL LIFE',
   description:
-    '롯데·현대·CJ·GS 홈쇼핑 정규 편성. ZOEL LIFE 침향 라이브 방송과 다시보기, Lot 인증서를 실시간으로 확인하세요.',
-  alternates: { canonical: 'https://www.daracheon.com/home-shopping' },
+    '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 대라천 ZOEL LIFE 침향 라이브 방송 시간표, 다시보기, Lot 인증서를 실시간으로 확인하세요.',
+  keywords: [
+    '침향 홈쇼핑', '침향 TV 홈쇼핑', '대라천 홈쇼핑', 'ZOEL LIFE 홈쇼핑', '조엘라이프 홈쇼핑',
+    '롯데홈쇼핑 침향', '현대홈쇼핑 침향', 'CJ온스타일 침향', 'GS홈쇼핑 침향',
+    '홈쇼핑 편성표', '침향 방송 편성표', '침향 다시보기',
+    '침향 라이브 방송', '침향 생방송',
+  ],
+  alternates: { canonical: 'https://zoellife.com/home-shopping' },
 };
 
 const STATUS_LABEL: Record<Broadcast['status'], string> = {

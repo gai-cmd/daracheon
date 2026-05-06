@@ -13,16 +13,26 @@ export const metadata: Metadata = {
   description:
     '식약처 공식 등재 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
-    '침향', '沈香', 'Agarwood', 'Aquilaria Agallocha Roxburgh',
-    '침향 효능', '침향 학명', '침향 정의', '대라천', 'ZOEL LIFE',
-    '식약처 침향', '동의보감 침향', '본초강목 침향',
+    // 토픽
+    '침향', '沈香', 'Agarwood', 'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+    // 정의/지식 의도
+    '침향이란', '침향 정의', '침향 학명', '침향 등급', '침향 종류',
+    '침향 형성 과정', '침향 수지', '침향 향', '세계 3대 향',
+    // 효능
+    '침향 효능', '침향 효과', '침향 부작용', '침향 복용법',
+    '아가로스피롤', '침향 신경 안정', '침향 자양강장',
+    // 문헌/근거
+    '식약처 침향', '대한민국약전외한약 침향', '한국한의학연구원 침향',
+    '동의보감 침향', '본초강목 침향', '향약집성방 침향',
+    // 브랜드
+    '대라천', 'ZOEL LIFE', '조엘라이프',
   ],
-  alternates: { canonical: 'https://www.daracheon.com/about-agarwood' },
+  alternates: { canonical: 'https://zoellife.com/about-agarwood' },
   openGraph: {
     type: 'article',
     title: '침향 이야기 — 식약처 등재 Aquilaria Agallocha Roxburgh',
     description: '학명·정의·효능·문헌·논문·매체 보도까지, 진짜 침향을 알아야 할 모든 것.',
-    url: 'https://www.daracheon.com/about-agarwood',
+    url: 'https://zoellife.com/about-agarwood',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     images: [{ url: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png', width: 1200, height: 630, alt: '대라천 침향 이야기' }],
@@ -41,7 +51,7 @@ const articleJsonLd = {
   headline: '침향이란? 침향의 정의 효능 등급 역사 완벽 가이드',
   description: '식약처 고시 공식 등록 침향의 정의, 효능, 문헌, 논문을 완벽 가이드합니다.',
   author: { '@type': 'Organization', name: 'ZOEL LIFE' },
-  publisher: { '@type': 'Organization', name: 'ZOEL LIFE', logo: { '@type': 'ImageObject', url: 'https://www.daracheon.com/images/logo.png' } },
+  publisher: { '@type': 'Organization', name: 'ZOEL LIFE', logo: { '@type': 'ImageObject', url: 'https://zoellife.com/images/logo.png' } },
   datePublished: '2026-01-07',
   dateModified: '2026-04-17',
   image: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
@@ -51,8 +61,8 @@ const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-    { '@type': 'ListItem', position: 2, name: '침향 이야기', item: 'https://www.daracheon.com/about-agarwood' },
+    { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+    { '@type': 'ListItem', position: 2, name: '침향 이야기', item: 'https://zoellife.com/about-agarwood' },
   ],
 };
 

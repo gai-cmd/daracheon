@@ -10,10 +10,17 @@ import ReviewFormModal from './ReviewFormModal';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '고객 리뷰 - ZOEL LIFE 침향 후기 | ZOEL LIFE',
+  title: '고객 리뷰·후기 — 대라천 침향 실사용기 | ZOEL LIFE',
   description:
-    'ZOEL LIFE 프리미엄 침향 제품을 실제 구매하신 고객님들의 생생한 후기. 침향 오일 캡슐, 침향단, 침향 선향, 침향수, 침향차 리뷰.',
-  alternates: { canonical: 'https://www.daracheon.com/reviews' },
+    '대라천 ZOEL LIFE 프리미엄 침향 제품을 실제 구매·복용한 고객들의 생생한 후기. 침향 오일·캡슐·침향단·선향·침향수·침향차 효능 리뷰, 복용 경험담, 별점 평가.',
+  keywords: [
+    '침향 후기', '침향 리뷰', '침향 효능 후기', '침향 복용 후기',
+    '대라천 후기', '대라천 리뷰', 'ZOEL LIFE 후기', '조엘라이프 후기',
+    '침향 오일 후기', '침향 캡슐 후기', '침향환 후기',
+    '침향단 후기', '침향 선향 후기', '침향수 후기', '침향차 후기',
+    '침향 별점', '침향 추천 후기',
+  ],
+  alternates: { canonical: 'https://zoellife.com/reviews' },
 };
 
 interface ReviewsHero {

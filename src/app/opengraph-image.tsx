@@ -71,7 +71,7 @@ export default async function Image() {
 
         {/* Bottom: domain */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 20, color: 'rgba(255,255,255,0.55)' }}>
-          <span style={{ letterSpacing: '0.22em' }}>www.daracheon.com</span>
+          <span style={{ letterSpacing: '0.22em' }}>zoellife.com</span>
           <span style={{ letterSpacing: '0.22em' }}>EST · 2003</span>
         </div>
       </div>

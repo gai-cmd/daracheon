@@ -10,7 +10,7 @@ import type { Product } from '@/data/products';
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // 1일
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.zoellife.com')
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
   .replace(/\s+/g, '')
   .replace(/\/$/, '');
 

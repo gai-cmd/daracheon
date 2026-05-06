@@ -12,15 +12,24 @@ export const metadata: Metadata = {
   description:
     "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria Agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
   keywords: [
-    '대라천 제품', '침향 오일', '침향환', '침향수', '침향차',
-    '침향 스틱', '침향 염주', 'ZOEL LIFE 제품', '25년산 침향',
+    // 브랜드 + 카테고리 의도
+    '대라천 제품', 'ZOEL LIFE 제품', '조엘라이프 제품', '대라천 침향 라인업',
+    // 제품 형태
+    '침향 오일', '침향오일', '참 침향 오일',
+    '침향 캡슐', '침향캡슐', '참 침향 캡슐',
+    '침향환', '침향단', '침향 환', '침향 추출물',
+    '침향수', '침향차', '침향 스틱', '침향 선향', '침향 염주',
+    '침향 보석함', '침향 선물세트',
+    // 품질/스펙
+    '25년산 침향', '베트남 직영 침향', '정품 침향',
+    'Aquilaria Agallocha Roxburgh 제품',
   ],
-  alternates: { canonical: 'https://www.daracheon.com/products' },
+  alternates: { canonical: 'https://zoellife.com/products' },
   openGraph: {
     type: 'website',
     title: '제품 소개 — 대라천 침향 제품 라인업',
     description: '오일·환·수·차·스틱·향·염주 — 25년 숙성 침향 제품 전 라인업.',
-    url: 'https://www.daracheon.com/products',
+    url: 'https://zoellife.com/products',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
   },
@@ -231,7 +240,7 @@ export default async function ProductsPage() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: '제품 소개 — 대라천 침향 제품 라인업',
-    url: 'https://www.daracheon.com/products',
+    url: 'https://zoellife.com/products',
     description: "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업.",
     mainEntity: {
       '@type': 'ItemList',
@@ -239,7 +248,7 @@ export default async function ProductsPage() {
       itemListElement: products.slice(0, 20).map((p, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `https://www.daracheon.com/products/${p.slug}`,
+        url: `https://zoellife.com/products/${p.slug}`,
         name: p.name,
       })),
     },
@@ -249,8 +258,8 @@ export default async function ProductsPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://www.daracheon.com/products' },
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+      { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://zoellife.com/products' },
     ],
   };
 

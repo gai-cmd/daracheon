@@ -6,10 +6,16 @@ import type { MediaItem } from './MediaGallery';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 농장 이야기 | ZOEL LIFE',
+  title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장 | 대라천 ZOEL LIFE',
   description:
-    '베트남 하띤 200ha 직영 농장 이야기와 영상·사진 갤러리. 25년의 시간이 담긴 대라천 침향 현장을 확인하세요.',
-  alternates: { canonical: 'https://www.daracheon.com/media' },
+    '베트남 하띤 200ha 대라천 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정을 미디어로 공개. 침향 영상, 침향 농장 다큐, 침향 인증 자료.',
+  keywords: [
+    '침향 영상', '침향 다큐멘터리', '침향 농장 영상', '침향 사진',
+    '대라천 영상', 'ZOEL LIFE 영상', '조엘라이프 영상',
+    '베트남 침향 농장 영상', '하띤 침향 영상',
+    '침향 미디어', '침향 갤러리', '침향 보도자료',
+  ],
+  alternates: { canonical: 'https://zoellife.com/media' },
 };
 
 // ── process 기본값 (pages.json 없을 때 fallback) ──

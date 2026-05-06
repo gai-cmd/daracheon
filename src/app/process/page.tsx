@@ -7,10 +7,17 @@ import styles from '@/styles/zoel/story-page.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 농장 이야기 - 베트남 하띤 200ha | ZOEL LIFE',
+  title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영 | 대라천 ZOEL LIFE',
   description:
-    '베트남 하띤(Ha Tinh) 북위 18°의 직영 침향 농장 200헥타르, 약 400만 그루. 62가구의 현지 공동체 파트너십과 4단계 원산지 검증 체계.',
-  alternates: { canonical: 'https://www.daracheon.com/process' },
+    '베트남 하띤(Ha Tinh) 북위 18°의 대라천 직영 침향 농장 200ha·약 400만 그루. 62가구 현지 공동체 파트너십, 4단계 원산지 검증, HACCP·GMP 6단계 생산 공정 — 묘목부터 완제품까지 모든 과정 공개.',
+  keywords: [
+    '침향 농장', '베트남 침향 농장', '하띤 침향 농장', '하띤성 침향',
+    '침향 생산 공정', '침향 제조 공정', '침향 가공',
+    '침향 재배', '침향 수지 유도', '침향 증류', '침향 HACCP', '침향 GMP',
+    '대라천 농장', 'ZOEL LIFE 농장',
+    '원산지 침향', 'CITES 침향', 'Aquilaria Agallocha Roxburgh 농장',
+  ],
+  alternates: { canonical: 'https://zoellife.com/process' },
 };
 
 interface ProcessHero {
@@ -195,8 +202,8 @@ export default async function ProcessPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-      { '@type': 'ListItem', position: 2, name: '침향 농장 이야기', item: 'https://www.daracheon.com/process' },
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+      { '@type': 'ListItem', position: 2, name: '침향 농장 이야기', item: 'https://zoellife.com/process' },
     ],
   };
 

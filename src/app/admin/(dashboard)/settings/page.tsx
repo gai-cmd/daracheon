@@ -497,7 +497,7 @@ export default function AdminSettingsPage() {
                 <p className="mb-3 text-xs font-medium text-gray-500">Google 검색 결과 미리보기</p>
                 <div className="space-y-1">
                   <p className="truncate text-xs text-emerald-700">
-                    https://www.zoellife.com › ko
+                    https://zoellife.com › ko
                   </p>
                   <p className="truncate text-base text-blue-700 hover:underline">
                     {seo.metaTitle || '메타 타이틀'}

@@ -10,17 +10,26 @@ export const metadata: Metadata = {
   description:
     "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
   keywords: [
-    '대라천', '대라천 참침향', 'ZOEL LIFE', '조엘라이프',
-    '베트남 침향', '하띤성 농장', 'Aquilaria Agallocha Roxburgh',
-    '침향 농장', '침향 생산 공정', '침향 브랜드',
+    // 브랜드
+    '대라천', '대라천 참침향', 'ZOEL LIFE', '조엘라이프', '대라천 브랜드 스토리', '大羅天', 'Đại La Thiên',
+    // 원산지/농장
+    '베트남 침향', '하띤성 농장', '베트남 하띤성 침향', '직영 농장 침향',
+    '200ha 농장', '400만 그루', '캄보디아 침향',
+    // 학명/공정
+    'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+    '침향 농장', '침향 생산 공정', '침향 재배', '침향 수지 유도',
+    '침향 증류', 'HACCP 침향', 'GMP 침향',
+    // 신뢰/카테고리
+    '침향 브랜드', '명품 침향 브랜드', '침향 브랜드 추천',
+    '진짜 침향', '정품 침향', 'CITES 침향', 'OCOP 침향',
   ],
-  alternates: { canonical: 'https://www.daracheon.com/brand-story' },
+  alternates: { canonical: 'https://zoellife.com/brand-story' },
   openGraph: {
     type: 'article',
     title: "브랜드 스토리 — 대라천 '참'침향의 25년 여정",
     description:
       '베트남 하띤성 200ha 직영 농장에서 자란 400만 그루 침향나무 — 농장·공정·역사·인증·품질을 담은 대라천 브랜드 스토리.',
-    url: 'https://www.daracheon.com/brand-story',
+    url: 'https://zoellife.com/brand-story',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
   },
@@ -77,10 +86,10 @@ export default async function BrandStoryPage() {
     name: "브랜드 스토리 — 대라천 '참'침향",
     description:
       "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정.",
-    url: 'https://www.daracheon.com/brand-story',
+    url: 'https://zoellife.com/brand-story',
     about: {
       '@type': 'Organization',
-      '@id': 'https://www.daracheon.com/#localbusiness',
+      '@id': 'https://zoellife.com/#localbusiness',
       name: '대라천 ZOEL LIFE Co., Ltd.',
     },
   };
@@ -107,8 +116,8 @@ export default async function BrandStoryPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-      { '@type': 'ListItem', position: 2, name: '브랜드 이야기', item: 'https://www.daracheon.com/brand-story' },
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+      { '@type': 'ListItem', position: 2, name: '브랜드 이야기', item: 'https://zoellife.com/brand-story' },
     ],
   };
 

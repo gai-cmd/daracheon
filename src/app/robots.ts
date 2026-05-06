@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 
 // env 값에 줄바꿈/공백 섞임 방지 — sitemap 라인이 깨지면 색인 실패.
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.zoellife.com')
+// 정규 도메인은 zoellife.com (no www) — sitemap.ts / layout.tsx canonical 과 일치.
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
   .replace(/\s+/g, '')
   .replace(/\/$/, '');
 

@@ -14,10 +14,16 @@ interface FaqItemWithMeta extends FaqItem {
 }
 
 export const metadata: Metadata = {
-  title: '회사소개 - ZOEL LIFE(조엘라이프) | ZOEL LIFE',
+  title: '회사소개 — 대라천 ZOEL LIFE(조엘라이프)',
   description:
-    'ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·찾아오시는 길. 베트남 현지 생산부터 글로벌 유통까지, 완벽한 가치사슬을 구축하는 프리미엄 침향 브랜드.',
-  alternates: { canonical: 'https://www.daracheon.com/company' },
+    '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 1998년 캄보디아에서 시작, 베트남 하띤성 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지 완벽한 가치사슬을 구축한 프리미엄 침향 전문 브랜드.',
+  keywords: [
+    '대라천', '대라천 회사', '대라천 본사', 'ZOEL LIFE', 'ZOEL LIFE 회사', '조엘라이프', '조엘라이프 회사소개',
+    '침향 회사', '침향 전문 회사', '침향 브랜드 회사',
+    '베트남 침향 회사', '하띤 침향 회사',
+    '대라천 문의', '대라천 FAQ', '침향 문의',
+  ],
+  alternates: { canonical: 'https://zoellife.com/company' },
 };
 
 // LocalBusiness + Organization + BreadcrumbList 통합 JSON-LD
@@ -27,14 +33,14 @@ const companyJsonLd = {
   '@graph': [
     {
       '@type': 'LocalBusiness',
-      '@id': 'https://www.daracheon.com/#localbusiness',
+      '@id': 'https://zoellife.com/#localbusiness',
       name: '대라천 ZOEL LIFE Co., Ltd.',
       alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프', '大羅天'],
       description:
         '1999년 베트남 하띤 직영 농장에서 시작해 2003년 한국에 본사를 설립한 침향 전문 기업. 원산지·원료·제조·시험 4단계 검증 체계.',
-      url: 'https://www.daracheon.com',
-      logo: 'https://www.daracheon.com/images/logo.png',
-      image: 'https://www.daracheon.com/images/og-default.jpg',
+      url: 'https://zoellife.com',
+      logo: 'https://zoellife.com/images/logo.png',
+      image: 'https://zoellife.com/images/og-default.jpg',
       telephone: '+82-70-4140-4086',
       email: 'contact@daracheon.com',
       foundingDate: '2003',
@@ -63,17 +69,17 @@ const companyJsonLd = {
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
         name: '대라천 침향 제품',
-        url: 'https://www.daracheon.com/products',
+        url: 'https://zoellife.com/products',
       },
       sameAs: [
-        'https://www.daracheon.com',
+        'https://zoellife.com',
       ],
     },
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://www.daracheon.com' },
-        { '@type': 'ListItem', position: 2, name: '회사소개', item: 'https://www.daracheon.com/company' },
+        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
+        { '@type': 'ListItem', position: 2, name: '회사소개', item: 'https://zoellife.com/company' },
       ],
     },
   ],
