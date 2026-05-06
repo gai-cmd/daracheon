@@ -109,8 +109,8 @@ export async function generateMetadata(): Promise<Metadata> {
     publisher: '대라천 ZOEL LIFE',
     applicationName: '대라천 ZOEL LIFE',
     category: 'health',
-    // og:image / twitter:image 는 명시적 metadata 로 선언 — alt/width/height 까지
-    // 풀필드. 파일 기반 자동 생성을 피하려고 public/ 으로 이동시켰음.
+    // og:image / twitter:image — 단순 URL 한 줄만 출력하도록 문자열로 지정.
+    // (객체로 주면 secure_url / width / height / alt / type 메타가 추가 생성됨.)
     openGraph: {
       type: 'website',
       locale: 'ko_KR',
@@ -119,22 +119,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: '대라천 ZOEL LIFE',
       title,
       description,
-      images: [
-        {
-          url: ogImageUrl,
-          secureUrl: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: SITE_OG_IMAGE_ALT,
-          type: 'image/jpeg',
-        },
-      ],
+      images: [ogImageUrl],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [{ url: twImageUrl, alt: SITE_OG_IMAGE_ALT }],
+      images: [twImageUrl],
     },
     alternates: {
       canonical: SITE_URL,
@@ -318,6 +309,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     description?: string;
     ceo?: string;
     businessReg?: string;
+    mailOrderReg?: string;
+    importBizReg?: string;
+    privacyOfficer?: string;
     address?: string;
     phone?: string;
     email?: string;
@@ -336,6 +330,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     name: settings?.name ?? '',
     ceo: settings?.ceo ?? '',
     businessReg: settings?.businessReg ?? '',
+    mailOrderReg: settings?.mailOrderReg ?? '',
+    importBizReg: settings?.importBizReg ?? '',
+    privacyOfficer: settings?.privacyOfficer ?? '',
     address: settings?.address ?? '',
     phone: settings?.phone ?? '',
     email: settings?.email ?? '',
