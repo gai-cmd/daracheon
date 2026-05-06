@@ -394,6 +394,10 @@ export default async function HomeShoppingPage({
                     </dl>
                   )}
                 </div>
+
+                {featured.preview?.enabled && featured.preview.isPublic && (
+                  <BroadcastPreviewBlock preview={featured.preview} />
+                )}
               </div>
             </section>
           );
@@ -481,11 +485,10 @@ export default async function HomeShoppingPage({
             <div className={styles.sponsoredHead}>
               <div className={styles.sponsoredKicker}>SPONSORED · 협찬방송</div>
               <h2>
-                조엘라이프가 <em>출연한 방송</em>
+                조엘라이프가 <em>협찬한 방송</em>
               </h2>
               <p className={styles.sponsoredLede}>
-                협찬·정보교양 프로그램에 등장한 대라천 침향. 진행자·전문가 패널이 직접
-                소개한 회차를 모아 보세요.
+                협찬·정보교양 프로그램에 등장한 진짜 침향에 대해 확인해보세요.
               </p>
             </div>
 
@@ -555,6 +558,11 @@ export default async function HomeShoppingPage({
                         </div>
                       )}
                     </div>
+                    {b.preview?.enabled && b.preview.isPublic && (
+                      <div className={styles.spPreviewWrap}>
+                        <BroadcastPreviewBlock preview={b.preview} />
+                      </div>
+                    )}
                   </article>
                 );
               })}
@@ -563,6 +571,50 @@ export default async function HomeShoppingPage({
         </section>
       )}
     </>
+  );
+}
+
+/** 방송 미리보기/요약 블록 — 헤드라인 + 본문 + YouTube 챕터식 타임라인 + 침향 핵심 포인트.
+ *  preview.isPublic 검사는 호출부에서 수행. */
+function BroadcastPreviewBlock({ preview }: { preview: NonNullable<Broadcast['preview']> }) {
+  const highlights = preview.highlights ?? [];
+  const keyPoints = preview.keyPoints ?? [];
+  if (!preview.headline && !preview.summary && highlights.length === 0 && keyPoints.length === 0) {
+    return null;
+  }
+  return (
+    <div className={styles.preview}>
+      <div className={styles.previewKicker}>Recap · 방송 다시보기 요약</div>
+      {preview.headline && <h3 className={styles.previewHeadline}>{preview.headline}</h3>}
+      {preview.summary && <p className={styles.previewSummary}>{preview.summary}</p>}
+
+      {highlights.length > 0 && (
+        <ol className={styles.previewChapters}>
+          {highlights.map((h, i) => (
+            <li key={i} className={styles.previewChapter}>
+              <span className={styles.previewChapterTime}>
+                {h.timestamp && h.timestamp.trim() ? h.timestamp : `${String(i + 1).padStart(2, '0')}`}
+              </span>
+              <div className={styles.previewChapterBody}>
+                <span className={styles.previewChapterTitle}>{h.title}</span>
+                {h.description && <span className={styles.previewChapterDesc}>{h.description}</span>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      {keyPoints.length > 0 && (
+        <div className={styles.previewKeys}>
+          <div className={styles.previewKeysHead}>침향, 이 방송에서 짚는 핵심</div>
+          <ul className={styles.previewKeysList}>
+            {keyPoints.map((kp, i) => (
+              <li key={i}>{kp}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 
