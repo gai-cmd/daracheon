@@ -324,7 +324,11 @@ export async function notifyTelegramReply(p: ReplyPayload): Promise<IntegrationR
       }),
     });
     const body = (await res.json().catch(() => ({}))) as { ok?: boolean; description?: string };
-    if (!res.ok || !body.ok) return { ok: false, error: body.description ?? `HTTP ${res.status}` };
+    if (!res.ok || !body.ok) {
+      // 디버깅: 실제 사용된 chat_id 를 에러에 포함. "supergroup upgraded" 류
+      // 에러는 보통 chat_id 갱신 누락이 원인이라 어떤 ID 가 쓰였는지 알아야 한다.
+      return { ok: false, error: `${body.description ?? `HTTP ${res.status}`} [chat_id=${cfg.telegramChatId}]` };
+    }
     return { ok: true };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
