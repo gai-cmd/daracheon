@@ -71,7 +71,12 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  /* fixed 헤더(72px) 만큼 앵커 스크롤 시 여백 — #contact / #faq 등에 적용 */
+  scroll-padding-top: 88px;
+}
 
 body {
   font-family: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;

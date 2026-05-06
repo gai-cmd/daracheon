@@ -71,17 +71,30 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
             })}
           </ul>
 
-          <button
-            type="button"
-            className={`${styles.hamburger} ${mobileOpen ? styles.open : ''}`}
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label="메뉴 열기"
-            aria-expanded={mobileOpen}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+          <div className={styles.navActions}>
+            {/* 문의하기 CTA — PC·모바일 모두 항상 노출.
+                회사소개 페이지의 #contact 앵커로 직행. */}
+            <Link
+              href="/company#contact"
+              className={styles.navCta}
+              aria-label="문의하기"
+            >
+              <span className={styles.navCtaIcon} aria-hidden>✉</span>
+              <span className={styles.navCtaLabel}>문의하기</span>
+            </Link>
+
+            <button
+              type="button"
+              className={`${styles.hamburger} ${mobileOpen ? styles.open : ''}`}
+              onClick={() => setMobileOpen((v) => !v)}
+              aria-label="메뉴 열기"
+              aria-expanded={mobileOpen}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -100,6 +113,13 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
               </Link>
             );
           })}
+          <Link
+            href="/company#contact"
+            className={styles.mobileOverlayCta}
+            onClick={() => setMobileOpen(false)}
+          >
+            ✉ 문의하기
+          </Link>
         </div>
       )}
     </header>
