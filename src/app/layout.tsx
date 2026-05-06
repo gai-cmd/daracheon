@@ -69,7 +69,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const keywords = seo?.keywords
     ? seo.keywords.split(',').map((k) => k.trim()).filter(Boolean)
     : DEFAULT_KEYWORDS;
-  const ogImage = seo?.ogImage || DEFAULT_OG_IMAGE;
+  // ogImage 는 src/app/opengraph-image.jpg 파일이 우선 — 변수 미사용.
+  // (어드민 SEO 의 ogImage 입력은 호환성 위해 인터페이스만 유지.)
 
   // Google Search Console 인증 토큰 — zoellife.com 등록용.
   // env 미설정 시에도 기본값으로 인증이 유지되도록 하드코딩 fallback.
@@ -98,6 +99,8 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: '대라천 ZOEL LIFE (Daracheon)', url: SITE_URL }],
     creator: '대라천 ZOEL LIFE',
     publisher: '대라천 ZOEL LIFE',
+    // og:image / twitter:image 는 src/app/{opengraph-image,twitter-image}.jpg
+    // 파일 기반 자동 생성 — 여기서는 명시 안 함 (이중 태그 방지).
     openGraph: {
       type: 'website',
       locale: 'ko_KR',
@@ -105,13 +108,11 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: '대라천 ZOEL LIFE',
       title,
       description,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: '대라천 ZOEL LIFE — 베트남 직영 프리미엄 침향' }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImage],
     },
     alternates: { canonical: SITE_URL },
     robots: {
