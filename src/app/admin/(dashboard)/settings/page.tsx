@@ -976,6 +976,7 @@ function IntegrationSettingsSection({
   const [ga4Ready, setGa4Ready] = useState(false);
   const [ga4PropertyId, setGa4PropertyId] = useState('');
   const [ga4ServiceAccountEmail, setGa4ServiceAccountEmail] = useState('');
+  const [ga4ImpersonateSubject, setGa4ImpersonateSubject] = useState('');
   const [chatHints, setChatHints] = useState<Array<{ chatId: string; title: string; type: string }> | null>(null);
   const [chatHintMsg, setChatHintMsg] = useState('');
   const [findingChats, setFindingChats] = useState(false);
@@ -996,6 +997,7 @@ function IntegrationSettingsSection({
         setGa4Ready(!!data.ga4Ready);
         setGa4PropertyId(data.ga4PropertyId ?? '');
         setGa4ServiceAccountEmail(data.ga4ServiceAccountEmail ?? '');
+        setGa4ImpersonateSubject(data.ga4ImpersonateSubject ?? '');
       })
       .catch(() => onToast('연동 설정 로드 실패'))
       .finally(() => setLoading(false));
@@ -1270,6 +1272,11 @@ function IntegrationSettingsSection({
               <p className="text-emerald-700 break-all">
                 서비스 계정: <code className="bg-white px-1.5 py-0.5 rounded border border-emerald-200">{ga4ServiceAccountEmail}</code>
               </p>
+              {ga4ImpersonateSubject && (
+                <p className="text-emerald-700 break-all">
+                  가장(DWD): <code className="bg-white px-1.5 py-0.5 rounded border border-emerald-200">{ga4ImpersonateSubject}</code>
+                </p>
+              )}
             </div>
           ) : (
             <div>

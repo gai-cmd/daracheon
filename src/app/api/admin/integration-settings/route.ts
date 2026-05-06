@@ -35,6 +35,7 @@ export async function GET() {
       ga4Ready: ga4.ready,
       ga4PropertyId: ga4.propertyId ?? '',
       ga4ServiceAccountEmail: ga4.serviceAccountEmail ?? '',
+      ga4ImpersonateSubject: ga4.impersonateSubject ?? '',
     });
   } catch (error) {
     console.error('[Admin IntegrationSettings] GET Error:', error);

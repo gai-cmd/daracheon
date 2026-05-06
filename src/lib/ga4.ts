@@ -7,8 +7,14 @@ import crypto from 'crypto';
  *   GA4_PROPERTY_ID            — GA4 속성 ID (숫자 9자리)
  *   GA4_SERVICE_ACCOUNT_EMAIL  — 서비스 계정 client_email
  *   GA4_PRIVATE_KEY            — 서비스 계정 private_key (\n 그대로 또는 실제 줄바꿈)
+ *   GA4_IMPERSONATE_SUBJECT    — (선택) 가장(impersonate) 할 워크스페이스 유저 이메일.
+ *                                Domain-Wide Delegation(DWD) 사용 시에만 설정.
+ *                                예: gai@try-n.com
  *
- * 사전 작업: 위 SA 를 GA4 속성에 "뷰어" 권한으로 추가, GCP 프로젝트에 Analytics Data API 활성화.
+ * 두 가지 인증 모드:
+ *   1) 직접 권한: GA4 속성 액세스 관리에 SA 이메일을 뷰어로 추가 → GA4_IMPERSONATE_SUBJECT 비움
+ *   2) DWD 가장: Workspace Admin → 도메인 전역 위임 → SA client_id + analytics.readonly 스코프 등록
+ *               → GA4_IMPERSONATE_SUBJECT 에 GA4 권한이 있는 유저 이메일 지정
  */
 
 function getEnv(name: string): string | undefined {
@@ -24,14 +30,17 @@ function getPrivateKey(): string | undefined {
 export function getGa4Config(): {
   propertyId?: string;
   serviceAccountEmail?: string;
+  impersonateSubject?: string;
   ready: boolean;
 } {
   const propertyId = getEnv('GA4_PROPERTY_ID');
   const serviceAccountEmail = getEnv('GA4_SERVICE_ACCOUNT_EMAIL');
+  const impersonateSubject = getEnv('GA4_IMPERSONATE_SUBJECT');
   const privateKey = getPrivateKey();
   return {
     propertyId,
     serviceAccountEmail,
+    impersonateSubject,
     ready: !!(propertyId && serviceAccountEmail && privateKey),
   };
 }
@@ -44,19 +53,22 @@ function base64UrlEncode(input: Buffer | string): string {
 async function getAccessToken(): Promise<string> {
   const email = getEnv('GA4_SERVICE_ACCOUNT_EMAIL');
   const key = getPrivateKey();
+  const subject = getEnv('GA4_IMPERSONATE_SUBJECT');
   if (!email || !key) {
     throw new Error('GA4_SERVICE_ACCOUNT_EMAIL / GA4_PRIVATE_KEY 가 설정되지 않았습니다.');
   }
 
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
-  const claim = {
+  const claim: Record<string, unknown> = {
     iss: email,
     scope: 'https://www.googleapis.com/auth/analytics.readonly',
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,
   };
+  // Domain-Wide Delegation: 워크스페이스 유저 가장
+  if (subject) claim.sub = subject;
   const signingInput = `${base64UrlEncode(JSON.stringify(header))}.${base64UrlEncode(JSON.stringify(claim))}`;
   const signer = crypto.createSign('RSA-SHA256');
   signer.update(signingInput);
