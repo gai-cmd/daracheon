@@ -121,7 +121,7 @@ export default function AdminProductsPage() {
   /* ─── Fetch products ─── */
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/admin/products');
+      const res = await fetch('/api/admin/products', { cache: 'no-store' });
       const data = await res.json();
       setProductList(data.products || data.items || data || []);
     } catch (err) {
@@ -245,11 +245,23 @@ export default function AdminProductsPage() {
         body: JSON.stringify(editingProduct),
       });
       if (!res.ok) throw new Error('Save failed');
+      const data = await res.json().catch(() => null);
+      const saved: Product | undefined = data?.product;
+
+      // Optimistic update — fetchProducts 의 round-trip 을 기다리지 않고
+      // 즉시 리스트에 반영해 사용자가 새로고침할 필요 없도록.
+      if (saved) {
+        setProductList((prev) =>
+          isAddMode ? [...prev, saved] : prev.map((p) => (p.id === saved.id ? saved : p))
+        );
+      }
+
       setToast(isAddMode ? '제품이 추가되었습니다.' : '제품이 수정되었습니다.');
       setIsEditOpen(false);
       setEditingProduct(null);
       setIsAddMode(false);
-      await fetchProducts();
+      // 백그라운드 동기화 — 서버의 정규화된 결과로 마무리.
+      fetchProducts();
     } catch (err) {
       console.error('Save error:', err);
       setToast('저장에 실패했습니다.');
