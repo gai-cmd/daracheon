@@ -207,20 +207,30 @@ export default function InquiriesPage() {
   }
 
   async function handleDelete(id: string) {
+    const target = inquiries.find((i) => i.id === id);
+    const who = target ? `${target.name} (${target.email})` : id;
+    if (!window.confirm(`${who} 의 문의를 삭제하시겠습니까?\n삭제 직전 자동 백업이 생성되어 복원 가능합니다.`)) return;
+
     try {
       const res = await fetch('/api/admin/inquiries', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
-      if (!res.ok) throw new Error('Delete failed');
-      setToast('문의가 삭제되었습니다.');
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || body?.success === false) {
+        throw new Error(body?.message || `HTTP ${res.status}`);
+      }
+      // 낙관적 갱신 — 응답 받자마자 UI 에서 제거. fetchInquiries 로 재검증.
+      setInquiries((prev) => prev.filter((i) => i.id !== id));
       if (expandedId === id) setExpandedId(null);
       setSelectedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
+      setToast('문의가 삭제되었습니다.');
       await fetchInquiries();
     } catch (err) {
       console.error('Delete error:', err);
-      setToast('삭제에 실패했습니다.');
+      const msg = err instanceof Error ? err.message : '오류';
+      setToast(`삭제 실패: ${msg}`);
     }
   }
 

@@ -3,6 +3,7 @@ import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
+import { notifyTelegramReply } from '@/lib/integrations';
 
 interface Inquiry {
   id: string;
@@ -161,6 +162,25 @@ export async function PATCH(request: Request) {
         text: `안녕하세요, ${updated.name}님.\n\n문의하신 내용에 대한 답변입니다.\n\n[답변 내용]\n${updated.reply}\n\n감사합니다.\nZOEL LIFE · 대라천\n전화: 070-4140-4086`,
       }).catch((err: unknown) => {
         console.error('[Admin Inquiries] sendEmail error:', err);
+      });
+
+      // 답변 작성 시 텔레그램 채널에도 발송. 메일은 고객용, 텔레그램은
+      // 운영팀 공유용. 실패해도 어드민 응답에는 영향 없도록 fire-and-forget.
+      notifyTelegramReply({
+        inquiryId: updated.id,
+        customerName: updated.name,
+        customerEmail: updated.email,
+        categoryLabel: catDisplay,
+        subject: subjectDisplay,
+        question: updated.message,
+        reply: updated.reply,
+        repliedBy: updated.replyBy,
+      }).then((r) => {
+        if (!r.ok && !r.skipped) {
+          console.error('[Admin Inquiries] notifyTelegramReply error:', r.error);
+        }
+      }).catch((err: unknown) => {
+        console.error('[Admin Inquiries] notifyTelegramReply threw:', err);
       });
     }
 

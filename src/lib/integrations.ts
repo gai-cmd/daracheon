@@ -252,6 +252,59 @@ export async function notifyTelegram(inquiry: InquiryPayload): Promise<Integrati
   }
 }
 
+export interface ReplyPayload {
+  inquiryId: string;
+  customerName: string;
+  customerEmail: string;
+  categoryLabel: string;
+  subject: string;
+  question: string;
+  reply: string;
+  repliedBy?: string;
+}
+
+export async function notifyTelegramReply(p: ReplyPayload): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.telegramBotToken || !cfg.telegramChatId) {
+    return { ok: false, skipped: true, error: 'telegram not configured' };
+  }
+
+  const lines = [
+    `<b>✅ 답변 발송</b>`,
+    `<b>유형:</b> ${escapeHtml(p.categoryLabel)}${p.subject ? ` · ${escapeHtml(p.subject)}` : ''}`,
+    `<b>고객:</b> ${escapeHtml(p.customerName)} (${escapeHtml(p.customerEmail)})`,
+    p.repliedBy ? `<b>작성자:</b> ${escapeHtml(p.repliedBy)}` : '',
+    ``,
+    `<b>원 문의</b>`,
+    escapeHtml(p.question).slice(0, 600),
+    ``,
+    `<b>답변</b>`,
+    escapeHtml(p.reply).slice(0, 1500),
+    ``,
+    `<i>id: ${escapeHtml(p.inquiryId)}</i>`,
+  ].filter(Boolean);
+  const text = lines.join('\n');
+
+  try {
+    const url = `https://api.telegram.org/bot${cfg.telegramBotToken}/sendMessage`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: cfg.telegramChatId,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      }),
+    });
+    const body = (await res.json().catch(() => ({}))) as { ok?: boolean; description?: string };
+    if (!res.ok || !body.ok) return { ok: false, error: body.description ?? `HTTP ${res.status}` };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 /* ───────── 텔레그램 진단: 봇이 본 채팅 목록 ───────── */
 
 export interface TelegramChatHint {
