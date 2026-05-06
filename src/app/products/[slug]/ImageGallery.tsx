@@ -11,6 +11,10 @@ interface Props {
   outOfStock?: boolean;
 }
 
+function isVideo(url: string): boolean {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(url);
+}
+
 export default function ImageGallery({ primary, gallery, alt, badge, outOfStock }: Props) {
   const allImages = [primary, ...(gallery ?? []).filter((url) => url && url !== primary)];
   const [activeIdx, setActiveIdx] = useState(0);
