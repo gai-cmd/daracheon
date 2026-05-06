@@ -133,7 +133,17 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 </h3>
 
                 {(() => {
-                  const KEEP_IDENTITY = ['상호', '브랜드', '대표자', '주소'];
+                  const KEEP_IDENTITY = [
+                    '상호',
+                    '브랜드',
+                    '대표자',
+                    '주소',
+                    '사업자번호',
+                    '통신판매업신고번호',
+                    '영업등록증',
+                    '개인정보보호책임자',
+                    '전화',
+                  ];
                   const isIdentity = (dt: string) => KEEP_IDENTITY.some((k) => dt.includes(k));
                   const identityRows = companyInfo?.rows.filter((r) => isIdentity(r.dt)) ?? [];
                   return (

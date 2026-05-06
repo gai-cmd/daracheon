@@ -103,14 +103,15 @@ const DEFAULT_PRODUCT_OPTIONS = [
 
 const DEFAULT_COMPANY_INFO: SupportCompanyInfo = {
   rows: [
-    { dt: '상호', dd: '(주)조엘라이프', bold: 'ZOEL LIFE Co., Ltd.' },
+    { dt: '상호', dd: '조엘라이프 주식회사', bold: 'ZOEL LIFE Co., Ltd.' },
     { dt: '브랜드', dd: '대라천', bold: '大羅天 · DAERACHEON' },
     { dt: '대표자', dd: '박병주' },
-    { dt: '설립일', dd: '2019년 · 연구 개시 1999년' },
-    { dt: '사업자번호', dd: '749-86-03668' },
     { dt: '주소', dd: '서울특별시 금천구 벚꽃로36길 30, 1511호' },
-    { dt: '전화', dd: '070 - 4140 - 4086' },
-    { dt: '이메일', dd: 'bj0202@gmail.com' },
+    { dt: '사업자번호', dd: '749-86-03668' },
+    { dt: '통신판매업신고번호', dd: '제2026-서울금천-0438호' },
+    { dt: '영업등록증', dd: '제20260001680호' },
+    { dt: '개인정보보호책임자', dd: '김승현' },
+    { dt: '전화', dd: '070-4140-4086' },
   ],
 };
 
@@ -420,6 +421,11 @@ export default function AdminSupportPage() {
           <SectionCard title="Company Info · 회사 정보 행" onSave={() => saveSection('companyInfo', { companyInfo })} saving={saving === 'companyInfo'}>
             <div className="space-y-3">
               <p className="text-xs text-gray-500">dt: 레이블(왼쪽), dd: 값(오른쪽), bold: 뒤에 붙는 굵은 글씨(선택).</p>
+              <p className="text-xs text-gray-500">
+                <strong>회사소개 페이지(/company)의 "회사 개요 · Identity"</strong>에 노출되는 dt 키:{' '}
+                <code className="rounded bg-gray-100 px-1 py-0.5">상호 · 브랜드 · 대표자 · 주소 · 사업자번호 · 통신판매업신고번호 · 영업등록증 · 개인정보보호책임자 · 전화</code>
+                . 그 외 dt 는 저장은 되지만 화면에는 노출되지 않습니다.
+              </p>
               {companyInfo.rows.map((r, i) => (
                 <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
                   <div className="mb-2 flex items-center justify-between">
