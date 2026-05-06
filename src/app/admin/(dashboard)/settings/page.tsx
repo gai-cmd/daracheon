@@ -972,6 +972,7 @@ function IntegrationSettingsSection({
   });
   const [serviceAccountEmail, setServiceAccountEmail] = useState('');
   const [serviceAccountReady, setServiceAccountReady] = useState(false);
+  const [hasTelegramToken, setHasTelegramToken] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/integration-settings')
@@ -980,9 +981,10 @@ function IntegrationSettingsSection({
         setForm({
           googleSheetsUrl: data.googleSheetsUrl ?? '',
           googleSheetsTab: data.googleSheetsTab ?? '',
-          telegramBotToken: data.telegramBotToken ?? '',
+          telegramBotToken: '',
           telegramChatId: data.telegramChatId ?? '',
         });
+        setHasTelegramToken(!!data.hasTelegramToken);
         setServiceAccountEmail(data.serviceAccountEmail ?? '');
         setServiceAccountReady(!!data.serviceAccountReady);
       })
@@ -1000,10 +1002,8 @@ function IntegrationSettingsSection({
       });
       if (!res.ok) throw new Error('save failed');
       const data = await res.json();
-      setForm((f) => ({
-        ...f,
-        telegramBotToken: data.settings?.telegramBotToken ?? '',
-      }));
+      setForm((f) => ({ ...f, telegramBotToken: '' }));
+      setHasTelegramToken(!!data.settings?.hasTelegramToken);
       onToast('연동 설정 저장 완료');
     } catch {
       onToast('연동 설정 저장 실패');
@@ -1118,27 +1118,39 @@ function IntegrationSettingsSection({
 
       {/* Telegram */}
       <div className="border-t border-gray-100 pt-6">
-        <h3 className="text-base font-semibold text-gray-900 mb-2">✈️ 텔레그램 채널</h3>
+        <h3 className="text-base font-semibold text-gray-900 mb-2">✈️ 텔레그램 (채널 · 그룹 모두 가능)</h3>
         <p className="text-xs text-gray-500 mb-4 leading-relaxed">
-          @BotFather 에서 봇을 만들어 토큰을 발급받고, 봇을 알림 받을 채널/그룹에 관리자로 추가하세요. 채널은
-          <code className="bg-gray-100 px-1 mx-1">@channelname</code> 또는 숫자 chat_id 모두 사용 가능합니다.
+          @BotFather 에서 봇을 만들어 토큰을 발급받고, 봇을 알림 받을 채널·그룹에 추가하세요. Chat ID 는
+          공개 채널의 <code className="bg-gray-100 px-1">@channelname</code>, 또는 숫자 ID(그룹·비공개 채널은 음수,
+          예: <code className="bg-gray-100 px-1">-1001234567890</code>) 모두 사용 가능합니다.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">봇 토큰</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              봇 토큰
+              {hasTelegramToken && (
+                <span className="ml-2 inline-block text-xs font-normal px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                  ✓ 저장됨
+                </span>
+              )}
+            </label>
             <input
               type="password"
               autoComplete="new-password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
               value={form.telegramBotToken}
               onChange={(e) => setForm({ ...form, telegramBotToken: e.target.value })}
-              placeholder="123456:ABC-DEF..."
+              placeholder={hasTelegramToken ? '변경하려면 새 토큰 입력 (비워두면 기존값 유지)' : '123456:ABC-DEF...'}
             />
-            <p className="mt-1 text-xs text-gray-400">저장 후 ●●●● 로 마스킹 표시.</p>
+            <p className="mt-1 text-xs text-gray-400">
+              {hasTelegramToken
+                ? '비밀 보호를 위해 저장된 토큰은 노출되지 않습니다. 그대로 두면 유지, 새 값을 넣으면 교체됩니다.'
+                : '@BotFather 에서 받은 토큰을 그대로 입력하세요.'}
+            </p>
           </div>
           <LabeledInput
-            label="Chat ID (@channel 또는 숫자)"
+            label="Chat ID (그룹/채널)"
             value={form.telegramChatId}
             onChange={(v) => setForm({ ...form, telegramChatId: v })}
           />
