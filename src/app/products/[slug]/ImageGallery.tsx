@@ -20,14 +20,27 @@ export default function ImageGallery({ primary, gallery, alt, badge, outOfStock 
     <div>
       <div className="relative aspect-square overflow-hidden bg-white">
         {activeImage ? (
-          <Image
-            src={activeImage}
-            alt={alt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            priority={activeIdx === 0}
-            className="object-cover"
-          />
+          isVideo(activeImage) ? (
+            <video
+              key={activeImage}
+              src={activeImage}
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <Image
+              src={activeImage}
+              alt={alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority={activeIdx === 0}
+              className="object-cover"
+            />
+          )
         ) : (
           <div className="flex h-full items-center justify-center text-neutral-300">이미지 없음</div>
         )}
@@ -54,7 +67,16 @@ export default function ImageGallery({ primary, gallery, alt, badge, outOfStock 
                 idx === activeIdx ? 'border-gold-500' : 'border-neutral-200 hover:border-gold-300'
               }`}
             >
-              <Image src={img} alt={`${alt} - ${idx + 1}`} fill sizes="120px" className="object-cover" />
+              {isVideo(img) ? (
+                <>
+                  <video src={img} muted playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover" />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                  </span>
+                </>
+              ) : (
+                <Image src={img} alt={`${alt} - ${idx + 1}`} fill sizes="120px" className="object-cover" />
+              )}
             </button>
           ))}
         </div>

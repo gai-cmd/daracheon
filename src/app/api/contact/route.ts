@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { readData, writeData, readSingleSafe } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
+import { appendToGoogleSheet, notifyTelegram, type InquiryPayload } from '@/lib/integrations';
 
 interface MailSettingsLite { adminEmail?: string }
 
@@ -148,13 +149,44 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
         })
       : Promise.resolve({ ok: false, error: 'admin email not configured' } as const);
 
-    const [customerResult, adminResult] = await Promise.all([
+    // Google Sheets / Telegram 도 메일과 병렬로 발송. 외부 호출이라 실패해도
+    // 인입 자체에는 영향을 주지 않도록 .catch 로 격리한다.
+    const inquiryPayload: InquiryPayload = {
+      id: newInquiry.id,
+      createdAt: nowIso,
+      name: validated.name,
+      email: validated.email,
+      phone: validated.phone,
+      category: validated.category,
+      categoryLabel: categoryLabel[validated.category] ?? validated.category,
+      subject: validated.subject,
+      message: validated.message,
+    };
+
+    const sheetsPromise = appendToGoogleSheet(inquiryPayload).catch((err) => ({
+      ok: false as const,
+      error: err instanceof Error ? err.message : String(err),
+    }));
+    const telegramPromise = notifyTelegram(inquiryPayload).catch((err) => ({
+      ok: false as const,
+      error: err instanceof Error ? err.message : String(err),
+    }));
+
+    const [customerResult, adminResult, sheetsResult, telegramResult] = await Promise.all([
       customerMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
       adminMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
+      sheetsPromise,
+      telegramPromise,
     ]);
 
     if (!customerResult.ok) console.error('[Contact Form] 고객 메일 발송 오류:', customerResult.error);
     if (!adminResult.ok) console.error('[Contact Form] 관리자 메일 발송 오류:', adminResult.error);
+    if (!sheetsResult.ok && !('skipped' in sheetsResult && sheetsResult.skipped)) {
+      console.error('[Contact Form] 구글 시트 기록 오류:', sheetsResult.error);
+    }
+    if (!telegramResult.ok && !('skipped' in telegramResult && telegramResult.skipped)) {
+      console.error('[Contact Form] 텔레그램 알림 오류:', telegramResult.error);
+    }
 
     return NextResponse.json(
       {
@@ -165,6 +197,14 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
           admin: adminResult.ok,
           customerError: customerResult.ok ? undefined : customerResult.error,
           adminError: adminResult.ok ? undefined : adminResult.error,
+        },
+        integrations: {
+          sheets: sheetsResult.ok,
+          sheetsSkipped: 'skipped' in sheetsResult ? sheetsResult.skipped : false,
+          sheetsError: sheetsResult.ok ? undefined : sheetsResult.error,
+          telegram: telegramResult.ok,
+          telegramSkipped: 'skipped' in telegramResult ? telegramResult.skipped : false,
+          telegramError: telegramResult.ok ? undefined : telegramResult.error,
         },
       },
       { status: 200 }

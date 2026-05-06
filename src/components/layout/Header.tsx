@@ -113,13 +113,6 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
               </Link>
             );
           })}
-          <Link
-            href="/company#contact"
-            className={styles.mobileOverlayCta}
-            onClick={() => setMobileOpen(false)}
-          >
-            ✉ 문의하기
-          </Link>
         </div>
       )}
     </header>

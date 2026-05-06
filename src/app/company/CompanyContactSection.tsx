@@ -77,12 +77,14 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
 
   const [topic, setTopic] = useState<string>(TOPICS[0]);
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setFormState('sending');
+    setErrorMsg('');
     const form = e.currentTarget;
     const data = new FormData(form);
 
@@ -98,8 +100,8 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
           message: data.get('message'),
         }),
       });
+      const body = await res.json().catch(() => ({}));
       if (res.ok) {
-        const body = await res.json().catch(() => ({}));
         const mail = body?.mailSent;
         if (mail && (!mail.customer || !mail.admin)) {
           console.warn('[Contact Form] 메일 일부 발송 실패', mail);
@@ -109,9 +111,14 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
         setTimeout(() => setShowToast(false), 2800);
         form.reset();
       } else {
+        const detail = Array.isArray(body?.errors) && body.errors.length > 0
+          ? body.errors.join(' ')
+          : body?.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+        setErrorMsg(detail);
         setFormState('error');
       }
     } catch {
+      setErrorMsg('네트워크 오류로 전송하지 못했습니다. 잠시 후 다시 시도해 주세요.');
       setFormState('error');
     }
   }
@@ -253,11 +260,16 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 <div className={styles.fld}>
                   <label htmlFor="message">
                     문의 내용 <span className={styles.req}>*</span>
+                    <span style={{ marginLeft: 8, fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>
+                      (10자 이상)
+                    </span>
                   </label>
                   <textarea
                     id="message"
                     name="message"
                     placeholder="문의하실 내용을 자세히 적어주세요. 대량 주문은 희망 수량, 납기일을 함께 알려주시면 빠른 답변이 가능합니다."
+                    minLength={10}
+                    maxLength={2000}
                     required
                   />
                 </div>
@@ -272,7 +284,7 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
 
                 {formState === 'error' && (
                   <p style={{ color: '#ff5252', fontSize: '0.85rem' }}>
-                    전송에 실패했습니다. 잠시 후 다시 시도해 주세요.
+                    {errorMsg || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.'}
                   </p>
                 )}
 

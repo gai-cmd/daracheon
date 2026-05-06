@@ -25,6 +25,22 @@ export interface BroadcastShowInfo {
   synopsis?: string;    // 방송 개요 요약문
 }
 
+export interface BroadcastPreviewHighlight {
+  timestamp?: string;
+  title: string;
+  description?: string;
+}
+
+export interface BroadcastPreview {
+  enabled?: boolean;
+  isPublic?: boolean;
+  headline?: string;
+  summary?: string;
+  highlights?: BroadcastPreviewHighlight[];
+  keyPoints?: string[];
+  updatedAt?: string;
+}
+
 export type BroadcastType = 'home-shopping' | 'sponsored';
 
 export interface Broadcast {
@@ -48,6 +64,8 @@ export interface Broadcast {
   salesCount?: number;
   feedback?: string;
   showInfo?: BroadcastShowInfo;
+  /** 방송 미리보기/다시보기 요약. 방송 후 isPublic=true 시 공개. */
+  preview?: BroadcastPreview;
   createdAt: string;
   updatedAt: string;
 }
@@ -86,6 +104,28 @@ const baseSchema = z.object({
       recordingAt: z.string().max(120).optional().nullable(),
       vcrAt: z.string().max(120).optional().nullable(),
       synopsis: z.string().max(4000).optional().nullable(),
+    })
+    .optional()
+    .nullable(),
+  preview: z
+    .object({
+      enabled: z.coerce.boolean().optional(),
+      isPublic: z.coerce.boolean().optional(),
+      headline: z.string().max(200).optional().nullable(),
+      summary: z.string().max(4000).optional().nullable(),
+      highlights: z
+        .array(
+          z.object({
+            timestamp: z.string().max(20).optional().nullable(),
+            title: z.string().max(200),
+            description: z.string().max(800).optional().nullable(),
+          })
+        )
+        .max(40)
+        .optional()
+        .nullable(),
+      keyPoints: z.array(z.string().max(300)).max(20).optional().nullable(),
+      updatedAt: z.string().optional().nullable(),
     })
     .optional()
     .nullable(),
@@ -161,6 +201,7 @@ export async function POST(request: Request) {
       ...(data.salesCount !== undefined ? { salesCount: data.salesCount as number } : {}),
       ...(data.feedback ? { feedback: data.feedback as string } : {}),
       ...(data.showInfo ? { showInfo: data.showInfo as BroadcastShowInfo } : {}),
+      ...(data.preview ? { preview: { ...(data.preview as BroadcastPreview), updatedAt: now } } : {}),
       createdAt: now,
       updatedAt: now,
     };
@@ -212,16 +253,22 @@ export async function PUT(request: Request) {
     //   - other → overwrite existing value.
     // Required fields (channel/scheduledAt…) are guarded by zod `.min(1)` so
     // an empty-string clear never reaches this loop.
+    const nowIso = new Date().toISOString();
     const merged: Record<string, unknown> = { ...broadcasts[index] };
     for (const [k, v] of Object.entries(rest)) {
       if (v === undefined) continue;
       if (v === null || v === '') {
         delete merged[k];
+      } else if (k === 'preview' && typeof v === 'object') {
+        // preview 부분 업데이트 — 어드민에서 일부 필드만 보낼 수도 있으므로
+        // 기존 preview 와 머지하고, updatedAt 갱신.
+        const prev = (merged.preview as BroadcastPreview | undefined) ?? {};
+        merged.preview = { ...prev, ...(v as BroadcastPreview), updatedAt: nowIso };
       } else {
         merged[k] = v;
       }
     }
-    merged.updatedAt = new Date().toISOString();
+    merged.updatedAt = nowIso;
     broadcasts[index] = merged as unknown as Broadcast;
     await writeData('broadcasts', broadcasts);
     revalidateBroadcasts();

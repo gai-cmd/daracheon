@@ -623,6 +623,13 @@ export default function AdminSettingsPage() {
             setSaving={(v) => setSaving(v ? 'mail' : null)}
           />
 
+          {/* Section 5.6: Integration Settings (Google Sheets / Telegram) */}
+          <IntegrationSettingsSection
+            onToast={setToast}
+            saving={saving === 'integration'}
+            setSaving={(v) => setSaving(v ? 'integration' : null)}
+          />
+
           {/* Section 6: Data Backup */}
           <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">데이터 백업 / 복원</h2>
@@ -871,6 +878,192 @@ function MailSettingsSection({
         >
           {testing ? '발송 중...' : '테스트 메일 발송'}
         </button>
+        <SaveButton onClick={save} loading={saving} />
+      </div>
+    </section>
+  );
+}
+
+interface IntegrationSettingsForm {
+  googleSheetsWebhookUrl: string;
+  googleSheetsSecret: string;
+  telegramBotToken: string;
+  telegramChatId: string;
+}
+
+function IntegrationSettingsSection({
+  onToast,
+  saving,
+  setSaving,
+}: {
+  onToast: (msg: string) => void;
+  saving: boolean;
+  setSaving: (v: boolean) => void;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [testing, setTesting] = useState<'sheets' | 'telegram' | null>(null);
+  const [form, setForm] = useState<IntegrationSettingsForm>({
+    googleSheetsWebhookUrl: '',
+    googleSheetsSecret: '',
+    telegramBotToken: '',
+    telegramChatId: '',
+  });
+
+  useEffect(() => {
+    fetch('/api/admin/integration-settings')
+      .then((r) => r.json())
+      .then((data) => {
+        setForm({
+          googleSheetsWebhookUrl: data.googleSheetsWebhookUrl ?? '',
+          googleSheetsSecret: data.googleSheetsSecret ?? '',
+          telegramBotToken: data.telegramBotToken ?? '',
+          telegramChatId: data.telegramChatId ?? '',
+        });
+      })
+      .catch(() => onToast('연동 설정 로드 실패'))
+      .finally(() => setLoading(false));
+  }, [onToast]);
+
+  async function save() {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/integration-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error('save failed');
+      const data = await res.json();
+      setForm((f) => ({
+        ...f,
+        googleSheetsSecret: data.settings?.googleSheetsSecret ?? '',
+        telegramBotToken: data.settings?.telegramBotToken ?? '',
+      }));
+      onToast('연동 설정 저장 완료');
+    } catch {
+      onToast('연동 설정 저장 실패');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function runTest(target: 'sheets' | 'telegram') {
+    setTesting(target);
+    try {
+      const res = await fetch('/api/admin/integration-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target }),
+      });
+      const data = await res.json();
+      onToast(data.success ? data.message : `테스트 실패: ${data.message}`);
+    } catch (err) {
+      onToast(`테스트 실패: ${err instanceof Error ? err.message : '오류'}`);
+    } finally {
+      setTesting(null);
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+        <div className="h-6 w-32 bg-gray-200 rounded mb-6" />
+        <div className="h-32 bg-gray-100 rounded" />
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">외부 연동 (구글 시트 · 텔레그램)</h2>
+      <p className="text-xs text-gray-500 mb-6 leading-relaxed">
+        문의 폼이 접수되면 구글 시트에 행을 추가하고 텔레그램 채널로 알림을 보냅니다.
+      </p>
+
+      {/* Google Sheets */}
+      <div className="mb-8">
+        <h3 className="text-base font-semibold text-gray-900 mb-2">📊 구글 시트 (DB 수집)</h3>
+        <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+          구글 시트에서 <span className="text-gray-700 font-medium">확장 프로그램 → Apps Script</span> 로 들어가
+          <code className="bg-gray-100 px-1 mx-1">doPost(e)</code> 핸들러를 작성한 뒤 <span className="font-medium">웹앱으로 배포</span> 해 받은
+          URL 을 아래에 붙여넣으세요. 비밀 키를 함께 설정하면 Apps Script 에서{' '}
+          <code className="bg-gray-100 px-1">e.postData</code> 의 <code className="bg-gray-100 px-1">secret</code> 값을 검증할 수 있습니다.
+        </p>
+
+        <div className="grid grid-cols-1 gap-5">
+          <LabeledInput
+            label="Apps Script 웹앱 URL"
+            value={form.googleSheetsWebhookUrl}
+            onChange={(v) => setForm({ ...form, googleSheetsWebhookUrl: v })}
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              공유 비밀 (선택) <span className="text-xs font-normal text-gray-400">— Apps Script 에서 검증용</span>
+            </label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+              value={form.googleSheetsSecret}
+              onChange={(e) => setForm({ ...form, googleSheetsSecret: e.target.value })}
+            />
+            <p className="mt-1 text-xs text-gray-400">저장 후 ●●●● 로 마스킹 표시.</p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            onClick={() => runTest('sheets')}
+            disabled={testing !== null}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
+          >
+            {testing === 'sheets' ? '발송 중...' : '시트 테스트 행 추가'}
+          </button>
+        </div>
+      </div>
+
+      {/* Telegram */}
+      <div className="border-t border-gray-100 pt-6">
+        <h3 className="text-base font-semibold text-gray-900 mb-2">✈️ 텔레그램 채널</h3>
+        <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+          @BotFather 에서 봇을 만들어 토큰을 발급받고, 봇을 알림 받을 채널/그룹에 관리자로 추가하세요. 채널은
+          <code className="bg-gray-100 px-1 mx-1">@channelname</code> 또는 숫자 chat_id 모두 사용 가능합니다.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">봇 토큰</label>
+            <input
+              type="password"
+              autoComplete="new-password"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+              value={form.telegramBotToken}
+              onChange={(e) => setForm({ ...form, telegramBotToken: e.target.value })}
+              placeholder="123456:ABC-DEF..."
+            />
+            <p className="mt-1 text-xs text-gray-400">저장 후 ●●●● 로 마스킹 표시.</p>
+          </div>
+          <LabeledInput
+            label="Chat ID (@channel 또는 숫자)"
+            value={form.telegramChatId}
+            onChange={(v) => setForm({ ...form, telegramChatId: v })}
+          />
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            onClick={() => runTest('telegram')}
+            disabled={testing !== null}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
+          >
+            {testing === 'telegram' ? '발송 중...' : '텔레그램 테스트 메시지'}
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6 flex justify-end border-t border-gray-100 pt-4">
         <SaveButton onClick={save} loading={saving} />
       </div>
     </section>

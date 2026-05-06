@@ -10,6 +10,7 @@ export type AuditModule =
   | 'faq'
   | 'settings'
   | 'mail-settings'
+  | 'integration-settings'
   | 'broadcasts'
   | 'auth'
   | 'upload'

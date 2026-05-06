@@ -18,6 +18,22 @@ interface BroadcastShowInfo {
   synopsis?: string | null;
 }
 
+interface BroadcastPreviewHighlight {
+  timestamp?: string | null;
+  title: string;
+  description?: string | null;
+}
+
+interface BroadcastPreview {
+  enabled?: boolean;
+  isPublic?: boolean;
+  headline?: string | null;
+  summary?: string | null;
+  highlights?: BroadcastPreviewHighlight[] | null;
+  keyPoints?: string[] | null;
+  updatedAt?: string | null;
+}
+
 interface Broadcast {
   id: string;
   broadcastType?: BroadcastType;
@@ -36,6 +52,7 @@ interface Broadcast {
   salesCount?: number | null;
   feedback?: string | null;
   showInfo?: BroadcastShowInfo | null;
+  preview?: BroadcastPreview | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -350,6 +367,40 @@ export default function AdminBroadcastsPage() {
     if (!draft) return;
     const cur = draft.showInfo ?? {};
     setDraft({ ...draft, showInfo: { ...cur, ...patch } });
+  }
+
+  function updatePreview(patch: Partial<BroadcastPreview>) {
+    if (!draft) return;
+    const cur = draft.preview ?? {};
+    setDraft({ ...draft, preview: { ...cur, ...patch } });
+  }
+
+  function addHighlight() {
+    if (!draft) return;
+    const cur = draft.preview?.highlights ?? [];
+    updatePreview({ highlights: [...cur, { timestamp: '', title: '', description: '' }] });
+  }
+
+  function updateHighlight(i: number, patch: Partial<BroadcastPreviewHighlight>) {
+    if (!draft) return;
+    const cur = (draft.preview?.highlights ?? []).slice();
+    cur[i] = { ...cur[i], ...patch };
+    updatePreview({ highlights: cur });
+  }
+
+  function removeHighlight(i: number) {
+    if (!draft) return;
+    const cur = (draft.preview?.highlights ?? []).filter((_, idx) => idx !== i);
+    updatePreview({ highlights: cur });
+  }
+
+  function moveHighlight(i: number, dir: -1 | 1) {
+    if (!draft) return;
+    const cur = (draft.preview?.highlights ?? []).slice();
+    const j = i + dir;
+    if (j < 0 || j >= cur.length) return;
+    [cur[i], cur[j]] = [cur[j], cur[i]];
+    updatePreview({ highlights: cur });
   }
 
   return (

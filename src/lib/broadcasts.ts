@@ -16,6 +16,34 @@ export interface BroadcastShowInfo {
   synopsis?: string;
 }
 
+/** 방송 미리보기/다시보기 요약 1개 챕터.
+ *  YouTube 챕터 스타일 — 타임라인 + 제목 + 부설명. */
+export interface BroadcastPreviewHighlight {
+  /** "00:00" 또는 "00:03:20" — 비워둘 수 있음(방영 전 초안) */
+  timestamp?: string;
+  title: string;
+  description?: string;
+}
+
+/** 방송 콘텐츠 미리보기/요약. 방송 전엔 어드민에서 작성·비공개,
+ *  방송 후 isPublic 토글로 공개. 시청자에게 ‘유튜브 영상 요약’처럼 보여진다. */
+export interface BroadcastPreview {
+  /** 미리보기 콘텐츠 사용 여부. false면 어드민에서도 미작성 상태로 취급. */
+  enabled?: boolean;
+  /** 공개 페이지 노출 토글. 방송 후 어드민이 직접 켠다. */
+  isPublic?: boolean;
+  /** 한 줄 강조 카피 — 침향 효능 관점의 헤드라인. */
+  headline?: string;
+  /** 본문 요약(1~2 문단). */
+  summary?: string;
+  /** 챕터(타임라인) — YouTube 챕터식. */
+  highlights?: BroadcastPreviewHighlight[];
+  /** 침향 효능 핵심 포인트 — 5~7개 불릿. */
+  keyPoints?: string[];
+  /** 마지막 편집 시각(ISO). */
+  updatedAt?: string;
+}
+
 export interface Broadcast {
   id: string;
   broadcastType?: BroadcastType;
@@ -34,6 +62,7 @@ export interface Broadcast {
   salesCount?: number;
   feedback?: string;
   showInfo?: BroadcastShowInfo;
+  preview?: BroadcastPreview;
   createdAt: string;
   updatedAt: string;
 }
@@ -78,6 +107,8 @@ export function autoSplitMixed(items: Broadcast[]): { migrated: boolean; list: B
 
     const homeShopping: Broadcast = { ...b, broadcastType: 'home-shopping' };
     delete homeShopping.showInfo;
+    // preview 는 프로그램 콘텐츠 요약이므로 sponsored 사본에만 귀속.
+    delete homeShopping.preview;
 
     const sponsored: Broadcast = {
       ...b,
