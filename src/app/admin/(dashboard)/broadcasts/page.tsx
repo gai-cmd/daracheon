@@ -516,10 +516,10 @@ export default function AdminBroadcastsPage() {
                   <tr key={b.id} className={`hover:bg-gray-50 ${pub ? '' : 'bg-gray-50/60'}`}>
                     <td className="px-3 py-3">
                       <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[0.7rem] font-semibold ${
+                        className={`inline-flex rounded-full px-2.5 py-1 text-[0.72rem] font-semibold tracking-wide shadow-sm ${
                           isSponsored
-                            ? 'bg-violet-100 text-violet-800 ring-1 ring-violet-200'
-                            : 'bg-amber-100 text-amber-800 ring-1 ring-amber-200'
+                            ? 'bg-violet-600 text-white ring-1 ring-violet-700'
+                            : 'bg-amber-500 text-white ring-1 ring-amber-600'
                         }`}
                       >
                         {TYPE_LABELS[t]}
