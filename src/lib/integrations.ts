@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { readSingleSafe } from '@/lib/db';
+import { readSingleUncached } from '@/lib/db';
 
 /**
  * 외부 연동 (Google Sheets / Telegram).
@@ -28,7 +28,10 @@ interface IntegrationResult {
 }
 
 async function resolveIntegrationSettings(): Promise<IntegrationSettings> {
-  const stored = (await readSingleSafe<IntegrationSettings>('integration-settings')) ?? {};
+  // Uncached 읽기 — 어드민이 chat_id 갱신 직후 5분 캐시 만료를 기다리지 않고
+  // 즉시 새 값으로 통지가 가도록. 데이터 라이브사이클이 짧고 호출 빈도도
+  // 폼/답변 단위라 캐시 우회 비용은 무시할 수 있음.
+  const stored = (await readSingleUncached<IntegrationSettings>('integration-settings')) ?? {};
   return {
     googleSheetsUrl: stored.googleSheetsUrl?.trim() || process.env.GOOGLE_SHEETS_URL,
     googleSheetsTab: stored.googleSheetsTab?.trim() || process.env.GOOGLE_SHEETS_TAB,
