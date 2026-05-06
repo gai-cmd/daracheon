@@ -6,11 +6,12 @@ import { appendToGoogleSheet, notifyTelegram, type InquiryPayload } from '@/lib/
 
 interface MailSettingsLite { adminEmail?: string }
 
-// IP 기반 rate limit: 1시간당 5건. process-local 이라 분산/서버리스에선
-// 불완전하지만 단일 인스턴스 기준 자동 봇 투입은 차단. 더 강한 보호는
-// Vercel KV 나 Cloudflare Turnstile 연동 필요.
-const RATE_WINDOW_MS = 60 * 60 * 1000;
-const RATE_MAX = 5;
+// IP 기반 rate limit. process-local 이라 분산/서버리스에선 불완전하지만
+// 단일 인스턴스 기준 자동 봇 투입은 차단. 더 강한 보호는 Vercel KV 나
+// Cloudflare Turnstile 연동 필요.
+const RATE_WINDOW_MS = 60 * 60 * 1000; // 1시간 윈도우
+const RATE_MAX = 20;                    // IP 당 최대 20건/시간 (실수 재제출/QA 여유)
+const EMAIL_COOLDOWN_MS = 5 * 60 * 1000; // 동일 이메일은 5분 안에 재접수 불가
 const rateBucket = new Map<string, number[]>();
 
 function clientIp(req: NextRequest): string {
@@ -80,9 +81,10 @@ export async function POST(request: NextRequest) {
     // 새 문의가 누락된 배열을 덮어쓰는 데이터 유실 방지.
     const inquiries = await readDataUncached('inquiries');
 
-    // 동일 이메일 1시간 내 중복 투입 차단 (봇이 이메일만 바꿔가며 공격하면
-    // 막을 수 없으므로 IP rate limit 과 함께 사용)
-    const cutoff = Date.now() - RATE_WINDOW_MS;
+    // 동일 이메일 5분 내 중복 투입 차단 (봇이 이메일만 바꿔가며 공격하면
+    // 막을 수 없으므로 IP rate limit 과 함께 사용). 너무 길면 QA/실수 재제출이
+    // 불가하므로 5분으로 단축.
+    const cutoff = Date.now() - EMAIL_COOLDOWN_MS;
     const recentByEmail = inquiries.filter((inq) => {
       if (inq.email !== validated.email) return false;
       const ts = inq.createdAt ? new Date(inq.createdAt).getTime() : NaN;
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
     });
     if (recentByEmail.length > 0) {
       return NextResponse.json(
-        { success: false, message: '같은 이메일로는 1시간 내 다시 접수할 수 없습니다.' },
+        { success: false, message: '같은 이메일로는 5분 내 다시 접수할 수 없습니다.' },
         { status: 429 }
       );
     }
