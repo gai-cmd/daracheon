@@ -385,36 +385,7 @@ export default function AdminSettingsPage() {
                 onChange={(v) => setFooterInfo({ ...footerInfo, foundingDate: v })}
               />
             </div>
-            <div className="mt-6 rounded-lg bg-gray-50 border border-gray-100 p-4 text-xs text-gray-600 leading-relaxed">
-              <p className="font-medium text-gray-700 mb-1.5">미리보기</p>
-              <p>
-                대표: {footerInfo.ceo || '대표자명'}
-                <span className="mx-1.5 text-gray-400">·</span>
-                사업자등록번호: {footerInfo.businessReg || '000-00-00000'}
-                {footerInfo.mailOrderReg && (
-                  <>
-                    <span className="mx-1.5 text-gray-400">·</span>
-                    통신판매업신고번호: {footerInfo.mailOrderReg}
-                  </>
-                )}
-                {footerInfo.importBizReg && (
-                  <>
-                    <span className="mx-1.5 text-gray-400">·</span>
-                    수입・판매업 영업등록증: {footerInfo.importBizReg}
-                  </>
-                )}
-                {footerInfo.privacyOfficer && (
-                  <>
-                    <span className="mx-1.5 text-gray-400">·</span>
-                    개인정보보호책임자: {footerInfo.privacyOfficer}
-                  </>
-                )}
-                <span className="mx-1.5 text-gray-400">·</span>
-                주소: {footerInfo.address || '주소'}
-                <span className="mx-1.5 text-gray-400">·</span>
-                전화: {footerInfo.phone || '전화번호'} | 이메일: {footerInfo.email || 'email@example.com'}
-              </p>
-            </div>
+            <FooterInfoPreview footerInfo={footerInfo} />
             <div className="mt-6 flex justify-end">
               <SaveButton onClick={handleSaveFooterInfo} loading={saving === 'footer'} />
             </div>
@@ -724,6 +695,55 @@ function LabeledInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
+    </div>
+  );
+}
+
+interface FooterInfoState {
+  ceo: string;
+  businessReg: string;
+  mailOrderReg: string;
+  importBizReg: string;
+  privacyOfficer: string;
+  address: string;
+  phone: string;
+  email: string;
+  foundingDate: string;
+}
+
+function FooterInfoPreview({ footerInfo }: { footerInfo: FooterInfoState }) {
+  // Footer.tsx 와 동일한 규칙: 값이 빈 항목은 라벨까지 통째로 숨김.
+  const contactCombined = [
+    footerInfo.phone && `전화: ${footerInfo.phone}`,
+    footerInfo.email && `이메일: ${footerInfo.email}`,
+  ]
+    .filter(Boolean)
+    .join(' | ');
+  const items: Array<{ key: string; text: string }> = [
+    { key: 'ceo', text: footerInfo.ceo && `대표: ${footerInfo.ceo}` },
+    { key: 'businessReg', text: footerInfo.businessReg && `사업자등록번호: ${footerInfo.businessReg}` },
+    { key: 'mailOrderReg', text: footerInfo.mailOrderReg && `통신판매업신고번호: ${footerInfo.mailOrderReg}` },
+    { key: 'importBizReg', text: footerInfo.importBizReg && `수입・판매업 영업등록증: ${footerInfo.importBizReg}` },
+    { key: 'privacyOfficer', text: footerInfo.privacyOfficer && `개인정보보호책임자: ${footerInfo.privacyOfficer}` },
+    { key: 'address', text: footerInfo.address && `주소: ${footerInfo.address}` },
+    { key: 'contact', text: contactCombined },
+  ].filter((it): it is { key: string; text: string } => Boolean(it.text));
+
+  return (
+    <div className="mt-6 rounded-lg bg-gray-50 border border-gray-100 p-4 text-xs text-gray-600 leading-relaxed">
+      <p className="font-medium text-gray-700 mb-1.5">미리보기</p>
+      {items.length === 0 ? (
+        <p className="text-gray-400">표시할 항목이 없습니다.</p>
+      ) : (
+        <p>
+          {items.map((it, i) => (
+            <span key={it.key}>
+              {i > 0 && <span className="mx-1.5 text-gray-400">·</span>}
+              {it.text}
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   );
 }
