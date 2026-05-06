@@ -486,7 +486,7 @@
 
 .identityDl {
   display: grid;
-  grid-template-columns: 96px 1fr;
+  grid-template-columns: 148px 1fr;
   gap: 16px 24px;
   font-size: 0.92rem;
   margin: 0;
@@ -494,11 +494,12 @@
 .identityDl dt {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.62rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   color: rgba(212, 168, 67, 0.85);
   text-transform: uppercase;
   align-self: start;
   padding-top: 4px;
+  white-space: nowrap;
 }
 .identityDl dd {
   margin: 0;
