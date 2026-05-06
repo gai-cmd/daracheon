@@ -107,7 +107,7 @@ export default function InquiriesPage() {
   /* ─── Fetch inquiries ─── */
   const fetchInquiries = async () => {
     try {
-      const res = await fetch('/api/admin/inquiries');
+      const res = await fetch('/api/admin/inquiries', { cache: 'no-store' });
       const data = await res.json();
       setInquiries(data.inquiries || data.items || data || []);
     } catch (err) {

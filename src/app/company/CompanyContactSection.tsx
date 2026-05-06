@@ -53,6 +53,16 @@ const TOPICS = [
   '기타',
 ] as const;
 
+// 토픽 라벨 → 서버 스키마의 category 코드.
+// 매핑이 없으면 카테고리 라벨이 항상 "제품"으로 고정되어 시트·메일·텔레그램에서 구분이 안 된다.
+const TOPIC_TO_CATEGORY: Record<(typeof TOPICS)[number], 'product' | 'order' | 'wholesale' | 'media' | 'other'> = {
+  '제품 상담': 'product',
+  '주문·배송': 'order',
+  '대량 주문': 'wholesale',
+  '미디어 취재': 'media',
+  '기타': 'other',
+};
+
 function FragmentRow({ row }: { row: SupportCompanyInfoRow }) {
   return (
     <>
@@ -96,6 +106,7 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
           name: data.get('name'),
           email: data.get('email'),
           phone: data.get('phone') || '',
+          category: TOPIC_TO_CATEGORY[topic as (typeof TOPICS)[number]] ?? 'other',
           subject: `[${topic}] ${data.get('subject') || '문의'}`,
           message: data.get('message'),
         }),

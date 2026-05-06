@@ -24,20 +24,25 @@ const validStatuses = ['new', 'replied', 'resolved', 'pending', 'in-progress', '
 
 export const dynamic = 'force-dynamic';
 
+// 응답 자체에 no-store 헤더 — 브라우저/엣지 어느 레이어도 어드민 데이터를
+// 캐싱하지 않도록. 삭제 직후 옛 응답이 되살아나는 "ghost restore" 방지.
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+  Pragma: 'no-cache',
+};
+
 export async function GET() {
   try {
-    // 어드민 화면은 항상 최신 상태를 봐야 한다. unstable_cache 우회.
-    // 5분 캐시 지연 때문에 새 문의가 즉시 안 보이는 문제 회피.
     const inquiries = await readDataUncached('inquiries');
-    return NextResponse.json({
-      inquiries,
-      total: inquiries.length,
-    });
+    return NextResponse.json(
+      { inquiries, total: inquiries.length },
+      { headers: NO_STORE_HEADERS },
+    );
   } catch (error) {
     console.error('[Admin Inquiries] GET Error:', error);
     return NextResponse.json(
       { success: false, message: '서버 오류가 발생했습니다.' },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS },
     );
   }
 }
