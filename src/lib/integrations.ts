@@ -432,7 +432,12 @@ export async function testTelegram(): Promise<IntegrationResult> {
       }),
     });
     const body = (await res.json().catch(() => ({}))) as { ok?: boolean; description?: string };
-    if (!res.ok || !body.ok) return { ok: false, error: body.description ?? `HTTP ${res.status}` };
+    if (!res.ok || !body.ok) {
+      return {
+        ok: false,
+        error: `${body.description ?? `HTTP ${res.status}`} [chat_id=${cfg.telegramChatId}]`,
+      };
+    }
     return { ok: true };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
