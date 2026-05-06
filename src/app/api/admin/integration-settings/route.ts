@@ -5,6 +5,7 @@ import {
   type IntegrationSettings,
   testGoogleSheet,
   testTelegram,
+  getServiceAccountEmail,
 } from '@/lib/integrations';
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +15,6 @@ const PASSWORD_MASK = '••••••••';
 function maskSecrets(s: IntegrationSettings): IntegrationSettings {
   return {
     ...s,
-    googleSheetsSecret: s.googleSheetsSecret ? PASSWORD_MASK : '',
     telegramBotToken: s.telegramBotToken ? PASSWORD_MASK : '',
   };
 }
@@ -22,7 +22,11 @@ function maskSecrets(s: IntegrationSettings): IntegrationSettings {
 export async function GET() {
   try {
     const stored = (await readSingle<IntegrationSettings>('integration-settings')) ?? {};
-    return NextResponse.json(maskSecrets(stored));
+    return NextResponse.json({
+      ...maskSecrets(stored),
+      serviceAccountEmail: getServiceAccountEmail() ?? '',
+      serviceAccountReady: !!getServiceAccountEmail() && !!process.env.GOOGLE_PRIVATE_KEY,
+    });
   } catch (error) {
     console.error('[Admin IntegrationSettings] GET Error:', error);
     return NextResponse.json(
@@ -37,18 +41,14 @@ export async function PUT(request: Request) {
     const body = (await request.json()) as IntegrationSettings;
     const existing = (await readSingle<IntegrationSettings>('integration-settings')) ?? {};
 
-    const nextSecret =
-      body.googleSheetsSecret === PASSWORD_MASK
-        ? existing.googleSheetsSecret
-        : body.googleSheetsSecret;
     const nextToken =
       body.telegramBotToken === PASSWORD_MASK
         ? existing.telegramBotToken
         : body.telegramBotToken;
 
     const updated: IntegrationSettings = {
-      googleSheetsWebhookUrl: (body.googleSheetsWebhookUrl ?? '').trim(),
-      googleSheetsSecret: (nextSecret ?? '').trim(),
+      googleSheetsUrl: (body.googleSheetsUrl ?? '').trim(),
+      googleSheetsTab: (body.googleSheetsTab ?? '').trim(),
       telegramBotToken: (nextToken ?? '').trim(),
       telegramChatId: (body.telegramChatId ?? '').trim(),
       updatedAt: new Date().toISOString(),
@@ -59,7 +59,7 @@ export async function PUT(request: Request) {
     await logAdmin('integration-settings', 'update', {
       summary: '외부 연동 설정 업데이트',
       meta: {
-        sheets: !!updated.googleSheetsWebhookUrl,
+        sheets: !!updated.googleSheetsUrl,
         telegram: !!(updated.telegramBotToken && updated.telegramChatId),
       },
     });
