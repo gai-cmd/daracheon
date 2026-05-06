@@ -488,7 +488,7 @@ export default async function HomeShoppingPage({
                 조엘라이프가 <em>협찬한 방송</em>
               </h2>
               <p className={styles.sponsoredLede}>
-                협찬·정보교양 프로그램에 등장한 진짜 침향에 대해 확인해보세요.
+                건강한 중장년의 라이프스타일을 다루는 정보·교양 프로그램 [퍼펙트 라이프]에 등장한 ‘진짜 침향’에 대해 확인해보세요.
               </p>
             </div>
 
