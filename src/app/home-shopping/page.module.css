@@ -466,7 +466,7 @@
 
 .sponsoredHead {
   margin-bottom: 44px;
-  max-width: 720px;
+  max-width: 100%;
 }
 .sponsoredKicker {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -495,6 +495,10 @@
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 300;
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .sponsoredLede { white-space: normal; }
 }
 
 .spList {
