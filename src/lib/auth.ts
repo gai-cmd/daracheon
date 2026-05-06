@@ -95,15 +95,3 @@ export async function verifySessionToken(
     return null;
   }
 }
-
-export function verifyCredentials(email: string, password: string): AdminSession['role'] | null {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!adminEmail || !adminPassword) return null;
-  const emailMatches = email.trim().toLowerCase() === adminEmail.trim().toLowerCase();
-  const passwordMatches = constantTimeEqual(password, adminPassword);
-  if (emailMatches && passwordMatches) {
-    return 'super_admin';
-  }
-  return null;
-}

@@ -4,7 +4,6 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE_SECONDS,
   createSessionToken,
-  verifyCredentials,
 } from '@/lib/auth';
 import { readData, writeData } from '@/lib/db';
 import type { AuditEntry } from '@/lib/audit';
@@ -137,10 +136,6 @@ export async function POST(request: Request) {
       }
     } catch (dbErr) {
       console.error('[Admin Login] admin-users 조회 오류:', dbErr);
-    }
-
-    if (!role) {
-      role = verifyCredentials(email, password);
     }
 
     if (!role) {
