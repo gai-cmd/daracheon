@@ -341,6 +341,36 @@ export default function AdminBroadcastsPage() {
     });
   }
 
+  /** 리스트 행에서 미리보기 공개 즉시 토글. PUT 으로 preview.isPublic 만 갱신. */
+  async function togglePreviewPublic(b: Broadcast) {
+    if (!b.preview?.enabled) {
+      setToast('미리보기가 ‘사용’으로 설정되어 있어야 공개할 수 있습니다.');
+      return;
+    }
+    const next = !(b.preview?.isPublic ?? false);
+    try {
+      const res = await fetch('/api/admin/broadcasts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: b.id, preview: { isPublic: next } }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setToast(data.message ?? '미리보기 공개 상태 변경에 실패했습니다.');
+        return;
+      }
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === b.id ? { ...it, preview: { ...(it.preview ?? {}), isPublic: next } } : it
+        )
+      );
+      setToast(next ? '미리보기를 공개했습니다.' : '미리보기를 비공개로 전환했습니다.');
+    } catch (err) {
+      console.error('[Admin Broadcasts] toggle preview error:', err);
+      setToast('미리보기 공개 상태 변경 중 오류가 발생했습니다.');
+    }
+  }
+
   /** 리스트 행에서 직접 공개/비공개 즉시 토글. PUT 으로 published 만 갱신. */
   async function togglePublished(b: Broadcast) {
     const next = !isPublished(b);
@@ -555,6 +585,7 @@ export default function AdminBroadcastsPage() {
                 <th className="px-4 py-3 text-left font-medium">특가</th>
                 <th className="px-4 py-3 text-left font-medium">상태</th>
                 <th className="px-3 py-3 text-center font-medium">공개</th>
+                <th className="px-3 py-3 text-center font-medium">요약 공개</th>
                 <th className="px-4 py-3 text-right font-medium">관리</th>
               </tr>
             </thead>
@@ -636,6 +667,31 @@ export default function AdminBroadcastsPage() {
                       <div className={`mt-0.5 text-[0.6rem] font-medium ${pub ? 'text-emerald-700' : 'text-gray-400'}`}>
                         {pub ? '공개' : '비공개'}
                       </div>
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      {b.preview?.enabled ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => togglePreviewPublic(b)}
+                            title={b.preview?.isPublic ? '요약 공개 — 클릭 시 비공개' : '요약 비공개 — 클릭 시 공개'}
+                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                              b.preview?.isPublic ? 'bg-amber-500' : 'bg-gray-300'
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                                b.preview?.isPublic ? 'translate-x-4' : 'translate-x-0.5'
+                              }`}
+                            />
+                          </button>
+                          <div className={`mt-0.5 text-[0.6rem] font-medium ${b.preview?.isPublic ? 'text-amber-700' : 'text-gray-400'}`}>
+                            {b.preview?.isPublic ? '공개' : '비공개'}
+                          </div>
+                        </>
+                      ) : (
+                        <span className="text-[0.6rem] text-gray-300">미작성</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button
@@ -933,6 +989,188 @@ export default function AdminBroadcastsPage() {
                   </div>
                 </div>
               )}
+
+              {/* PREVIEW · 방송 미리보기 / 다시보기 요약 (YouTube 챕터 스타일) */}
+              <div className="space-y-4 rounded-lg border border-amber-200 bg-amber-50/40 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                    방송 미리보기 · 다시보기 요약
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label className="flex cursor-pointer items-center gap-2 text-xs text-gray-700">
+                      <span className="font-medium">사용</span>
+                      <button
+                        type="button"
+                        onClick={() => updatePreview({ enabled: !(draft.preview?.enabled ?? false) })}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                          draft.preview?.enabled ? 'bg-amber-500' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                            draft.preview?.enabled ? 'translate-x-4' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2 text-xs text-gray-700">
+                      <span className="font-medium">공개</span>
+                      <button
+                        type="button"
+                        onClick={() => updatePreview({ isPublic: !(draft.preview?.isPublic ?? false) })}
+                        disabled={!draft.preview?.enabled}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                          draft.preview?.isPublic ? 'bg-emerald-500' : 'bg-gray-300'
+                        } disabled:opacity-40`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                            draft.preview?.isPublic ? 'translate-x-4' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                      <span className={`font-semibold ${draft.preview?.isPublic ? 'text-emerald-700' : 'text-gray-400'}`}>
+                        {draft.preview?.isPublic ? 'ON · 공개 중' : 'OFF · 비공개'}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <p className="text-[11px] text-gray-500">
+                  방송 후 공개 토글을 켜면 <code>/home-shopping</code> 페이지에 ‘방송 다시보기 요약’ 카드로 노출됩니다. (YouTube 챕터 스타일)
+                </p>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-gray-700">강조 헤드라인 (한 줄 카피)</label>
+                  <input
+                    type="text"
+                    value={draft.preview?.headline ?? ''}
+                    onChange={(e) => updatePreview({ headline: e.target.value })}
+                    placeholder="수령 25년 침향, 왜 ‘심신을 다스리는 으뜸 약재’로 불리는가"
+                    className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-gray-700">본문 요약 (1~2 문단)</label>
+                  <textarea
+                    rows={4}
+                    value={draft.preview?.summary ?? ''}
+                    onChange={(e) => updatePreview({ summary: e.target.value })}
+                    placeholder="이번 회차가 다루는 침향의 핵심 내용을 1~2 문단으로 요약합니다."
+                    className="w-full resize-y rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                {/* CHAPTERS */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-medium text-gray-700">챕터 · 타임라인</label>
+                    <button
+                      type="button"
+                      onClick={addHighlight}
+                      className="rounded-md border border-amber-300 bg-white px-2.5 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100"
+                    >
+                      + 챕터 추가
+                    </button>
+                  </div>
+                  {(draft.preview?.highlights ?? []).length === 0 ? (
+                    <p className="rounded-md border border-dashed border-amber-200 bg-white/50 px-3 py-4 text-center text-xs text-gray-400">
+                      아직 챕터가 없습니다. ‘+ 챕터 추가’ 버튼으로 시작하세요.
+                    </p>
+                  ) : (
+                    <ul className="space-y-2">
+                      {(draft.preview?.highlights ?? []).map((h, i) => (
+                        <li key={i} className="rounded-md border border-amber-200 bg-white p-3">
+                          <div className="flex items-start gap-2">
+                            <div className="flex flex-col gap-1">
+                              <button
+                                type="button"
+                                onClick={() => moveHighlight(i, -1)}
+                                disabled={i === 0}
+                                className="rounded border border-gray-200 px-1.5 text-[10px] text-gray-500 hover:bg-gray-50 disabled:opacity-30"
+                                title="위로"
+                              >
+                                ↑
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => moveHighlight(i, 1)}
+                                disabled={i === (draft.preview?.highlights?.length ?? 0) - 1}
+                                className="rounded border border-gray-200 px-1.5 text-[10px] text-gray-500 hover:bg-gray-50 disabled:opacity-30"
+                                title="아래로"
+                              >
+                                ↓
+                              </button>
+                            </div>
+                            <div className="flex-1 space-y-1.5">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={h.timestamp ?? ''}
+                                  onChange={(e) => updateHighlight(i, { timestamp: e.target.value })}
+                                  placeholder="00:00"
+                                  className="w-20 rounded-md border border-gray-200 px-2 py-1 text-xs font-mono"
+                                />
+                                <input
+                                  type="text"
+                                  value={h.title}
+                                  onChange={(e) => updateHighlight(i, { title: e.target.value })}
+                                  placeholder="챕터 제목"
+                                  className="flex-1 min-w-[180px] rounded-md border border-gray-200 px-2 py-1 text-sm"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeHighlight(i)}
+                                  className="rounded-md border border-red-200 bg-white px-2 py-1 text-[11px] text-red-600 hover:bg-red-50"
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                              <textarea
+                                rows={2}
+                                value={h.description ?? ''}
+                                onChange={(e) => updateHighlight(i, { description: e.target.value })}
+                                placeholder="챕터 부설명 (선택)"
+                                className="w-full resize-y rounded-md border border-gray-200 px-2 py-1.5 text-xs"
+                              />
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* KEY POINTS */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-gray-700">
+                    핵심 포인트 (한 줄당 1개 · 침향 효능 강조)
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={(draft.preview?.keyPoints ?? []).join('\n')}
+                    onChange={(e) =>
+                      updatePreview({
+                        keyPoints: e.target.value
+                          .split('\n')
+                          .map((s) => s.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                    placeholder={'동의보감·본초강목이 ‘理氣安神’의 으뜸 약재로 기록한 천 년의 한방 원료\n수령 25년 이상 자연 숙성된 침향에서만 풍부하게 검출되는 세스퀴테르펜\n자율신경 안정 → 수면의 질 개선 · 만성 피로 회복'}
+                    className="w-full resize-y rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    각 줄이 공개 페이지에서 ‘침향 핵심 포인트’ 불릿으로 표시됩니다.
+                  </p>
+                </div>
+
+                {draft.preview?.updatedAt && (
+                  <p className="text-[11px] text-gray-400">
+                    마지막 편집: {fmtDisplay(draft.preview.updatedAt)}
+                  </p>
+                )}
+              </div>
 
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 영상 URL (YouTube / Vimeo)</label>

@@ -72,18 +72,29 @@ function genSplitId(): string {
 }
 
 /**
- * 한 레코드에 홈쇼핑 정보(가격/제품)와 협찬방송 정보(showInfo)가 함께
- * 들어있는 과도기 데이터를 두 건으로 분리한다. 멱등.
+ * Legacy 1회성 마이그레이션 — `broadcastType` 이 한 번도 지정된 적 없는
+ * 레거시 레코드만 대상으로 한다. 한 번 마이그레이션된(또는 이후 어드민에서
+ * 작성된) 레코드는 `broadcastType` 이 박혀있으므로 다시 분리되지 않는다.
  *
- *   원본: { channel:'NS홈쇼핑', specialPrice:.., showInfo:{title:'퍼펙트 라이프', ...} }
- *     ↓
- *   1) home-shopping 만 남긴 사본 (showInfo 제거)
- *   2) sponsored 사본 (가격/판매 메타 제거, broadcastType='sponsored')
+ * 분리 조건(과거 mixed 데이터 한정):
+ *   - broadcastType 이 undefined
+ *   - showInfo 와 가격(또는 productIds) 양쪽이 모두 의미있게 채워져 있음
+ *
+ * NOTE: 어드민에서 home-shopping 레코드에 showInfo 를 의도적으로 추가하는
+ * 케이스(예: NS홈쇼핑 ‘퍼펙트 라이프’ 회차)는 분리 대상이 아니다.
+ * 이전 구현은 `broadcastType !== 'sponsored'` 만 검사해서, 사용자가
+ * 저장한 showInfo 를 매 GET 마다 다시 탈취했다.
  */
 export function autoSplitMixed(items: Broadcast[]): { migrated: boolean; list: Broadcast[] } {
   let migrated = false;
   const out: Broadcast[] = [];
   for (const b of items) {
+    // 핵심 가드: 명시적 broadcastType 이 있으면 어떤 경우에도 손대지 않는다.
+    if (b.broadcastType) {
+      out.push(b);
+      continue;
+    }
+
     const si = b.showInfo;
     const hasShow = !!(
       si &&
@@ -99,16 +110,23 @@ export function autoSplitMixed(items: Broadcast[]): { migrated: boolean; list: B
       (b.regularPrice ?? 0) > 0 ||
       (b.discountRate ?? 0) > 0 ||
       (b.productIds?.length ?? 0) > 0;
-    const isMixed = hasShow && hasHomeShoppingSide && b.broadcastType !== 'sponsored';
+    const isMixed = hasShow && hasHomeShoppingSide;
     if (!isMixed) {
-      out.push(b);
+      // 분리할 필요 없는 untyped 레코드 — broadcastType 만 추정해 박아둔다.
+      // 다음 GET 에서 위의 early return 으로 빠지므로 멱등.
+      const inferred: Broadcast = {
+        ...b,
+        broadcastType: hasShow && !hasHomeShoppingSide ? 'sponsored' : 'home-shopping',
+      };
+      if (inferred.broadcastType !== b.broadcastType) migrated = true;
+      out.push(inferred);
       continue;
     }
 
+    // 진짜 legacy mixed → 두 레코드로 분리. 단, showInfo / preview 는
+    // home-shopping 사본에 그대로 남겨둔다(공개 페이지 시놉시스 노출용).
+    // sponsored 사본은 별도의 협찬방송 카드용 복제본.
     const homeShopping: Broadcast = { ...b, broadcastType: 'home-shopping' };
-    delete homeShopping.showInfo;
-    // preview 는 프로그램 콘텐츠 요약이므로 sponsored 사본에만 귀속.
-    delete homeShopping.preview;
 
     const sponsored: Broadcast = {
       ...b,

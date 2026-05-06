@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import styles from './page.module.css';
+
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
+  .replace(/\s+/g, '')
+  .replace(/\/$/, '');
 
 export const dynamic = 'force-dynamic';
 
@@ -186,6 +191,30 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
+// 홈 전용 ItemList JSON-LD — AI 검색이 "대라천 침향 제품" 질문에 직접 응답할 때
+// 인용 후보로 활용. 실제 제품 슬러그를 외부 데이터에서 빌드해 나열.
+function buildHomeItemListJsonLd(siteUrl: string) {
+  const items = [
+    { name: '침향 오일', slug: 'agarwood-oil' },
+    { name: '침향 캡슐', slug: 'agarwood-capsule' },
+    { name: '침향단(환)', slug: 'agarwood-pill' },
+    { name: '선향(스틱)', slug: 'agarwood-incense' },
+    { name: '침향수', slug: 'agarwood-water' },
+    { name: '침향차', slug: 'agarwood-tea' },
+  ];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '대라천 ZOEL LIFE 대표 침향 제품',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${siteUrl}/products/${it.slug}`,
+      name: it.name,
+    })),
+  };
+}
+
 export default async function HomePage() {
   const pagesData = await readSingleSafe<{ home?: HomeData }>('pages');
   const home = pagesData?.home ?? {};
@@ -201,6 +230,16 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page}>
+      {/* LCP 최적화: hero 배경 이미지를 preload 로 우선 페치.
+          background-image 는 브라우저가 CSS 파싱 후에야 로드를 시작해 LCP 가 나빠진다. */}
+      <link
+        rel="preload"
+        as="image"
+        href={hero.heroBg}
+        // @ts-expect-error fetchPriority 는 React 19 부터 정식 지원
+        fetchpriority="high"
+      />
+      <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div className="hero-bg-agarwood" aria-hidden />
@@ -334,7 +373,15 @@ export default async function HomePage() {
                 <div key={`${c.title}-${i}`} className={styles.agCard} style={{ overflow: 'hidden', padding: 0 }}>
                   {c.image && (
                     <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img src={c.image} alt={c.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <img
+                        src={c.image}
+                        alt={`${c.title} — ${kicker}`}
+                        loading="lazy"
+                        decoding="async"
+                        width={800}
+                        height={600}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
                     </div>
                   )}
                   <div style={{ padding: 26 }}>
@@ -364,7 +411,15 @@ export default async function HomePage() {
                 <div key={`${b.title}-${i}`} className={styles.benItem} style={{ borderTop: 'none', overflow: 'hidden', padding: 0 }}>
                   {b.image && (
                     <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img src={b.image} alt={b.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <img
+                        src={b.image}
+                        alt={`침향 효능 ${i + 1} — ${b.title}`}
+                        loading="lazy"
+                        decoding="async"
+                        width={800}
+                        height={600}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
                     </div>
                   )}
                   <div style={{ padding: '18px 0 0', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
@@ -399,7 +454,15 @@ export default async function HomePage() {
                 <div className={styles.procDur}>{processDurations[i] ?? '—'}</div>
                 {PROCESS_IMAGES[i] && (
                   <div className={styles.procImgWrap}>
-                    <img src={PROCESS_IMAGES[i]} alt={step} className={styles.procImg} />
+                    <img
+                      src={PROCESS_IMAGES[i]}
+                      alt={`침향 6단계 공정 ${String(i + 1).padStart(2, '0')} — ${step}`}
+                      loading="lazy"
+                      decoding="async"
+                      width={1200}
+                      height={900}
+                      className={styles.procImg}
+                    />
                   </div>
                 )}
               </div>
