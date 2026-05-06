@@ -25,6 +25,25 @@ const DEFAULT_BRAND_DESC =
 export default function Footer({ socialLinks = [], company }: Props) {
   const activeSocial = socialLinks.filter((s) => s.url.trim() !== '');
   const brandDesc = company.brandDesc?.trim() || DEFAULT_BRAND_DESC;
+
+  // 값이 비어있는 항목은 라벨까지 통째로 숨김.
+  // 구분자는 실제로 노출되는 항목 사이에만 자동 삽입.
+  const contactCombined = [
+    company.phone && `전화: ${company.phone}`,
+    company.email && `이메일: ${company.email}`,
+  ]
+    .filter(Boolean)
+    .join(' | ');
+  const infoItems = [
+    { key: 'ceo', label: '대표', value: company.ceo },
+    { key: 'businessReg', label: '사업자등록번호', value: company.businessReg },
+    { key: 'mailOrderReg', label: '통신판매업신고번호', value: company.mailOrderReg },
+    { key: 'importBizReg', label: '수입・판매업 영업등록증', value: company.importBizReg },
+    { key: 'privacyOfficer', label: '개인정보보호책임자', value: company.privacyOfficer },
+    { key: 'address', label: '주소', value: company.address },
+    { key: 'contact', label: '', value: contactCombined, raw: true },
+  ].filter((item) => item.value && item.value.trim() !== '');
+
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -53,54 +72,23 @@ export default function Footer({ socialLinks = [], company }: Props) {
           )}
         </div>
 
-        {/* Company Info */}
-        <div className={styles.companyInfo}>
-          <p className={styles.companyInfoRow}>
-            {company.ceo && (
-              <span className={styles.infoBlock}>대표: {company.ceo}</span>
-            )}
-            {company.ceo && company.businessReg && (
-              <span className={styles.infoSep} aria-hidden>·</span>
-            )}
-            {company.businessReg && (
-              <span className={styles.infoBlock}>사업자등록번호: {company.businessReg}</span>
-            )}
-            {company.mailOrderReg && (
-              <>
-                <span className={styles.infoSep} aria-hidden>·</span>
-                <span className={styles.infoBlock}>통신판매업신고번호: {company.mailOrderReg}</span>
-              </>
-            )}
-            {company.importBizReg && (
-              <>
-                <span className={styles.infoSep} aria-hidden>·</span>
-                <span className={styles.infoBlock}>수입・판매업 영업등록증: {company.importBizReg}</span>
-              </>
-            )}
-            {company.privacyOfficer && (
-              <>
-                <span className={styles.infoSep} aria-hidden>·</span>
-                <span className={styles.infoBlock}>개인정보보호책임자: {company.privacyOfficer}</span>
-              </>
-            )}
-            {company.address && (
-              <>
-                <span className={styles.infoSep} aria-hidden>·</span>
-                <span className={styles.infoBlock}>주소: {company.address}</span>
-              </>
-            )}
-            {(company.phone || company.email) && (
-              <>
-                <span className={styles.infoSep} aria-hidden>·</span>
-                <span className={styles.infoBlock}>
-                  {company.phone && `전화: ${company.phone}`}
-                  {company.phone && company.email && ' | '}
-                  {company.email && `이메일: ${company.email}`}
+        {/* Company Info — 값이 빈 항목은 라벨까지 표시되지 않음 */}
+        {infoItems.length > 0 && (
+          <div className={styles.companyInfo}>
+            <p className={styles.companyInfoRow}>
+              {infoItems.map((item, i) => (
+                <span key={item.key} style={{ display: 'contents' }}>
+                  {i > 0 && (
+                    <span className={styles.infoSep} aria-hidden>·</span>
+                  )}
+                  <span className={styles.infoBlock}>
+                    {item.raw ? item.value : `${item.label}: ${item.value}`}
+                  </span>
                 </span>
-              </>
-            )}
-          </p>
-        </div>
+              ))}
+            </p>
+          </div>
+        )}
 
         <div className={styles.bottom}>
           <span>© 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
