@@ -84,8 +84,8 @@ export default function Footer({ socialLinks = [], company }: Props) {
         <div className={styles.bottom}>
           <span>© 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
           <div className={styles.bottomLinks}>
-            <Link href="/company#privacy">개인정보처리방침</Link>
-            <Link href="/company#terms">이용약관</Link>
+            <Link href="/privacy">개인정보처리방침</Link>
+            <Link href="/terms">이용약관</Link>
             <Link href="/admin">관리자</Link>
           </div>
         </div>

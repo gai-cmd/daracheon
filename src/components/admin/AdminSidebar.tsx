@@ -28,6 +28,8 @@ const navItems: NavItem[] = [
   { label: 'On-Air 특별관', href: '/admin/broadcasts', icon: '▶', badgeKey: 'broadcasts_upcoming' },
   { label: '회사소개', href: '/admin/pages/company', icon: '▦' },
   { label: '회사정보·문의채널', href: '/admin/pages/support', icon: '☎' },
+  { label: '개인정보처리방침', href: '/admin/pages/privacy', icon: '▥' },
+  { label: '이용약관', href: '/admin/pages/terms', icon: '▥' },
   { label: '문의하기', href: '/admin/inquiries', icon: '◆', badgeKey: 'inquiries_new' },
   { label: 'FAQ 관리', href: '/admin/faq', icon: '▤' },
   { label: '리뷰 관리', href: '/admin/reviews', icon: '◇', badgeKey: 'reviews_pending' },
