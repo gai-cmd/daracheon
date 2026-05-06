@@ -252,6 +252,70 @@ export async function notifyTelegram(inquiry: InquiryPayload): Promise<Integrati
   }
 }
 
+/* ───────── 텔레그램 진단: 봇이 본 채팅 목록 ───────── */
+
+export interface TelegramChatHint {
+  chatId: string;
+  title: string;
+  type: string;
+}
+
+export interface TelegramChatsResult {
+  ok: boolean;
+  chats?: TelegramChatHint[];
+  error?: string;
+  hint?: string;
+}
+
+export async function listTelegramChats(): Promise<TelegramChatsResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.telegramBotToken) {
+    return { ok: false, error: '봇 토큰이 저장되지 않았습니다.' };
+  }
+  try {
+    const url = `https://api.telegram.org/bot${cfg.telegramBotToken}/getUpdates`;
+    const res = await fetch(url);
+    const body = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      description?: string;
+      result?: Array<{
+        message?: { chat?: { id?: number; title?: string; type?: string; username?: string; first_name?: string } };
+        channel_post?: { chat?: { id?: number; title?: string; type?: string; username?: string } };
+        my_chat_member?: { chat?: { id?: number; title?: string; type?: string; username?: string } };
+      }>;
+    };
+    if (!res.ok || !body.ok) {
+      return { ok: false, error: body.description ?? `HTTP ${res.status}` };
+    }
+
+    const seen = new Map<string, TelegramChatHint>();
+    for (const update of body.result ?? []) {
+      const chat = (update.message?.chat ?? update.channel_post?.chat ?? update.my_chat_member?.chat) as
+        | { id?: number; title?: string; type?: string; username?: string; first_name?: string }
+        | undefined;
+      if (!chat || chat.id === undefined) continue;
+      const id = String(chat.id);
+      if (seen.has(id)) continue;
+      const title =
+        chat.title || (chat.username ? `@${chat.username}` : '') || chat.first_name || '(이름 없음)';
+      seen.set(id, { chatId: id, title, type: chat.type ?? '' });
+    }
+
+    const chats = Array.from(seen.values());
+    if (chats.length === 0) {
+      return {
+        ok: true,
+        chats: [],
+        hint:
+          '봇이 본 최근 채팅이 없습니다. 그룹에서 봇을 향해 아무 메시지나 한 번 보낸 뒤 다시 시도하세요. (Privacy Mode 가 켜져 있으면 봇은 자기에게 직접 보낸 메시지만 봅니다 — @BotFather 의 /setprivacy 로 끌 수 있습니다.)',
+      };
+    }
+    return { ok: true, chats };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 /* ───────── 어드민 테스트 핸들러 ───────── */
 
 export async function testGoogleSheet(): Promise<IntegrationResult> {

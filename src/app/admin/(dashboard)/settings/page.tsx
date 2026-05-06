@@ -973,6 +973,9 @@ function IntegrationSettingsSection({
   const [serviceAccountEmail, setServiceAccountEmail] = useState('');
   const [serviceAccountReady, setServiceAccountReady] = useState(false);
   const [hasTelegramToken, setHasTelegramToken] = useState(false);
+  const [chatHints, setChatHints] = useState<Array<{ chatId: string; title: string; type: string }> | null>(null);
+  const [chatHintMsg, setChatHintMsg] = useState('');
+  const [findingChats, setFindingChats] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/integration-settings')
@@ -1009,6 +1012,30 @@ function IntegrationSettingsSection({
       onToast('연동 설정 저장 실패');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function findTelegramChats() {
+    setFindingChats(true);
+    setChatHintMsg('');
+    setChatHints(null);
+    try {
+      const res = await fetch('/api/admin/integration-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: 'telegram-chats' }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        onToast(`조회 실패: ${data.message}`);
+        return;
+      }
+      setChatHints(data.chats ?? []);
+      setChatHintMsg(data.hint ?? '');
+    } catch (err) {
+      onToast(`조회 실패: ${err instanceof Error ? err.message : '오류'}`);
+    } finally {
+      setFindingChats(false);
     }
   }
 
@@ -1149,12 +1176,63 @@ function IntegrationSettingsSection({
                 : '@BotFather 에서 받은 토큰을 그대로 입력하세요.'}
             </p>
           </div>
-          <LabeledInput
-            label="Chat ID (그룹/채널)"
-            value={form.telegramChatId}
-            onChange={(v) => setForm({ ...form, telegramChatId: v })}
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Chat ID (그룹/채널)</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                value={form.telegramChatId}
+                onChange={(e) => setForm({ ...form, telegramChatId: e.target.value })}
+                placeholder="@channel 또는 -1001234567890"
+              />
+              <button
+                type="button"
+                onClick={findTelegramChats}
+                disabled={findingChats || !hasTelegramToken}
+                title={hasTelegramToken ? '봇이 본 채팅 목록 조회' : '먼저 봇 토큰을 저장하세요'}
+                className="shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                {findingChats ? '조회 중...' : '🔍 채팅 찾기'}
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-gray-400">
+              모르겠으면 옆 버튼 클릭. 봇이 최근에 본 그룹·채널 목록을 보여줍니다.
+            </p>
+          </div>
         </div>
+
+        {chatHints !== null && (
+          <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
+            {chatHints.length > 0 ? (
+              <>
+                <p className="text-xs text-gray-600 mb-2">아래 채팅을 클릭하면 Chat ID 가 자동 입력됩니다.</p>
+                <ul className="space-y-1.5">
+                  {chatHints.map((c) => (
+                    <li key={c.chatId}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForm({ ...form, telegramChatId: c.chatId });
+                          onToast(`Chat ID 입력됨: ${c.chatId}`);
+                        }}
+                        className="w-full text-left flex items-center justify-between gap-3 px-3 py-2 bg-white border border-gray-200 rounded hover:border-gold-500 hover:bg-gold-50 transition-colors"
+                      >
+                        <span className="text-sm text-gray-900 truncate">
+                          <span className="font-medium">{c.title}</span>
+                          <span className="ml-2 text-xs text-gray-500">{c.type}</span>
+                        </span>
+                        <code className="shrink-0 text-xs text-gray-700 bg-gray-100 px-2 py-0.5 rounded">{c.chatId}</code>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="text-xs text-amber-700 leading-relaxed">{chatHintMsg || '봇이 본 최근 채팅이 없습니다.'}</p>
+            )}
+          </div>
+        )}
 
         <div className="mt-4 flex justify-end">
           <button

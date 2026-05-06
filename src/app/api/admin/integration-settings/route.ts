@@ -6,6 +6,7 @@ import {
   testGoogleSheet,
   testTelegram,
   getServiceAccountEmail,
+  listTelegramChats,
 } from '@/lib/integrations';
 
 export const dynamic = 'force-dynamic';
@@ -84,15 +85,29 @@ export async function PUT(request: Request) {
   }
 }
 
-// 테스트: body.target = 'sheets' | 'telegram'
+// target: 'sheets' | 'telegram' | 'telegram-chats'
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { target?: 'sheets' | 'telegram' };
+    const body = (await request.json().catch(() => ({}))) as {
+      target?: 'sheets' | 'telegram' | 'telegram-chats';
+    };
     const target = body.target;
+
+    if (target === 'telegram-chats') {
+      const result = await listTelegramChats();
+      await logAdmin('integration-settings', 'test', {
+        summary: '텔레그램 채팅 목록 조회',
+        meta: { ok: result.ok, count: result.chats?.length, error: result.error },
+      });
+      if (!result.ok) {
+        return NextResponse.json({ success: false, message: result.error ?? '실패' }, { status: 500 });
+      }
+      return NextResponse.json({ success: true, chats: result.chats ?? [], hint: result.hint });
+    }
 
     if (target !== 'sheets' && target !== 'telegram') {
       return NextResponse.json(
-        { success: false, message: 'target 은 sheets 또는 telegram' },
+        { success: false, message: 'target 은 sheets · telegram · telegram-chats' },
         { status: 400 },
       );
     }
