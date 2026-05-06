@@ -248,20 +248,23 @@ export default function AdminProductsPage() {
       const data = await res.json().catch(() => null);
       const saved: Product | undefined = data?.product;
 
-      // Optimistic update — fetchProducts 의 round-trip 을 기다리지 않고
-      // 즉시 리스트에 반영해 사용자가 새로고침할 필요 없도록.
+      // 서버가 saved product 를 돌려주면 그것을 source of truth 로 삼고
+      // 추가 GET 은 하지 않는다. 이유: PUT 직후 GET 은 blob CDN edge 의
+      // 전파 지연으로 stale 을 돌려받아 방금 저장한 값(inStock=false 등)을
+      // 다시 덮어쓰는 사고가 발생함.
       if (saved) {
         setProductList((prev) =>
           isAddMode ? [...prev, saved] : prev.map((p) => (p.id === saved.id ? saved : p))
         );
+      } else {
+        // 서버가 product 를 안 돌려준 비정상 경로에서만 GET 으로 동기화.
+        await fetchProducts();
       }
 
       setToast(isAddMode ? '제품이 추가되었습니다.' : '제품이 수정되었습니다.');
       setIsEditOpen(false);
       setEditingProduct(null);
       setIsAddMode(false);
-      // 백그라운드 동기화 — 서버의 정규화된 결과로 마무리.
-      fetchProducts();
     } catch (err) {
       console.error('Save error:', err);
       setToast('저장에 실패했습니다.');
