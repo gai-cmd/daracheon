@@ -135,12 +135,19 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
   },
 ];
 
+interface ProductCategoryRow {
+  id: string;
+  label: string;
+  labelEn?: string;
+}
+
 export default async function CompanyPage() {
-  const [pagesData, settings, faqItems] = await Promise.all([
+  const [pagesData, settings, faqItems, productCategories] = await Promise.all([
     // unstable_cache 우회 — blob 외부 변경 즉시 반영. force-dynamic 라우트라 매 요청 fresh.
     readSingleUncached<{ company?: CompanyData; support?: SupportData }>('pages'),
     readSingleSafe<{ brandLogo?: string; companyLogo?: string }>('company'),
     readDataSafe<FaqItemWithMeta>('faq'),
+    readDataSafe<ProductCategoryRow>('productCategories'),
   ]);
 
   const brandLogo = settings?.brandLogo || '/images/logo-brand.png';
@@ -153,7 +160,17 @@ export default async function CompanyPage() {
     pagesData?.company?.chapters && pagesData.company.chapters.length > 0
       ? pagesData.company.chapters
       : DEFAULT_CHAPTERS;
-  const supportData = pagesData?.support ?? null;
+  // 문의 폼의 "관심 제품 / 제목" 드롭다운은 /admin/products 의 카테고리 관리에서 단일 소스로 제공.
+  // 'all' 은 필터 전용이라 제외. 카테고리가 비어 있을 때만 support.productOptions 로 폴백.
+  const categoryOptions = productCategories
+    .filter((c) => c.id && c.id !== 'all' && c.label)
+    .map((c) => c.label);
+  const supportBase = pagesData?.support ?? null;
+  const supportData: SupportData | null = supportBase
+    ? { ...supportBase, productOptions: categoryOptions.length > 0 ? categoryOptions : supportBase.productOptions }
+    : categoryOptions.length > 0
+      ? { productOptions: categoryOptions }
+      : null;
 
   // FAQPage JSON-LD — 실제 DB 데이터 기반 동적 생성.
   // /support 통합으로 회사소개 페이지가 FAQ 의 정식 위치가 됨.
