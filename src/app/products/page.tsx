@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readDataSafe, readSingleUncached } from '@/lib/db';
+import { readDataSafe, readDataUncached, readSingleUncached } from '@/lib/db';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
@@ -215,7 +215,9 @@ const DEFAULT_PRODUCTS: Product[] = [
 ];
 
 export default async function ProductsPage() {
-  const dbProducts = await readDataSafe<Product>('products');
+  // 어드민 토글(재고/공개 등)이 즉시 반영되도록 uncached 직접 읽기.
+  // 캐시 태그 propagation 지연으로 stale 노출되는 사고 방지.
+  const dbProducts = await readDataUncached<Product>('products');
   const dbCategories = await readDataSafe<ProductCategory>('productCategories');
   // 인증 배지는 관리자 /admin/pages/home 의 certs 섹션과 공유 —
   // 한 곳에서 편집하면 홈·제품 페이지 모두 반영된다.

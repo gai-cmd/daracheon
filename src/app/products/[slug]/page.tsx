@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { readDataSafe } from '@/lib/db';
+import { readDataSafe, readDataUncached } from '@/lib/db';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
@@ -49,8 +49,9 @@ export default async function ProductDetailPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+  // products 는 uncached — 어드민 토글이 즉시 반영되도록.
   const [products, reviews] = await Promise.all([
-    readDataSafe<Product>('products'),
+    readDataUncached<Product>('products'),
     readDataSafe<ReviewRecord>('reviews'),
   ]);
   const product = products.find((p) => p.slug === slug);
