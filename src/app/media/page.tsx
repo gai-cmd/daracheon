@@ -26,6 +26,8 @@ const DEFAULT_HERO: FarmStoryData['hero'] = {
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
   lede: '호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
+  heroImage:
+    'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/vn/site-showroom-1778043495627.jpg',
 };
 
 const DEFAULT_SCENE_SECTION: SceneSection = {
@@ -283,7 +285,7 @@ export default async function MediaPage() {
   const process = pagesData?.process;
   const rawVideos = process?.productionVideos;
   const farmStory: FarmStoryData = {
-    hero: process?.hero ?? DEFAULT_HERO,
+    hero: { ...DEFAULT_HERO, ...(process?.hero ?? {}) },
     sceneSection: process?.sceneSection ?? DEFAULT_SCENE_SECTION,
     chapters: process?.chapters?.length ? process.chapters : DEFAULT_CHAPTERS,
     processVideos: rawVideos
