@@ -90,11 +90,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(SITE_URL),
-    icons: {
-      icon: '/images/ZOEL-LIFE-logo.png',
-      shortcut: '/images/ZOEL-LIFE-logo.png',
-      apple: '/images/ZOEL-LIFE-logo.png',
-    },
+    // 파비콘 / apple-touch-icon 은 src/app/icon.png + apple-icon.png 로
+    // Next.js 가 자동 생성. 매뉴얼 선언 제거 — 충돌 방지.
     title: { default: title, template: '%s | 대라천 ZOEL LIFE' },
     description,
     keywords,
