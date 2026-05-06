@@ -481,7 +481,7 @@ export default async function HomeShoppingPage({
             <div className={styles.sponsoredHead}>
               <div className={styles.sponsoredKicker}>SPONSORED · 협찬방송</div>
               <h2>
-                대라천이 <em>출연한 방송</em>
+                조엘라이프가 <em>출연한 방송</em>
               </h2>
               <p className={styles.sponsoredLede}>
                 협찬·정보교양 프로그램에 등장한 대라천 침향. 진행자·전문가 패널이 직접
