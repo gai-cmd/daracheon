@@ -357,56 +357,32 @@
 @media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(6, 1fr); } }
 .certChip {
   background: #0a0b10;
-  padding: 28px 14px 24px;
+  padding: 22px 16px 22px;
   text-align: center;
   transition: background 0.4s ease;
 }
 .certChip:hover { background: #0c0e16; }
-.certChip:hover .certMark {
-  border-color: rgba(212, 168, 67, 0.7);
-  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.15), inset 0 0 18px rgba(212, 168, 67, 0.08);
+.certChip:hover .certThumb {
+  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.4), 0 14px 30px -14px rgba(212, 168, 67, 0.45);
+  transform: translateY(-2px);
 }
-.certChip:hover .certMark > svg { transform: scale(1.06); }
-.certChip:hover .certMarkCorner { background: var(--accent); }
 
-.certMark {
+.certThumb {
   position: relative;
-  width: 52px;
-  height: 52px;
-  border: 1px solid rgba(212, 168, 67, 0.45);
-  color: var(--accent);
-  display: grid;
-  place-items: center;
-  margin: 0 auto 14px;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(212, 168, 67, 0.07) 0%, rgba(212, 168, 67, 0) 70%),
-    #0a0b10;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  width: 100%;
+  max-width: 132px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto 16px;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  background: #0a0b10;
 }
-.certMark::before,
-.certMark::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border: 1px solid rgba(212, 168, 67, 0.12);
-  pointer-events: none;
+.certThumb > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
-.certMark::after { inset: 3px; border-color: rgba(212, 168, 67, 0.08); }
-.certMark > svg,
-.certMark > img { transition: transform 0.4s ease; }
-.certChip:hover .certMark > img { transform: scale(1.08); }
-
-.certMarkCorner {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  background: rgba(212, 168, 67, 0.55);
-  transition: background 0.4s ease;
-}
-.certMarkCorner[data-pos='tl'] { top: -2px; left: -2px; }
-.certMarkCorner[data-pos='tr'] { top: -2px; right: -2px; }
-.certMarkCorner[data-pos='bl'] { bottom: -2px; left: -2px; }
-.certMarkCorner[data-pos='br'] { bottom: -2px; right: -2px; }
 .certName {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.66rem;

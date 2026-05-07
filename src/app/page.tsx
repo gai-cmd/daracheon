@@ -351,12 +351,8 @@ export default async function HomePage() {
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
                 <div key={`${c.name}-${i}`} className={styles.certChip}>
-                  <div className={styles.certMark} aria-hidden="true">
-                    <span className={styles.certMarkCorner} data-pos="tl" />
-                    <span className={styles.certMarkCorner} data-pos="tr" />
-                    <span className={styles.certMarkCorner} data-pos="bl" />
-                    <span className={styles.certMarkCorner} data-pos="br" />
-                    <CertIcon name={c.name} size={22} />
+                  <div className={styles.certThumb} aria-hidden="true">
+                    <CertIcon name={c.name} />
                   </div>
                   <div className={styles.certName}>{c.name}</div>
                   <div className={styles.certSub}>{c.sub}</div>
