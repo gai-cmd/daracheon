@@ -49,6 +49,12 @@ const DEFAULT_AUTHENTICITY: AuthenticityTab = {
     { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
     { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
   ],
+  check01Summary: {
+    prefix: 'VIHECO 중앙제약 성분명세서에는 ',
+    highlight: 'Aquilaria agallocha Roxburgh',
+    suffix: ' 학명이 명시되어 있습니다.',
+    line2: '제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.',
+  },
   check02Title: '산지를 따져봐야 한다',
   check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
   check02QuoteSource: '향승(香乘) · 명대 1611년',
@@ -705,13 +711,29 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     </div>
 
                     {/* 성분명세서 텍스트 요약 */}
-                    <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
-                      <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
-                        VIHECO 중앙제약 성분명세서에는 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>Aquilaria agallocha Roxburgh</em> 학명이 명시되어 있습니다.
-                        <br />
-                        제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.
-                      </p>
-                    </div>
+                    {(() => {
+                      const summary = auth.check01Summary ?? DEFAULT_AUTHENTICITY.check01Summary!;
+                      const hasContent =
+                        summary.prefix || summary.highlight || summary.suffix || summary.line2;
+                      if (!hasContent) return null;
+                      return (
+                        <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
+                          <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
+                            {summary.prefix}
+                            {summary.highlight && (
+                              <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>{summary.highlight}</em>
+                            )}
+                            {summary.suffix}
+                            {summary.line2 && (
+                              <>
+                                <br />
+                                {summary.line2}
+                              </>
+                            )}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </RevealOnScroll>
 

@@ -220,8 +220,23 @@
 /* VERIFIED */
 .verified {
   padding: 100px 0;
-  background: #0a0b10;
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(10, 11, 16, 0.92) 0%, rgba(10, 11, 16, 0.88) 50%, rgba(10, 11, 16, 0.94) 100%),
+    url('/images/backgrounds/home-verified.webp') center / cover no-repeat fixed,
+    #0a0b10;
 }
+.verified::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 80% 20%, rgba(212, 168, 67, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(212, 168, 67, 0.05), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.verified > * { position: relative; z-index: 1; }
 .verifiedHead {
   text-align: center;
   margin: 0 auto 60px;
@@ -357,20 +372,54 @@
 @media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(6, 1fr); } }
 .certChip {
   background: #0a0b10;
-  padding: 24px 14px;
+  padding: 28px 14px 24px;
   text-align: center;
+  transition: background 0.4s ease;
 }
+.certChip:hover { background: #0c0e16; }
+.certChip:hover .certMark {
+  border-color: rgba(212, 168, 67, 0.7);
+  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.15), inset 0 0 18px rgba(212, 168, 67, 0.08);
+}
+.certChip:hover .certMark > svg { transform: scale(1.06); }
+.certChip:hover .certMarkCorner { background: var(--accent); }
+
 .certMark {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--accent);
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(212, 168, 67, 0.45);
   color: var(--accent);
   display: grid;
   place-items: center;
-  margin: 0 auto 10px;
-  font-family: 'Noto Serif KR', serif;
-  font-size: 1rem;
+  margin: 0 auto 14px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(212, 168, 67, 0.07) 0%, rgba(212, 168, 67, 0) 70%),
+    #0a0b10;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
+.certMark::before,
+.certMark::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid rgba(212, 168, 67, 0.12);
+  pointer-events: none;
+}
+.certMark::after { inset: 3px; border-color: rgba(212, 168, 67, 0.08); }
+.certMark > svg { transition: transform 0.4s ease; }
+
+.certMarkCorner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(212, 168, 67, 0.55);
+  transition: background 0.4s ease;
+}
+.certMarkCorner[data-pos='tl'] { top: -2px; left: -2px; }
+.certMarkCorner[data-pos='tr'] { top: -2px; right: -2px; }
+.certMarkCorner[data-pos='bl'] { bottom: -2px; left: -2px; }
+.certMarkCorner[data-pos='br'] { bottom: -2px; right: -2px; }
 .certName {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.66rem;
@@ -388,8 +437,52 @@
 /* GENERIC SECTION */
 .section {
   padding: 100px 0;
+  position: relative;
 }
 .sectionAlt { background: #0c0d13; }
+
+/* Section background variants — Drive 이미지 + dark overlay */
+.bgAgarwood {
+  background:
+    linear-gradient(180deg, rgba(12, 13, 19, 0.94) 0%, rgba(12, 13, 19, 0.88) 50%, rgba(12, 13, 19, 0.94) 100%),
+    url('/images/backgrounds/home-agarwood.webp') center / cover no-repeat fixed,
+    #0c0d13;
+}
+.bgBenefits {
+  background:
+    linear-gradient(180deg, rgba(10, 11, 16, 0.93) 0%, rgba(10, 11, 16, 0.86) 50%, rgba(10, 11, 16, 0.93) 100%),
+    url('/images/backgrounds/home-benefits.webp') center / cover no-repeat fixed,
+    #0a0b10;
+}
+.bgProcess {
+  background:
+    linear-gradient(180deg, rgba(12, 13, 19, 0.94) 0%, rgba(12, 13, 19, 0.88) 50%, rgba(12, 13, 19, 0.94) 100%),
+    url('/images/backgrounds/home-process.webp') center / cover no-repeat fixed,
+    #0c0d13;
+}
+.bgAgarwood::after,
+.bgBenefits::after,
+.bgProcess::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 20% 30%, rgba(212, 168, 67, 0.07), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 85% 80%, rgba(212, 168, 67, 0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.bgAgarwood > *,
+.bgBenefits > *,
+.bgProcess > * { position: relative; z-index: 1; }
+
+/* 모바일에서 background-attachment: fixed 는 iOS Safari 성능 문제 — scroll 로 fallback */
+@media (max-width: 900px) {
+  .verified,
+  .bgAgarwood,
+  .bgBenefits,
+  .bgProcess { background-attachment: scroll; }
+}
 
 .section .head {
   text-align: center;

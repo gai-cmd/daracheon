@@ -112,12 +112,19 @@ export interface OfficialSourcesSection {
 
 export interface AuthenticitySource { label: string; value: string; }
 export interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
+export interface AuthenticitySummary {
+  prefix: string;
+  highlight: string;
+  suffix: string;
+  line2: string;
+}
 export interface AuthenticityTab {
   subtitle: string;
   intro: string;
   check01Title: string;
   check01Body: string;
   check01Sources: AuthenticitySource[];
+  check01Summary?: AuthenticitySummary;
   check02Title: string;
   check02Body: string;
   check02QuoteSource: string;

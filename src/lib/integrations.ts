@@ -116,6 +116,7 @@ async function getAccessToken(): Promise<string> {
 }
 
 const HEADER_ROW = ['일시', 'ID', '유형', '제목', '이름', '이메일', '연락처', '내용'];
+const REPLY_HEADERS = ['답변일시', '답변자', '답변'];
 
 function inquiryToRow(inq: InquiryPayload): (string | number)[] {
   return [
@@ -202,6 +203,99 @@ export async function appendToGoogleSheet(inquiry: InquiryPayload): Promise<Inte
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       return { ok: false, error: `HTTP ${res.status} ${text.slice(0, 300)}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+/**
+ * 답변 컬럼 헤더(I1:K1)를 멱등적으로 보장. 이미 동일 값이면 no-op.
+ * 기존 시트가 A:H 만 갖고 있어도 자동으로 헤더가 채워진다.
+ */
+async function ensureReplyHeaders(
+  spreadsheetId: string,
+  tabName: string,
+  token: string,
+): Promise<void> {
+  const range = encodeURIComponent(`${tabName}!I1:K1`);
+  const getUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
+  const getRes = await fetch(getUrl, { headers: { Authorization: `Bearer ${token}` } });
+  if (getRes.ok) {
+    const body = (await getRes.json().catch(() => ({}))) as { values?: string[][] };
+    const existing = body.values?.[0];
+    if (existing && existing[0] === REPLY_HEADERS[0]) return; // 이미 채워져 있음
+  }
+  const putUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
+  await fetch(putUrl, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ values: [REPLY_HEADERS] }),
+  });
+}
+
+export interface SheetReplyPayload {
+  inquiryId: string;
+  replyAt: string;   // ISO
+  replyBy?: string;
+  reply: string;
+}
+
+/**
+ * 시트에서 ID 컬럼(B)을 검색해 해당 행의 I·J·K 셀에 답변일시·답변자·답변을 기록.
+ * 행을 찾지 못하면 ok=false. 기존 행을 덮어쓰는 방식이라 동일 ID 재발송 시 최신 답변으로 갱신.
+ */
+export async function updateGoogleSheetReply(
+  payload: SheetReplyPayload,
+): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.googleSheetsUrl) return { ok: false, skipped: true, error: 'sheet url not configured' };
+
+  const spreadsheetId = extractSpreadsheetId(cfg.googleSheetsUrl);
+  if (!spreadsheetId) return { ok: false, error: '시트 URL에서 ID 를 찾지 못했습니다.' };
+
+  try {
+    const token = await getAccessToken();
+    const tabName = cfg.googleSheetsTab || (await resolveDefaultTabName(spreadsheetId, token));
+    await ensureReplyHeaders(spreadsheetId, tabName, token);
+
+    // ID 컬럼 (B) 전체 조회 → 행 인덱스 탐색
+    const idRange = encodeURIComponent(`${tabName}!B:B`);
+    const getRes = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${idRange}`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    if (!getRes.ok) {
+      const text = await getRes.text().catch(() => '');
+      return { ok: false, error: `ID 컬럼 조회 실패: HTTP ${getRes.status} ${text.slice(0, 300)}` };
+    }
+    const idBody = (await getRes.json()) as { values?: string[][] };
+    const rows = idBody.values ?? [];
+    const rowIndex = rows.findIndex((r) => (r[0] ?? '') === payload.inquiryId);
+    if (rowIndex === -1) {
+      return { ok: false, error: `시트에서 문의 ID(${payload.inquiryId}) 행을 찾지 못했습니다.` };
+    }
+    const sheetRow = rowIndex + 1; // 1-indexed
+
+    const writeRange = encodeURIComponent(`${tabName}!I${sheetRow}:K${sheetRow}`);
+    const putUrl =
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${writeRange}` +
+      `?valueInputOption=USER_ENTERED`;
+    const putRes = await fetch(putUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ values: [[payload.replyAt, payload.replyBy ?? '', payload.reply]] }),
+    });
+    if (!putRes.ok) {
+      const text = await putRes.text().catch(() => '');
+      return { ok: false, error: `답변 기록 실패: HTTP ${putRes.status} ${text.slice(0, 300)}` };
     }
     return { ok: true };
   } catch (err) {

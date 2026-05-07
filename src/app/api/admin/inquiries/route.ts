@@ -3,7 +3,7 @@ import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
-import { notifyTelegramReply } from '@/lib/integrations';
+import { notifyTelegramReply, updateGoogleSheetReply } from '@/lib/integrations';
 
 interface Inquiry {
   id: string;
@@ -186,6 +186,20 @@ export async function PATCH(request: Request) {
         }
       }).catch((err: unknown) => {
         console.error('[Admin Inquiries] notifyTelegramReply threw:', err);
+      });
+
+      // Google Sheets 의 동일 ID 행에 답변 컬럼(I·J·K) 갱신. fire-and-forget.
+      updateGoogleSheetReply({
+        inquiryId: updated.id,
+        replyAt: updated.replyAt ?? new Date().toISOString(),
+        replyBy: updated.replyBy,
+        reply: updated.reply,
+      }).then((r) => {
+        if (!r.ok && !r.skipped) {
+          console.error('[Admin Inquiries] updateGoogleSheetReply error:', r.error);
+        }
+      }).catch((err: unknown) => {
+        console.error('[Admin Inquiries] updateGoogleSheetReply threw:', err);
       });
     }
 

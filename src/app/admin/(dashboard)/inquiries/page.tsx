@@ -197,8 +197,14 @@ export default function InquiriesPage() {
         body: JSON.stringify({ id, reply: text, status: 'replied' }),
       });
       if (!res.ok) throw new Error('Reply save failed');
-      setToast('답변이 저장되었습니다.');
-      setReplyTexts((prev) => ({ ...prev, [id]: '' }));
+      setToast('답변을 보냈습니다.');
+      // 키 자체를 제거해야 textarea 가 inq.reply 로 fallback 됨.
+      // ''로 비우면 ?? 가 빈 문자열을 통과시켜 답변이 사라진 것처럼 보임.
+      setReplyTexts((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
       await fetchInquiries();
     } catch (err) {
       console.error('Reply save error:', err);
@@ -605,7 +611,7 @@ export default function InquiriesPage() {
                               disabled={!replyTexts[inq.id]?.trim()}
                               className="adm-btn-primary px-4 disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                              답변 저장
+                              답변 보내기
                             </button>
                           )}
                           {nextStatus && (

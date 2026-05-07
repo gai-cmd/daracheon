@@ -73,12 +73,19 @@ interface Paper {
 
 interface AuthenticitySource { label: string; value: string; }
 interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
+interface AuthenticitySummary {
+  prefix: string;
+  highlight: string;
+  suffix: string;
+  line2: string;
+}
 interface AuthenticityTabData {
   subtitle: string;
   intro: string;
   check01Title: string;
   check01Body: string;
   check01Sources: AuthenticitySource[];
+  check01Summary?: AuthenticitySummary;
   check02Title: string;
   check02Body: string;
   check02QuoteSource: string;
@@ -334,6 +341,12 @@ export default function AdminAboutAgarwoodPage() {
       { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
       { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
     ],
+    check01Summary: {
+      prefix: 'VIHECO 중앙제약 성분명세서에는 ',
+      highlight: 'Aquilaria agallocha Roxburgh',
+      suffix: ' 학명이 명시되어 있습니다.',
+      line2: '제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.',
+    },
     check02Title: '산지를 따져봐야 한다',
     check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
     check02QuoteSource: '향승(香乘) · 명대 1611년',
@@ -953,6 +966,26 @@ export default function AdminAboutAgarwoodPage() {
                         className="text-gold-600 hover:text-gold-700 text-sm font-medium"
                       >+ 출처 추가</button>
                     </div>
+                  </div>
+
+                  {/* 성분명세서 요약 (강조 인용 박스) */}
+                  <div className="mt-4 pt-4 border-t border-dashed border-gray-300">
+                    <p className="text-sm font-medium text-gray-700 mb-1">성분명세서 요약 인용 박스</p>
+                    <p className="text-xs text-gray-500 mb-3">CHECK·01 출처 목록 아래에 표시되는 강조 인용 박스입니다. 1번째 줄은 강조어 앞/뒤 텍스트로 분리됩니다 (강조어는 골드색 + 굵게 표시).</p>
+                    {(() => {
+                      const sum = authenticityTab.check01Summary ?? { prefix: '', highlight: '', suffix: '', line2: '' };
+                      const update = (patch: Partial<AuthenticitySummary>) =>
+                        setAuthenticityTab({ ...authenticityTab, check01Summary: { ...sum, ...patch } });
+                      return (
+                        <div className="space-y-3">
+                          <LabeledInput label="1번째 줄 — 강조어 앞 텍스트" value={sum.prefix} onChange={(v) => update({ prefix: v })} />
+                          <LabeledInput label="1번째 줄 — 강조어 (골드색)" value={sum.highlight} onChange={(v) => update({ highlight: v })} />
+                          <LabeledInput label="1번째 줄 — 강조어 뒤 텍스트" value={sum.suffix} onChange={(v) => update({ suffix: v })} />
+                          <LabeledTextarea label="2번째 줄" value={sum.line2} onChange={(v) => update({ line2: v })} rows={2} />
+                          <p className="text-xs text-gray-400">모든 칸을 비우면 인용 박스 자체가 표시되지 않습니다.</p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
