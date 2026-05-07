@@ -368,7 +368,7 @@ export default async function HomePage() {
       </section>
 
       {/* AGARWOOD INTRO */}
-      <section className={`${styles.section} ${styles.sectionAlt} ${styles.bgAgarwood}`}>
+      <section className={`${styles.section} ${styles.sectionAlt}`}>
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{agarwood.tag}</span>
@@ -406,7 +406,7 @@ export default async function HomePage() {
       </section>
 
       {/* BENEFITS */}
-      <section className={`${styles.section} ${styles.bgBenefits}`} id="benefits">
+      <section className={styles.section} id="benefits">
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{benefits.tag}</span>
@@ -445,7 +445,7 @@ export default async function HomePage() {
       </section>
 
       {/* PROCESS */}
-      <section className={`${styles.section} ${styles.sectionAlt} ${styles.bgProcess}`} id="process">
+      <section className={`${styles.section} ${styles.sectionAlt}`} id="process">
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{processData.tag}</span>

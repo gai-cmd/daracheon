@@ -63,13 +63,6 @@ const DEFAULT_PRODUCTS_HERO: ProductsHero = {
   lede: '베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업. 모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.',
 };
 
-const CERTS = [
-  { mark: 'C', k: 'CITES', v: '국제협약 인증' },
-  { mark: 'H', k: 'HACCP', v: '식품안전' },
-  { mark: 'V', k: 'VCO', v: '베트남 유기농' },
-  { mark: 'K', k: '식약처', v: '식품공전 등재' },
-];
-
 // Fallback categories mirroring data/db/productCategories.json
 const DEFAULT_CATEGORIES: ProductCategory[] = [
   { id: 'all', label: '전체', labelEn: 'All' },
@@ -221,18 +214,11 @@ export default async function ProductsPage() {
   // 캐시 태그 propagation 지연으로 stale 노출되는 사고 방지.
   const dbProducts = await readDataUncached<Product>('products');
   const dbCategories = await readDataSafe<ProductCategory>('productCategories');
-  // 인증 배지는 관리자 /admin/pages/home 의 certs 섹션과 공유 —
-  // 한 곳에서 편집하면 홈·제품 페이지 모두 반영된다.
   // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
   const pagesData = await readSingleUncached<{
-    home?: { certs?: Array<{ mark: string; name: string; sub: string }> };
     products?: { hero?: ProductsHero };
   }>('pages');
   const productsHero: ProductsHero = { ...DEFAULT_PRODUCTS_HERO, ...pagesData?.products?.hero };
-  const homeCerts = pagesData?.home?.certs ?? [];
-  const certs = homeCerts.length > 0
-    ? homeCerts.map((c) => ({ mark: c.mark, k: c.name, v: c.sub }))
-    : CERTS;
 
   // 공개 목록은 published === false 인 제품 제외.
   const allProducts = dbProducts.length > 0 ? dbProducts : DEFAULT_PRODUCTS;
@@ -296,29 +282,6 @@ export default async function ProductsPage() {
       <JsonLd data={breadcrumbJsonLd} />
       {/* Hero(탭 포함) + 제품 그리드 — 클라이언트 컴포넌트 */}
       <ProductsPageClient products={products} productCategories={productCategories} hero={productsHero} />
-
-      {/* CERTIFICATIONS */}
-      <section className={styles.certs}>
-        <div className={styles.wrap}>
-          <div className={styles.certsInner}>
-            <div>
-              <div className={styles.certsKicker}>Certified</div>
-              <h3 className={styles.certsHeadline}>
-                모든 제품은 <em>국제 인증</em>으로<br />증명된 진품입니다
-              </h3>
-            </div>
-            <div className={styles.certsRow}>
-              {certs.map((c, i) => (
-                <div key={`${c.k}-${i}`} className={styles.cert}>
-                  <div className={styles.certMark}>{c.mark}</div>
-                  <div className={styles.certK}>{c.k}</div>
-                  <div className={styles.certV}>{c.v}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

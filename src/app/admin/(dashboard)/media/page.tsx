@@ -6,7 +6,7 @@ import GalleryAdminPanel from './GalleryAdminPanel';
 
 const TABS = [
   { key: 'story' as const, label: '침향 농장 이야기' },
-  { key: 'gallery' as const, label: '갤러리 관리' },
+  { key: 'gallery' as const, label: '영상・사진 갤러리 관리' },
 ];
 
 export default function MediaAdminPage() {

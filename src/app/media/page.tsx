@@ -47,6 +47,7 @@ function ytIdFromUrl(url: string): string | null {
 function buildMediaJsonLd(media: MediaItem[]) {
   const videos = media.filter((m) => m.type === 'video');
   const photos = media.filter((m) => m.type === 'photo');
+  void photos;
 
   const videoItems = videos.map((v, i) => {
     const id = v.url ? ytIdFromUrl(v.url) : null;
@@ -323,36 +324,6 @@ const DEFAULT_MEDIA: MediaItem[] = [
     date: '2026-04-11',
     image: 'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
   },
-  {
-    id: 'a-default-1',
-    type: 'article',
-    title: '침향이란? 3,000년 역사를 가진 동양 최고의 향약',
-    source: 'Agarwood Library',
-    date: '2026-01-07',
-    image: 'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
-    excerpt: '침향(沈香, Agarwood)은 Aquilaria 나무에서 생성되는 귀한 향약입니다. 동의보감부터 현대 임상연구까지, 침향의 정의·역사·효능·종류를 완벽 정리합니다.',
-    url: '/about-agarwood',
-  },
-  {
-    id: 'a-default-2',
-    type: 'press',
-    title: '대라천, Asia 10 Leading Pioneering Brand 선정',
-    source: '굿모닝경제',
-    date: '2025-11-15',
-    image: 'https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280',
-    excerpt: '베트남 침향 전문기업 대라천이 아시아 10대 선도 브랜드로 선정되었다. 하띤성 200ha 부지에 400만 그루 이상의 Aquilaria Agallocha 침향나무를 직접 관리하며 수직계열화를 완성했다.',
-    url: '#',
-  },
-  {
-    id: 'a-default-3',
-    type: 'press',
-    title: '가짜 침향 가려낸다 — 한약재도 유전자 검사',
-    source: '연합뉴스TV',
-    date: '2026-03-28',
-    image: 'https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280',
-    excerpt: '대라천은 DNA 유전자 분석으로 검증된 Aquilaria Agallocha Roxburgh 정품만을 사용. 식약처 공정서 기준에 적합한 침향입니다.',
-    url: '/home-shopping',
-  },
 ];
 
 // DB에서 읽는 process 데이터의 타입 (내부 사용)
@@ -393,7 +364,6 @@ export default async function MediaPage() {
   const gallery = {
     videos: allMedia.filter((m) => m.type === 'video'),
     photos: allMedia.filter((m) => m.type === 'photo'),
-    articles: allMedia.filter((m) => m.type === 'article' || m.type === 'press'),
   };
 
   const mediaJsonLd = buildMediaJsonLd(allMedia);

@@ -270,28 +270,6 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
   },
 ];
 
-function formatChannelLogo(channel: string): string {
-  const c = channel.toUpperCase();
-  if (c.includes('롯데') || c.includes('LOTTE')) return 'L';
-  if (c.includes('현대') || c.includes('HYUNDAI')) return 'H';
-  if (c.includes('CJ')) return 'C';
-  if (c.includes('GS')) return 'G';
-  return c.slice(0, 1);
-}
-
-const KST = 'Asia/Seoul';
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return {
-    day: new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: KST }).format(d),
-    monthYear: new Intl.DateTimeFormat('ko-KR', { year: '2-digit', month: 'short', timeZone: KST })
-      .format(d)
-      .toUpperCase(),
-    time: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: KST }),
-  };
-}
-
 export default async function HomeShoppingPage({
   searchParams,
 }: {
@@ -394,9 +372,6 @@ export default async function HomeShoppingPage({
                   <a href="tel:070-4140-4086" className={styles.btnLive}>
                     ● 전화 주문 070-4140-4086
                   </a>
-                  <a href="#sched" className={styles.btnNotify}>
-                    편성표 보기 →
-                  </a>
                 </div>
               </div>
               <div>
@@ -490,79 +465,6 @@ export default async function HomeShoppingPage({
           );
         })()
       )}
-
-      {/* SCHEDULE */}
-      <section className={styles.sched} id="sched">
-        <div className={styles.wrap}>
-          <div className={styles.schedHead}>
-            <h2>
-              방송 <em>편성표</em>
-            </h2>
-          </div>
-
-          <div className={styles.schedList}>
-            {sorted.length === 0 ? (
-              <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
-            ) : (
-              sorted.map((b) => {
-                const logo = formatChannelLogo(b.channel);
-                const dt = formatDate(b.scheduledAt);
-                return (
-                  <div key={b.id} className={styles.schedRow}>
-                    <div className={styles.schedDate}>
-                      <span className={styles.schedDateDay}>{dt.day}</span>
-                      {dt.monthYear}
-                    </div>
-                    <div className={styles.schedCh}>
-                      <div className={styles.schedChLogo}>{logo}</div>
-                      <div className={styles.schedChInfo}>
-                        <span className={styles.schedChName}>{b.channel}</span>
-                        <span className={styles.schedChTime}>{dt.time}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className={styles.schedProdTitle}>{b.description ?? '대라천 침향 특별 방송'}</div>
-                      <div className={styles.schedProdOffer}>
-                        {b.specialPrice ? (
-                          <>
-                            특별가 <b>₩{b.specialPrice.toLocaleString()}</b>
-                            {b.discountRate ? ` · −${b.discountRate}%` : ''}
-                          </>
-                        ) : (
-                          '방송 중 특별가 공개'
-                        )}
-                      </div>
-                    </div>
-                    <div className={styles.schedHost}>
-                      {b.host ? (
-                        <>
-                          <b>{b.host}</b>
-                          쇼호스트
-                        </>
-                      ) : (
-                        <span>—</span>
-                      )}
-                    </div>
-                    <div className={styles.schedAction}>
-                      {b.status === 'live' && b.vodUrl ? (
-                        <a href="#live" className={styles.btnLive}>
-                          ● LIVE
-                        </a>
-                      ) : b.status === 'ended' && b.vodUrl ? (
-                        <a href="#live" className={styles.btnNotify}>
-                          다시보기 →
-                        </a>
-                      ) : (
-                        <span className={styles.schedStatus}>{STATUS_LABEL[b.status]}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* SPONSORED · 협찬방송 — 한 행 2열(설명 좌 · 영상 우) 으로 정렬,
           홈쇼핑의 LIVE 카드 골격을 차용하되 보라 액센트로 차별화. */}

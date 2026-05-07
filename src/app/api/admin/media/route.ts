@@ -5,7 +5,7 @@ import { snapshotBeforeDestructive } from '@/lib/backup';
 
 interface MediaItem {
   id: string;
-  type: 'article' | 'press' | 'video';
+  type: 'video' | 'photo';
   title: string;
   source: string;
   date: string;
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     const newItem: MediaItem = {
       id: body.id || `m-${Date.now()}`,
-      type: body.type || 'article',
+      type: body.type || 'video',
       title: body.title.trim(),
       source: body.source?.trim() || '',
       date: body.date || new Date().toISOString().split('T')[0],

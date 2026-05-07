@@ -34,8 +34,6 @@ export async function generateMetadata(
 const TYPE_LABEL: Record<MediaItem['type'], string> = {
   video: '영상',
   photo: '사진',
-  article: '기사',
-  press: '보도자료',
 };
 
 export default async function MediaDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -64,30 +62,16 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
           ...(ytId ? { embedUrl: `https://www.youtube.com/embed/${ytId}` } : {}),
           publisher: { '@id': `${SITE_URL}/#organization` },
         }
-      : item.type === 'photo'
-        ? {
-            '@context': 'https://schema.org',
-            '@type': 'ImageObject',
-            contentUrl: item.image,
-            name: item.title,
-            description: item.excerpt ?? item.title,
-            datePublished: item.date,
-            creditText: item.source ?? '대라천 ZOEL LIFE',
-            creator: { '@id': `${SITE_URL}/#organization` },
-          }
-        : {
-            // article / press
-            '@context': 'https://schema.org',
-            '@type': item.type === 'press' ? 'NewsArticle' : 'Article',
-            headline: item.title,
-            description: item.excerpt ?? item.title,
-            image: item.image,
-            datePublished: item.date,
-            author: { '@type': 'Organization', name: item.source ?? '대라천 ZOEL LIFE' },
-            publisher: { '@id': `${SITE_URL}/#organization` },
-            mainEntityOfPage: pageUrl,
-            inLanguage: 'ko-KR',
-          };
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'ImageObject',
+          contentUrl: item.image,
+          name: item.title,
+          description: item.excerpt ?? item.title,
+          datePublished: item.date,
+          creditText: item.source ?? '대라천 ZOEL LIFE',
+          creator: { '@id': `${SITE_URL}/#organization` },
+        };
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',

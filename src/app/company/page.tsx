@@ -263,7 +263,7 @@ export default async function CompanyPage() {
                           flexShrink: 0,
                         }}
                       />
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
                         <span
                           style={{
                             fontFamily: "'Noto Sans KR', sans-serif",

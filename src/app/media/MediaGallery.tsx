@@ -7,7 +7,7 @@ import styles from '@/styles/zoel/story-page.module.css';
 
 export interface MediaItem {
   id: string;
-  type: 'article' | 'press' | 'video' | 'photo';
+  type: 'video' | 'photo';
   title: string;
   source: string;
   date: string;
@@ -254,11 +254,9 @@ function VideoModal({ item, onClose }: VideoModalProps) {
 export default function MediaGallery({
   videos,
   photos,
-  articles,
 }: {
   videos: MediaItem[];
   photos: MediaItem[];
-  articles: MediaItem[];
 }) {
   const [openVideo, setOpenVideo] = useState<MediaItem | null>(null);
 
@@ -431,71 +429,6 @@ export default function MediaGallery({
                 </div>
               ) : (
                 <p style={{ color: 'rgba(255,255,255,0.55)', marginTop: 20 }}>등록된 사진이 없습니다.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ARTICLES */}
-      <section className={styles.chapter}>
-        <div className={styles.wrap}>
-          <div className={styles.chapterGrid}>
-            <div>
-              <div className={styles.chapterNum}>03</div>
-              <div className={styles.chapterTag}>Articles</div>
-            </div>
-            <div className={styles.chapterBody}>
-              <h3>기사·보도</h3>
-              {articles.length > 0 ? (
-                <div style={{ display: 'grid', gap: 16, marginTop: 24 }}>
-                  {articles.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={`/media/${item.id}`}
-                      style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'grid',
-                        gridTemplateColumns: '160px 1fr',
-                        gap: 20,
-                        padding: 16,
-                        border: '1px solid rgba(212,168,67,0.18)',
-                        background: 'rgba(255,255,255,0.02)',
-                        transition: 'border-color 200ms',
-                      }}
-                    >
-                      <div style={{ aspectRatio: '4/3', position: 'relative', overflow: 'hidden', background: '#1a1d29' }}>
-                        {item.image && (
-                          <Image src={item.image} alt={item.title} fill sizes="160px" style={{ objectFit: 'cover' }} />
-                        )}
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                            fontSize: '0.66rem',
-                            letterSpacing: '0.22em',
-                            textTransform: 'uppercase',
-                            color: 'var(--accent)',
-                            marginBottom: 6,
-                          }}
-                        >
-                          {item.source} · {item.date}
-                        </div>
-                        <h4 style={{ fontSize: '1.05rem', color: '#fff', marginBottom: 8, fontWeight: 500 }}>{item.title}</h4>
-                        {item.excerpt && (
-                          <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, fontWeight: 300 }}>
-                            {item.excerpt}
-                          </p>
-                        )}
-                        <div style={{ marginTop: 10, fontSize: '0.8rem', color: 'var(--accent)' }}>자세히 보기 →</div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <p style={{ color: 'rgba(255,255,255,0.55)', marginTop: 20 }}>등록된 기사가 없습니다.</p>
               )}
             </div>
           </div>

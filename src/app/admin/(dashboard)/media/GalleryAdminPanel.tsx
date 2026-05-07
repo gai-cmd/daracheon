@@ -5,7 +5,7 @@ import Image from 'next/image';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 
 /* ─── Types ─── */
-type MediaType = 'video' | 'press' | 'article' | 'photo';
+type MediaType = 'video' | 'photo';
 
 interface MediaItem {
   id: string;
@@ -19,18 +19,14 @@ interface MediaItem {
 }
 
 /* ─── Label / Color Maps ─── */
-// Order mirrors the /media frontend section order: 01 Videos · 02 Press · 03 Photos.
+// Order mirrors the /media frontend section order: 01 Videos · 02 Photos.
 const typeLabel: Record<MediaType, string> = {
   video: '영상',
-  press: '보도',
-  article: '기사',
   photo: '사진',
 };
 
 const typeColor: Record<MediaType, string> = {
   video: 'adm-badge adm-badge-luxury',
-  press: 'adm-badge adm-badge-premium',
-  article: 'adm-badge adm-badge-traditional',
   photo: 'adm-badge adm-badge-default',
 };
 
@@ -49,7 +45,7 @@ export default function GalleryAdminPanel() {
   /* Empty form template */
   const emptyItem: MediaItem = {
     id: '',
-    type: 'article',
+    type: 'video',
     title: '',
     source: '',
     date: new Date().toISOString().slice(0, 10),
@@ -189,7 +185,7 @@ export default function GalleryAdminPanel() {
           <div>
             <h1 className="text-2xl font-bold text-neutral-900 font-serif">침향 농장 이야기</h1>
             <p className="text-sm text-neutral-500 mt-1">
-              <span className="font-mono">/media</span> 공개 페이지의 세 섹션(01 Videos · 02 Press · 03 Photos) 콘텐츠를 관리합니다.
+              <span className="font-mono">/media</span> 공개 페이지의 두 섹션(01 Videos · 02 Photos) 콘텐츠를 관리합니다.
             </p>
           </div>
           <button
@@ -205,7 +201,7 @@ export default function GalleryAdminPanel() {
 
         {/* Type Filter Tabs */}
         <div className="flex gap-2 mb-8">
-          {(['all', 'video', 'press', 'article', 'photo'] as const).map((t) => (
+          {(['all', 'video', 'photo'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
@@ -340,9 +336,7 @@ export default function GalleryAdminPanel() {
                     className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
                   >
                     <option value="video">영상 (01 Videos)</option>
-                    <option value="press">보도 (02 Press)</option>
-                    <option value="article">기사 (02 Press)</option>
-                    <option value="photo">사진 (03 Photos)</option>
+                    <option value="photo">사진 (02 Photos)</option>
                   </select>
                 </div>
 

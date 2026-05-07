@@ -66,12 +66,11 @@ export interface FarmStoryData {
 export interface GalleryData {
   videos: MediaItem[];
   photos: MediaItem[];
-  articles: MediaItem[];
 }
 
 const TABS = [
   { key: 'story' as const, label: '침향 농장 이야기' },
-  { key: 'gallery' as const, label: '갤러리' },
+  { key: 'gallery' as const, label: '영상・사진 갤러리' },
 ];
 
 export default function MediaPageClient({
@@ -470,7 +469,7 @@ export default function MediaPageClient({
           </section>
         </>
       ) : (
-        <MediaGallery videos={gallery.videos} photos={gallery.photos} articles={gallery.articles} />
+        <MediaGallery videos={gallery.videos} photos={gallery.photos} />
       )}
     </>
   );
