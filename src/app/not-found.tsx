@@ -1,4 +1,12 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
+
+// 404 는 크롤러가 색인하지 않도록 noindex. soft-404 / 빈 페이지 색인 방지.
+export const metadata: Metadata = {
+  title: '페이지를 찾을 수 없습니다 (404)',
+  description: '요청하신 페이지가 존재하지 않거나 이동되었습니다.',
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (

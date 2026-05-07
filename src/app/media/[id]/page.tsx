@@ -3,10 +3,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { readDataSafe } from '@/lib/db';
+import JsonLd from '@/components/ui/JsonLd';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { MediaItem } from '../MediaGallery';
 
+const SITE_URL = 'https://zoellife.com';
+
 export const dynamic = 'force-dynamic';
+
+function ytIdFromUrl(url: string): string | null {
+  const m = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(url);
+  return m ? m[1] : null;
+}
 
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
@@ -39,8 +47,62 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
   // 같은 타입의 다른 항목 — 추천
   const related = items.filter((m) => m.id !== item.id && m.type === item.type).slice(0, 3);
 
+  // 미디어 항목 타입에 맞춰 JSON-LD 분기 — Google 영상 캐러셀 / 뉴스 / 사진 가이드
+  // 모두 BreadcrumbList 와 함께 emit.
+  const pageUrl = `${SITE_URL}/media/${item.id}`;
+  const ytId = item.url ? ytIdFromUrl(item.url) : null;
+  const itemJsonLd: Record<string, unknown> =
+    item.type === 'video'
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: item.title,
+          description: item.excerpt ?? item.title,
+          thumbnailUrl: item.image,
+          uploadDate: item.date,
+          contentUrl: item.url ?? pageUrl,
+          ...(ytId ? { embedUrl: `https://www.youtube.com/embed/${ytId}` } : {}),
+          publisher: { '@id': `${SITE_URL}/#organization` },
+        }
+      : item.type === 'photo'
+        ? {
+            '@context': 'https://schema.org',
+            '@type': 'ImageObject',
+            contentUrl: item.image,
+            name: item.title,
+            description: item.excerpt ?? item.title,
+            datePublished: item.date,
+            creditText: item.source ?? '대라천 ZOEL LIFE',
+            creator: { '@id': `${SITE_URL}/#organization` },
+          }
+        : {
+            // article / press
+            '@context': 'https://schema.org',
+            '@type': item.type === 'press' ? 'NewsArticle' : 'Article',
+            headline: item.title,
+            description: item.excerpt ?? item.title,
+            image: item.image,
+            datePublished: item.date,
+            author: { '@type': 'Organization', name: item.source ?? '대라천 ZOEL LIFE' },
+            publisher: { '@id': `${SITE_URL}/#organization` },
+            mainEntityOfPage: pageUrl,
+            inLanguage: 'ko-KR',
+          };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: '미디어', item: `${SITE_URL}/media` },
+      { '@type': 'ListItem', position: 3, name: item.title, item: pageUrl },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={itemJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         <div className={styles.wrap}>
