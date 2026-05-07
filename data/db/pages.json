@@ -1,64 +1,60 @@
 {
   "brandStory": {
     "hero": {
-      "sectionTag": "Brand Story",
-      "titleKr": "대라천 '참'침향",
-      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다.",
-      "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg"
+      "sectionTag": "브랜드 스토리 · Brand Story",
+      "titleKr": "100%  베트남산,",
+      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닙니다. 수천 년의 시간을 지나며 검증된 침향의 신뢰를 담았습니다. 25년 이상을 오직 침향 한 길만 연구하고 지켜온 정직과 성실, 그리고 자연이 오랜 시간에 걸쳐 빚어낸 기다림의 결실을 여러분께 온전히 전해 드립니다. ",
+      "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/floot-brand-story-hero.jpg",
+      "titleEn": "아갈로차 침향만 고집"
     },
     "brandStoryTab": {
-      "headlineTitle": "100% 베트남산, 아갈로차 침향나무만 고집!",
+      "headlineTitle": "베트남에서 오직 침향 한 길만 고집했습니다!",
       "headlineSubtitle": "200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전",
       "sourceTag": "THE SOURCE",
       "sourceTitle": "25년의 기다림이 시작되는 곳",
-      "sourceBody": "조엘라이프는 \"자연의 진실된 가치\"를 모토로 한 프리미엄 침향 브랜드 [대라천 '참'침향]을 소개합니다.\n침향은 수천 년 전부터 귀하게 여겨져 온 천연의 선물로, 침향나무가 스스로 상처를 치유하며 만들어내는 고귀한 수지입니다.\n조엘라이프는 이 고귀한 가치를 현대 과학과 결합하여 인류의 건강과 행복에 기여하고자 합니다.\n\n대라천 '참'침향은 세계적으로 인정 받은 침향의 최고 산지인 베트남에서 생산된 침향만 100% 사용합니다.\n직접 운영하는 침향농장에서 생산된 침향을 사용하는 제품은 오직 대라천 '참'침향뿐입니다.\n또한, 베트남 식약청에서 'Aquilaria Agallocha Roxburgh' 학명 사용을 인정한 제품은 대라천 '참'침향 제품 뿐입니다.\n\n대라천 '참'침향은 식목에서 침향을 얻기까지 20~30년 동안 유기농법으로 재배합니다.\n20년 이상 된 침향나무에서 2~10년에 걸쳐 열대과일 발효액으로 수지 내림을 해, 벌목 후 사람 손으로 하나하나 침향을 채취하고 국가 공인 유기농 인증을 통해 더욱 안전하고 신뢰할 수 있습니다.\n\n베트남 하띤성의 침향농장에서는 모든 Agallocha 침향나무에 개별적으로 고유번호를 부여해 이력을 관리하며 동나이 직영공장에서 전통 증기 증류법으로 침향오일을 생산합니다.\n침향나무 재배나 수지 추출 과정을 고려하면 당연히 비쌀 수 밖에 없지만 비싼 만큼 최선을 다하고 있습니다."
+      "sourceBody": "조엘라이프는 \"자연의 진실된 가치\"를 모토로 한 프리미엄 침향 브랜드 [대라천 '참'침향]을 소개합니다. 침향은 수천 년 전부터 귀하게 여겨져 온 천연의 선물로, 침향나무가 스스로 상처를 치유하며 만들어내는 고귀한 수지입니다.  조엘라이프는 이 고귀한 가치를 현대 과학과 결합하여 인류의 건강과 행복에 기여하고자 합니다.\n\n대라천 '참'침향은 세계적으로 인정 받은 침향의 최고 산지인 베트남에서 생산된 침향만 100% 사용합니다. 직접 운영하는 침향농장에서 생산된 침향을 사용하는 제품은 오직 대라천 '참'침향뿐입니다. 또한, 베트남 식약청에서 'Aquilaria Agallocha Roxburgh' 학명 사용을 인정한 제품은 대라천 '참'침향 제품 뿐입니다.\n\n대라천 '참'침향은 식목에서 침향을 얻기까지 20~30년 동안 유기농법으로 재배합니다. 20년 이상 된 침향나무에서 2~10년에 걸쳐 열대과일 발효액으로 수지 내림을 해, 벌목 후 사람 손으로 하나하나 침향을 채취하고 국가 공인 유기농 인증을 통해 더욱 안전하고 신뢰할 수 있습니다.\n\n베트남 하띤성의 침향농장에서는 모든 Agallocha 침향나무에 개별적으로 고유번호를 부여해 이력을 관리하며 동나이 직영공장에서 전통 증기 증류법으로 침향오일을 생산합니다. 침향나무 재배나 수지 추출 과정을 고려하면 당연히 비쌀 수 밖에 없지만 비싼 만큼 최선을 다하고 있습니다."
     },
     "farms": [
       {
         "name": "하띤",
         "nameVi": "Ha Tinh",
-        "desc": "메인 대규모 농장 (200ha)",
+        "desc": "침향의 전통 산지",
         "image": "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280"
       },
       {
         "name": "동나이",
         "nameVi": "Dong Nai",
-        "desc": "전략 재배 거점",
+        "desc": "현무암 토양, 깊은 오일향",
         "image": "https://lh3.googleusercontent.com/d/1t02AQvPDeUsqjOv-NcUpwiDWrXwZ6mgA=w1280"
       },
       {
         "name": "냐짱",
         "nameVi": "Nha Trang",
-        "desc": "고품질 원료 산지",
+        "desc": "굵은 침향, 오랜 관리의 결과",
         "image": "https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280"
       },
       {
-        "name": "푸국",
+        "name": "푸꾸옥",
         "nameVi": "Phu Quoc",
-        "desc": "해양성 기후 재배지",
+        "desc": "고수령 침향목·체험농장",
         "image": "https://lh3.googleusercontent.com/d/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs=w1280"
       },
       {
         "name": "람동",
         "nameVi": "Lam Dong",
-        "desc": "고산지대 특화 농장",
+        "desc": "158ha(478,000평) · 대규모 거점",
         "image": "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png"
       }
     ],
     "sceneTab": {
       "tag": "THE FIELD",
-      "title": "대라천 침향 현장",
-      "subtitle": "200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전",
-      "body": "베트남 하띤성에 위치한 200ha 규모의 대규모 침향 농장은 대라천 '참'침향의 심장부로, 400만 그루의 침향나무가 자라는 생명의 터전입니다.\n하띤성, 냐짱, 푸꿕, 동나이, 람동 등 베트남 5개 성에 걸쳐 대규모 직영 농장을 운영하고 있습니다.\n\n직영 농장에서는 모든 Agallocha 침향나무에 GPS 기반 개별 고유번호를 부여해 나무 한 그루씩 이력을 관리하며, 특허받은 수지유도 기술(특허 #12835)을 통해 최상의 침향을 생산합니다. CITES 국제인증, Organic HACCP 품질인증, 베트남 정부 OCOP 품질보증을 통해 그 가치를 입증했습니다.\n\n수지 채취 작업은 수십 미터 높이의 사다리를 타고 올라가 나무에 삽입된 수지유도관을 통해 형성된 침향 수지를 직접 확인·채취하는 고도의 전문 작업입니다. 62개 가족 농가와 함께 2025년 현재도 매일 이 작업이 이루어지고 있습니다. 푸꿕 제1농장(2025.12 촬영)에서 노란 유니폼을 입은 작업자들이 사다리를 타고 수지 채취 작업을 진행하는 모습을 직접 확인할 수 있습니다.",
+      "title": "5개 지역의 대라천 '참'침향 현장",
+      "subtitle": "하띤, 냐짱, 람동, 동나이, 푸꾸옥의 200ha 부지에 400만 그루",
+      "body": "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 ‘진정한 침향’이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 나짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허 받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
       "images": [
         "https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280",
         "https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280",
-        "https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280",
-        "https://lh3.googleusercontent.com/d/17EiU_mn7SNlRR6h1GPfdJygQNCQc2DQj=w1280",
-        "https://lh3.googleusercontent.com/d/1rCIMO6zfTHjLokXBU6-bOCm4C7k1ODlL=w1280",
-        "https://lh3.googleusercontent.com/d/1OPsfkpIen9VDFUBgnsyfMYA-EM-yHb-Z=w1280",
-        "https://lh3.googleusercontent.com/d/1CKYOtnu0fETBnp9nUQnsBSxqE8QxKh4u=w1280",
-        "https://lh3.googleusercontent.com/d/1W8szQeZMqdeeaLXhw0P51RrFQ5Ks4bjh=w1280"
+        "https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280"
       ]
     },
     "historyTab": {
@@ -68,11 +64,11 @@
         {
           "era": "1998-2001",
           "items": [
-            "1998 캄보디아 침향사업 시작",
+            "1998 침향 사업 시작",
             "2000 베트남 5개 지역에 농장 조성 및 본격적인 침향 재배 시작",
             "2001  동나이성에 대규모 식재 진행"
           ],
-          "description": "1998년 캄보디아에서 침향사업을 시작한 이래, 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년에는 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했습니다. 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다."
+          "description": "1998년 침향 사업을 시작한 이후, 대라천 침향은 꾸준한 도전과 연구를 이어오며 기반을 다져왔습니다. 2000년에는 베트남의 주요 5개 지역에 농장을 조성하며 본격적인 침향 재배에 나섰고, 이어 2001년에는 동나이성에 대규모 식재를 진행하며 미래를 향한 준비를 한층 더 구체화했습니다."
         },
         {
           "era": "2014-2019",
@@ -95,23 +91,9 @@
     },
     "certificationsTab": {
       "tag": "CERTIFICATIONS",
-      "title": "신뢰의 지표",
-      "subtitle": "국제가 인정하는 대라천의 품질 — 총 14종 인증",
+      "title": "증명할 수 있는 문서가 신뢰의 지표",
+      "subtitle": "전 세계가 인정하는 대라천 '참'침향의 품질을 공식문서와 함께 확인하세요!",
       "certs": [
-        {
-          "name": "CITES 국제협약 인증서",
-          "nameEn": "CITES IIA-DNI-007",
-          "category": "국제인증",
-          "thumb": "https://drive.google.com/thumbnail?id=1FGOC76sQFvtmGPDI_kFkqFwWxNPgLcTt&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1FGOC76sQFvtmGPDI_kFkqFwWxNPgLcTt/view"
-        },
-        {
-          "name": "HACCP 식품안전관리 인증서",
-          "nameEn": "HACCP Codex Alimentarius",
-          "category": "품질인증",
-          "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view"
-        },
         {
           "name": "유기농 제품 인증서",
           "nameEn": "Organic Product Certification",
@@ -121,7 +103,7 @@
         },
         {
           "name": "유기농 원료 생산지역 인증서",
-          "nameEn": "Organic Raw Material Area Cert.",
+          "nameEn": "Organic Raw Material Area",
           "category": "유기농인증",
           "thumb": "https://drive.google.com/thumbnail?id=136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view"
@@ -135,17 +117,31 @@
         },
         {
           "name": "야생동·식물 식재시설 인증서",
-          "nameEn": "Wild Plant Cultivation Facility",
+          "nameEn": "Wild Plant Cultivation F.",
           "category": "품질인증",
           "thumb": "https://drive.google.com/thumbnail?id=1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view"
         },
         {
-          "name": "ISO 식품안전 경영시스템 인증서",
+          "name": "ISO 식품안전 경영시스템",
           "nameEn": "ISO Food Safety Management",
           "category": "ISO인증",
           "thumb": "https://lh3.googleusercontent.com/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0=w600",
           "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view"
+        },
+        {
+          "name": "VN OCOP 품질보증서",
+          "nameEn": "OCOP 4-Star Certificate",
+          "category": "품질인증",
+          "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
+          "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view"
+        },
+        {
+          "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298375658-04e70813406b8d69b9d0.webp",
+          "name": "FDA 등록증",
+          "nameEn": "Food and Drug Administration",
+          "category": "품질인증",
+          "viewUrl": ""
         },
         {
           "name": "ISO 품질경영시스템 인증서",
@@ -155,46 +151,32 @@
           "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view"
         },
         {
-          "name": "식품안전규정 준수시설 인증서",
-          "nameEn": "Food Safety Compliance Facility",
-          "category": "품질인증",
-          "thumb": "https://lh3.googleusercontent.com/d/1DmhUByiw5jquCyS3hcQPONa0o_SY7lw1=w600",
-          "viewUrl": "https://drive.google.com/file/d/1DmhUByiw5jquCyS3hcQPONa0o_SY7lw1/view"
-        },
-        {
-          "name": "아시아 선도기업 10대 브랜드",
-          "nameEn": "Asia Top 10 Leading Brand 2025",
-          "category": "수상",
-          "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
-          "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view"
-        },
-        {
-          "name": "베트남 농업총국 황금브랜드 인증서",
+          "name": "VN 농업총국 황금브랜드",
           "nameEn": "Vietnam Golden Brand Award",
           "category": "수상",
           "thumb": "https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w600",
           "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view"
         },
         {
-          "name": "NTV 베트남 사업자·생산등록증",
-          "nameEn": "NTV Vietnam Business Registration",
-          "category": "사업등록",
-          "thumb": "https://drive.google.com/thumbnail?id=1FP8g6c0XEGx7qK0KaJRUc9uCGJlFvLIG&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1FP8g6c0XEGx7qK0KaJRUc9uCGJlFvLIG/view"
-        },
-        {
-          "name": "NTV 동나이사업장 사업자·생산등록증",
-          "nameEn": "NTV Dong Nai Plant Registration",
-          "category": "사업등록",
-          "thumb": "https://drive.google.com/thumbnail?id=1UzVurmG7uxiAEi49wG2pc03ziBNH97QY&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1UzVurmG7uxiAEi49wG2pc03ziBNH97QY/view"
-        },
-        {
-          "name": "OCOP 품질보증서 베트남 동나이 인민위원회",
-          "nameEn": "OCOP 4-Star Certificate — Dong Nai Province 2025",
+          "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298508022-192490b725d892d8bf60.webp",
+          "name": "AAR품종확인서",
+          "nameEn": "Certificate of AAR Variety",
           "category": "품질인증",
-          "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
-          "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view"
+          "viewUrl": ""
+        },
+        {
+          "name": "HACCP 인증서",
+          "nameEn": "HACCP Codex Alimentarius",
+          "category": "품질인증",
+          "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
+          "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view"
+        },
+        {
+          "name": "아시아 선도기업 10대 B.",
+          "nameEn": "Asia Top 10 Leading Brand",
+          "category": "수상",
+          "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
+          "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view"
         }
       ],
       "sections": [
@@ -266,12 +248,8 @@
     "processTab": {
       "tag": "PRODUCTION PROCESS",
       "title": "생산 공정",
-      "subtitle": "베트남 직영 농장에서 완제품까지 — 최소 26년의 기록",
-      "heroVideo": {
-        "id": "1cEAulq4MzBUZ1uBf2F5fqFSigR0jAmWb",
-        "title": "대라천 직영 농장과 공정 전체 개요",
-        "body": "1998년 캄보디아에서 시작해 2000년 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장된 대라천의 여정. 200ha 부지·400만 그루 규모의 직영 농장에서 최소 25년을 기다려 얻은 수지를, 자체 특허 공정으로 다듬어 한 방울의 오일로 완성합니다."
-      },
+      "subtitle": "베트남 직영 농장에서 완제품까지 - 최소 26년의 기록",
+      "images": [],
       "stats": [
         {
           "value": "400만+",
@@ -290,410 +268,226 @@
           "label": "식목부터 출고까지 (년)"
         }
       ],
-      "images": [
-        "https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280",
-        "https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280"
-      ],
-      "videoChapters": [
+      "steps": [],
+      "processGroups": [
         {
-          "title": "농장 현장",
-          "titleEn": "CHAPTER 01 — THE FARM",
-          "description": "식목부터 25년 자연 숙성까지.\n베트남 5개 성 직영 농장에서 자라는 Aquilaria Agallocha Roxburgh의 하루.",
-          "videos": [
+          "title": "침향 생산과정",
+          "titleEn": "AGARWOOD PRODUCTION",
+          "description": "좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다. 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 '참'침향은 당분간 누구도 흉내내기 어려운 '명품'이 될 것입니다.",
+          "image": "https://lh3.googleusercontent.com/d/1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g=w1280",
+          "steps": [
             {
-              "id": "1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g",
-              "title": "하띤성 대규모 재배지 드론 촬영"
+              "step": "01",
+              "name": "천연목 식목",
+              "duration": "최소 20년",
+              "desc": "Aquilaria Agallocha Roxburgh 묘목"
             },
             {
-              "id": "1oKXg0SyCbFy63C8hzQrPBs7THV4xIROE",
-              "title": "침향나무 식목·관수 루틴"
+              "step": "02",
+              "name": "유기농 관리",
+              "duration": "5~20년 이상",
+              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수"
             },
             {
-              "id": "1p8OQBwzt57lH6mF8zZFDMuAGttqNATze",
-              "title": "동나이성 전략 재배 거점"
+              "step": "03",
+              "name": "수지 앉힘",
+              "duration": "특허 #12835",
+              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성"
             },
             {
-              "id": "1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg",
-              "title": "푸국 해양성 기후 재배지"
+              "step": "04",
+              "name": "수지 관리",
+              "duration": "2~10년",
+              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리"
             },
             {
-              "id": "13zJY7WQ6rVNQVAROdcgle4M5FQhvQ1fJ",
-              "title": "람동 고산지대 특화 농장"
+              "step": "05",
+              "name": "침향(수지) 검사",
+              "duration": "수시",
+              "desc": "수지 형성 상태 확인 및 등급 판정"
             },
             {
-              "id": "1qLhMthhqbEf0_pF69QnLfRWr_w5N9u42",
-              "title": "농장 전경 및 나무별 추적 번호"
+              "step": "06",
+              "name": "침향 수확",
+              "duration": "숙성 확인 후",
+              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인"
+            },
+            {
+              "step": "07",
+              "name": "선별 가공",
+              "duration": "고품질 침향 선별",
+              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공"
+            },
+            {
+              "step": "08",
+              "name": "완제품",
+              "duration": "최종 품질 검사",
+              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고"
             }
           ]
         },
         {
-          "title": "수지 유도 · 수확",
-          "titleEn": "CHAPTER 02 — RESIN & HARVEST",
-          "description": "특허 #12835 수지유도 기술과 25년 숙성을 거친 원목 수확.\n침수 등급(沈水香)만을 선별하는 검사 과정.",
-          "videos": [
+          "title": "침향 오일 생산과정",
+          "titleEn": "OIL PRODUCTION",
+          "description": "",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg",
+          "steps": [
             {
-              "id": "1uMxdrgJds4tYaMfiC-He9RXsu5P0vLLN",
-              "title": "수지유도 특허 공정 (#12835)"
+              "step": "01",
+              "name": "원목 입고",
+              "duration": "로트 번호",
+              "desc": "수지가 앉혀진 침향목을 공장으로 입고"
             },
             {
-              "id": "1kP1ZDwwzdykGzpGgYvHSHchLHLVS1aK3",
-              "title": "수지 침착 확인 및 품질 검사"
+              "step": "02",
+              "name": "세척",
+              "duration": "오염물 제거",
+              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거"
             },
             {
-              "id": "1t0p5Asny1aSLmz3EJavdgLik0CG9jhiX",
-              "title": "25년생 원목 수확 현장"
+              "step": "03",
+              "name": "절단",
+              "duration": "10~20cm",
+              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단"
             },
             {
-              "id": "1wEJRCgCbBYvn3IT3fjc2JNFM7Q3eE5vR",
-              "title": "침수 테스트 (沈水香 선별)"
+              "step": "04",
+              "name": "수지목 분리",
+              "duration": "수지 침착부위",
+              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별"
             },
             {
-              "id": "17a2AFo-WlXp5BaU9Y9SM7xODgja9B7V6",
-              "title": "원목 입고 및 초기 분류"
+              "step": "05",
+              "name": "이물질 제거",
+              "duration": "정밀 수작업",
+              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거"
             },
             {
-              "id": "17SrjxGE0AGxBnC92D0QctfUJCEmuOTP9",
-              "title": "세척 — 표피 제거"
+              "step": "06",
+              "name": "세척",
+              "duration": "물세척 3회",
+              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인"
             },
             {
-              "id": "1cEAulq4MzBUZ1uBf2F5fqFSigR0jAmWb",
-              "title": "절단 (10-20cm 규격)"
+              "step": "07",
+              "name": "건조",
+              "duration": "자연광 건조",
+              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지"
+            },
+            {
+              "step": "08",
+              "name": "분쇄",
+              "duration": "1~2mm 크기",
+              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지"
+            },
+            {
+              "step": "09",
+              "name": "고온 증류법",
+              "duration": "72시간",
+              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출"
+            },
+            {
+              "step": "10",
+              "name": "수지 채취",
+              "duration": "분리 채취",
+              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리"
+            },
+            {
+              "step": "11",
+              "name": "숙성",
+              "duration": "안정화",
+              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화"
+            },
+            {
+              "step": "12",
+              "name": "검사 및 출고",
+              "duration": "ISO/IEC 17025:2017",
+              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고"
             }
           ]
-        },
-        {
-          "title": "가공 · 고온증류",
-          "titleEn": "CHAPTER 03 — PROCESSING & DISTILLATION",
-          "description": "수지목 분리부터 자연광 건조, 고온증류 72시간까지.\n대라천만의 정제 공정을 공개합니다.",
-          "videos": [
-            {
-              "id": "1Z0cAltNGNyh2ci5lLMX1Bjt2Q8eH83LK",
-              "title": "수지목 · 비수지목 분리"
-            },
-            {
-              "id": "1dOoNdDKOlDNH7haOlI2DrMy4St4V7pdN",
-              "title": "이물질 제거 정선 라인"
-            },
-            {
-              "id": "1qHF1akmmkxpb-hvHabjcqOJdqabbBNaw",
-              "title": "3단계 정밀 세척"
-            },
-            {
-              "id": "1R3VyKugJ2pfmtGBB7hk-tSSHNfW5nmCZ",
-              "title": "자연광 건조장"
-            },
-            {
-              "id": "1Hsn_292sxMaT44S03_PBj9hohyXq9hnm",
-              "title": "분쇄 공정 (1~2mm 규격)"
-            },
-            {
-              "id": "1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I",
-              "title": "고온증류 72시간 — 증류 탑 가동"
-            },
-            {
-              "id": "1znuovM4M9nvZx2HPDDBl17tGhJDAZYu2",
-              "title": "수지 채취 및 숙성 검사"
-            }
-          ]
-        },
-        {
-          "title": "완제품 · 품질",
-          "titleEn": "CHAPTER 04 — PRODUCT & QA",
-          "description": "VIMECO 위탁 제조 라인에서 소프트캡슐·환·오일로 완성되는 최종 공정과 품질 검사.",
-          "videos": [
-            {
-              "id": "1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV",
-              "title": "VIMECO 위탁 제조 라인"
-            },
-            {
-              "id": "1X971r3WIpGyVfBCIhWBXEDs_vQYRX7iF",
-              "title": "연질캡슐 주입 공정"
-            },
-            {
-              "id": "1ftsQrPVw13ZSe84s6gRYiap1wgvie8in",
-              "title": "중금속 8종 불검출 시험"
-            },
-            {
-              "id": "1DJNVADLouhOLZ7kCjRoSJBtQKrw5cUvg",
-              "title": "개별 번호 추적 시스템"
-            },
-            {
-              "id": "1QEpCnv_IupoF4Z3iuVeRvl5STggCmiAi",
-              "title": "최종 기프트박스 포장 라인"
-            },
-            {
-              "id": "1_aDdda893CT4ftADFAkj9w1AH4fgJ-Vn",
-              "title": "한국 수출 선적 현장"
-            },
-            {
-              "id": "1hr8UT4dJM2FKDSNaI8mxcFwzk8Gx5ILz",
-              "title": "침향오일병 라벨부착 자동컨베이어라인 (2025.04)"
-            },
-            {
-              "id": "1SjtRkKK6BF_H86Z9z1bFTKQglAKXv0En",
-              "title": "대라천 침향오일 제품검수 — 흰장갑 최종확인 (2025.04)"
-            },
-            {
-              "id": "1nm2TKZwuqKSw23wrYl4DejQZDCrN4weK",
-              "title": "출고 전 최종 검사"
-            }
-          ]
-        }
-      ],
-      "steps": [
-        "식목",
-        "수지앉힘(특허#12835)",
-        "침향검사",
-        "침향수확",
-        "원목입고",
-        "세척(표피제거)",
-        "절단(10-20cm)",
-        "수지목분리",
-        "이물질제거",
-        "세척(3회)",
-        "건조(자연광)",
-        "분쇄(1-2mm)",
-        "고온증류(72시간)",
-        "수지채취후숙성검사출고"
-      ],
-      "stepsDetailed": [
-        {
-          "step": "01",
-          "name": "식목",
-          "duration": "최소 20년",
-          "desc": "Aquilaria Agallocha Roxburgh 침향나무 묘목을 베트남 5개 사업장(하띤·동나이·냐짱·푸꿕·람동)에 식재. 유기농법(TCVN 11041-2:2017)으로 재배. GPS 개별 번호 부여로 나무 한 그루씩 이력 추적."
-        },
-        {
-          "step": "02",
-          "name": "수지 앉힘",
-          "duration": "2~10년",
-          "desc": "특허 #12835 식용가능 천연 수지유도제 주입. 나무에 천공 후 유도관 삽입. 2~10년에 걸쳐 나무 내부에 침향 수지 형성. 20년 유효 특허 기술."
-        },
-        {
-          "step": "03",
-          "name": "침향 검사",
-          "duration": "수시",
-          "desc": "수지 형성 상태 육안 확인 및 등급 판정. 물에 가라앉는 침수(沈水香) 등급 최우선 선별. 작업자가 사다리를 타고 직접 상태 확인."
-        },
-        {
-          "step": "04",
-          "name": "침향 수확",
-          "duration": "숙성 확인 후",
-          "desc": "25년생 이상 원목 벌목 및 수확. GPS 번호 추적 체계로 나무별 이력 최종 확인 후 수확 진행. 62개 가족 농가 협동 작업."
-        },
-        {
-          "step": "05",
-          "name": "원목 입고",
-          "duration": "—",
-          "desc": "수지가 앉혀진 벌목한 침향목을 동나이 직영 공장으로 입고. 로트(Lot) 번호 부여 시작. HACCP 생산 라인 관리 개시."
-        },
-        {
-          "step": "06",
-          "name": "1차 세척",
-          "duration": "—",
-          "desc": "표피제거 및 표면 이물질 제거. 흙·먼지·외부 오염물 완전 제거."
-        },
-        {
-          "step": "07",
-          "name": "절단",
-          "duration": "—",
-          "desc": "10~20cm 크기로 수지앉힘 작업시 천공된 부분 주변을 기준으로 절단. 수지 함량 최대 보존 구간 선별 절단."
-        },
-        {
-          "step": "08",
-          "name": "수지목 분리",
-          "duration": "—",
-          "desc": "목질(비수지) 부분 제거. 순수 수지가 침착된 핵심 부분만 선별. 순도 높은 수지목만 다음 공정으로 이동."
-        },
-        {
-          "step": "09",
-          "name": "이물질 제거",
-          "duration": "—",
-          "desc": "수지앉힘 작업시 천공한 부분 속 이물질 및 불순물 완전 제거. 정밀 수작업으로 진행."
-        },
-        {
-          "step": "10",
-          "name": "2차 세척",
-          "duration": "—",
-          "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인."
-        },
-        {
-          "step": "11",
-          "name": "건조",
-          "duration": "—",
-          "desc": "수지 손실을 막기위해 자연광 건조. 인위적 열원 사용 금지. 수지 성분 완전 보존."
-        },
-        {
-          "step": "12",
-          "name": "분쇄",
-          "duration": "—",
-          "desc": "1~2mm 크기로 균일 분쇄. 고온증류 효율 극대화를 위한 최적 입자 크기 유지."
-        },
-        {
-          "step": "13",
-          "name": "고온 증류",
-          "duration": "72시간 연속",
-          "desc": "전통 증기 증류법(Steam Distillation)으로 72시간 연속 가동. 침향 수지의 유효성분(아가로스피롤 등)을 순수 오일로 추출. VIMECO 동나이 공장 가동."
-        },
-        {
-          "step": "14",
-          "name": "수지 채취 · 숙성 · 출고",
-          "duration": "자체 숙성 후",
-          "desc": "순수 수지만 분리·채취. 자체 숙성 완료 후 ISO/IEC 17025:2017 기준 중금속 8종 불검출 검사(Pb·Cd·Hg·As·Cu·Sn·Sb·Ni). 전 검사 통과 시 로트(Lot)별 QR코드 부착 후 최종 출고."
         }
       ],
       "totalTimeLabel": "TOTAL PROCESS TIME",
       "totalTimeValue": "26+ Years",
       "totalTimeDesc": "식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치",
-      "paragraphs": [
-        {
-          "title": "14단계 프리미엄 공정",
-          "body": "침향오일은 14단계의 엄격한 생산공정을 거쳐 탄생합니다. 1. 식목, 2. 수지앉힘(특허#12835 식용가능유도제), 3. 침향검사, 4. 침향수확, 5. 원목입고, 6. 세척(표피제거), 7. 절단(10-20cm), 8. 수지목분리, 9. 이물질제거, 10. 세척(3회), 11. 건조(자연광), 12. 분쇄(1-2mm), 13. 고온증류(72시간), 14. 수지채취후숙성검사출고."
-        },
-        {
-          "title": "시간과 기술",
-          "body": "총 소요 시간은 최소 26년입니다. 각 단계는 침향의 순수함과 효능을 유지하기 위해 정교하게 설계되었습니다. 수지앉힘 단계에서 사용하는 특허받은 식용가능 유도제는 대라천 '참'침향만의 핵심 기술입니다."
-        },
-        {
-          "title": "증류 및 숙성",
-          "body": "고온증류 과정은 72시간 동안 지속되며, 이 과정에서 침향의 깊은 향과 성분이 추출됩니다. 이후 숙성 및 검사 과정을 거쳐 최종 제품으로 출고됩니다. 이러한 철저한 공정은 대라천 '참'침향이 왜 프리미엄인지를 보여줍니다."
-        },
-        {
-          "title": "자연과 과학의 조화",
-          "body": "우리는 자연의 시간을 존중하며, 그 시간을 제품에 담아냅니다. 26년의 기다림 끝에 얻은 침향오일은 고객에게 최고의 경험을 선사할 것입니다. 대라천 '참'침향의 생산 공정은 자연과 과학의 완벽한 조화입니다."
-        }
-      ]
-    }
+      "paragraphs": []
+    },
+    "sectionTag": "브랜드 스토리 · Brand Story"
   },
   "aboutAgarwood": {
     "hero": {
-      "sectionTag": "Agarwood Story",
-      "titleKr": "이젠 진짜 침향 이야기",
-      "titleEn": "Agarwood Story",
-      "subtitle": "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'에 공식 등록돼 있는 바로 그 침향입니다.",
-      "heroImage": "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png"
+      "sectionTag": "침향 이야기 · Agarwood Story",
+      "titleKr": "진짜 침향 이야기",
+      "titleEn": "219,000시간의 기다림",
+      "subtitle": "넘쳐나는 침향 속, 진짜를 만날 기회! 침향의 본질, 베트남산 아갈로차 침향에서 시작됩니다. 대한민국 공식 문서들에서 정의하는 바로 그 침향! 반드시 산지와 학명・품종을 확인하세요. 공식 침향은 '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'입니다.",
+      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png"
     },
     "definitionSection": {
-      "title": "침향(沈香)이란 무엇인가?",
+      "title": "침향(沈香)이란 무엇인가요?",
       "subtitle": "자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)",
       "body": "침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.",
-      "officialNameCallout": "아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)"
-    },
-    "officialSourcesSection": {
-      "title": "대한민국 공식 기준 — 침향 품종은 아갈로차",
-      "subtitle": "4개의 한국 공식 문헌·기관이 일치하여 Aquilaria Agallocha Roxburgh를 침향의 정품 품종으로 규정합니다",
-      "sources": [
-        {
-          "num": "01",
-          "name": "대한약전외한약(생약)규격집",
-          "authority": "식품의약품안전처 고시",
-          "finding": "침향 학명: Aquilaria Agallocha Roxburgh (팥꽃나무과)",
-          "detail": "침향(沈香)은 팥꽃나무과(Thymeleaceae) Aquilaria Agallocha Roxburgh의 수지가 침착된 수간목(樹幹木)으로 규정. 품질 기준: 흑갈색, 달고 쓴맛, 물에 가라앉는 것을 상품으로 함. 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상."
-        },
-        {
-          "num": "02",
-          "name": "식품공전(食品公典)",
-          "authority": "식품의약품안전처",
-          "finding": "식용 침향 원료: Aquilaria Agallocha Roxburgh로 등재",
-          "detail": "식품원료로 사용 가능한 침향을 Aquilaria Agallocha Roxburgh로 명시 등재. 식용 침향 제품의 원료 기준으로 적용됨. 한국에서 식품으로 유통되는 침향의 공식 기준 품종."
-        },
-        {
-          "num": "03",
-          "name": "한약재 관능검사 해설서",
-          "authority": "대한민국 식품의약품안전처 발간 (발간등록번호 11-1471057-000553-14)",
-          "finding": "708페이지 — 침향 학명/품종: Aquilaria Agallocha Roxburgh로 정의",
-          "detail": "식약처 공식 발간 해설서 708페이지에서 침향의 학명/품종을 아갈로차(Agallocha)로 명확히 정의. 단, 참고사항으로 인도네시아에서는 아갈로차와 말라센시스(malaccensis)를 동일종으로 간주하고 CITES 수출 허가를 내주고 있다는 내용이 병기됨. 이는 침향 생산 모든 국가(베트남·인도·태국·말레이시아)와 생산하지 않는 우리나라까지 두 품종을 별개로 구분하는데, 오직 인도네시아만이 자국 수출 편의를 위해 동일종으로 간주하는 특이한 사례임.",
-          "highlight": "인도네시아만의 해석 — 전 세계 기준과 다름"
-        },
-        {
-          "num": "04",
-          "name": "한국민족문화대백과사전",
-          "authority": "한국학중앙연구원",
-          "finding": "침향: Aquilaria Agallocha 계열로 등재·기술",
-          "detail": "한국 전통 의학 문화에서 침향은 아갈로차 계열로 일관되게 기록·전승됨. 동의보감, 향약집성방 등 조선 의학 문헌이 기록한 침향은 모두 Aquilaria Agallocha를 지칭. 수천 년 한국 의학 전통에서 단 한 번도 malaccensis로 표기된 사례 없음."
-        }
-      ],
-      "conclusionTitle": "결론: 한국 기준 정품 침향 = Aquilaria Agallocha Roxburgh",
-      "conclusionBody": "대한민국 식약처, 한국 의학 전통, 국제 학술 기준 모두 Aquilaria Agallocha Roxburgh를 정품 침향으로 규정합니다.\n인도네시아에서 말라센시스를 아갈로차와 동일시하는 것은 침향 생산국 중 유일한 인도네시아만의 해석이며, CITES 수출 허가를 용이하게 하기 위한 행정 편의 판단으로 해석됩니다.\n대라천 '참'침향은 100% Aquilaria Agallocha Roxburgh — 한국 공식 기준이 정한 바로 그 품종, 베트남 직영농장에서만 생산합니다."
+      "officialNameCallout": "Aquilaria Agallocha Roxburgh"
     },
     "formationSteps": [
       {
         "step": "01",
-        "title": "외부 자극",
-        "description": "침향나무가 외부 상처나 곰팡이 감염 등 자극을 받습니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-01.png"
+        "title": "상처 발생",
+        "description": "침향나무에 벌레, 바람, 낙뢰, 외부 충격 등으로 인해 상처가 발생합니다."
       },
       {
         "step": "02",
-        "title": "수지 분비",
-        "description": "상처 치유를 위해 나무 스스로 방어 수지를 분비합니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-02.png"
+        "title": "균 감염",
+        "description": "상처 부위를 통해 곰팡이균이 나무 내부로 침투합니다."
       },
       {
         "step": "03",
-        "title": "침착",
-        "description": "분비된 수지가 수십 년에 걸쳐 나무 내부에 서서히 침착됩니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-03.png"
+        "title": "수지 분비",
+        "description": "나무가 자기 방어 기제로 상처 부위에 수지를 분비하여 치유합니다."
       },
       {
         "step": "04",
-        "title": "형성",
-        "description": "수지가 충분히 침착된 부분이 향목 — 침향이 됩니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-04.png"
+        "title": "숙성",
+        "description": "수십 년에 걸쳐 수지가 축적되고 숙성되어 침향이 형성됩니다."
       }
     ],
     "specialReasons": [
       {
-        "title": "수십 년의 시간",
-        "description": "20년 이상의 긴 시간이 만들어낸 자연의 결정체입니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360653924-5d3ce478230548f31163.png"
+        "title": "희소성",
+        "description": "CITES 국제 협약으로 보호 받는 희귀 자원입니다. 침향 생성까지 최소 219,000시간(25년) 이상을 기다려야 만날 수 있습니다."
       },
       {
-        "title": "희귀한 수지",
-        "description": "전 세계적으로 생산량이 제한된 귀한 향목입니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360655331-31db38dee568918a4039.png"
+        "title": "가치",
+        "description": "침향은 수천 년 간 왕실과 귀족들만의 전유물이었습니다. 시간과 자연이 만든 가장 깊은 가치이자 전통과 희소성, 경험이 만든 가치입니다."
       },
       {
-        "title": "학명 기반 품질",
-        "description": "식약처 고시 학명 Aquilaria Agallocha Roxburgh.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360656355-b63035be04b8c9da5bdd.png"
-      },
-      {
-        "title": "동서양 의학서",
-        "description": "동의보감·본초강목 등 수천 년간 약재로 기록.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360657352-88b8f35106f5edab08a8.png"
+        "title": "약용",
+        "description": "동의보감을 비롯한 수많은 의학 문헌에 기록된 검증된 약재로, 현대 과학 논문에서도 그 효능이 속속 입증되고 있습니다."
       }
     ],
     "benefits": [
       {
-        "title": "기혈 순환",
-        "description": "막힌 기를 뚫어 오장육부 기능을 정상화합니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360658336-b61b83c979195cfdcac0.png"
+        "title": "기 뚫고 원기 회복 · 자양강장",
+        "description": "몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강해줍니다. 또, 피로 해소와 활력 증진을 돕습니다."
       },
       {
-        "title": "자양강장",
-        "description": "찬 기운을 몰아내고 몸을 따뜻하게 보강합니다.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360660293-72241ed68688a81af84f.png"
+        "title": "냉감 · 정력 감퇴 · 복통에 탁월",
+        "description": "하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월한 반응을 일으키고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다."
       },
       {
-        "title": "신경 안정",
-        "description": "예민한 신경을 이완시키고 숙면에 도움.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360661261-007f903d7d31583f9698.png"
+        "title": "신경 안정 및 숙면 유도",
+        "description": "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할을 합니다. 예민해진 신경을 이완시켜 스트레스를 완화하고 심리적 안정과 불면증 개선에 효과적입니다."
       },
       {
-        "title": "항염 · 혈관",
-        "description": "염증 억제와 혈관 건강 증진.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360662043-6f1277c1f6cbf5646b2a.png"
+        "title": "항염 및 혈관 건강 개선",
+        "description": "침향은 항염 작용을 통해 염증 물질(사이토카인)을 억제하고, 혈전 형성을 방지하여 만성 염증 치료와 혈관 건강 증진에 도움을 줍니다."
       },
       {
-        "title": "뇌 건강",
-        "description": "뇌혈류 개선과 뇌세포 보호.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360662845-ee43129850bb3a8590f4.png"
+        "title": "뇌 질환 예방",
+        "description": "침향은 뇌혈류 개선 및 뇌세포 보호에 도움을 주어, 뇌졸중과 같은 혈관 질환 예방 및 퇴행성 뇌 질환 예방에 긍정적인 영향을 미칠 수 있습니다."
       },
       {
-        "title": "소화 · 복통",
-        "description": "위를 따뜻하게 하여 소화 기능 개선.",
-        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360663825-1e91d50820e4de8ea150.png"
+        "title": "소화 기능 향상 및 복통 완화",
+        "description": "침향은 기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화해줍니다. 복통을 멈추는 데 도움을 주기도 합니다."
       }
     ],
     "literatures": [
@@ -1271,14 +1065,152 @@
           "body": "복용하는 침향 오일은 단순히 함량은 높다고 좋은 것이 아니다. 오히려 저가 오일이거나 복합 오일일 가능성이 크다. 적정 함량이 가장 효과적이다."
         }
       ]
-    }
+    },
+    "authenticityTab": {
+      "subtitle": "가짜 침향, 당신의 건강을 위협합니다. 이 세 가지로 반드시 확인하세요.",
+      "intro": "한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법, 즉 학명・품종, 산지, 증빙서류로 확인할 수 있습니다.",
+      "check01Title": "학명・품종을 따져봐야 합니다.",
+      "check01Body": "대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)입니다.",
+      "check01Sources": [
+        {
+          "label": "식약처 고시 '대한민국약전외한약(생약)규격집'",
+          "value": "침향의 학명에 대한 정의가 명확하게 나와 있습니다. 바로 Aquilaria Agallocha Roxburgh입니다."
+        },
+        {
+          "label": "식약처 고시 '식품공전'",
+          "value": "식용 가능한 침향을 다음의 두 종류로 기록하고 있습니다.  ① Aquilaria Agallocha Roxburgh ② Aquilaria Malaccensis Lam"
+        },
+        {
+          "label": "식약처 발간 '한약재 관능검사 해설서'",
+          "value": "침향나무를 Aquilaria Agallocha Roxburgh로 정의하고 있습니다."
+        },
+        {
+          "label": "식약처 발간 '원색 한약재감별도감'",
+          "value": "침향나무는 Aquilaria agallocha Roxburgh의 수지가 침착된 수간목으로 기록하고 있습니다."
+        },
+        {
+          "label": "'한국한의학연구원 한약자원연구센터'",
+          "value": "상록교목인 침향나무를 Aquilaria Agallocha Roxburgh로 기록하고 있습니다."
+        }
+      ],
+      "check02Title": "원산지를 따져봐야 합니다.",
+      "check02Body": "고문헌들이 역사에서 기록한 최고의 침향 산지는 베트남산으로 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.",
+      "check02QuoteSource": "향승(香乘) · 명대 1611년",
+      "check02QuoteBody": "명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하고 있으며 최상품은 진랍(眞臘), 상품은 점성(占城)으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록하고 있습니다.",
+      "check03Title": "증명할 수 있는 문서・서류들을 따져봐야 합니다.",
+      "check03Body": "진짜 침향이라면 원산지 증명서부터 유기농 인증서, CITES 인증서 등 해당 침향이 진짜임을 증명할 수 있는 문서들을 갖추고 있어야 합니다.",
+      "check03Docs": [
+        {
+          "doc": "원산지 증명서",
+          "desc": "원산지가 100% 베트남산임을 증명할 수 있는 문서",
+          "highlight": true
+        },
+        {
+          "doc": "정식 수입 증빙 서류",
+          "desc": "정상적인 통관·검역·수입을 확인할 수 있는 문서",
+          "highlight": false
+        },
+        {
+          "doc": "유기농 인증서",
+          "desc": "Organic 인증서로 식용 가능한지 확인할 수 있는 문서",
+          "highlight": true
+        },
+        {
+          "doc": "CITES 인증서",
+          "desc": "국제거래협약에 따라 정식으로 수입 통관된 안전한 침향임을 증명",
+          "highlight": true
+        },
+        {
+          "doc": "성분검사서",
+          "desc": "침향의 안전성과 품질을 인증하기 위해 성분 종류와 함량 분",
+          "highlight": false
+        },
+        {
+          "doc": "아갈로차 인증서",
+          "desc": "침향나무가 아퀴라리아 아갈로차 록스버그임을 증명",
+          "highlight": false
+        },
+        {
+          "doc": "FDA",
+          "desc": "엄격한 안전성 유효성 검증으로 효과를 글로벌 표준으로 인정",
+          "highlight": false
+        },
+        {
+          "doc": "HACCP, GMP",
+          "desc": "식품안전관리인증, 우수 제조 및 품질관리 기준 확인",
+          "highlight": false
+        }
+      ]
+    },
+    "tabHeroes": {
+      "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362415629-8cd62fb9dde3844ef91e.png",
+      "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362417505-91f29493cde696a847b3.png",
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362419117-9160411a29b8340a0c92.png",
+      "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362420594-241eefdca9becdf2aaa6.png",
+      "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362422155-5d63c6561b3cfdcc3077.png",
+      "tab5": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362424072-7f111b4423198d384f06.png"
+    },
+    "officialSourcesSection": {
+      "title": "대한민국 공식 기준 - 침향 학명・품종은 아갈로차",
+      "subtitle": "대한민국 공식 문서 4군데서 동일하게 Aquilaria Agallocha Roxburgh를 침향나무로 등록, 규정하고 있습니다.",
+      "sources": [
+        {
+          "num": "01",
+          "name": "대한약전외한약(생약)규격집",
+          "authority": "식품의약품안전처 고시",
+          "finding": "379페이지 - 침향 학명・품종: Aquilaria Agallocha Roxburgh (팥꽃나무과)",
+          "detail": "침향(沈香)은 팥꽃나무과(Thymeleaceae) Aquilaria Agallocha Roxburgh의 수지가 침착된 수간목(樹幹木)으로 규정. 품질 기준: 흑갈색, 달고 쓴맛, 물에 가라앉는 것을 상품으로 함. 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상."
+        },
+        {
+          "num": "02",
+          "name": "식품공전(食品公典)",
+          "authority": "식품의약품안전처 고시",
+          "finding": "식용 침향 원료: Aquilaria Agallocha Roxburgh 등록",
+          "detail": "식용 가능한 침향으로 Aquilaria Agallocha Roxburgh와 Aquilaria Malaccensis Lam이 등록돼 있습니다."
+        },
+        {
+          "num": "03",
+          "name": "한약재 관능검사 해설서",
+          "authority": "식품의약품안전처 발간 (발간등록번호 11-1471057-000553-14)",
+          "finding": "708페이지 - 침향 학명・품종: Aquilaria Agallocha Roxburgh로 정의",
+          "detail": "식약처 공식 발간 해설서 708페이지에서 침향의 학명・품종을 아갈로차(Agallocha)로 명확히 정의. 단, 참고사항으로 인도네시아에서는 아갈로차와 말라센시스(malaccensis)를 동일종으로 간주하고 CITES 수출 허가를 내주고 있다는 내용이 병기됨. 이는 대부분의 침향 생산 국가뿐 아니라 생산하지 않는 우리나라까지 두 품종을 별개로 구분하는데, 오직 인도네시아만 자국 수출 편의를 위해 동일종으로 간주하는 특이한 사례임.",
+          "highlight": ""
+        },
+        {
+          "num": "04",
+          "name": "원색 한약재감별도감",
+          "authority": "식품의약품안전처 발간 2009년",
+          "finding": "침향나무: Aquilaria agallocha Roxburgh(팥꽃나무과 Thymeleaceae)의 수지가 침착된 수간목",
+          "detail": "식약처 발간 '원색 한약재감별도감'에서 침향나무는 Aquilaria agallocha Roxburgh(팥꽃나무과 Thymeleaceae)의 수지가 침착된 수간목으로 정의하고 있음.",
+          "highlight": ""
+        },
+        {
+          "num": "05",
+          "name": "한국한의학연구원 한약자원연구센터",
+          "authority": "Korea Institute of Oriental Medicine",
+          "finding": "팥꽃나무과 침향나무를 Aquilaria Agallocha Roxburgh로 기록",
+          "detail": "'한국한의학연구원 한약자원연구센터'와 '대한한의학회 표준한의학용어집 2.1'에서는 침향나무를 팥꽃나무과(瑞香科, Thymelaeaceae)에 속한 상록교목인 Aquilaria agallocha Roxburgh의 수지가 침착된 수간목으로 정의"
+        },
+        {
+          "num": "06",
+          "name": "한국민족문화대백과사전",
+          "authority": "한국학중앙연구원",
+          "finding": "침향: 약재의 형태는 수지가 많이 들어 있는 목재로서 향기가 높고 은은",
+          "detail": "성분은 정유로서 벤질아세톤, P-메토실 벤질아세톤 등이 알려져 있다. 동물실험에서는 진정작용이 인정되고 있으며 달인 물은 결핵균을 완전히 억제시키고 티프스균·적리균에 대해서도 강력한 억제효과를 나타내고 있다."
+        }
+      ],
+      "conclusionTitle": "결론: 대한한국 기준 정품 침향 = Aquilaria Agallocha Roxburgh",
+      "conclusionBody": "1. 학명·품종: 대한민국 식약처, 한국 의학 전통, 국제 학술 기준 모두 Aquilaria Agallocha Roxburgh를 정품 침향으로 규정합니다.\n\n2. 산지: 역사적 기록에서는 '베트남산'을 최고로 여기고 있습니다. 수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.\n   - 당나라 시대: 침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.\n    - 송나라 시대: 교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.\n    - 원나라 시대: 안남 지역으로 현재의 베트남에 해당합니다.\n    - 명나라 시대: '대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다.\n    - '향승'에서는 진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.\n    - 조선 시대: 조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다. \n이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 지금의 베트남 지역입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.\n\n대라천 '참'침향은 100% Aquilaria Agallocha Roxburgh로, 대한한국 공식 문서가 정한 바로 그 품종이며, 베트남 직영농장에서만 생산합니다."
+    },
+    "sectionTag": "침향 이야기 · Agarwood Story",
+    "specialReasonsSectionTitle": "침향이 특별한 3가지 이유"
   },
   "home": {
     "hero": {
       "sectionTag": "Genuine Only · 진짜 침향만",
-      "titleKr": "대라천은, 진짜 침향만 다룹니다",
-      "subtitle": "한 품종, 한 나라 — Aquilaria Agallocha Roxburgh, 베트남 직영.\n25년, 한 회사 — 베트남 직영 생산 · 한국 직판. 조엘라이프가 원산지부터 연결합니다.\n프리미엄이 아니라 근거로 증명합니다.",
-      "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg",
+      "titleKr": "조엘라이프는, 진짜 침향만 다룹니다",
+      "subtitle": "조엘라이프는 오랜 세월 자연 속에서 형성된 진정한 침향만을 고집하며, 원산지와 수령, 성분까지 철저하게 검증된 제품만을 엄선해 선보입니다. 단순한 상품을 넘어 수천 년의 역사와 전통이 담긴 침향의 본질적 가치를 전달하고자 하며, 타협 없는 품질 기준과 정직한 원칙을 바탕으로 고객에게 깊은 신뢰와 품격 있는 경험을 제공합니다.",
+      "heroBg": "https://assets.floot.app/e11132a3-2be5-48d4-9778-d3572811b06d/1663ba31-5f63-43a3-904f-5b635d42acd4.jpg",
       "ctaPrimaryLabel": "검증 과정 보기 →",
       "ctaPrimaryHref": "/brand-story",
       "ctaSecondaryLabel": "제품 보기",
@@ -1286,46 +1218,37 @@
     },
     "stats": [
       {
-        "value": "25yrs",
-        "label": "Research"
+        "value": "25년 이상",
+        "label": "연구 및 생산재배"
       },
       {
-        "value": "400만+",
-        "label": "Trees"
+        "value": "바로 그 학명·품종",
+        "label": "아퀼라리아 아갈로차 록스버그"
       },
       {
-        "value": "200ha",
-        "label": "Farm"
+        "value": "200헥타르, 400만 그루",
+        "label": "5개 지역 직영 침향농장"
       },
       {
-        "value": "8건",
-        "label": "Certifications"
-      },
-      {
-        "value": "5개",
-        "label": "직영 사업장"
+        "value": "12건 이상 인증 & 특허",
+        "label": "유기농의 믿을 수 있는 침향"
       }
     ],
     "verification": [
       {
         "num": "01",
-        "label": "원산지 — 베트남 하띤 직영 200ha",
+        "label": "원산지 - 100% 베트남산 침향",
         "meta": "CITES"
       },
       {
         "num": "02",
-        "label": "원료 — Aquilaria Agallocha Roxburgh",
+        "label": "학명・품종 - Aquilaria Agallocha Roxburgh",
         "meta": "식약처"
       },
       {
         "num": "03",
-        "label": "제조 — HACCP · GMP 시설",
+        "label": "직영 - 연구개발부터 생산까지 수직계열화",
         "meta": "인증"
-      },
-      {
-        "num": "04",
-        "label": "시험 — 중금속·유해물질 0건",
-        "meta": "LOT별"
       }
     ],
     "verifiedCards": [
@@ -1375,19 +1298,39 @@
         "sub": "베트남 증명"
       },
       {
-        "mark": "D",
-        "name": "DNA",
-        "sub": "유전자 검증"
-      },
-      {
         "mark": "F",
         "name": "식약처",
         "sub": "고시 학명"
       },
       {
-        "mark": "S",
-        "name": "SGS",
-        "sub": "국제 검사"
+        "mark": "I",
+        "name": "ISO",
+        "sub": "ISO 식품안전 경영시스템"
+      },
+      {
+        "mark": "F",
+        "name": "FDA",
+        "sub": "FDA 등록"
+      },
+      {
+        "mark": "V",
+        "name": "VN 농업총국",
+        "sub": "황금브랜드"
+      },
+      {
+        "mark": "A",
+        "name": "AAR",
+        "sub": "AAR 품종 확인서"
+      },
+      {
+        "mark": "W",
+        "name": "야생동식물",
+        "sub": "식재시설 인증서"
+      },
+      {
+        "mark": "R",
+        "name": "특허",
+        "sub": "수지 유도제"
       }
     ],
     "agarwood": {
@@ -1398,63 +1341,63 @@
           "title": "동서양의 역사적 가치",
           "kicker": "Heritage",
           "description": "수천 년 전부터 왕실과 귀족들만이 향유할 수 있었던, 동서양을 막론하고 최고의 가치로 인정받아 온 귀한 약재이자 향입니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360632601-cdf5bfa2553a4519bc0d.png"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777366741277-d337022118823d62f3c2.png"
         },
         {
           "title": "20년 이상의 긴 생육 시간",
           "kicker": "Time",
           "description": "20년 이상 생육된 침향나무에서 채취한 수지는 함량이 높아 약재로서 효능과 가치를 인정받습니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360634419-cf7c3a045208d5225202.png"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360744463-7dead8a06a173f28fe14.png"
         },
         {
           "title": "논문에서 발표하는 침향",
           "kicker": "Research",
           "description": "침향 연구는 전 세계에서 활발히 이뤄지고 있으며, SCI급 논문도 실제 효과를 속속 보고합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360636374-21b384dff8335fb7553e.png"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360745635-023348b35e136a96dd57.png"
         }
       ]
     },
     "benefits": {
       "tag": "Benefits · 연구 기반 효능",
-      "title": "침향의 가치, 여섯 가지 방향",
+      "title": "침향의 가치, 여섯 가지 대표적 효능",
       "items": [
         {
           "kicker": "Qi Circulation",
           "title": "기 뚫고 원기 회복 · 자양강장",
-          "description": "몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강, 피로 해소와 활력 증진을 돕습니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360639097-9d3832d1101b4a92ff0f.png"
+          "description": "몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강해줍니다. 또, 피로 해소와 활력 증진을 돕습니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/benefits/qi-holistic-health.png"
         },
         {
           "kicker": "Menstruation & Stamina",
           "title": "냉감 · 정력 감퇴 · 복통에 탁월",
-          "description": "하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월하고, 하복통 심한 사람에게 많이 활용됩니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360640236-2905737867fc836bd872.png"
+          "description": "하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월한 반응을 일으키고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360750493-65e9701d77d0ff3b1901.png"
         },
         {
-          "title": "신경 안정 · 숙면",
-          "description": "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할. 예민해진 신경을 이완시키고 심리적 안정과 불면증 개선에 효과적입니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360641149-53bb363d67439f6c3639.png"
+          "title": "신경 안정 및 숙면 유도",
+          "description": "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할을 합니다. 예민해진 신경을 이완시켜 스트레스를 완화하고 심리적 안정과 불면증 개선에 효과적입니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360751934-4a4404c9955539ae1feb.png"
         },
         {
-          "title": "항염 · 혈관 건강",
-          "description": "항염 작용으로 사이토카인을 억제하고 혈전을 막아, 만성 염증을 가라앉히고 혈관을 튼튼하게 합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360643118-f0ce4b2cdc14868903a5.png"
+          "title": "항염 및 혈관 건강 개선",
+          "description": "침향은 항염 작용을 통해 염증 물질(사이토카인)을 억제하고, 혈전 형성을 방지하여 만성 염증 치료와 혈관 건강 증진에 도움을 줍니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360752874-8f3800e1aa590d4e9dd0.png"
         },
         {
           "title": "뇌 질환 예방",
-          "description": "뇌혈류를 개선하고 뇌세포를 보호해, 뇌졸중·퇴행성 뇌 질환 예방 가능성을 높입니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360644938-ba3b3b3ce4affdbfa040.png"
+          "description": "침향은 뇌혈류 개선 및 뇌세포 보호에 도움을 주어, 뇌졸중과 같은 혈관 질환 예방 및 퇴행성 뇌 질환 예방에 긍정적인 영향을 미칠 수 있습니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360754575-2d353c3462cbba6c4e80.png"
         },
         {
-          "title": "소화 · 복통 완화",
-          "description": "기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화하고 복통을 멈추게 합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360646384-c26b89088f98a56fd9e0.png"
+          "title": "소화 기능 향상 및 복통 완화",
+          "description": "침향은 기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화해줍니다. 복통을 멈추는 데 도움을 주기도 합니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360755557-7a7f6ff6798299b59fef.png"
         }
       ]
     },
     "process": {
       "tag": "Craftsmanship · 6단계 공정",
-      "title": "씨앗에서 완제품까지 20년이 넘는 시간",
+      "title": "씨앗에서 완제품까지 25년이 넘는 시간",
       "steps": [
         "씨앗 발아 및 묘목 육성",
         "베트남 직영 농장 식재",
@@ -1475,75 +1418,67 @@
   },
   "process": {
     "hero": {
-      "kicker": "침향 농장 이야기",
-      "titleLine1": "베트남 하띤의",
-      "titleEmphasis": "200헥타르, 25년의 시간",
-      "latLabel": "Lat 18° N · Ha Tinh, Vietnam",
-      "lede": "호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림.\n침향나무가 가장 깊은 수지를 만드는 유일한 기후.\n대라천은 이곳에서 25년째 직영 농장을 운영합니다.",
+      "kicker": "침향 농장 이야기 - Farm Story",
+      "titleLine1": "베트남 5개 농장",
+      "titleEmphasis": "200ha, 400만 그루",
+      "latLabel": "",
+      "lede": "베트남 하띤, 냐짱, 람동, 동나이, 푸꾸옥 등 5개 지역에 걸쳐 약 200헥타르(약 60만 평)에 400만 그루를 식재한 구조로, 침향 산업에서는 매우 드문 초대형 농장입니다. 침향은 생성 확률이 낮고 장기간이 필요한 자원이기 때문에, 대규모 식재를 통해 안정적인 생산 가능성을 확보한 것이 가장 큰 특징입니다.",
       "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg"
     },
     "chapters": [
       {
-        "num": "01",
+        "num": "02",
         "tag": "Location",
-        "title": "북위 18° — 침향의 마지막 기후대",
-        "body": "아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다.\n베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지 침착에 최적화된 마이크로클라이밋을 가진 세계에서 가장 북쪽 끝 침향 산지입니다.",
+        "title": "하띤 - 침향의 전통 산지",
+        "body": "베트남 하띤 침향농장은 오랜 세월 침향이 형성되어 온 전통 산지로서, 자연이 만들어낸 깊은 역사성과 정통성을 그대로 간직하고 있다는 점에서 큰 특징을 지닙니다. \n\n이 지역은 예로부터 야생 침향이 발견되던 곳으로 알려져 있어, 단순한 인공 재배지를 넘어 자연 발생 침향의 가능성이 살아있는 전통적인 생산지로 평가됩니다. 또한 오랜 기간 축적된 재배 경험과 지역 고유의 기후·토양 환경이 결합되어, 침향 특유의 깊고 묵직한 향과 높은 품질을 기대할 수 있는 기반을 갖추고 있습니다.\n\n하띤 농장은 현대적인 대량 생산 중심의 농장과 달리, 자연 순환과 전통 방식을 존중하는 운영 철학을 바탕으로 하고 있어 보다 ‘정통 침향’에 가까운 가치를 지향합니다. 이는 단순한 생산지를 넘어, 침향이 지닌 역사성과 희소성, 그리고 시간의 깊이를 함께 담아내는 공간이라는 의미를 가지며, 프리미엄 원료 생산의 핵심 거점으로서 중요한 역할을 합니다.",
+        "stats": [],
         "imageSrc": "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280",
         "imageAlt": "베트남 하띤(Ha Tinh) 직영 농장",
-        "imageCaption": "하띤 · Ha Tinh · 메인 대규모 농장 (200ha)"
-      },
-      {
-        "num": "02",
-        "tag": "Scale",
-        "title": "직영 200ha · 약 400만 그루",
-        "body": "농장은 CITES(멸종위기종 국제거래협약) 등록 번호 VN-2008-AAR-003 하에 관리되는 공식 조림지.\n평균 수령 18년 이상의 성숙목 400만 그루가 자연 침착 환경에서 자라고 있으며, 매년 평균 180그루에서 제한된 수확만 이루어집니다.",
-        "stats": [
-          {
-            "value": "200",
-            "label": "ha"
-          },
-          {
-            "value": "4M",
-            "label": "trees"
-          }
-        ],
-        "imageSrc": "https://lh3.googleusercontent.com/d/1t02AQvPDeUsqjOv-NcUpwiDWrXwZ6mgA=w1280",
-        "imageAlt": "동나이(Dong Nai) 전략 재배 거점",
-        "imageCaption": "동나이 · Dong Nai · 전략 재배 거점"
+        "imageCaption": "하띤 · Ha Tinh · 침향의 전통 산지"
       },
       {
         "num": "03",
-        "tag": "Partnership",
-        "title": "현지 공동체와의 25년",
-        "body": "농장의 관리는 하띤 지역 62가구의 현지 파트너 가족이 맡고 있습니다. 25년간 함께 일해온 이들에게는 한국 본사와 동일한 의료·교육 복지가 제공됩니다. \"진짜 침향은 사람과 자연 모두가 건강할 때만 만들어집니다\" — 박병주 대표의 원칙.",
-        "stats": [
-          {
-            "value": "62",
-            "label": "families"
-          }
-        ],
-        "imageSrc": "https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280",
-        "imageAlt": "냐짱(Nha Trang) 고품질 원료 산지",
-        "imageCaption": "냐짱 · Nha Trang · 고품질 원료 산지"
+        "tag": "Scale",
+        "title": "람동 - 158헥타르 · 대규모 핵심 거점",
+        "body": "람동 농장은 약 158ha에 달하는 넓은 규모를 자랑하는 핵심 거점으로, 단순한 재배지를 넘어 다양한 사업을 동시에 구상하고 실행할 수 있는 확장형 플랫폼이라는 점에서 큰 의미를 가집니다. \n\n넓은 부지를 기반으로 침향나무의 대량 식재와 체계적인 관리가 가능해 안정적인 원료 생산 기반을 확보할 수 있으며, 장기적으로는 수확 시점의 분산과 품질 관리 측면에서도 유리한 구조를 갖추고 있습니다.\n\n특히 람동 지역은 고지대 특유의 서늘한 기후와 비옥한 토양을 갖추고 있어 침향나무 생육에 적합하며, 이러한 자연환경은 균일하고 건강한 수목 성장에 긍정적인 영향을 줍니다. 이를 바탕으로 단순 원목 생산을 넘어 침향 오일 추출, 가공 시설 구축, 연구·개발(R&D), 묘목 육성 등 다양한 부가 사업을 함께 설계할 수 있는 것이 강점입니다.",
+        "stats": [],
+        "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg",
+        "imageAlt": "",
+        "imageCaption": "람동 · Lam Dong · 158헥타르 대규모 재배"
       },
       {
         "num": "04",
-        "tag": "Verification",
-        "title": "4단계 원산지 검증",
-        "body": "① GPS 좌표로 각 나무의 위치 기록 ② 수확 시 나무 ID와 수지 함량 DB 입력 ③ 베트남 농업부 검사증 발급 ④ 한국 식약처 수입 통관 시 2차 검증.\n제품의 Lot 번호로 이 모든 이력을 누구나 조회할 수 있습니다.",
-        "stats": [
-          {
-            "value": "4",
-            "label": "steps"
-          }
-        ],
-        "imageSrc": "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png",
-        "imageAlt": "람동(Lam Dong) 고산지대 특화 농장",
-        "imageCaption": "람동 · Lam Dong · 고산지대 특화 농장"
+        "tag": "Old-growth",
+        "title": "푸꾸옥 - 고수령 침향목·체험농장",
+        "body": "푸꾸옥 농장은 130년생과 50년생에 이르는 침향목이 함께 존재하는 매우 상징적인 공간으로, 단순한 재배지를 넘어 시간의 깊이와 희소 가치를 동시에 보여주는 프리미엄 농장입니다. \n\n특히 100년 이상 된 고수령 침향목은 자연 상태에서 오랜 세월을 거치며 형성된 만큼, 침향의 밀도와 향의 깊이, 희소성 측면에서 높은 가치를 지니며, 이는 일반적인 재배목과는 차별화되는 핵심 경쟁력으로 작용합니다. 여기에 중장기 수확이 가능한 50년생 나무가 함께 구성되어 있어, 현재와 미래의 균형 잡힌 자산 포트폴리오를 이루고 있기도 합니다.\n\n또한 푸꾸옥은 베트남을 대표하는 관광지로서 국내외 관광객 유입이 활발한 지역이기 때문에, 농장의 접근성이 뛰어난 지역입니다. 침향 숲을 직접 체험하고 향을 느끼는 프로그램, 명상 및 힐링 콘텐츠, 프리미엄 제품 판매까지 가능한 곳입니다.",
+        "stats": [],
+        "imageSrc": "",
+        "imageAlt": "",
+        "imageCaption": "푸꼬옥 · Phu Quoc · 130년, 50년생 침향나무"
+      },
+      {
+        "num": "05",
+        "tag": "Long Management",
+        "title": "냐짱 - 굵은 침향, 오랜 관리의 결과",
+        "body": "냐짱 농장은 안정적인 생육 환경과 오랜 관리의 결과로 수령이 잘 형성된 굵은 침향나무들이 자리하고 있습니다. \n\n나무의 직경이 굵다는 것은 그만큼 성장 기간이 충분히 축적되었음을 의미하고, 침향 형성에 있어 중요한 기반이 되는 요소이기 때문에 향의 밀도와 품질 측면에서도 긍정적인 기대를 가능하게 합니다. 즉, 단순한 수량 중심의 농장이 아니라 일정 수준 이상의 품질을 확보할 수 있는 성숙한 재배지라고 할 수 있습니다.\n\n또한 냐짱은 베트남을 대표하는 해안 관광 도시로, 국내외 관광객의 유입이 활발한 지역이기 때문에 제품에 대한 접근성도 무난합니다.",
+        "stats": [],
+        "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777526902581-9adddd01b45819844675.jpg",
+        "imageAlt": "",
+        "imageCaption": "냐짱 · Nha Trang · 오랜 관리의 결과로 굵은 침향나무"
+      },
+      {
+        "num": "06",
+        "tag": "Location",
+        "title": "동나이 - 현무암 토양, 깊은 오일향",
+        "body": "동나이 농장은 현무암 기반의 토양 위에 조성된 것이 가장 큰 특징으로, 이러한 토양 조건이 침향나무의 생육과 수지 형성에 긍정적인 영향을 미치는 것으로 평가됩니다. \n\n현무암 토양은 미네랄이 풍부하고 배수성과 통기성이 뛰어나 나무의 뿌리 발달을 촉진시키며, 이는 장기적으로 건강한 수목 성장과 안정적인 침향 형성 기반을 만들어줍니다. 이러한 환경에서 자란 침향은 수지의 밀도가 높고, 특히 오일로 추출했을 때 향이 깊고 묵직하며 지속력이 뛰어난 특징을 보이는 경우가 많습니다.\n\n또한 동나이 지역은 베트남 경제 중심지인 호치민과 인접해 있어 물류와 가공, 유통 측면에서도 매우 유리한 입지를 갖추고 있습니다.",
+        "stats": [],
+        "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777525829244-d1d8522fa10200c4cfdd.jpg",
+        "imageAlt": "",
+        "imageCaption": "동나이 · Dong Nai · 현무암 토양 지역, 깊고 좋은 오일향"
       }
     ],
     "productionVideos": {
-      "num": "05",
+      "num": "07",
       "tag": "Videos",
       "title": "생산 영상 — 농장 현장",
       "body": "베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.",
@@ -1575,7 +1510,7 @@
       ]
     },
     "certifications": {
-      "num": "06",
+      "num": "08",
       "tag": "Certifications",
       "title": "신뢰의 지표 — 국제가 인정하는 품질",
       "body": "CITES 국제거래 인증부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지.\n대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.",
@@ -1610,30 +1545,34 @@
         "https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600",
         "https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600"
       ]
-    }
+    },
+    "kicker": "침향 농장 이야기 · Farm Story"
   },
   "company": {
     "hero": {
-      "kicker": "회사소개",
+      "kicker": "회사 소개 · About Us",
       "titleLine1": "진짜를 증명하는 일에",
-      "titleEmphasis": "25년을 쓰다",
-      "lede": "조엘라이프의 대라천 '참'침향은 베트남 직영 농장 기반의 침향 전문기업에서 생산됩니다.\n원산지부터 제품까지 전 과정을 자체 운영하며, 식약처 고시 '대한민국약전외한약(생약)규격집'과 식약처 '식품공전'에 등록된 공식 침향만을 다룹니다."
+      "titleEmphasis": "최선을 다합니다",
+      "lede": "조엘라이프는 ‘진짜'를 증명하는 일에 최선을 다합니다. 수십 년, 때로는 백 년 이상의 시간을 견디며 만들어진 침향의 본질 - 산지부터 유통까지, 모든 과정을 투명하게 검증하며 단 하나의 타협도 허용하지 않습니다. 시간이 만든 가치를 온전히 전하는 것이 우리의 역할입니다.",
+      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/floot-hero-image.jpg"
     },
     "chapters": [
       {
         "num": "01",
-        "tag": "About",
-        "title": "회사 개요",
-        "body": "\"안녕하세요.\n조엘라이프(ZOEL LIFE)를 찾아주셔서 진심으로 감사합니다.\"\n조엘라이프는 ‘활력 넘치는 삶을 살아가자’라는 가치를 바탕으로, 일상의 건강과 균형을 회복하는 데 도움을 드리고자 시작되었습니다.\n바쁜 현대인의 삶 속에서 몸과 마음의 조화를 이루는 것은 무엇보다 중요하며, 저희는 그 해답을 자연에서 찾고자 했습니다.\n특히 예로부터 귀한 약재로 알려진 침향을 중심으로, 엄선된 원료와 철저한 기준을 바탕으로 한 다양한 제품을 선보이고 있습니다.\n조엘라이프는 단순한 제품 판매를 넘어, 고객 한 분 한 분의 삶의 질을 높이는 동반자가 되고자 합니다.\n현재, 베트남 직영 농장에서 생산된 최상급 침향인 아갈로차(Agallocha) 품종의 한국 및 글로벌 시장 유통을 담당하고 있으며 브랜드 전략 수립, 마케팅, 온·오프라인 유통 채널 관리부터 고객 서비스까지 소비자 접점의 모든 과정을 책임지기 위해 노력하고 있습니다.\n앞으로도 정직함과 신뢰를 바탕으로, 건강한 라이프스타일을 위한 최선의 선택지를 제공해 드리겠습니다.\n늘 고객의 곁에서 함께 호흡하며 성장하는 조엘라이프가 되겠습니다.\n감사합니다."
+        "tag": "Intro",
+        "title": "인사말",
+        "body": "안녕하세요, 조엘라이프(ZOEL LIFE)를 찾아주셔서 진심으로 감사합니다.\n\n조엘라이프는 ‘활력 넘치는 삶을 살아가자’라는 가치를 바탕으로, 현대인의 일상에 건강한 균형과 에너지를 더하고자 시작되었습니다. 빠르게 변화하는 삶 속에서 몸과 마음의 조화를 이루는 일은 무엇보다 중요하며, 저희는 그 해답을 자연에서 찾고 있습니다. 특히 오랜 세월 귀한 자원으로 여겨져 온 침향을 중심으로, 엄선된 원료와 철저한 품질 기준을 바탕으로 한 다양한 제품을 선보이고 있습니다.\n\n무엇보다 조엘라이프는 ‘진짜 침향의 가치’를 올바르게 전달하는 데 집중하고 있습니다. 원산지, 수령, 품종, 재배 및 생산 과정까지 꼼꼼하게 검증된 침향만을 엄선하여, 소비자가 신뢰할 수 있는 기준을 제시하고자 합니다. 단순한 판매를 넘어 침향이 지닌 본연의 깊이와 의미를 제대로 알리고, 그 가치를 온전히 경험할 수 있도록 돕는 것이 저희의 역할이라 생각합니다.\n\n또한 베트남 직영 농장에서 재배한 아갈로차(Agallocha) 침향을 기반으로, 원료의 생산부터 브랜드 기획, 마케팅, 온·오프라인 유통, 고객 서비스에 이르기까지 전 과정을 책임 있게 관리하며 품질과 신뢰를 함께 지켜가고 있습니다.\n\n앞으로도 정직과 진심을 바탕으로, 자연이 주는 건강한 가치를 더 많은 분들께 전달하겠습니다. 일상 속에서 활력과 균형을 경험할 수 있도록 늘 곁에서 함께하는 조엘라이프가 되겠습니다.\n\n감사합니다."
       }
-    ]
+    ],
+    "kicker": "회사 소개 · About Us"
   },
   "support": {
     "hero": {
-      "kicker": "문의하기",
+      "kicker": "문의하기 · Support",
       "titleLine1": "무엇을",
       "titleEmphasis": "도와드릴까요",
-      "lede": "제품에 대한 질문, Lot 번호 조회, 대량 주문 · B2B 문의까지.\n평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다."
+      "lede": "제품에 대한 질문, Lot 번호 조회, 대량 주문 · B2B 문의까지.\n평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.",
+      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/meditation-space.png"
     },
     "channels": [
       {
@@ -1651,17 +1590,17 @@
         "label": "Email",
         "title": "이메일 문의",
         "sub": "24시간 접수 · 평일 24시간 내 회신\n첨부파일은 10MB 이하로 부탁드립니다",
-        "value": "zoel@zoellife.co.kr",
+        "value": "",
         "hint": "Business · 사업 제휴 · 대량 주문",
         "ctaLabel": "메일 작성하기 →",
-        "ctaHref": "mailto:zoel@zoellife.co.kr"
+        "ctaHref": ""
       },
       {
         "num": "03 · KakaoTalk",
         "label": "KakaoTalk",
         "title": "카카오톡 상담",
         "sub": "실시간 1:1 상담 · 평일 09:00 – 18:00\n이미지·영상 첨부 가능",
-        "value": "@대라천ZOELLIFE",
+        "value": "",
         "hint": "Live Chat · 가장 빠른 응답",
         "ctaLabel": "채팅 시작 →",
         "ctaHref": "#"
@@ -1699,31 +1638,38 @@
           "dd": "박병주"
         },
         {
-          "dt": "설립일",
-          "dd": "2019년 · 연구 개시 1999년"
+          "dt": "주소",
+          "dd": "서울특별시 금천구 벚꽃로36길 30, 1511호"
         },
         {
           "dt": "사업자번호",
           "dd": "749-86-03668"
         },
         {
-          "dt": "주소",
-          "dd": "서울특별시 금천구 벚꽃로36길 30, 1511호"
+          "dt": "통신판매업신고번호",
+          "dd": "제2026-서울금천-0438호"
+        },
+        {
+          "dt": "수입・판매업 영업등록증",
+          "dd": "제20260001680호",
+          "bold": ""
+        },
+        {
+          "dt": "개인정보보호책임자",
+          "dd": "김승현",
+          "bold": ""
         },
         {
           "dt": "전화",
           "dd": "070 - 4140 - 4086"
-        },
-        {
-          "dt": "이메일",
-          "dd": "bj0202@gmail.com"
         }
       ]
     },
     "mapLabel": {
       "title": "대라천 · ZOEL LIFE 본사",
       "address": "서울 금천구 벚꽃로36길 30, 1511호"
-    }
+    },
+    "kicker": "문의하기 · Support"
   },
   "homeShopping": {
     "warningBanner": {
@@ -1800,90 +1746,20 @@
           "quote": "25년을 키워온 진짜, 오늘 방송 특가로 만나보세요. 전화는 070-4140-4086입니다. 선착순이라 서두르셔야 해요."
         }
       ]
+    },
+    "hero": {
+      "titleLine1": "TV 홈쇼핑",
+      "titleEmphasis": "편성표 · 다시보기",
+      "lede": "NS홈쇼핑 론칭을 기념해, 기존 판매 과정에서 발생하던 복잡한 유통 단계를 과감하게 줄였습니다. 불필요한 중간 과정을 최소화하고, 브랜드가 직접 홈쇼핑 채널을 통해 소비자에게 전달하는 방식을 선택했습니다. 그 결과, 동일한 품질의 제품을 보다 합리적이고 경쟁력 있는 가격으로 만나보실 수 있습니다. 이제 '참' 침향을 자신 있게 소개합니다."
     }
   },
-  "pages": {
-    "aboutAgarwood": {
-      "formationSteps": [
-        {
-          "step": "01",
-          "title": "외부 자극",
-          "description": "침향나무가 외부 상처나 곰팡이 감염 등 자극을 받습니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-01.jpg"
-        },
-        {
-          "step": "02",
-          "title": "수지 분비",
-          "description": "상처 치유를 위해 나무 스스로 방어 수지를 분비합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-02.jpg"
-        },
-        {
-          "step": "03",
-          "title": "침착",
-          "description": "분비된 수지가 수십 년에 걸쳐 나무 내부에 서서히 침착됩니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-03.jpg"
-        },
-        {
-          "step": "04",
-          "title": "형성",
-          "description": "수지가 충분히 침착된 부분이 향목 — 침향이 됩니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-08.jpg"
-        }
-      ],
-      "specialReasons": [
-        {
-          "title": "수십 년의 시간",
-          "description": "20년 이상의 긴 시간이 만들어낸 자연의 결정체입니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-09.jpg"
-        },
-        {
-          "title": "희귀한 수지",
-          "description": "전 세계적으로 생산량이 제한된 귀한 향목입니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-10.jpg"
-        },
-        {
-          "title": "학명 기반 품질",
-          "description": "식약처 고시 학명 Aquilaria Agallocha Roxburgh.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-11.jpg"
-        },
-        {
-          "title": "동서양 의학서",
-          "description": "동의보감·본초강목 등 수천 년간 약재로 기록.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-12.jpg"
-        }
-      ],
-      "benefits": [
-        {
-          "title": "기혈 순환",
-          "description": "막힌 기를 뚫어 오장육부 기능을 정상화합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-13.jpg"
-        },
-        {
-          "title": "자양강장",
-          "description": "찬 기운을 몰아내고 몸을 따뜻하게 보강합니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-14.jpg"
-        },
-        {
-          "title": "신경 안정",
-          "description": "예민한 신경을 이완시키고 숙면에 도움.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-15.jpg"
-        },
-        {
-          "title": "항염 · 혈관",
-          "description": "염증 억제와 혈관 건강 증진.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-16.jpg"
-        },
-        {
-          "title": "뇌 건강",
-          "description": "뇌혈류 개선과 뇌세포 보호.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-17.jpg"
-        },
-        {
-          "title": "소화 · 복통",
-          "description": "위를 따뜻하게 하여 소화 기능 개선.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-dearacheon-18.jpg"
-        }
-      ]
+  "products": {
+    "hero": {
+      "kicker": "제품 소개 · Products",
+      "titleLine1": "수십 년 숙성의 시간을",
+      "titleEmphasis": "담은 고귀한 제품",
+      "lede": "베트남에서 자란 100% 아갈로차 침향을 바탕으로, 25년간 축적된 연구와 재배 노하우를 담아 완성한 프리미엄 라인업입니다. 오랜 시간 자연 속에서 형성된 침향의 깊은 가치에 전통 제법의 정성과 현대 과학의 기술을 더해, 그 진귀한 향과 에너지를 온전히 제품에 담아냈습니다.",
+      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/products-resin-formation.jpg"
     }
   }
 }

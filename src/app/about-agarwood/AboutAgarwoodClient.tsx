@@ -674,7 +674,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
                 {/* Check 01 — 학명 */}
                 <RevealOnScroll delay={200}>
-                  <div style={{ marginBottom: 40 }}>
+                  <div style={{ marginTop: 40, marginBottom: 40 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
                       <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
                         CHECK · 01

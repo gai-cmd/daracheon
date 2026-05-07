@@ -47,7 +47,6 @@ function ytIdFromUrl(url: string): string | null {
 function buildMediaJsonLd(media: MediaItem[]) {
   const videos = media.filter((m) => m.type === 'video');
   const photos = media.filter((m) => m.type === 'photo');
-  void photos;
 
   const videoItems = videos.map((v, i) => {
     const id = v.url ? ytIdFromUrl(v.url) : null;

@@ -392,7 +392,9 @@
   pointer-events: none;
 }
 .certMark::after { inset: 3px; border-color: rgba(212, 168, 67, 0.08); }
-.certMark > svg { transition: transform 0.4s ease; }
+.certMark > svg,
+.certMark > img { transition: transform 0.4s ease; }
+.certChip:hover .certMark > img { transform: scale(1.08); }
 
 .certMarkCorner {
   position: absolute;
