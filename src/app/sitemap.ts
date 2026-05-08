@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl, lastModified, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${baseUrl}/about-agarwood`, lastModified, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/brand-story`, lastModified, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/showroom`, lastModified, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/products`, lastModified, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${baseUrl}/home-shopping`, lastModified, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${baseUrl}/company`, lastModified, changeFrequency: 'monthly', priority: 0.6 },

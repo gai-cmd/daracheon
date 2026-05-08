@@ -33,6 +33,12 @@ export default function AdminPagesPage() {
       icon: '◆',
     },
     {
+      href: '/admin/pages/showroom',
+      title: '전시장 (쇼룸)',
+      desc: '/showroom 히어로 · 소개 · 방문 안내 · 갤러리 편집',
+      icon: '◊',
+    },
+    {
       href: '/admin/pages/support',
       title: '문의·연락 채널 (회사소개 통합)',
       desc: '/company 의 문의 양식 · 연락 채널 · 회사정보 · 지도 데이터 편집',
