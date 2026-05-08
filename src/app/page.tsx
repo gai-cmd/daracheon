@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
-import CertIcon from '@/components/ui/CertIcon';
 import styles from './page.module.css';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
@@ -346,16 +345,15 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.certRow}>
-            <span className={styles.tag}>Certifications</span>
-            <div className={styles.certEyebrow}>{`Certified · ${certs.length} Seals`}</div>
+            <span className={styles.tag}>Certifications · {certs.length}건 인증</span>
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
-                <div key={`${c.name}-${i}`} className={styles.certChip}>
-                  <div className={styles.certThumb} aria-hidden="true">
-                    <CertIcon name={c.name} />
-                  </div>
-                  <div className={styles.certName}>{c.name}</div>
-                  <div className={styles.certSub}>{c.sub}</div>
+                <div key={`${c.name}-${i}`} className={styles.certTile}>
+                  <div className={styles.certNo}>No.</div>
+                  <div className={styles.certNum}>{String(i + 1).padStart(2, '0')}</div>
+                  <div className={styles.certDivider} aria-hidden="true" />
+                  <div className={styles.certTitle}>{c.name}</div>
+                  <div className={styles.certCaption}>{c.sub}</div>
                 </div>
               ))}
             </div>
