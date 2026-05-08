@@ -222,7 +222,15 @@ export default function AdminProductsPage() {
   function updateVariant(index: number, field: keyof ProductVariant, value: string | number | boolean) {
     if (!editingProduct) return;
     const updated = [...(editingProduct.variants ?? [])];
-    updated[index] = { ...updated[index], [field]: value } as ProductVariant;
+    const nextVariant = { ...updated[index], [field]: value } as ProductVariant;
+    // 가격 변경 시 priceDisplay 동기화 — stale 표시 방지.
+    if (field === 'price') {
+      const p = typeof value === 'number' ? value : Number(value) || 0;
+      nextVariant.price = p;
+      if (p > 0) nextVariant.priceDisplay = `${p.toLocaleString('ko-KR')}원`;
+      else delete nextVariant.priceDisplay;
+    }
+    updated[index] = nextVariant;
     setEditingProduct({ ...editingProduct, variants: updated });
   }
 
@@ -293,6 +301,14 @@ export default function AdminProductsPage() {
 
   function updateEditField<K extends keyof Product>(key: K, value: Product[K]) {
     if (!editingProduct) return;
+    // price 변경 시 priceDisplay 도 즉시 동기화 — 백엔드에서도 재산출하지만
+    // 폼에서 미리 보여줘야 사용자가 변경 결과를 즉시 확인할 수 있다.
+    if (key === 'price') {
+      const next = typeof value === 'number' ? value : Number(value) || 0;
+      const display = next > 0 ? `${next.toLocaleString('ko-KR')}원` : '가격 문의';
+      setEditingProduct({ ...editingProduct, price: next, priceDisplay: display });
+      return;
+    }
     setEditingProduct({ ...editingProduct, [key]: value });
   }
 

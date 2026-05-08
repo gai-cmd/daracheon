@@ -9,8 +9,11 @@ interface Props {
   basePriceDisplay: string;
 }
 
-function formatPrice(price: number, fallback: string): string {
+// price (숫자) 가 있으면 항상 그것으로부터 표시 문자열을 산출해 stale priceDisplay 가
+// 새 가격을 가리는 사고를 막는다. price === 0 일 때만 priceDisplay/fallback 사용.
+function formatPrice(price: number, fallback: string, displayOverride?: string): string {
   if (price > 0) return `${price.toLocaleString('ko-KR')}원`;
+  if (displayOverride && displayOverride.trim()) return displayOverride;
   return fallback;
 }
 
@@ -27,7 +30,7 @@ export default function VariantSelector({ variants, basePrice, basePriceDisplay 
   }
 
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
-  const priceLabel = selected.priceDisplay ?? formatPrice(selected.price, basePriceDisplay);
+  const priceLabel = formatPrice(selected.price, basePriceDisplay, selected.priceDisplay);
 
   return (
     <div className="mt-8 border-t border-neutral-200 pt-8">
@@ -64,7 +67,7 @@ export default function VariantSelector({ variants, basePrice, basePriceDisplay 
                 )}
               </span>
               <span className="font-display text-base text-gold-600">
-                {v.priceDisplay ?? formatPrice(v.price, '문의')}
+                {formatPrice(v.price, '문의', v.priceDisplay)}
               </span>
             </button>
           );

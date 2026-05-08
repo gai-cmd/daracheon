@@ -11,6 +11,15 @@ function revalidateProducts() {
   revalidatePath('/', 'layout');
 }
 
+// 가격(숫자) 으로부터 표시용 문자열을 산출. price > 0 이면 항상 재산출하여
+// 어드민에서 숫자만 바꿨을 때 이전 priceDisplay 가 stale 로 남는 사고를 막는다.
+// price === 0 일 때만 사용자가 입력한 override 문자열("가격 문의" 등) 을 보존.
+function derivePriceDisplay(price: number, override?: unknown): string | undefined {
+  if (price > 0) return `${price.toLocaleString('ko-KR')}원`;
+  if (typeof override === 'string' && override.trim()) return override.trim();
+  return undefined;
+}
+
 function validateAndNormalizeVariants(raw: unknown): ProductVariant[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   if (raw.length === 0) return [];
@@ -24,9 +33,8 @@ function validateAndNormalizeVariants(raw: unknown): ProductVariant[] | undefine
     const price = typeof item.price === 'number' ? item.price : 0;
     const inStock = item.inStock !== false;
     const result: ProductVariant = { id, label, price, inStock };
-    if (typeof item.priceDisplay === 'string' && item.priceDisplay.trim()) {
-      result.priceDisplay = item.priceDisplay.trim();
-    }
+    const display = derivePriceDisplay(price, item.priceDisplay);
+    if (display) result.priceDisplay = display;
     if (typeof item.sku === 'string' && item.sku.trim()) {
       result.sku = item.sku.trim();
     }
@@ -83,7 +91,8 @@ export async function POST(request: Request) {
       categoryEn: body.categoryEn?.trim() || '',
       badge: body.badge?.trim() || '',
       price: body.price ?? 0,
-      priceDisplay: body.priceDisplay || (body.price ? `${body.price.toLocaleString()}원` : '가격 문의'),
+      priceDisplay:
+        derivePriceDisplay(body.price ?? 0, body.priceDisplay) ?? '가격 문의',
       image: body.image?.trim() || '',
       description: body.description?.trim() || '',
       shortDescription: body.shortDescription?.trim() || '',
@@ -138,14 +147,22 @@ export async function PUT(request: Request) {
     }
 
     const normalizedVariants = validateAndNormalizeVariants(body.variants);
-    const updatedProduct: Product = {
+    // price 가 변경되면 priceDisplay 도 항상 재산출. 어드민 UI 가
+    // priceDisplay 를 갱신하지 않은 채 price 만 바꿔 저장해도
+    // 표시 문자열이 stale 로 남지 않도록 백엔드에서 강제 동기화한다.
+    const merged: Product = {
       ...products[index],
       ...body,
       ...(normalizedVariants !== undefined
         ? { variants: normalizedVariants }
         : { variants: products[index].variants }),
     };
-    products[index] = updatedProduct;
+    const nextPrice = typeof merged.price === 'number' ? merged.price : 0;
+    merged.price = nextPrice;
+    merged.priceDisplay =
+      derivePriceDisplay(nextPrice, body.priceDisplay ?? products[index].priceDisplay) ??
+      '가격 문의';
+    products[index] = merged;
     await writeData('products', products);
     revalidateProducts();
 
