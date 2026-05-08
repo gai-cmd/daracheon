@@ -379,17 +379,18 @@
   background: rgba(212, 168, 67, 0.18);
 }
 @media (min-width: 700px) { .certGrid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(6, 1fr); } }
 
 .certTile {
   position: relative;
   background: #0a0b10;
-  padding: 36px 24px 30px;
+  padding: 32px 20px 26px;
   text-align: left;
   transition: background 320ms ease;
   display: flex;
   flex-direction: column;
 }
+@media (min-width: 1024px) { .certTile { padding: 28px 16px 24px; } }
 .certTile:hover { background: rgba(212, 168, 67, 0.06); }
 
 .certNo {
@@ -402,39 +403,44 @@
 }
 .certNum {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(2.6rem, 4vw, 3.4rem);
+  font-size: clamp(2.4rem, 3.4vw, 3rem);
   font-weight: 200;
   line-height: 1;
   color: #fff;
   letter-spacing: 0.06em;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
+}
+@media (min-width: 1024px) {
+  .certNum { font-size: 2.2rem; margin-bottom: 14px; }
 }
 .certDivider {
   width: 28px;
   height: 1px;
   background: rgba(212, 168, 67, 0.55);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   transition: width 320ms ease, background 320ms ease;
 }
 .certTile:hover .certDivider {
-  width: 56px;
+  width: 48px;
   background: var(--accent);
 }
 .certTitle {
   font-family: 'Noto Serif KR', serif;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.88);
-  line-height: 1.5;
-  margin-bottom: 6px;
+  line-height: 1.45;
+  margin-bottom: 4px;
   font-weight: 400;
 }
+@media (min-width: 1024px) { .certTitle { font-size: 0.85rem; } }
 .certCaption {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   letter-spacing: 0.01em;
   color: rgba(255, 255, 255, 0.5);
   font-weight: 300;
-  line-height: 1.55;
+  line-height: 1.5;
 }
+@media (min-width: 1024px) { .certCaption { font-size: 0.66rem; line-height: 1.45; } }
 
 /* GENERIC SECTION */
 .section {
