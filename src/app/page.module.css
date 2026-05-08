@@ -35,7 +35,24 @@
   z-index: 0;
   background-size: cover;
   background-position: center;
-  opacity: 0.18;
+  opacity: 0.92;
+  pointer-events: none;
+}
+/* 텍스트 가독성을 위한 어둠 오버레이: 좌측 강하게 → 우측(트러스트 카드 영역) 투명 + 하단 약간 */
+.heroBg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(10, 11, 16, 0.78) 0%,
+      rgba(10, 11, 16, 0.55) 28%,
+      rgba(10, 11, 16, 0.25) 58%,
+      rgba(10, 11, 16, 0.05) 82%,
+      transparent 100%
+    ),
+    linear-gradient(180deg, transparent 50%, rgba(10, 11, 16, 0.45) 100%);
   pointer-events: none;
 }
 

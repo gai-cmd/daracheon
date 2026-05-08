@@ -245,7 +245,6 @@ export default async function HomePage() {
       <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`}>
-        <div className="hero-bg-agarwood" aria-hidden />
         <div
           className={styles.heroBg}
           style={{ backgroundImage: `url('${hero.heroBg}')` }}

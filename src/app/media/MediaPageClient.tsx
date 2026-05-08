@@ -346,37 +346,51 @@ export default function MediaPageClient({
                       marginTop: 30,
                     }}
                   >
-                    {processVideos.items.filter((v) => v.src).map((v, i) => (
-                      <figure key={v.src || i} style={{ margin: 0 }}>
-                        <div
-                          style={{
-                            position: 'relative',
-                            aspectRatio: '16/9',
-                            overflow: 'hidden',
-                            background: '#000',
-                            border: '1px solid rgba(212,168,67,0.18)',
-                          }}
-                        >
-                          <video
-                            src={v.src}
-                            controls
-                            playsInline
-                            preload="metadata"
-                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-                          />
-                        </div>
-                        <figcaption
-                          style={{
-                            marginTop: 10,
-                            fontSize: '0.85rem',
-                            color: 'rgba(255,255,255,0.72)',
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          {v.title}
-                        </figcaption>
-                      </figure>
-                    ))}
+                    {processVideos.items.filter((v) => v.src).map((v, i) => {
+                      // Google Drive 영상은 video 태그로 못 재생 — preview iframe 으로 임베드.
+                      const isDrive = /^https?:\/\/drive\.google\.com\//.test(v.src);
+                      return (
+                        <figure key={v.src || i} style={{ margin: 0 }}>
+                          <div
+                            style={{
+                              position: 'relative',
+                              aspectRatio: '16/9',
+                              overflow: 'hidden',
+                              background: '#000',
+                              border: '1px solid rgba(212,168,67,0.18)',
+                            }}
+                          >
+                            {isDrive ? (
+                              <iframe
+                                src={v.src}
+                                title={v.title}
+                                allow="autoplay; encrypted-media"
+                                allowFullScreen
+                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                              />
+                            ) : (
+                              <video
+                                src={v.src}
+                                controls
+                                playsInline
+                                preload="metadata"
+                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+                              />
+                            )}
+                          </div>
+                          <figcaption
+                            style={{
+                              marginTop: 10,
+                              fontSize: '0.85rem',
+                              color: 'rgba(255,255,255,0.72)',
+                              lineHeight: 1.6,
+                            }}
+                          >
+                            {v.title}
+                          </figcaption>
+                        </figure>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

@@ -347,13 +347,21 @@ export default async function MediaPage() {
     hero: { ...DEFAULT_HERO, ...(process?.hero ?? {}) },
     sceneSection: process?.sceneSection ?? DEFAULT_SCENE_SECTION,
     chapters: process?.chapters?.length ? process.chapters : DEFAULT_CHAPTERS,
+    // DB 항목은 src(URL) 또는 id(Google Drive 파일 ID) 둘 중 하나로 저장될 수 있다.
+    // id 만 있으면 Drive preview 임베드 URL 로 변환해 src 를 채운다 — 클라이언트는
+    // drive.google.com URL 을 iframe 으로 임베드.
     processVideos: rawVideos
       ? {
           ...rawVideos,
-          items: (rawVideos.items ?? []).map((item) => ({
-            src: (item as { src?: string; id?: string }).src ?? '',
-            title: item.title ?? '',
-          })),
+          items: (rawVideos.items ?? []).map((item) => {
+            const it = item as { src?: string; id?: string; title?: string };
+            const src = it.src
+              ? it.src
+              : it.id
+                ? `https://drive.google.com/file/d/${it.id}/preview`
+                : '';
+            return { src, title: it.title ?? '' };
+          }),
         }
       : DEFAULT_PROCESS_VIDEOS,
     certifications: process?.certifications ?? DEFAULT_CERTIFICATIONS,
