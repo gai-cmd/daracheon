@@ -27,6 +27,7 @@ interface DosageItem {
   num: string;
   title: string;
   body: string;
+  image?: string;
 }
 
 interface DosageSection {
@@ -136,6 +137,7 @@ interface AboutAgarwoodData {
     subtitle: string;
     body: string;
     officialNameCallout: string;
+    images?: string[];
   };
   formationSteps: FormationStep[];
   specialReasons: SpecialReason[];
@@ -295,6 +297,7 @@ export default function AdminAboutAgarwoodPage() {
     subtitle: '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)',
     body: '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.',
     officialNameCallout: '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)',
+    images: [],
   });
   const [formationSteps, setFormationSteps] = useState<FormationStep[]>([
     { step: '01', title: '외부 자극', description: '침향나무가 외부 상처나 곰팡이 감염 등 자극을 받습니다.' },
@@ -624,6 +627,63 @@ export default function AdminAboutAgarwoodPage() {
               <LabeledInput label="부제목 (이탤릭)" value={definitionSection.subtitle} onChange={(v) => setDefinitionSection({ ...definitionSection, subtitle: v })} />
               <LabeledTextarea label="본문" value={definitionSection.body} onChange={(v) => setDefinitionSection({ ...definitionSection, body: v })} rows={4} />
               <LabeledTextarea label="공식명 콜아웃 텍스트" value={definitionSection.officialNameCallout} onChange={(v) => setDefinitionSection({ ...definitionSection, officialNameCallout: v })} rows={2} />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  사진 갤러리 ({(definitionSection.images ?? []).length})
+                  <span className="ml-2 text-xs font-normal text-gray-500">— 본문 아래에 자동 그리드로 표시됩니다.</span>
+                </label>
+                <div className="space-y-3">
+                  {(definitionSection.images ?? []).map((src, i) => (
+                    <div key={i} className="bg-gray-50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-600">사진 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const arr = [...(definitionSection.images ?? [])];
+                              setDefinitionSection({ ...definitionSection, images: moveItem(arr, i, i - 1) });
+                            }}
+                            className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded"
+                          >▲</button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const arr = [...(definitionSection.images ?? [])];
+                              setDefinitionSection({ ...definitionSection, images: moveItem(arr, i, i + 1) });
+                            }}
+                            className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded"
+                          >▼</button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const arr = [...(definitionSection.images ?? [])];
+                              setDefinitionSection({ ...definitionSection, images: removeItem(arr, i) });
+                            }}
+                            className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded"
+                          >삭제</button>
+                        </div>
+                      </div>
+                      <ImageUploadField
+                        value={src}
+                        onChange={(url) => {
+                          const arr = [...(definitionSection.images ?? [])];
+                          arr[i] = url;
+                          setDefinitionSection({ ...definitionSection, images: arr });
+                        }}
+                        subdir="pages"
+                      />
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setDefinitionSection({ ...definitionSection, images: [...(definitionSection.images ?? []), ''] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium"
+                  >
+                    + 사진 추가
+                  </button>
+                </div>
+              </div>
             </div>
           </SectionCard>
 
@@ -806,6 +866,14 @@ export default function AdminAboutAgarwoodPage() {
                           onChange={(e) => { const n = [...dosageSection.items]; n[i] = { ...n[i], body: e.target.value }; setDosageSection({ ...dosageSection, items: n }); }}
                           className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                         />
+                        <div className="sm:col-span-3">
+                          <label className="block text-xs text-gray-500 mb-1">이미지 (선택 — 카드 상단에 표시)</label>
+                          <ImageUploadField
+                            value={item.image ?? ''}
+                            onChange={(url) => { const n = [...dosageSection.items]; n[i] = { ...n[i], image: url }; setDosageSection({ ...dosageSection, items: n }); }}
+                            subdir="pages"
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}

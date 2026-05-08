@@ -79,7 +79,7 @@ const faqJsonLd = {
 export interface FormationStep { step: string; title: string; description: string; image?: string }
 export interface SpecialReason { title: string; description: string; image?: string }
 export interface Benefit { title: string; description: string; image?: string }
-export interface DosageItem { num: string; title: string; body: string }
+export interface DosageItem { num: string; title: string; body: string; image?: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
@@ -148,7 +148,7 @@ export interface TabHeroes {
 export interface AboutAgarwoodData {
   hero: { sectionTag: string; titleKr: string; titleEn: string; subtitle: string; heroImage: string };
   tabHeroes?: TabHeroes;
-  definitionSection: { title: string; subtitle: string; body: string; officialNameCallout: string };
+  definitionSection: { title: string; subtitle: string; body: string; officialNameCallout: string; images?: string[] };
   officialSourcesSection?: OfficialSourcesSection;
   registrySection?: RegistrySection;
   formationSteps: FormationStep[];

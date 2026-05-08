@@ -223,6 +223,39 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.'}
                     </p>
                   </RevealOnScroll>
+                  {definition?.images && definition.images.filter(Boolean).length > 0 && (
+                    <RevealOnScroll delay={250}>
+                      <div
+                        style={{
+                          marginTop: 26,
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                          gap: 14,
+                        }}
+                      >
+                        {definition.images.filter(Boolean).map((src, i) => (
+                          <div
+                            key={src + i}
+                            style={{
+                              position: 'relative',
+                              width: '100%',
+                              aspectRatio: '4/3',
+                              border: '1px solid rgba(212,168,67,0.2)',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <Image
+                              src={src}
+                              alt={`${definition?.title ?? '침향'} 사진 ${i + 1}`}
+                              fill
+                              sizes="(max-width: 768px) 50vw, 25vw"
+                              style={{ objectFit: 'cover', display: 'block' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </RevealOnScroll>
+                  )}
                   <RevealOnScroll delay={300}>
                     <div
                       onMouseEnter={() => setHoveredDefinitionBox(true)}
@@ -486,12 +519,24 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         <RevealOnScroll key={item.num + i} delay={i * 80}>
                           <div
                             style={{
-                              padding: '20px 24px',
                               border: '1px solid rgba(212,168,67,0.25)',
                               background: 'rgba(212,168,67,0.04)',
                               borderRadius: 4,
+                              overflow: 'hidden',
                             }}
                           >
+                            {item.image && (
+                              <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}>
+                                <Image
+                                  src={item.image}
+                                  alt={item.title}
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 800px"
+                                  style={{ objectFit: 'cover', display: 'block' }}
+                                />
+                              </div>
+                            )}
+                            <div style={{ padding: '20px 24px' }}>
                             <div
                               style={{
                                 fontFamily: "'Noto Serif KR', serif",
@@ -526,6 +571,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             >
                               {item.body}
                             </p>
+                            </div>
                           </div>
                         </RevealOnScroll>
                       ))}
