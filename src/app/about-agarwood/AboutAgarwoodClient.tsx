@@ -949,6 +949,28 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     침향(沈香)은 수천 년간 동서양의 의학 문헌에서 그 가치를 인정받아 온 귀중한 약재입니다.
                   </p>
                 </RevealOnScroll>
+                {tabHeroes.tab2 && (
+                  <RevealOnScroll delay={150}>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={tabHeroes.tab2}
+                        alt="문헌에 실린 침향 — 상징 이미지"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 880px"
+                        style={{ objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  </RevealOnScroll>
+                )}
                 {literatures.length > 0 ? (
                   <div
                     style={{
@@ -1057,6 +1079,28 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     현대 과학 논문에서 그 가치를 인정받아 온 귀중한 약재입니다.
                   </p>
                 </RevealOnScroll>
+                {tabHeroes.tab3 && (
+                  <RevealOnScroll delay={150}>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={tabHeroes.tab3}
+                        alt="논문에 실린 침향 — 상징 이미지"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 880px"
+                        style={{ objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  </RevealOnScroll>
+                )}
                 {papers.length > 0 ? (
                   <>
                     <div
