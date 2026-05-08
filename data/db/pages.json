@@ -337,12 +337,30 @@
           "description": "",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg",
           "photos": [
-            { "src": "https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280", "caption": "원목 입고 — 동나이 직영 공장" },
-            { "src": "https://lh3.googleusercontent.com/d/1MonkWnkUKO2T6ksAOziCfV1Q2GVYeAdc=w1280", "caption": "세척 — 표피·외부 오염물 제거" },
-            { "src": "https://lh3.googleusercontent.com/d/1ZlCQlH6WBjDXMQx9-67RxYKepyvmXIQ9=w1280", "caption": "절단 — 천공부 기준 10~20cm" },
-            { "src": "https://lh3.googleusercontent.com/d/14p2TUhpX3PjweKeFx4kb3nUQi8FN1VaC=w1280", "caption": "건조 — 자연광 건조" },
-            { "src": "https://lh3.googleusercontent.com/d/1Z76QJj6-X9GNTahyBBfiCLKxb2TQJCrc=w1280", "caption": "고온 증류 — 72시간 연속 가동" },
-            { "src": "https://lh3.googleusercontent.com/d/10I1fjc7rC3oXo5g9cynXFLwMj2lpAwuR=w1280", "caption": "검사 및 출고 — 중금속 8종 불검출" }
+            {
+              "src": "https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280",
+              "caption": "원목 입고 — 동나이 직영 공장"
+            },
+            {
+              "src": "https://lh3.googleusercontent.com/d/1MonkWnkUKO2T6ksAOziCfV1Q2GVYeAdc=w1280",
+              "caption": "세척 — 표피·외부 오염물 제거"
+            },
+            {
+              "src": "https://lh3.googleusercontent.com/d/1ZlCQlH6WBjDXMQx9-67RxYKepyvmXIQ9=w1280",
+              "caption": "절단 — 천공부 기준 10~20cm"
+            },
+            {
+              "src": "https://lh3.googleusercontent.com/d/14p2TUhpX3PjweKeFx4kb3nUQi8FN1VaC=w1280",
+              "caption": "건조 — 자연광 건조"
+            },
+            {
+              "src": "https://lh3.googleusercontent.com/d/1Z76QJj6-X9GNTahyBBfiCLKxb2TQJCrc=w1280",
+              "caption": "고온 증류 — 72시간 연속 가동"
+            },
+            {
+              "src": "https://lh3.googleusercontent.com/d/10I1fjc7rC3oXo5g9cynXFLwMj2lpAwuR=w1280",
+              "caption": "검사 및 출고 — 중금속 8종 불검출"
+            }
           ],
           "steps": [
             {
@@ -1158,8 +1176,8 @@
     "tabHeroes": {
       "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362415629-8cd62fb9dde3844ef91e.png",
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362417505-91f29493cde696a847b3.png",
-      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362419117-9160411a29b8340a0c92.png",
-      "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362420594-241eefdca9becdf2aaa6.png",
+      "tab2": "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1/agarwood/40_05_agallocha_hero.png",
+      "tab3": "https://res.cloudinary.com/dnfrvzdjd/image/upload/v1764765341/ijxu7a20ecx6ny6ob9wz.webp",
       "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362422155-5d63c6561b3cfdcc3077.png",
       "tab5": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362424072-7f111b4423198d384f06.png"
     },
@@ -1447,7 +1465,24 @@
         "stats": [],
         "imageSrc": "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280",
         "imageAlt": "베트남 하띤(Ha Tinh) 직영 농장",
-        "imageCaption": "하띤 · Ha Tinh · 침향의 전통 산지"
+        "imageCaption": "하띤 · Ha Tinh · 침향의 전통 산지",
+        "images": [
+          "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280",
+          "https://lh3.googleusercontent.com/d/1XV5QsDsxdZhzYryUiXyMOcdYVzPjIZcL=w1280",
+          "https://lh3.googleusercontent.com/d/15plJjdQ--UJzQW7CrIcZyJRwXO8aRyNW=w1280",
+          "https://lh3.googleusercontent.com/d/1IW0Jg7SXocdeJxDb7m27097B6TRSEi47=w1280",
+          "https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280",
+          "https://lh3.googleusercontent.com/d/1JKfeto1czHEPFF1QIpYzaT4VpXmkMNVR=w1280",
+          "https://lh3.googleusercontent.com/d/1eXR9sYP_UhTBGe3NZ6huQ-_Am1mrEU1A=w1280",
+          "https://lh3.googleusercontent.com/d/14NVPdPAzMMkVhJQwITHDWamEroAZsmcr=w1280",
+          "https://lh3.googleusercontent.com/d/1vMg67TwHPKgtuRngbavReETlS9gK9zJD=w1280",
+          "https://lh3.googleusercontent.com/d/1xPbK_jHbQ4Pv6wJIA7CAoHrd3zALmkLG=w1280",
+          "https://lh3.googleusercontent.com/d/1dOg-3mfM8dYVScQOKhvlT1Mq_0Vr7EqN=w1280",
+          "https://lh3.googleusercontent.com/d/1PWx0dQHuBjBZdlJ5ESf2aZoiylIpc4FO=w1280",
+          "https://lh3.googleusercontent.com/d/1SRwCEhWfnugBgF_HcgMN77vO3vMuuUGR=w1280",
+          "https://lh3.googleusercontent.com/d/1YYE6txcivaCt1TpVlFLU9ee6QkbYS9Ta=w1280",
+          "https://lh3.googleusercontent.com/d/1Gx7Lts7P0iPioeticYKTidJXR3G0rVpY=w1280"
+        ]
       },
       {
         "num": "03",
@@ -1457,7 +1492,10 @@
         "stats": [],
         "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg",
         "imageAlt": "",
-        "imageCaption": "람동 · Lam Dong · 158헥타르 대규모 재배"
+        "imageCaption": "람동 · Lam Dong · 158헥타르 대규모 재배",
+        "images": [
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg"
+        ]
       },
       {
         "num": "04",
@@ -1467,7 +1505,20 @@
         "stats": [],
         "imageSrc": "",
         "imageAlt": "",
-        "imageCaption": "푸꼬옥 · Phu Quoc · 130년, 50년생 침향나무"
+        "imageCaption": "푸꼬옥 · Phu Quoc · 130년, 50년생 침향나무",
+        "images": [
+          "https://lh3.googleusercontent.com/d/1fUdQAd2aHuIWpom_EaFqdtjC0YyLz9Ir=w1280",
+          "https://lh3.googleusercontent.com/d/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs=w1280",
+          "https://lh3.googleusercontent.com/d/1eBlzVcm6Whj5ilHAp2Fr9JtJm5z39NOP=w1280",
+          "https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280",
+          "https://lh3.googleusercontent.com/d/1TW1YTrWORogf7x4_43zv7EnvIrgQFJ2s=w1280",
+          "https://lh3.googleusercontent.com/d/1u0rX18J2cR01BjiiZXS1F-tKwcvsf-az=w1280",
+          "https://lh3.googleusercontent.com/d/12pP8XUgW8qnGDpc_6ohCf08HYstMEe4I=w1280",
+          "https://lh3.googleusercontent.com/d/1LX8VbjAK296dtG0UeGo63R9gvN0WAAer=w1280",
+          "https://lh3.googleusercontent.com/d/1-wPwngEs7h-AXhqTbjwsnzWNWy-N2qIn=w1280",
+          "https://lh3.googleusercontent.com/d/1lO6D2P1uaJ0qTu9cCNtL3sQ2eHpty7G_=w1280",
+          "https://lh3.googleusercontent.com/d/1aVJdD3S9J209_cUtNQgXrfh52BNrTHYk=w1280"
+        ]
       },
       {
         "num": "05",
@@ -1477,7 +1528,26 @@
         "stats": [],
         "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777526902581-9adddd01b45819844675.jpg",
         "imageAlt": "",
-        "imageCaption": "냐짱 · Nha Trang · 오랜 관리의 결과로 굵은 침향나무"
+        "imageCaption": "냐짱 · Nha Trang · 오랜 관리의 결과로 굵은 침향나무",
+        "images": [
+          "https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280",
+          "https://lh3.googleusercontent.com/d/1maYh_MONnN2PWIMz7acolQVpVeAfNezL=w1280",
+          "https://lh3.googleusercontent.com/d/167pkrcBiuFz5vFGL5SMmWaAW2UGVemYG=w1280",
+          "https://lh3.googleusercontent.com/d/1zRdQ3278yTPi-p2SCX66khDBMq5hiVvh=w1280",
+          "https://lh3.googleusercontent.com/d/1hIGClgj6bxDLZwlgAna7Y6MFT9N0ZIEd=w1280",
+          "https://lh3.googleusercontent.com/d/1Tfj39jm8YG-spo88bKoe-HMY5AfhoJhk=w1280",
+          "https://lh3.googleusercontent.com/d/1gWqkT0FI-QNEcpu4XR-8BqTHvocmU6TU=w1280",
+          "https://lh3.googleusercontent.com/d/1n1JSplwzUECZWKglQNcLYiLf15H5EdLR=w1280",
+          "https://lh3.googleusercontent.com/d/1HUQSBLGfIDv0iXYhc60TpMVuX8Kj3kq3=w1280",
+          "https://lh3.googleusercontent.com/d/1CBEqiROSVtSI4ctTOn4gcAgOUHy8GUsi=w1280",
+          "https://lh3.googleusercontent.com/d/1SPgONLKZuawWN3B34dmpbsMuGLqaK15q=w1280",
+          "https://lh3.googleusercontent.com/d/1jViJKpSmcWiJREA4Fd5reCKZLXfMjvYC=w1280",
+          "https://lh3.googleusercontent.com/d/1BR3FoihI8XcDaYnUQ3a-y7hKxPSTjpA5=w1280",
+          "https://lh3.googleusercontent.com/d/1UnwU6OnzWIJGDlSV-gOYdru0exDLYsQX=w1280",
+          "https://lh3.googleusercontent.com/d/1Xnfp2EEVpnV37fOhecFWM6pRZDGIiXP3=w1280",
+          "https://lh3.googleusercontent.com/d/1DgdywEGT7rB1-TrkIbAMu9FBKZ-WMyTf=w1280",
+          "https://lh3.googleusercontent.com/d/1KBhM2PQe69CvQBzLDnqJi2E-5wAcmrJU=w1280"
+        ]
       },
       {
         "num": "06",
@@ -1487,7 +1557,27 @@
         "stats": [],
         "imageSrc": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777525829244-d1d8522fa10200c4cfdd.jpg",
         "imageAlt": "",
-        "imageCaption": "동나이 · Dong Nai · 현무암 토양 지역, 깊고 좋은 오일향"
+        "imageCaption": "동나이 · Dong Nai · 현무암 토양 지역, 깊고 좋은 오일향",
+        "images": [
+          "https://lh3.googleusercontent.com/d/1t02AQvPDeUsqjOv-NcUpwiDWrXwZ6mgA=w1280",
+          "https://lh3.googleusercontent.com/d/1I3VF_o1V64oBI3wwTIRDiJxiNJS_qkW-=w1280",
+          "https://lh3.googleusercontent.com/d/1vMgFPmYLyOzHXyOEkkMkh_-xMfEcgud2=w1280",
+          "https://lh3.googleusercontent.com/d/1t4EJe-0FZpfhDZYaWmhJ6whInHmjFts7=w1280",
+          "https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280",
+          "https://lh3.googleusercontent.com/d/1u1GR3yzZJ54XBA5v6DeYi4cv-sag7m5X=w1280",
+          "https://lh3.googleusercontent.com/d/17Wg4SaPB6Xo6lkxZUKhJtcCBCtszjbKN=w1280",
+          "https://lh3.googleusercontent.com/d/1MMcIuECWehMG7Ycpori6W3oJrBNkMsgF=w1280",
+          "https://lh3.googleusercontent.com/d/1DFKBrH5HcH7uThsqrLyouHLPO-fjlbld=w1280",
+          "https://lh3.googleusercontent.com/d/1dxHsLHoP9lRSHmdmxFG85Xvd2ULMBc0Z=w1280",
+          "https://lh3.googleusercontent.com/d/1ACWNrhSp2aSOTqvV_5WLtQTlKnirrxgy=w1280",
+          "https://lh3.googleusercontent.com/d/1xizkL9MRUMrytKqsOGtpHbOze0VHTNr2=w1280",
+          "https://lh3.googleusercontent.com/d/1UQliUriKe6oFQhUDcbbrHgcB38OtAD7b=w1280",
+          "https://lh3.googleusercontent.com/d/1b4y_Rq2O5-AvjeuCNqgekrKOvnzFYc1K=w1280",
+          "https://lh3.googleusercontent.com/d/1Jf6knzIx_Xph4_VIUJKFZGHV0W31UFEB=w1280",
+          "https://lh3.googleusercontent.com/d/1Qi6gBYNQAamdI8ffefA_HcPOUn9piq7D=w1280",
+          "https://lh3.googleusercontent.com/d/1kYAgLttmyrHGZNaW_gFaBDQb54U82U6V=w1280",
+          "https://lh3.googleusercontent.com/d/1hCKmm9r3BNKI8ipCK6fatR2EvfMLwtE6=w1280"
+        ]
       }
     ],
     "productionVideos": {
