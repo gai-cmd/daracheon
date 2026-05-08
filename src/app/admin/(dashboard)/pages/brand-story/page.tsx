@@ -18,6 +18,8 @@ interface HistoryEra {
   era: string;
   items: string[];
   description?: string;
+  image?: string;
+  imageCaption?: string;
 }
 
 interface CertItem {
@@ -42,12 +44,18 @@ interface ProcessStep {
   image?: string;
 }
 
+interface ProcessPhoto {
+  src: string;
+  caption?: string;
+}
+
 interface ProcessGroup {
   title: string;
   titleEn: string;
   description: string;
   image?: string;
   steps: ProcessStep[];
+  photos?: ProcessPhoto[];
 }
 
 interface BrandStoryData {
@@ -411,7 +419,7 @@ export default function AdminBrandStoryPage() {
     return arr.filter((_, i) => i !== index);
   }
 
-  const ADMIN_TABS = ['브랜드 스토리', '대라천 침향 역사', '다양한 인증', '생산 공정'];
+  const ADMIN_TABS = ['브랜드 스토리 + 침향 역사', '다양한 인증', '생산 공정'];
 
   if (loading) {
     return (
@@ -522,11 +530,8 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
-          </>)}
-          {activeAdminTab === 1 && (<>
-
-          {/* History Tab */}
-          <SectionCard title="탭 2 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
+          {/* History Tab — 브랜드 스토리 페이지 02 섹션으로 통합 */}
+          <SectionCard title="섹션 02 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
             <div className="space-y-5">
               <LabeledInput label="태그" value={historyTab.tag} onChange={(v) => setHistoryTab({ ...historyTab, tag: v })} />
               <LabeledInput label="제목" value={historyTab.title} onChange={(v) => setHistoryTab({ ...historyTab, title: v })} />
@@ -574,9 +579,23 @@ export default function AdminBrandStoryPage() {
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                         />
                       </div>
+                      <div className="mt-3">
+                        <label className="block text-xs text-gray-500 mb-1">시대 이미지 (선택) — 설명 단락 아래에 큰 사진으로 표시됩니다</label>
+                        <ImageUploadField
+                          value={era.image ?? ''}
+                          onChange={(url) => { const n = [...historyTab.eras]; n[eraIdx] = { ...n[eraIdx], image: url }; setHistoryTab({ ...historyTab, eras: n }); }}
+                          subdir="pages"
+                        />
+                        <input
+                          placeholder="이미지 캡션 (선택, 예: 2018 NTV Vietnam 통합법인 — HACCP 클린룸 라인)"
+                          value={era.imageCaption ?? ''}
+                          onChange={(e) => { const n = [...historyTab.eras]; n[eraIdx] = { ...n[eraIdx], imageCaption: e.target.value }; setHistoryTab({ ...historyTab, eras: n }); }}
+                          className="w-full mt-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setHistoryTab({ ...historyTab, eras: [...historyTab.eras, { era: '', items: [''], description: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                  <button type="button" onClick={() => setHistoryTab({ ...historyTab, eras: [...historyTab.eras, { era: '', items: [''], description: '', image: '', imageCaption: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
                     + 시대 추가
                   </button>
                 </div>
@@ -585,10 +604,10 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           </>)}
-          {activeAdminTab === 2 && (<>
+          {activeAdminTab === 1 && (<>
 
           {/* Certifications Tab */}
-          <SectionCard title="탭 3 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
+          <SectionCard title="탭 2 · 다양한 인증" onSave={() => saveSection('certificationsTab', { certificationsTab })} saving={saving === 'certificationsTab'}>
             <div className="space-y-6">
 
               {/* 섹션 헤더 */}
@@ -718,10 +737,10 @@ export default function AdminBrandStoryPage() {
           </SectionCard>
 
           </>)}
-          {activeAdminTab === 3 && (<>
+          {activeAdminTab === 2 && (<>
 
           {/* Process Tab */}
-          <SectionCard title="탭 4 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
+          <SectionCard title="탭 3 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>
             <div className="space-y-5">
               {/* 헤더 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -789,6 +808,46 @@ export default function AdminBrandStoryPage() {
                           onChange={(url) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], image: url }; setProcessTab({ ...processTab, processGroups: n }); }}
                           subdir="pages"
                         />
+                      </div>
+
+                      {/* 공정 사진 갤러리 — 단계 아래 그리드로 노출됨 */}
+                      <div className="mb-4 border-t border-gray-200 pt-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-medium text-gray-600">공정 사진 ({(group.photos ?? []).length}개)</label>
+                          <span className="text-[11px] text-gray-400">단계 아래 그리드로 노출</span>
+                        </div>
+                        <div className="space-y-3">
+                          {(group.photos ?? []).map((photo, pi) => (
+                            <div key={pi} className="bg-white border border-gray-200 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-gray-400 font-mono">PHOTO {String(pi + 1).padStart(2, '0')}</span>
+                                <div className="flex gap-1">
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; n[gi] = { ...n[gi], photos: moveItem(ps, pi, pi - 1) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; n[gi] = { ...n[gi], photos: moveItem(ps, pi, pi + 1) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                                  <button type="button" onClick={() => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; n[gi] = { ...n[gi], photos: removeItem(ps, pi) }; setProcessTab({ ...processTab, processGroups: n }); }} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                                </div>
+                              </div>
+                              <ImageUploadField
+                                value={photo.src}
+                                onChange={(url) => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; ps[pi] = { ...ps[pi], src: url }; n[gi] = { ...n[gi], photos: ps }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                subdir="pages"
+                              />
+                              <input
+                                placeholder="사진 캡션 (선택, 예: 원목 입고 — 동나이 직영 공장)"
+                                value={photo.caption ?? ''}
+                                onChange={(e) => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; ps[pi] = { ...ps[pi], caption: e.target.value }; n[gi] = { ...n[gi], photos: ps }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                className="w-full mt-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => { const n = [...processTab.processGroups]; const ps = [...(n[gi].photos ?? [])]; n[gi] = { ...n[gi], photos: [...ps, { src: '', caption: '' }] }; setProcessTab({ ...processTab, processGroups: n }); }}
+                            className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+                          >
+                            + 공정 사진 추가
+                          </button>
+                        </div>
                       </div>
 
                       {/* 단계 목록 */}

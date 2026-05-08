@@ -37,6 +37,7 @@ interface ProcessChapter {
   imageSrc?: string;
   imageAlt?: string;
   imageCaption?: string;
+  images?: string[];
 }
 
 interface ProductionVideo {
@@ -274,6 +275,7 @@ export default function AdminProcessPage() {
               imageSrc: c.imageSrc ?? '',
               imageAlt: c.imageAlt ?? '',
               imageCaption: c.imageCaption ?? '',
+              images: Array.isArray(c.images) ? c.images : [],
             })),
           );
         }
@@ -486,7 +488,7 @@ export default function AdminProcessPage() {
                   </div>
                 </div>
               ))}
-              <button type="button" onClick={() => setChapters([...chapters, { num: '', tag: '', title: '', body: '', stats: [], imageSrc: '', imageAlt: '', imageCaption: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 챕터 추가</button>
+              <button type="button" onClick={() => setChapters([...chapters, { num: '', tag: '', title: '', body: '', stats: [], imageSrc: '', imageAlt: '', imageCaption: '', images: [] }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 챕터 추가</button>
             </div>
           </SectionCard>
 

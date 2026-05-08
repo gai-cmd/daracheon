@@ -12,7 +12,6 @@ interface Props {
 
 const TAB_LIST = [
   '브랜드 스토리',
-  '대라천 침향 역사',
   '다양한 인증',
   '생산 공정',
 ] as const;
@@ -186,10 +185,11 @@ export default function BrandStoryClient({ data }: Props) {
         </div>
       </nav>
 
-      {/* TAB 0 — Brand Story */}
+      {/* TAB 0 — Brand Story + History (통합) */}
       {activeTab === 0 && (
         <section className={styles.chapter}>
           <div className={styles.wrap}>
+            {/* 01 — 브랜드 스토리 */}
             <div className={styles.chapterGrid}>
               <div>
                 <div className={styles.chapterNum}>01</div>
@@ -230,50 +230,62 @@ export default function BrandStoryClient({ data }: Props) {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
 
-      {/* TAB 1 — History */}
-      {activeTab === 1 && (
-        <section className={styles.chapter}>
-          <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
+            {/* 02 — 대라천 침향 역사 (통합 섹션) */}
+            <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
               <div>
-                <div className={styles.chapterNum}>01</div>
+                <div className={styles.chapterNum}>02</div>
                 <div className={styles.chapterTag}>{historyTab?.tag ?? 'HISTORY'}</div>
               </div>
               <div>
                 <h2 className={styles.chapterTitle}>{historyTab?.title ?? '대라천 침향 역사'}</h2>
                 <div className={styles.line} style={{ margin: '24px 0' }} />
                 <div className={styles.timeline}>
-              {eras.map((era, i) => (
-                <div key={era.era + i} className={styles.timelineItem}>
-                  <div className={styles.timelineEra}>{era.era}</div>
-                  <div>
-                    <ul className={styles.timelineList}>
-                      {era.items.map((it, j) => (
-                        <li key={j}>{it}</li>
-                      ))}
-                    </ul>
-                    {era.description && (
-                      <p
-                        style={{
-                          marginTop: 14,
-                          paddingTop: 14,
-                          borderTop: '1px solid rgba(212,168,67,0.18)',
-                          fontSize: '0.98rem',
-                          color: 'rgba(255,255,255,0.78)',
-                          lineHeight: 1.95,
-                          fontWeight: 300,
-                        }}
-                      >
-                        {era.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+                  {eras.map((era, i) => (
+                    <div key={era.era + i} className={styles.timelineItem}>
+                      <div className={styles.timelineEra}>{era.era}</div>
+                      <div>
+                        <ul className={styles.timelineList}>
+                          {era.items.map((it, j) => (
+                            <li key={j}>{it}</li>
+                          ))}
+                        </ul>
+                        {era.description && (
+                          <p
+                            style={{
+                              marginTop: 14,
+                              paddingTop: 14,
+                              borderTop: '1px solid rgba(212,168,67,0.18)',
+                              fontSize: '0.98rem',
+                              color: 'rgba(255,255,255,0.78)',
+                              lineHeight: 1.95,
+                              fontWeight: 300,
+                            }}
+                          >
+                            {era.description}
+                          </p>
+                        )}
+                        {era.image && (
+                          <figure style={{ margin: 0 }}>
+                            <div className={styles.timelineImg}>
+                              <Image
+                                src={era.image}
+                                alt={era.imageCaption ?? `${era.era} 대라천 침향 역사 이미지`}
+                                fill
+                                sizes="(max-width: 900px) 100vw, 700px"
+                                style={{ objectFit: 'cover' }}
+                              />
+                            </div>
+                            {era.imageCaption && (
+                              <figcaption className={styles.timelineImgCaption}>
+                                {era.imageCaption}
+                              </figcaption>
+                            )}
+                          </figure>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -281,8 +293,8 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 2 — Certifications */}
-      {activeTab === 2 && (
+      {/* TAB 1 — Certifications */}
+      {activeTab === 1 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -509,8 +521,8 @@ export default function BrandStoryClient({ data }: Props) {
         </section>
       )}
 
-      {/* TAB 3 — Process */}
-      {activeTab === 3 && (
+      {/* TAB 2 — Process */}
+      {activeTab === 2 && (
         <section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -569,6 +581,29 @@ export default function BrandStoryClient({ data }: Props) {
                       </div>
                     )}
                   </div>
+
+                  {/* 공정 사진 갤러리 — 그룹별 photos[] 가 있을 때만 노출 */}
+                  {Array.isArray(group.photos) && group.photos.length > 0 && (
+                    <div className={styles.processPhotoGallery}>
+                      <div className={styles.processPhotoGalleryLabel}>{group.titleEn || 'PHOTOS'} · 현장 사진</div>
+                      <div className={styles.processPhotoGrid}>
+                        {group.photos.map((p, pi) => (
+                          <figure key={pi} className={styles.processPhotoItem}>
+                            <div className={styles.processPhotoFrame}>
+                              <Image
+                                src={p.src}
+                                alt={p.caption || `${group.title} ${pi + 1}`}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw"
+                                style={{ objectFit: 'cover' }}
+                              />
+                            </div>
+                            {p.caption && <figcaption className={styles.processPhotoCaption}>{p.caption}</figcaption>}
+                          </figure>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

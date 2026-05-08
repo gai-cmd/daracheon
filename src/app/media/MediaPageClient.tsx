@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import styles from '@/styles/zoel/story-page.module.css';
+import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import MediaGallery, { type MediaItem } from './MediaGallery';
 
 interface ProcessChapter {
@@ -14,6 +15,7 @@ interface ProcessChapter {
   imageSrc?: string;
   imageAlt?: string;
   imageCaption?: string;
+  images?: string[];
 }
 
 interface ProcessVideo {
@@ -285,42 +287,19 @@ export default function MediaPageClient({
                   <div className={styles.chapterBody}>
                     <h3>{ch.title}</h3>
                     <p>{ch.body}</p>
-                    {ch.imageSrc && (
-                      <figure style={{ margin: '32px 0 0' }}>
-                        <div
-                          style={{
-                            position: 'relative',
-                            aspectRatio: '16/9',
-                            overflow: 'hidden',
-                            background: '#1a1d29',
-                            border: '1px solid rgba(212,168,67,0.18)',
-                          }}
-                        >
-                          <Image
-                            src={ch.imageSrc}
-                            alt={ch.imageAlt ?? ''}
-                            fill
-                            sizes="(max-width: 900px) 100vw, 720px"
-                            style={{ objectFit: 'cover' }}
-                            unoptimized
-                          />
-                        </div>
-                        {ch.imageCaption && (
-                          <figcaption
-                            style={{
-                              marginTop: 12,
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                              fontSize: '0.62rem',
-                              letterSpacing: '0.22em',
-                              color: 'rgba(255,255,255,0.5)',
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            {ch.imageCaption}
-                          </figcaption>
-                        )}
-                      </figure>
-                    )}
+                    {(() => {
+                      const list = (ch.images?.filter(Boolean) ?? []);
+                      const fallback = ch.imageSrc ? [ch.imageSrc] : [];
+                      const imgs = list.length > 0 ? list : fallback;
+                      if (imgs.length === 0) return null;
+                      return (
+                        <ChapterCarousel
+                          images={imgs}
+                          alt={ch.imageAlt}
+                          caption={ch.imageCaption}
+                        />
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

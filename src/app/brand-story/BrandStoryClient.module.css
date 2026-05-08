@@ -336,6 +336,33 @@
   flex-shrink: 0;
 }
 
+/* 시대별 이미지 — 본문 단락 아래 큰 사진 */
+.timelineImg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 67, 0.22);
+  background: #14161f;
+}
+.timelineImgCaption {
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+}
+
+/* 합쳐진 챕터 — 두 번째 섹션 구분선 */
+.subSectionDivider {
+  margin: 64px 0 0;
+  padding-top: 48px;
+  border-top: 1px solid rgba(212, 168, 67, 0.22);
+}
+
 /* Cert sections */
 .certTitle {
   font-family: 'Noto Serif KR', serif;
@@ -592,6 +619,52 @@
     aspect-ratio: 2 / 3;
     max-height: 360px;
   }
+}
+
+/* 공정 사진 갤러리 (그룹별 photos[]) */
+.processPhotoGallery {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px dashed rgba(212, 168, 67, 0.18);
+}
+.processPhotoGalleryLabel {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(212, 168, 67, 0.7);
+  margin-bottom: 16px;
+}
+.processPhotoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 720px) { .processPhotoGrid { grid-template-columns: repeat(3, 1fr); } }
+.processPhotoItem {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.processPhotoFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: #14161f;
+  transition: border-color 200ms ease;
+}
+.processPhotoItem:hover .processPhotoFrame {
+  border-color: rgba(212, 168, 67, 0.5);
+}
+.processPhotoCaption {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 300;
+  word-break: keep-all;
 }
 
 /* 스텝 카드 그리드 (상세 설명 포함) */

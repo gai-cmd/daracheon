@@ -77,7 +77,9 @@
             "2018 Vietnam 통합법인 설립 및 Organic/HACCP 인증 획득, 식용 가능 수지유도제 개발",
             "2019 베트남 정부 OCOP 품질보증 획득"
           ],
-          "description": "2014년 노니발효 시스템을 개발하며 기술력을 축적했고, 2018년에는 NTV Vietnam 통합법인을 설립하고 Organic/HACCP 인증을 획득하며 식용가능 수지유도제를 재개발했습니다. 2019년에는 OCOP 베트남 정부 품질보증을 받았습니다."
+          "description": "2014년 노니발효 시스템을 개발하며 기술력을 축적했고, 2018년에는 NTV Vietnam 통합법인을 설립하고 Organic/HACCP 인증을 획득하며 식용가능 수지유도제를 재개발했습니다. 2019년에는 OCOP 베트남 정부 품질보증을 받았습니다.",
+          "image": "/uploads/pages/history-2014-2019-haccp-facility.jpg",
+          "imageCaption": "2018 NTV Vietnam 통합법인 — Organic·HACCP 인증 클린룸 충전·포장 라인"
         },
         {
           "era": "2023-2026",
@@ -85,7 +87,10 @@
             "2023 침향캡슐 건강기능성 재인증(18품목 생산)",
             "2025 아시아 10대 선도 브랜드 선정 및 유기 바나듐·셀레늄·게르마늄 특허 출원",
             "2026 조엘라이프의 대라천 '참'침향 브랜드 한국 시장 본격 진출"
-          ]
+          ],
+          "description": "2023년 침향캡슐 건강기능성 재인증을 통해 18품목을 생산하게 되었고, 2025년에는 아시아 10대 선도 브랜드로 선정되며 유기 바나듐·셀레늄·게르마늄 특허를 출원했습니다. 2026년 조엘라이프를 통해 한국 시장에 본격 진출하며 새로운 도약을 시작했습니다.",
+          "image": "/uploads/pages/history-2023-2026-korea-launch.jpg",
+          "imageCaption": "2026 한국 시장 진출 — NTV 대라천 침향(大羅天 沈香) 정식 수출 패키지"
         }
       ]
     },
@@ -331,6 +336,14 @@
           "titleEn": "OIL PRODUCTION",
           "description": "",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg",
+          "photos": [
+            { "src": "https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280", "caption": "원목 입고 — 동나이 직영 공장" },
+            { "src": "https://lh3.googleusercontent.com/d/1MonkWnkUKO2T6ksAOziCfV1Q2GVYeAdc=w1280", "caption": "세척 — 표피·외부 오염물 제거" },
+            { "src": "https://lh3.googleusercontent.com/d/1ZlCQlH6WBjDXMQx9-67RxYKepyvmXIQ9=w1280", "caption": "절단 — 천공부 기준 10~20cm" },
+            { "src": "https://lh3.googleusercontent.com/d/14p2TUhpX3PjweKeFx4kb3nUQi8FN1VaC=w1280", "caption": "건조 — 자연광 건조" },
+            { "src": "https://lh3.googleusercontent.com/d/1Z76QJj6-X9GNTahyBBfiCLKxb2TQJCrc=w1280", "caption": "고온 증류 — 72시간 연속 가동" },
+            { "src": "https://lh3.googleusercontent.com/d/10I1fjc7rC3oXo5g9cynXFLwMj2lpAwuR=w1280", "caption": "검사 및 출고 — 중금속 8종 불검출" }
+          ],
           "steps": [
             {
               "step": "01",
@@ -1481,7 +1494,7 @@
       "num": "07",
       "tag": "Videos",
       "title": "생산 영상 — 농장 현장",
-      "body": "베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.",
+      "body": "베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.",
       "items": [
         {
           "id": "1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g",
