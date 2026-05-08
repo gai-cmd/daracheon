@@ -344,58 +344,111 @@
   font-weight: 300;
 }
 
-.certRow { margin-top: 60px; }
-.certRow > .tag { margin-bottom: 24px; display: block; text-align: center; }
+/* CERT — Wax Seal Wall
+   12 개 단색(와인-블랙) 봉랍 인장. 아이콘/장식 없음. 약자 + 점.
+   기본: 봉랍 + 약자만. hover: 한 줄 캡션(국문명 + 부연) 페이드 인. */
+.certRow { margin-top: 80px; }
+.certRow > .tag {
+  margin-bottom: 12px;
+  display: block;
+  text-align: center;
+}
+.certEyebrow {
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.42em;
+  color: rgba(255, 255, 255, 0.32);
+  text-transform: uppercase;
+  margin-bottom: 56px;
+}
+.certEyebrow::before,
+.certEyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+  vertical-align: middle;
+  margin: 0 14px;
+}
 .certGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: rgba(212, 168, 67, 0.15);
-  border: 1px solid rgba(212, 168, 67, 0.15);
+  gap: 36px 18px;
+  padding: 8px 0 12px;
 }
-@media (min-width: 600px) { .certGrid { grid-template-columns: repeat(4, 1fr); } }
-@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 600px) { .certGrid { grid-template-columns: repeat(3, 1fr); gap: 44px 24px; } }
+@media (min-width: 1024px) { .certGrid { grid-template-columns: repeat(4, 1fr); gap: 56px 32px; } }
 .certChip {
-  background: #0a0b10;
-  padding: 22px 16px 22px;
   text-align: center;
-  transition: background 0.4s ease;
-}
-.certChip:hover { background: #0c0e16; }
-.certChip:hover .certThumb {
-  box-shadow: 0 0 0 1px rgba(212, 168, 67, 0.4), 0 14px 30px -14px rgba(212, 168, 67, 0.45);
-  transform: translateY(-2px);
+  background: transparent;
+  padding: 0;
+  position: relative;
 }
 
 .certThumb {
   position: relative;
   width: 100%;
-  max-width: 132px;
+  max-width: 118px;
   aspect-ratio: 1 / 1;
-  margin: 0 auto 16px;
-  border: 1px solid rgba(212, 168, 67, 0.25);
-  overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  background: #0a0b10;
+  margin: 0 auto 14px;
+  border: none;
+  background: transparent;
+  filter:
+    drop-shadow(0 14px 24px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s ease;
 }
+.certThumb::before {
+  /* 봉랍 아래 살짝 떨어지는 그림자 자국 — 종이에 찍힌 듯 */
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -6px;
+  height: 8px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4), transparent 70%);
+  z-index: -1;
+  filter: blur(2px);
+  transition: opacity 0.5s ease;
+  opacity: 0.85;
+}
+.certChip:hover .certThumb {
+  transform: translateY(-4px) rotate(-1.2deg);
+  filter:
+    drop-shadow(0 22px 32px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+}
+.certChip:hover .certThumb::before { opacity: 1; }
 .certThumb > svg {
   display: block;
   width: 100%;
   height: 100%;
 }
+
 .certName {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.18em;
-  color: #fff;
-  margin-bottom: 4px;
-  text-transform: uppercase;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 2px;
+  font-weight: 400;
+  transition: color 0.4s ease;
 }
 .certSub {
-  font-size: 0.66rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.32);
+  text-transform: uppercase;
   font-weight: 300;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
+.certChip:hover .certName { color: rgba(255, 232, 220, 0.95); }
+.certChip:hover .certSub { opacity: 1; transform: translateY(0); }
 
 /* GENERIC SECTION */
 .section {

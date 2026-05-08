@@ -347,7 +347,8 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.certRow}>
-            <span className={styles.tag}>Certifications · {certs.length}개 인증</span>
+            <span className={styles.tag}>Certifications</span>
+            <div className={styles.certEyebrow}>{`Certified · ${certs.length} Seals`}</div>
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
                 <div key={`${c.name}-${i}`} className={styles.certChip}>
