@@ -74,9 +74,10 @@ interface Paper {
 interface AuthenticitySource { label: string; value: string; }
 interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
 interface AuthenticitySummary {
-  prefix: string;
-  highlight: string;
-  suffix: string;
+  line1?: string;
+  prefix?: string;
+  highlight?: string;
+  suffix?: string;
   line2: string;
 }
 interface AuthenticityTabData {
@@ -342,9 +343,7 @@ export default function AdminAboutAgarwoodPage() {
       { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
     ],
     check01Summary: {
-      prefix: 'VIHECO 중앙제약 성분명세서에는 ',
-      highlight: 'Aquilaria agallocha Roxburgh',
-      suffix: ' 학명이 명시되어 있습니다.',
+      line1: 'VIHECO 중앙제약 성분명세서에는 **Aquilaria agallocha Roxburgh** 학명이 명시되어 있습니다.',
       line2: '제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.',
     },
     check02Title: '산지를 따져봐야 한다',
@@ -465,7 +464,25 @@ export default function AdminAboutAgarwoodPage() {
         if (d.dosageSection) setDosageSection(d.dosageSection);
         if (d.officialSourcesSection) setOfficialSourcesSection(d.officialSourcesSection);
         if (d.tabHeroes) setTabHeroes(d.tabHeroes);
-        if (d.authenticityTab) setAuthenticityTab(d.authenticityTab);
+        if (d.authenticityTab) {
+          // CMS 에 check01Summary 가 없거나 일부 필드만 있어도 기본값으로 보강.
+          // legacy {prefix, highlight, suffix} → line1 의 **highlight** 마커로 자동 마이그레이션.
+          setAuthenticityTab((prev) => {
+            const cms = d.authenticityTab!;
+            const cmsSum = cms.check01Summary;
+            let mergedSummary = prev.check01Summary!;
+            if (cmsSum) {
+              const hasLegacy = cmsSum.prefix || cmsSum.highlight || cmsSum.suffix;
+              const line1 = cmsSum.line1
+                ?? (hasLegacy
+                  ? `${cmsSum.prefix ?? ''}${cmsSum.highlight ? `**${cmsSum.highlight}**` : ''}${cmsSum.suffix ?? ''}`
+                  : prev.check01Summary!.line1);
+              const line2 = cmsSum.line2 ?? prev.check01Summary!.line2;
+              mergedSummary = { line1, line2 };
+            }
+            return { ...prev, ...cms, check01Summary: mergedSummary };
+          });
+        }
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
         if (d.cta) setCta(d.cta);
@@ -971,18 +988,53 @@ export default function AdminAboutAgarwoodPage() {
                   {/* 성분명세서 요약 (강조 인용 박스) */}
                   <div className="mt-4 pt-4 border-t border-dashed border-gray-300">
                     <p className="text-sm font-medium text-gray-700 mb-1">성분명세서 요약 인용 박스</p>
-                    <p className="text-xs text-gray-500 mb-3">CHECK·01 출처 목록 아래에 표시되는 강조 인용 박스입니다. 1번째 줄은 강조어 앞/뒤 텍스트로 분리됩니다 (강조어는 골드색 + 굵게 표시).</p>
+                    <p className="text-xs text-gray-500 mb-3">
+                      CHECK·01 출처 목록 아래에 표시되는 강조 인용 박스입니다.
+                      강조하고 싶은 단어는 <code className="px-1 py-0.5 rounded bg-gold-50 text-gold-700">**텍스트**</code> 처럼 별표 두 개로 감싸면 골드색·굵게 표시됩니다.
+                    </p>
                     {(() => {
-                      const sum = authenticityTab.check01Summary ?? { prefix: '', highlight: '', suffix: '', line2: '' };
-                      const update = (patch: Partial<AuthenticitySummary>) =>
-                        setAuthenticityTab({ ...authenticityTab, check01Summary: { ...sum, ...patch } });
+                      const sum = authenticityTab.check01Summary ?? { line1: '', line2: '' };
+                      // legacy 데이터 (prefix/highlight/suffix) 가 들어와 있으면 line1 으로 보여줌.
+                      const line1Value = sum.line1
+                        ?? `${sum.prefix ?? ''}${sum.highlight ? `**${sum.highlight}**` : ''}${sum.suffix ?? ''}`;
+                      const line2Value = sum.line2 ?? '';
+                      const update = (patch: { line1?: string; line2?: string }) =>
+                        setAuthenticityTab({
+                          ...authenticityTab,
+                          // 저장 시점부터는 line1/line2 만 남김 — legacy 키 제거.
+                          check01Summary: { line1: line1Value, line2: line2Value, ...patch },
+                        });
                       return (
                         <div className="space-y-3">
-                          <LabeledInput label="1번째 줄 — 강조어 앞 텍스트" value={sum.prefix} onChange={(v) => update({ prefix: v })} />
-                          <LabeledInput label="1번째 줄 — 강조어 (골드색)" value={sum.highlight} onChange={(v) => update({ highlight: v })} />
-                          <LabeledInput label="1번째 줄 — 강조어 뒤 텍스트" value={sum.suffix} onChange={(v) => update({ suffix: v })} />
-                          <LabeledTextarea label="2번째 줄" value={sum.line2} onChange={(v) => update({ line2: v })} rows={2} />
-                          <p className="text-xs text-gray-400">모든 칸을 비우면 인용 박스 자체가 표시되지 않습니다.</p>
+                          <LabeledTextarea
+                            label="1번째 줄 (강조어는 **단어** 로 감싸세요)"
+                            value={line1Value}
+                            onChange={(v) => update({ line1: v })}
+                            rows={2}
+                          />
+                          <LabeledTextarea
+                            label="2번째 줄"
+                            value={line2Value}
+                            onChange={(v) => update({ line2: v })}
+                            rows={2}
+                          />
+                          <p className="text-xs text-gray-400">두 줄 모두 비우면 인용 박스 자체가 표시되지 않습니다.</p>
+
+                          {/* 미리보기 */}
+                          <div className="mt-3 rounded-md border border-gold-200 bg-gold-50/40 p-3">
+                            <p className="text-[11px] uppercase tracking-widest text-gold-700 mb-1">미리보기</p>
+                            <p className="text-sm text-gray-800 leading-relaxed">
+                              {line1Value
+                                ? line1Value.split(/(\*\*[^*]+\*\*)/g).map((p, i) =>
+                                    /^\*\*[^*]+\*\*$/.test(p)
+                                      ? <em key={i} className="not-italic font-semibold text-gold-700">{p.slice(2, -2)}</em>
+                                      : <span key={i}>{p}</span>
+                                  )
+                                : <span className="text-gray-400">(1번째 줄 비어 있음)</span>}
+                              {line1Value && line2Value && <br />}
+                              {line2Value}
+                            </p>
+                          </div>
                         </div>
                       );
                     })()}

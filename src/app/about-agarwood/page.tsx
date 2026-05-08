@@ -113,9 +113,12 @@ export interface OfficialSourcesSection {
 export interface AuthenticitySource { label: string; value: string; }
 export interface AuthenticityDoc { doc: string; desc: string; highlight?: boolean; }
 export interface AuthenticitySummary {
-  prefix: string;
-  highlight: string;
-  suffix: string;
+  // 신규(권장): line1 안에 **강조어** 마커로 강조 부분 지정.
+  line1?: string;
+  // 구버전 호환 — 분리 저장된 prefix / highlight / suffix.
+  prefix?: string;
+  highlight?: string;
+  suffix?: string;
   line2: string;
 }
 export interface AuthenticityTab {

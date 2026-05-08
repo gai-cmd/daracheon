@@ -50,9 +50,7 @@ const DEFAULT_AUTHENTICITY: AuthenticityTab = {
     { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
   ],
   check01Summary: {
-    prefix: 'VIHECO 중앙제약 성분명세서에는 ',
-    highlight: 'Aquilaria agallocha Roxburgh',
-    suffix: ' 학명이 명시되어 있습니다.',
+    line1: 'VIHECO 중앙제약 성분명세서에는 **Aquilaria agallocha Roxburgh** 학명이 명시되어 있습니다.',
     line2: '제약 등급 원료로 정식 등록된 침향임을 증명하는 공식 문서입니다.',
   },
   check02Title: '산지를 따져봐야 한다',
@@ -713,23 +711,35 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     {/* 성분명세서 텍스트 요약 */}
                     {(() => {
                       const summary = auth.check01Summary ?? DEFAULT_AUTHENTICITY.check01Summary!;
-                      const hasContent =
-                        summary.prefix || summary.highlight || summary.suffix || summary.line2;
-                      if (!hasContent) return null;
+                      // line1 우선 — legacy {prefix, highlight, suffix} 는 합쳐서 동일 포맷으로 변환.
+                      const line1 = summary.line1 && summary.line1.length > 0
+                        ? summary.line1
+                        : [summary.prefix ?? '', summary.highlight ? `**${summary.highlight}**` : '', summary.suffix ?? '']
+                            .filter(Boolean).join('').trim();
+                      const line2 = summary.line2 ?? '';
+                      if (!line1 && !line2) return null;
+
+                      // **...** 마커 파싱 — 골드색 강조로 변환.
+                      const renderLine1 = (text: string) => {
+                        const parts = text.split(/(\*\*[^*]+\*\*)/g);
+                        return parts.map((p, i) => {
+                          if (/^\*\*[^*]+\*\*$/.test(p)) {
+                            return (
+                              <em key={i} style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>
+                                {p.slice(2, -2)}
+                              </em>
+                            );
+                          }
+                          return <span key={i}>{p}</span>;
+                        });
+                      };
+
                       return (
                         <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
                           <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
-                            {summary.prefix}
-                            {summary.highlight && (
-                              <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>{summary.highlight}</em>
-                            )}
-                            {summary.suffix}
-                            {summary.line2 && (
-                              <>
-                                <br />
-                                {summary.line2}
-                              </>
-                            )}
+                            {line1 && renderLine1(line1)}
+                            {line1 && line2 && <br />}
+                            {line2}
                           </p>
                         </div>
                       );
