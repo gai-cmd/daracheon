@@ -443,7 +443,10 @@ export default function AdminProcessPage() {
               {chapters.map((ch, ci) => (
                 <div key={ci} className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-gray-700">챕터 {ci + 1}</span>
+                    <span className="text-sm font-semibold text-gray-700">
+                      챕터 {ch.num || String(ci + 1).padStart(2, '0')}
+                      {ch.tag && <span className="ml-2 font-mono text-[11px] font-normal text-gray-500">· {ch.tag}</span>}
+                    </span>
                     <div className="flex gap-1">
                       <button type="button" onClick={() => setChapters(moveItem(chapters, ci, ci - 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
                       <button type="button" onClick={() => setChapters(moveItem(chapters, ci, ci + 1))} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
@@ -477,11 +480,14 @@ export default function AdminProcessPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-md border border-gray-200 bg-white p-3">
-                      <label className="mb-2 block text-xs font-medium text-gray-700">
-                        캐러셀 이미지 ({(ch.images ?? []).length})
-                      </label>
-                      <p className="mb-2 text-[11px] text-gray-500">2장 이상이면 자동으로 캐러셀로 표시됩니다. 1장이면 단일 이미지로 표시.</p>
+                    <div className="rounded-md border-2 border-amber-200 bg-amber-50/40 p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <label className="block text-sm font-semibold text-amber-900">
+                          📸 캐러셀 이미지 ({(ch.images ?? []).length}장)
+                        </label>
+                        <span className="font-mono text-[10px] text-amber-700">/media → 챕터 {ch.num}</span>
+                      </div>
+                      <p className="mb-3 text-[11px] text-gray-600">프론트 페이지에 표시되는 챕터별 이미지입니다. 추가/삭제/순서 변경이 즉시 프론트에 반영됩니다 (저장 후). 2장 이상이면 자동 캐러셀, 1장이면 단일 이미지.</p>
                       <div className="space-y-2">
                         {(ch.images ?? []).map((img, ii) => (
                           <div key={ii} className="flex items-start gap-2 rounded border border-gray-100 bg-gray-50 p-2">

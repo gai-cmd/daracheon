@@ -12,7 +12,7 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   brandStory: ['/brand-story'],
   home: ['/'],
   company: ['/company'],
-  process: ['/process'],
+  process: ['/process', '/media'],
   // /support 는 /company 로 통합됨. support 데이터는 여전히 어드민 편집 가능하지만
   // 변경 시 /company 를 재검증한다.
   support: ['/company'],
