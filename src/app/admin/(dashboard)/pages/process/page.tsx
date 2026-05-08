@@ -147,7 +147,7 @@ const DEFAULT_VIDEOS: ProductionVideos = {
   num: '06',
   tag: 'Videos',
   title: '생산과정 — 농장 현장',
-  body: '베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
+  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
   items: [],
 };
 

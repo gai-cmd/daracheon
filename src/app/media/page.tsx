@@ -186,7 +186,7 @@ const DEFAULT_PROCESS_VIDEOS: FarmStoryData['processVideos'] = {
   num: '06',
   tag: 'Videos',
   title: '생산과정 — 농장 현장',
-  body: '베트남 5개 성 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
+  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
   items: [
     { src: '/uploads/media/farm-video-01.mp4', title: '하띤성 대규모 재배지 드론 촬영' },
     { src: '/uploads/media/farm-video-02.mp4', title: '침향나무 식목·관수 루틴' },
