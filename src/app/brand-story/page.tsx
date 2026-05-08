@@ -53,8 +53,15 @@ export interface ProcessStat { value: string; label: string }
 export interface ProcessStep { step: string; name: string; duration?: string; desc: string; image?: string }
 export interface ProcessPhoto { src: string; caption?: string }
 export interface ProcessGroup { title: string; titleEn: string; description: string; image?: string; steps: ProcessStep[]; photos?: ProcessPhoto[] }
+export interface BrandStoryTabHeroes {
+  tab0?: string; // 브랜드 스토리
+  tab1?: string; // 다양한 인증
+  tab2?: string; // 생산 공정
+}
+
 export interface BrandStoryData {
   hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
+  tabHeroes?: BrandStoryTabHeroes;
   brandStoryTab: { headlineTitle: string; headlineSubtitle: string; sourceTag: string; sourceTitle: string; sourceBody: string };
   farms: Farm[];
   historyTab: { tag: string; title: string; eras: HistoryEra[] };

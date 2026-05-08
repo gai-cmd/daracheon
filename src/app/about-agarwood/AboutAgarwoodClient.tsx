@@ -217,6 +217,28 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       {definition?.subtitle ?? '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)'}
                     </p>
                   </RevealOnScroll>
+                  {tabHeroes.tab0 && (
+                    <RevealOnScroll delay={150}>
+                      <div
+                        style={{
+                          marginTop: 30,
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '16/9',
+                          border: '1px solid rgba(212,168,67,0.2)',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <Image
+                          src={tabHeroes.tab0}
+                          alt="침향이란? — 상징 이미지"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 880px"
+                          style={{ objectFit: 'cover', display: 'block' }}
+                        />
+                      </div>
+                    </RevealOnScroll>
+                  )}
                   <RevealOnScroll delay={200}>
                     <p>
                       {definition?.body ??
@@ -712,6 +734,28 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     {auth.subtitle}
                   </p>
                 </RevealOnScroll>
+                {tabHeroes.tab1 && (
+                  <RevealOnScroll delay={130}>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={tabHeroes.tab1}
+                        alt="진짜 침향 구별 방법 — 상징 이미지"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 880px"
+                        style={{ objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  </RevealOnScroll>
+                )}
                 <RevealOnScroll delay={150}>
                   <p>{auth.intro}</p>
                 </RevealOnScroll>
@@ -1243,6 +1287,28 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     {usageTab.subtitle ?? '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.'}
                   </p>
                 </RevealOnScroll>
+                {tabHeroes.tab4 && (
+                  <RevealOnScroll delay={130}>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={tabHeroes.tab4}
+                        alt="복용 및 사용법 — 상징 이미지"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 880px"
+                        style={{ objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  </RevealOnScroll>
+                )}
                 <div style={{ marginTop: 10, marginBottom: 36, display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {(usageTab.introLines ?? DEFAULT_USAGE.introLines!).map((line, i) => (
                     <RevealOnScroll key={i} delay={i * 80}>

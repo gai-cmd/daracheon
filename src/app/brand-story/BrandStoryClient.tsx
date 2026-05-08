@@ -75,6 +75,7 @@ export default function BrandStoryClient({ data }: Props) {
   const [activeVideo, setActiveVideo] = useState<{ id: string; title: string } | null>(null);
 
   const hero = data?.hero;
+  const tabHeroes = data?.tabHeroes ?? {};
   const brandStoryTab = data?.brandStoryTab;
   const farms = data?.farms ?? [];
   const historyTab = data?.historyTab;
@@ -202,6 +203,26 @@ export default function BrandStoryClient({ data }: Props) {
                 <p className={styles.chapterSubtitle}>
                   {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
                 </p>
+                {tabHeroes.tab0 && (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={tabHeroes.tab0}
+                      alt="브랜드 스토리 — 상징 이미지"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 880px"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                )}
                 <div className={styles.line} style={{ margin: '24px 0' }} />
                 <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
                   {brandStoryTab?.sourceBody ??
@@ -305,6 +326,26 @@ export default function BrandStoryClient({ data }: Props) {
               <div>
                 <h2 className={styles.chapterTitle}>{certificationsTab?.title ?? '신뢰의 지표'}</h2>
                 <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
+                {tabHeroes.tab1 && (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={tabHeroes.tab1}
+                      alt="다양한 인증 — 상징 이미지"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 880px"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                )}
                 <div className={styles.line} style={{ margin: '24px 0' }} />
             {/* 카테고리 범례 */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '28px 0 32px' }}>
@@ -533,6 +574,26 @@ export default function BrandStoryClient({ data }: Props) {
               <div>
                 <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
                 <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
+                {tabHeroes.tab2 && (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={tabHeroes.tab2}
+                      alt="생산 공정 — 상징 이미지"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 880px"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                )}
                 <div className={styles.line} style={{ margin: '24px 0' }} />
 
             {/* Stats */}

@@ -443,7 +443,12 @@
       "totalTimeDesc": "식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치",
       "paragraphs": []
     },
-    "sectionTag": "브랜드 스토리 · Brand Story"
+    "sectionTag": "브랜드 스토리 · Brand Story",
+    "tabHeroes": {
+      "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275477525-ee9340294fe5e276ea73.jpg",
+      "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275481654-449ac5b65adb80d8e33d.jpg",
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275484089-be0486e2f49fccfebacb.jpg"
+    }
   },
   "aboutAgarwood": {
     "hero": {
@@ -457,68 +462,87 @@
       "title": "침향(沈香)이란 무엇인가요?",
       "subtitle": "자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)",
       "body": "침향(沈香, Agarwood)은 팥꽃나무과(Thymeleaceae)에 속하는 Aquilaria 속 나무가 외부 상처나 곰팡이 감염에 대응하여 분비한 수지(樹脂)가 수십 년에 걸쳐 나무 내부에 침착되어 형성된 향목(香木)입니다.",
-      "officialNameCallout": "Aquilaria Agallocha Roxburgh"
+      "officialNameCallout": "Aquilaria Agallocha Roxburgh",
+      "images": [
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/definition-01.png",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/definition-02.png",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/definition-03.png",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/definition-04.png"
+      ]
     },
     "formationSteps": [
       {
         "step": "01",
         "title": "상처 발생",
-        "description": "침향나무에 벌레, 바람, 낙뢰, 외부 충격 등으로 인해 상처가 발생합니다."
+        "description": "침향나무에 벌레, 바람, 낙뢰, 외부 충격 등으로 인해 상처가 발생합니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-01.png"
       },
       {
         "step": "02",
         "title": "균 감염",
-        "description": "상처 부위를 통해 곰팡이균이 나무 내부로 침투합니다."
+        "description": "상처 부위를 통해 곰팡이균이 나무 내부로 침투합니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-02.png"
       },
       {
         "step": "03",
         "title": "수지 분비",
-        "description": "나무가 자기 방어 기제로 상처 부위에 수지를 분비하여 치유합니다."
+        "description": "나무가 자기 방어 기제로 상처 부위에 수지를 분비하여 치유합니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-03.png"
       },
       {
         "step": "04",
         "title": "숙성",
-        "description": "수십 년에 걸쳐 수지가 축적되고 숙성되어 침향이 형성됩니다."
+        "description": "수십 년에 걸쳐 수지가 축적되고 숙성되어 침향이 형성됩니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/formation-04.png"
       }
     ],
     "specialReasons": [
       {
         "title": "희소성",
-        "description": "CITES 국제 협약으로 보호 받는 희귀 자원입니다. 침향 생성까지 최소 219,000시간(25년) 이상을 기다려야 만날 수 있습니다."
+        "description": "CITES 국제 협약으로 보호 받는 희귀 자원입니다. 침향 생성까지 최소 219,000시간(25년) 이상을 기다려야 만날 수 있습니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/special-01-rarity.png"
       },
       {
         "title": "가치",
-        "description": "침향은 수천 년 간 왕실과 귀족들만의 전유물이었습니다. 시간과 자연이 만든 가장 깊은 가치이자 전통과 희소성, 경험이 만든 가치입니다."
+        "description": "침향은 수천 년 간 왕실과 귀족들만의 전유물이었습니다. 시간과 자연이 만든 가장 깊은 가치이자 전통과 희소성, 경험이 만든 가치입니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/special-02-value.png"
       },
       {
         "title": "약용",
-        "description": "동의보감을 비롯한 수많은 의학 문헌에 기록된 검증된 약재로, 현대 과학 논문에서도 그 효능이 속속 입증되고 있습니다."
+        "description": "동의보감을 비롯한 수많은 의학 문헌에 기록된 검증된 약재로, 현대 과학 논문에서도 그 효능이 속속 입증되고 있습니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/special-03-medicine.png"
       }
     ],
     "benefits": [
       {
         "title": "기 뚫고 원기 회복 · 자양강장",
-        "description": "몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강해줍니다. 또, 피로 해소와 활력 증진을 돕습니다."
+        "description": "몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강해줍니다. 또, 피로 해소와 활력 증진을 돕습니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-01-qi.png"
       },
       {
         "title": "냉감 · 정력 감퇴 · 복통에 탁월",
-        "description": "하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월한 반응을 일으키고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다."
+        "description": "하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월한 반응을 일으키고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-02-warming.png"
       },
       {
         "title": "신경 안정 및 숙면 유도",
-        "description": "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할을 합니다. 예민해진 신경을 이완시켜 스트레스를 완화하고 심리적 안정과 불면증 개선에 효과적입니다."
+        "description": "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할을 합니다. 예민해진 신경을 이완시켜 스트레스를 완화하고 심리적 안정과 불면증 개선에 효과적입니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-03-calm.png"
       },
       {
         "title": "항염 및 혈관 건강 개선",
-        "description": "침향은 항염 작용을 통해 염증 물질(사이토카인)을 억제하고, 혈전 형성을 방지하여 만성 염증 치료와 혈관 건강 증진에 도움을 줍니다."
+        "description": "침향은 항염 작용을 통해 염증 물질(사이토카인)을 억제하고, 혈전 형성을 방지하여 만성 염증 치료와 혈관 건강 증진에 도움을 줍니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-04-vessel.png"
       },
       {
         "title": "뇌 질환 예방",
-        "description": "침향은 뇌혈류 개선 및 뇌세포 보호에 도움을 주어, 뇌졸중과 같은 혈관 질환 예방 및 퇴행성 뇌 질환 예방에 긍정적인 영향을 미칠 수 있습니다."
+        "description": "침향은 뇌혈류 개선 및 뇌세포 보호에 도움을 주어, 뇌졸중과 같은 혈관 질환 예방 및 퇴행성 뇌 질환 예방에 긍정적인 영향을 미칠 수 있습니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-05-brain.png"
       },
       {
         "title": "소화 기능 향상 및 복통 완화",
-        "description": "침향은 기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화해줍니다. 복통을 멈추는 데 도움을 주기도 합니다."
+        "description": "침향은 기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화해줍니다. 복통을 멈추는 데 도움을 주기도 합니다.",
+        "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/benefit-06-digest.png"
       }
     ],
     "literatures": [
@@ -1083,17 +1107,20 @@
         {
           "num": "01",
           "title": "한국한의학연구원 한약자원연구센터",
-          "body": "용법용량: 1~1.5g을 쓰는데 먼저 다른 약을 달이고 난 다음에 넣는다. 또 갈아서 즙을 내어 먹기도 하며, 알약이나 가루약에 넣어 복용한다."
+          "body": "용법용량: 1~1.5g을 쓰는데 먼저 다른 약을 달이고 난 다음에 넣는다. 또 갈아서 즙을 내어 먹기도 하며, 알약이나 가루약에 넣어 복용한다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-01.png"
         },
         {
           "num": "02",
           "title": "100% 침향 오일은 하루 2~3mg이 적정",
-          "body": "향은 자주 맡아도 좋지만 복용하는 침향은 권장량을 지키는 게 효과적이다. 하루 복용량 분말 1~2g을 증류법으로 오일을 추출하면 약 2~3mg이 나온다."
+          "body": "향은 자주 맡아도 좋지만 복용하는 침향은 권장량을 지키는 게 효과적이다. 하루 복용량 분말 1~2g을 증류법으로 오일을 추출하면 약 2~3mg이 나온다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-02.png"
         },
         {
           "num": "03",
           "title": "침향 오일 함량이 높다고 좋은 건 아니다",
-          "body": "복용하는 침향 오일은 단순히 함량은 높다고 좋은 것이 아니다. 오히려 저가 오일이거나 복합 오일일 가능성이 크다. 적정 함량이 가장 효과적이다."
+          "body": "복용하는 침향 오일은 단순히 함량은 높다고 좋은 것이 아니다. 오히려 저가 오일이거나 복합 오일일 가능성이 크다. 적정 함량이 가장 효과적이다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-03.png"
         }
       ]
     },
@@ -1174,11 +1201,11 @@
       ]
     },
     "tabHeroes": {
-      "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362415629-8cd62fb9dde3844ef91e.png",
-      "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362417505-91f29493cde696a847b3.png",
+      "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275477525-ee9340294fe5e276ea73.jpg",
+      "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275481654-449ac5b65adb80d8e33d.jpg",
       "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272814505-50756fa1678763d658b3.png",
       "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272816338-efd399c54655f72c1caa.webp",
-      "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362422155-5d63c6561b3cfdcc3077.png",
+      "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778275484089-be0486e2f49fccfebacb.jpg",
       "tab5": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362424072-7f111b4423198d384f06.png"
     },
     "officialSourcesSection": {
