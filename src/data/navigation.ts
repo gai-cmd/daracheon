@@ -24,7 +24,6 @@ export interface NavigationData {
 export const DEFAULT_MAIN_NAV: NavItem[] = [
   { label: '침향 이야기', href: '/about-agarwood' },
   { label: '브랜드 이야기', href: '/brand-story' },
-  { label: '전시장', href: '/showroom' },
   { label: '침향 농장 이야기', href: '/media' },
   { label: '제품 소개', href: '/products' },
   { label: 'On-Air 특별관', href: '/home-shopping' },
