@@ -243,17 +243,27 @@ export default function InquiriesPage() {
   async function handleBulkStatusChange() {
     if (selectedIds.size === 0) return;
     setIsBulkLoading(true);
+    // 직렬 처리 필수 — PATCH 가 read-modify-write(전체 inquiries 배열) 라서
+    // Promise.all 로 동시에 쏘면 stale read 끼리 덮어써 마지막 1건만 남는다.
+    // (audit-log 도 같은 패턴이라 로그도 동시 호출 시 1건만 남음.)
+    let okCount = 0;
+    const failedIds: string[] = [];
     try {
-      await Promise.all(
-        Array.from(selectedIds).map((id) =>
-          fetch('/api/admin/inquiries', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, status: bulkStatus }),
-          })
-        )
-      );
-      setToast(`${selectedIds.size}건을 "${statusLabel[bulkStatus]}"(으)로 변경했습니다.`);
+      for (const id of selectedIds) {
+        const res = await fetch('/api/admin/inquiries', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: bulkStatus }),
+        });
+        if (res.ok) okCount += 1;
+        else failedIds.push(id);
+      }
+      if (failedIds.length === 0) {
+        setToast(`${okCount}건을 "${statusLabel[bulkStatus]}"(으)로 변경했습니다.`);
+      } else {
+        setToast(`${okCount}건 변경 완료, ${failedIds.length}건 실패`);
+        console.error('Bulk status partial failure:', failedIds);
+      }
       setSelectedIds(new Set());
       await fetchInquiries();
     } catch (err) {
