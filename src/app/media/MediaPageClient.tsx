@@ -275,7 +275,7 @@ export default function MediaPageClient({
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
                                 gap: 24,
-                                alignItems: 'center',
+                                alignItems: 'start',
                               }}
                             >
                               {reverse ? (
