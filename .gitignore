@@ -65,3 +65,4 @@ scripts/
 zoel-app.js
 .env.vercel.production
 scripts/factory-footage-cache/
+scripts/production-video-thumbs/

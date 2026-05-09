@@ -370,13 +370,13 @@ export default async function MediaPage() {
       ? {
           ...rawVideos,
           items: (rawVideos.items ?? []).map((item) => {
-            const it = item as { src?: string; id?: string; title?: string };
+            const it = item as { src?: string; id?: string; title?: string; thumbnail?: string };
             const src = it.src
               ? it.src
               : it.id
                 ? `https://drive.google.com/file/d/${it.id}/preview`
                 : '';
-            return { src, title: it.title ?? '' };
+            return { src, title: it.title ?? '', thumbnail: it.thumbnail };
           }),
         }
       : DEFAULT_PROCESS_VIDEOS,
@@ -437,14 +437,18 @@ export default async function MediaPage() {
 
   const productionVideoItems: MediaItem[] = farmStory.processVideos.items
     .filter((v) => v.src)
-    .map((v, i) => ({
-      id: `pv-${i}-${v.src}`,
-      type: 'video' as const,
-      title: v.title,
-      source: '대라천 공식',
-      date: '2026-04-11',
-      url: v.src,
-    }));
+    .map((v, i) => {
+      const item = v as { src: string; title: string; thumbnail?: string };
+      return {
+        id: `pv-${i}-${item.src}`,
+        type: 'video' as const,
+        title: item.title,
+        source: '대라천 공식',
+        date: '2026-04-11',
+        image: item.thumbnail,
+        url: item.src,
+      };
+    });
 
   const dbVideos = allMedia.filter((m) => m.type === 'video');
   const seenUrls = new Set<string>();
