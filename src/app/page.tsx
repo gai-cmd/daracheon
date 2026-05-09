@@ -351,8 +351,6 @@ export default async function HomePage() {
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
                 <div key={`${c.name}-${i}`} className={styles.certTile}>
-                  <div className={styles.certNo}>No.</div>
-                  <div className={styles.certNum}>{String(i + 1).padStart(2, '0')}</div>
                   <div className={styles.certDivider} aria-hidden="true" />
                   <div className={styles.certTitle}>{c.name}</div>
                   <div className={styles.certCaption}>{c.sub}</div>
