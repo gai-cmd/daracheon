@@ -11,6 +11,18 @@ interface HeaderProps {
   brandLogo?: string;
 }
 
+// Paths where the public chrome must never render. Mirrors ChromeGate but
+// enforced at the component itself — defensive against hydration timing,
+// CSS :has() unsupported browsers, or stale ChromeGate bundles.
+const IMMERSIVE_PREFIXES = ['/edition', '/agarwood-edition', '/admin'];
+
+function isImmersivePath(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return IMMERSIVE_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+}
+
 // Critical positioning enforced via inline style — guarantees nav visibility
 // even if CSS Module loading is delayed/failed for any reason.
 const NAV_INLINE_STYLE: React.CSSProperties = {
@@ -41,6 +53,11 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
       document.body.style.overflow = '';
     };
   }, [mobileOpen]);
+
+  // Defensive guard — ChromeGate is the primary owner of this hide, but the
+  // public nav bar is fixed/blur/z-9999 and any hydration glitch that lets it
+  // through visibly covers the admin sidebar logo. Self-hide regardless.
+  if (isImmersivePath(pathname)) return null;
 
   return (
     <header>
