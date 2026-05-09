@@ -130,47 +130,63 @@ export default function AdminSidebar() {
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Logo — 인라인 스타일로 강제 (Tailwind/admin 테마 override 무시) */}
+        {/* Logo — 프론트 Header(src/components/layout/Header.tsx) 와 동일 구조 (이미지 + 조엘라이프(주) / ZOEL LIFE).
+            인라인 스타일로 강제 (Tailwind/admin 테마 override 무시). */}
         <Link
           href="/admin"
           style={{
             position: 'relative',
             zIndex: 10,
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 6,
-            padding: '20px 24px',
-            background: 'linear-gradient(180deg, #2a1f0a 0%, #1a1a17 100%)',
+            gap: 10,
+            padding: '16px 20px',
+            height: 72,
+            background: 'rgba(10, 11, 16, 0.96)',
             borderBottom: '1px solid rgba(212, 168, 67, 0.35)',
             textDecoration: 'none',
           }}
         >
+          <img
+            src="/images/logo-brand.png"
+            alt="조엘라이프 ZOEL LIFE"
+            style={{ height: 40, width: 'auto', display: 'block', objectFit: 'contain' }}
+          />
           <span
             style={{
-              fontSize: 26,
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              color: '#e9c97a',
-              lineHeight: 1.1,
-              textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 7,
+              lineHeight: 1,
             }}
           >
-            ZOEL LIFE
-          </span>
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.4em',
-              color: '#1a1a17',
-              background: '#d4a843',
-              padding: '2px 10px',
-              borderRadius: 999,
-            }}
-          >
-            ADMIN
+            <span
+              style={{
+                fontFamily: "'Noto Sans KR', sans-serif",
+                fontSize: '0.84rem',
+                fontWeight: 500,
+                color: 'rgba(255, 255, 255, 0.9)',
+                letterSpacing: '0.03em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              조엘라이프(주)
+            </span>
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontSize: '0.6rem',
+                fontWeight: 400,
+                color: '#d4a843',
+                letterSpacing: '0.28em',
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              ZOEL LIFE
+            </span>
           </span>
         </Link>
 
