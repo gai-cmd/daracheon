@@ -462,25 +462,30 @@ export default function AdminProcessPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">추가 블록 · 사진+설명 교차 ({(sceneSection.extras ?? []).length})</label>
-                <p className="mb-3 text-xs text-gray-500">본문 아래에 사진+설명, 설명+사진 순으로 교차 배치됩니다.</p>
-                <div className="space-y-3">
+              <div className="rounded-md border-2 border-amber-200 bg-amber-50/40 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-amber-900">
+                    🗂️ 2-열 카드 · 사진 + 설명 ({(sceneSection.extras ?? []).length}개)
+                  </label>
+                  <span className="font-mono text-[10px] text-amber-700">/media → 본문 하단</span>
+                </div>
+                <p className="mb-3 text-[11px] text-gray-600">본문 아래 좌·우 2-열로 배치됩니다 — 각 카드 = 사진(상) + 설명(하) 세로 스택, 카드 사이 희미한 테두리. 모바일은 1열 스택.</p>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {(sceneSection.extras ?? []).map((ex, i) => (
                     <div key={i} className="rounded-md border border-gray-200 bg-white p-3">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-xs font-semibold text-gray-700">
-                          블록 {i + 1} <span className="ml-1 font-mono text-[10px] font-normal text-gray-500">{i % 2 === 0 ? '(사진 + 설명)' : '(설명 + 사진)'}</span>
+                          {i === 0 ? '◐ 좌측 열' : i === 1 ? '◑ 우측 열' : `카드 ${i + 1}`}
                         </span>
                         <div className="flex gap-1">
-                          <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                          <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                          <button type="button" title="앞으로" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">◀</button>
+                          <button type="button" title="뒤로" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▶</button>
                           <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: removeIndex(sceneSection.extras ?? [], i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <ImageUploadField
-                          label="이미지"
+                          label="사진 (상단)"
                           value={ex.image}
                           onChange={(url) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], image: url }; setSceneSection({ ...sceneSection, extras: n }); }}
                           subdir="pages"
@@ -492,23 +497,23 @@ export default function AdminProcessPage() {
                           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
                         />
                         <textarea
-                          rows={4}
+                          rows={5}
                           value={ex.body}
                           onChange={(e) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], body: e.target.value }; setSceneSection({ ...sceneSection, extras: n }); }}
-                          placeholder="설명 본문"
+                          placeholder="설명 본문 (하단)"
                           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
                         />
                       </div>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => setSceneSection({ ...sceneSection, extras: [...(sceneSection.extras ?? []), { image: '', body: '', alt: '' }] })}
-                    className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
-                  >
-                    + 블록 추가
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setSceneSection({ ...sceneSection, extras: [...(sceneSection.extras ?? []), { image: '', body: '', alt: '' }] })}
+                  className="mt-3 w-full rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
+                >
+                  + 카드 추가
+                </button>
               </div>
             </div>
           </SectionCard>
