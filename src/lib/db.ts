@@ -120,9 +120,13 @@ async function blobReadRawUncached(filename: string): Promise<unknown | typeof N
         console.log(`[db:read] ${filename}: NOT_FOUND (list returned ${blobs.length} entries)`);
         return NOT_FOUND;
       }
-      const bust = match.uploadedAt
-        ? `?v=${new Date(match.uploadedAt).getTime()}`
-        : `?v=${Date.now()}`;
+      // Vercel Blob 은 우리가 cacheControlMaxAge:0 으로 put 해도 응답에
+      // public,max-age=60 을 강제로 붙인다. ?v=uploadedAt 만으론 부족 —
+      // 직전 write 후 list() 가 stale uploadedAt 을 돌려주면 동일 URL 이라
+      // CDN HIT 으로 60초간 옛 데이터가 반환됨. 매 호출마다 unique segment
+      // 를 추가해 CDN 을 무조건 우회.
+      const uploadedTs = match.uploadedAt ? new Date(match.uploadedAt).getTime() : 0;
+      const bust = `?v=${uploadedTs}&_=${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const res = await fetch(`${match.url}${bust}`, { cache: 'no-store' });
       if (!res.ok) {
         // HTTP error is retryable (CDN propagation, transient 5xx).
