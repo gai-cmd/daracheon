@@ -3,6 +3,7 @@ import { readSingleUncached, readDataSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
+import type { Farm } from '@/app/brand-story/page';
 
 const SITE_URL = 'https://zoellife.com';
 
@@ -351,11 +352,12 @@ interface RawProcessData {
 export default async function MediaPage() {
   const [pagesData, dbMedia] = await Promise.all([
     // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
-    readSingleUncached<{ process?: RawProcessData }>('pages'),
+    readSingleUncached<{ process?: RawProcessData; brandStory?: { farms?: Farm[] } }>('pages'),
     readDataSafe<MediaItem>('media'),
   ]);
 
   const process = pagesData?.process;
+  const farms: Farm[] = pagesData?.brandStory?.farms ?? [];
   const rawVideos = process?.productionVideos;
   const farmStory: FarmStoryData = {
     hero: { ...DEFAULT_HERO, ...(process?.hero ?? {}) },
@@ -382,8 +384,8 @@ export default async function MediaPage() {
   };
 
   const allMedia = dbMedia.length > 0 ? dbMedia : DEFAULT_MEDIA;
+  // 영상 갤러리는 /brand-story 04 섹션으로 이동 — /media 는 사진만 노출.
   const gallery = {
-    videos: allMedia.filter((m) => m.type === 'video'),
     photos: allMedia.filter((m) => m.type === 'photo'),
   };
 
@@ -394,7 +396,7 @@ export default async function MediaPage() {
       {mediaJsonLd.map((d, i) => (
         <JsonLd key={i} data={d} />
       ))}
-      <MediaPageClient farmStory={farmStory} gallery={gallery} />
+      <MediaPageClient farmStory={farmStory} gallery={gallery} farms={farms} />
     </>
   );
 }

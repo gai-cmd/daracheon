@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import type { BrandStoryData } from './page';
+import type { BrandStoryData, PromoVideoItem } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import styles from './BrandStoryClient.module.css';
@@ -18,6 +18,147 @@ const TAB_LIST = [
   '다양한 인증',
   '생산 공정',
 ] as const;
+
+function extractYouTubeId(url: string): string | null {
+  const m = url.match(/(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function PromoVideoModal({ item, onClose }: { item: PromoVideoItem; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const ytId = item.url ? extractYouTubeId(item.url) : null;
+  const driveMatch = item.url ? item.url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^#]*id=)([A-Za-z0-9_-]+)/) : null;
+  const embedSrc = ytId
+    ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`
+    : driveMatch
+      ? `https://drive.google.com/file/d/${driveMatch[1]}/preview`
+      : null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.title}
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 2000,
+        background: 'rgba(0,0,0,0.92)',
+        display: 'grid', placeItems: 'center',
+        padding: 'clamp(12px, 4vw, 40px)',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: 1280, maxHeight: '90dvh',
+          background: '#000',
+          border: '1px solid rgba(212,168,67,0.35)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          display: 'flex', flexDirection: 'column', overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 20px', background: 'rgba(10,11,16,0.95)',
+            borderBottom: '1px solid rgba(212,168,67,0.2)', gap: 16,
+          }}
+        >
+          <div style={{ minWidth: 0, flex: 1 }}>
+            {(item.source || item.date) && (
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontSize: '0.7rem', letterSpacing: '0.22em',
+                  textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4,
+                }}
+              >
+                {[item.source, item.date].filter(Boolean).join(' · ')}
+              </div>
+            )}
+            <h3
+              style={{
+                fontSize: '1.05rem', fontWeight: 500, color: '#fff',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0,
+              }}
+            >
+              {item.title}
+            </h3>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: '0.78rem', color: 'rgba(255,255,255,0.7)',
+                  textDecoration: 'none', padding: '6px 12px',
+                  border: '1px solid rgba(255,255,255,0.18)', borderRadius: 4,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                원본 →
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="닫기"
+              style={{
+                width: 36, height: 36, background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.25)', color: '#fff',
+                fontSize: '1.1rem', cursor: 'pointer', borderRadius: 4,
+              }}
+            >✕</button>
+          </div>
+        </div>
+        <div style={{ position: 'relative', aspectRatio: '16 / 9', width: '100%', background: '#000', overflow: 'hidden' }}>
+          {embedSrc ? (
+            <iframe
+              src={embedSrc}
+              allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+              allowFullScreen
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              title={item.title}
+            />
+          ) : (
+            <div
+              style={{
+                position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+                color: 'rgba(255,255,255,0.6)', fontSize: '0.92rem', padding: 40, textAlign: 'center',
+              }}
+            >
+              임베드할 수 있는 영상이 아닙니다.
+            </div>
+          )}
+        </div>
+        {item.excerpt && (
+          <div
+            style={{
+              padding: '16px 20px', background: 'rgba(10,11,16,0.95)',
+              borderTop: '1px solid rgba(212,168,67,0.15)',
+              color: 'rgba(255,255,255,0.78)', fontSize: '0.92rem',
+              lineHeight: 1.85, fontWeight: 300,
+            }}
+          >
+            {item.excerpt}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: string; onClose: () => void }) {
   useEffect(() => {
@@ -76,11 +217,12 @@ function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: 
 export default function BrandStoryClient({ data, showroom }: Props) {
   const [activeTab, setActiveTab] = useState(0);
   const [activeVideo, setActiveVideo] = useState<{ id: string; title: string } | null>(null);
+  const [activePromoVideo, setActivePromoVideo] = useState<PromoVideoItem | null>(null);
 
   const hero = data?.hero;
   const tabHeroes = data?.tabHeroes ?? {};
   const brandStoryTab = data?.brandStoryTab;
-  const farms = data?.farms ?? [];
+  const promoVideos = data?.promoVideos;
   const historyTab = data?.historyTab;
   const eras = historyTab?.eras ?? [];
   const certificationsTab = data?.certificationsTab;
@@ -231,27 +373,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   {brandStoryTab?.sourceBody ??
                     '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.'}
                 </p>
-                <div className={styles.gridAuto}>
-                  {farms.map((farm, i) => (
-                    <div key={farm.nameVi + i} className={styles.card}>
-                      {farm.image && (
-                        <div className={styles.imgFrame} style={{ marginBottom: 14, aspectRatio: '4/3' }}>
-                          <Image
-                            src={farm.image}
-                            alt={`${farm.name} (${farm.nameVi}) 농장`}
-                            fill
-                            sizes="(max-width: 1024px) 50vw, 25vw"
-                            style={{ objectFit: 'cover' }}
-                          />
-                        </div>
-                      )}
-                      <div className={styles.cardKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
-                      <div className={styles.cardTitle}>{farm.name}</div>
-                      <div className={styles.cardSub}>{farm.nameVi}</div>
-                      <div className={styles.cardDesc}>{farm.desc}</div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
 
@@ -353,8 +474,140 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 </div>
               </div>
             )}
+
+            {/* 04 — 대라천 '참'침향 브랜드 홍보영상 */}
+            {promoVideos && promoVideos.items.length > 0 && (
+              <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
+                <div>
+                  <div className={styles.chapterNum}>{promoVideos.num ?? '04'}</div>
+                  <div className={styles.chapterTag}>{promoVideos.tag ?? 'VIDEOS'}</div>
+                </div>
+                <div>
+                  <h2 className={styles.chapterTitle}>
+                    {promoVideos.title ?? "대라천 '참'침향 브랜드 홍보영상"}
+                  </h2>
+                  {promoVideos.subtitle && (
+                    <p className={styles.chapterSubtitle}>{promoVideos.subtitle}</p>
+                  )}
+                  <div className={styles.line} style={{ margin: '24px 0' }} />
+                  {promoVideos.body && (
+                    <p
+                      style={{
+                        whiteSpace: 'pre-line',
+                        fontSize: '1rem',
+                        lineHeight: 1.95,
+                        color: 'rgba(255,255,255,0.72)',
+                        fontWeight: 300,
+                        marginBottom: 16,
+                      }}
+                    >
+                      {promoVideos.body}
+                    </p>
+                  )}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                      gap: 24,
+                      marginTop: 30,
+                    }}
+                  >
+                    {promoVideos.items.map((item, vIdx) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActivePromoVideo(item)}
+                        style={{
+                          textAlign: 'left',
+                          background: 'transparent',
+                          padding: 0,
+                          border: 0,
+                          cursor: 'pointer',
+                          color: 'inherit',
+                          display: 'block',
+                          width: '100%',
+                        }}
+                      >
+                        <div
+                          style={{
+                            aspectRatio: '16/9',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            background: '#1a1d29',
+                            border: '1px solid rgba(212,168,67,0.18)',
+                          }}
+                        >
+                          {item.thumbnail && (
+                            <Image
+                              src={item.thumbnail}
+                              alt={item.title}
+                              fill
+                              sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                              priority={vIdx === 0}
+                              style={{ objectFit: 'cover' }}
+                            />
+                          )}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              inset: 0,
+                              background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)',
+                              display: 'grid',
+                              placeItems: 'center',
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                background: 'rgba(212,168,67,0.92)',
+                                display: 'grid',
+                                placeItems: 'center',
+                                color: '#0a0b10',
+                                fontSize: '1.6rem',
+                                paddingLeft: 4,
+                                boxShadow: '0 6px 20px rgba(0,0,0,0.5)',
+                              }}
+                            >
+                              ▶
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ padding: '14px 4px 0', color: 'rgba(255,255,255,0.78)' }}>
+                          {(item.source || item.date) && (
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.66rem',
+                                letterSpacing: '0.2em',
+                                textTransform: 'uppercase',
+                                color: 'var(--accent)',
+                                marginBottom: 6,
+                              }}
+                            >
+                              {[item.source, item.date].filter(Boolean).join(' · ')}
+                            </div>
+                          )}
+                          <div style={{ fontSize: '0.96rem', lineHeight: 1.55, color: '#fff' }}>{item.title}</div>
+                          {item.excerpt && (
+                            <p style={{ marginTop: 8, fontSize: '0.86rem', lineHeight: 1.7, color: 'rgba(255,255,255,0.6)', fontWeight: 300 }}>
+                              {item.excerpt}
+                            </p>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </section>
+      )}
+
+      {activePromoVideo && (
+        <PromoVideoModal item={activePromoVideo} onClose={() => setActivePromoVideo(null)} />
       )}
 
       {/* TAB 1 — Certifications */}

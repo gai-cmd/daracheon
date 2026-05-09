@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from '@/styles/zoel/story-page.module.css';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import MediaGallery, { type MediaItem } from './MediaGallery';
+import type { Farm } from '@/app/brand-story/page';
 
 interface ProcessChapter {
   num: string;
@@ -76,21 +77,22 @@ export interface FarmStoryData {
 }
 
 export interface GalleryData {
-  videos: MediaItem[];
   photos: MediaItem[];
 }
 
 const TABS = [
   { key: 'story' as const, label: '침향 농장 이야기' },
-  { key: 'gallery' as const, label: '영상・사진 갤러리' },
+  { key: 'gallery' as const, label: '사진 갤러리' },
 ];
 
 export default function MediaPageClient({
   farmStory,
   gallery,
+  farms = [],
 }: {
   farmStory: FarmStoryData;
   gallery: GalleryData;
+  farms?: Farm[];
 }) {
   const [activeTab, setActiveTab] = useState<'story' | 'gallery'>('story');
   const { hero, sceneSection, chapters, processVideos, certifications } = farmStory;
@@ -198,6 +200,95 @@ export default function MediaPageClient({
                       <p className={styles.chapterSubtitle}>
                         {sceneSection.subtitle}
                       </p>
+                    )}
+                    {farms.length > 0 && (
+                      <div
+                        className="farms-row"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: `repeat(${farms.length}, minmax(0, 1fr))`,
+                          gap: 16,
+                          margin: '24px 0 28px',
+                        }}
+                      >
+                        {farms.map((farm, i) => (
+                          <div
+                            key={farm.nameVi + i}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 10,
+                              padding: 14,
+                              border: '1px solid rgba(212,168,67,0.18)',
+                              background: 'rgba(255,255,255,0.015)',
+                            }}
+                          >
+                            {farm.image && (
+                              <div
+                                style={{
+                                  position: 'relative',
+                                  aspectRatio: '4/3',
+                                  overflow: 'hidden',
+                                  background: '#1a1d29',
+                                  border: '1px solid rgba(212,168,67,0.18)',
+                                }}
+                              >
+                                <Image
+                                  src={farm.image}
+                                  alt={`${farm.name} (${farm.nameVi}) 농장`}
+                                  fill
+                                  sizes="(max-width: 768px) 50vw, 20vw"
+                                  style={{ objectFit: 'cover' }}
+                                  unoptimized
+                                />
+                              </div>
+                            )}
+                            <div
+                              style={{
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.6rem',
+                                letterSpacing: '0.22em',
+                                textTransform: 'uppercase',
+                                color: 'var(--accent)',
+                              }}
+                            >
+                              농장 · {String(i + 1).padStart(2, '0')}
+                            </div>
+                            <div
+                              style={{
+                                fontFamily: "'Noto Serif KR', serif",
+                                fontSize: '1.02rem',
+                                color: '#fff',
+                                fontWeight: 400,
+                                lineHeight: 1.4,
+                              }}
+                            >
+                              {farm.name}
+                              <span
+                                style={{
+                                  marginLeft: 6,
+                                  fontFamily: 'inherit',
+                                  fontSize: '0.85rem',
+                                  color: 'rgba(255,255,255,0.55)',
+                                  fontWeight: 300,
+                                }}
+                              >
+                                ({farm.nameVi})
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255,255,255,0.7)',
+                                lineHeight: 1.65,
+                                fontWeight: 300,
+                              }}
+                            >
+                              {farm.desc}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                     {sceneSection.images.length > 0 && (
                       <div
@@ -560,7 +651,7 @@ export default function MediaPageClient({
           </section>
         </>
       ) : (
-        <MediaGallery videos={gallery.videos} photos={gallery.photos} />
+        <MediaGallery photos={gallery.photos} />
       )}
     </>
   );

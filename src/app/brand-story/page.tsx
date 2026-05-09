@@ -60,10 +60,30 @@ export interface BrandStoryTabHeroes {
   tab2?: string; // 생산 공정
 }
 
+export interface PromoVideoItem {
+  id: string;
+  title: string;
+  source?: string;
+  date?: string;
+  thumbnail?: string;
+  excerpt?: string;
+  url: string;
+}
+
+export interface PromoVideosData {
+  num?: string;       // default '04'
+  tag?: string;       // default 'VIDEOS'
+  title?: string;     // default "대라천 '참'침향 브랜드 홍보영상"
+  subtitle?: string;
+  body?: string;
+  items: PromoVideoItem[];
+}
+
 export interface BrandStoryData {
   hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
   tabHeroes?: BrandStoryTabHeroes;
   brandStoryTab: { headlineTitle: string; headlineSubtitle: string; sourceTag: string; sourceTitle: string; sourceBody: string };
+  promoVideos?: PromoVideosData;
   farms: Farm[];
   historyTab: { tag: string; title: string; eras: HistoryEra[] };
   certificationsTab: { tag: string; title: string; subtitle: string; images?: string[]; imageLabels?: string[]; certs?: CertItem[]; sections: CertSection[] };
