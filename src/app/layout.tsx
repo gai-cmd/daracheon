@@ -32,9 +32,11 @@ const SITE_URL = normalizeSiteUrl(
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com'
 );
 
-const DEFAULT_TITLE = '대라천 ZOEL LIFE — 베트남 직영 프리미엄 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드';
+// Naver 검색엔진 가이드라인: 사이트 제목 / OG 제목 ≤40자, 사이트 설명 / OG 설명 ≤80자.
+// (회사 정보 / FAQ / 키워드는 metadata.keywords + JSON-LD 로 보강.)
+const DEFAULT_TITLE = '대라천 ZOEL LIFE — 정품 침향 전문 브랜드';
 const DEFAULT_DESCRIPTION =
-  '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드 대라천 ZOEL LIFE. 베트남 하띤성 200ha 직영 농장에서 25년간 재배·연구한 정품 침향만 취급합니다. 침향 오일·캡슐·침향단(환)·선향(스틱)·침향수·침향차 한국 직판. HACCP·GMP·CITES·FDA 인증, Lot별 시험성적서 공개.';
+  "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.";
 
 // 검색 의도별로 키워드 카테고리화 — Title/Description 으로 잡기 어려운 long-tail
 // 까지 metadata.keywords 로 보강. (Google 자체는 keywords 가중치 낮지만

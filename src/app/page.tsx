@@ -188,8 +188,10 @@ const PROCESS_IMAGES = [
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
   title: '대라천 ZOEL LIFE — 25년 검증된 베트남 직영 프리미엄 침향',
+  // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
+  // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:
-    '식약처 등재 침향(Aquilaria Agallocha Roxburgh) 전문. 베트남 하띤성 200ha 직영 농장 25년, HACCP·GMP·CITES·FDA 인증, Lot별 시험성적서 공개. 침향 오일·캡슐·침향단·선향 한국 직판.',
+    '식약처 등재 정품 침향(Aquilaria Agallocha Roxburgh). 베트남 200ha 직영 농장 25년 한국 직판.',
   alternates: { canonical: '/' },
 };
 
