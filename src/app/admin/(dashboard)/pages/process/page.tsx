@@ -66,7 +66,6 @@ interface CertSection {
 }
 
 interface CertExtraSection {
-  subtitle?: string;
   images: string[];
 }
 
@@ -756,7 +755,7 @@ export default function AdminProcessPage() {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => setCerts({ ...certs, extraSection: { subtitle: '', images: [] } })}
+                      onClick={() => setCerts({ ...certs, extraSection: { images: [] } })}
                       className="rounded border border-gold-300 px-2 py-1 text-xs text-gold-600 hover:bg-gold-50"
                     >
                       + 섹션 추가
@@ -765,12 +764,7 @@ export default function AdminProcessPage() {
                 </div>
                 {certs.extraSection && (
                   <div className="space-y-3">
-                    <LabeledInput
-                      label="소제목 (예: 베트남 대라천 '참'침향)"
-                      value={certs.extraSection.subtitle ?? ''}
-                      onChange={(v) => setCerts({ ...certs, extraSection: { ...certs.extraSection!, subtitle: v } })}
-                    />
-                    <p className="text-xs text-gray-500">인증서 이미지 그리드 아래에 별도 블록으로 노출됩니다 (4:5 비율).</p>
+                    <p className="text-xs text-gray-500">인증서 이미지 그리드 아래에 소제목 없이 이미지 그리드만 노출됩니다.</p>
                     <div className="space-y-3">
                       {certs.extraSection.images.map((img, i) => (
                         <div key={i} className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3">

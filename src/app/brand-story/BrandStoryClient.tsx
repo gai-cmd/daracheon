@@ -390,6 +390,37 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   </div>
                 )}
                 <div className={styles.line} style={{ margin: '24px 0' }} />
+
+            {/* 인증 카테고리 설명 섹션 (1, 2, 3 번호 카드) */}
+            <div className={styles.gridAuto} style={{ marginBottom: 48 }}>
+              {certSections.map((section, i) => (
+                <div key={section.title + i} className={styles.card}>
+                  <div className={styles.numBadge}>{i + 1}</div>
+                  <div className={styles.certTitle}>{section.title}</div>
+                  <ul className={styles.certList}>
+                    {section.items.map((it, j) => (
+                      <li key={j}>{it}</li>
+                    ))}
+                  </ul>
+                  {section.body && (
+                    <p
+                      style={{
+                        marginTop: 14,
+                        paddingTop: 14,
+                        borderTop: '1px solid rgba(212,168,67,0.18)',
+                        fontSize: '0.92rem',
+                        color: 'rgba(255,255,255,0.68)',
+                        lineHeight: 1.85,
+                        fontWeight: 300,
+                      }}
+                    >
+                      {section.body}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
             {/* 카테고리 범례 */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '28px 0 32px' }}>
               {(['국제인증', '품질인증', '유기농인증', 'ISO인증', '특허', '수상', '사업등록'] as const).map((cat) => {
@@ -570,34 +601,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   </div>
                 );
               })}
-            </div>
-            <div className={styles.gridAuto}>
-              {certSections.map((section, i) => (
-                <div key={section.title + i} className={styles.card}>
-                  <div className={styles.numBadge}>{i + 1}</div>
-                  <div className={styles.certTitle}>{section.title}</div>
-                  <ul className={styles.certList}>
-                    {section.items.map((it, j) => (
-                      <li key={j}>{it}</li>
-                    ))}
-                  </ul>
-                  {section.body && (
-                    <p
-                      style={{
-                        marginTop: 14,
-                        paddingTop: 14,
-                        borderTop: '1px solid rgba(212,168,67,0.18)',
-                        fontSize: '0.92rem',
-                        color: 'rgba(255,255,255,0.68)',
-                        lineHeight: 1.85,
-                        fontWeight: 300,
-                      }}
-                    >
-                      {section.body}
-                    </p>
-                  )}
-                </div>
-              ))}
             </div>
               </div>
             </div>
