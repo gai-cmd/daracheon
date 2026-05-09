@@ -233,7 +233,9 @@ export default function MediaGallery({
                     marginTop: 30,
                   }}
                 >
-                  {videos.map((item, vIdx) => (
+                  {videos.map((item, vIdx) => {
+                    const isMp4Url = item.url ? /\.(mp4|webm|mov)(\?|$)/i.test(item.url) || item.url.startsWith('/') : false;
+                    return (
                     <button
                       key={item.id}
                       type="button"
@@ -258,7 +260,7 @@ export default function MediaGallery({
                           border: '1px solid rgba(212,168,67,0.18)',
                         }}
                       >
-                        {item.image && (
+                        {item.image ? (
                           <Image
                             src={item.image}
                             alt={item.title}
@@ -268,7 +270,17 @@ export default function MediaGallery({
                             style={{ objectFit: 'cover' }}
                             unoptimized
                           />
-                        )}
+                        ) : isMp4Url && item.url ? (
+                          // 썸네일 미지정 mp4 → 비디오 첫 프레임을 썸네일로 표시.
+                          <video
+                            src={item.url}
+                            preload="metadata"
+                            muted
+                            playsInline
+                            aria-hidden
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+                          />
+                        ) : null}
                         <div
                           style={{
                             position: 'absolute',
@@ -317,7 +329,8 @@ export default function MediaGallery({
                         )}
                       </div>
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p style={{ color: 'rgba(255,255,255,0.55)', marginTop: 20 }}>등록된 영상이 없습니다.</p>

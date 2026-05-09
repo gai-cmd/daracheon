@@ -387,22 +387,52 @@ export default async function MediaPage() {
 
   // 갤러리 영상 = (DB 미디어 영상) + (processVideos: /media 침향농장이야기 → 갤러리 통합)
   // + (Factory Footage: brand-story 의 베트남 직영 공장 실측 영상 6편 통합)
-  // URL/id 기준 dedup.
+  // URL/id 기준 dedup. 영상·썸네일 모두 Vercel Blob 호스팅 (외부 CDN 의존 금지).
   const FACTORY_FOOTAGE: MediaItem[] = [
-    { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '농장 현장 — 식목·관수' },
-    { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '수확 현장 — 침향 채취' },
-    { id: '1uMxdrgJds4tYaMfiC-He9RXsu5P0vLLN', title: '특허 #12835 — 수지유도 공정' },
-    { id: '1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I', title: '72시간 고온증류' },
-    { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
-    { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
+    {
+      slug: 'farm-planting-watering',
+      title: '농장 현장 — 식목·관수',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-F1SBFZXQ9TpBUEPPcSHlg1te5Of34l.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-thumb-6Uz8dijs2BhkvfcuCquV4Yjx6IJnib.jpg',
+    },
+    {
+      slug: 'harvest-agarwood',
+      title: '수확 현장 — 침향 채취',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-TjZSNSkQnn2br7raRpYhaoE25a3MuK.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-thumb-rZfnc4ls6HFf8brbYSYThFcCinEd32.jpg',
+    },
+    {
+      slug: 'patent-12835-resin',
+      title: '특허 #12835 — 수지유도 공정',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-zA3YSKZGAm4j6xQ4JnotolIxvy2kuz.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-thumb-5dKoBvrRG4pOUI5b0SQy1sxzhcXZVh.jpg',
+    },
+    {
+      slug: 'high-temp-distill-72h',
+      title: '72시간 고온증류',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-KXSzhfXnfsHUkaT9U1WBw8kDWZ3iZ3.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-thumb-al714QTsYsct6CU10SelIwNIEucZIL.jpg',
+    },
+    {
+      slug: 'vimeco-line',
+      title: 'VIMECO 위탁 제조 라인',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-rzGUp5P0ejaxD1lvCkpRs1AFyRdbeQ.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-thumb-kFzwLaWlptKjs7cS1aKRiF7nvu9s48.jpg',
+    },
+    {
+      slug: 'qc-heavymetal',
+      title: '품질 검사 — 중금속 8종 불검출',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-V8ESMkMnp8APJYuJgz0lCnOy2rMU0m.mp4',
+      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-thumb-eQqw49IM7NvdsKqEBnwLyND15t4pql.jpg',
+    },
   ].map((v) => ({
-    id: `ff-${v.id}`,
+    id: `ff-${v.slug}`,
     type: 'video' as const,
     title: v.title,
     source: '대라천 공식',
     date: '2026-04-11',
-    image: `https://lh3.googleusercontent.com/d/${v.id}=w1280`,
-    url: `https://drive.google.com/file/d/${v.id}/view`,
+    image: v.thumb,
+    url: v.url,
   }));
 
   const productionVideoItems: MediaItem[] = farmStory.processVideos.items
