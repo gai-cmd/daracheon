@@ -384,8 +384,50 @@ export default async function MediaPage() {
   };
 
   const allMedia = dbMedia.length > 0 ? dbMedia : DEFAULT_MEDIA;
-  // 영상 갤러리는 /brand-story 04 섹션으로 이동 — /media 는 사진만 노출.
+
+  // 갤러리 영상 = (DB 미디어 영상) + (processVideos: /media 침향농장이야기 → 갤러리 통합)
+  // + (Factory Footage: brand-story 의 베트남 직영 공장 실측 영상 6편 통합)
+  // URL/id 기준 dedup.
+  const FACTORY_FOOTAGE: MediaItem[] = [
+    { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '농장 현장 — 식목·관수' },
+    { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '수확 현장 — 침향 채취' },
+    { id: '1uMxdrgJds4tYaMfiC-He9RXsu5P0vLLN', title: '특허 #12835 — 수지유도 공정' },
+    { id: '1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I', title: '72시간 고온증류' },
+    { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
+    { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
+  ].map((v) => ({
+    id: `ff-${v.id}`,
+    type: 'video' as const,
+    title: v.title,
+    source: '대라천 공식',
+    date: '2026-04-11',
+    image: `https://lh3.googleusercontent.com/d/${v.id}=w1280`,
+    url: `https://drive.google.com/file/d/${v.id}/view`,
+  }));
+
+  const productionVideoItems: MediaItem[] = farmStory.processVideos.items
+    .filter((v) => v.src)
+    .map((v, i) => ({
+      id: `pv-${i}-${v.src}`,
+      type: 'video' as const,
+      title: v.title,
+      source: '대라천 공식',
+      date: '2026-04-11',
+      url: v.src,
+    }));
+
+  const dbVideos = allMedia.filter((m) => m.type === 'video');
+  const seenUrls = new Set<string>();
+  const galleryVideos: MediaItem[] = [];
+  for (const v of [...dbVideos, ...FACTORY_FOOTAGE, ...productionVideoItems]) {
+    const key = v.url ?? v.id;
+    if (seenUrls.has(key)) continue;
+    seenUrls.add(key);
+    galleryVideos.push(v);
+  }
+
   const gallery = {
+    videos: galleryVideos,
     photos: allMedia.filter((m) => m.type === 'photo'),
   };
 

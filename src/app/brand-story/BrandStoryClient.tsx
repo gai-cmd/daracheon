@@ -160,63 +160,8 @@ function PromoVideoModal({ item, onClose }: { item: PromoVideoItem; onClose: () 
   );
 }
 
-function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: string; onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'rgba(0,0,0,0.92)',
-        display: 'grid', placeItems: 'center',
-        padding: 'clamp(12px, 4vw, 40px)',
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ position: 'relative', width: '100%', maxWidth: 900 }}
-      >
-        <button
-          onClick={onClose}
-          aria-label="닫기"
-          style={{
-            position: 'absolute', top: -44, right: 0,
-            background: 'none', border: 'none', color: '#fff',
-            fontSize: '1.6rem', cursor: 'pointer', lineHeight: 1,
-          }}
-        >✕</button>
-        <div style={{ aspectRatio: '16/9', background: '#000' }}>
-          <iframe
-            src={`https://drive.google.com/file/d/${driveId}/preview`}
-            title={title}
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-          />
-        </div>
-        <p style={{
-          marginTop: 12, color: 'rgba(255,255,255,0.75)',
-          fontFamily: "'Noto Sans KR', sans-serif", fontSize: '0.9rem', textAlign: 'center',
-        }}>{title}</p>
-      </div>
-    </div>
-  );
-}
-
-
 export default function BrandStoryClient({ data, showroom }: Props) {
   const [activeTab, setActiveTab] = useState(0);
-  const [activeVideo, setActiveVideo] = useState<{ id: string; title: string } | null>(null);
   const [activePromoVideo, setActivePromoVideo] = useState<PromoVideoItem | null>(null);
 
   const hero = data?.hero;
@@ -235,13 +180,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
 
   return (
     <div className={styles.page}>
-      {activeVideo && (
-        <DriveVideoModal
-          driveId={activeVideo.id}
-          title={activeVideo.title}
-          onClose={() => setActiveVideo(null)}
-        />
-      )}
       {/* HERO */}
       <section className={`${storyStyles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>
         {hero?.heroBg && (
@@ -985,42 +923,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               <div className={styles.totalDesc}>{processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}</div>
             </div>
 
-            {/* 공장 현장 영상 */}
-            <div style={{ marginTop: 60 }}>
-              <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.7rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 14, textAlign: 'center' }}>
-                Factory Footage · 공장 현장 영상
-              </div>
-              <h3 style={{ textAlign: 'center', fontFamily: "'Noto Sans KR', sans-serif", fontSize: 'clamp(1.4rem, 2.8vw, 2rem)', fontWeight: 200, color: '#fff', marginBottom: 30 }}>
-                베트남 직영 공장 <em style={{ color: 'var(--accent)', fontFamily: "'Noto Serif KR', serif", fontStyle: 'normal', fontWeight: 400 }}>실측 영상</em>
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-                {[
-                  { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '농장 현장 — 식목·관수' },
-                  { id: '1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg', title: '수확 현장 — 침향 채취' },
-                  { id: '1uMxdrgJds4tYaMfiC-He9RXsu5P0vLLN', title: '특허 #12835 — 수지유도 공정' },
-                  { id: '1fVou2UCQ4fETdRWYvkjXS5Wd3inBxa1I', title: '72시간 고온증류' },
-                  { id: '1wdjW37Z8ETzPdMEwbHBBPF-t0TfMJjVV', title: 'VIMECO 위탁 제조 라인' },
-                  { id: '1ftsQrPVw13ZSe84s6gRYiap1wgvie8in', title: '품질 검사 — 중금속 8종 불검출' },
-                ].map((v) => (
-                  <div
-                    key={v.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setActiveVideo(v)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveVideo(v); }}
-                    style={{ display: 'block', border: '1px solid rgba(212,168,67,0.25)', background: 'rgba(255,255,255,0.02)', overflow: 'hidden', cursor: 'pointer', transition: 'border-color 200ms' }}
-                  >
-                    <div style={{ aspectRatio: '16 / 9', position: 'relative', background: '#000', overflow: 'hidden' }}>
-                      <img src={`https://lh3.googleusercontent.com/d/${v.id}=w1280`} alt={v.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)' }}>
-                        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(212,168,67,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0a0b10', fontSize: '1.6rem', lineHeight: 1, paddingLeft: 4, boxShadow: '0 6px 20px rgba(0,0,0,0.4)' }}>▶</div>
-                      </div>
-                    </div>
-                    <div style={{ padding: '14px 16px', fontFamily: "'Noto Sans KR', sans-serif", fontSize: '0.88rem', color: '#fff', fontWeight: 400 }}>{v.title}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Factory Footage 섹션은 /media 갤러리(01 영상 갤러리) 로 이동 */}
               </div>
             </div>
           </div>

@@ -77,12 +77,13 @@ export interface FarmStoryData {
 }
 
 export interface GalleryData {
+  videos: MediaItem[];
   photos: MediaItem[];
 }
 
 const TABS = [
   { key: 'story' as const, label: '침향 농장 이야기' },
-  { key: 'gallery' as const, label: '사진 갤러리' },
+  { key: 'gallery' as const, label: '영상・사진 갤러리' },
 ];
 
 export default function MediaPageClient({
@@ -95,7 +96,7 @@ export default function MediaPageClient({
   farms?: Farm[];
 }) {
   const [activeTab, setActiveTab] = useState<'story' | 'gallery'>('story');
-  const { hero, sceneSection, chapters, processVideos, certifications } = farmStory;
+  const { hero, sceneSection, chapters, certifications } = farmStory;
 
   return (
     <>
@@ -462,82 +463,12 @@ export default function MediaPageClient({
             </section>
           ))}
 
-          {/* PRODUCTION VIDEOS */}
+          {/* CERTIFICATIONS — 영상 갤러리는 /media 갤러리 탭 01 영상 갤러리 로 통합. */}
           <section className={styles.chapter} data-alt="1">
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div>
-                  <div className={styles.chapterNum}>{processVideos.num}</div>
-                  <div className={styles.chapterTag}>{processVideos.tag}</div>
-                </div>
-                <div className={styles.chapterBody}>
-                  <h3>{processVideos.title}</h3>
-                  <p>{processVideos.body}</p>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                      gap: 20,
-                      marginTop: 30,
-                    }}
-                  >
-                    {processVideos.items.filter((v) => v.src).map((v, i) => {
-                      // Google Drive 영상은 video 태그로 못 재생 — preview iframe 으로 임베드.
-                      const isDrive = /^https?:\/\/drive\.google\.com\//.test(v.src);
-                      return (
-                        <figure key={v.src || i} style={{ margin: 0 }}>
-                          <div
-                            style={{
-                              position: 'relative',
-                              aspectRatio: '1/1',
-                              overflow: 'hidden',
-                              background: '#000',
-                              border: '1px solid rgba(212,168,67,0.18)',
-                            }}
-                          >
-                            {isDrive ? (
-                              <iframe
-                                src={v.src}
-                                title={v.title}
-                                allow="autoplay; encrypted-media"
-                                allowFullScreen
-                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-                              />
-                            ) : (
-                              <video
-                                src={v.src}
-                                controls
-                                playsInline
-                                preload="metadata"
-                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-                              />
-                            )}
-                          </div>
-                          <figcaption
-                            style={{
-                              marginTop: 10,
-                              fontSize: '0.85rem',
-                              color: 'rgba(255,255,255,0.72)',
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            {v.title}
-                          </figcaption>
-                        </figure>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CERTIFICATIONS */}
-          <section className={styles.chapter}>
-            <div className={styles.wrap}>
-              <div className={styles.chapterGrid}>
-                <div>
-                  <div className={styles.chapterNum}>{certifications.num}</div>
+                  <div className={styles.chapterNum}>07</div>
                   <div className={styles.chapterTag}>{certifications.tag}</div>
                 </div>
                 <div className={styles.chapterBody}>
@@ -651,7 +582,7 @@ export default function MediaPageClient({
           </section>
         </>
       ) : (
-        <MediaGallery photos={gallery.photos} />
+        <MediaGallery videos={gallery.videos} photos={gallery.photos} />
       )}
     </>
   );
