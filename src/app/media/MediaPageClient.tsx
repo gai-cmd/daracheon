@@ -232,10 +232,27 @@ export default function MediaPageClient({
                       <p style={{ whiteSpace: 'pre-line' }}>{sceneSection.body}</p>
                     )}
                     {sceneSection.extras && sceneSection.extras.length > 0 && (
-                      <div style={{ marginTop: 36, display: 'grid', gap: 32 }}>
-                        {sceneSection.extras.map((ex, i) => {
-                          const reverse = i % 2 === 1;
-                          const imageBlock = (
+                      <div
+                        style={{
+                          marginTop: 36,
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                          gap: 20,
+                          alignItems: 'stretch',
+                        }}
+                      >
+                        {sceneSection.extras.map((ex, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 16,
+                              padding: 18,
+                              border: '1px solid rgba(212,168,67,0.12)',
+                              background: 'rgba(255,255,255,0.015)',
+                            }}
+                          >
                             <div
                               style={{
                                 position: 'relative',
@@ -254,8 +271,6 @@ export default function MediaPageClient({
                                 unoptimized
                               />
                             </div>
-                          );
-                          const textBlock = (
                             <p
                               style={{
                                 whiteSpace: 'pre-line',
@@ -267,31 +282,8 @@ export default function MediaPageClient({
                             >
                               {ex.body}
                             </p>
-                          );
-                          return (
-                            <div
-                              key={i}
-                              style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                                gap: 24,
-                                alignItems: 'start',
-                              }}
-                            >
-                              {reverse ? (
-                                <>
-                                  {textBlock}
-                                  {imageBlock}
-                                </>
-                              ) : (
-                                <>
-                                  {imageBlock}
-                                  {textBlock}
-                                </>
-                              )}
-                            </div>
-                          );
-                        })}
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
