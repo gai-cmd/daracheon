@@ -19,6 +19,12 @@ interface ChapterStat {
   label: string;
 }
 
+interface SceneExtra {
+  image: string;
+  body: string;
+  alt?: string;
+}
+
 interface SceneSection {
   num: string;
   tag: string;
@@ -26,6 +32,7 @@ interface SceneSection {
   subtitle: string;
   body: string;
   images: string[];
+  extras?: SceneExtra[];
 }
 
 interface ProcessChapter {
@@ -95,6 +102,20 @@ const DEFAULT_SCENE_SECTION: SceneSection = {
     'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
     'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
     'https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280',
+  ],
+  extras: [
+    {
+      image:
+        'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/scene-extras/01-phuquoc-old-growth.jpg',
+      alt: '푸꾸옥 농장의 100년 이상 된 고수령 침향목',
+      body: '푸꾸옥 농장의 100년 이상 된 고수령 침향목은 오랜 세월 자연 환경 속에서 천천히 수지가 축적되며 형성된 귀한 자원입니다. 세월의 흔적이 깊게 배어 있는 만큼 침향의 밀도와 향의 깊이가 뛰어나며, 희소성 또한 높아 높은 가치를 지닌 침향목으로 평가받고 있습니다.',
+    },
+    {
+      image:
+        'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/scene-extras/02-hatinh-resin-ant.jpg',
+      alt: '하띤 농장 5년차 수지 작업 침향나무 — 개미집 형성',
+      body: '하띤 농장에서 5년간 수지 작업을 진행해 온 침향나무로, 작업 부위에는 현재 개미집이 형성되어 있습니다. 사용된 수지 유도제는 천연 성분 기반으로 개미도 서식할 수 있는 환경이며, 침향나무는 개미 활동으로 인해 지속적인 자연 스트레스를 받고 있는 상태입니다. 이러한 조건은 수지 생성과 축적을 더욱 촉진하는 환경으로 평가되며, 향후 수지 함량이 높은 우수한 품질의 침향으로 성장할 가능성이 기대되는 침향나무입니다.',
+    },
   ],
 };
 
@@ -262,6 +283,13 @@ export default function AdminProcessPage() {
             ...DEFAULT_SCENE_SECTION,
             ...d.sceneSection,
             images: Array.isArray(d.sceneSection.images) ? d.sceneSection.images : [],
+            extras: Array.isArray(d.sceneSection.extras)
+              ? d.sceneSection.extras.map((ex) => ({
+                  image: ex?.image ?? '',
+                  body: ex?.body ?? '',
+                  alt: ex?.alt ?? '',
+                }))
+              : [],
           });
         }
         if (Array.isArray(d?.chapters) && d.chapters.length > 0) {
@@ -431,6 +459,55 @@ export default function AdminProcessPage() {
                     </div>
                   ))}
                   <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: [...sceneSection.images, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 이미지 추가</button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">추가 블록 · 사진+설명 교차 ({(sceneSection.extras ?? []).length})</label>
+                <p className="mb-3 text-xs text-gray-500">본문 아래에 사진+설명, 설명+사진 순으로 교차 배치됩니다.</p>
+                <div className="space-y-3">
+                  {(sceneSection.extras ?? []).map((ex, i) => (
+                    <div key={i} className="rounded-md border border-gray-200 bg-white p-3">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-gray-700">
+                          블록 {i + 1} <span className="ml-1 font-mono text-[10px] font-normal text-gray-500">{i % 2 === 0 ? '(사진 + 설명)' : '(설명 + 사진)'}</span>
+                        </span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                          <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: moveItem(sceneSection.extras ?? [], i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                          <button type="button" onClick={() => setSceneSection({ ...sceneSection, extras: removeIndex(sceneSection.extras ?? [], i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <ImageUploadField
+                          label="이미지"
+                          value={ex.image}
+                          onChange={(url) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], image: url }; setSceneSection({ ...sceneSection, extras: n }); }}
+                          subdir="pages"
+                        />
+                        <input
+                          value={ex.alt ?? ''}
+                          onChange={(e) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], alt: e.target.value }; setSceneSection({ ...sceneSection, extras: n }); }}
+                          placeholder="이미지 alt (선택)"
+                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                        <textarea
+                          rows={4}
+                          value={ex.body}
+                          onChange={(e) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], body: e.target.value }; setSceneSection({ ...sceneSection, extras: n }); }}
+                          placeholder="설명 본문"
+                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setSceneSection({ ...sceneSection, extras: [...(sceneSection.extras ?? []), { image: '', body: '', alt: '' }] })}
+                    className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
+                  >
+                    + 블록 추가
+                  </button>
                 </div>
               </div>
             </div>

@@ -28,6 +28,12 @@ interface CertSection {
   items: string[];
 }
 
+export interface SceneExtra {
+  image: string;
+  body: string;
+  alt?: string;
+}
+
 export interface SceneSection {
   num: string;
   tag: string;
@@ -35,6 +41,7 @@ export interface SceneSection {
   subtitle: string;
   body: string;
   images: string[];
+  extras?: SceneExtra[];
 }
 
 export interface FarmStoryData {
@@ -223,6 +230,69 @@ export default function MediaPageClient({
                     )}
                     {sceneSection.body && (
                       <p style={{ whiteSpace: 'pre-line' }}>{sceneSection.body}</p>
+                    )}
+                    {sceneSection.extras && sceneSection.extras.length > 0 && (
+                      <div style={{ marginTop: 36, display: 'grid', gap: 32 }}>
+                        {sceneSection.extras.map((ex, i) => {
+                          const reverse = i % 2 === 1;
+                          const imageBlock = (
+                            <div
+                              style={{
+                                position: 'relative',
+                                aspectRatio: '4/3',
+                                overflow: 'hidden',
+                                background: '#1a1d29',
+                                border: '1px solid rgba(212,168,67,0.18)',
+                              }}
+                            >
+                              <Image
+                                src={ex.image}
+                                alt={ex.alt ?? `현장 추가 ${i + 1}`}
+                                fill
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                style={{ objectFit: 'cover' }}
+                                unoptimized
+                              />
+                            </div>
+                          );
+                          const textBlock = (
+                            <p
+                              style={{
+                                whiteSpace: 'pre-line',
+                                margin: 0,
+                                fontSize: '0.96rem',
+                                lineHeight: 1.85,
+                                color: 'rgba(255,255,255,0.82)',
+                              }}
+                            >
+                              {ex.body}
+                            </p>
+                          );
+                          return (
+                            <div
+                              key={i}
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                                gap: 24,
+                                alignItems: 'center',
+                              }}
+                            >
+                              {reverse ? (
+                                <>
+                                  {textBlock}
+                                  {imageBlock}
+                                </>
+                              ) : (
+                                <>
+                                  {imageBlock}
+                                  {textBlock}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                 </div>
