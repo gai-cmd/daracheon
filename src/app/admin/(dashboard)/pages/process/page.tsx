@@ -65,6 +65,11 @@ interface CertSection {
   items: string[];
 }
 
+interface CertExtraSection {
+  subtitle?: string;
+  images: string[];
+}
+
 interface Certifications {
   num: string;
   tag: string;
@@ -72,6 +77,7 @@ interface Certifications {
   body: string;
   sections: CertSection[];
   images: string[];
+  extraSection?: CertExtraSection;
 }
 
 interface ProcessData {
@@ -727,6 +733,69 @@ export default function AdminProcessPage() {
                   ))}
                   <button type="button" onClick={() => setCerts({ ...certs, images: [...certs.images, ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 이미지 추가</button>
                 </div>
+              </div>
+
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-700">
+                    추가 이미지 섹션 (침향 사진 등)
+                    {certs.extraSection && ` · ${certs.extraSection.images.length}장`}
+                  </label>
+                  {certs.extraSection ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const c = { ...certs };
+                        delete c.extraSection;
+                        setCerts(c);
+                      }}
+                      className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50"
+                    >
+                      섹션 삭제
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setCerts({ ...certs, extraSection: { subtitle: '', images: [] } })}
+                      className="rounded border border-gold-300 px-2 py-1 text-xs text-gold-600 hover:bg-gold-50"
+                    >
+                      + 섹션 추가
+                    </button>
+                  )}
+                </div>
+                {certs.extraSection && (
+                  <div className="space-y-3">
+                    <LabeledInput
+                      label="소제목 (예: 베트남 대라천 '참'침향)"
+                      value={certs.extraSection.subtitle ?? ''}
+                      onChange={(v) => setCerts({ ...certs, extraSection: { ...certs.extraSection!, subtitle: v } })}
+                    />
+                    <p className="text-xs text-gray-500">인증서 이미지 그리드 아래에 별도 블록으로 노출됩니다 (4:5 비율).</p>
+                    <div className="space-y-3">
+                      {certs.extraSection.images.map((img, i) => (
+                        <div key={i} className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3">
+                          <div className="flex-1">
+                            <ImageUploadField
+                              value={img}
+                              onChange={(url) => {
+                                const n = [...certs.extraSection!.images];
+                                n[i] = url;
+                                setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: n } });
+                              }}
+                              subdir="pages"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <button type="button" onClick={() => setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: moveItem(certs.extraSection!.images, i, i - 1) } })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                            <button type="button" onClick={() => setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: moveItem(certs.extraSection!.images, i, i + 1) } })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                            <button type="button" onClick={() => setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: removeIndex(certs.extraSection!.images, i) } })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                          </div>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: [...certs.extraSection!.images, ''] } })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 이미지 추가</button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </SectionCard>

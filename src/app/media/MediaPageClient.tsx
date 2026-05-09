@@ -69,6 +69,10 @@ export interface FarmStoryData {
     body: string;
     sections: CertSection[];
     images: string[];
+    extraSection?: {
+      subtitle: string;
+      images: string[];
+    };
   };
 }
 
@@ -518,6 +522,53 @@ export default function MediaPageClient({
                       </div>
                     ))}
                   </div>
+                  {certifications.extraSection && certifications.extraSection.images.length > 0 && (
+                    <div style={{ marginTop: 44 }}>
+                      <h4
+                        style={{
+                          fontFamily: "'Noto Serif KR', serif",
+                          fontSize: '1.2rem',
+                          fontWeight: 500,
+                          color: 'var(--accent)',
+                          letterSpacing: '0.04em',
+                          margin: '0 0 18px',
+                          paddingBottom: 10,
+                          borderBottom: '1px solid rgba(212,168,67,0.25)',
+                        }}
+                      >
+                        {certifications.extraSection.subtitle}
+                      </h4>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                          gap: 14,
+                        }}
+                      >
+                        {certifications.extraSection.images.map((src, idx) => (
+                          <div
+                            key={src}
+                            style={{
+                              position: 'relative',
+                              aspectRatio: '3/4',
+                              overflow: 'hidden',
+                              background: '#1a1d29',
+                              border: '1px solid rgba(212,168,67,0.18)',
+                            }}
+                          >
+                            <Image
+                              src={src}
+                              alt={`${certifications.extraSection!.subtitle} ${idx + 1}`}
+                              fill
+                              sizes="(max-width: 900px) 50vw, 240px"
+                              style={{ objectFit: 'cover' }}
+                              unoptimized
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

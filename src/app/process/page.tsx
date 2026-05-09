@@ -65,11 +65,16 @@ interface CertSection {
   items: string[];
 }
 
+interface CertExtraSection {
+  subtitle?: string;
+  images: string[];
+}
+
 interface ProcessData {
   hero?: ProcessHero;
   chapters?: ProcessChapter[];
   productionVideos?: { num: string; tag: string; title: string; body: string; items: ProductionVideo[] };
-  certifications?: { num: string; tag: string; title: string; body: string; sections: CertSection[]; images: string[] };
+  certifications?: { num: string; tag: string; title: string; body: string; sections: CertSection[]; images: string[]; extraSection?: CertExtraSection };
 }
 
 const DEFAULT_HERO: ProcessHero = {
@@ -541,6 +546,53 @@ export default async function ProcessPage() {
                   </div>
                 ))}
               </div>
+
+              {certs.extraSection && certs.extraSection.images.length > 0 && (
+                <div style={{ marginTop: 56 }}>
+                  {certs.extraSection.subtitle && (
+                    <div
+                      style={{
+                        fontFamily: "'Noto Serif KR', serif",
+                        fontSize: '1.15rem',
+                        color: 'var(--accent)',
+                        letterSpacing: '0.04em',
+                        marginBottom: 18,
+                      }}
+                    >
+                      {certs.extraSection.subtitle}
+                    </div>
+                  )}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: 14,
+                    }}
+                  >
+                    {certs.extraSection.images.map((src, idx) => (
+                      <div
+                        key={src}
+                        style={{
+                          position: 'relative',
+                          aspectRatio: '4/5',
+                          overflow: 'hidden',
+                          background: '#1a1d29',
+                          border: '1px solid rgba(212,168,67,0.18)',
+                        }}
+                      >
+                        <Image
+                          src={src}
+                          alt={`${certs.extraSection?.subtitle ?? '대라천 참침향'} ${idx + 1}`}
+                          fill
+                          sizes="(max-width: 900px) 50vw, 280px"
+                          style={{ objectFit: 'cover' }}
+                          unoptimized
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
