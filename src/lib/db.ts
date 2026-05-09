@@ -225,19 +225,21 @@ async function writeRaw(filename: string, data: unknown): Promise<void> {
     } catch (err) {
       console.warn(`[db:write] ${filename}: revalidateTag failed`, err);
     }
-    // Post-write read-back (uncached) — blob 의 실제 최신 상태를 확인해 로그한다.
-    // 동일 요청 내에서 CDN 레이어가 새 값을 돌려주는지 체크하는 진단 용도.
-    try {
-      const verify = await blobReadRawUncached(filename);
-      if (verify === NOT_FOUND) {
-        console.warn(`[db:write] ${filename}: post-write read returned NOT_FOUND (CDN propagation delay?)`);
-      } else {
-        const ok = JSON.stringify(verify) === JSON.stringify(data);
-        console.log(`[db:write] ${filename}: post-write read-back ${ok ? 'MATCH' : 'MISMATCH'}`);
-      }
-    } catch (err) {
-      console.warn(`[db:write] ${filename}: post-write read-back threw`, err);
-    }
+    // Post-write read-back (uncached) — 진단 전용. await 하면 매 write 마다
+    // ~500ms 추가 → 어드민 응답이 느려진다. fire-and-forget 으로 백그라운드
+    // 검증만 수행. 실패해도 사용자 응답에 영향 없음.
+    blobReadRawUncached(filename)
+      .then((verify) => {
+        if (verify === NOT_FOUND) {
+          console.warn(`[db:write] ${filename}: post-write read returned NOT_FOUND (CDN propagation delay?)`);
+        } else {
+          const ok = JSON.stringify(verify) === JSON.stringify(data);
+          console.log(`[db:write] ${filename}: post-write read-back ${ok ? 'MATCH' : 'MISMATCH'}`);
+        }
+      })
+      .catch((err) => {
+        console.warn(`[db:write] ${filename}: post-write read-back threw`, err);
+      });
     return;
   }
   if (process.env.VERCEL) {

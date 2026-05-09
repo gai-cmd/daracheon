@@ -171,6 +171,10 @@ export default function InquiriesPage() {
     const next = getNextStatus(inq.status);
     if (!next) return;
 
+    // 옵티미스틱 — 클릭 즉시 로컬 반영. 실패시 snapshot 으로 롤백.
+    const snapshot = inquiries;
+    setInquiries((prev) => prev.map((i) => (i.id === id ? { ...i, status: next } : i)));
+    setToast(`상태가 "${statusLabel[next]}"(으)로 변경되었습니다.`);
     try {
       const res = await fetch('/api/admin/inquiries', {
         method: 'PATCH',
@@ -178,11 +182,11 @@ export default function InquiriesPage() {
         body: JSON.stringify({ id, status: next }),
       });
       if (!res.ok) throw new Error('Status change failed');
-      setToast(`상태가 "${statusLabel[next]}"(으)로 변경되었습니다.`);
-      await fetchInquiries();
     } catch (err) {
       console.error('Status change error:', err);
+      setInquiries(snapshot);
       setToast('상태 변경에 실패했습니다.');
+      await fetchInquiries();
     }
   }
 
@@ -242,12 +246,17 @@ export default function InquiriesPage() {
 
   async function handleBulkStatusChange() {
     if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    const idSet = new Set(ids);
+    // 옵티미스틱 업데이트 — 즉시 로컬 state 반영. 서버 응답 대기 없음.
+    // 실패 시 snapshot 으로 롤백 후 재요청 결과로 정합화.
+    const snapshot = inquiries;
+    setInquiries((prev) =>
+      prev.map((inq) => (idSet.has(inq.id) ? { ...inq, status: bulkStatus } : inq)),
+    );
+    setSelectedIds(new Set());
     setIsBulkLoading(true);
-    // 서버측 batch 엔드포인트 — ids[] 를 한 번의 read-modify-write 로 처리.
-    // 클라이언트 직렬화로는 cross-Lambda race(Vercel Blob list propagation
-    // lag) 를 못 막아서, 같은 Lambda 인스턴스 내에서 끝내는 게 유일한 방법.
     try {
-      const ids = Array.from(selectedIds);
       const res = await fetch('/api/admin/inquiries', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -264,12 +273,18 @@ export default function InquiriesPage() {
           ? `${updated}건 변경 완료, ${missing}건 누락`
           : `${updated}건을 "${statusLabel[bulkStatus]}"(으)로 변경했습니다.`,
       );
-      setSelectedIds(new Set());
-      await fetchInquiries();
+      // 서버 결과로 정합화 — 단순 새로고침이 아니라 누락된 ID 등 부분실패 반영.
+      // 옵티미스틱이 이미 맞으면 사용자 화면엔 변화 없음.
+      if (missing > 0) {
+        await fetchInquiries();
+      }
     } catch (err) {
       console.error('Bulk status error:', err);
+      // 롤백 후 진짜 상태로 정합화.
+      setInquiries(snapshot);
       const msg = err instanceof Error ? err.message : '오류';
       setToast(`일괄 변경 실패: ${msg}`);
+      await fetchInquiries();
     } finally {
       setIsBulkLoading(false);
     }
