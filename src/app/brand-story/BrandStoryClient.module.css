@@ -308,12 +308,6 @@
   padding: 22px 0;
   border-bottom: 1px solid rgba(212, 168, 67, 0.12);
 }
-@media (min-width: 700px) {
-  .timelineItem {
-    grid-template-columns: 100px 1fr;
-    gap: 30px;
-  }
-}
 .timelineEra {
   font-family: 'Noto Serif KR', serif;
   font-size: 1.6rem;
