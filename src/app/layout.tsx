@@ -98,7 +98,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const GSC_DEFAULT = 'RvjwX2kdcOYXh_k3fkUKGQc-r_N_Yby-kb2Vb3lywpM';
   // Naver 웹마스터도구 사이트 소유확인 토큰 — zoellife.com 등록용.
   // 재발급 시 NAVER_SITE_VERIFICATION env 로 덮어쓰기.
-  const NAVER_DEFAULT = '78f6f8ac415595d6b1d9e8e33fca157f8194e05f';
+  const NAVER_DEFAULT = '65638b682587b3511ca3b0c3133830fbef39acdf';
   const verificationEntries = (() => {
     const google = process.env.GOOGLE_SITE_VERIFICATION || GSC_DEFAULT;
     const naver = process.env.NAVER_SITE_VERIFICATION || NAVER_DEFAULT;
