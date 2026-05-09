@@ -450,7 +450,17 @@ export default function AdminBrandStoryPage() {
 
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">브랜드 이야기 편집</h1>
-        <p className="text-gray-500 mb-8">/brand-story 공개 페이지의 콘텐츠를 관리합니다.</p>
+        <p className="text-gray-500 mb-2">/brand-story 공개 페이지의 콘텐츠를 관리합니다.</p>
+        {/* 공개 페이지의 03 SHOWROOM 챕터는 쇼룸 편집기와 데이터 공유 — 검색 동선 안내. */}
+        <div className="mb-8 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 flex items-center gap-3">
+          <span>ℹ️ 공개 페이지의 <strong>03 SHOWROOM</strong> 챕터(사진 · 소개 · 방문 안내)는 별도 편집기에서 관리합니다.</span>
+          <a
+            href="/admin/pages/showroom"
+            className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-amber-600 text-white font-medium hover:bg-amber-700 whitespace-nowrap"
+          >
+            쇼룸 편집기 열기 →
+          </a>
+        </div>
 
         {/* Admin Tab Bar */}
         <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
