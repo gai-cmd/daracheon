@@ -3,11 +3,14 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { BrandStoryData } from './page';
+import type { ShowroomData } from '@/app/showroom/page';
+import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import styles from './BrandStoryClient.module.css';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 
 interface Props {
   data: BrandStoryData | null;
+  showroom?: ShowroomData | null;
 }
 
 const TAB_LIST = [
@@ -70,7 +73,7 @@ function DriveVideoModal({ driveId, title, onClose }: { driveId: string; title: 
 }
 
 
-export default function BrandStoryClient({ data }: Props) {
+export default function BrandStoryClient({ data, showroom }: Props) {
   const [activeTab, setActiveTab] = useState(0);
   const [activeVideo, setActiveVideo] = useState<{ id: string; title: string } | null>(null);
 
@@ -310,6 +313,46 @@ export default function BrandStoryClient({ data }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* 03 — SHOWROOM (대라천 '참'침향 전시장) */}
+            {showroom && (
+              <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
+                <div>
+                  <div className={styles.chapterNum}>03</div>
+                  <div className={styles.chapterTag}>SHOWROOM</div>
+                </div>
+                <div>
+                  <h2 className={styles.chapterTitle}>
+                    {showroom.intro?.title ?? "대라천 '참'침향 전시장"}
+                  </h2>
+                  {showroom.intro?.tag && (
+                    <p className={styles.chapterSubtitle}>{showroom.intro.tag}</p>
+                  )}
+                  <div className={styles.line} style={{ margin: '24px 0' }} />
+                  {showroom.intro?.body && (
+                    <p
+                      style={{
+                        whiteSpace: 'pre-line',
+                        fontSize: '1rem',
+                        lineHeight: 1.95,
+                        color: 'rgba(255,255,255,0.72)',
+                        fontWeight: 300,
+                        marginBottom: 16,
+                      }}
+                    >
+                      {showroom.intro.body}
+                    </p>
+                  )}
+                  {showroom.gallery && showroom.gallery.length > 0 && (
+                    <ChapterCarousel
+                      images={showroom.gallery.map((g) => g.src).filter(Boolean)}
+                      alt="대라천 '참'침향 전시장"
+                      caption={showroom.visit?.address}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}

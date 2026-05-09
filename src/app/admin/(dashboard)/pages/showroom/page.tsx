@@ -181,7 +181,10 @@ export default function AdminShowroomPage() {
       )}
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">전시장(쇼룸) 편집</h1>
-        <p className="text-gray-500 mb-8">/showroom 공개 페이지의 콘텐츠를 관리합니다.</p>
+        <p className="text-gray-500 mb-2">/showroom 공개 페이지의 콘텐츠를 관리합니다.</p>
+        <div className="mb-8 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+          ℹ️ 여기서 편집하는 인트로(소개 본문) · 갤러리는 <span className="font-mono">/brand-story</span>의 <strong>03 SHOWROOM</strong> 챕터에도 동일하게 표시됩니다.
+        </div>
 
         <div className="space-y-8">
           {/* Hero */}

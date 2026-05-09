@@ -24,6 +24,9 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   editionAgarwood: [],
   privacy: ['/privacy'],
   terms: ['/terms'],
+  // showroom 데이터는 /showroom 단독 페이지뿐 아니라 /brand-story 03 챕터에도 표시되므로
+  // 둘 다 revalidate.
+  showroom: ['/showroom', '/brand-story'],
 };
 
 const VALID_KEYS = Object.keys(PAGE_PUBLIC_PATHS);

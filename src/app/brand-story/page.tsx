@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import BrandStoryClient from './BrandStoryClient';
+import type { ShowroomData } from '@/app/showroom/page';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,8 +87,13 @@ export interface BrandStoryData {
 
 export default async function BrandStoryPage() {
   // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
-  const pagesData = await readSingleUncached<{ aboutAgarwood: unknown; brandStory: BrandStoryData }>('pages');
+  const pagesData = await readSingleUncached<{
+    aboutAgarwood: unknown;
+    brandStory: BrandStoryData;
+    showroom?: ShowroomData;
+  }>('pages');
   const data: BrandStoryData | null = pagesData?.brandStory ?? null;
+  const showroom: ShowroomData | null = pagesData?.showroom ?? null;
 
   // AboutPage JSON-LD — 브랜드 개요 엔티티. AI Overview 가 회사 기원·규모를 직접 인용.
   const aboutPageJsonLd = {
@@ -154,7 +160,7 @@ export default async function BrandStoryPage() {
       <JsonLd data={aboutPageJsonLd} />
       {videoJsonLd && <JsonLd data={videoJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />
-      <BrandStoryClient data={data} />
+      <BrandStoryClient data={data} showroom={showroom} />
     </>
   );
 }
