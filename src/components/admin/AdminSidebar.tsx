@@ -132,8 +132,8 @@ export default function AdminSidebar() {
       >
         {/* Logo */}
         <div className="flex flex-col items-center gap-1 border-b border-gold-900/40 px-6 py-8">
-          <span className="font-display text-3xl tracking-wider text-gold-500">大羅天</span>
-          <span className="text-xs font-medium tracking-[0.3em] text-gold-700">ADMIN</span>
+          <span className="font-display text-3xl tracking-wider text-gold-400 antialiased">大羅天</span>
+          <span className="text-xs font-semibold tracking-[0.3em] text-gold-500 antialiased">ADMIN</span>
         </div>
 
         {/* Navigation */}
