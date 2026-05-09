@@ -61,7 +61,7 @@ export default function VariantSelector({ variants, basePrice, basePriceDisplay 
                     isSelected ? 'border-gold-500 bg-gold-500' : 'border-neutral-300'
                   }`}
                 />
-                <span className="text-sm text-neutral-800">{v.label || '옵션'}</span>
+                <span className="text-sm text-white">{v.label || '옵션'}</span>
                 {!isAvailable && (
                   <span className="ml-2 text-[0.65rem] tracking-wider text-neutral-400">품절</span>
                 )}
