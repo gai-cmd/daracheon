@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { readSingleSafe } from '@/lib/db';
+import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import AboutAgarwoodClient from './AboutAgarwoodClient';
 
-// Admin 저장 즉시 반영을 위해 dynamic 렌더링 (CDN/ISR 캐시 우회).
-// readSingleSafe 는 내부적으로 unstable_cache + tag 무효화를 사용하므로
-// blob 비용은 admin 저장 시점에만 발생.
+// Admin 저장 / 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
+// readSingleUncached 는 unstable_cache 우회하므로 blob 1 회 read 비용은
+// 페이지 요청마다 발생하지만, 라이브 업데이트 신뢰성이 우선.
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -166,7 +166,7 @@ export interface AboutAgarwoodData {
 }
 
 export default async function AboutAgarwoodPage() {
-  const pagesData = await readSingleSafe<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
+  const pagesData = await readSingleUncached<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
   const data: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
 
   // ScholarlyArticle JSON-LD — 검증된 논문 데이터(저자·연도·저널·링크
