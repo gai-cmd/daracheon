@@ -130,11 +130,49 @@ export default function AdminSidebar() {
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-1 border-b border-gold-900/40 px-6 py-8">
-          <span className="font-display text-3xl tracking-wider text-gold-500">大羅天</span>
-          <span className="text-xs font-medium tracking-[0.3em] text-gold-700">ADMIN</span>
-        </div>
+        {/* Logo — 인라인 스타일로 강제 (Tailwind/admin 테마 override 무시) */}
+        <Link
+          href="/admin"
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+            padding: '20px 24px',
+            background: 'linear-gradient(180deg, #2a1f0a 0%, #1a1a17 100%)',
+            borderBottom: '1px solid rgba(212, 168, 67, 0.35)',
+            textDecoration: 'none',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 26,
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              color: '#e9c97a',
+              lineHeight: 1.1,
+              textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+            }}
+          >
+            ZOEL LIFE
+          </span>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.4em',
+              color: '#1a1a17',
+              background: '#d4a843',
+              padding: '2px 10px',
+              borderRadius: 999,
+            }}
+          >
+            ADMIN
+          </span>
+        </Link>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-6">
