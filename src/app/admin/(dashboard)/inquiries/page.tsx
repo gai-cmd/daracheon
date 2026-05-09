@@ -243,32 +243,33 @@ export default function InquiriesPage() {
   async function handleBulkStatusChange() {
     if (selectedIds.size === 0) return;
     setIsBulkLoading(true);
-    // 직렬 처리 필수 — PATCH 가 read-modify-write(전체 inquiries 배열) 라서
-    // Promise.all 로 동시에 쏘면 stale read 끼리 덮어써 마지막 1건만 남는다.
-    // (audit-log 도 같은 패턴이라 로그도 동시 호출 시 1건만 남음.)
-    let okCount = 0;
-    const failedIds: string[] = [];
+    // 서버측 batch 엔드포인트 — ids[] 를 한 번의 read-modify-write 로 처리.
+    // 클라이언트 직렬화로는 cross-Lambda race(Vercel Blob list propagation
+    // lag) 를 못 막아서, 같은 Lambda 인스턴스 내에서 끝내는 게 유일한 방법.
     try {
-      for (const id of selectedIds) {
-        const res = await fetch('/api/admin/inquiries', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, status: bulkStatus }),
-        });
-        if (res.ok) okCount += 1;
-        else failedIds.push(id);
+      const ids = Array.from(selectedIds);
+      const res = await fetch('/api/admin/inquiries', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, status: bulkStatus }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data?.success === false) {
+        throw new Error(data?.message || `HTTP ${res.status}`);
       }
-      if (failedIds.length === 0) {
-        setToast(`${okCount}건을 "${statusLabel[bulkStatus]}"(으)로 변경했습니다.`);
-      } else {
-        setToast(`${okCount}건 변경 완료, ${failedIds.length}건 실패`);
-        console.error('Bulk status partial failure:', failedIds);
-      }
+      const updated = Array.isArray(data?.updatedIds) ? data.updatedIds.length : ids.length;
+      const missing = Array.isArray(data?.notFoundIds) ? data.notFoundIds.length : 0;
+      setToast(
+        missing
+          ? `${updated}건 변경 완료, ${missing}건 누락`
+          : `${updated}건을 "${statusLabel[bulkStatus]}"(으)로 변경했습니다.`,
+      );
       setSelectedIds(new Set());
       await fetchInquiries();
     } catch (err) {
       console.error('Bulk status error:', err);
-      setToast('일괄 변경에 실패했습니다.');
+      const msg = err instanceof Error ? err.message : '오류';
+      setToast(`일괄 변경 실패: ${msg}`);
     } finally {
       setIsBulkLoading(false);
     }

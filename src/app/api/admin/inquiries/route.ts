@@ -51,6 +51,50 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json();
 
+    // Bulk path: body.ids = string[]. 같은 Lambda 인스턴스에서 1번의
+    // read-modify-write 로 N건 처리 → Vercel Blob 의 list() propagation
+    // lag 으로 인한 cross-Lambda race 차단 (단일 PATCH 직렬화로는 못 막음).
+    if (Array.isArray(body.ids)) {
+      if (body.ids.length === 0) {
+        return NextResponse.json(
+          { success: false, message: 'ids 배열이 비어있습니다.' },
+          { status: 400, headers: NO_STORE_HEADERS },
+        );
+      }
+      if (!body.status || !validStatuses.includes(body.status)) {
+        return NextResponse.json(
+          { success: false, message: `유효하지 않은 상태: ${validStatuses.join(', ')}` },
+          { status: 400, headers: NO_STORE_HEADERS },
+        );
+      }
+      const ids: string[] = body.ids.filter((x: unknown): x is string => typeof x === 'string');
+      const inquiries = await readDataUncached('inquiries');
+      const updatedIds: string[] = [];
+      const notFoundIds: string[] = [];
+      for (const id of ids) {
+        const idx = inquiries.findIndex((inq) => inq.id === id);
+        if (idx === -1) { notFoundIds.push(id); continue; }
+        inquiries[idx] = { ...inquiries[idx], status: body.status };
+        updatedIds.push(id);
+      }
+      if (updatedIds.length > 0) {
+        await writeData('inquiries', inquiries);
+      }
+      await logAdmin('inquiries', 'status_change', {
+        summary: `문의 일괄 상태 변경: ${updatedIds.length}건 → ${body.status}`,
+        meta: { ids: updatedIds, notFoundIds, newStatus: body.status, count: updatedIds.length },
+      });
+      return NextResponse.json(
+        {
+          success: true,
+          message: `${updatedIds.length}건 상태 변경됨${notFoundIds.length ? `, ${notFoundIds.length}건 누락` : ''}`,
+          updatedIds,
+          notFoundIds,
+        },
+        { headers: NO_STORE_HEADERS },
+      );
+    }
+
     if (!body.id || typeof body.id !== 'string') {
       return NextResponse.json(
         { success: false, message: '문의 ID는 필수입니다.' },
