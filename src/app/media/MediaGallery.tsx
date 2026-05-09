@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from '@/styles/zoel/story-page.module.css';
 
@@ -397,7 +396,7 @@ export default function MediaGallery({
                   }}
                 >
                   {photos.map((item, pIdx) => (
-                    <Link key={item.id} href={`/media/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div key={item.id} style={{ color: 'inherit' }}>
                       <div
                         style={{
                           aspectRatio: '4/3',
@@ -424,7 +423,7 @@ export default function MediaGallery({
                           {item.source} · {item.date}
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               ) : (

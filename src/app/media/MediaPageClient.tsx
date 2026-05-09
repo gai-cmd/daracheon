@@ -70,7 +70,6 @@ export interface FarmStoryData {
     sections: CertSection[];
     images: string[];
     extraSection?: {
-      subtitle: string;
       images: string[];
     };
   };
@@ -399,7 +398,7 @@ export default function MediaPageClient({
                           <div
                             style={{
                               position: 'relative',
-                              aspectRatio: '16/9',
+                              aspectRatio: '1/1',
                               overflow: 'hidden',
                               background: '#000',
                               border: '1px solid rgba(212,168,67,0.18)',
@@ -524,20 +523,6 @@ export default function MediaPageClient({
                   </div>
                   {certifications.extraSection && certifications.extraSection.images.length > 0 && (
                     <div style={{ marginTop: 44 }}>
-                      <h4
-                        style={{
-                          fontFamily: "'Noto Serif KR', serif",
-                          fontSize: '1.2rem',
-                          fontWeight: 500,
-                          color: 'var(--accent)',
-                          letterSpacing: '0.04em',
-                          margin: '0 0 18px',
-                          paddingBottom: 10,
-                          borderBottom: '1px solid rgba(212,168,67,0.25)',
-                        }}
-                      >
-                        {certifications.extraSection.subtitle}
-                      </h4>
                       <div
                         style={{
                           display: 'grid',
@@ -545,7 +530,7 @@ export default function MediaPageClient({
                           gap: 14,
                         }}
                       >
-                        {certifications.extraSection.images.map((src, idx) => (
+                        {certifications.extraSection.images.map((src) => (
                           <div
                             key={src}
                             style={{
@@ -558,7 +543,7 @@ export default function MediaPageClient({
                           >
                             <Image
                               src={src}
-                              alt={`${certifications.extraSection!.subtitle} ${idx + 1}`}
+                              alt=""
                               fill
                               sizes="(max-width: 900px) 50vw, 240px"
                               style={{ objectFit: 'cover' }}

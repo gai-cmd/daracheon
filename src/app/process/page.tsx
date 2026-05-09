@@ -66,7 +66,6 @@ interface CertSection {
 }
 
 interface CertExtraSection {
-  subtitle?: string;
   images: string[];
 }
 
@@ -549,19 +548,6 @@ export default async function ProcessPage() {
 
               {certs.extraSection && certs.extraSection.images.length > 0 && (
                 <div style={{ marginTop: 56 }}>
-                  {certs.extraSection.subtitle && (
-                    <div
-                      style={{
-                        fontFamily: "'Noto Serif KR', serif",
-                        fontSize: '1.15rem',
-                        color: 'var(--accent)',
-                        letterSpacing: '0.04em',
-                        marginBottom: 18,
-                      }}
-                    >
-                      {certs.extraSection.subtitle}
-                    </div>
-                  )}
                   <div
                     style={{
                       display: 'grid',
@@ -569,7 +555,7 @@ export default async function ProcessPage() {
                       gap: 14,
                     }}
                   >
-                    {certs.extraSection.images.map((src, idx) => (
+                    {certs.extraSection.images.map((src) => (
                       <div
                         key={src}
                         style={{
@@ -582,7 +568,7 @@ export default async function ProcessPage() {
                       >
                         <Image
                           src={src}
-                          alt={`${certs.extraSection?.subtitle ?? '대라천 참침향'} ${idx + 1}`}
+                          alt=""
                           fill
                           sizes="(max-width: 900px) 50vw, 280px"
                           style={{ objectFit: 'cover' }}
