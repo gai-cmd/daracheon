@@ -94,9 +94,12 @@ export async function generateMetadata(): Promise<Metadata> {
   // env 미설정 시에도 기본값으로 인증이 유지되도록 하드코딩 fallback.
   // (다른 GSC 속성에서 재발급 시 GOOGLE_SITE_VERIFICATION env 로 덮어쓰기.)
   const GSC_DEFAULT = 'RvjwX2kdcOYXh_k3fkUKGQc-r_N_Yby-kb2Vb3lywpM';
+  // Naver 웹마스터도구 사이트 소유확인 토큰 — zoellife.com 등록용.
+  // 재발급 시 NAVER_SITE_VERIFICATION env 로 덮어쓰기.
+  const NAVER_DEFAULT = '78f6f8ac415595d6b1d9e8e33fca157f8194e05f';
   const verificationEntries = (() => {
     const google = process.env.GOOGLE_SITE_VERIFICATION || GSC_DEFAULT;
-    const naver = process.env.NAVER_SITE_VERIFICATION;
+    const naver = process.env.NAVER_SITE_VERIFICATION || NAVER_DEFAULT;
     const bing = process.env.BING_SITE_VERIFICATION;
     const v: { google?: string; other?: Record<string, string | string[]> } = {};
     if (google) v.google = google;
