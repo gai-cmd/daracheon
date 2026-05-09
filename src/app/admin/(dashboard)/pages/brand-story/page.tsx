@@ -58,6 +58,16 @@ interface ProcessGroup {
   photos?: ProcessPhoto[];
 }
 
+/* Showroom — pages.showroom 과 데이터 공유. 공개 /brand-story 의 03 SHOWROOM
+   챕터에도 동일하게 표시되므로 brand-story 편집기 안에서 인라인으로 관리. */
+interface ShowroomGalleryItem { src: string; alt?: string; caption?: string }
+interface ShowroomData {
+  hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
+  intro: { tag: string; title: string; body: string };
+  visit: { address: string; addressEn: string; hours: string; note: string };
+  gallery: ShowroomGalleryItem[];
+}
+
 interface BrandStoryData {
   hero: {
     sectionTag: string;
@@ -319,6 +329,29 @@ export default function AdminBrandStoryPage() {
       },
     ],
   });
+
+  // Showroom — pages.showroom 과 별개 blob key 로 저장. 공개 /brand-story
+  // 의 03 SHOWROOM 챕터와 /showroom 페이지 모두 동일 소스 사용.
+  const [showroomHero, setShowroomHero] = useState<ShowroomData['hero']>({
+    sectionTag: '대라천 침향 전시장 · ZOEL LIFE Showroom',
+    titleKr: "대라천 '참'침향 전시장",
+    titleEn: 'Daracheon Agarwood Showroom',
+    subtitle: '베트남 직영 본관 — 침향 원목·증류·시향까지 한 공간에.',
+    heroBg: '',
+  });
+  const [showroomIntro, setShowroomIntro] = useState<ShowroomData['intro']>({
+    tag: 'THE SHOWROOM',
+    title: '천년의 향기를 직접 체험하는 공간',
+    body: '',
+  });
+  const [showroomVisit, setShowroomVisit] = useState<ShowroomData['visit']>({
+    address: '베트남 동나이성 직영 본관',
+    addressEn: 'Dong Nai Province, Vietnam',
+    hours: '연중무휴 10:00 – 18:00 (사전 예약 권장)',
+    note: '한국어 통역 도슨트 동행 가능. 사전 예약은 회사소개 페이지의 문의 양식을 이용해 주세요.',
+  });
+  const [showroomGallery, setShowroomGallery] = useState<ShowroomGalleryItem[]>([]);
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -335,9 +368,14 @@ export default function AdminBrandStoryPage() {
         // 폼 전체가 빈칸으로 렌더링되던 버그가 있었음. 옵셔널 체이닝 + 기본값
         // fallback 으로 방어.
         const raw = (await res.json().catch(() => ({}))) as {
-          pages?: { brandStory?: Partial<BrandStoryData> };
+          pages?: { brandStory?: Partial<BrandStoryData>; showroom?: Partial<ShowroomData> };
         };
         const d = raw?.pages?.brandStory;
+        const s = raw?.pages?.showroom;
+        if (s?.hero) setShowroomHero((prev) => ({ ...prev, ...s.hero }));
+        if (s?.intro) setShowroomIntro((prev) => ({ ...prev, ...s.intro }));
+        if (s?.visit) setShowroomVisit((prev) => ({ ...prev, ...s.visit }));
+        if (Array.isArray(s?.gallery)) setShowroomGallery(s.gallery);
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
@@ -407,6 +445,31 @@ export default function AdminBrandStoryPage() {
     }
   }
 
+  // Showroom 은 별도 blob key('showroom') 에 저장. brandStory 와 분리해야
+  // /admin/pages/showroom 편집기와도 충돌 없이 양방향으로 작동.
+  async function saveShowroomSection(sectionKey: string, payload: Partial<ShowroomData>) {
+    setSaving(`showroom-${sectionKey}`);
+    try {
+      const res = await fetch('/api/admin/pages');
+      const existing = (await res.json().catch(() => ({}))) as {
+        pages?: { showroom?: Partial<ShowroomData> };
+      };
+      const prev = existing?.pages?.showroom ?? {};
+      const merged = { ...prev, ...payload };
+      const result = await saveAdminPage('showroom', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
+    } catch (err) {
+      console.error(`Save showroom-${sectionKey} error:`, err);
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
+    } finally {
+      setSaving(null);
+    }
+  }
+
   function moveItem<T>(arr: T[], from: number, to: number): T[] {
     if (to < 0 || to >= arr.length) return arr;
     const next = [...arr];
@@ -450,17 +513,7 @@ export default function AdminBrandStoryPage() {
 
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">브랜드 이야기 편집</h1>
-        <p className="text-gray-500 mb-2">/brand-story 공개 페이지의 콘텐츠를 관리합니다.</p>
-        {/* 공개 페이지의 03 SHOWROOM 챕터는 쇼룸 편집기와 데이터 공유 — 검색 동선 안내. */}
-        <div className="mb-8 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900 flex items-center gap-3">
-          <span>ℹ️ 공개 페이지의 <strong>03 SHOWROOM</strong> 챕터(사진 · 소개 · 방문 안내)는 별도 편집기에서 관리합니다.</span>
-          <a
-            href="/admin/pages/showroom"
-            className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-amber-600 text-white font-medium hover:bg-amber-700 whitespace-nowrap"
-          >
-            쇼룸 편집기 열기 →
-          </a>
-        </div>
+        <p className="text-gray-500 mb-8">/brand-story 공개 페이지의 콘텐츠를 관리합니다.</p>
 
         {/* Admin Tab Bar */}
         <div className="flex gap-0 flex-wrap border-b border-gray-200 mb-8 overflow-x-auto">
@@ -610,6 +663,111 @@ export default function AdminBrandStoryPage() {
                   </button>
                 </div>
               </div>
+            </div>
+          </SectionCard>
+
+          {/* ─────────────────────────────────────────────
+              03 SHOWROOM — pages.showroom 과 데이터 공유.
+              공개 /brand-story 의 03 SHOWROOM 챕터, /showroom 페이지에 동시 반영.
+          ───────────────────────────────────────────── */}
+          <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+            ℹ️ 아래 <strong>03 SHOWROOM</strong> 섹션은 <span className="font-mono">/brand-story</span>의 03 챕터와 <span className="font-mono">/showroom</span> 페이지에 동시에 반영됩니다.
+          </div>
+
+          {/* Showroom Hero */}
+          <SectionCard
+            title="03 SHOWROOM · Hero"
+            onSave={() => saveShowroomSection('hero', { hero: showroomHero })}
+            saving={saving === 'showroom-hero'}
+          >
+            <div className="space-y-5">
+              <LabeledInput label="섹션 태그" value={showroomHero.sectionTag} onChange={(v) => setShowroomHero({ ...showroomHero, sectionTag: v })} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="제목 (한글)" value={showroomHero.titleKr} onChange={(v) => setShowroomHero({ ...showroomHero, titleKr: v })} />
+                <LabeledInput label="제목 (영문)" value={showroomHero.titleEn ?? ''} onChange={(v) => setShowroomHero({ ...showroomHero, titleEn: v })} />
+              </div>
+              <LabeledTextarea label="부제목" value={showroomHero.subtitle} onChange={(v) => setShowroomHero({ ...showroomHero, subtitle: v })} />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">배경 이미지</label>
+                <ImageUploadField value={showroomHero.heroBg} onChange={(url) => setShowroomHero({ ...showroomHero, heroBg: url })} subdir="showroom" />
+              </div>
+            </div>
+          </SectionCard>
+
+          {/* Showroom Intro */}
+          <SectionCard
+            title="03 SHOWROOM · 소개 (THE SHOWROOM)"
+            onSave={() => saveShowroomSection('intro', { intro: showroomIntro })}
+            saving={saving === 'showroom-intro'}
+          >
+            <div className="space-y-5">
+              <LabeledInput label="태그" value={showroomIntro.tag} onChange={(v) => setShowroomIntro({ ...showroomIntro, tag: v })} />
+              <LabeledInput label="제목" value={showroomIntro.title} onChange={(v) => setShowroomIntro({ ...showroomIntro, title: v })} />
+              <LabeledTextarea label="본문" value={showroomIntro.body} onChange={(v) => setShowroomIntro({ ...showroomIntro, body: v })} rows={8} />
+            </div>
+          </SectionCard>
+
+          {/* Showroom Visit */}
+          <SectionCard
+            title="03 SHOWROOM · 방문 안내"
+            onSave={() => saveShowroomSection('visit', { visit: showroomVisit })}
+            saving={saving === 'showroom-visit'}
+          >
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="주소 (한글)" value={showroomVisit.address} onChange={(v) => setShowroomVisit({ ...showroomVisit, address: v })} />
+                <LabeledInput label="주소 (영문)" value={showroomVisit.addressEn} onChange={(v) => setShowroomVisit({ ...showroomVisit, addressEn: v })} />
+              </div>
+              <LabeledInput label="운영시간" value={showroomVisit.hours} onChange={(v) => setShowroomVisit({ ...showroomVisit, hours: v })} />
+              <LabeledTextarea label="방문 안내 메모" value={showroomVisit.note} onChange={(v) => setShowroomVisit({ ...showroomVisit, note: v })} rows={3} />
+            </div>
+          </SectionCard>
+
+          {/* Showroom Gallery */}
+          <SectionCard
+            title={`03 SHOWROOM · 갤러리 · ${showroomGallery.length}장`}
+            onSave={() => saveShowroomSection('gallery', { gallery: showroomGallery })}
+            saving={saving === 'showroom-gallery'}
+          >
+            <div className="space-y-4">
+              {showroomGallery.map((item, i) => (
+                <div key={i} className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-600">SCENE {String(i + 1).padStart(2, '0')}</span>
+                    <div className="flex gap-1">
+                      <button type="button" onClick={() => setShowroomGallery(moveItem(showroomGallery, i, i - 1))} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                      <button type="button" onClick={() => setShowroomGallery(moveItem(showroomGallery, i, i + 1))} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                      <button type="button" onClick={() => setShowroomGallery(removeItem(showroomGallery, i))} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                    </div>
+                  </div>
+                  <ImageUploadField
+                    value={item.src}
+                    onChange={(url) => { const n = [...showroomGallery]; n[i] = { ...n[i], src: url }; setShowroomGallery(n); }}
+                    subdir="showroom"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                    <input
+                      placeholder="alt 텍스트 (검색엔진/접근성)"
+                      value={item.alt ?? ''}
+                      onChange={(e) => { const n = [...showroomGallery]; n[i] = { ...n[i], alt: e.target.value }; setShowroomGallery(n); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                    />
+                    <input
+                      placeholder="캡션 (선택, 호버/라이트박스에 표시)"
+                      value={item.caption ?? ''}
+                      onChange={(e) => { const n = [...showroomGallery]; n[i] = { ...n[i], caption: e.target.value }; setShowroomGallery(n); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setShowroomGallery([...showroomGallery, { src: '', alt: '', caption: '' }])}
+                className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+              >
+                + 사진 추가
+              </button>
             </div>
           </SectionCard>
 
