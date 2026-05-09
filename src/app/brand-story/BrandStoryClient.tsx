@@ -689,7 +689,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   {/* 공정 사진 갤러리 — 그룹별 photos[] 가 있을 때만 노출 */}
                   {Array.isArray(group.photos) && group.photos.length > 0 && (
                     <div className={styles.processPhotoGallery}>
-                      <div className={styles.processPhotoGalleryLabel}>{group.titleEn || 'PHOTOS'} · 현장 사진</div>
+                      <div className={styles.processPhotoGalleryLabel}>{group.titleEn || 'PHOTOS'} · 현장 이미지</div>
                       <div className={styles.processPhotoGrid}>
                         {group.photos.map((p, pi) => (
                           <figure key={pi} className={styles.processPhotoItem}>
