@@ -1203,7 +1203,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                 </span>
                                 {paper.citations && paper.citations !== '-' && (
                                   <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
-                                    cited {paper.citations}
+                                    인용 {paper.citations}
                                   </span>
                                 )}
                               </div>
@@ -1604,7 +1604,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               {paperSummaryOpen.citations && paperSummaryOpen.citations !== '-' && (
                 <>
                   <span aria-hidden style={{ color: 'rgba(212,168,67,0.4)' }}>·</span>
-                  <span>cited {paperSummaryOpen.citations}</span>
+                  <span>인용 {paperSummaryOpen.citations}</span>
                 </>
               )}
             </div>
