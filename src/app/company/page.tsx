@@ -16,7 +16,7 @@ interface FaqItemWithMeta extends FaqItem {
 export const metadata: Metadata = {
   title: '회사소개 — 조엘라이프(주)',
   description:
-    '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 1998년 캄보디아에서 시작, 베트남 하띤성 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지 완벽한 가치사슬을 구축한 프리미엄 침향 전문 브랜드.',
+    '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 베트남 하띤성 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지 완벽한 가치사슬을 구축한 프리미엄 침향 전문 브랜드.',
   keywords: [
     '대라천', '대라천 회사', '대라천 본사', 'ZOEL LIFE', 'ZOEL LIFE 회사', '조엘라이프', '조엘라이프 회사소개',
     '침향 회사', '침향 전문 회사', '침향 브랜드 회사',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     title: '회사소개 — 조엘라이프(주) ZOEL LIFE',
-    description: '1998년 캄보디아에서 시작, 베트남 하띤 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지의 프리미엄 침향 전문 브랜드 조엘라이프 회사 소개.',
+    description: '베트남 하띤 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지의 프리미엄 침향 전문 브랜드 조엘라이프 회사 소개.',
     url: 'https://zoellife.com/company',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',

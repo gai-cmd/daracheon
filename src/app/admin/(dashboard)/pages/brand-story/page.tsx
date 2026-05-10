@@ -195,7 +195,7 @@ export default function AdminBrandStoryPage() {
     sourceTag: 'THE SOURCE',
     sourceTitle: '',
     sourceBody:
-      '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+      '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
   });
   const [farms, setFarms] = useState<Farm[]>([
     { name: '하띤', nameVi: 'Ha Tinh', desc: '메인 대규모 농장 (200ha)' },
@@ -209,14 +209,13 @@ export default function AdminBrandStoryPage() {
     title: '대라천 침향 역사',
     eras: [
       {
-        era: '1998-2001',
+        era: '2000-2001',
         items: [
-          '1998 캄보디아 침향사업 시작',
           '2000 베트남 5개 성 농장 조성',
           '2001 동나이성 대규모 식재',
         ],
         description:
-          "1998년 캄보디아에서 침향사업을 시작한 이래, 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년에는 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했습니다. 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다.",
+          "대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했고, 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다.",
       },
       {
         era: '2014-2019',
@@ -669,7 +668,7 @@ export default function AdminBrandStoryPage() {
                         <label className="block text-xs text-gray-500 mb-1">시대 설명 문단 (선택) — 항목 아래에 단락으로 표시됩니다</label>
                         <textarea
                           rows={4}
-                          placeholder="예: 1998년 캄보디아에서 침향사업을 시작한 이래, 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다..."
+                          placeholder="예: 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했습니다..."
                           value={era.description ?? ''}
                           onChange={(e) => { const n = [...historyTab.eras]; n[eraIdx] = { ...n[eraIdx], description: e.target.value }; setHistoryTab({ ...historyTab, eras: n }); }}
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"

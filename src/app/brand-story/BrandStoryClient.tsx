@@ -310,7 +310,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 <div className={styles.line} style={{ margin: '24px 0' }} />
                 <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
                   {brandStoryTab?.sourceBody ??
-                    '1998년 캄보디아에서 시작된 대라천의 여정.\n\n2000년에는 베트남 5개 성(하띤·동나이·냐짱·푸국·람동)으로 확장되었습니다.'}
+                    '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며 25년 동안 가꿔왔습니다.'}
                 </p>
               </div>
             </div>

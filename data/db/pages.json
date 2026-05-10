@@ -3,7 +3,7 @@
     "hero": {
       "sectionTag": "브랜드 스토리 · Brand Story",
       "titleKr": "100%  베트남산,",
-      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닙니다. 수천 년의 시간을 지나며 검증된 침향의 신뢰를 담았습니다. 25년 이상을 오직 침향 한 길만 연구하고 지켜온 정직과 성실, 그리고 자연이 오랜 시간에 걸쳐 빚어낸 기다림의 결실을 여러분께 온전히 전해 드립니다. ",
+      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닙니다. 수천 년의 시간을 지나며 검증된 침향의 신뢰를 담았습니다. 25년 이상을 오직 침향 한 길만 연구하고 지켜온 정직과 성실, 그리고 자연이 오랜 시간에 걸쳐 빚어낸 기다림의 결실을 여러분께 온전히 전해 드립니다.",
       "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg",
       "titleEn": "아갈로차 침향만 고집"
     },
@@ -62,9 +62,8 @@
       "title": "한 눈에 보는 대라천 침향 역사",
       "eras": [
         {
-          "era": "1998-2001",
+          "era": "2000-2001",
           "items": [
-            "1998 침향 사업 시작",
             "2000 베트남 5개 지역에 농장 조성 및 본격적인 침향 재배 시작",
             "2001  동나이성에 대규모 식재 진행"
           ],
@@ -292,20 +291,20 @@
       "images": [],
       "stats": [
         {
-          "value": "400만+",
-          "label": "하띤 직영 농장 침향나무"
+          "value": "400만 그루 +",
+          "label": "베트남 직영 농장 침향나무"
         },
         {
-          "value": "#12835",
-          "label": "수지유도 특허"
+          "value": "식용 가능 수지",
+          "label": "천연 수지 유도제 특허"
         },
         {
-          "value": "72h",
-          "label": "고온 증류 공정"
+          "value": "72시간",
+          "label": "오일 추출 증류 공정"
         },
         {
-          "value": "26+",
-          "label": "식목부터 출고까지 (년)"
+          "value": "26년 +",
+          "label": "식목부터 출고까지 기간"
         }
       ],
       "steps": [],
@@ -319,7 +318,7 @@
             {
               "step": "01",
               "name": "천연목 식목",
-              "duration": "최소 20년",
+              "duration": "최소 20년 이상",
               "desc": "Aquilaria Agallocha Roxburgh 묘목",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-01-%EC%B2%9C%EC%97%B0%EB%AA%A9_%EC%8B%9D%EB%AA%A9.png"
             },
@@ -327,49 +326,49 @@
               "step": "02",
               "name": "유기농 관리",
               "duration": "5~20년 이상",
-              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수",
+              "desc": "유기농 인증 기준(TCVN 11041-2:2017)",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-02-%EC%9C%A0%EA%B8%B0%EB%86%8D_%EA%B4%80%EB%A6%AC.png"
             },
             {
               "step": "03",
               "name": "수지 앉힘",
               "duration": "특허 #12835",
-              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-03-%EC%88%98%EC%A7%80_%EC%95%89%ED%9E%98.png"
+              "desc": "식용 가능 천연 수지유도제로 수지 형성",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-farm-03-resin-induction.png"
             },
             {
               "step": "04",
               "name": "수지 관리",
               "duration": "2~10년",
-              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리",
+              "desc": "수지 형성 상태 모니터링, 품질 관리",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-04-%EC%88%98%EC%A7%80_%EA%B4%80%EB%A6%AC.png"
             },
             {
               "step": "05",
               "name": "침향(수지) 검사",
-              "duration": "수시",
+              "duration": "수시로 확인 관리",
               "desc": "수지 형성 상태 확인 및 등급 판정",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-05-%EC%B9%A8%ED%96%A5_%EC%88%98%EC%A7%80_%EA%B2%80%EC%82%AC.png"
             },
             {
               "step": "06",
               "name": "침향 수확",
-              "duration": "숙성 확인 후",
-              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-06-%EC%B9%A8%ED%96%A5_%EC%88%98%ED%99%95.png"
+              "duration": "체계별 수확 관리 시스템",
+              "desc": "GPS 번호 추적 체계로 나무별 이력 확인",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-farm-06-harvest.png"
             },
             {
               "step": "07",
               "name": "선별 가공",
               "duration": "고품질 침향 선별",
-              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공",
+              "desc": "침향을 등급별 선별하고 초벌 가공",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-07-%EC%84%A0%EB%B3%84_%EA%B0%80%EA%B3%B5.png"
             },
             {
               "step": "08",
               "name": "완제품",
               "duration": "최종 품질 검사",
-              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고",
+              "desc": "최종 품질 검사 후 이력 부착 후 출고",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-08-%EC%99%84%EC%A0%9C%ED%92%88.png"
             }
           ]
@@ -379,14 +378,39 @@
           "titleEn": "OIL PRODUCTION",
           "description": "",
           "image": "",
-          "photos": [],
+          "photos": [
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-01-intake.png",
+              "caption": "원목 입고 - 5개 지역 직영 공장"
+            },
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-02-wash.png",
+              "caption": "세척 - 표피·외부 오염물 제거"
+            },
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-03-cut.png",
+              "caption": "절단 - 천공부 기준 10~20cm"
+            },
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-07-dry.png",
+              "caption": "건조 - 자연광 건조"
+            },
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-11-distill.png",
+              "caption": "고온 증류 - 72시간 연속 가동"
+            },
+            {
+              "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-13-ship.png",
+              "caption": "검사 및 출고 - 중금속 8종 불검출"
+            }
+          ],
           "steps": [
             {
               "step": "01",
               "name": "원목 입고",
               "duration": "로트 번호",
               "desc": "수지가 앉혀진 침향목을 공장으로 입고",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-01-%EC%9B%90%EB%AA%A9_%EC%9E%85%EA%B3%A0.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-01-intake.png"
             },
             {
               "step": "02",
@@ -407,14 +431,14 @@
               "name": "수지목 분리",
               "duration": "수지 침착부위",
               "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-04-%EC%88%98%EC%A7%80%EB%AA%A9_%EB%B6%84%EB%A6%AC.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-04-resin-separation.png"
             },
             {
               "step": "05",
               "name": "이물질 제거",
               "duration": "정밀 수작업",
               "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-05-%EC%9D%B4%EB%AC%BC%EC%A7%88_%EC%A0%9C%EA%B1%B0.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-05-debris-removal.png"
             },
             {
               "step": "06",
@@ -425,10 +449,10 @@
             },
             {
               "step": "07",
-              "name": "건조",
+              "name": "자연 건조",
               "duration": "자연광 건조",
               "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-07-%EA%B1%B4%EC%A1%B0.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-07-natural-dry.png"
             },
             {
               "step": "08",
@@ -1048,7 +1072,7 @@
           "outlet": "한국경제",
           "date": "2025.11",
           "title": "25년의 기록 — 대라천, 200ha 침향 숲을 일구다",
-          "summary": "1998년 캄보디아에서 시작된 침향 여정, 베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기."
+          "summary": "베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기."
         },
         {
           "outlet": "한국디자인진흥원",

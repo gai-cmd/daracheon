@@ -9,13 +9,13 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: "브랜드 스토리 — 대라천 '참'침향",
   description:
-    "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
+    "베트남 하띤성 200ha·400만 그루 규모의 직영 농장에서 25년 동안 가꿔온 대라천 '참'침향의 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
   keywords: [
     // 브랜드
     '대라천', '대라천 참침향', 'ZOEL LIFE', '조엘라이프', '대라천 브랜드 스토리', '大羅天', 'Đại La Thiên',
     // 원산지/농장
     '베트남 침향', '하띤성 농장', '베트남 하띤성 침향', '직영 농장 침향',
-    '200ha 농장', '400만 그루', '캄보디아 침향',
+    '200ha 농장', '400만 그루',
     // 학명/공정
     'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
     '침향 농장', '침향 생산 공정', '침향 재배', '침향 수지 유도',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "대라천 '참'침향 — 25년 여정",
-    description: '1998년 캄보디아에서 시작된 대라천 침향의 농장·공정·역사 이야기.',
+    description: '베트남 하띤성 200ha 직영 농장에서 25년 동안 가꿔온 대라천 침향의 농장·공정·역사 이야기.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg'],
   },
 };
@@ -138,7 +138,7 @@ export default async function BrandStoryPage() {
     '@type': 'AboutPage',
     name: "브랜드 스토리 — 대라천 '참'침향",
     description:
-      "1998년 캄보디아에서 시작, 베트남 하띤성 200ha·400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정.",
+      "베트남 하띤성 200ha·400만 그루 직영 농장에서 25년을 가꿔온 대라천 '참'침향의 여정.",
     url: 'https://zoellife.com/brand-story',
     about: {
       '@type': 'Organization',
@@ -180,7 +180,7 @@ export default async function BrandStoryPage() {
     '@type': 'Article',
     headline: "대라천 '참'침향 — 25년 브랜드 스토리",
     description:
-      "1998년 캄보디아 시작, 베트남 하띤성 200ha · 약 400만 그루 직영 농장으로 성장한 대라천 '참'침향의 25년 여정.",
+      "베트남 하띤성 200ha · 약 400만 그루 직영 농장에서 25년을 가꿔온 대라천 '참'침향의 여정.",
     inLanguage: 'ko-KR',
     isPartOf: { '@id': 'https://zoellife.com/#website' },
     author: { '@type': 'Organization', name: '대라천 ZOEL LIFE', url: 'https://zoellife.com' },

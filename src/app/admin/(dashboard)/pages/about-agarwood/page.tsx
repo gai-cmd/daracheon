@@ -384,7 +384,7 @@ export default function AdminAboutAgarwoodPage() {
         outlet: '한국경제',
         date: '2025.11',
         title: '25년의 기록 — 대라천, 200ha 침향 숲을 일구다',
-        summary: '1998년 캄보디아에서 시작된 침향 여정, 베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기.',
+        summary: '베트남 하띤성 200ha 부지 400만 그루의 직영 농장에서 25년을 가꿔온 대라천의 이야기.',
       },
       {
         outlet: '한국디자인진흥원',

@@ -18,7 +18,7 @@ export const agarwoodEditionKo: EditionContent = {
   foreword: {
     greeting: '귀한 시간을 내어 이 에디션을 펼쳐 주셔서 감사합니다.',
     body: [
-      '대라천은 1998년 캄보디아의 한 침향나무에서 시작되었습니다. 2000년 베트남 5개 성으로 자리를 옮긴 이후, 우리는 단 하나의 종 — Aquilaria Agallocha Roxburgh — 에만 25년을 바쳤습니다.',
+      '대라천은 베트남 5개 성(하띤·동나이·냐짱·푸국·람동) 직영 농장에서 단 하나의 종 — Aquilaria Agallocha Roxburgh — 에만 25년을 바쳤습니다.',
       "이 디지털 에디션은 그 25년의 기록을 한 권에 압축한 한정 자료입니다. 학명·산지·증빙. 이 세 가지로 진짜 침향을 가리는 방법을 페이지 너머로 전합니다.",
     ],
     signature: '대라천 · ZOEL LIFE',
@@ -29,14 +29,14 @@ export const agarwoodEditionKo: EditionContent = {
       num: '01',
       tag: 'Chapter I · Origin',
       title: '25년의 여정',
-      subtitle: '캄보디아의 한 그루에서 베트남 5개 성으로',
+      subtitle: '베트남 5개 성, 200ha 직영 침향 농장',
       body: [
-        '1998년, 대라천은 캄보디아의 한 침향나무에서 시작되었습니다. 그리고 2000년, 베트남 하띤(Hà Tĩnh) · 동나이(Đồng Nai) · 냐짱(Nha Trang) · 푸국(Phú Quốc) · 람동(Lâm Đồng) 5개 성으로 직영 농장을 확장했습니다.',
+        '대라천은 베트남 하띤(Hà Tĩnh) · 동나이(Đồng Nai) · 냐짱(Nha Trang) · 푸국(Phú Quốc) · 람동(Lâm Đồng) 5개 성에 자리한 직영 농장에서 25년 동안 침향을 가꿔왔습니다.',
         '오늘날 대라천은 200ha 부지에 400만 그루 이상의 침향나무를 직접 관리하고 있습니다. 25년 동안 함께 일해온 62가구의 베트남 현지 파트너 가족이 농장을 지키고 있으며, 그들에게는 베트남 현지 최고 수준의 의료·교육 복지가 제공됩니다.',
       ],
       highlights: [
-        { label: 'Started', value: '1998' },
-        { label: 'Farms', value: '5 Provinces' },
+        { label: 'Provinces', value: '5' },
+        { label: 'Farms', value: 'Direct' },
         { label: 'Land', value: '200ha' },
         { label: 'Trees', value: '4M+' },
       ],
