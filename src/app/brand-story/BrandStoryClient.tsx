@@ -789,6 +789,72 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                       }}>
                         {cert.nameEn}
                       </p>
+                      {(cert.certNumber || cert.issuer || cert.validity) && (
+                        <div style={{
+                          marginTop: 8,
+                          paddingTop: 8,
+                          borderTop: `1px dashed ${accentColor}33`,
+                          textAlign: 'left',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 4,
+                        }}>
+                          {cert.certNumber && (
+                            <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                              <span style={{
+                                flexShrink: 0,
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '0.46rem',
+                                letterSpacing: '0.16em',
+                                color: `${accentColor}99`,
+                                textTransform: 'uppercase',
+                              }}>NO.</span>
+                              <span style={{
+                                fontSize: '0.6rem',
+                                lineHeight: 1.45,
+                                color: '#d4cdb4',
+                                wordBreak: 'break-word',
+                              }}>{cert.certNumber}</span>
+                            </div>
+                          )}
+                          {cert.issuer && (
+                            <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                              <span style={{
+                                flexShrink: 0,
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '0.46rem',
+                                letterSpacing: '0.16em',
+                                color: `${accentColor}99`,
+                                textTransform: 'uppercase',
+                              }}>발급</span>
+                              <span style={{
+                                fontSize: '0.6rem',
+                                lineHeight: 1.45,
+                                color: '#cfc9b3',
+                                wordBreak: 'break-word',
+                              }}>{cert.issuer}</span>
+                            </div>
+                          )}
+                          {cert.validity && (
+                            <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                              <span style={{
+                                flexShrink: 0,
+                                fontFamily: "'JetBrains Mono', monospace",
+                                fontSize: '0.46rem',
+                                letterSpacing: '0.16em',
+                                color: `${accentColor}99`,
+                                textTransform: 'uppercase',
+                              }}>기간</span>
+                              <span style={{
+                                fontSize: '0.6rem',
+                                lineHeight: 1.45,
+                                color: '#cfc9b3',
+                                wordBreak: 'break-word',
+                              }}>{cert.validity}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -827,10 +893,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                       marginTop: 30,
                       position: 'relative',
                       width: '100%',
-                      maxWidth: 520,
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      aspectRatio: '3/4',
+                      aspectRatio: '16/9',
                       border: '1px solid rgba(212,168,67,0.2)',
                       overflow: 'hidden',
                       background: '#0a0b10',
@@ -838,9 +901,9 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   >
                     <Image
                       src={tabHeroes.tab2}
-                      alt="생산 공정 — 동나이 사업소 침향 가공 현장"
+                      alt="생산 공정 — 대표 이미지"
                       fill
-                      sizes="(max-width: 540px) 100vw, 520px"
+                      sizes="(max-width: 768px) 100vw, 880px"
                       style={{ objectFit: 'cover', display: 'block' }}
                     />
                   </div>

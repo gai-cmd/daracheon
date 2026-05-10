@@ -101,87 +101,123 @@
       "certs": [
         {
           "name": "유기농 제품 인증서",
-          "nameEn": "Organic Product Certification",
+          "nameEn": "Organic Product Certification (TCVN 11041-1:2017)",
           "category": "유기농인증",
           "thumb": "https://drive.google.com/thumbnail?id=1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq/view"
+          "viewUrl": "https://drive.google.com/file/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq/view",
+          "certNumber": "TQC.19.1082-B (Phiên bản 02)",
+          "issuer": "TQC GLOBAL · Trung tâm Kiểm nghiệm và Chứng nhận TQC GLOBAL (베트남)",
+          "validity": "2024.07.30 ~ 2026.07.29 (재인증 1회·발효 2025.09.05)"
         },
         {
           "name": "유기농 원료 생산지역 인증서",
-          "nameEn": "Organic Raw Material Area",
+          "nameEn": "Organic Raw Material Area (TCVN 11041-2:2017)",
           "category": "유기농인증",
           "thumb": "https://drive.google.com/thumbnail?id=136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view"
+          "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view",
+          "certNumber": "TQC.19.1082-A (Phiên bản 02)",
+          "issuer": "TQC GLOBAL · Trung tâm Kiểm nghiệm và Chứng nhận TQC GLOBAL (베트남)",
+          "validity": "2024.07.30 ~ 2026.07.29 (재인증 1회·발효 2025.09.05)"
         },
         {
           "name": "수지유도제 특허 인증서",
           "nameEn": "Resin Inducer Patent #12835",
           "category": "특허",
           "thumb": "https://drive.google.com/thumbnail?id=1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw/view"
+          "viewUrl": "https://drive.google.com/file/d/1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw/view",
+          "certNumber": "Bằng độc quyền sáng chế #12835 (출원번호 1-2011-02401)",
+          "issuer": "Cục Sở hữu trí tuệ Việt Nam · 베트남 지식재산권청 (등록 결정 21889/QĐ-SHTT, 2014.04.08)",
+          "validity": "출원일(2011.09.12)로부터 20년 — 2031.09.12까지"
         },
         {
           "name": "야생동·식물 식재시설 인증서",
-          "nameEn": "Wild Plant Cultivation F.",
+          "nameEn": "Wild Plant Cultivation Facility Registration",
           "category": "품질인증",
           "thumb": "https://drive.google.com/thumbnail?id=1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view"
+          "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view",
+          "certNumber": "00.38/2016/GCN-QLBV&TTN",
+          "issuer": "Chi cục Kiểm lâm tỉnh Đồng Nai · 동나이성 산림보호국 (베트남 농업농촌개발부 산하)",
+          "validity": "2016.08.09 발급 (Aquilaria agallocha Roxburgh 식재시설 등록 — 별도 만료일 없음)"
         },
         {
           "name": "ISO 식품안전 경영시스템",
-          "nameEn": "ISO Food Safety Management",
+          "nameEn": "ISO 22000:2018 Food Safety Management",
           "category": "ISO인증",
           "thumb": "https://lh3.googleusercontent.com/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0=w600",
-          "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view"
+          "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view",
+          "certNumber": "HA 616 (Mã số 616-23-01/02)",
+          "issuer": "ISSQ · Viện Nghiên Cứu Phát Triển Tiêu Chuẩn Chất Lượng (VICAS 083 / IAF 인정, 한국 제조 파트너 VIHECO 발급)",
+          "validity": "2024.08.27 ~ 2026.12.19 (최초 인증 2023.12.20)"
         },
         {
           "name": "VN OCOP 품질보증서",
           "nameEn": "OCOP 4-Star Certificate",
           "category": "품질인증",
           "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
-          "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view"
+          "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view",
+          "certNumber": "Quyết định số 68/QĐ-UBND (DAERACHEON Agarwood Essential Oil)",
+          "issuer": "UBND tỉnh Đồng Nai · 동나이성 인민위원회 (베트남 정부 OCOP 제도)",
+          "validity": "2025.01.11 발급, 발급일로부터 36개월 — 2028.01.10까지"
         },
         {
           "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298375658-04e70813406b8d69b9d0.webp",
           "name": "FDA 등록증",
-          "nameEn": "Food and Drug Administration",
+          "nameEn": "U.S. FDA Food Facility Registration",
           "category": "품질인증",
-          "viewUrl": ""
+          "viewUrl": "",
+          "certNumber": "US FDA Registration #12466836220 (DUNS 556939963 · WG.2872762)",
+          "issuer": "U.S. Food and Drug Administration · 美 식품의약국 (US Agent: Willow Glen Consultancy)",
+          "validity": "2024.04.25 발급, 만료 2025.04.30 — 매 짝수년 갱신 사이클(차기 2026 갱신 진행)"
         },
         {
           "name": "ISO 품질경영시스템 인증서",
-          "nameEn": "ISO Quality Management System",
+          "nameEn": "ISO 13485:2016 Medical Device QMS",
           "category": "ISO인증",
           "thumb": "https://lh3.googleusercontent.com/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG=w600",
-          "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view"
+          "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view",
+          "certNumber": "YT 562 (Mã số 562-23-01/01)",
+          "issuer": "ISSQ · Viện Nghiên Cứu Phát Triển Tiêu Chuẩn Chất Lượng (한국 제조 파트너 VIHECO 발급)",
+          "validity": "2024.08.27 ~ 2026.12.19 (최초 인증 2021.03.19)"
         },
         {
           "name": "VN 농업총국 황금브랜드",
-          "nameEn": "Vietnam Golden Brand Award",
+          "nameEn": "Vietnam Golden Brand Award 2025",
           "category": "수상",
           "thumb": "https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w600",
-          "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view"
+          "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view",
+          "certNumber": "Thương Hiệu Vàng Nông Nghiệp Việt Nam 2025 (수상 브랜드: TRẦM HƯƠNG ĐẠI LA THIÊN)",
+          "issuer": "Tổng Hội Nông nghiệp và Phát triển Nông thôn Việt Nam · 베트남 농업농촌개발총회 (공동 주관 VECI)",
+          "validity": "2025.10.10 수상 (연간 시상 — 2025년도 인정)"
         },
         {
           "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298508022-192490b725d892d8bf60.webp",
           "name": "AAR품종확인서",
-          "nameEn": "Certificate of AAR Variety",
+          "nameEn": "Aquilaria agallocha Roxburgh Variety Confirmation",
           "category": "품질인증",
-          "viewUrl": ""
+          "viewUrl": "",
+          "certNumber": "VIHECO CEO 확인서 (제품: VIÊN NANG HƯƠNG ĐẠI LA THIÊN / DAERACHEON Fragrance Capsule)",
+          "issuer": "VIHECO Central Pharmaceutical JSC · CEO Nguyen Van Vinh 직인 확인 (제조사 자체 학명 보증)",
+          "validity": "2026.02.10 발급 (해당 Lot 제품 한정 보증서)"
         },
         {
           "name": "HACCP 인증서",
-          "nameEn": "HACCP Codex Alimentarius",
+          "nameEn": "HACCP Codex Alimentarius (TCVN 5603:2023, CXC 1-1969 rev. 2020)",
           "category": "품질인증",
           "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
-          "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view"
+          "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view",
+          "certNumber": "TQC.05.1082 (Phiên bản 01 · 최초 인증)",
+          "issuer": "TQC GLOBAL · Trung tâm Kiểm nghiệm và Chứng nhận TQC GLOBAL (베트남)",
+          "validity": "2025.09.05 ~ 2028.09.04 (3년 — 매년 사후관리 1·2회차 필수)"
         },
         {
           "name": "아시아 선도기업 10대 B.",
-          "nameEn": "Asia Top 10 Leading Brand",
+          "nameEn": "Asia Excellent Brand 2025 — Top 10",
           "category": "수상",
           "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
-          "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view"
+          "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view",
+          "certNumber": "Asia Excellent Brand No. XI-2025 (Quyết định 166/2025/QĐ-BTC)",
+          "issuer": "VEDSU 주관 / VECI 협력 · 아시아 우수 브랜드 평가위원회 (Asia Excellent Brand 위원회)",
+          "validity": "2025.06.28 수상 (Top 10 — 2025년도 인정)"
         }
       ],
       "sections": [
@@ -442,15 +478,13 @@
       "totalTimeValue": "26+ Years",
       "totalTimeDesc": "식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치",
       "paragraphs": [],
-      "heroImages": [
-        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-tab-hero-1778395292022.jpg"
-      ]
+      "heroImages": []
     },
     "sectionTag": "브랜드 스토리 · Brand Story",
     "tabHeroes": {
       "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab0-brand.png",
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab1-cert.png",
-      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-tab-hero-1778395292022.jpg"
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-hero-modern-1778398873.png"
     }
   },
   "aboutAgarwood": {

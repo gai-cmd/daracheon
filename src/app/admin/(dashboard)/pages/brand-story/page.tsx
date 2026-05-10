@@ -840,6 +840,26 @@ export default function AdminBrandStoryPage() {
                           className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                         />
                       </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <input
+                          placeholder="인증번호 (예: TQC.19.1082-B, #12835)"
+                          value={cert.certNumber ?? ''}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], certNumber: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="발급기관 (예: TQC GLOBAL, 베트남 지식재산권청)"
+                          value={cert.issuer ?? ''}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], issuer: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none sm:col-span-2"
+                        />
+                        <input
+                          placeholder="유효기간 (예: 2024.08.27 ~ 2026.12.19)"
+                          value={cert.validity ?? ''}
+                          onChange={(e) => { const n = [...certificationsTab.certs]; n[i] = { ...n[i], validity: e.target.value }; setCertificationsTab({ ...certificationsTab, certs: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none sm:col-span-2"
+                        />
+                      </div>
                       <div>
                         <label className="block text-xs text-gray-500 mb-1">인증서 이미지 (액자에 표시)</label>
                         <ImageUploadField
