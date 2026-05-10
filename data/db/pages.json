@@ -314,63 +314,55 @@
           "title": "침향 생산과정",
           "titleEn": "AGARWOOD PRODUCTION",
           "description": "좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다. 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 '참'침향은 당분간 누구도 흉내내기 어려운 '명품'이 될 것입니다.",
-          "image": "",
+          "image": "https://lh3.googleusercontent.com/d/1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g=w1280",
           "steps": [
             {
               "step": "01",
               "name": "천연목 식목",
               "duration": "최소 20년",
-              "desc": "Aquilaria Agallocha Roxburgh 묘목",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-01-%EC%B2%9C%EC%97%B0%EB%AA%A9_%EC%8B%9D%EB%AA%A9.png"
+              "desc": "Aquilaria Agallocha Roxburgh 묘목"
             },
             {
               "step": "02",
               "name": "유기농 관리",
               "duration": "5~20년 이상",
-              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-02-%EC%9C%A0%EA%B8%B0%EB%86%8D_%EA%B4%80%EB%A6%AC.png"
+              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수"
             },
             {
               "step": "03",
               "name": "수지 앉힘",
               "duration": "특허 #12835",
-              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-03-%EC%88%98%EC%A7%80_%EC%95%89%ED%9E%98.png"
+              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성"
             },
             {
               "step": "04",
               "name": "수지 관리",
               "duration": "2~10년",
-              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-04-%EC%88%98%EC%A7%80_%EA%B4%80%EB%A6%AC.png"
+              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리"
             },
             {
               "step": "05",
               "name": "침향(수지) 검사",
               "duration": "수시",
-              "desc": "수지 형성 상태 확인 및 등급 판정",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-05-%EC%B9%A8%ED%96%A5_%EC%88%98%EC%A7%80_%EA%B2%80%EC%82%AC.png"
+              "desc": "수지 형성 상태 확인 및 등급 판정"
             },
             {
               "step": "06",
               "name": "침향 수확",
               "duration": "숙성 확인 후",
-              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-06-%EC%B9%A8%ED%96%A5_%EC%88%98%ED%99%95.png"
+              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인"
             },
             {
               "step": "07",
               "name": "선별 가공",
               "duration": "고품질 침향 선별",
-              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-07-%EC%84%A0%EB%B3%84_%EA%B0%80%EA%B3%B5.png"
+              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공"
             },
             {
               "step": "08",
               "name": "완제품",
               "duration": "최종 품질 검사",
-              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-08-%EC%99%84%EC%A0%9C%ED%92%88.png"
+              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고"
             }
           ]
         },
@@ -378,92 +370,80 @@
           "title": "침향 오일 생산과정",
           "titleEn": "OIL PRODUCTION",
           "description": "",
-          "image": "",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg",
           "photos": [],
           "steps": [
             {
               "step": "01",
               "name": "원목 입고",
               "duration": "로트 번호",
-              "desc": "수지가 앉혀진 침향목을 공장으로 입고",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-01-%EC%9B%90%EB%AA%A9_%EC%9E%85%EA%B3%A0.png"
+              "desc": "수지가 앉혀진 침향목을 공장으로 입고"
             },
             {
               "step": "02",
               "name": "세척",
               "duration": "오염물 제거",
-              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-02-%EC%84%B8%EC%B2%99.png"
+              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거"
             },
             {
               "step": "03",
               "name": "절단",
               "duration": "10~20cm",
-              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-03-%EC%A0%88%EB%8B%A8.png"
+              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단"
             },
             {
               "step": "04",
               "name": "수지목 분리",
               "duration": "수지 침착부위",
-              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-04-%EC%88%98%EC%A7%80%EB%AA%A9_%EB%B6%84%EB%A6%AC.png"
+              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별"
             },
             {
               "step": "05",
               "name": "이물질 제거",
               "duration": "정밀 수작업",
-              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-05-%EC%9D%B4%EB%AC%BC%EC%A7%88_%EC%A0%9C%EA%B1%B0.png"
+              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거"
             },
             {
               "step": "06",
-              "name": "세척",
+              "name": "정밀 세척",
               "duration": "물세척 3회",
-              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-06-%EC%84%B8%EC%B2%99.png"
+              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인"
             },
             {
               "step": "07",
               "name": "건조",
               "duration": "자연광 건조",
-              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-07-%EA%B1%B4%EC%A1%B0.png"
+              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지"
             },
             {
               "step": "08",
               "name": "분쇄",
               "duration": "1~2mm 크기",
-              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-08-%EB%B6%84%EC%87%84.png"
+              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지"
             },
             {
               "step": "09",
               "name": "고온 증류법",
               "duration": "72시간",
-              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-09-%EA%B3%A0%EC%98%A8_%EC%A6%9D%EB%A5%98%EB%B2%95.png"
+              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출"
             },
             {
               "step": "10",
               "name": "수지 채취",
               "duration": "분리 채취",
-              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-10-%EC%88%98%EC%A7%80_%EC%B1%84%EC%B7%A8.png"
+              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리"
             },
             {
               "step": "11",
               "name": "숙성",
               "duration": "안정화",
-              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-11-%EC%88%99%EC%84%B1.png"
+              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화"
             },
             {
               "step": "12",
               "name": "검사 및 출고",
               "duration": "ISO/IEC 17025:2017",
-              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-12-%EA%B2%80%EC%82%AC_%EB%B0%8F_%EC%B6%9C%EA%B3%A0.png"
+              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고"
             }
           ]
         }
