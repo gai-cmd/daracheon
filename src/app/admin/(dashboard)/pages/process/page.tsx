@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import ImageUploadField from '@/components/admin/ImageUploadField';
-import VideoUploadField from '@/components/admin/VideoUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
 
 interface ProcessHero {
@@ -647,54 +646,18 @@ export default function AdminProcessPage() {
               <LabeledInput label="섹션 제목" value={videos.title} onChange={(v) => setVideos({ ...videos, title: v })} />
               <LabeledTextarea label="섹션 본문" value={videos.body} onChange={(v) => setVideos({ ...videos, body: v })} rows={3} />
 
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">영상 항목 ({videos.items.length})</label>
-                <p className="mb-2 text-xs text-gray-500">영상 파일을 업로드하거나 URL을 직접 입력하세요. (mp4 / webm / mov)</p>
-                <div className="space-y-4">
-                  {videos.items.map((v, i) => (
-                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                      <div className="mb-2 flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-600">영상 {i + 1}</span>
-                        <div className="flex gap-1">
-                          <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
-                          <button type="button" onClick={() => setVideos({ ...videos, items: moveItem(videos.items, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
-                          <button type="button" onClick={() => setVideos({ ...videos, items: removeIndex(videos.items, i) })} className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <input
-                          value={v.title}
-                          onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], title: e.target.value }; setVideos({ ...videos, items: n }); }}
-                          placeholder="영상 제목"
-                          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
-                        />
-                        <div>
-                          <label className="mb-1 block text-[11px] font-medium text-gray-500">촬영일 (YYYY-MM-DD)</label>
-                          <input
-                            type="date"
-                            value={v.date ?? ''}
-                            onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], date: e.target.value }; setVideos({ ...videos, items: n }); }}
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
-                          />
-                          <p className="mt-1 text-[11px] text-gray-400">갤러리(/media)에 표시되는 날짜. 비우면 업로드일 표기.</p>
-                        </div>
-                        <VideoUploadField
-                          value={v.src}
-                          onChange={(url) => { const n = [...videos.items]; n[i] = { ...n[i], src: url }; setVideos({ ...videos, items: n }); }}
-                        />
-                        <div>
-                          <label className="mb-1 block text-[11px] font-medium text-gray-500">썸네일 (선택)</label>
-                          <ImageUploadField
-                            value={v.thumbnail ?? ''}
-                            onChange={(url) => { const n = [...videos.items]; n[i] = { ...n[i], thumbnail: url }; setVideos({ ...videos, items: n }); }}
-                            subdir="media"
-                          />
-                          <p className="mt-1 text-[11px] text-gray-400">비우면 영상 첫 프레임을 자동 사용.</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => setVideos({ ...videos, items: [...videos.items, { src: '', title: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 영상 추가</button>
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start gap-2">
+                  <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="text-sm text-amber-900">
+                    <p className="font-medium">영상 항목 ({videos.items.length}편) 은 갤러리 탭에서 관리합니다.</p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      개별 영상 추가·삭제·제목·날짜·썸네일 편집은 상단의 <span className="font-mono">영상・사진 갤러리 관리</span> 탭 → <span className="font-mono">영상</span> 서브탭에서 진행하세요.
+                      여기에서는 섹션 헤더(번호·태그·제목·본문) 만 편집합니다.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
