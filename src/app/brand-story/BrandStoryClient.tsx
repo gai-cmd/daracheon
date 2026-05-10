@@ -878,6 +878,14 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               <div>
                 <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
                 <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
+
+                {/* Total time — subtitle 바로 아래로 이동 (이전 위치는 Stats 위) */}
+                <div className={styles.totalTime} style={{ marginTop: 28 }}>
+                  <div className={styles.totalLabel}>{processTab?.totalTimeLabel ?? 'TOTAL PROCESS TIME'}</div>
+                  <div className={styles.totalValue}>{processTab?.totalTimeValue ?? '26+ Years'}</div>
+                  <div className={styles.totalDesc}>{processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}</div>
+                </div>
+
                 {processHeroImages.length > 0 ? (
                   <div style={{ marginTop: 30 }}>
                     <ChapterCarousel
@@ -1003,12 +1011,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
             )}
 
-            {/* Total time */}
-            <div className={styles.totalTime}>
-              <div className={styles.totalLabel}>{processTab?.totalTimeLabel ?? 'TOTAL PROCESS TIME'}</div>
-              <div className={styles.totalValue}>{processTab?.totalTimeValue ?? '26+ Years'}</div>
-              <div className={styles.totalDesc}>{processTab?.totalTimeDesc ?? '식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치'}</div>
-            </div>
+            {/* (Total time 블록은 위로 이동 — subtitle 바로 아래) */}
 
             {/* Factory Footage 섹션은 /media 갤러리(01 영상 갤러리) 로 이동 */}
               </div>
