@@ -224,13 +224,6 @@ export default function AdminBrandStoryPage() {
     body: '',
     items: [],
   });
-  const [farms, setFarms] = useState<Farm[]>([
-    { name: '하띤', nameVi: 'Ha Tinh', desc: '메인 대규모 농장 (200ha)' },
-    { name: '동나이', nameVi: 'Dong Nai', desc: '전략 재배 거점' },
-    { name: '냐짱', nameVi: 'Nha Trang', desc: '고품질 원료 산지' },
-    { name: '푸국', nameVi: 'Phu Quoc', desc: '해양성 기후 재배지' },
-    { name: '람동', nameVi: 'Lam Dong', desc: '고산지대 특화 농장' },
-  ]);
   const [historyTab, setHistoryTab] = useState<BrandStoryData['historyTab']>({
     tag: 'HISTORY',
     title: '대라천 침향 역사',
@@ -419,7 +412,6 @@ export default function AdminBrandStoryPage() {
             items: Array.isArray(pv.items) ? pv.items : prev.items,
           }));
         }
-        if (d?.farms && Array.isArray(d.farms) && d.farms.length > 0) setFarms(d.farms);
         if (d?.historyTab) setHistoryTab({
           ...d.historyTab,
           eras: Array.isArray(d.historyTab.eras) ? d.historyTab.eras : [],
@@ -626,39 +618,8 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
-          {/* Farms */}
-          <SectionCard title="탭 1 · 브랜드 스토리 — 농장 네트워크" onSave={() => saveSection('farms', { farms })} saving={saving === 'farms'}>
-            <div className="space-y-4">
-              {farms.map((farm, i) => (
-                <div key={i} className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-600">농장 {i + 1}</span>
-                    <div className="flex gap-1">
-                      <button type="button" onClick={() => setFarms(moveItem(farms, i, i - 1))} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
-                      <button type="button" onClick={() => setFarms(moveItem(farms, i, i + 1))} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
-                      <button type="button" onClick={() => setFarms(removeItem(farms, i))} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-                    <input placeholder="농장명 (한글)" value={farm.name} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], name: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                    <input placeholder="농장명 (베트남어)" value={farm.nameVi} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], nameVi: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                    <input placeholder="설명" value={farm.desc} onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], desc: e.target.value }; setFarms(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">농장 사진 (선택)</label>
-                    <ImageUploadField
-                      value={farm.image ?? ''}
-                      onChange={(url) => { const n = [...farms]; n[i] = { ...n[i], image: url }; setFarms(n); }}
-                      subdir="pages"
-                    />
-                  </div>
-                </div>
-              ))}
-              <button type="button" onClick={() => setFarms([...farms, { name: '', nameVi: '', desc: '', image: '' }])} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                + 농장 추가
-              </button>
-            </div>
-          </SectionCard>
+          {/* 농장 카드 편집은 /admin/media → 기본 설정 탭으로 이동됨
+              (단일 진입점 — 같은 pages.brandStory.farms 데이터를 공유) */}
 
           {/* History Tab — 브랜드 스토리 페이지 02 섹션으로 통합 */}
           <SectionCard title="섹션 02 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
