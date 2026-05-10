@@ -436,7 +436,33 @@ export default function AdminBrandStoryPage() {
         pages?: { brandStory?: Partial<BrandStoryData> };
       };
       const prev = existing?.pages?.brandStory ?? {};
-      const merged = { ...prev, ...payload };
+
+      // step.image 보존 — 어드민 state 가 옛 상태(image 없음)인 채로 저장될 때
+      // 서버 prev 의 step.image 를 자동 머지해 데이터 유실 방지.
+      const safePayload: Partial<BrandStoryData> = { ...payload };
+      if (safePayload.processTab && prev.processTab) {
+        const ptPayload = safePayload.processTab;
+        const ptPrev = prev.processTab;
+        if (Array.isArray(ptPayload.processGroups) && Array.isArray(ptPrev.processGroups)) {
+          safePayload.processTab = {
+            ...ptPayload,
+            processGroups: ptPayload.processGroups.map((g, gi) => {
+              const prevGroup = ptPrev.processGroups?.[gi];
+              if (!prevGroup) return g;
+              return {
+                ...g,
+                steps: (g.steps ?? []).map((s, si) => ({
+                  ...s,
+                  // image 가 비어있으면 서버에 있던 값을 보존.
+                  image: s.image || prevGroup.steps?.[si]?.image || '',
+                })),
+              };
+            }),
+          };
+        }
+      }
+
+      const merged = { ...prev, ...safePayload };
 
       const result = await saveAdminPage('brandStory', merged);
       if (!result.ok) {

@@ -975,28 +975,8 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     </div>
                   </div>
 
-                  {/* 공정 사진 갤러리 — 그룹별 photos[] 가 있을 때만 노출 */}
-                  {Array.isArray(group.photos) && group.photos.length > 0 && (
-                    <div className={styles.processPhotoGallery}>
-                      <div className={styles.processPhotoGalleryLabel}>{group.titleEn || 'PHOTOS'} · 현장 이미지</div>
-                      <div className={styles.processPhotoGrid}>
-                        {group.photos.map((p, pi) => (
-                          <figure key={pi} className={styles.processPhotoItem}>
-                            <div className={styles.processPhotoFrame}>
-                              <Image
-                                src={p.src}
-                                alt={p.caption || `${group.title} ${pi + 1}`}
-                                fill
-                                sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw"
-                                style={{ objectFit: 'cover' }}
-                              />
-                            </div>
-                            {p.caption && <figcaption className={styles.processPhotoCaption}>{p.caption}</figcaption>}
-                          </figure>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* 공정 사진 갤러리(group.photos) 렌더링은 영구 제거 — 단계별 카드 이미지로 대체.
+                      어드민에서도 photos 편집 영역을 삭제했고, 데이터에 잔존하더라도 더 이상 노출되지 않음. */}
                 </div>
               ))
             ) : (
