@@ -28,6 +28,9 @@ interface CertItem {
   nameEn: string;
   category: string;
   viewUrl: string;
+  certNumber?: string;
+  issuer?: string;
+  validity?: string;
 }
 
 interface CertSection {

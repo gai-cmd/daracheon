@@ -46,7 +46,19 @@ export const metadata: Metadata = {
 export interface Farm { name: string; nameVi: string; desc: string; image?: string }
 export interface HistoryEra { era: string; items: string[]; description?: string; image?: string; imageCaption?: string }
 export interface CertSection { title: string; items: string[]; body?: string }
-export interface CertItem { name: string; nameEn: string; category: string; thumb: string; viewUrl: string }
+export interface CertItem {
+  name: string;
+  nameEn: string;
+  category: string;
+  thumb: string;
+  viewUrl: string;
+  /** 인증서 번호 (예: TQC.19.1082-B, #12835, HA 616). 없으면 노출 생략 */
+  certNumber?: string;
+  /** 발급기관 (예: TQC GLOBAL, Cục Sở hữu trí tuệ Việt Nam). 없으면 노출 생략 */
+  issuer?: string;
+  /** 유효기간 표기 (예: "2024.08.27 ~ 2026.12.19", "20년 (2031.09.12까지)"). 없으면 노출 생략 */
+  validity?: string;
+}
 export interface NarrativeParagraph { title: string; body: string }
 export interface ProcessVideo { id: string; title: string }
 export interface ProcessChapter { title: string; titleEn: string; description: string; videos: ProcessVideo[] }

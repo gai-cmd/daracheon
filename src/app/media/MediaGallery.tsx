@@ -107,7 +107,7 @@ function VideoModal({ item, onClose }: { item: MediaItem; onClose: () => void })
                 textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4,
               }}
             >
-              {item.source} · {item.date}
+              {item.source}
             </div>
             <h3
               style={{
@@ -319,7 +319,7 @@ export default function MediaGallery({
                             marginBottom: 6,
                           }}
                         >
-                          {item.source} · {item.date}
+                          {item.source}
                         </div>
                         <div style={{ fontSize: '0.96rem', lineHeight: 1.55, color: '#fff' }}>{item.title}</div>
                         {item.excerpt && (
@@ -385,7 +385,7 @@ export default function MediaGallery({
                       <div style={{ padding: '10px 2px 0', color: 'rgba(255,255,255,0.78)' }}>
                         <div style={{ fontSize: '0.92rem', color: '#fff' }}>{item.title}</div>
                         <div style={{ marginTop: 4, fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
-                          {item.source} · {item.date}
+                          {item.source}
                         </div>
                       </div>
                     </div>
