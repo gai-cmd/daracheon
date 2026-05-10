@@ -96,28 +96,28 @@
     },
     "certificationsTab": {
       "tag": "CERTIFICATIONS",
-      "title": "증명할 수 있는 문서가 신뢰의 지표",
-      "subtitle": "전 세계가 인정하는 대라천 '참'침향의 품질을 공식문서와 함께 확인하세요!",
+      "title": "신뢰의 지표 — 국제가 인정하는 품질",
+      "subtitle": "CITES 국제거래 인증부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지. 대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.",
       "certs": [
         {
           "name": "유기농 제품 인증서",
-          "nameEn": "Organic Product Certification (TCVN 11041-1:2017)",
+          "nameEn": "Organic Product Certification",
           "category": "유기농인증",
           "thumb": "https://drive.google.com/thumbnail?id=1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq/view",
           "certNumber": "TQC.19.1082-B · 판본 02",
-          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회 (베트남)",
-          "validity": "2024/07/30 ~ 2026/07/29 (발급 유형: 정보 변경 1회 · 효력 발생일 2025/09/05)"
+          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
+          "validity": ""
         },
         {
           "name": "유기농 원료 생산지역 인증서",
-          "nameEn": "Organic Raw Material Area (TCVN 11041-2:2017)",
+          "nameEn": "Organic Raw Material Area",
           "category": "유기농인증",
           "thumb": "https://drive.google.com/thumbnail?id=136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view",
           "certNumber": "TQC.19.1082-A · 판본 02",
-          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회 (베트남)",
-          "validity": "2024/07/30 ~ 2026/07/29 (발급 유형: 정보 변경 1회 · 효력 발생일 2025/09/05)"
+          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
+          "validity": ""
         },
         {
           "name": "수지유도제 특허 인증서",
@@ -125,29 +125,29 @@
           "category": "특허",
           "thumb": "https://drive.google.com/thumbnail?id=1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw/view",
-          "certNumber": "특허번호 12835 (출원번호 1-2011-02401)",
+          "certNumber": "특허번호 12835",
           "issuer": "지식재산권청 — 과학기술부 (등록 결정 21889/QĐ-SHTT, 2014/04/08) (베트남)",
-          "validity": "발급일부터 출원일 2011/09/12 기준 20년간 유효 (특허권자: TRƯƠNG THANH KHOAN)"
+          "validity": ""
         },
         {
           "name": "야생동·식물 식재시설 인증서",
-          "nameEn": "Wild Plant Cultivation Facility Registration",
+          "nameEn": "Wild Plant Cultivation Facility R.",
           "category": "품질인증",
           "thumb": "https://drive.google.com/thumbnail?id=1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view",
           "certNumber": "00.38/2016/GCN-QLBV&TTN",
           "issuer": "동나이성 산림보호청 — 동나이성 농업·농촌개발국 (베트남)",
-          "validity": "2016/08/09 발급 (수령자: Trương Thanh Khoan 1인 유한회사 · 종: Aquilaria agallocha Roxburgh · 등록면적 10ha — 인증서에 만료일 표기 없음)"
+          "validity": ""
         },
         {
           "name": "ISO 식품안전 경영시스템",
-          "nameEn": "ISO 22000:2018 Food Safety Management",
+          "nameEn": "ISO 22000:2018 Food Safety M.",
           "category": "ISO인증",
           "thumb": "https://lh3.googleusercontent.com/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0=w600",
           "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view",
           "certNumber": "HA 616 · 부호 616-23-01/02",
-          "issuer": "ISSQ 품질표준개발연구원 (인증서에 IAF · VICAS 083-FSMS · ISSQ 로고 표기) (베트남)",
-          "validity": "2024/08/27 ~ 2026/12/19 (최초 인증 2023/12/20 · 수령자: VIHECO 중앙제약 주식회사, 하노이)"
+          "issuer": "ISSQ 품질표준개발연구원 (인증서에 IAF · VICAS 083-FSMS · ISSQ 로고 표기)",
+          "validity": ""
         },
         {
           "name": "VN OCOP 품질보증서",
@@ -155,19 +155,19 @@
           "category": "품질인증",
           "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
           "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view",
-          "certNumber": "결정번호 68/QĐ-UBND (제품 등급: 4 STARS)",
+          "certNumber": "결정번호 68/QĐ-UBND",
           "issuer": "동나이성 인민위원회 — OCOP(1코뮌1제품) 프로그램 2025 (베트남)",
-          "validity": "2025/01/11 발급 — 발급일로부터 36개월간 유효 (수령자: NTV Vietnam Import Export Company Limited · 제품: DAERACHEON Agarwood Essential Oil)"
+          "validity": ""
         },
         {
           "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298375658-04e70813406b8d69b9d0.webp",
-          "name": "FDA 등록증",
+          "name": "FDA 인증",
           "nameEn": "U.S. FDA Food Facility Registration",
           "category": "품질인증",
           "viewUrl": "",
           "certNumber": "US FDA 등록번호 12466836220 · DUNS 556939963 · Willow Glen 번호 WG.2872762",
-          "issuer": "Willow Glen Consultancy 발행 — 美 식품의약국(FDA) 등록 확인 등록증 (US Agent / 미국)",
-          "validity": "2024/04/25 발급 — 만료일 2025/04/30 (수령자: VIHECO 중앙제약 주식회사, 하노이 광민 산업단지 확장지구)"
+          "issuer": "Willow Glen Consultancy 발행",
+          "validity": ""
         },
         {
           "name": "ISO 품질경영시스템 인증서",
@@ -177,7 +177,7 @@
           "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view",
           "certNumber": "YT 562 · 부호 562-23-01/01",
           "issuer": "ISSQ 품질표준개발연구원 (베트남)",
-          "validity": "2024/08/27 ~ 2026/12/19 (최초 인증 2021/03/19 · 수령자: VIHECO 중앙제약 주식회사, 하노이)"
+          "validity": ""
         },
         {
           "name": "VN 농업총국 황금브랜드",
@@ -186,28 +186,28 @@
           "thumb": "https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w600",
           "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view",
           "certNumber": "2025년 베트남 농업 황금브랜드 수상 (수상 브랜드: TRẦM HƯƠNG ĐẠI LA THIÊN)",
-          "issuer": "베트남 농업·농촌개발 총회 — 상무위원회 / 회장 Hồ Xuân Hùng (지도기관·협력실행기관: VECI) (베트남)",
-          "validity": "2025/10/10 수상 (수령자: NTV Vietnam Import Export Co., Ltd.)"
+          "issuer": "베트남 농업·농촌개발 총회 — 상무위원회 / 회장 Hồ Xuân Hùng (지기관: VECI)",
+          "validity": ""
         },
         {
           "thumb": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777298508022-192490b725d892d8bf60.webp",
           "name": "AAR품종확인서",
-          "nameEn": "Aquilaria agallocha Roxburgh Variety Confirmation",
+          "nameEn": "Aquilaria agallocha Roxburgh",
           "category": "품질인증",
           "viewUrl": "",
           "certNumber": "VIHECO 자체 발행 확인서 (제품: VIÊN NANG HƯƠNG ĐẠI LA THIÊN / DAERACHEON FRAGRANCE CAPSULE)",
-          "issuer": "VIHECO 중앙제약 주식회사 (하노이 광민 산업단지 확장지구) — CEO NGUYEN VAN VINH 서명·직인 (베트남)",
-          "validity": "2026/02/10 발급 (원산지: 베트남 · 학명: Aquilaria agallocha Roxburgh · 사용 부위: 수지가 함유된 침향 목재)"
+          "issuer": "VIHECO 중앙제약 주식회사",
+          "validity": ""
         },
         {
           "name": "HACCP 인증서",
-          "nameEn": "HACCP Codex Alimentarius (TCVN 5603:2023, CXC 1-1969 rev. 2020)",
+          "nameEn": "HACCP Codex Alimentarius",
           "category": "품질인증",
           "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
           "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view",
           "certNumber": "TQC.05.1082 · 판본 01 (발급 유형: 최초 인증)",
-          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회 (베트남)",
-          "validity": "2025/09/05 ~ 2028/09/04 (3년 동안 사후관리 평가 2회 실시 · 수령자: NTV Vietnam Import Export Co., Ltd.)"
+          "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
+          "validity": ""
         },
         {
           "name": "아시아 선도기업 10대 B.",
@@ -215,9 +215,9 @@
           "category": "수상",
           "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
           "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view",
-          "certNumber": "ASIA EXCELLENT BRAND No. XI · 2025 (결정번호 166/2025 QĐ BTC)",
-          "issuer": "원장 권한대리 — 사무총장 Hồ Xuân Suc (협력실행기관: VECI · VEDSU) (베트남)",
-          "validity": "2025/06/28 Top 10 수상 — 호치민시 (수령자: NTV Vietnam Import Export Co., Ltd.)"
+          "certNumber": "ASIA EXCELLENT BRAND No. XI · 2025",
+          "issuer": "협력실행기관: VECI · VEDSU",
+          "validity": ""
         }
       ],
       "sections": [
@@ -232,12 +232,10 @@
         {
           "title": "품질 보증",
           "items": [
-            "Organic",
-            "HACCP",
-            "OCOP",
+            "Organic, HACCP, OCOP",
             "2025 아시아 10대 브랜드"
           ],
-          "body": "Organic 유기농 재배 인증과 HACCP 식품안전관리 인증을 통해 안전성을 확보했습니다. OCOP 베트남 정부 품질보증을 통해 품질을 공인받았습니다. 2025 아시아 10대 선도 브랜드로 선정된 것은 대라천 '참'침향의 노력을 인정받은 결과입니다."
+          "body": "Organic 유기농 재배 인증과 HACCP 식품안전관리 인증을 통해 안전성과 신뢰성을 확보했으며, 베트남 정부의 OCOP 품질보증으로 우수한 품질을 공식 인정받았습니다. 또한 2025 아시아 10대 선도 브랜드 선정은 대라천 ‘참’침향이 꾸준히 이어온 품질과 노력의 결실이라 할 수 있습니다."
         },
         {
           "title": "안전성 시험",
@@ -245,7 +243,7 @@
             "TSL ISO/IEC 17025:2017",
             "중금속 8종 전부 불검출"
           ],
-          "body": "TSL 안전성 시험은 ISO/IEC 17025:2017 기준을 준수하며, 2023년 8월 24일 실시한 중금속 8종 시험에서 전부 불검출 판정을 받았습니다. 이러한 인증들은 대라천 '참'침향이 안전하고 신뢰할 수 있는 제품임을 증명합니다."
+          "body": "TSL 안전성 시험은 ISO/IEC 17025:2017 기준에 따라 진행되었으며, 2023년 8월 24일 실시한 중금속 8종 검사에서 모두 불검출 판정을 받았습니다. 이러한 엄격한 시험과 인증은 대라천 ‘참’침향이 안전성과 신뢰성을 갖춘 제품임을 보여줍니다."
         }
       ]
     },
@@ -315,55 +313,63 @@
           "title": "침향 생산과정",
           "titleEn": "AGARWOOD PRODUCTION",
           "description": "좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다. 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 '참'침향은 당분간 누구도 흉내내기 어려운 '명품'이 될 것입니다.",
-          "image": "https://lh3.googleusercontent.com/d/1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g=w1280",
+          "image": "",
           "steps": [
             {
               "step": "01",
               "name": "천연목 식목",
               "duration": "최소 20년",
-              "desc": "Aquilaria Agallocha Roxburgh 묘목"
+              "desc": "Aquilaria Agallocha Roxburgh 묘목",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-01-%EC%B2%9C%EC%97%B0%EB%AA%A9_%EC%8B%9D%EB%AA%A9.png"
             },
             {
               "step": "02",
               "name": "유기농 관리",
               "duration": "5~20년 이상",
-              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수"
+              "desc": "유기농 인증 기준(TCVN 11041-2:2017) 준수",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-02-%EC%9C%A0%EA%B8%B0%EB%86%8D_%EA%B4%80%EB%A6%AC.png"
             },
             {
               "step": "03",
               "name": "수지 앉힘",
               "duration": "특허 #12835",
-              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성"
+              "desc": "식용 가능 천연 수지유도제 주입으로 수지 형성",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-03-%EC%88%98%EC%A7%80_%EC%95%89%ED%9E%98.png"
             },
             {
               "step": "04",
               "name": "수지 관리",
               "duration": "2~10년",
-              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리"
+              "desc": "수지 형성 상태를 정기적으로 모니터링하며 품질 관리",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-04-%EC%88%98%EC%A7%80_%EA%B4%80%EB%A6%AC.png"
             },
             {
               "step": "05",
               "name": "침향(수지) 검사",
               "duration": "수시",
-              "desc": "수지 형성 상태 확인 및 등급 판정"
+              "desc": "수지 형성 상태 확인 및 등급 판정",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-05-%EC%B9%A8%ED%96%A5_%EC%88%98%EC%A7%80_%EA%B2%80%EC%82%AC.png"
             },
             {
               "step": "06",
               "name": "침향 수확",
               "duration": "숙성 확인 후",
-              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인"
+              "desc": "GPS 번호 추적 체계로 나무별 이력 최종 확인",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-06-%EC%B9%A8%ED%96%A5_%EC%88%98%ED%99%95.png"
             },
             {
               "step": "07",
               "name": "선별 가공",
               "duration": "고품질 침향 선별",
-              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공"
+              "desc": "수확된 침향을 등급별로 선별하고 초벌 가공",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-07-%EC%84%A0%EB%B3%84_%EA%B0%80%EA%B3%B5.png"
             },
             {
               "step": "08",
               "name": "완제품",
               "duration": "최종 품질 검사",
-              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고"
+              "desc": "침향 원목 완제품 완성. 최종 품질 검사 후 이력 부착 후 출고",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-08-%EC%99%84%EC%A0%9C%ED%92%88.png"
             }
           ]
         },
@@ -371,7 +377,7 @@
           "title": "침향 오일 생산과정",
           "titleEn": "OIL PRODUCTION",
           "description": "",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg",
+          "image": "",
           "photos": [
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-01-intake.png",
@@ -403,73 +409,85 @@
               "step": "01",
               "name": "원목 입고",
               "duration": "로트 번호",
-              "desc": "수지가 앉혀진 침향목을 공장으로 입고"
+              "desc": "수지가 앉혀진 침향목을 공장으로 입고",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-01-%EC%9B%90%EB%AA%A9_%EC%9E%85%EA%B3%A0.png"
             },
             {
               "step": "02",
               "name": "세척",
               "duration": "오염물 제거",
-              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거"
+              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-02-%EC%84%B8%EC%B2%99.png"
             },
             {
               "step": "03",
               "name": "절단",
               "duration": "10~20cm",
-              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단"
+              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-03-%EC%A0%88%EB%8B%A8.png"
             },
             {
               "step": "04",
               "name": "수지목 분리",
               "duration": "수지 침착부위",
-              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별"
+              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-04-%EC%88%98%EC%A7%80%EB%AA%A9_%EB%B6%84%EB%A6%AC.png"
             },
             {
               "step": "05",
               "name": "이물질 제거",
               "duration": "정밀 수작업",
-              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거"
+              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-05-%EC%9D%B4%EB%AC%BC%EC%A7%88_%EC%A0%9C%EA%B1%B0.png"
             },
             {
               "step": "06",
               "name": "세척",
               "duration": "물세척 3회",
-              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인"
+              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-06-%EC%84%B8%EC%B2%99.png"
             },
             {
               "step": "07",
               "name": "건조",
               "duration": "자연광 건조",
-              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지"
+              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-07-%EA%B1%B4%EC%A1%B0.png"
             },
             {
               "step": "08",
               "name": "분쇄",
               "duration": "1~2mm 크기",
-              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지"
+              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-08-%EB%B6%84%EC%87%84.png"
             },
             {
               "step": "09",
               "name": "고온 증류법",
               "duration": "72시간",
-              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출"
+              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-09-%EA%B3%A0%EC%98%A8_%EC%A6%9D%EB%A5%98%EB%B2%95.png"
             },
             {
               "step": "10",
               "name": "수지 채취",
               "duration": "분리 채취",
-              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리"
+              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-10-%EC%88%98%EC%A7%80_%EC%B1%84%EC%B7%A8.png"
             },
             {
               "step": "11",
               "name": "숙성",
               "duration": "안정화",
-              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화"
+              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-11-%EC%88%99%EC%84%B1.png"
             },
             {
               "step": "12",
               "name": "검사 및 출고",
               "duration": "ISO/IEC 17025:2017",
-              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고"
+              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-12-%EA%B2%80%EC%82%AC_%EB%B0%8F_%EC%B6%9C%EA%B3%A0.png"
             }
           ]
         }
@@ -485,6 +503,49 @@
       "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab0-brand.png",
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab1-cert.png",
       "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-hero-modern-1778398873.png"
+    },
+    "promoVideos": {
+      "num": "04",
+      "tag": "VIDEOS",
+      "title": "대라천 '참'침향 브랜드 홍보영상",
+      "items": [
+        {
+          "id": "v1",
+          "title": "대라천 침향 — 유기농 재배 · 베트남 정부 인증 현장 | 문경수 대표",
+          "source": "대라천 공식",
+          "date": "2024-10-01",
+          "thumbnail": "https://img.youtube.com/vi/LwKK8t6AyQA/hqdefault.jpg",
+          "excerpt": "말도 많고 가짜도 많은 베트남 침향, 유기농 재배로 베트남 정부 HACCP·유기농·OCOP 인증품을 생산. 하띤성 직영 농장 23년 기록.",
+          "url": "https://www.youtube.com/watch?v=LwKK8t6AyQA"
+        },
+        {
+          "id": "v2",
+          "title": "대라천 침향 · 침향단 — 베트남 현지 가공 전 공정 (NTV 방송)",
+          "source": "NTV Việt Nam",
+          "date": "2024-10-08",
+          "thumbnail": "https://img.youtube.com/vi/Wj9X0XYlbrw/hqdefault.jpg",
+          "excerpt": "베트남 현지 방송 NTV와 함께한 대라천 침향단 제조 공정 완전 공개. 원목 수확부터 최종 제품까지.",
+          "url": "https://www.youtube.com/watch?v=Wj9X0XYlbrw"
+        },
+        {
+          "id": "v3",
+          "title": "베트남 현지 침향 가공 현장 — 원목에서 제품까지 전 공정",
+          "source": "약초방송",
+          "date": "2023-09-19",
+          "thumbnail": "https://img.youtube.com/vi/U_UTerP2C84/hqdefault.jpg",
+          "excerpt": "귀하디귀한 베트남 침향 가공 현장 영상. 원목 수확·분쇄·추출까지 현장 그대로 담았습니다.",
+          "url": "https://www.youtube.com/watch?v=U_UTerP2C84"
+        },
+        {
+          "id": "v4",
+          "title": "하띤성 · 침향 생산 나무 현장 확인 — Aquilaria Agallocha",
+          "source": "Vietnam Agarwood",
+          "date": "2023-06-01",
+          "thumbnail": "https://img.youtube.com/vi/kpj5UIW9wTc/hqdefault.jpg",
+          "excerpt": "베트남 하띤성에서 Aquilaria Agallocha 침향 생산 나무를 직접 확인하는 현장 영상.",
+          "url": "https://www.youtube.com/watch?v=kpj5UIW9wTc"
+        }
+      ]
     }
   },
   "aboutAgarwood": {
@@ -1174,13 +1235,13 @@
           "num": "01",
           "title": "한국한의학연구원 한약자원연구센터",
           "body": "용법용량: 1~1.5g을 쓰는데 먼저 다른 약을 달이고 난 다음에 넣는다. 또 갈아서 즙을 내어 먹기도 하며, 알약이나 가루약에 넣어 복용한다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-01-kiom-v3-1778302317992.png"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272814505-50756fa1678763d658b3.png"
         },
         {
           "num": "02",
           "title": "100% 침향 오일은 하루 2~3mg이 적정",
           "body": "향은 자주 맡아도 좋지만 복용하는 침향은 권장량을 지키는 게 효과적이다. 하루 복용량 분말 1~2g을 증류법으로 오일을 추출하면 약 2~3mg이 나온다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-02.png"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-02-v2-1778339070641.png"
         },
         {
           "num": "03",
@@ -1194,7 +1255,7 @@
       "subtitle": "가짜 침향, 당신의 건강을 위협합니다. 이 세 가지로 반드시 확인하세요.",
       "intro": "한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법, 즉 학명・품종, 산지, 증빙서류로 확인할 수 있습니다.",
       "check01Title": "학명・품종을 따져봐야 합니다.",
-      "check01Body": "대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)입니다.",
+      "check01Body": "대한민국 정부의 공식문서 5곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)입니다.",
       "check01Sources": [
         {
           "label": "식약처 고시 '대한민국약전외한약(생약)규격집'",
@@ -1217,6 +1278,10 @@
           "value": "상록교목인 침향나무를 Aquilaria Agallocha Roxburgh로 기록하고 있습니다."
         }
       ],
+      "check01Summary": {
+        "line1": "침향나무의 학명・품종이 정확하게 **Aquilaria agallocha Roxburgh**인지 반드시 확인하시기 바랍니다.",
+        "line2": "제약 등급 원료 및 식용이 가능하고 침향과 관련된 대한민국의 모든 공식 문서에 정식 등록된 침향입니다."
+      },
       "check02Title": "원산지를 따져봐야 합니다.",
       "check02Body": "고문헌들이 역사에서 기록한 최고의 침향 산지는 베트남산으로 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.",
       "check02QuoteSource": "향승(香乘) · 명대 1611년",
@@ -1268,7 +1333,7 @@
     },
     "tabHeroes": {
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/imagen-real-vs-fake-1778299498677.png",
-      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272814505-50756fa1678763d658b3.png",
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-01-kiom-v3-1778302317992.png",
       "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272816338-efd399c54655f72c1caa.webp",
       "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/imagen-dosage-usage-1778302075112.png",
       "tab5": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362424072-7f111b4423198d384f06.png"
@@ -1565,21 +1630,21 @@
         "imageAlt": "베트남 하띤(Ha Tinh) 직영 농장",
         "imageCaption": "하띤 · Ha Tinh · 침향의 전통 산지",
         "images": [
-          "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280",
-          "https://lh3.googleusercontent.com/d/1XV5QsDsxdZhzYryUiXyMOcdYVzPjIZcL=w1280",
-          "https://lh3.googleusercontent.com/d/15plJjdQ--UJzQW7CrIcZyJRwXO8aRyNW=w1280",
-          "https://lh3.googleusercontent.com/d/1IW0Jg7SXocdeJxDb7m27097B6TRSEi47=w1280",
-          "https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280",
-          "https://lh3.googleusercontent.com/d/1JKfeto1czHEPFF1QIpYzaT4VpXmkMNVR=w1280",
-          "https://lh3.googleusercontent.com/d/1eXR9sYP_UhTBGe3NZ6huQ-_Am1mrEU1A=w1280",
-          "https://lh3.googleusercontent.com/d/14NVPdPAzMMkVhJQwITHDWamEroAZsmcr=w1280",
-          "https://lh3.googleusercontent.com/d/1vMg67TwHPKgtuRngbavReETlS9gK9zJD=w1280",
-          "https://lh3.googleusercontent.com/d/1xPbK_jHbQ4Pv6wJIA7CAoHrd3zALmkLG=w1280",
-          "https://lh3.googleusercontent.com/d/1dOg-3mfM8dYVScQOKhvlT1Mq_0Vr7EqN=w1280",
-          "https://lh3.googleusercontent.com/d/1PWx0dQHuBjBZdlJ5ESf2aZoiylIpc4FO=w1280",
-          "https://lh3.googleusercontent.com/d/1SRwCEhWfnugBgF_HcgMN77vO3vMuuUGR=w1280",
-          "https://lh3.googleusercontent.com/d/1YYE6txcivaCt1TpVlFLU9ee6QkbYS9Ta=w1280",
-          "https://lh3.googleusercontent.com/d/1Gx7Lts7P0iPioeticYKTidJXR3G0rVpY=w1280"
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/01.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/02.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/03.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/04.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/05.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/06.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/07.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/08.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/09.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/10.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/11.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/12.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/13.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/14.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/15.jpg"
         ]
       },
       {
@@ -1605,17 +1670,17 @@
         "imageAlt": "",
         "imageCaption": "푸꼬옥 · Phu Quoc · 130년, 50년생 침향나무",
         "images": [
-          "https://lh3.googleusercontent.com/d/1fUdQAd2aHuIWpom_EaFqdtjC0YyLz9Ir=w1280",
-          "https://lh3.googleusercontent.com/d/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs=w1280",
-          "https://lh3.googleusercontent.com/d/1eBlzVcm6Whj5ilHAp2Fr9JtJm5z39NOP=w1280",
-          "https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280",
-          "https://lh3.googleusercontent.com/d/1TW1YTrWORogf7x4_43zv7EnvIrgQFJ2s=w1280",
-          "https://lh3.googleusercontent.com/d/1u0rX18J2cR01BjiiZXS1F-tKwcvsf-az=w1280",
-          "https://lh3.googleusercontent.com/d/12pP8XUgW8qnGDpc_6ohCf08HYstMEe4I=w1280",
-          "https://lh3.googleusercontent.com/d/1LX8VbjAK296dtG0UeGo63R9gvN0WAAer=w1280",
-          "https://lh3.googleusercontent.com/d/1-wPwngEs7h-AXhqTbjwsnzWNWy-N2qIn=w1280",
-          "https://lh3.googleusercontent.com/d/1lO6D2P1uaJ0qTu9cCNtL3sQ2eHpty7G_=w1280",
-          "https://lh3.googleusercontent.com/d/1aVJdD3S9J209_cUtNQgXrfh52BNrTHYk=w1280"
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/01.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/02.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/03.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/04.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/05.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/06.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/07.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/08.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/09.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/10.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/11.jpg"
         ]
       },
       {
@@ -1628,23 +1693,23 @@
         "imageAlt": "",
         "imageCaption": "냐짱 · Nha Trang · 오랜 관리의 결과로 굵은 침향나무",
         "images": [
-          "https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280",
-          "https://lh3.googleusercontent.com/d/1maYh_MONnN2PWIMz7acolQVpVeAfNezL=w1280",
-          "https://lh3.googleusercontent.com/d/167pkrcBiuFz5vFGL5SMmWaAW2UGVemYG=w1280",
-          "https://lh3.googleusercontent.com/d/1zRdQ3278yTPi-p2SCX66khDBMq5hiVvh=w1280",
-          "https://lh3.googleusercontent.com/d/1hIGClgj6bxDLZwlgAna7Y6MFT9N0ZIEd=w1280",
-          "https://lh3.googleusercontent.com/d/1Tfj39jm8YG-spo88bKoe-HMY5AfhoJhk=w1280",
-          "https://lh3.googleusercontent.com/d/1gWqkT0FI-QNEcpu4XR-8BqTHvocmU6TU=w1280",
-          "https://lh3.googleusercontent.com/d/1n1JSplwzUECZWKglQNcLYiLf15H5EdLR=w1280",
-          "https://lh3.googleusercontent.com/d/1HUQSBLGfIDv0iXYhc60TpMVuX8Kj3kq3=w1280",
-          "https://lh3.googleusercontent.com/d/1CBEqiROSVtSI4ctTOn4gcAgOUHy8GUsi=w1280",
-          "https://lh3.googleusercontent.com/d/1SPgONLKZuawWN3B34dmpbsMuGLqaK15q=w1280",
-          "https://lh3.googleusercontent.com/d/1jViJKpSmcWiJREA4Fd5reCKZLXfMjvYC=w1280",
-          "https://lh3.googleusercontent.com/d/1BR3FoihI8XcDaYnUQ3a-y7hKxPSTjpA5=w1280",
-          "https://lh3.googleusercontent.com/d/1UnwU6OnzWIJGDlSV-gOYdru0exDLYsQX=w1280",
-          "https://lh3.googleusercontent.com/d/1Xnfp2EEVpnV37fOhecFWM6pRZDGIiXP3=w1280",
-          "https://lh3.googleusercontent.com/d/1DgdywEGT7rB1-TrkIbAMu9FBKZ-WMyTf=w1280",
-          "https://lh3.googleusercontent.com/d/1KBhM2PQe69CvQBzLDnqJi2E-5wAcmrJU=w1280"
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/01.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/02.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/03.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/04.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/05.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/06.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/07.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/08.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/09.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/10.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/11.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/12.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/13.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/14.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/15.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/16.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/17.jpg"
         ]
       },
       {
@@ -1657,24 +1722,24 @@
         "imageAlt": "",
         "imageCaption": "동나이 · Dong Nai · 현무암 토양 지역, 깊고 좋은 오일향",
         "images": [
-          "https://lh3.googleusercontent.com/d/1t02AQvPDeUsqjOv-NcUpwiDWrXwZ6mgA=w1280",
-          "https://lh3.googleusercontent.com/d/1I3VF_o1V64oBI3wwTIRDiJxiNJS_qkW-=w1280",
-          "https://lh3.googleusercontent.com/d/1vMgFPmYLyOzHXyOEkkMkh_-xMfEcgud2=w1280",
-          "https://lh3.googleusercontent.com/d/1t4EJe-0FZpfhDZYaWmhJ6whInHmjFts7=w1280",
-          "https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280",
-          "https://lh3.googleusercontent.com/d/1u1GR3yzZJ54XBA5v6DeYi4cv-sag7m5X=w1280",
-          "https://lh3.googleusercontent.com/d/17Wg4SaPB6Xo6lkxZUKhJtcCBCtszjbKN=w1280",
-          "https://lh3.googleusercontent.com/d/1MMcIuECWehMG7Ycpori6W3oJrBNkMsgF=w1280",
-          "https://lh3.googleusercontent.com/d/1DFKBrH5HcH7uThsqrLyouHLPO-fjlbld=w1280",
-          "https://lh3.googleusercontent.com/d/1dxHsLHoP9lRSHmdmxFG85Xvd2ULMBc0Z=w1280",
-          "https://lh3.googleusercontent.com/d/1ACWNrhSp2aSOTqvV_5WLtQTlKnirrxgy=w1280",
-          "https://lh3.googleusercontent.com/d/1xizkL9MRUMrytKqsOGtpHbOze0VHTNr2=w1280",
-          "https://lh3.googleusercontent.com/d/1UQliUriKe6oFQhUDcbbrHgcB38OtAD7b=w1280",
-          "https://lh3.googleusercontent.com/d/1b4y_Rq2O5-AvjeuCNqgekrKOvnzFYc1K=w1280",
-          "https://lh3.googleusercontent.com/d/1Jf6knzIx_Xph4_VIUJKFZGHV0W31UFEB=w1280",
-          "https://lh3.googleusercontent.com/d/1Qi6gBYNQAamdI8ffefA_HcPOUn9piq7D=w1280",
-          "https://lh3.googleusercontent.com/d/1kYAgLttmyrHGZNaW_gFaBDQb54U82U6V=w1280",
-          "https://lh3.googleusercontent.com/d/1hCKmm9r3BNKI8ipCK6fatR2EvfMLwtE6=w1280"
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/01.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/02.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/03.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/04.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/05.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/06.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/07.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/08.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/09.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/10.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/11.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/12.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/13.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/14.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/15.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/16.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/17.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/18.jpg"
         ]
       }
     ],
@@ -1685,69 +1750,178 @@
       "body": "베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.",
       "items": [
         {
-          "id": "1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g",
-          "title": "하띤성 대규모 재배지 드론 촬영"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-TjZSNSkQnn2br7raRpYhaoE25a3MuK.mp4",
+          "title": "농장 능선 임도 — 침향 군락 촬영",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-thumb-rZfnc4ls6HFf8brbYSYThFcCinEd32.jpg"
         },
         {
-          "id": "1oKXg0SyCbFy63C8hzQrPBs7THV4xIROE",
-          "title": "침향나무 식목·관수 루틴"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-04-nhatrang.mp4",
+          "title": "농장 임내 — 침향 성목 군락 (수평 패닝)",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-04-nhatrang-thumb-Svspz5YdM7QW1t1mjdnLj5ZjrDH2hl.jpg"
         },
         {
-          "id": "1p8OQBwzt57lH6mF8zZFDMuAGttqNATze",
-          "title": "동나이성 전략 재배 거점"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-06-lamdong.mp4",
+          "title": "농장 임내 — 침향 성목 수직 촬영",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-06-lamdong-thumb-0uFn0IIOfGfsCj7bQ8WracL106SGSt.jpg"
         },
         {
-          "id": "1IuUk2qrtyhE831wIZhFZkGngDx_hfON7",
-          "title": "냐짱 고품질 원료 산지"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-02-planting.mp4",
+          "title": "수확 침향 — 1차 가공·선별 작업",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-02-planting-thumb-skYXj1ggovxVO2JCTGW8ADJSP0Oj84.jpg"
         },
         {
-          "id": "1dBm27G-X2cLWy5ISGCMcpRXRzsFlLlwg",
-          "title": "푸국 해양성 기후 재배지"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-03-dongnai.mp4",
+          "title": "수확 침향 — 분류·계량 작업",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-03-dongnai-thumb-cl3ybFOTTLXAYuameLPaeEMJOcJb2C.jpg"
         },
         {
-          "id": "13zJY7WQ6rVNQVAROdcgle4M5FQhvQ1fJ",
-          "title": "람동 고산지대 특화 농장"
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-10-autumn-2025.mp4",
+          "title": "수확 침향 — 자연 햇볕 건조 작업",
+          "date": "2025-11-25",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-10-autumn-2025-thumb-ZC4jeNBBHIC3ejOoxIZe0JQD3nN0TH.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-F1SBFZXQ9TpBUEPPcSHlg1te5Of34l.mp4",
+          "title": "전시실 — 침향 원목·뿌리·세분 표본 진열",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-thumb-6Uz8dijs2BhkvfcuCquV4Yjx6IJnib.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-rzGUp5P0ejaxD1lvCkpRs1AFyRdbeQ.mp4",
+          "title": "NTV Vietnam 인증 — 농장 현장 배너 안내",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-thumb-kFzwLaWlptKjs7cS1aKRiF7nvu9s48.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-12-jul-2024.mp4",
+          "title": "베트남 현지 직원 — 대라천 침향 제품 소개",
+          "date": "2024-07-24",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-12-jul-2024-thumb-tN5VACOfRayF56G7tGwVqtuKRxDpOY.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-KXSzhfXnfsHUkaT9U1WBw8kDWZ3iZ3.mp4",
+          "title": "묘목 육성장 — 침향 묘목 점검",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-thumb-al714QTsYsct6CU10SelIwNIEucZIL.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-09-summer-2025.mp4",
+          "title": "신규 식재지 — 어린 침향 묘목 라인",
+          "date": "2025-07-06",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-09-summer-2025-thumb-8fKenD1ufgn9T3hJflgJE9kEAHBDjj.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-zA3YSKZGAm4j6xQ4JnotolIxvy2kuz.mp4",
+          "title": "수지유도 시술 — 특허 #12835 시연 (클로즈업)",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-thumb-5dKoBvrRG4pOUI5b0SQy1sxzhcXZVh.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-V8ESMkMnp8APJYuJgz0lCnOy2rMU0m.mp4",
+          "title": "수지유도 작업 — 농장 작업팀 시연 (와이드샷)",
+          "date": "2026-04-11",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-thumb-eQqw49IM7NvdsKqEBnwLyND15t4pql.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-07-spring-2024.mp4",
+          "title": "수지 침착 부위 점검 — 침향 성목 절개부",
+          "date": "2024-05-01",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-07-spring-2024-thumb-P4z6tlwAnNT7fAs3nz4q4HldDm0Ssy.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-11-jun-2024.mp4",
+          "title": "우기 시작 농장 임내 — 이끼·지의류 점검",
+          "date": "2024-06-10",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-11-jun-2024-thumb-RixtZtnKdibGHi0oBOsFqI7es6QZnI.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-13-oct-2024.mp4",
+          "title": "농장 침향 성목 — 수피 자생 생태 기록",
+          "date": "2024-10-10",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-13-oct-2024-thumb-08c7I8CP1wAAsVZoX7fN8XewGACeZG.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-08-autumn-2024.mp4",
+          "title": "건기 농장 임도 정기 순회",
+          "date": "2024-11-23",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-08-autumn-2024-thumb-nmVMkb5Sx9CZ1nNtWklC4si5DMaXDP.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-14-apr-2025.mp4",
+          "title": "건기 끝자락 — 침향 성목 임내 풍경",
+          "date": "2025-04-05",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-14-apr-2025-thumb-TBpISjLaFlHuVAEKes0ENVvrgfzd2d.jpg"
+        },
+        {
+          "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-15-apr-2026.mp4",
+          "title": "농장 가공장 — 홍보 영상 촬영 현장",
+          "date": "2026-04-22",
+          "thumbnail": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/farm-video-15-apr-2026-thumb-QBWMeNex57BsKZ7gXU5OyBkCYqOsgM.jpg"
         }
       ]
     },
     "certifications": {
       "num": "08",
       "tag": "Certifications",
-      "title": "신뢰의 지표 — 국제가 인정하는 품질",
-      "body": "CITES 국제거래 인증부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지.\n대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.",
-      "sections": [
-        {
-          "title": "국제 거래 및 기술 특허",
-          "items": [
-            "CITES IIA-DNI-007",
-            "수지유도 특허 #12835"
-          ]
-        },
-        {
-          "title": "품질 보증",
-          "items": [
-            "Organic",
-            "HACCP",
-            "OCOP",
-            "2025 아시아 10대 브랜드"
-          ]
-        },
-        {
-          "title": "안전성 시험",
-          "items": [
-            "TSL ISO/IEC 17025:2017",
-            "중금속 8종 전부 불검출"
-          ]
-        }
-      ],
-      "images": [
-        "https://lh3.googleusercontent.com/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5=w1600",
-        "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w1600",
-        "https://lh3.googleusercontent.com/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR=w1600",
-        "https://lh3.googleusercontent.com/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT=w1600"
-      ]
+      "title": "베트남 대라천 '참'침향",
+      "body": "베트남 직영 농장에서 25년의 시간으로 발생한 수지를 깊게 침착시킨 Aquilaria Agallocha Roxburgh. 모방할 수 없는 결과 빛깔과 무게감, 한 조각만 태워도 공간을 채우는 깊은 향 — 진짜 '참'침향만이 보여주는 모습을 직접 확인하세요.",
+      "sections": [],
+      "images": [],
+      "extraSection": {
+        "images": [
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-01.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-02.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-03.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-04.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-05.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-06.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-07.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-08.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-09.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-10.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-11.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-12.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-13.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-14.jpg",
+          "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/certifications/cham-v2-15.jpg"
+        ]
+      }
     },
-    "kicker": "침향 농장 이야기 · Farm Story"
+    "kicker": "침향 농장 이야기 · Farm Story",
+    "sceneSection": {
+      "num": "01",
+      "tag": "THE FIELD",
+      "title": "대라천 침향 현장",
+      "subtitle": "하띤, 냐짱, 람동, 동나이, 푸꾸옥의 200ha 부지에 400만 그루",
+      "body": "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 '진정한 침향'이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 냐짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허 받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
+      "images": [
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/01.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/hatinh/02.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/phuquoc/01.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/07.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/01.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/nhatrang/02.jpg",
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/dongnai/14.jpg"
+      ],
+      "extras": [
+        {
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778413341296-22c666d4f38a62d50fd6.webp",
+          "body": "푸꾸옥 농장의 100년 이상 된 고수령 침향나무는 오랜 세월 자연 환경 속에서 천천히 수지가 축적되며 형성된 귀한 자원입니다. 세월의 흔적이 깊게 배어 있는 만큼 침향의 밀도와 향의 깊이가 뛰어나며, 희소성 또한 높아 높은 가치를 지닌 침향목으로 평가받고 있습니다. 또한 베트남의 대표적인 관광지로서 농장의 접근성이 뛰어나 푸꾸옥 여행자들은 언제든지 방문해서 체험할 수 있습니다.",
+          "alt": "푸꾸옥 농장의 100년 이상 된 고수령 침향목"
+        },
+        {
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/scene-extras/02-hatinh-resin-ant.jpg",
+          "body": "하띤 농장에서 5년간 수지 작업을 진행해 온 침향나무로, 작업 부위에는 현재 개미집이 형성돼 있습니다. 천연 성분의 수도 유도제 사용으로 개미도 서식할 수 있는 환경이며, 침향나무는 개미 활동으로 인해 지속적인 자연 스트레스를 받고 있는 상태입니다. 이러한 조건은 수지 생성과 축적을 더욱 촉진하는 환경으로 평가되며, 수지 함량이 높은 우수한 품질의 침향이 기대됩니다.",
+          "alt": "하띤 농장 5년차 수지 작업 침향나무 — 개미집 형성"
+        }
+      ]
+    }
   },
   "company": {
     "hero": {
@@ -1962,5 +2136,109 @@
       "lede": "베트남에서 자란 100% 아갈로차 침향을 바탕으로, 25년간 축적된 연구와 재배 노하우를 담아 완성한 프리미엄 라인업입니다. 오랜 시간 자연 속에서 형성된 침향의 깊은 가치에 전통 제법의 정성과 현대 과학의 기술을 더해, 그 진귀한 향과 에너지를 온전히 제품에 담아냈습니다.",
       "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/products-resin-formation.jpg"
     }
+  },
+  "showroom": {
+    "hero": {
+      "sectionTag": "대라천 침향 전시장 · ZOEL LIFE Showroom",
+      "titleKr": "대라천 '참'침향 전시장",
+      "titleEn": "Daracheon Agarwood Showroom",
+      "subtitle": "베트남 직영 농장에서 빚어낸 25년의 결실 — 대라천 침향의 모든 라인업과 원목·증류·시향을 한 공간에서 만나보세요. 전통 목조 양식의 본관에서 침향의 천년 향기를 직접 체험할 수 있습니다.",
+      "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-01.jpg"
+    },
+    "intro": {
+      "tag": "THE SHOWROOM",
+      "title": "천년의 향기를 직접 체험하는 공간",
+      "body": "대라천 '참'침향 전시장은 단순한 매장이 아닙니다. 베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 직영 농장에서 25년 이상 자란 Aquilaria Agallocha Roxburgh 침향나무가 어떻게 천년의 향기로 거듭나는지를, 원목·수지·오일·완제품에 이르기까지 한 공간에서 보여드립니다.\n\n전통 목조 양식의 본관 내부에는 침향 원목 단면·수지 결정·증류 오일·다양한 제품 라인업이 정성스럽게 진열되어 있으며, 베트남 전통 의상(Áo dài)을 입은 전문 도슨트가 직접 안내합니다. 시향(試香)과 시음을 통해 진짜 침향만이 전하는 깊고 그윽한 향을 직접 느껴보세요."
+    },
+    "visit": {
+      "address": "베트남 동나이성 직영 본관",
+      "addressEn": "Dong Nai Province, Vietnam — Daracheon Direct Showroom",
+      "hours": "연중무휴 10:00 – 18:00 (사전 예약 권장)",
+      "note": "한국 고객 방문 시 한국어 통역 도슨트 동행이 가능합니다. 사전 예약은 회사소개 페이지의 문의 양식을 이용해 주세요."
+    },
+    "gallery": [
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-01.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 01",
+        "caption": "대라천 침향 직영 전시장 입구 — 천년의 향기, 大羅天 沈香"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-02.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 02"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-04.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 04"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-05.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 05"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-06.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 06"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-07.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 07"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-08.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 08"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-09.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 09"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-10.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 10"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-11.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 11"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-12.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 12"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-13.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 13"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-14.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 14"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-15.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 15",
+        "caption": "전통 목조 양식의 본관 내부 — 진열 캐비닛과 영접 직원"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-16.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 16"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-17.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 17"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-18.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 18"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-19.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 19"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-20.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 20"
+      },
+      {
+        "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-21.jpg",
+        "alt": "대라천 침향 베트남 직영 전시장 — Scene 21"
+      }
+    ]
   }
 }

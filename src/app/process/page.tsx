@@ -371,7 +371,7 @@ export default async function ProcessPage() {
                     >
                       <Image
                         src={ch.imageSrc}
-                        alt={ch.imageAlt ?? ''}
+                        alt={ch.imageAlt ?? `${ch.title} — 침향 생산 공정 ${ch.num}`}
                         fill
                         sizes="(max-width: 900px) 100vw, 720px"
                         style={{ objectFit: 'cover' }}
@@ -555,7 +555,7 @@ export default async function ProcessPage() {
                       gap: 14,
                     }}
                   >
-                    {certs.extraSection.images.map((src) => (
+                    {certs.extraSection.images.map((src, idx) => (
                       <div
                         key={src}
                         style={{
@@ -568,7 +568,7 @@ export default async function ProcessPage() {
                       >
                         <Image
                           src={src}
-                          alt=""
+                          alt={`대라천 침향 추가 인증 문서 ${idx + 1}`}
                           fill
                           sizes="(max-width: 900px) 50vw, 280px"
                           style={{ objectFit: 'cover' }}

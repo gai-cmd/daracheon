@@ -558,7 +558,7 @@ export default function MediaPageClient({
                           gap: 14,
                         }}
                       >
-                        {certifications.extraSection.images.map((src) => (
+                        {certifications.extraSection.images.map((src, idx) => (
                           <div
                             key={src}
                             style={{
@@ -571,7 +571,7 @@ export default function MediaPageClient({
                           >
                             <Image
                               src={src}
-                              alt=""
+                              alt={`대라천 침향 추가 인증 문서 ${idx + 1}`}
                               fill
                               sizes="(max-width: 900px) 50vw, 240px"
                               style={{ objectFit: 'cover' }}
