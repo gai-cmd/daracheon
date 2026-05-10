@@ -7,6 +7,24 @@ import { saveAdminPage } from '@/lib/adminSave';
 /* ─────────────────────────────────────────────
    Types
 ───────────────────────────────────────────── */
+interface PromoVideoItem {
+  title: string;
+  source?: string;
+  date?: string;
+  thumbnail?: string;
+  excerpt?: string;
+  url: string;
+}
+
+interface PromoVideosData {
+  num?: string;
+  tag?: string;
+  title?: string;
+  subtitle?: string;
+  body?: string;
+  items: PromoVideoItem[];
+}
+
 interface Farm {
   name: string;
   nameVi: string;
@@ -86,6 +104,7 @@ interface BrandStoryData {
     sourceTitle: string;
     sourceBody: string;
   };
+  promoVideos?: PromoVideosData;
   farms: Farm[];
   historyTab: {
     tag: string;
@@ -196,6 +215,14 @@ export default function AdminBrandStoryPage() {
     sourceTitle: '',
     sourceBody:
       '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+  });
+  const [promoVideos, setPromoVideos] = useState<PromoVideosData>({
+    num: '04',
+    tag: 'VIDEOS',
+    title: "대라천 '참'침향 브랜드 홍보영상",
+    subtitle: '',
+    body: '',
+    items: [],
   });
   const [farms, setFarms] = useState<Farm[]>([
     { name: '하띤', nameVi: 'Ha Tinh', desc: '메인 대규모 농장 (200ha)' },
@@ -384,6 +411,14 @@ export default function AdminBrandStoryPage() {
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
+        if (d?.promoVideos) {
+          const pv = d.promoVideos as Partial<PromoVideosData>;
+          setPromoVideos((prev) => ({
+            ...prev,
+            ...pv,
+            items: Array.isArray(pv.items) ? pv.items : prev.items,
+          }));
+        }
         if (d?.farms && Array.isArray(d.farms) && d.farms.length > 0) setFarms(d.farms);
         if (d?.historyTab) setHistoryTab({
           ...d.historyTab,
@@ -800,6 +835,100 @@ export default function AdminBrandStoryPage() {
               >
                 + 사진 추가
               </button>
+            </div>
+          </SectionCard>
+
+          {/* ─────────────────────────────────────────────
+              04 VIDEOS — 브랜드 홍보영상 (promoVideos)
+              공개 /brand-story 의 04 VIDEOS 챕터에 노출.
+              YouTube URL 만 넣으면 프론트가 자동으로 ID 추출 → 임베드.
+          ───────────────────────────────────────────── */}
+          <SectionCard
+            title={`04 VIDEOS · 브랜드 홍보영상 · ${promoVideos.items.length}개`}
+            onSave={() => saveSection('promoVideos', { promoVideos })}
+            saving={saving === 'promoVideos'}
+          >
+            <div className="space-y-5">
+              {/* 챕터 헤더 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <LabeledInput label="챕터 번호" value={promoVideos.num ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, num: v })} />
+                <LabeledInput label="태그" value={promoVideos.tag ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, tag: v })} />
+                <LabeledInput label="제목" value={promoVideos.title ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, title: v })} />
+              </div>
+              <LabeledInput label="부제목 (선택)" value={promoVideos.subtitle ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, subtitle: v })} />
+              <LabeledTextarea label="본문 (선택)" value={promoVideos.body ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, body: v })} rows={3} />
+
+              {/* 영상 목록 */}
+              <div className="border-t border-gray-100 pt-5">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-gray-700">영상 목록 ({promoVideos.items.length}개)</label>
+                  <span className="text-xs text-gray-400">YouTube URL 만 넣으면 자동 임베드됩니다</span>
+                </div>
+                <div className="space-y-4">
+                  {promoVideos.items.map((item, i) => (
+                    <div key={i} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-600">영상 {i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setPromoVideos({ ...promoVideos, items: moveItem(promoVideos.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setPromoVideos({ ...promoVideos, items: moveItem(promoVideos.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setPromoVideos({ ...promoVideos, items: removeItem(promoVideos.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <input
+                          placeholder="제목 (예: 대라천 침향 — 유기농 재배 · 베트남 정부 인증 현장 | 문경수 대표)"
+                          value={item.title}
+                          onChange={(e) => { const n = [...promoVideos.items]; n[i] = { ...n[i], title: e.target.value }; setPromoVideos({ ...promoVideos, items: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="YouTube URL (예: https://www.youtube.com/watch?v=XXXXXXXXXXX)"
+                          value={item.url}
+                          onChange={(e) => { const n = [...promoVideos.items]; n[i] = { ...n[i], url: e.target.value }; setPromoVideos({ ...promoVideos, items: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <input
+                            placeholder="출처 (예: 대라천 공식, NTV Việt Nam, 약초방송)"
+                            value={item.source ?? ''}
+                            onChange={(e) => { const n = [...promoVideos.items]; n[i] = { ...n[i], source: e.target.value }; setPromoVideos({ ...promoVideos, items: n }); }}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                          <input
+                            placeholder="날짜 (예: 2024-10-01)"
+                            value={item.date ?? ''}
+                            onChange={(e) => { const n = [...promoVideos.items]; n[i] = { ...n[i], date: e.target.value }; setPromoVideos({ ...promoVideos, items: n }); }}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                        </div>
+                        <textarea
+                          rows={2}
+                          placeholder="요약 (선택, 카드 하단에 표시)"
+                          value={item.excerpt ?? ''}
+                          onChange={(e) => { const n = [...promoVideos.items]; n[i] = { ...n[i], excerpt: e.target.value }; setPromoVideos({ ...promoVideos, items: n }); }}
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">썸네일 (선택, 비워두면 YouTube 자동 썸네일 사용)</label>
+                          <ImageUploadField
+                            value={item.thumbnail ?? ''}
+                            onChange={(url) => { const n = [...promoVideos.items]; n[i] = { ...n[i], thumbnail: url }; setPromoVideos({ ...promoVideos, items: n }); }}
+                            subdir="pages"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setPromoVideos({ ...promoVideos, items: [...promoVideos.items, { title: '', url: '', source: '', date: '', excerpt: '', thumbnail: '' }] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+                  >
+                    + 영상 추가
+                  </button>
+                </div>
+              </div>
             </div>
           </SectionCard>
 
