@@ -23,11 +23,16 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/showroom',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-01.jpg',
+      alt: "대라천 '참'침향 전시장 — 베트남 직영 본관 침향 라인업·원목·증류·시향",
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '대라천 침향 전시장 — ZOEL LIFE Showroom',
     description: '베트남 직영 본관 — 침향 원목·증류·시향까지 한 공간에.',
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-01.jpg'],
   },
 };
 

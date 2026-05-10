@@ -33,13 +33,16 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/brand-story',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    images: ['/opengraph-image.jpg'],
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg',
+      alt: "대라천 '참'침향 — 베트남 하띤 200ha 직영 침향 농장 25년 여정",
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: "대라천 '참'침향 — 25년 여정",
     description: '1998년 캄보디아에서 시작된 대라천 침향의 농장·공정·역사 이야기.',
-    images: ['/twitter-image.jpg'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg'],
   },
 };
 

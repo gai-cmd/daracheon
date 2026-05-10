@@ -576,6 +576,7 @@
   font-weight: 300;
 }
 .procImgWrap {
+  position: relative;
   margin-top: 16px;
   overflow: hidden;
   aspect-ratio: 4 / 3;

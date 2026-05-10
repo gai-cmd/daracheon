@@ -24,6 +24,24 @@ export const metadata: Metadata = {
     '대라천 문의', '대라천 FAQ', '침향 문의',
   ],
   alternates: { canonical: 'https://zoellife.com/company' },
+  openGraph: {
+    type: 'website',
+    title: '회사소개 — 조엘라이프(주) ZOEL LIFE',
+    description: '1998년 캄보디아에서 시작, 베트남 하띤 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지의 프리미엄 침향 전문 브랜드 조엘라이프 회사 소개.',
+    url: 'https://zoellife.com/company',
+    siteName: '대라천 ZOEL LIFE',
+    locale: 'ko_KR',
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg',
+      alt: '조엘라이프(주) 대라천 ZOEL LIFE — 베트남 직영 25년 프리미엄 침향 브랜드',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '회사소개 — 조엘라이프(주) ZOEL LIFE',
+    description: '베트남 하띤 200ha 직영 농장 25년 — 프리미엄 침향 전문 브랜드 회사 소개.',
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg'],
+  },
 };
 
 // LocalBusiness + Organization + BreadcrumbList 통합 JSON-LD

@@ -32,13 +32,16 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/products',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    images: ['/opengraph-image.jpg'],
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/drive-13-1777031065906-uOH4D21UuNVAEeyrXQnmVeLaLJt0D7.jpg',
+      alt: "대라천 '참'침향 오일 캡슐 — 25년 숙성 Aquilaria Agallocha Roxburgh 정품",
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '제품 소개 — 대라천 침향 제품',
     description: '25년 숙성 Aquilaria Agallocha Roxburgh 정품 라인업.',
-    images: ['/twitter-image.jpg'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/drive-13-1777031065906-uOH4D21UuNVAEeyrXQnmVeLaLJt0D7.jpg'],
   },
 };
 

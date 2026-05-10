@@ -27,13 +27,16 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장',
     description: '베트남 하띤 200ha 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정 미디어 공개.',
-    images: ['/opengraph-image.jpg'],
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg',
+      alt: '대라천 침향 미디어 — 베트남 하띤 농장 영상·사진 갤러리',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '침향 영상·사진 미디어 — 하띤 농장 현장',
     description: '대라천 직영 침향 농장의 영상·사진 갤러리.',
-    images: ['/twitter-image.jpg'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg'],
   },
 };
 

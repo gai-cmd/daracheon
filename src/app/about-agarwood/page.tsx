@@ -35,13 +35,16 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/about-agarwood',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    images: [{ url: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png', width: 1200, height: 630, alt: '대라천 침향 이야기' }],
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png',
+      alt: '침향 이야기 — 식약처 등재 Aquilaria Agallocha Roxburgh 정의·효능·문헌',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
     description: '식약처 공식 등재 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
-    images: ['https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png'],
   },
 };
 

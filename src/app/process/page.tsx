@@ -25,13 +25,16 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
     description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증 · HACCP·GMP 6단계 공정.',
-    images: ['/opengraph-image.jpg'],
+    images: [{
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg',
+      alt: '베트남 하띤성 200ha 직영 침향 농장 — 대라천 25년 생산 공정',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
     description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증.',
-    images: ['/twitter-image.jpg'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg'],
   },
 };
 

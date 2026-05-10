@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import styles from './page.module.css';
@@ -342,19 +343,12 @@ export default async function HomePage() {
                 background: '#000',
               }}
             >
-              <img
+              <Image
                 src={showroomImage.src}
                 alt={showroomImage.title ?? '대라천 침향 전시장'}
-                loading="lazy"
-                decoding="async"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
+                fill
+                sizes="(max-width: 1200px) 100vw, 1200px"
+                style={{ objectFit: 'cover', display: 'block' }}
               />
             </div>
           </div>
@@ -434,14 +428,12 @@ export default async function HomePage() {
                 <div key={`${c.title}-${i}`} className={styles.agCard} style={{ overflow: 'hidden', padding: 0 }}>
                   {c.image && (
                     <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img
+                      <Image
                         src={c.image}
                         alt={`${c.title} — ${kicker}`}
-                        loading="lazy"
-                        decoding="async"
-                        width={800}
-                        height={600}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        style={{ objectFit: 'cover', display: 'block' }}
                       />
                     </div>
                   )}
@@ -472,14 +464,12 @@ export default async function HomePage() {
                 <div key={`${b.title}-${i}`} className={styles.benItem} style={{ borderTop: 'none', overflow: 'hidden', padding: 0 }}>
                   {b.image && (
                     <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <img
+                      <Image
                         src={b.image}
                         alt={`침향 효능 ${i + 1} — ${b.title}`}
-                        loading="lazy"
-                        decoding="async"
-                        width={800}
-                        height={600}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        style={{ objectFit: 'cover', display: 'block' }}
                       />
                     </div>
                   )}
@@ -515,13 +505,11 @@ export default async function HomePage() {
                 <div className={styles.procDur}>{processDurations[i] ?? '—'}</div>
                 {PROCESS_IMAGES[i] && (
                   <div className={styles.procImgWrap}>
-                    <img
+                    <Image
                       src={PROCESS_IMAGES[i]}
                       alt={`침향 6단계 공정 ${String(i + 1).padStart(2, '0')} — ${step}`}
-                      loading="lazy"
-                      decoding="async"
-                      width={1200}
-                      height={900}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
                       className={styles.procImg}
                     />
                   </div>
