@@ -88,6 +88,21 @@ interface ProcessData {
   certifications: Certifications;
 }
 
+interface Farm {
+  name: string;
+  nameVi: string;
+  desc: string;
+  image?: string;
+}
+
+const DEFAULT_FARMS: Farm[] = [
+  { name: '하띤', nameVi: 'Ha Tinh', desc: '침향의 전통 산지' },
+  { name: '동나이', nameVi: 'Dong Nai', desc: '현무암 토양, 깊은 오일향' },
+  { name: '냐짱', nameVi: 'Nha Trang', desc: '굵은 침향, 오랜 관리의 결과' },
+  { name: '푸꾸옥', nameVi: 'Phu Quoc', desc: '고수령 침향목·체험농장' },
+  { name: '람동', nameVi: 'Lam Dong', desc: '158ha(478,000평) · 대규모 거점' },
+];
+
 const DEFAULT_HERO: ProcessHero = {
   kicker: '침향 농장 이야기 · Farm Story',
   titleLine1: '베트남 하띤의',
@@ -267,6 +282,7 @@ export default function AdminProcessPage() {
   const [chapters, setChapters] = useState<ProcessChapter[]>(DEFAULT_CHAPTERS);
   const [videos, setVideos] = useState<ProductionVideos>(DEFAULT_VIDEOS);
   const [certs, setCerts] = useState<Certifications>(DEFAULT_CERTS);
+  const [farms, setFarms] = useState<Farm[]>(DEFAULT_FARMS);
 
   useEffect(() => {
     if (!toast) return;
@@ -281,8 +297,17 @@ export default function AdminProcessPage() {
         if (res.status === 404) {
           return;
         }
-        const data = (await res.json()) as { pages?: { process?: Partial<ProcessData> } };
+        const data = (await res.json()) as { pages?: { process?: Partial<ProcessData>; brandStory?: { farms?: Farm[] } } };
         const d = data.pages?.process;
+        const bsFarms = data.pages?.brandStory?.farms;
+        if (Array.isArray(bsFarms) && bsFarms.length > 0) {
+          setFarms(bsFarms.map((f) => ({
+            name: f?.name ?? '',
+            nameVi: f?.nameVi ?? '',
+            desc: f?.desc ?? '',
+            image: f?.image ?? '',
+          })));
+        }
         if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
         if (d?.sceneSection) {
           setSceneSection({
@@ -362,6 +387,30 @@ export default function AdminProcessPage() {
       setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
     } catch (err) {
       console.error(`Save ${sectionKey} error:`, err);
+      setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  // 농장 카드는 /media + /brand-story 가 공유하는 단일 소스
+  // (pages.brandStory.farms) 를 그대로 갱신한다 — process 키가 아닌
+  // brandStory 키를 머지 저장해 다른 brandStory 필드는 보존.
+  async function saveFarms() {
+    setSaving('farms');
+    try {
+      const res = await fetch('/api/admin/pages');
+      const body = res.ok ? ((await res.json()) as { pages?: { brandStory?: Record<string, unknown> } }) : { pages: {} };
+      const prev = body.pages?.brandStory ?? {};
+      const merged = { ...prev, farms };
+      const result = await saveAdminPage('brandStory', merged);
+      if (!result.ok) {
+        setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
+        return;
+      }
+      setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
+    } catch (err) {
+      console.error('Save farms error:', err);
       setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
     } finally {
       setSaving(null);
@@ -526,6 +575,66 @@ export default function AdminProcessPage() {
                   + 카드 추가
                 </button>
               </div>
+            </div>
+          </SectionCard>
+
+          {/* FARM CARDS — pages.brandStory.farms (공유 소스) */}
+          <SectionCard title="농장 카드 · 5개 산지 (Scene 본문 하단)" onSave={saveFarms} saving={saving === 'farms'}>
+            <div className="space-y-4">
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-[12px] text-blue-900">
+                <p className="font-semibold mb-1">📍 공유 데이터: <span className="font-mono">pages.brandStory.farms</span></p>
+                <p>이 카드들은 <span className="font-mono">/media</span> 와 <span className="font-mono">/brand-story</span> 두 페이지에서 동시에 표시됩니다. "농장 · 01~05" 번호는 아래 순서대로 자동 부여됩니다.</p>
+              </div>
+              {farms.map((farm, i) => (
+                <div key={i} className="rounded-lg bg-gray-50 p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      농장 · {String(i + 1).padStart(2, '0')}
+                      {farm.name && <span className="ml-2 font-normal text-gray-500">— {farm.name}{farm.nameVi && ` (${farm.nameVi})`}</span>}
+                    </span>
+                    <div className="flex gap-1">
+                      <button type="button" onClick={() => setFarms(moveItem(farms, i, i - 1))} className="rounded border border-gray-200 bg-white px-1.5 py-0.5 text-xs text-gray-400 hover:text-gray-600">▲</button>
+                      <button type="button" onClick={() => setFarms(moveItem(farms, i, i + 1))} className="rounded border border-gray-200 bg-white px-1.5 py-0.5 text-xs text-gray-400 hover:text-gray-600">▼</button>
+                      <button type="button" onClick={() => setFarms(removeIndex(farms, i))} className="rounded border border-red-200 px-1.5 py-0.5 text-xs text-red-400 hover:text-red-600">삭제</button>
+                    </div>
+                  </div>
+                  <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <input
+                      placeholder="농장명 (한글)"
+                      value={farm.name}
+                      onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], name: e.target.value }; setFarms(n); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500"
+                    />
+                    <input
+                      placeholder="농장명 (베트남어)"
+                      value={farm.nameVi}
+                      onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], nameVi: e.target.value }; setFarms(n); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500"
+                    />
+                    <input
+                      placeholder="설명 (예: 침향의 전통 산지)"
+                      value={farm.desc}
+                      onChange={(e) => { const n = [...farms]; n[i] = { ...n[i], desc: e.target.value }; setFarms(n); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">농장 사진 (선택 · 4:3 권장)</label>
+                    <ImageUploadField
+                      value={farm.image ?? ''}
+                      onChange={(url) => { const n = [...farms]; n[i] = { ...n[i], image: url }; setFarms(n); }}
+                      subdir="pages"
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setFarms([...farms, { name: '', nameVi: '', desc: '', image: '' }])}
+                className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
+              >
+                + 농장 추가
+              </button>
             </div>
           </SectionCard>
 
