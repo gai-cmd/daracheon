@@ -125,14 +125,20 @@ export default function ImageUploadField({
   const [aiPrompt, setAiPrompt] = useState(aiPromptSeed);
   const [aiAspect, setAiAspect] = useState<typeof aiAspectRatio>(aiAspectRatio);
   const [aiBusy, setAiBusy] = useState(false);
+  // 생성 결과는 "적용" 버튼을 누르기 전까지 onChange 를 부르지 않고 미리보기에만 표시.
+  const [aiPreviewUrl, setAiPreviewUrl] = useState<string | null>(null);
+  // 같은 패널 안에서 여러 번 재생성한 결과를 이력으로 보관(최대 5장) — 클릭 시 그 시안을 다시 미리보기로 선택.
+  const [aiHistory, setAiHistory] = useState<string[]>([]);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   async function handleAiGenerate() {
     const prompt = aiPrompt.trim();
     if (!prompt) {
-      setUploadError('프롬프트를 입력하세요.');
+      setAiError('프롬프트를 입력하세요.');
       return;
     }
     setAiBusy(true);
+    setAiError(null);
     setUploadError(null);
     setCompressionInfo(null);
     try {
@@ -145,13 +151,31 @@ export default function ImageUploadField({
       if (!res.ok || !data.success || !data.url) {
         throw new Error(data.message || 'AI 이미지 생성 실패');
       }
-      onChange(data.url);
-      setAiOpen(false);
+      // onChange 는 부르지 않는다 — "적용" 시점까지 외부 값은 그대로 유지.
+      const newUrl: string = data.url;
+      setAiPreviewUrl(newUrl);
+      setAiHistory((prev) => [newUrl, ...prev.filter((u) => u !== newUrl)].slice(0, 5));
     } catch (err) {
-      setUploadError(err instanceof Error ? err.message : 'AI 이미지 생성 실패');
+      setAiError(err instanceof Error ? err.message : 'AI 이미지 생성 실패');
     } finally {
       setAiBusy(false);
     }
+  }
+
+  function handleAiApply() {
+    if (!aiPreviewUrl) return;
+    onChange(aiPreviewUrl);
+    setAiOpen(false);
+    setAiPreviewUrl(null);
+    setAiHistory([]);
+    setAiError(null);
+  }
+
+  function handleAiCancel() {
+    setAiOpen(false);
+    setAiPreviewUrl(null);
+    setAiHistory([]);
+    setAiError(null);
   }
 
   const handleMirrorUrl = useCallback(async (url: string) => {
@@ -305,6 +329,7 @@ export default function ImageUploadField({
               value={aiAspect}
               onChange={(e) => setAiAspect(e.target.value as typeof aiAspect)}
               className="text-xs px-2 py-1 border border-purple-200 rounded bg-white"
+              disabled={aiBusy}
             >
               <option value="1:1">1:1</option>
               <option value="4:3">4:3 (가로)</option>
@@ -319,12 +344,59 @@ export default function ImageUploadField({
             rows={3}
             placeholder="원하는 이미지를 영어 또는 한국어로 묘사하세요. 예: traditional Korean herbal medicine document, ancient parchment, calligraphy of agarwood characters, no people, warm sepia tones"
             className="w-full text-sm px-3 py-2 border border-purple-200 rounded bg-white focus:outline-none focus:ring-2 focus:ring-purple-300"
+            disabled={aiBusy}
           />
-          <div className="flex justify-end gap-2">
+
+          {/* 생성 결과 미리보기 */}
+          {aiPreviewUrl && (
+            <div className="rounded border border-purple-300 bg-white p-2">
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <span className="text-[11px] font-semibold text-purple-700">미리보기</span>
+                <span className="text-[11px] text-gray-500">
+                  마음에 들면 <b className="text-purple-700">적용</b> · 아니면 프롬프트 수정 후 <b className="text-purple-700">재생성</b>
+                </span>
+              </div>
+              <div className="relative w-full bg-gray-50 rounded overflow-hidden" style={{ maxHeight: 360 }}>
+                {/* 새 이미지 로드 중 깜빡임 줄이기 위해 next/image 대신 native img */}
+                <img
+                  src={aiPreviewUrl}
+                  alt="AI 생성 미리보기"
+                  className="w-full h-auto object-contain max-h-[360px] block"
+                />
+              </div>
+
+              {/* 생성 이력 — 직전 시안 비교/되돌리기 */}
+              {aiHistory.length > 1 && (
+                <div className="mt-2">
+                  <p className="text-[11px] text-gray-500 mb-1 px-1">이전 시안 — 클릭해서 다시 미리보기</p>
+                  <div className="flex gap-1.5 overflow-x-auto pb-1 px-1">
+                    {aiHistory.map((u, idx) => (
+                      <button
+                        key={u}
+                        type="button"
+                        onClick={() => setAiPreviewUrl(u)}
+                        className={`shrink-0 relative w-14 h-14 rounded overflow-hidden border-2 transition ${
+                          u === aiPreviewUrl ? 'border-purple-500 ring-1 ring-purple-300' : 'border-gray-200 hover:border-purple-300'
+                        }`}
+                        title={`시안 ${aiHistory.length - idx}`}
+                      >
+                        <img src={u} alt={`시안 ${aiHistory.length - idx}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {aiError && <p className="text-xs text-red-500">{aiError}</p>}
+
+          <div className="flex justify-end gap-2 flex-wrap">
             <button
               type="button"
-              onClick={() => setAiOpen(false)}
+              onClick={handleAiCancel}
               className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded hover:bg-gray-50"
+              disabled={aiBusy}
             >
               취소
             </button>
@@ -332,7 +404,7 @@ export default function ImageUploadField({
               type="button"
               onClick={handleAiGenerate}
               disabled={aiBusy || !aiPrompt.trim()}
-              className="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+              className="px-3 py-1.5 text-xs font-medium text-purple-700 bg-white border border-purple-300 rounded hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
             >
               {aiBusy ? (
                 <>
@@ -340,12 +412,32 @@ export default function ImageUploadField({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
                   </svg>
-                  생성 중...
+                  {aiPreviewUrl ? '재생성 중...' : '생성 중...'}
+                </>
+              ) : aiPreviewUrl ? (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  재생성
                 </>
               ) : (
                 '생성'
               )}
             </button>
+            {aiPreviewUrl && (
+              <button
+                type="button"
+                onClick={handleAiApply}
+                disabled={aiBusy}
+                className="px-3 py-1.5 text-xs font-semibold text-white bg-purple-600 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                이 이미지로 적용
+              </button>
+            )}
           </div>
         </div>
       )}
