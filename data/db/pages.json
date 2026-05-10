@@ -846,7 +846,8 @@
         "description": "Aquilaria 종의 약리학적 특성과 한방 제제 개발 가능성 분석.",
         "tag": "학술",
         "link": "https://www.researchgate.net/publication/395124490",
-        "titleKr": "한약재로서 Aquilaria 의 약리학적 활성 잠재력 및 한약 제제 개발"
+        "titleKr": "한약재로서 Aquilaria 의 약리학적 활성 잠재력 및 한약 제제 개발",
+        "summaryKr": "Aquilaria 속은 귀중한 침향 수지를 생산하는 열대 식물이지만, 잎(특히 A. sinensis·A. malaccensis·A. crassna)은 흔히 폐기물로 취급되어 왔다. 본 리뷰는 이 잎들의 약리학적 잠재력에 주목하여 전통 의학과 한약재 개발의 활성 성분으로서의 가능성을 부각시킨다. 세 종 모두 항산화·세포독성·항염·항균·항당뇨 등 다양한 약리 활성을 보이며, 이는 apigenin·quercetin·kaempferol 등 플라보노이드 계열의 생리활성 이차대사산물에 기인한다. 또한 나노에멀젼·나노캡슐화 등 현대 약물전달 시스템 적용 가능성을 함께 다루고, 향후 생화학적 특성 규명·생체이용률 연구·임상시험·약물전달 기술 개발이 필요하다고 권고한다."
       },
       {
         "title": "침향 정유의 추출 방법이 수율·성분·생물활성에 미치는 영향",
@@ -856,7 +857,8 @@
         "description": "다양한 추출 방법에 따른 침향 정유의 진정, 수면유도 약리활성 비교.",
         "tag": "진정",
         "link": "https://doi.org/10.1080/10412905.2024.2447706",
-        "titleKr": "추출 방법이 침향 정유의 수율·성분·생물활성에 미치는 영향"
+        "titleKr": "추출 방법이 침향 정유의 수율·성분·생물활성에 미치는 영향",
+        "summaryKr": "침향 정유(AEO)는 화학·전통의학·종교 등 다양한 영역에서 귀하게 쓰이는 약용 물질이지만 수율이 낮은 한계가 있다. 수증기증류(HD)·증기증류(SD)는 최적 추출률을 보장하지 못하고, 용매 추출(SE)은 잔류 용매 위험이 따른다. 초음파 보조 추출(UAE)은 수율을 높이나 시간이 길어지면 생리활성 성분을 손상시킬 수 있고, 마이크로파 보조 추출(MAE)은 처리 조건 조정으로 기능성 성분을 맞춤화할 수 있다. 초임계 유체 추출(SFE)은 시간 효율이 좋지만 비용이 크며, 효소 전처리는 효과적이나 경제성이 낮다. HD·UAE·MAE 를 병행 최적화하면 생산 시간·비용을 줄이며 수율을 높일 수 있다. 본 논문은 7 가지 추출법이 AEO 의 수율·화학 조성·생물학적 기능성에 미치는 영향을 종합 리뷰한다."
       },
       {
         "title": "침향 성분의 약리학적 개요 및 독성",
@@ -920,7 +922,9 @@
         "citations": "-",
         "description": "침향이 비특이적 면역 반응을 강화하는 대표적 한약재임을 문헌적으로 고찰.",
         "tag": "면역",
-        "titleKr": "비특이성 면역을 강화하는 한약재의 문헌적 고찰"
+        "titleKr": "비특이성 면역을 강화하는 한약재의 문헌적 고찰",
+        "summaryKr": "본 논문은 면역의 정의, 특이성·비특이성 면역 반응 및 면역 보조 물질에 대한 정리 후, 한약재와 면역의 관계(면역 촉진 및 면역 조절)를 검토하고, 비특이성 면역을 강화하는 한약재를 보기약(補氣藥)·보혈약(補血藥)·보음약(補陰藥)·보양약(補陽藥)으로 분류하여 정리한 문헌적 고찰이다. 또한 사상체질별로 비특이성 면역을 강화시키는 데 적합한 한약재 분류도 함께 제시한다. 침향은 비특이성 면역을 강화하는 대표적 보양약 계열로 분류되어 본 연구에서 다뤄진다.",
+        "link": "https://oak.chosun.ac.kr/handle/2020.oak/2065"
       },
       {
         "title": "고지방사료 비만 당뇨 마우스에서 침향 첨가 녹차의 생리활성",
@@ -947,7 +951,9 @@
         "citations": "-",
         "description": "침향 유래 phenylethylchromone이 아디포넥틴 분비를 촉진하여 대사증후군 개선 가능성 제시.",
         "tag": "대사",
-        "titleKr": "침향 유래 페닐에틸크로몬의 아디포넥틴 분비 촉진 메커니즘"
+        "titleKr": "침향 유래 페닐에틸크로몬의 아디포넥틴 분비 촉진 메커니즘",
+        "summaryKr": "침향(Aquilaria malaccensis 유래)에서 분리한 2-(2-phenylethyl)chromone(PEC) 유도체들이 인간 골수 중간엽 줄기세포의 지방세포 분화 과정에서 아디포넥틴 분비를 촉진하는 활성을 평가한 연구이다. 새 화합물 5,6-dihydroxy-2-(2-phenylethyl)chromone 을 포함한 페닐에틸크로몬 유도체들이 동정되었으며, 가장 강력한 분비 촉진 활성을 보인 6-methoxy-2-(2-phenylethyl)chromone 과 7-methoxy-2-(2-phenylethyl)chromone 은 PPARγ 부분 작용제(partial agonist)로 작용함이 확인되었다. 침향 유래 PEC 의 대사증후군 개선 가능성을 분자 수준에서 제시한다.",
+        "link": "https://pubmed.ncbi.nlm.nih.gov/30672698/"
       },
       {
         "title": "한방신경정신과 영역의 수면장애 관련 연구현황",
@@ -976,7 +982,9 @@
         "citations": "-",
         "description": "말레이시아 Aquilaria 종의 식물학, 전통 의약 사용법, 약리 효과를 종합 분석.",
         "tag": "학술",
-        "titleKr": "말레이시아 Aquilaria 의 식물학·민족의학적 활용·약리 효과 종합 분석"
+        "titleKr": "말레이시아 Aquilaria 의 식물학·민족의학적 활용·약리 효과 종합 분석",
+        "summaryKr": "Aquilaria 속은 인도-말레시아(Indomalesia) 지역 열대우림에 폭넓게 분포하며 전 세계적으로 약 20 종이 알려져 있다. 그중 말레이시아 자생종은 Aquilaria beccariana, A. hirta, A. malaccensis, A. microcarpa, A. rostrata 5 종이다. 본 리뷰는 말레이시아에서 발견되는 Aquilaria 종을 대상으로 식물학적 특징·전통적 사용·약리학적 효과를 정리한다. 이들 종의 식물화학적·약리학적 평가 결과 항당뇨·항균·항암 활성 등 유익한 효과에 기여하는 다양한 생리활성 화합물이 확인되었다.",
+        "link": "https://www.eurekaselect.com/article/146454"
       },
       {
         "title": "침향 한의학적 활용과 웰니스 산업 연계 방안",
@@ -1531,7 +1539,7 @@
       ]
     },
     "showroomImage": {
-      "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/home/home-showroom-1778396993116.jpg",
+      "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/home/home-showroom-1778412223648.jpg",
       "tag": "Showroom · 대라천 ‘참’침향 전시장",
       "title": "대라천 침향 전시장",
       "body": "베트남 직영 농장에서 출하된 ‘참’침향이 한 자리에 모이는 곳. 진품의 풍경을 직접 보여드립니다."
