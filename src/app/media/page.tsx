@@ -370,13 +370,13 @@ export default async function MediaPage() {
       ? {
           ...rawVideos,
           items: (rawVideos.items ?? []).map((item) => {
-            const it = item as { src?: string; id?: string; title?: string; thumbnail?: string };
+            const it = item as { src?: string; id?: string; title?: string; thumbnail?: string; date?: string };
             const src = it.src
               ? it.src
               : it.id
                 ? `https://drive.google.com/file/d/${it.id}/preview`
                 : '';
-            return { src, title: it.title ?? '', thumbnail: it.thumbnail };
+            return { src, title: it.title ?? '', thumbnail: it.thumbnail, date: it.date };
           }),
         }
       : DEFAULT_PROCESS_VIDEOS,
@@ -385,66 +385,21 @@ export default async function MediaPage() {
 
   const allMedia = dbMedia.length > 0 ? dbMedia : DEFAULT_MEDIA;
 
-  // 갤러리 영상 = (DB 미디어 영상) + (processVideos: /media 침향농장이야기 → 갤러리 통합)
-  // + (Factory Footage: brand-story 의 베트남 직영 공장 실측 영상 6편 통합)
+  // 갤러리 영상 = (DB 미디어 영상) + (processVideos: blob pages.json 의 productionVideos.items)
+  // 영상은 모두 blob `process.productionVideos.items` 한 곳에서 관리한다 — 어드민
+  // (/admin/media → 침향 농장 이야기 탭) 에서 추가/삭제/제목·날짜·썸네일 편집 가능.
   // URL/id 기준 dedup. 영상·썸네일 모두 Vercel Blob 호스팅 (외부 CDN 의존 금지).
-  const FACTORY_FOOTAGE: MediaItem[] = [
-    {
-      slug: 'farm-planting-watering',
-      title: '농장 현장 — 식목·관수',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-F1SBFZXQ9TpBUEPPcSHlg1te5Of34l.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/farm-planting-watering-thumb-6Uz8dijs2BhkvfcuCquV4Yjx6IJnib.jpg',
-    },
-    {
-      slug: 'harvest-agarwood',
-      title: '수확 현장 — 침향 채취',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-TjZSNSkQnn2br7raRpYhaoE25a3MuK.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/harvest-agarwood-thumb-rZfnc4ls6HFf8brbYSYThFcCinEd32.jpg',
-    },
-    {
-      slug: 'patent-12835-resin',
-      title: '특허 #12835 — 수지유도 공정',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-zA3YSKZGAm4j6xQ4JnotolIxvy2kuz.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/patent-12835-resin-thumb-5dKoBvrRG4pOUI5b0SQy1sxzhcXZVh.jpg',
-    },
-    {
-      slug: 'high-temp-distill-72h',
-      title: '72시간 고온증류',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-KXSzhfXnfsHUkaT9U1WBw8kDWZ3iZ3.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/high-temp-distill-72h-thumb-al714QTsYsct6CU10SelIwNIEucZIL.jpg',
-    },
-    {
-      slug: 'vimeco-line',
-      title: 'VIMECO 위탁 제조 라인',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-rzGUp5P0ejaxD1lvCkpRs1AFyRdbeQ.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/vimeco-line-thumb-kFzwLaWlptKjs7cS1aKRiF7nvu9s48.jpg',
-    },
-    {
-      slug: 'qc-heavymetal',
-      title: '품질 검사 — 중금속 8종 불검출',
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-V8ESMkMnp8APJYuJgz0lCnOy2rMU0m.mp4',
-      thumb: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/factory-footage/qc-heavymetal-thumb-eQqw49IM7NvdsKqEBnwLyND15t4pql.jpg',
-    },
-  ].map((v) => ({
-    id: `ff-${v.slug}`,
-    type: 'video' as const,
-    title: v.title,
-    source: '대라천 공식',
-    date: '2026-04-11',
-    image: v.thumb,
-    url: v.url,
-  }));
-
   const productionVideoItems: MediaItem[] = farmStory.processVideos.items
     .filter((v) => v.src)
     .map((v, i) => {
-      const item = v as { src: string; title: string; thumbnail?: string };
+      const item = v as { src: string; title: string; thumbnail?: string; date?: string };
       return {
         id: `pv-${i}-${item.src}`,
         type: 'video' as const,
         title: item.title,
         source: '대라천 공식',
-        date: '2026-04-11',
+        // 영상 메타데이터(ffprobe creation_time)에서 추출한 실제 촬영일을 사용. 없으면 업로드일.
+        date: item.date ?? '2026-04-11',
         image: item.thumbnail,
         url: item.src,
       };
@@ -453,7 +408,7 @@ export default async function MediaPage() {
   const dbVideos = allMedia.filter((m) => m.type === 'video');
   const seenUrls = new Set<string>();
   const galleryVideos: MediaItem[] = [];
-  for (const v of [...dbVideos, ...FACTORY_FOOTAGE, ...productionVideoItems]) {
+  for (const v of [...dbVideos, ...productionVideoItems]) {
     const key = v.url ?? v.id;
     if (seenUrls.has(key)) continue;
     seenUrls.add(key);

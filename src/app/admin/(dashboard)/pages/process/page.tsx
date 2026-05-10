@@ -50,6 +50,8 @@ interface ProcessChapter {
 interface ProductionVideo {
   src: string;
   title: string;
+  date?: string;
+  thumbnail?: string;
 }
 
 interface ProductionVideos {
@@ -316,10 +318,15 @@ export default function AdminProcessPage() {
           setVideos({
             ...DEFAULT_VIDEOS,
             ...d.productionVideos,
-            items: (d.productionVideos.items ?? []).map((item) => ({
-              src: (item as { src?: string; id?: string }).src ?? '',
-              title: item.title ?? '',
-            })),
+            items: (d.productionVideos.items ?? []).map((item) => {
+              const it = item as { src?: string; id?: string; title?: string; date?: string; thumbnail?: string };
+              return {
+                src: it.src ?? '',
+                title: it.title ?? '',
+                date: it.date ?? '',
+                thumbnail: it.thumbnail ?? '',
+              };
+            }),
           });
         }
         if (d?.certifications) {
@@ -661,10 +668,29 @@ export default function AdminProcessPage() {
                           placeholder="영상 제목"
                           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
                         />
+                        <div>
+                          <label className="mb-1 block text-[11px] font-medium text-gray-500">촬영일 (YYYY-MM-DD)</label>
+                          <input
+                            type="date"
+                            value={v.date ?? ''}
+                            onChange={(e) => { const n = [...videos.items]; n[i] = { ...n[i], date: e.target.value }; setVideos({ ...videos, items: n }); }}
+                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                          />
+                          <p className="mt-1 text-[11px] text-gray-400">갤러리(/media)에 표시되는 날짜. 비우면 업로드일 표기.</p>
+                        </div>
                         <VideoUploadField
                           value={v.src}
                           onChange={(url) => { const n = [...videos.items]; n[i] = { ...n[i], src: url }; setVideos({ ...videos, items: n }); }}
                         />
+                        <div>
+                          <label className="mb-1 block text-[11px] font-medium text-gray-500">썸네일 (선택)</label>
+                          <ImageUploadField
+                            value={v.thumbnail ?? ''}
+                            onChange={(url) => { const n = [...videos.items]; n[i] = { ...n[i], thumbnail: url }; setVideos({ ...videos, items: n }); }}
+                            subdir="media"
+                          />
+                          <p className="mt-1 text-[11px] text-gray-400">비우면 영상 첫 프레임을 자동 사용.</p>
+                        </div>
                       </div>
                     </div>
                   ))}

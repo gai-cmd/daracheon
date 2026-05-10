@@ -22,6 +22,8 @@ interface ProcessChapter {
 interface ProcessVideo {
   src: string;
   title: string;
+  date?: string;
+  thumbnail?: string;
 }
 
 interface CertSection {
@@ -474,75 +476,79 @@ export default function MediaPageClient({
                 <div className={styles.chapterBody}>
                   <h3>{certifications.title}</h3>
                   <p>{certifications.body}</p>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                      gap: 20,
-                      marginTop: 30,
-                    }}
-                  >
-                    {certifications.sections.map((section) => (
-                      <div
-                        key={section.title}
-                        style={{
-                          border: '1px solid rgba(212,168,67,0.25)',
-                          padding: '20px 18px',
-                          background: 'rgba(255,255,255,0.02)',
-                        }}
-                      >
+                  {certifications.sections.length > 0 && (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                        gap: 20,
+                        marginTop: 30,
+                      }}
+                    >
+                      {certifications.sections.map((section) => (
                         <div
+                          key={section.title}
                           style={{
-                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                            fontSize: '0.6rem',
-                            letterSpacing: '0.22em',
-                            textTransform: 'uppercase',
-                            color: 'var(--accent)',
-                            marginBottom: 12,
+                            border: '1px solid rgba(212,168,67,0.25)',
+                            padding: '20px 18px',
+                            background: 'rgba(255,255,255,0.02)',
                           }}
                         >
-                          {section.title}
+                          <div
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.6rem',
+                              letterSpacing: '0.22em',
+                              textTransform: 'uppercase',
+                              color: 'var(--accent)',
+                              marginBottom: 12,
+                            }}
+                          >
+                            {section.title}
+                          </div>
+                          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 8 }}>
+                            {section.items.map((item) => (
+                              <li key={item} style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.5 }}>
+                                · {item}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 8 }}>
-                          {section.items.map((item) => (
-                            <li key={item} style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.5 }}>
-                              · {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                      gap: 14,
-                      marginTop: 28,
-                    }}
-                  >
-                    {certifications.images.map((src, idx) => (
-                      <div
-                        key={src}
-                        style={{
-                          position: 'relative',
-                          aspectRatio: '3/4',
-                          overflow: 'hidden',
-                          background: '#1a1d29',
-                          border: '1px solid rgba(212,168,67,0.18)',
-                        }}
-                      >
-                        <Image
-                          src={src}
-                          alt={`인증서 문서 ${idx + 1}`}
-                          fill
-                          sizes="(max-width: 900px) 50vw, 240px"
-                          style={{ objectFit: 'cover' }}
-                          unoptimized
-                        />
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
+                  {certifications.images.length > 0 && (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                        gap: 14,
+                        marginTop: 28,
+                      }}
+                    >
+                      {certifications.images.map((src, idx) => (
+                        <div
+                          key={src}
+                          style={{
+                            position: 'relative',
+                            aspectRatio: '3/4',
+                            overflow: 'hidden',
+                            background: '#1a1d29',
+                            border: '1px solid rgba(212,168,67,0.18)',
+                          }}
+                        >
+                          <Image
+                            src={src}
+                            alt={`인증서 문서 ${idx + 1}`}
+                            fill
+                            sizes="(max-width: 900px) 50vw, 240px"
+                            style={{ objectFit: 'cover' }}
+                            unoptimized
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {certifications.extraSection && certifications.extraSection.images.length > 0 && (
                     <div style={{ marginTop: 44 }}>
                       <div
