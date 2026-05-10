@@ -3,7 +3,7 @@
     "hero": {
       "sectionTag": "브랜드 스토리 · Brand Story",
       "titleKr": "100%  베트남산,",
-      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닙니다. 수천 년의 시간을 지나며 검증된 침향의 신뢰를 담았습니다. 25년 이상을 오직 침향 한 길만 연구하고 지켜온 정직과 성실, 그리고 자연이 오랜 시간에 걸쳐 빚어낸 기다림의 결실을 여러분께 온전히 전해 드립니다.",
+      "subtitle": "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닙니다. 수천 년의 시간을 지나며 검증된 침향의 신뢰를 담았습니다. 25년 이상을 오직 침향 한 길만 연구하고 지켜온 정직과 성실, 그리고 자연이 오랜 시간에 걸쳐 빚어낸 기다림의 결실을 여러분께 온전히 전해 드립니다. ",
       "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg",
       "titleEn": "아갈로차 침향만 고집"
     },
@@ -64,30 +64,50 @@
         {
           "era": "2000-2001",
           "items": [
-            "2000 베트남 5개 지역에 농장 조성 및 본격적인 침향 재배 시작",
-            "2001  동나이성에 대규모 식재 진행"
+            "2000 베트남 하띤성 일대 13만 그루 규모의 침향농장 조성",
+            "2001 동나이성 대규모 식재 진행"
           ],
-          "description": "1998년 침향 사업을 시작한 이후, 대라천 침향은 꾸준한 도전과 연구를 이어오며 기반을 다져왔습니다. 2000년에는 베트남의 주요 5개 지역에 농장을 조성하며 본격적인 침향 재배에 나섰고, 이어 2001년에는 동나이성에 대규모 식재를 진행하며 미래를 향한 준비를 한층 더 구체화했습니다."
+          "description": "대라천 '참'침향은 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했고, 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다."
         },
         {
           "era": "2014-2019",
           "items": [
-            "2014 노니발효 시스템 개발로 기술력 축적",
-            "2018 Vietnam 통합법인 설립 및 Organic/HACCP 인증 획득, 식용 가능 수지유도제 개발",
-            "2019 베트남 정부 OCOP 품질보증 획득"
+            "2014 노니발효 시스템 개발",
+            "2015 띠엔장성 일대 5ha 규모의 노니농장 조성",
+            "2018 NTV VIETNAM CO.LTD 통합 법인 설립",
+            "2018 노니발효 가공 공장 준공",
+            "2018 천연 침향 수지유도제 개발 및 생산",
+            "2018 동나이성 일대 5ha 규모의 침향오일 생산용 농장 조성",
+            "2018 침향농장·노니농장 Organic 인증 및 완제품 생산 공장 HACCP 인증",
+            "2019 노니·침향 OCOP(베트남 인민위원회 품질보증) 인증",
+            "2019 닥터노니 제품 생산 — 이슬 외 8종 (롯데·신세계·갤러리아 백화점 입점)"
           ],
-          "description": "2014년 노니발효 시스템을 개발하며 기술력을 축적했고, 2018년에는 NTV Vietnam 통합법인을 설립하고 Organic/HACCP 인증을 획득하며 식용가능 수지유도제를 재개발했습니다. 2019년에는 OCOP 베트남 정부 품질보증을 받았습니다.",
+          "description": "2014년 노니발효 시스템 개발을 시작으로, 2018년 NTV Vietnam 통합법인 출범과 함께 Organic·HACCP 인증을 획득하고 식용 가능 수지유도제를 자체 개발했습니다. 2019년에는 베트남 정부 OCOP 품질보증과 국내 백화점 입점으로 신뢰의 영역을 넓혔습니다.",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2014-2019-haccp-facility.jpg",
           "imageCaption": "2018 NTV Vietnam 통합법인 — Organic·HACCP 인증 클린룸 충전·포장 라인"
         },
         {
+          "era": "2020-2022",
+          "items": [
+            "2020 베트남 농공산품 엑스포 경진대회 우수상 입상",
+            "2020 면세점·7대마트 입점권 획득",
+            "2021 하띤성 침향농장의 침향목(20년산) 분양 사업 시작"
+          ],
+          "description": "2020년 베트남 농공산품 엑스포 우수상 입상과 함께 면세점 및 주요 마트 입점권을 확보했으며, 2021년부터는 하띤성 침향농장의 20년산 침향목 분양 사업을 시작했습니다."
+        },
+        {
           "era": "2023-2026",
           "items": [
-            "2023 침향캡슐 건강기능성 재인증(18품목 생산)",
+            "2023 대라천침향 오일캡슐 베트남 건강 기능성 식품(GMP) 인증",
+            "2023 침향 오일 캡슐 외 18품목의 침향제품 생산",
+            "2023 한경국립대학교·베트남 농람대학교와 기술 연구 제휴(MOU)",
+            "2023 하노이·호찌민 쇼룸 개장",
+            "2024 한국법인 The NTV Korea 설립 및 침향제품 한국 수출",
+            "2024 캄보디아 프놈펜·씨엠립 판매점 오픈",
             "2025 아시아 10대 선도 브랜드 선정 및 유기 바나듐·셀레늄·게르마늄 특허 출원",
             "2026 조엘라이프의 대라천 '참'침향 브랜드 한국 시장 본격 진출"
           ],
-          "description": "2023년 침향캡슐 건강기능성 재인증을 통해 18품목을 생산하게 되었고, 2025년에는 아시아 10대 선도 브랜드로 선정되며 유기 바나듐·셀레늄·게르마늄 특허를 출원했습니다. 2026년 조엘라이프를 통해 한국 시장에 본격 진출하며 새로운 도약을 시작했습니다.",
+          "description": "2023년 베트남 건강기능성식품 GMP 인증과 18품목의 침향제품 생산 체계를 확립하고, 한경국립대학교·베트남 농람대학교와의 기술 제휴, 하노이·호찌민 쇼룸 개장으로 글로벌 거점을 다졌습니다. 2024년 한국법인 The NTV Korea 설립과 캄보디아 판매점 오픈을 거쳐 2026년 조엘라이프의 대라천 '참'침향 브랜드로 한국 시장에 본격 진출합니다.",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2023-2026-korea-launch-v2.png",
           "imageCaption": "2026 한국 시장 진출 — 대라천 침향(大羅天 沈香) 캡슐 라인업"
         }
@@ -320,7 +340,7 @@
               "name": "천연목 식목",
               "duration": "최소 20년 이상",
               "desc": "Aquilaria Agallocha Roxburgh 묘목",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/farm-01-%EC%B2%9C%EC%97%B0%EB%AA%A9_%EC%8B%9D%EB%AA%A9.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-farm-01-planting.png"
             },
             {
               "step": "02",
@@ -408,85 +428,85 @@
             {
               "step": "01",
               "name": "원목 입고",
-              "duration": "로트 번호",
+              "duration": "관리된 원목별 번호 순서",
               "desc": "수지가 앉혀진 침향목을 공장으로 입고",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-01-intake.png"
             },
             {
               "step": "02",
               "name": "세척",
-              "duration": "오염물 제거",
-              "desc": "표피 제거 및 흙·먼지·외부 오염물 완전 제거",
+              "duration": "표피 제거, 오염물 제거",
+              "desc": "표피 및 흙·먼지·외부 오염물 완전 제거",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-02-%EC%84%B8%EC%B2%99.png"
             },
             {
               "step": "03",
               "name": "절단",
-              "duration": "10~20cm",
-              "desc": "10~20cm 크기로 천공된 부분 주변을 기준으로 절단",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-03-%EC%A0%88%EB%8B%A8.png"
+              "duration": "10~20cm 크기로 절단",
+              "desc": "10~20cm로 천공된 부분 주변 기준 절단",
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-03-cut.png"
             },
             {
               "step": "04",
               "name": "수지목 분리",
-              "duration": "수지 침착부위",
-              "desc": "목질 부분 제거. 순수 수지가 침착된 핵심 부분만 선별",
+              "duration": "수지 침착 부위 외 목질 부분 제거",
+              "desc": "순수 수지가 침착된 핵심 부분만 선별",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-04-resin-separation.png"
             },
             {
               "step": "05",
               "name": "이물질 제거",
-              "duration": "정밀 수작업",
-              "desc": "수지앉힘 작업 시 천공한 부분 속 이물질 완전 제거",
+              "duration": "수지앉힘 작업 시 천공 부분 속 이물질",
+              "desc": "천공한 부분 속 이물질 완전 제거",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-05-debris-removal.png"
             },
             {
               "step": "06",
               "name": "정밀 세척",
-              "duration": "물세척 3회",
-              "desc": "물세척 3회 반복 정밀 세척. 잔여 이물질 완전 제거 확인",
+              "duration": "물세척 3회 반복으로 정밀 세척",
+              "desc": "정밀 물세척 3회. 잔여 이물질 완전 제거",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-06-%EC%84%B8%EC%B2%99.png"
             },
             {
               "step": "07",
               "name": "자연 건조",
-              "duration": "자연광 건조",
-              "desc": "수지 손실 막기 위해 자연광 건조. 인위적 열원 사용 금지",
+              "duration": "자연광 건조, 인위적 열원 사용 금지",
+              "desc": "수지 손실 막기 위해 자연광 건조",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-07-natural-dry.png"
             },
             {
               "step": "08",
               "name": "분쇄",
-              "duration": "1~2mm 크기",
-              "desc": "고온증류 효율 극대화를 위한 최적 입자 크기 유지",
+              "duration": "효율 극대화 위한 1~2mm 크기 유지",
+              "desc": "고온증류 효율 극대화 위한 최적 입자",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-08-%EB%B6%84%EC%87%84.png"
             },
             {
               "step": "09",
               "name": "고온 증류법",
-              "duration": "72시간",
-              "desc": "전통 증기 증류법으로 72시간 연속 가동. 순수 오일 추출",
+              "duration": "72시간 연속 가동",
+              "desc": "전통 증기 증류법으로 순수 오일 추출",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-09-%EA%B3%A0%EC%98%A8_%EC%A6%9D%EB%A5%98%EB%B2%95.png"
             },
             {
               "step": "10",
               "name": "수지 채취",
-              "duration": "분리 채취",
-              "desc": "분리·채취, 불순물 완전 제거 후 고순도 수지만 분리",
+              "duration": "분리·채취, 불순물 완전 제거",
+              "desc": "불순물 완전 제거, 고순도 수지만 분리",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-10-%EC%88%98%EC%A7%80_%EC%B1%84%EC%B7%A8.png"
             },
             {
               "step": "11",
               "name": "숙성",
-              "duration": "안정화",
-              "desc": "자체 숙성 과정 통해 침향 오일의 깊은 향과 성분 안정화",
+              "duration": "자체 숙성 과정 준수",
+              "desc": "숙성 과정 통해 깊은 향과 성분 안정화",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-11-%EC%88%99%EC%84%B1.png"
             },
             {
               "step": "12",
               "name": "검사 및 출고",
               "duration": "ISO/IEC 17025:2017",
-              "desc": "중금속 8종 불검출 검사. 이력 추척 가능한 투명 출고",
+              "desc": "중금속 검사, 이력 추척 가능한 투명 출고",
               "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-12-%EA%B2%80%EC%82%AC_%EB%B0%8F_%EC%B6%9C%EA%B3%A0.png"
             }
           ]
