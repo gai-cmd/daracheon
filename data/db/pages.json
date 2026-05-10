@@ -288,6 +288,7 @@
       "tag": "PRODUCTION PROCESS",
       "title": "생산 공정",
       "subtitle": "베트남 직영 농장에서 완제품까지 - 최소 26년의 기록",
+      "heroImages": [],
       "images": [],
       "stats": [
         {
@@ -381,27 +382,27 @@
           "photos": [
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-01-intake.png",
-              "caption": "원목 입고 — 동나이 직영 공장"
+              "caption": "원목 입고 - 5개 지역 직영 공장"
             },
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-02-wash.png",
-              "caption": "세척 — 표피·외부 오염물 제거"
+              "caption": "세척 - 표피·외부 오염물 제거"
             },
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-03-cut.png",
-              "caption": "절단 — 천공부 기준 10~20cm"
+              "caption": "절단 - 천공부 기준 10~20cm"
             },
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-07-dry.png",
-              "caption": "건조 — 자연광 건조"
+              "caption": "건조 - 자연광 건조"
             },
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-11-distill.png",
-              "caption": "고온 증류 — 72시간 연속 가동"
+              "caption": "고온 증류 - 72시간 연속 가동"
             },
             {
               "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/imagen-oil-13-ship.png",
-              "caption": "검사 및 출고 — 중금속 8종 불검출"
+              "caption": "검사 및 출고 - 중금속 8종 불검출"
             }
           ],
           "steps": [
@@ -495,8 +496,7 @@
       "totalTimeLabel": "TOTAL PROCESS TIME",
       "totalTimeValue": "26+ Years",
       "totalTimeDesc": "식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치",
-      "paragraphs": [],
-      "heroImages": []
+      "paragraphs": []
     },
     "sectionTag": "브랜드 스토리 · Brand Story",
     "tabHeroes": {
@@ -2240,5 +2240,7 @@
         "alt": "대라천 침향 베트남 직영 전시장 — Scene 21"
       }
     ]
-  }
+  },
+  "_test_1778418146472": "hello",
+  "_force_marker": "mark-1778418204888"
 }
