@@ -589,12 +589,6 @@
   margin-bottom: 28px;
   word-break: keep-all;
 }
-@media (min-width: 900px) {
-  .processGroupDesc {
-    margin-left: -300px;
-    width: calc(100% + 300px);
-  }
-}
 
 /* 레이아웃: 측면 이미지 제거 — 스텝 그리드가 전체 폭 사용 */
 .processGroupLayout {
