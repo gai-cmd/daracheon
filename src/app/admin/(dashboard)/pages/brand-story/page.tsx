@@ -1004,6 +1004,50 @@ export default function AdminBrandStoryPage() {
                 </div>
               </div>
 
+              {/* 통계 카드 (stats[]) — 페이지 상단의 4개 골드 강조 카드.
+                  예: "400만+ 하띤 직영 농장 침향나무" / "#12835 수지유도 특허" / "72h 고온 증류 공정" / "26+ 식목부터 출고까지" */}
+              <div className="border-t border-gray-100 pt-5">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-gray-700">통계 카드 ({processTab.stats.length}개)</label>
+                  <span className="text-xs text-gray-400">큰 숫자(value) + 라벨(label) 한 줄</span>
+                </div>
+                <div className="space-y-2">
+                  {processTab.stats.map((stat, si) => (
+                    <div key={si} className="bg-gray-50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-gray-500 font-mono">STAT {String(si + 1).padStart(2, '0')}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, stats: moveItem(processTab.stats, si, si - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, stats: moveItem(processTab.stats, si, si + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setProcessTab({ ...processTab, stats: removeItem(processTab.stats, si) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input
+                          placeholder="값 (예: 400만+, #12835, 72h, 26+)"
+                          value={stat.value}
+                          onChange={(e) => { const n = [...processTab.stats]; n[si] = { ...n[si], value: e.target.value }; setProcessTab({ ...processTab, stats: n }); }}
+                          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                        <input
+                          placeholder="라벨 (예: 하띤 직영 농장 침향나무)"
+                          value={stat.label}
+                          onChange={(e) => { const n = [...processTab.stats]; n[si] = { ...n[si], label: e.target.value }; setProcessTab({ ...processTab, stats: n }); }}
+                          className="sm:col-span-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setProcessTab({ ...processTab, stats: [...processTab.stats, { value: '', label: '' }] })}
+                    className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+                  >
+                    + 통계 카드 추가
+                  </button>
+                </div>
+              </div>
+
               {/* 공정 그룹 (침향 생산과정 / 침향 오일 생산과정) */}
               <div className="border-t border-gray-100 pt-5">
                 <div className="flex items-center justify-between mb-3">
