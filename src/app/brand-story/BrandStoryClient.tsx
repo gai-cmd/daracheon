@@ -177,6 +177,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
   const processSteps = processTab?.steps ?? [];
   const processStats = processTab?.stats ?? [];
   const processGroups = processTab?.processGroups ?? [];
+  const processHeroImages = (processTab?.heroImages ?? []).filter(Boolean);
 
   return (
     <div className={styles.page}>
@@ -811,26 +812,39 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               <div>
                 <h2 className={styles.chapterTitle}>{processTab?.title ?? '생산 공정'}</h2>
                 <p className={styles.chapterSubtitle}>{processTab?.subtitle ?? '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록'}</p>
-                {tabHeroes.tab2 && (
+                {processHeroImages.length > 0 ? (
+                  <div style={{ marginTop: 30 }}>
+                    <ChapterCarousel
+                      images={processHeroImages}
+                      alt="생산 공정 대표 이미지"
+                      aspect="4/3"
+                      autoplay={5000}
+                    />
+                  </div>
+                ) : tabHeroes.tab2 ? (
                   <div
                     style={{
                       marginTop: 30,
                       position: 'relative',
                       width: '100%',
-                      aspectRatio: '16/9',
+                      maxWidth: 520,
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      aspectRatio: '3/4',
                       border: '1px solid rgba(212,168,67,0.2)',
                       overflow: 'hidden',
+                      background: '#0a0b10',
                     }}
                   >
                     <Image
                       src={tabHeroes.tab2}
-                      alt="생산 공정 — 상징 이미지"
+                      alt="생산 공정 — 동나이 사업소 침향 가공 현장"
                       fill
-                      sizes="(max-width: 768px) 100vw, 880px"
+                      sizes="(max-width: 540px) 100vw, 520px"
                       style={{ objectFit: 'cover', display: 'block' }}
                     />
                   </div>
-                )}
+                ) : null}
                 <div className={styles.line} style={{ margin: '24px 0' }} />
 
             {/* Stats */}

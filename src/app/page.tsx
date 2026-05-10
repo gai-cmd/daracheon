@@ -51,6 +51,14 @@ export interface VerificationRow { num: string; label: string; meta: string }
 export interface VerifiedCard { step: string; title: string; en: string; body: string }
 export interface CertChip { mark: string; name: string; sub: string }
 
+export interface HomeShowroomVideo {
+  src: string;
+  poster?: string;
+  tag?: string;
+  title?: string;
+  body?: string;
+}
+
 export interface HomeData {
   hero?: HomeHero;
   stats?: HomeStat[];
@@ -61,6 +69,7 @@ export interface HomeData {
   verification?: VerificationRow[];
   verifiedCards?: VerifiedCard[];
   certs?: CertChip[];
+  showroomVideo?: HomeShowroomVideo;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -231,6 +240,7 @@ export default async function HomePage() {
   const verifiedCards = home.verifiedCards ?? DEFAULT_VERIFIED_CARDS;
   const certs = home.certs ?? DEFAULT_CERTS;
   const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
+  const showroomVideo = home.showroomVideo;
 
   return (
     <div className={styles.page}>
@@ -302,6 +312,59 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* SHOWROOM VIDEO — 트러스트 스트립 직후 */}
+      {showroomVideo?.src && (
+        <section className={styles.section} aria-label="대라천 침향 전시장">
+          <div className={styles.wrap}>
+            <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
+              {showroomVideo.tag && <span className={styles.tag}>{showroomVideo.tag}</span>}
+              {showroomVideo.title && (
+                <h2 className={styles.h2} style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.4rem)' }}>
+                  {showroomVideo.title}
+                </h2>
+              )}
+              <div className={styles.line} />
+              {showroomVideo.body && (
+                <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
+                  {showroomVideo.body}
+                </p>
+              )}
+            </div>
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 1200,
+                margin: '0 auto',
+                aspectRatio: '16 / 9',
+                overflow: 'hidden',
+                border: '1px solid rgba(212,168,67,0.2)',
+                background: '#000',
+              }}
+            >
+              <video
+                src={showroomVideo.src}
+                poster={showroomVideo.poster}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                aria-label={showroomVideo.title ?? '대라천 침향 전시장 영상'}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* VERIFIED */}
       <section className={styles.verified} id="verified">

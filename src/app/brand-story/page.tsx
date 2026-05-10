@@ -95,6 +95,8 @@ export interface BrandStoryData {
     heroVideo?: { id: string; title: string; body: string };
     stats?: ProcessStat[];
     videoChapters?: ProcessChapter[];
+    /** 탭 상단 대표 이미지 캐러셀. 1장 이상이면 ChapterCarousel 로 표시 */
+    heroImages?: string[];
     images: string[];
     steps: string[];
     processGroups?: ProcessGroup[];

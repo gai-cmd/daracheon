@@ -102,6 +102,8 @@ interface BrandStoryData {
     tag: string;
     title: string;
     subtitle: string;
+    /** 탭 상단 대표 이미지 캐러셀 (1장 이상이면 캐러셀로 노출) */
+    heroImages: string[];
     images: string[];
     stats: { value: string; label: string }[];
     steps: string[];
@@ -257,6 +259,7 @@ export default function AdminBrandStoryPage() {
     tag: 'PRODUCTION PROCESS',
     title: '생산 공정',
     subtitle: '베트남 직영 농장에서 완제품까지 — 최소 26년의 기록',
+    heroImages: [],
     images: [],
     stats: [
       { value: '400만+', label: '하띤 직영 농장 침향나무' },
@@ -395,6 +398,7 @@ export default function AdminBrandStoryPage() {
             tag: pt.tag || prev.tag,
             title: pt.title || prev.title,
             subtitle: pt.subtitle || prev.subtitle,
+            heroImages: Array.isArray(pt.heroImages) ? pt.heroImages : prev.heroImages,
             images: Array.isArray(pt.images) ? pt.images : prev.images,
             stats: Array.isArray(pt.stats) && pt.stats.length > 0 ? pt.stats : prev.stats,
             steps: Array.isArray(pt.steps) ? pt.steps : prev.steps,
@@ -906,6 +910,59 @@ export default function AdminBrandStoryPage() {
 
           </>)}
           {activeAdminTab === 2 && (<>
+
+          {/* 생산 공정 — 대표 이미지 캐러셀 */}
+          <SectionCard
+            title={`탭 3 · 대표 이미지 캐러셀 · ${processTab.heroImages.length}장`}
+            onSave={() => saveSection('processTab', { processTab })}
+            saving={saving === 'processTab'}
+          >
+            <div className="space-y-4">
+              <p className="text-xs text-gray-500">
+                생산 공정 탭 상단(부제목 아래)에 노출되는 대표 이미지입니다. 1장 이상 등록 시 자동으로 캐러셀로 전환됩니다(자동 5초 슬라이드).
+              </p>
+              {processTab.heroImages.map((src, i) => (
+                <div key={i} className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-600">SLIDE {String(i + 1).padStart(2, '0')}</span>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setProcessTab({ ...processTab, heroImages: moveItem(processTab.heroImages, i, i - 1) })}
+                        className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded"
+                      >▲</button>
+                      <button
+                        type="button"
+                        onClick={() => setProcessTab({ ...processTab, heroImages: moveItem(processTab.heroImages, i, i + 1) })}
+                        className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded"
+                      >▼</button>
+                      <button
+                        type="button"
+                        onClick={() => setProcessTab({ ...processTab, heroImages: removeItem(processTab.heroImages, i) })}
+                        className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded"
+                      >삭제</button>
+                    </div>
+                  </div>
+                  <ImageUploadField
+                    value={src}
+                    onChange={(url) => {
+                      const n = [...processTab.heroImages];
+                      n[i] = url;
+                      setProcessTab({ ...processTab, heroImages: n });
+                    }}
+                    subdir="process/hero"
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setProcessTab({ ...processTab, heroImages: [...processTab.heroImages, ''] })}
+                className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
+              >
+                + 이미지 추가
+              </button>
+            </div>
+          </SectionCard>
 
           {/* Process Tab */}
           <SectionCard title="탭 3 · 생산 공정" onSave={() => saveSection('processTab', { processTab })} saving={saving === 'processTab'}>

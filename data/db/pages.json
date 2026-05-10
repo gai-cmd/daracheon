@@ -441,13 +441,16 @@
       "totalTimeLabel": "TOTAL PROCESS TIME",
       "totalTimeValue": "26+ Years",
       "totalTimeDesc": "식목부터 최종 출고까지, 최소 26년의 시간이 만드는 가치",
-      "paragraphs": []
+      "paragraphs": [],
+      "heroImages": [
+        "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-tab-hero-1778395292022.jpg"
+      ]
     },
     "sectionTag": "브랜드 스토리 · Brand Story",
     "tabHeroes": {
       "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab0-brand.png",
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab1-cert.png",
-      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab2-process.png"
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-tab-hero-1778395292022.jpg"
     }
   },
   "aboutAgarwood": {
@@ -1471,6 +1474,13 @@
         "Controlled Harvest",
         "Steam Distillation · GMP"
       ]
+    },
+    "showroomVideo": {
+      "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/vn/veo-showroom-1778043495627.mp4",
+      "poster": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-21.jpg",
+      "tag": "Showroom · 대라천 ‘참’침향 전시장",
+      "title": "대라천 침향 전시장 — 진품의 풍경",
+      "body": "베트남 직영 농장에서 출하된 ‘참’침향이 한 자리에 모이는 곳. 카메라가 천천히 진열대 사이를 지나며 침향의 깊이와 두께를 보여줍니다."
     }
   },
   "process": {
