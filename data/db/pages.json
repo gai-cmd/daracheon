@@ -1475,12 +1475,11 @@
         "Steam Distillation · GMP"
       ]
     },
-    "showroomVideo": {
-      "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/vn/veo-showroom-1778043495627.mp4",
-      "poster": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-21.jpg",
+    "showroomImage": {
+      "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/home/home-showroom-1778396993116.jpg",
       "tag": "Showroom · 대라천 ‘참’침향 전시장",
-      "title": "대라천 침향 전시장 — 진품의 풍경",
-      "body": "베트남 직영 농장에서 출하된 ‘참’침향이 한 자리에 모이는 곳. 카메라가 천천히 진열대 사이를 지나며 침향의 깊이와 두께를 보여줍니다."
+      "title": "대라천 침향 전시장",
+      "body": "베트남 직영 농장에서 출하된 ‘참’침향이 한 자리에 모이는 곳. 진품의 풍경을 직접 보여드립니다."
     }
   },
   "process": {
