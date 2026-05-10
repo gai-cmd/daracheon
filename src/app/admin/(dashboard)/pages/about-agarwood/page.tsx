@@ -63,6 +63,7 @@ interface Literature {
 
 interface Paper {
   title: string;
+  titleKr?: string;
   journal: string;
   year: string;
   citations: string;
@@ -70,6 +71,7 @@ interface Paper {
   tag?: string;
   link?: string;
   authors?: string;
+  summaryKr?: string;
 }
 
 interface AuthenticitySource { label: string; value: string; }
@@ -1248,12 +1250,21 @@ export default function AdminAboutAgarwoodPage() {
                     <input placeholder="연도" value={paper.year} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], year: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                     <input placeholder="인용수 (미정시 -)" value={paper.citations} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], citations: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                   </div>
-                  <input placeholder="논문 제목" value={paper.title} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], title: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <input placeholder="논문 제목 (원문)" value={paper.title} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], title: e.target.value }; setPapers(n); }} className="w-full mb-2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <input placeholder="논문 제목 (한글) — 카드 노출용" value={paper.titleKr ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], titleKr: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                     <input placeholder="저자 (선택)" value={paper.authors ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], authors: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                     <input placeholder="태그 (예: 학술)" value={paper.tag ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], tag: e.target.value }; setPapers(n); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                   </div>
-                  <textarea placeholder="요약/설명 (선택)" rows={2} value={paper.description ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], description: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <textarea placeholder="요약/설명 (카드 하단 한 줄 — 선택)" rows={2} value={paper.description ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], description: e.target.value }; setPapers(n); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                  <textarea
+                    placeholder="요약 보기 모달 본문 (한글 300자 내외) — 초록 기반 요약"
+                    rows={5}
+                    value={paper.summaryKr ?? ''}
+                    onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], summaryKr: e.target.value }; setPapers(n); }}
+                    className="w-full mb-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                  />
+                  <p className="text-[11px] text-gray-500 mb-3">{(paper.summaryKr ?? '').length}자 — 카드의 "요약 보기" 버튼 클릭 시 모달에 표시됩니다.</p>
                   <input placeholder="원문 링크 (선택, https://...)" value={paper.link ?? ''} onChange={(e) => { const n = [...papers]; n[i] = { ...n[i], link: e.target.value }; setPapers(n); }} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                 </div>
               ))}

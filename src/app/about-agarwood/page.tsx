@@ -82,7 +82,17 @@ export interface Benefit { title: string; description: string; image?: string }
 export interface DosageItem { num: string; title: string; body: string; image?: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
-export interface Paper { title: string; journal: string; year: string; citations: string; authors?: string; link?: string }
+export interface Paper {
+  title: string;
+  titleKr?: string;
+  journal: string;
+  year: string;
+  citations: string;
+  authors?: string;
+  link?: string;
+  /** 한글 요약 (300자 내외) — 카드의 "요약 보기" 모달에 표시 */
+  summaryKr?: string;
+}
 export interface RegistryRow { label: string; value: string }
 export interface RegistrySection { title: string; subtitle?: string; rows: RegistryRow[] }
 export interface UsageItem { product: string; instruction: string; }

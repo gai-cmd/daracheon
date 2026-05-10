@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
-import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper } from './page';
 
 // 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
 // 외부 호환을 위해 동일 시그니처를 유지하지만 단순 wrapper 로 동작.
@@ -98,6 +98,22 @@ const TABS = ['침향이란?', '진짜 침향 구별', '문헌에 실린 침향'
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [hoveredDefinitionBox, setHoveredDefinitionBox] = useState<boolean>(false);
+  const [paperSummaryOpen, setPaperSummaryOpen] = useState<Paper | null>(null);
+
+  // 모달 열린 동안 body 스크롤 락 + ESC 닫기
+  useEffect(() => {
+    if (!paperSummaryOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPaperSummaryOpen(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [paperSummaryOpen]);
 
   const hero = data?.hero;
   const definition = data?.definitionSection;
@@ -1156,85 +1172,137 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       }}
                     >
                       {papers.map((paper, i) => {
-                        const CardInner = (
-                          <div
-                            style={{
-                              padding: 22,
-                              border: '1px solid rgba(212,168,67,0.2)',
-                              background: 'rgba(255,255,255,0.02)',
-                              height: '100%',
-                            }}
-                          >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
-                              <span
-                                style={{
-                                  padding: '4px 10px',
-                                  border: '1px solid rgba(212,168,67,0.35)',
-                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                                  fontSize: '0.62rem',
-                                  letterSpacing: '0.22em',
-                                  color: 'var(--accent)',
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                {paper.year}
-                              </span>
-                              {paper.citations && paper.citations !== '-' && (
-                                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
-                                  cited {paper.citations}
-                                </span>
-                              )}
-                            </div>
-                            <h4
-                              style={{
-                                fontFamily: "'Noto Serif KR', serif",
-                                fontSize: '0.98rem',
-                                color: '#fff',
-                                marginBottom: 8,
-                                fontWeight: 400,
-                                lineHeight: 1.5,
-                              }}
-                            >
-                              {paper.title}
-                            </h4>
-                            {paper.authors && (
-                              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6, lineHeight: 1.6 }}>
-                                {paper.authors}
-                              </p>
-                            )}
-                            <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', fontSize: '0.8rem', color: 'var(--accent-soft)' }}>
-                              {paper.journal}
-                            </p>
-                            {paper.link && (
-                              <p
-                                style={{
-                                  marginTop: 12,
-                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                                  fontSize: '0.64rem',
-                                  letterSpacing: '0.22em',
-                                  color: 'var(--accent)',
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                원문 보기 →
-                              </p>
-                            )}
-                          </div>
-                        );
+                        // 카드에 노출되는 제목은 한글(titleKr) 우선, 없으면 원문 title.
+                        const displayTitle = paper.titleKr && paper.titleKr.trim().length > 0 ? paper.titleKr : paper.title;
+                        const hasSummary = !!(paper.summaryKr && paper.summaryKr.trim().length > 0);
                         return (
                           <RevealOnScroll key={paper.title + i} delay={(i % 6) * 60}>
-                            {paper.link ? (
-                              <a
-                                href={paper.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+                            <div
+                              style={{
+                                padding: 22,
+                                border: '1px solid rgba(212,168,67,0.2)',
+                                background: 'rgba(255,255,255,0.02)',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+                                <span
+                                  style={{
+                                    padding: '4px 10px',
+                                    border: '1px solid rgba(212,168,67,0.35)',
+                                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                    fontSize: '0.62rem',
+                                    letterSpacing: '0.22em',
+                                    color: 'var(--accent)',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  {paper.year}
+                                </span>
+                                {paper.citations && paper.citations !== '-' && (
+                                  <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)' }}>
+                                    cited {paper.citations}
+                                  </span>
+                                )}
+                              </div>
+                              <h4
+                                style={{
+                                  fontFamily: "'Noto Serif KR', serif",
+                                  fontSize: '0.98rem',
+                                  color: '#fff',
+                                  marginBottom: 8,
+                                  fontWeight: 400,
+                                  lineHeight: 1.5,
+                                  wordBreak: 'keep-all',
+                                }}
                               >
-                                {CardInner}
-                              </a>
-                            ) : (
-                              CardInner
-                            )}
+                                {displayTitle}
+                              </h4>
+                              {paper.authors && (
+                                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', marginBottom: 6, lineHeight: 1.6 }}>
+                                  {paper.authors}
+                                </p>
+                              )}
+                              <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', fontSize: '0.8rem', color: 'var(--accent-soft)', flex: 1 }}>
+                                {paper.journal}
+                              </p>
+
+                              {/* 카드 하단 버튼 영역 — 원문 보기 / 요약 보기 */}
+                              {(paper.link || hasSummary) && (
+                                <div
+                                  style={{
+                                    marginTop: 16,
+                                    paddingTop: 14,
+                                    borderTop: '1px solid rgba(212,168,67,0.15)',
+                                    display: 'flex',
+                                    gap: 8,
+                                    flexWrap: 'wrap',
+                                  }}
+                                >
+                                  {paper.link && (
+                                    <a
+                                      href={paper.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{
+                                        flex: '1 1 0',
+                                        minWidth: 110,
+                                        textAlign: 'center',
+                                        padding: '8px 12px',
+                                        border: '1px solid rgba(212,168,67,0.4)',
+                                        background: 'transparent',
+                                        color: 'var(--accent)',
+                                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                        fontSize: '0.64rem',
+                                        letterSpacing: '0.18em',
+                                        textTransform: 'uppercase',
+                                        textDecoration: 'none',
+                                        transition: 'background 200ms, color 200ms',
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.12)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                      }}
+                                    >
+                                      원문 보기 →
+                                    </a>
+                                  )}
+                                  {hasSummary && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPaperSummaryOpen(paper)}
+                                      style={{
+                                        flex: '1 1 0',
+                                        minWidth: 110,
+                                        padding: '8px 12px',
+                                        border: '1px solid var(--accent)',
+                                        background: 'var(--accent)',
+                                        color: 'var(--lx-black)',
+                                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                        fontSize: '0.64rem',
+                                        letterSpacing: '0.18em',
+                                        textTransform: 'uppercase',
+                                        cursor: 'pointer',
+                                        fontWeight: 600,
+                                        transition: 'opacity 200ms',
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        (e.currentTarget as HTMLElement).style.opacity = '0.85';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        (e.currentTarget as HTMLElement).style.opacity = '1';
+                                      }}
+                                    >
+                                      요약 보기 →
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </RevealOnScroll>
                         );
                       })}
@@ -1418,6 +1486,186 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </RevealOnScroll>
         </div>
       </section>
+
+      {/* ════════════ 논문 요약 모달 ════════════ */}
+      {paperSummaryOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${paperSummaryOpen.titleKr || paperSummaryOpen.title} — 요약`}
+          onClick={() => setPaperSummaryOpen(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 100,
+            background: 'rgba(0,0,0,0.78)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            display: 'grid',
+            placeItems: 'center',
+            padding: '20px',
+            animation: 'paperModalFade 200ms ease',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: 640,
+              maxHeight: '85vh',
+              overflowY: 'auto',
+              background: '#0e1018',
+              border: '1px solid rgba(212,168,67,0.3)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,168,67,0.05)',
+              padding: 'clamp(24px, 4vw, 36px)',
+              animation: 'paperModalSlide 240ms cubic-bezier(0.22, 1, 0.36, 1)',
+            }}
+          >
+            <button
+              type="button"
+              aria-label="닫기"
+              onClick={() => setPaperSummaryOpen(null)}
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                width: 36,
+                height: 36,
+                display: 'grid',
+                placeItems: 'center',
+                background: 'transparent',
+                border: '1px solid rgba(212,168,67,0.3)',
+                color: 'rgba(255,255,255,0.7)',
+                cursor: 'pointer',
+                fontSize: '1.1rem',
+                lineHeight: 1,
+                fontFamily: 'inherit',
+                transition: 'background 200ms, color 200ms, border-color 200ms',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.12)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)';
+                (e.currentTarget as HTMLElement).style.color = 'var(--accent)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.3)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)';
+              }}
+            >
+              ×
+            </button>
+
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontSize: '0.62rem',
+                letterSpacing: '0.26em',
+                color: 'var(--accent)',
+                textTransform: 'uppercase',
+                marginBottom: 14,
+              }}
+            >
+              논문 요약 · Paper Summary
+            </div>
+
+            <h3
+              style={{
+                fontFamily: "'Noto Serif KR', serif",
+                fontSize: 'clamp(1.05rem, 2.6vw, 1.25rem)',
+                color: '#fff',
+                marginBottom: 8,
+                fontWeight: 500,
+                lineHeight: 1.5,
+                wordBreak: 'keep-all',
+              }}
+            >
+              {paperSummaryOpen.titleKr && paperSummaryOpen.titleKr.trim().length > 0
+                ? paperSummaryOpen.titleKr
+                : paperSummaryOpen.title}
+            </h3>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: 10,
+                flexWrap: 'wrap',
+                fontSize: '0.78rem',
+                color: 'rgba(255,255,255,0.55)',
+                marginBottom: 22,
+              }}
+            >
+              <span style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)' }}>
+                {paperSummaryOpen.journal}
+              </span>
+              <span aria-hidden style={{ color: 'rgba(212,168,67,0.4)' }}>·</span>
+              <span>{paperSummaryOpen.year}</span>
+              {paperSummaryOpen.citations && paperSummaryOpen.citations !== '-' && (
+                <>
+                  <span aria-hidden style={{ color: 'rgba(212,168,67,0.4)' }}>·</span>
+                  <span>cited {paperSummaryOpen.citations}</span>
+                </>
+              )}
+            </div>
+
+            <p
+              style={{
+                fontFamily: "'Noto Serif KR', serif",
+                fontSize: 'clamp(0.92rem, 2.3vw, 1rem)',
+                color: 'rgba(255,255,255,0.85)',
+                lineHeight: 2,
+                fontWeight: 300,
+                wordBreak: 'keep-all',
+                whiteSpace: 'pre-line',
+              }}
+            >
+              {paperSummaryOpen.summaryKr}
+            </p>
+
+            {paperSummaryOpen.link && (
+              <div style={{ marginTop: 26, paddingTop: 20, borderTop: '1px solid rgba(212,168,67,0.15)' }}>
+                <a
+                  href={paperSummaryOpen.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    padding: '10px 18px',
+                    border: '1px solid var(--accent)',
+                    background: 'transparent',
+                    color: 'var(--accent)',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: '0.66rem',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
+                    transition: 'background 200ms, color 200ms',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = 'var(--accent)';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--lx-black)';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    (e.currentTarget as HTMLElement).style.color = 'var(--accent)';
+                  }}
+                >
+                  원문 보기 (초록 포함) →
+                </a>
+              </div>
+            )}
+          </div>
+
+          <style>{`
+            @keyframes paperModalFade { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes paperModalSlide {
+              from { opacity: 0; transform: translateY(12px) scale(0.98); }
+              to   { opacity: 1; transform: translateY(0) scale(1); }
+            }
+          `}</style>
+        </div>
+      )}
     </>
   );
 }
