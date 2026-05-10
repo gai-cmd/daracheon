@@ -591,33 +591,16 @@
   word-break: keep-all;
 }
 
-/* 레이아웃: 모바일 = 스텝 그리드만, 데스크탑 = 스텝(1fr) + 이미지(200px) */
+/* 레이아웃: 측면 이미지 제거 — 스텝 그리드가 전체 폭 사용 */
 .processGroupLayout {
   display: grid;
   gap: 24px;
   grid-template-columns: 1fr;
 }
-@media (min-width: 960px) {
-  .processGroupLayout {
-    grid-template-columns: 1fr 200px;
-    align-items: start;
-  }
-}
 
-/* 이미지: 모바일 숨김, 데스크탑에서만 우측 사이드바로 */
+/* legacy: group.image 측면 이미지 (사용 중단). 혹시 남아있어도 노출 안 되게. */
 .processGroupImg {
   display: none;
-}
-@media (min-width: 960px) {
-  .processGroupImg {
-    display: block;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(212, 168, 67, 0.18);
-    background: #1a1d29;
-    aspect-ratio: 2 / 3;
-    max-height: 360px;
-  }
 }
 
 /* 공정 사진 갤러리 (그룹별 photos[]) */
@@ -676,17 +659,52 @@
 @media (min-width: 1050px) { .stepGridDetailed { grid-template-columns: repeat(4, 1fr); } }
 
 .stepCardDetailed {
-  padding: 16px 12px;
+  padding: 0;
   border: 1px solid rgba(212, 168, 67, 0.18);
   background: rgba(255, 255, 255, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  transition: border-color 240ms, background 240ms;
+  gap: 0;
+  overflow: hidden;
+  transition: border-color 240ms, background 240ms, transform 240ms;
 }
 .stepCardDetailed:hover {
   border-color: rgba(212, 168, 67, 0.48);
   background: rgba(212, 168, 67, 0.04);
+  transform: translateY(-2px);
+}
+
+/* 스텝 카드 상단 이미지 — Imagen 으로 생성한 단계별 시각 자료 */
+.stepCardImg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, #14161f 0%, #1a1d29 100%);
+  overflow: hidden;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+}
+.stepCardImg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+}
+.stepCardImgPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.6rem;
+  color: rgba(212, 168, 67, 0.28);
+  letter-spacing: 0.18em;
+}
+.stepCardBody {
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .stepCardName {
   font-family: 'Noto Sans KR', sans-serif;

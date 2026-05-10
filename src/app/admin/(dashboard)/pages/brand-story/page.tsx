@@ -1048,15 +1048,24 @@ export default function AdminBrandStoryPage() {
                         </div>
                       </div>
 
-                      {/* 그룹 대표 이미지 */}
-                      <div className="mb-4">
-                        <label className="block text-xs text-gray-500 mb-1">대표 이미지 (우측 세로 이미지, 선택)</label>
-                        <ImageUploadField
-                          value={group.image ?? ''}
-                          onChange={(url) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], image: url }; setProcessTab({ ...processTab, processGroups: n }); }}
-                          subdir="pages"
-                        />
-                      </div>
+                      {/* 그룹 대표 이미지 — 사용 중단(우측 사이드 이미지 제거됨).
+                          데이터에 남아있어도 공개 페이지에 노출되지 않으며, 단계별 이미지가 카드에 직접 노출됨. */}
+                      {group.image && (
+                        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 flex items-start gap-2">
+                          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          <div className="flex-1">
+                            <p className="font-medium">우측 대표 이미지가 더 이상 노출되지 않습니다.</p>
+                            <p className="mt-0.5 text-amber-700">단계별 이미지가 각 카드에 직접 표시됩니다. 아래에서 비워 두는 것을 권장합니다.</p>
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], image: '' }; setProcessTab({ ...processTab, processGroups: n }); }}
+                              className="mt-2 px-2.5 py-1 text-xs font-medium text-amber-800 bg-white border border-amber-300 rounded hover:bg-amber-100"
+                            >
+                              대표 이미지 비우기
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       {/* 공정 사진 갤러리 — 단계 아래 그리드로 노출됨 */}
                       <div className="mb-4 border-t border-gray-200 pt-4">
@@ -1132,6 +1141,17 @@ export default function AdminBrandStoryPage() {
                                 onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: n[gi].steps.map((s, ii) => ii === si ? { ...s, desc: e.target.value } : s) }; setProcessTab({ ...processTab, processGroups: n }); }}
                                 className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                               />
+                              {/* 단계별 이미지 — AI 생성 가능 (Imagen). 카드 상단에 4:3 으로 노출. */}
+                              <div className="mt-2">
+                                <label className="block text-[11px] text-gray-500 mb-1">단계 이미지 (4:3 권장 — 카드 상단에 표시)</label>
+                                <ImageUploadField
+                                  value={step.image ?? ''}
+                                  onChange={(url) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], steps: n[gi].steps.map((s, ii) => ii === si ? { ...s, image: url } : s) }; setProcessTab({ ...processTab, processGroups: n }); }}
+                                  subdir="pages"
+                                  aiAspectRatio="4:3"
+                                  aiPromptSeed={`Cinematic photo of "${step.name}" step in agarwood (Aquilaria) ${gi === 0 ? 'plantation farming' : 'oil distillation factory'}. ${step.desc} Realistic documentary style, soft natural lighting, no text overlay, no people unless essential.`}
+                                />
+                              </div>
                             </div>
                           ))}
                           <button

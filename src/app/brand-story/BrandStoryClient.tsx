@@ -938,23 +938,33 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     <p className={styles.processGroupDesc}>{group.description}</p>
                   )}
 
-                  {/* 이미지 + 스텝 그리드 */}
+                  {/* 스텝 그리드 — 측면 이미지 제거, 카드 자체에 단계별 이미지 가미 */}
                   <div className={styles.processGroupLayout}>
                     <div className={styles.stepGridDetailed}>
                       {group.steps.map((step, si) => (
                         <div key={si} className={styles.stepCardDetailed}>
-                          <div className={styles.stepNum} style={{ margin: '0 0 8px' }}>{String(si + 1).padStart(2, '0')}</div>
-                          <div className={styles.stepCardName}>{step.name}</div>
-                          {step.duration && <div className={styles.stepCardDuration}>{step.duration}</div>}
-                          {step.desc && <div className={styles.stepCardDesc}>{step.desc}</div>}
+                          <div className={styles.stepCardImg}>
+                            {step.image ? (
+                              <Image
+                                src={step.image}
+                                alt={`${group.title} ${step.name}`}
+                                fill
+                                sizes="(max-width: 580px) 50vw, (max-width: 1050px) 33vw, 25vw"
+                                style={{ objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <span className={styles.stepCardImgPlaceholder}>{String(si + 1).padStart(2, '0')}</span>
+                            )}
+                          </div>
+                          <div className={styles.stepCardBody}>
+                            <div className={styles.stepNum} style={{ margin: '0 0 6px' }}>{String(si + 1).padStart(2, '0')}</div>
+                            <div className={styles.stepCardName}>{step.name}</div>
+                            {step.duration && <div className={styles.stepCardDuration}>{step.duration}</div>}
+                            {step.desc && <div className={styles.stepCardDesc}>{step.desc}</div>}
+                          </div>
                         </div>
                       ))}
                     </div>
-                    {group.image && (
-                      <div className={styles.processGroupImg}>
-                        <Image src={group.image} alt={group.title} fill sizes="(max-width: 960px) 100vw, 220px" style={{ objectFit: 'cover' }} />
-                      </div>
-                    )}
                   </div>
 
                   {/* 공정 사진 갤러리 — 그룹별 photos[] 가 있을 때만 노출 */}
