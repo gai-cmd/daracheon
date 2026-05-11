@@ -44,7 +44,7 @@ export default function StickyTabBar({
   }, [activeKey]);
 
   return (
-    <nav className={styles.nav} aria-label={ariaLabel}>
+    <nav id="sticky-tab-bar" className={styles.nav} aria-label={ariaLabel}>
       <div className={styles.inner}>
         <div className={styles.scroller} ref={scrollerRef} role="tablist">
           {tabs.map((t) => {

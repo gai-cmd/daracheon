@@ -6,6 +6,7 @@ import styles from '@/styles/zoel/story-page.module.css';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import MediaGallery, { type MediaItem } from './MediaGallery';
 import StickyTabBar from '@/components/layout/StickyTabBar';
+import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import type { Farm } from '@/app/brand-story/page';
 
 interface ProcessChapter {
@@ -101,6 +102,11 @@ export default function MediaPageClient({
   const [activeTab, setActiveTab] = useState<'story' | 'gallery'>('story');
   const { hero, sceneSection, chapters, certifications } = farmStory;
 
+  useHashTab(
+    (k) => setActiveTab(k as 'story' | 'gallery'),
+    (k) => k === 'story' || k === 'gallery'
+  );
+
   return (
     <>
       {/* HERO — brand-story / about-agarwood 와 완전 동일 구조 */}
@@ -140,7 +146,10 @@ export default function MediaPageClient({
       <StickyTabBar
         tabs={TABS.map((t) => ({ key: t.key, label: t.label }))}
         activeKey={activeTab}
-        onChange={(k) => setActiveTab(k as typeof activeTab)}
+        onChange={(k) => {
+          setActiveTab(k as typeof activeTab);
+          setTabHash(k);
+        }}
       />
 
       {/* TAB CONTENT */}

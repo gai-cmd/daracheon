@@ -178,21 +178,55 @@
   background: rgba(10, 11, 16, 0.98);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 48px 24px;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 18px;
+  /* fixed header(72px) 아래에서 시작 + 좌우 여백 */
+  padding: calc(var(--nav-bar-h, 72px) + 24px) 28px 48px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.mobileOverlay a {
-  color: rgba(255, 255, 255, 0.7);
+.mobileNavGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.mobileOverlay .mobileNavGroup > a {
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.18);
+}
+
+.mobileSubTabs {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-left: 1px solid rgba(212, 168, 67, 0.22);
+}
+
+.mobileSubTabs a {
+  display: block;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.62);
+  padding: 4px 0 4px 12px;
   text-decoration: none;
-  font-size: 1.1rem;
-  letter-spacing: 0.15em;
-  transition: color 300ms;
+  transition: color 200ms;
 }
 
-.mobileOverlay a:hover,
+.mobileSubTabs a:hover {
+  color: var(--accent);
+}
+
 .mobileOverlay a:global(.active) {
   color: var(--accent);
 }

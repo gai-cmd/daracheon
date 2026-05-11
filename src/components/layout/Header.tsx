@@ -9,7 +9,34 @@ import styles from './Header.module.css';
 interface HeaderProps {
   mainNav: NavItem[];
   brandLogo?: string;
+  /** /products 카테고리 — 햄버거 메뉴 sub-탭으로 노출. admin 편집 즉시 반영. */
+  productCategories?: { id: string; label: string }[];
 }
+
+/**
+ * 페이지별 탭 매핑.
+ * 햄버거 메뉴에서 각 메인 메뉴 항목 아래에 sub-list 로 노출.
+ * 클릭 시 `/path#tab-<key>` 로 이동 → 페이지 client 컴포넌트(useHashTab)가
+ * activeTab 동기화 후 해당 탭 콘텐츠로 스크롤.
+ */
+const STATIC_PAGE_TABS: Record<string, { key: string; label: string }[]> = {
+  '/about-agarwood': [
+    { key: '0', label: '침향이란?' },
+    { key: '1', label: '진짜 침향 구별' },
+    { key: '2', label: '문헌에 실린 침향' },
+    { key: '3', label: '논문에 실린 침향' },
+    { key: '4', label: '복용 및 사용법' },
+  ],
+  '/brand-story': [
+    { key: '0', label: '브랜드 스토리' },
+    { key: '1', label: '다양한 인증' },
+    { key: '2', label: '생산 공정' },
+  ],
+  '/media': [
+    { key: 'story', label: '침향 농장 이야기' },
+    { key: 'gallery', label: '영상・사진 갤러리' },
+  ],
+};
 
 // Paths where the public chrome must never render. Mirrors ChromeGate but
 // enforced at the component itself — defensive against hydration timing,
@@ -39,9 +66,16 @@ const NAV_INLINE_STYLE: React.CSSProperties = {
   boxShadow: '0 8px 24px -16px rgba(0, 0, 0, 0.6)',
 };
 
-export default function Header({ mainNav, brandLogo }: HeaderProps) {
+export default function Header({ mainNav, brandLogo, productCategories = [] }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  // /products 의 sub-탭은 동적 (admin 편집) — STATIC_PAGE_TABS 와 합쳐서 조회.
+  const productsTabs = productCategories.map((c) => ({ key: c.id, label: c.label }));
+  function tabsFor(href: string): { key: string; label: string }[] | null {
+    if (href === '/products' && productsTabs.length > 0) return productsTabs;
+    return STATIC_PAGE_TABS[href] ?? null;
+  }
 
   useEffect(() => {
     setMobileOpen(false);
@@ -119,15 +153,31 @@ export default function Header({ mainNav, brandLogo }: HeaderProps) {
         <div className={styles.mobileOverlay}>
           {mainNav.map((item) => {
             const active = pathname === item.href;
+            const subTabs = tabsFor(item.href);
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={active ? 'active' : ''}
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.label}
-              </Link>
+              <div key={item.href} className={styles.mobileNavGroup}>
+                <Link
+                  href={item.href}
+                  className={active ? 'active' : ''}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {item.label}
+                </Link>
+                {subTabs && (
+                  <ul className={styles.mobileSubTabs}>
+                    {subTabs.map((t) => (
+                      <li key={t.key}>
+                        <Link
+                          href={`${item.href}#tab-${encodeURIComponent(t.key)}`}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {t.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             );
           })}
         </div>

@@ -5,6 +5,7 @@ import NextImage from 'next/image';
 import type { Product } from '@/data/products';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 import StickyTabBar from '@/components/layout/StickyTabBar';
+import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import ProductsClient from './ProductsClient';
 
 interface ProductCategory {
@@ -29,6 +30,12 @@ interface Props {
 
 export default function ProductsPageClient({ products, productCategories, hero }: Props) {
   const [activeCategory, setActiveCategory] = useState('all');
+
+  const validIds = productCategories.map((c) => c.id);
+  useHashTab(
+    (k) => setActiveCategory(k),
+    (k) => validIds.includes(k)
+  );
 
   return (
     <>
@@ -67,7 +74,10 @@ export default function ProductsPageClient({ products, productCategories, hero }
       <StickyTabBar
         tabs={productCategories.map((c) => ({ key: c.id, label: c.label }))}
         activeKey={activeCategory}
-        onChange={setActiveCategory}
+        onChange={(k) => {
+          setActiveCategory(k);
+          setTabHash(k);
+        }}
       />
 
       {/* 제품 그리드 — 선택된 카테고리 전달 */}

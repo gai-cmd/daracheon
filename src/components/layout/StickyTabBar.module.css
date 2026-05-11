@@ -6,6 +6,8 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(212, 168, 67, 0.15);
+  /* scroll-margin: hash 로 들어왔을 때 fixed header 에 가려지지 않도록 */
+  scroll-margin-top: var(--nav-bar-h, 72px);
 }
 
 .inner {

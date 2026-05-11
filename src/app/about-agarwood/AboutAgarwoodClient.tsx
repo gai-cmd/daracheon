@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import StickyTabBar from '@/components/layout/StickyTabBar';
+import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper } from './page';
 
 // 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
@@ -101,6 +102,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const [hoveredDefinitionBox, setHoveredDefinitionBox] = useState<boolean>(false);
   const [paperSummaryOpen, setPaperSummaryOpen] = useState<Paper | null>(null);
 
+  useHashTab(
+    (k) => setActiveTab(Number(k)),
+    (k) => /^[0-9]+$/.test(k) && Number(k) >= 0 && Number(k) < TABS.length
+  );
+
   // 모달 열린 동안 body 스크롤 락 + ESC 닫기
   useEffect(() => {
     if (!paperSummaryOpen) return;
@@ -172,7 +178,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
       <StickyTabBar
         tabs={TABS.map((label, i) => ({ key: String(i), label }))}
         activeKey={String(activeTab)}
-        onChange={(k) => setActiveTab(Number(k))}
+        onChange={(k) => {
+          setActiveTab(Number(k));
+          setTabHash(k);
+        }}
       />
 
       {/* ════════════ TAB 0: 침향이란? ════════════ */}

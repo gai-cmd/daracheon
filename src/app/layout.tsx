@@ -6,7 +6,7 @@ import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { readSingleSafe, readSingleUncached } from '@/lib/db';
+import { readDataSafe, readSingleSafe, readSingleUncached } from '@/lib/db';
 import {
   DEFAULT_MAIN_NAV,
   type NavigationData,
@@ -312,6 +312,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // unstable_cache 우회 — 외부 스크립트로 blob 을 업데이트했을 때도 즉시 반영.
   // 네비게이션은 페이지마다 한 번 호출되며 blob 1 회 read 라 비용 부담 작음.
   const nav = await readSingleUncached<NavigationData>('navigation');
+  // 햄버거 메뉴의 /products sub-탭으로 사용 — 카테고리는 admin 이 자유롭게 편집하므로
+  // 정적 하드코딩 대신 매 페이지마다 1회 blob read 로 최신 상태 반영.
+  const productCategoriesRaw = await readDataSafe<{ id: string; label: string }>(
+    'productCategories'
+  );
+  const productCategories = productCategoriesRaw.map((c) => ({ id: c.id, label: c.label }));
   const rawMainNav = nav?.main ?? DEFAULT_MAIN_NAV;
   // 라벨 마이그레이션: '홈쇼핑 특별관' → 'On-Air 특별관' (URL 동일).
   // blob 의 사용자 커스텀 라벨이 있어도 어드민 재저장 없이 즉시 반영.
@@ -377,7 +383,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body data-palette="gold">
         <ChromeGate>
-          <Header mainNav={mainNav} brandLogo={brandLogo} />
+          <Header mainNav={mainNav} brandLogo={brandLogo} productCategories={productCategories} />
         </ChromeGate>
         <main>{children}</main>
         <ChromeGate>

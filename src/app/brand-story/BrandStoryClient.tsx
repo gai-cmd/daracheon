@@ -6,6 +6,7 @@ import type { BrandStoryData, PromoVideoItem } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import StickyTabBar from '@/components/layout/StickyTabBar';
+import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import styles from './BrandStoryClient.module.css';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 
@@ -165,6 +166,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
   const [activeTab, setActiveTab] = useState(0);
   const [activePromoVideo, setActivePromoVideo] = useState<PromoVideoItem | null>(null);
 
+  useHashTab(
+    (k) => setActiveTab(Number(k)),
+    (k) => /^[0-9]+$/.test(k) && Number(k) >= 0 && Number(k) < TAB_LIST.length
+  );
+
   const hero = data?.hero;
   const tabHeroes = data?.tabHeroes ?? {};
   const brandStoryTab = data?.brandStoryTab;
@@ -229,7 +235,10 @@ export default function BrandStoryClient({ data, showroom }: Props) {
       <StickyTabBar
         tabs={TAB_LIST.map((label, i) => ({ key: String(i), label }))}
         activeKey={String(activeTab)}
-        onChange={(k) => setActiveTab(Number(k))}
+        onChange={(k) => {
+          setActiveTab(Number(k));
+          setTabHash(k);
+        }}
       />
 
       {/* TAB 0 — Brand Story + History (통합) */}
