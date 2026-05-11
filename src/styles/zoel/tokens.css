@@ -84,7 +84,8 @@ body {
   letter-spacing: -0.005em;
   color: var(--lx-ink);
   background: var(--lx-ivory);
-  overflow-x: hidden;
+  /* clip — hidden 은 sticky 자식의 containing block 을 만들어 모바일에서 sticky 가 안 먹음. */
+  overflow-x: clip;
 
   /* ━━━ 한국어 조판(KR typography) 기본값 ━━━
      word-break: keep-all          → 어절(공백 단위) 유지, 단어 중간 줄바꿈 금지

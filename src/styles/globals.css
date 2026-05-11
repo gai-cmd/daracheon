@@ -18,7 +18,11 @@
    ═══════════════════════════════════════ */
 html {
   font-size: 17.5px;
-  overflow-x: hidden;
+  /* overflow-x: clip — hidden 으로 두면 모바일에서 sticky containing block 이 깨짐.
+     clip 은 시각적 잘림은 유지하면서 스크롤 컨테이너를 안 만들어 position: sticky 가 살아남.
+     Safari 16+, Chrome 90+, Firefox 81+ 지원. 그 이전 브라우저는 가로 스크롤이 보일 수 있으나
+     실제 콘텐츠가 viewport 를 넘는 경우는 거의 없음. */
+  overflow-x: clip;
 }
 /* 모바일에서는 17px 로 한 단계 내려 과도한 줄바꿈 완화 */
 @media (max-width: 480px) {
