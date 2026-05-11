@@ -191,6 +191,8 @@ export default function AdminProductsPage() {
       badge: '',
       price: 0,
       priceDisplay: '',
+      originalPrice: undefined,
+      discountRate: undefined,
       image: '',
       description: '',
       shortDescription: '',
@@ -219,17 +221,44 @@ export default function AdminProductsPage() {
     });
   }
 
-  function updateVariant(index: number, field: keyof ProductVariant, value: string | number | boolean) {
+  function updateVariant(index: number, field: keyof ProductVariant, value: string | number | boolean | undefined) {
     if (!editingProduct) return;
     const updated = [...(editingProduct.variants ?? [])];
     const nextVariant = { ...updated[index], [field]: value } as ProductVariant;
-    // 가격 변경 시 priceDisplay 동기화 — stale 표시 방지.
-    if (field === 'price') {
-      const p = typeof value === 'number' ? value : Number(value) || 0;
-      nextVariant.price = p;
-      if (p > 0) nextVariant.priceDisplay = `${p.toLocaleString('ko-KR')}원`;
+
+    // 원가/할인율/할인가 세 필드는 서로 연동된다.
+    if (field === 'price' || field === 'originalPrice' || field === 'discountRate') {
+      const op = typeof nextVariant.originalPrice === 'number' && nextVariant.originalPrice > 0
+        ? nextVariant.originalPrice
+        : 0;
+      const sp = typeof nextVariant.price === 'number' ? nextVariant.price : 0;
+      const dr = typeof nextVariant.discountRate === 'number' ? nextVariant.discountRate : 0;
+
+      if (field === 'discountRate' && op > 0) {
+        // 원가 + 할인율 -> 할인가 산출
+        nextVariant.price = Math.round(op * (1 - dr / 100));
+      } else if (field === 'price' && op > 0 && sp >= 0) {
+        // 원가 + 할인가 -> 할인율 산출
+        nextVariant.discountRate = op > sp ? Math.round(((op - sp) / op) * 100) : 0;
+      } else if (field === 'originalPrice') {
+        // 원가 변경 시 — 기존 할인율 우선 적용해 할인가 재산출.
+        if (op > 0 && dr > 0) {
+          nextVariant.price = Math.round(op * (1 - dr / 100));
+        } else if (op > 0 && sp > 0) {
+          nextVariant.discountRate = op > sp ? Math.round(((op - sp) / op) * 100) : 0;
+        }
+      }
+
+      // 할인 무의미 케이스 정리
+      if (!nextVariant.originalPrice || nextVariant.originalPrice <= (nextVariant.price ?? 0)) {
+        nextVariant.discountRate = nextVariant.originalPrice && nextVariant.originalPrice === nextVariant.price ? 0 : nextVariant.discountRate;
+      }
+
+      const finalPrice = nextVariant.price ?? 0;
+      if (finalPrice > 0) nextVariant.priceDisplay = `${finalPrice.toLocaleString('ko-KR')}원`;
       else delete nextVariant.priceDisplay;
     }
+
     updated[index] = nextVariant;
     setEditingProduct({ ...editingProduct, variants: updated });
   }
@@ -301,14 +330,32 @@ export default function AdminProductsPage() {
 
   function updateEditField<K extends keyof Product>(key: K, value: Product[K]) {
     if (!editingProduct) return;
-    // price 변경 시 priceDisplay 도 즉시 동기화 — 백엔드에서도 재산출하지만
-    // 폼에서 미리 보여줘야 사용자가 변경 결과를 즉시 확인할 수 있다.
-    if (key === 'price') {
-      const next = typeof value === 'number' ? value : Number(value) || 0;
-      const display = next > 0 ? `${next.toLocaleString('ko-KR')}원` : '가격 문의';
-      setEditingProduct({ ...editingProduct, price: next, priceDisplay: display });
+
+    // 원가/할인율/할인가 세 필드는 서로 연동.
+    if (key === 'price' || key === 'originalPrice' || key === 'discountRate') {
+      const draft: Product = { ...editingProduct, [key]: value };
+      const op = typeof draft.originalPrice === 'number' && draft.originalPrice > 0 ? draft.originalPrice : 0;
+      const sp = typeof draft.price === 'number' ? draft.price : 0;
+      const dr = typeof draft.discountRate === 'number' ? draft.discountRate : 0;
+
+      if (key === 'discountRate' && op > 0) {
+        draft.price = Math.round(op * (1 - dr / 100));
+      } else if (key === 'price' && op > 0 && sp >= 0) {
+        draft.discountRate = op > sp ? Math.round(((op - sp) / op) * 100) : 0;
+      } else if (key === 'originalPrice') {
+        if (op > 0 && dr > 0) {
+          draft.price = Math.round(op * (1 - dr / 100));
+        } else if (op > 0 && sp > 0) {
+          draft.discountRate = op > sp ? Math.round(((op - sp) / op) * 100) : 0;
+        }
+      }
+
+      const finalPrice = draft.price ?? 0;
+      draft.priceDisplay = finalPrice > 0 ? `${finalPrice.toLocaleString('ko-KR')}원` : '가격 문의';
+      setEditingProduct(draft);
       return;
     }
+
     setEditingProduct({ ...editingProduct, [key]: value });
   }
 
@@ -569,7 +616,59 @@ export default function AdminProductsPage() {
                         );
                       })()}
                     </td>
-                    <td className="px-4 py-3 text-gray-900 font-medium">{product.priceDisplay}</td>
+                    <td className="px-4 py-3 text-gray-900 font-medium align-top">
+                      {(() => {
+                        const fmt = (n: number) => `${n.toLocaleString('ko-KR')}원`;
+                        const hasVariants = (product.variants?.length ?? 0) > 0;
+                        if (!hasVariants) {
+                          const op = product.originalPrice ?? 0;
+                          const sp = product.price ?? 0;
+                          const dr = product.discountRate ?? 0;
+                          if (op > 0 && op > sp && sp > 0) {
+                            return (
+                              <div className="flex flex-col gap-0.5 leading-tight">
+                                <span className="text-[11px] text-gray-400 line-through">{fmt(op)}</span>
+                                <span className="flex items-center gap-1.5">
+                                  {dr > 0 && (
+                                    <span className="text-[11px] font-semibold text-rose-600">-{dr}%</span>
+                                  )}
+                                  <span>{product.priceDisplay}</span>
+                                </span>
+                              </div>
+                            );
+                          }
+                          return <span>{product.priceDisplay}</span>;
+                        }
+                        return (
+                          <div className="flex flex-col gap-1.5">
+                            {product.variants!.map((v) => {
+                              const op = v.originalPrice ?? 0;
+                              const sp = v.price ?? 0;
+                              const dr = v.discountRate ?? 0;
+                              return (
+                                <div key={v.id} className="flex flex-col leading-tight">
+                                  <span className="text-[11px] text-gray-500 truncate" title={v.label}>
+                                    {v.label || '(라벨 없음)'}
+                                    {!v.inStock && <span className="ml-1 text-rose-500">·품절</span>}
+                                  </span>
+                                  {op > 0 && op > sp && sp > 0 ? (
+                                    <span className="flex items-baseline gap-1.5">
+                                      <span className="text-[11px] text-gray-400 line-through">{fmt(op)}</span>
+                                      {dr > 0 && (
+                                        <span className="text-[11px] font-semibold text-rose-600">-{dr}%</span>
+                                      )}
+                                      <span className="text-sm">{sp > 0 ? fmt(sp) : '—'}</span>
+                                    </span>
+                                  ) : (
+                                    <span className="text-sm">{sp > 0 ? fmt(sp) : '—'}</span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={getBadgeClass(product.badge)}>
                         {product.badge || '—'}
@@ -634,7 +733,7 @@ export default function AdminProductsPage() {
       {isEditOpen && editingProduct && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsEditOpen(false)} />
-          <div className="relative w-full max-w-xl bg-white shadow-2xl overflow-y-auto animate-slide-in">
+          <div className="relative w-full max-w-2xl bg-white shadow-2xl overflow-y-auto animate-slide-in">
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-gray-900">
                 {isAddMode ? '새 제품 추가' : '제품 편집'}
@@ -711,15 +810,60 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Price */}
+              {/* Price — 원가 / 할인율 / 할인가 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">가격 (원)</label>
-                <input
-                  type="number"
-                  value={editingProduct.price}
-                  onChange={(e) => updateEditField('price', Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">가격 (원)</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="block text-[11px] text-gray-500 mb-1">원가 (정가)</label>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={editingProduct.originalPrice ?? ''}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        updateEditField('originalPrice', raw === '' ? undefined : Number(raw));
+                      }}
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-gray-500 mb-1">할인율 (%)</label>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      max={100}
+                      value={editingProduct.discountRate ?? ''}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        updateEditField('discountRate', raw === '' ? undefined : Number(raw));
+                      }}
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-gray-500 mb-1">할인가 (판매가)</label>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={editingProduct.price === 0 ? '' : editingProduct.price}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        updateEditField('price', raw === '' ? 0 : Number(raw));
+                      }}
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                    />
+                  </div>
+                </div>
+                <p className="mt-1 text-[11px] text-gray-400">
+                  원가 + 할인율 = 할인가 자동 계산. 할인가 직접 입력 시 할인율 재계산. 원가가 비어 있으면 할인 표기 없이 판매가만 노출됩니다.
+                </p>
               </div>
 
               {/* Image */}
@@ -933,36 +1077,27 @@ export default function AdminProductsPage() {
                     단일 가격 제품으로 관리됩니다. 옵션을 추가하면 다중 용량 관리가 가능합니다.
                   </p>
                 ) : (
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-[1fr_90px_60px_32px] gap-1.5 px-1 mb-1">
-                      <span className="text-xs text-gray-400">라벨</span>
-                      <span className="text-xs text-gray-400">가격(원)</span>
-                      <span className="text-xs text-gray-400 text-center">재고</span>
-                      <span />
-                    </div>
+                  <div className="space-y-3">
                     {(editingProduct.variants ?? []).map((variant, i) => (
-                      <div key={variant.id} className="grid grid-cols-[1fr_90px_60px_32px] gap-1.5 items-center">
-                        <input
-                          type="text"
-                          value={variant.label}
-                          onChange={(e) => updateVariant(i, 'label', e.target.value)}
-                          className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
-                          placeholder="예: 500mg 30캡슐"
-                        />
-                        <input
-                          type="number"
-                          value={variant.price}
-                          onChange={(e) => updateVariant(i, 'price', Number(e.target.value))}
-                          className="px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
-                          min={0}
-                        />
-                        <div className="flex justify-center">
+                      <div
+                        key={variant.id}
+                        className="rounded-lg border border-gray-200 bg-gray-50/40 p-3 space-y-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={variant.label}
+                            onChange={(e) => updateVariant(i, 'label', e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            placeholder="예: 500mg 30캡슐"
+                          />
                           <button
                             type="button"
                             onClick={() => updateVariant(i, 'inStock', !variant.inStock)}
-                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ${
                               variant.inStock ? 'bg-gold-500' : 'bg-gray-300'
                             }`}
+                            title={variant.inStock ? '재고 있음' : '품절'}
                           >
                             <span
                               className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm ${
@@ -970,15 +1105,64 @@ export default function AdminProductsPage() {
                               }`}
                             />
                           </button>
+                          <button
+                            onClick={() => removeVariant(i)}
+                            className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                            title="옵션 삭제"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => removeVariant(i)}
-                          className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="block text-[11px] text-gray-500 mb-1">원가 (원)</label>
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min={0}
+                              value={variant.originalPrice ?? ''}
+                              onChange={(e) => {
+                                const raw = e.target.value;
+                                updateVariant(i, 'originalPrice', raw === '' ? undefined : Number(raw));
+                              }}
+                              placeholder="0"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-gray-500 mb-1">할인율 (%)</label>
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min={0}
+                              max={100}
+                              value={variant.discountRate ?? ''}
+                              onChange={(e) => {
+                                const raw = e.target.value;
+                                updateVariant(i, 'discountRate', raw === '' ? undefined : Number(raw));
+                              }}
+                              placeholder="0"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-gray-500 mb-1">할인가 (원)</label>
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min={0}
+                              value={variant.price === 0 ? '' : variant.price}
+                              onChange={(e) => {
+                                const raw = e.target.value;
+                                updateVariant(i, 'price', raw === '' ? 0 : Number(raw));
+                              }}
+                              placeholder="0"
+                              className="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>

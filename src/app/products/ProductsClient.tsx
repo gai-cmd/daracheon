@@ -6,17 +6,36 @@ import { useMemo, useState } from 'react';
 import type { Product } from '@/data/products';
 import styles from './page.module.css';
 
-function getVariantDisplay(product: Product): { badge: string | null; priceLabel: string } {
+function getVariantDisplay(product: Product): {
+  badge: string | null;
+  priceLabel: string;
+  originalPrice?: number;
+  discountRate?: number;
+  hasRange: boolean;
+} {
   const variants = product.variants;
   if (!variants || variants.length === 0) {
-    return { badge: null, priceLabel: product.priceDisplay };
+    return {
+      badge: null,
+      priceLabel: product.priceDisplay,
+      originalPrice: product.originalPrice,
+      discountRate: product.discountRate,
+      hasRange: false,
+    };
   }
   const inStockVariants = variants.filter((v) => v.inStock);
   const source = inStockVariants.length > 0 ? inStockVariants : variants;
-  const minPrice = Math.min(...source.map((v) => v.price));
+  const cheapest = source.reduce((a, b) => (a.price > 0 && a.price <= b.price ? a : b), source[0]);
+  const minPrice = cheapest?.price ?? 0;
   const badge = `${variants.length}가지 옵션`;
   const priceLabel = minPrice > 0 ? `${minPrice.toLocaleString()}원~` : product.priceDisplay;
-  return { badge, priceLabel };
+  return {
+    badge,
+    priceLabel,
+    originalPrice: cheapest?.originalPrice,
+    discountRate: cheapest?.discountRate,
+    hasRange: variants.length > 1,
+  };
 }
 
 function productMinPrice(p: Product): number {
@@ -98,7 +117,17 @@ export default function ProductsClient({ products, productCategories, activeCate
               <div className={styles.empty}>해당 카테고리의 제품이 없습니다.</div>
             ) : (
               filtered.map((product) => {
-                const { priceLabel } = getVariantDisplay(product);
+                const { priceLabel, originalPrice, discountRate } = getVariantDisplay(product);
+                const effectivePrice =
+                  product.variants && product.variants.length > 0
+                    ? productMinPrice(product)
+                    : product.price;
+                const hasDiscount =
+                  typeof originalPrice === 'number' &&
+                  originalPrice > 0 &&
+                  product.inStock &&
+                  effectivePrice > 0 &&
+                  originalPrice > effectivePrice;
                 const badge = product.badge ?? (!product.inStock ? 'SOLD' : null);
                 const badgeClass =
                   !product.inStock
@@ -167,13 +196,25 @@ export default function ProductsClient({ products, productCategories, activeCate
                       <p className={styles.prodSub}>{product.shortDescription}</p>
                       <div className={styles.prodMeta}>
                         {product.inStock ? (
-                          <div className={styles.prodPrice}>{priceLabel}</div>
+                          <div className={styles.prodPrice}>
+                            {hasDiscount && (
+                              <>
+                                <span className={styles.was}>
+                                  {originalPrice!.toLocaleString('ko-KR')}원
+                                </span>
+                                {typeof discountRate === 'number' && discountRate > 0 && (
+                                  <span className={styles.discount}>-{discountRate}%</span>
+                                )}
+                              </>
+                            )}
+                            {priceLabel}
+                          </div>
                         ) : (
                           <div className={styles.prodPrice} style={{ color: 'rgba(255,255,255,0.4)' }}>
-                            준비 중
+                            문의
                           </div>
                         )}
-                        <div className={styles.prodArrow}>{product.inStock ? '자세히 →' : '알림 →'}</div>
+                        <div className={styles.prodArrow}>{product.inStock ? '자세히 →' : '문의 →'}</div>
                       </div>
                     </div>
                   </Link>

@@ -1,8 +1,13 @@
 export interface ProductVariant {
   id: string;
   label: string;
+  /** 판매가(할인가). 실제 결제되는 금액. */
   price: number;
   priceDisplay?: string;
+  /** 정가(원가). price 보다 클 때만 할인 표기로 렌더된다. */
+  originalPrice?: number;
+  /** 할인율(%). 원가/판매가가 모두 있으면 자동 계산되지만 표기 일관성을 위해 저장. */
+  discountRate?: number;
   inStock: boolean;
   sku?: string;
 }
@@ -15,8 +20,13 @@ export interface Product {
   category: string;
   categoryEn: string;
   badge: string;
+  /** 판매가(할인가). */
   price: number;
   priceDisplay: string;
+  /** 정가(원가). price 보다 클 때만 할인 표기로 렌더된다. */
+  originalPrice?: number;
+  /** 할인율(%). */
+  discountRate?: number;
   image: string;
   gallery?: string[];
   description: string;

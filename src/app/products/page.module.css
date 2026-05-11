@@ -267,6 +267,15 @@
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   letter-spacing: 0.1em;
 }
+.prodPrice .discount {
+  display: inline-block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ef4f6a;
+  letter-spacing: 0.05em;
+  margin-right: 10px;
+}
 .prodPrice .unit {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.5);

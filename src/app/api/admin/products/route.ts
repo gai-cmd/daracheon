@@ -20,6 +20,31 @@ function derivePriceDisplay(price: number, override?: unknown): string | undefin
   return undefined;
 }
 
+function normalizePriceTriad(originalRaw: unknown, priceRaw: unknown, discountRateRaw: unknown):
+  { price: number; originalPrice?: number; discountRate?: number } {
+  const price = typeof priceRaw === 'number' && priceRaw > 0 ? priceRaw : 0;
+  const originalPrice =
+    typeof originalRaw === 'number' && originalRaw > 0 ? originalRaw : undefined;
+  let discountRate =
+    typeof discountRateRaw === 'number' && discountRateRaw > 0 ? Math.round(discountRateRaw) : undefined;
+
+  // 일관성: 원가가 판매가보다 클 때만 할인 표기로 유효.
+  // discountRate 가 없거나 부정확하면 원가/판매가에서 재계산.
+  if (originalPrice !== undefined && originalPrice > price && price > 0) {
+    const computed = Math.round(((originalPrice - price) / originalPrice) * 100);
+    if (discountRate === undefined || discountRate === 0) discountRate = computed;
+  } else if (originalPrice === undefined || originalPrice <= price) {
+    // 할인 무의미 → discountRate 폐기.
+    discountRate = undefined;
+  }
+
+  return {
+    price,
+    ...(originalPrice !== undefined ? { originalPrice } : {}),
+    ...(discountRate !== undefined ? { discountRate } : {}),
+  };
+}
+
 function validateAndNormalizeVariants(raw: unknown): ProductVariant[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   if (raw.length === 0) return [];
@@ -30,10 +55,12 @@ function validateAndNormalizeVariants(raw: unknown): ProductVariant[] | undefine
         ? item.id.trim()
         : `v-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const label = typeof item.label === 'string' ? item.label.trim() : '';
-    const price = typeof item.price === 'number' ? item.price : 0;
+    const triad = normalizePriceTriad(item.originalPrice, item.price, item.discountRate);
     const inStock = item.inStock !== false;
-    const result: ProductVariant = { id, label, price, inStock };
-    const display = derivePriceDisplay(price, item.priceDisplay);
+    const result: ProductVariant = { id, label, price: triad.price, inStock };
+    if (triad.originalPrice !== undefined) result.originalPrice = triad.originalPrice;
+    if (triad.discountRate !== undefined) result.discountRate = triad.discountRate;
+    const display = derivePriceDisplay(triad.price, item.priceDisplay);
     if (display) result.priceDisplay = display;
     if (typeof item.sku === 'string' && item.sku.trim()) {
       result.sku = item.sku.trim();
@@ -81,6 +108,7 @@ export async function POST(request: Request) {
 
     const products = await readData('products');
     const normalizedVariants = validateAndNormalizeVariants(body.variants);
+    const triad = normalizePriceTriad(body.originalPrice, body.price, body.discountRate);
 
     const newProduct: Product = {
       id: body.id || `product-${Date.now()}`,
@@ -90,9 +118,11 @@ export async function POST(request: Request) {
       category: body.category.trim(),
       categoryEn: body.categoryEn?.trim() || '',
       badge: body.badge?.trim() || '',
-      price: body.price ?? 0,
+      price: triad.price,
       priceDisplay:
-        derivePriceDisplay(body.price ?? 0, body.priceDisplay) ?? '가격 문의',
+        derivePriceDisplay(triad.price, body.priceDisplay) ?? '가격 문의',
+      ...(triad.originalPrice !== undefined && { originalPrice: triad.originalPrice }),
+      ...(triad.discountRate !== undefined && { discountRate: triad.discountRate }),
       image: body.image?.trim() || '',
       description: body.description?.trim() || '',
       shortDescription: body.shortDescription?.trim() || '',
@@ -157,11 +187,19 @@ export async function PUT(request: Request) {
         ? { variants: normalizedVariants }
         : { variants: products[index].variants }),
     };
-    const nextPrice = typeof merged.price === 'number' ? merged.price : 0;
-    merged.price = nextPrice;
+    const triad = normalizePriceTriad(
+      body.originalPrice ?? products[index].originalPrice,
+      typeof merged.price === 'number' ? merged.price : 0,
+      body.discountRate ?? products[index].discountRate,
+    );
+    merged.price = triad.price;
     merged.priceDisplay =
-      derivePriceDisplay(nextPrice, body.priceDisplay ?? products[index].priceDisplay) ??
+      derivePriceDisplay(triad.price, body.priceDisplay ?? products[index].priceDisplay) ??
       '가격 문의';
+    if (triad.originalPrice !== undefined) merged.originalPrice = triad.originalPrice;
+    else delete merged.originalPrice;
+    if (triad.discountRate !== undefined) merged.discountRate = triad.discountRate;
+    else delete merged.discountRate;
     products[index] = merged;
     await writeData('products', products);
     revalidateProducts();

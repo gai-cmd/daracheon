@@ -55,7 +55,7 @@ export default function ImageGallery({ primary, gallery, alt, badge, outOfStock 
         )}
         {outOfStock && (
           <span className="absolute top-6 right-6 bg-[#0a0b10]/80 px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-white">
-            준비 중
+            문의
           </span>
         )}
       </div>

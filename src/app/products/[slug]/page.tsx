@@ -182,9 +182,11 @@ export default async function ProductDetailPage(
                 variants={product.variants ?? []}
                 basePrice={product.price}
                 basePriceDisplay={product.priceDisplay}
+                baseOriginalPrice={product.originalPrice}
+                baseDiscountRate={product.discountRate}
               />
             ) : (
-              <div className={styles.notice}>현재 판매 준비 중입니다. 출시 시 안내드립니다.</div>
+              <div className={styles.notice}>가격 및 재고는 문의 부탁드립니다.</div>
             )}
 
             <div className={styles.ctas}>
