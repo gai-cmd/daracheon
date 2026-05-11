@@ -17,11 +17,19 @@ export function useHashTab(
       const k = decodeURIComponent(m[1]);
       if (isValid(k)) {
         setActiveKey(k);
-        // 햄버거 메뉴에서 같은 페이지로 들어왔을 때 — 탭 바 위치로 부드럽게 스크롤.
+        // 햄버거 메뉴에서 같은 페이지로 들어왔을 때 — 탭 바를 fixed nav 바로 아래로 정렬.
+        // scrollIntoView + scroll-margin-top 은 일부 모바일 브라우저에서 nav 높이만큼
+        // 부족하게 스크롤되는 경우가 있어 직접 좌표 계산으로 대체.
         requestAnimationFrame(() => {
-          document
-            .getElementById('sticky-tab-bar')
-            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const tabBar = document.getElementById('sticky-tab-bar');
+          if (!tabBar) return;
+          const navH =
+            parseInt(
+              getComputedStyle(document.documentElement).getPropertyValue('--nav-bar-h'),
+              10,
+            ) || 72;
+          const target = window.scrollY + tabBar.getBoundingClientRect().top - navH;
+          window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
         });
       }
     }

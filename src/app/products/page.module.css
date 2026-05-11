@@ -75,14 +75,15 @@
 }
 
 /* FILTER BAR */
+/* sticky 제거 — StickyTabBar(z-20, top: --nav-bar-h) 와 같은 top 으로 sticky 되면
+   .filters 가 z-index 우위로 탭바를 덮어 가리는 사고 발생.
+   sort 드롭다운은 짧고 자주 쓰지 않아 sticky 가치가 낮음. 일반 흐름으로 둠. */
 .filters {
-  padding: 28px 0;
+  padding: 18px 0;
   border-bottom: 1px solid rgba(212, 168, 67, 0.15);
   background: rgba(10, 11, 16, 0.92);
-  position: sticky;
-  top: var(--nav-bar-h);
-  z-index: 40;
-  backdrop-filter: blur(20px);
+  position: relative;
+  z-index: 1;
 }
 
 .filters .wrap {

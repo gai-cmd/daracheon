@@ -1,7 +1,9 @@
 .nav {
   position: sticky;
   top: var(--nav-bar-h, 72px);
-  z-index: 20;
+  /* 페이지 내부 sticky/relative 섹션(예: /products .filters)에 절대 가려지지 않도록
+     충분히 높은 z-index 사용. fixed nav(1000) 보다는 낮게. */
+  z-index: 50;
   background: rgba(10, 11, 16, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
