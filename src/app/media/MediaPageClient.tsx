@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from '@/styles/zoel/story-page.module.css';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import MediaGallery, { type MediaItem } from './MediaGallery';
+import StickyTabBar from '@/components/layout/StickyTabBar';
 import type { Farm } from '@/app/brand-story/page';
 
 interface ProcessChapter {
@@ -136,54 +137,11 @@ export default function MediaPageClient({
         </div>
       </section>
 
-      {/* STICKY TAB NAV — 침향이야기와 동일 */}
-      <nav
-        aria-label="페이지 탭"
-        style={{
-          position: 'sticky',
-          top: 'var(--nav-bar-h)',
-          zIndex: 10,
-          background: 'rgba(10,11,16,0.96)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(212,168,67,0.15)',
-        }}
-      >
-        <div className={styles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
-          <div className={styles.chapterGrid}>
-            <div aria-hidden />
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {TABS.map(({ key, label }) => {
-                const isActive = activeTab === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setActiveTab(key)}
-                    aria-current={isActive ? 'page' : undefined}
-                    style={{
-                      padding: '10px 20px',
-                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                      fontSize: '0.72rem',
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      cursor: 'pointer',
-                      border: `1px solid ${isActive ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                      background: isActive ? 'var(--accent)' : 'transparent',
-                      color: isActive ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                      fontWeight: isActive ? 600 : 400,
-                      transition: 'all 300ms',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <StickyTabBar
+        tabs={TABS.map((t) => ({ key: t.key, label: t.label }))}
+        activeKey={activeTab}
+        onChange={(k) => setActiveTab(k as typeof activeTab)}
+      />
 
       {/* TAB CONTENT */}
       {activeTab === 'story' ? (

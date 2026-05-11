@@ -35,6 +35,7 @@ next-env.d.ts
 # JSON file database (PII 포함 가능 — 절대 커밋 금지)
 data/db/
 data/backups/
+backups/
 
 # Uploaded assets (keep directory structure, ignore actual uploads)
 /public/uploads/*
@@ -54,6 +55,9 @@ data/backups/
 # try-n account credentials (per-project isolation, never commit)
 .vercel-token
 .backup-migration/
+
+# 데이터 백업 — 로컬 보관용. 큰 바이너리/JSON 누적이라 git 에 안 올림.
+backups/
 
 # Drive 자산 로컬 캐시 (마이그레이션 중간 산물)
 scripts/drive-cache/

@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
+import StickyTabBar from '@/components/layout/StickyTabBar';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper } from './page';
 
 // 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
@@ -168,50 +169,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </div>
       </section>
 
-      {/* STICKY TAB NAV */}
-      <nav
-        style={{
-          position: 'sticky',
-          top: 'var(--nav-bar-h)',
-          zIndex: 10,
-          background: 'rgba(10,11,16,0.96)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(212,168,67,0.15)',
-        }}
-      >
-        <div className={styles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
-          <div className={styles.chapterGrid}>
-            <div aria-hidden />
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {TABS.map((tab, i) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(i)}
-                  aria-current={activeTab === i ? 'page' : undefined}
-                  style={{
-                    padding: '10px 20px',
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                    background: activeTab === i ? 'var(--accent)' : 'transparent',
-                    color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                    fontWeight: activeTab === i ? 600 : 400,
-                    transition: 'all 300ms',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <StickyTabBar
+        tabs={TABS.map((label, i) => ({ key: String(i), label }))}
+        activeKey={String(activeTab)}
+        onChange={(k) => setActiveTab(Number(k))}
+      />
 
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
       {activeTab === 0 && (

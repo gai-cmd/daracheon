@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import type { BrandStoryData, PromoVideoItem } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
+import StickyTabBar from '@/components/layout/StickyTabBar';
 import styles from './BrandStoryClient.module.css';
 import storyStyles from '@/styles/zoel/story-page.module.css';
 
@@ -225,50 +226,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
         </div>
       </section>
 
-      {/* STICKY TAB NAV — 침향이야기와 동일 */}
-      <nav
-        style={{
-          position: 'sticky',
-          top: 'var(--nav-bar-h)',
-          zIndex: 10,
-          background: 'rgba(10,11,16,0.96)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(212,168,67,0.15)',
-        }}
-      >
-        <div className={storyStyles.wrap} style={{ paddingTop: 14, paddingBottom: 14 }}>
-          <div className={styles.chapterGrid}>
-            <div aria-hidden />
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {TAB_LIST.map((tab, i) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(i)}
-                  aria-current={activeTab === i ? 'page' : undefined}
-                  style={{
-                    padding: '10px 20px',
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    border: `1px solid ${activeTab === i ? 'var(--accent)' : 'rgba(212,168,67,0.25)'}`,
-                    background: activeTab === i ? 'var(--accent)' : 'transparent',
-                    color: activeTab === i ? 'var(--lx-black)' : 'rgba(255,255,255,0.7)',
-                    fontWeight: activeTab === i ? 600 : 400,
-                    transition: 'all 300ms',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <StickyTabBar
+        tabs={TAB_LIST.map((label, i) => ({ key: String(i), label }))}
+        activeKey={String(activeTab)}
+        onChange={(k) => setActiveTab(Number(k))}
+      />
 
       {/* TAB 0 — Brand Story + History (통합) */}
       {activeTab === 0 && (
