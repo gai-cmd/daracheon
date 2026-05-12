@@ -104,6 +104,25 @@ interface BrandStoryData {
     sourceTitle: string;
     sourceBody: string;
   };
+  twentyYearPrinciple?: {
+    tag: string;
+    headlineLead: string;
+    headlineBold: string;
+    subtitle: string;
+    intro: string;
+    heroImage?: string;
+    heroCaption?: string;
+    sections: Array<{
+      label: string;
+      titleKr: string;
+      titleEn?: string;
+      body: string;
+      image?: string;
+      imageCaption?: string;
+    }>;
+    closing: string;
+    closingImage?: string;
+  };
   promoVideos?: PromoVideosData;
   farms: Farm[];
   historyTab: {
@@ -215,6 +234,22 @@ export default function AdminBrandStoryPage() {
     sourceTitle: '',
     sourceBody:
       '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+  });
+  const [twentyYearPrinciple, setTwentyYearPrinciple] = useState<NonNullable<BrandStoryData['twentyYearPrinciple']>>({
+    tag: 'THE 20-YEAR PROOF',
+    headlineLead: '침향은 비싼 것이 중요한 게 아닙니다.',
+    headlineBold: '확인 가능한 침향인지가 중요합니다.',
+    subtitle: '그래서 우리는 — 20년을 기다린 나무에만 수지를 내립니다',
+    intro: '조엘라이프가 20년 이상 자란 침향나무만 고집하는 데는 분명한 이유가 있습니다. 향이 깊어지는 시간은, 단축할 수 없기 때문입니다.',
+    heroImage: '',
+    heroCaption: '20년을 넘긴 침향나무 — 수지를 축적할 준비가 끝납니다',
+    sections: [
+      { label: 'A', titleEn: 'GROWTH STOPS, RESIN BEGINS', titleKr: '키 성장의 끝, 수지의 시작', body: '침향나무는 약 20년 전후가 되면 키 성장을 담당하는 생장점의 활동이 점차 둔화되거나 멈춥니다. 이 시기 이후 나무는 위로 자라기보다 둘레가 굵어지는 방향으로 성장하며, 비로소 수지를 만들 준비를 갖춥니다.', image: '', imageCaption: '' },
+      { label: 'B', titleEn: 'WHY UNDER 20 YEARS FAILS', titleKr: '어린 나무는 상처를 "치유"합니다', body: '20년 이하의 어린 침향나무는 회복력이 강합니다. 초기 1~6개월은 수지 활동이 활발하지만, 시간이 지나며 나무는 그 상처를 "치유된 상태"로 인식해 조직 복구·성장에 에너지를 집중합니다. 결과적으로 형성됐던 수지는 감소하거나 사라집니다.', image: '', imageCaption: '' },
+      { label: 'C', titleEn: '20+ YEARS — ACCUMULATION', titleKr: '성숙한 나무는 수지를 "축적"합니다', body: '20년 이상의 성숙한 나무는 분비 이후 약 1~2년에 걸쳐 수지가 농축·응집되며 향과 밀도가 깊어집니다. 빠른 복구가 아닌 장기간의 축적·유지 경향이 강해, 고품질 침향이 형성될 조건을 갖추게 됩니다.', image: '', imageCaption: '' },
+    ],
+    closing: '최소 20년 — 이것이 대라천이 25년간 지켜온 *원료의 원칙*입니다.\n빠른 길은 있지만, *깊은 향에 이르는 지름길은 없습니다.*',
+    closingImage: '',
   });
   const [promoVideos, setPromoVideos] = useState<PromoVideosData>({
     num: '04',
@@ -404,6 +439,14 @@ export default function AdminBrandStoryPage() {
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
+        if (d?.twentyYearPrinciple) {
+          const t = d.twentyYearPrinciple;
+          setTwentyYearPrinciple((prev) => ({
+            ...prev,
+            ...t,
+            sections: Array.isArray(t.sections) && t.sections.length > 0 ? t.sections : prev.sections,
+          }));
+        }
         if (d?.promoVideos) {
           const pv = d.promoVideos as Partial<PromoVideosData>;
           setPromoVideos((prev) => ({
@@ -618,11 +661,105 @@ export default function AdminBrandStoryPage() {
             </div>
           </SectionCard>
 
+          {/* 섹션 02 · THE 20-YEAR PROOF */}
+          <SectionCard title="섹션 02 · 20년의 약속 (THE 20-YEAR PROOF)" onSave={() => saveSection('twentyYearPrinciple', { twentyYearPrinciple })} saving={saving === 'twentyYearPrinciple'}>
+            <div className="space-y-5">
+              <LabeledInput label="태그 (영문)" value={twentyYearPrinciple.tag} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, tag: v })} />
+              <LabeledInput label="헤드라인 1행 — 회색 (예: '침향은 비싼 것이 중요한 게 아닙니다.')" value={twentyYearPrinciple.headlineLead} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineLead: v })} />
+              <LabeledInput label="헤드라인 2행 — 강조 ('확인 가능한 침향' 부분만 골드)" value={twentyYearPrinciple.headlineBold} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineBold: v })} />
+              <LabeledInput label="부제 (이탤릭)" value={twentyYearPrinciple.subtitle} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, subtitle: v })} />
+              <LabeledTextarea label="리드 문단 (좌측 골드 보더 박스)" value={twentyYearPrinciple.intro} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, intro: v })} rows={3} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">챕터 hero 이미지 (16:9)</label>
+                  <ImageUploadField value={twentyYearPrinciple.heroImage ?? ''} onChange={(url) => setTwentyYearPrinciple({ ...twentyYearPrinciple, heroImage: url })} subdir="pages/brand" />
+                </div>
+                <LabeledInput label="Hero 캡션" value={twentyYearPrinciple.heroCaption ?? ''} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, heroCaption: v })} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">A · B · C 섹션</label>
+                <div className="space-y-4">
+                  {twentyYearPrinciple.sections.map((sec, si) => (
+                    <div key={si} className="bg-gray-50 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-gray-700">섹션 {sec.label || ['A','B','C'][si] || String(si + 1)}</span>
+                        <div className="flex gap-1.5">
+                          <button type="button" onClick={() => setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: moveItem(twentyYearPrinciple.sections, si, si - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: moveItem(twentyYearPrinciple.sections, si, si + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: removeItem(twentyYearPrinciple.sections, si) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">라벨 (A/B/C)</label>
+                          <input
+                            type="text"
+                            value={sec.label}
+                            onChange={(e) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], label: e.target.value }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }}
+                            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-medium text-gray-600 mb-1">영문 타이틀 (카드 상단 mono 텍스트)</label>
+                          <input
+                            type="text"
+                            value={sec.titleEn ?? ''}
+                            onChange={(e) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], titleEn: e.target.value }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }}
+                            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">한글 제목</label>
+                        <input
+                          type="text"
+                          value={sec.titleKr}
+                          onChange={(e) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], titleKr: e.target.value }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }}
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">본문</label>
+                        <textarea
+                          rows={4}
+                          value={sec.body}
+                          onChange={(e) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], body: e.target.value }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }}
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">이미지 (4:3)</label>
+                          <ImageUploadField value={sec.image ?? ''} onChange={(url) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], image: url }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }} subdir="pages/brand" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">이미지 캡션 (alt)</label>
+                          <input
+                            type="text"
+                            value={sec.imageCaption ?? ''}
+                            onChange={(e) => { const n = [...twentyYearPrinciple.sections]; n[si] = { ...n[si], imageCaption: e.target.value }; setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: n }); }}
+                            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setTwentyYearPrinciple({ ...twentyYearPrinciple, sections: [...twentyYearPrinciple.sections, { label: '', titleKr: '', titleEn: '', body: '', image: '', imageCaption: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 섹션 추가
+                  </button>
+                </div>
+              </div>
+
+              <LabeledTextarea label='클로징 박스 (강조할 부분은 *별표*로 감쌀 것 — 예: "*원료의 원칙*")' value={twentyYearPrinciple.closing} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, closing: v })} rows={3} />
+            </div>
+          </SectionCard>
+
           {/* 농장 카드 편집은 /admin/media → 기본 설정 탭으로 이동됨
               (단일 진입점 — 같은 pages.brandStory.farms 데이터를 공유) */}
 
-          {/* History Tab — 브랜드 스토리 페이지 02 섹션으로 통합 */}
-          <SectionCard title="섹션 02 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
+          {/* History Tab — 브랜드 스토리 페이지 03 섹션 (20-YEAR PROOF 다음) */}
+          <SectionCard title="섹션 03 · 대라천 침향 역사" onSave={() => saveSection('historyTab', { historyTab })} saving={saving === 'historyTab'}>
             <div className="space-y-5">
               <LabeledInput label="태그" value={historyTab.tag} onChange={(v) => setHistoryTab({ ...historyTab, tag: v })} />
               <LabeledInput label="제목" value={historyTab.title} onChange={(v) => setHistoryTab({ ...historyTab, title: v })} />

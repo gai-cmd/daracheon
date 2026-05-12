@@ -362,6 +362,203 @@
   border-top: 1px solid rgba(212, 168, 67, 0.22);
 }
 
+/* ── THE 20-YEAR PROOF ── 마케팅 헤드라인 + A/B/C 섹션 + 클로징 박스 ── */
+.proofHeadline {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.7rem, 3.8vw, 2.8rem);
+  font-weight: 200;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 8px 0 6px;
+  word-break: keep-all;
+}
+.proofHeadlineEm {
+  color: #fff;
+  font-style: normal;
+  font-weight: 400;
+}
+.proofHeadlineEm em {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 500;
+}
+.proofSubtitle {
+  font-family: 'Noto Serif KR', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--accent-soft);
+  margin-top: 6px;
+  margin-bottom: 28px;
+  word-break: keep-all;
+}
+.proofLead {
+  font-size: 1rem;
+  line-height: 1.95;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 300;
+  margin: 20px 0 0;
+  padding: 22px 24px;
+  border-left: 2px solid var(--accent);
+  background: rgba(212, 168, 67, 0.04);
+  word-break: keep-all;
+}
+
+.proofHeroFrame {
+  margin-top: 30px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 67, 0.22);
+  background: #14161f;
+}
+.proofHeroCaption {
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+}
+
+.proofGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  margin-top: 36px;
+}
+@media (min-width: 900px) {
+  .proofGrid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+
+.proofCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 240ms ease, transform 240ms ease, background 240ms ease;
+  overflow: hidden;
+}
+.proofCard:hover {
+  border-color: rgba(212, 168, 67, 0.55);
+  background: rgba(212, 168, 67, 0.04);
+  transform: translateY(-2px);
+}
+.proofCardImg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, #14161f 0%, #1a1d29 100%);
+  overflow: hidden;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+}
+.proofCardImg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
+}
+.proofCardImgPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 2.6rem;
+  color: rgba(212, 168, 67, 0.22);
+  letter-spacing: 0.18em;
+}
+.proofCardLabel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--lx-black);
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+.proofCardBody {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.proofCardTitleEn {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.78;
+}
+.proofCardTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+}
+.proofCardBodyText {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  word-break: keep-all;
+  margin-top: 2px;
+}
+
+/* 클로징 박스 */
+.proofClosing {
+  margin-top: 48px;
+  padding: 36px 30px;
+  border: 1px solid var(--accent);
+  background:
+    radial-gradient(800px 200px at 50% 0%, rgba(212, 168, 67, 0.1), transparent 70%),
+    rgba(212, 168, 67, 0.04);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.proofClosing::before,
+.proofClosing::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  transform: translateX(-50%);
+}
+.proofClosing::before { top: 12px; }
+.proofClosing::after  { bottom: 12px; }
+.proofClosingText {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-weight: 300;
+  line-height: 1.7;
+  color: #fff;
+  white-space: pre-line;
+  word-break: keep-all;
+}
+.proofClosingText em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 500;
+}
+
 /* Cert sections */
 .certTitle {
   font-family: 'Noto Serif KR', serif;

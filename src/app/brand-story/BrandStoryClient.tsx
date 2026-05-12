@@ -174,6 +174,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
   const hero = data?.hero;
   const tabHeroes = data?.tabHeroes ?? {};
   const brandStoryTab = data?.brandStoryTab;
+  const principle = data?.twentyYearPrinciple;
   const promoVideos = data?.promoVideos;
   const historyTab = data?.historyTab;
   const eras = historyTab?.eras ?? [];
@@ -286,10 +287,109 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
             </div>
 
-            {/* 02 — 대라천 침향 역사 (통합 섹션) */}
+            {/* 02 — THE 20-YEAR PROOF: 왜 20년 이상된 침향나무만 고집하는가 */}
+            {principle && (
+              <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
+                <div>
+                  <div className={styles.chapterNum}>02</div>
+                  <div className={styles.chapterTag}>{principle.tag || 'THE 20-YEAR PROOF'}</div>
+                </div>
+                <div>
+                  <p className={styles.proofHeadline}>
+                    {principle.headlineLead || '침향은 비싼 것이 중요한 게 아닙니다.'}
+                  </p>
+                  <p className={`${styles.proofHeadline} ${styles.proofHeadlineEm}`}>
+                    {(() => {
+                      const bold = principle.headlineBold || '확인 가능한 침향인지가 중요합니다.';
+                      // "확인 가능한 침향" 부분을 강조 (em 으로 골드 컬러)
+                      const m = bold.match(/^(.*?)(확인 가능한 침향)(.*)$/);
+                      if (m) {
+                        return <>{m[1]}<em>{m[2]}</em>{m[3]}</>;
+                      }
+                      return bold;
+                    })()}
+                  </p>
+                  {principle.subtitle && (
+                    <p className={styles.proofSubtitle}>{principle.subtitle}</p>
+                  )}
+                  <div className={styles.line} style={{ margin: '20px 0 0' }} />
+                  {principle.intro && (
+                    <p className={styles.proofLead}>{principle.intro}</p>
+                  )}
+                  {principle.heroImage && (
+                    <figure style={{ margin: 0 }}>
+                      <div className={styles.proofHeroFrame}>
+                        <Image
+                          src={principle.heroImage}
+                          alt={principle.heroCaption ?? '20년 이상 자란 침향나무'}
+                          fill
+                          sizes="(max-width: 900px) 100vw, 880px"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                      {principle.heroCaption && (
+                        <figcaption className={styles.proofHeroCaption}>
+                          {principle.heroCaption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  )}
+                  {principle.sections && principle.sections.length > 0 && (
+                    <div className={styles.proofGrid}>
+                      {principle.sections.map((sec, i) => (
+                        <article key={i} className={styles.proofCard}>
+                          <div className={styles.proofCardImg}>
+                            <span className={styles.proofCardLabel}>{sec.label || String.fromCharCode(65 + i)}</span>
+                            {sec.image ? (
+                              <Image
+                                src={sec.image}
+                                alt={sec.imageCaption ?? sec.titleKr}
+                                fill
+                                sizes="(max-width: 900px) 100vw, 420px"
+                                style={{ objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <span className={styles.proofCardImgPlaceholder}>
+                                {sec.label || String.fromCharCode(65 + i)}
+                              </span>
+                            )}
+                          </div>
+                          <div className={styles.proofCardBody}>
+                            {sec.titleEn && (
+                              <div className={styles.proofCardTitleEn}>{sec.titleEn}</div>
+                            )}
+                            <h3 className={styles.proofCardTitle}>{sec.titleKr}</h3>
+                            <p className={styles.proofCardBodyText}>{sec.body}</p>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                  {principle.closing && (
+                    <div className={styles.proofClosing}>
+                      <p className={styles.proofClosingText}>
+                        {(() => {
+                          // 별표(*)로 감싼 부분을 em 으로 강조
+                          const txt = principle.closing;
+                          const parts = txt.split(/(\*[^*]+\*)/g);
+                          return parts.map((p, i) => {
+                            if (p.startsWith('*') && p.endsWith('*')) {
+                              return <em key={i}>{p.slice(1, -1)}</em>;
+                            }
+                            return <span key={i}>{p}</span>;
+                          });
+                        })()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 03 — 대라천 침향 역사 (통합 섹션) */}
             <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
               <div>
-                <div className={styles.chapterNum}>02</div>
+                <div className={styles.chapterNum}>03</div>
                 <div className={styles.chapterTag}>{historyTab?.tag ?? 'HISTORY'}</div>
               </div>
               <div>
@@ -345,11 +445,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
             </div>
 
-            {/* 03 — SHOWROOM (대라천 '참'침향 전시장) */}
+            {/* 04 — SHOWROOM (대라천 '참'침향 전시장) */}
             {showroom && (
               <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
                 <div>
-                  <div className={styles.chapterNum}>03</div>
+                  <div className={styles.chapterNum}>04</div>
                   <div className={styles.chapterTag}>SHOWROOM</div>
                 </div>
                 <div>
@@ -385,11 +485,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
             )}
 
-            {/* 04 — 대라천 '참'침향 브랜드 홍보영상 */}
+            {/* 05 — 대라천 '참'침향 브랜드 홍보영상 */}
             {promoVideos && promoVideos.items.length > 0 && (
               <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
                 <div>
-                  <div className={styles.chapterNum}>{promoVideos.num ?? '04'}</div>
+                  <div className={styles.chapterNum}>{promoVideos.num ?? '05'}</div>
                   <div className={styles.chapterTag}>{promoVideos.tag ?? 'VIDEOS'}</div>
                 </div>
                 <div>

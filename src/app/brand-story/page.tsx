@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     // 신뢰/카테고리
     '침향 브랜드', '명품 침향 브랜드', '침향 브랜드 추천',
     '진짜 침향', '정품 침향', 'CITES 침향', 'OCOP 침향',
+    // 20년 원료 원칙 (THE 20-YEAR PROOF)
+    '20년 침향나무', '20년산 침향', '침향 수지 형성', '침향 수지 응집',
+    '침향 수지 유도 시기', '성숙 침향나무', '아갈로차 수지 축적',
+    '확인 가능한 침향', '추적 가능한 침향', '침향 이력 관리',
   ],
   alternates: { canonical: 'https://zoellife.com/brand-story' },
   openGraph: {
@@ -94,10 +98,32 @@ export interface PromoVideosData {
   items: PromoVideoItem[];
 }
 
+export interface TwentyYearPrincipleSection {
+  label: string;            // 'A' / 'B' / 'C' 등
+  titleKr: string;
+  titleEn?: string;
+  body: string;
+  image?: string;
+  imageCaption?: string;
+}
+export interface TwentyYearPrinciple {
+  tag: string;              // 'THE 20-YEAR PROOF'
+  headlineLead: string;     // "침향은 비싼 것이 중요한 게 아닙니다."
+  headlineBold: string;     // "확인 가능한 침향인지가 중요합니다."
+  subtitle: string;         // "그래서 우리는 — 20년을 기다린 나무에만..."
+  intro: string;            // 리드 문단
+  heroImage?: string;
+  heroCaption?: string;
+  sections: TwentyYearPrincipleSection[];
+  closing: string;          // 강조 박스 한 줄
+  closingImage?: string;
+}
+
 export interface BrandStoryData {
   hero: { sectionTag: string; titleKr: string; titleEn?: string; subtitle: string; heroBg: string };
   tabHeroes?: BrandStoryTabHeroes;
   brandStoryTab: { headlineTitle: string; headlineSubtitle: string; sourceTag: string; sourceTitle: string; sourceBody: string };
+  twentyYearPrinciple?: TwentyYearPrinciple;
   promoVideos?: PromoVideosData;
   farms: Farm[];
   historyTab: { tag: string; title: string; eras: HistoryEra[] };
