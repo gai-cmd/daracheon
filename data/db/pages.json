@@ -9,7 +9,7 @@
     },
     "brandStoryTab": {
       "headlineTitle": "베트남에서 오직 침향 한 길만 고집했습니다!",
-      "headlineSubtitle": "200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전",
+      "headlineSubtitle": "200헥타르 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전",
       "sourceTag": "THE SOURCE",
       "sourceTitle": "25년의 기다림이 시작되는 곳",
       "sourceBody": "조엘라이프는 \"자연의 진실된 가치\"를 모토로 한 프리미엄 침향 브랜드 [대라천 '참'침향]을 소개합니다. 침향은 수천 년 전부터 귀하게 여겨져 온 천연의 선물로, 침향나무가 스스로 상처를 치유하며 만들어내는 고귀한 수지입니다.  조엘라이프는 이 고귀한 가치를 현대 과학과 결합하여 인류의 건강과 행복에 기여하고자 합니다.\n\n대라천 '참'침향은 세계적으로 인정 받은 침향의 최고 산지인 베트남에서 생산된 침향만 100% 사용합니다. 직접 운영하는 침향농장에서 생산된 침향을 사용하는 제품은 오직 대라천 '참'침향뿐입니다. 또한, 베트남 식약청에서 'Aquilaria Agallocha Roxburgh' 학명 사용을 인정한 제품은 대라천 '참'침향 제품 뿐입니다.\n\n대라천 '참'침향은 식목에서 침향을 얻기까지 20~30년 동안 유기농법으로 재배합니다. 20년 이상 된 침향나무에서 2~10년에 걸쳐 열대과일 발효액으로 수지 내림을 해, 벌목 후 사람 손으로 하나하나 침향을 채취하고 국가 공인 유기농 인증을 통해 더욱 안전하고 신뢰할 수 있습니다.\n\n베트남 하띤성의 침향농장에서는 모든 Agallocha 침향나무에 개별적으로 고유번호를 부여해 이력을 관리하며 동나이 직영공장에서 전통 증기 증류법으로 침향오일을 생산합니다. 침향나무 재배나 수지 추출 과정을 고려하면 당연히 비쌀 수 밖에 없지만 비싼 만큼 최선을 다하고 있습니다."
@@ -62,32 +62,33 @@
       "title": "한 눈에 보는 대라천 침향 역사",
       "eras": [
         {
-          "era": "2000-2001",
+          "era": "1998~2001년",
           "items": [
+            "1998 침향 사업 및 연구 시작",
             "2000 베트남 하띤성 일대 13만 그루 규모의 침향농장 조성",
             "2001 동나이성 대규모 식재 진행"
           ],
           "description": "대라천 '참'침향은 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했고, 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다."
         },
         {
-          "era": "2014-2019",
+          "era": "2014~2019년",
           "items": [
             "2014 노니발효 시스템 개발",
-            "2015 띠엔장성 일대 5ha 규모의 노니농장 조성",
+            "2015 띠엔장성 일대 5헥타르 규모의 노니농장 조성",
             "2018 NTV VIETNAM CO.LTD 통합 법인 설립",
             "2018 노니발효 가공 공장 준공",
             "2018 천연 침향 수지유도제 개발 및 생산",
             "2018 동나이성 일대 5ha 규모의 침향오일 생산용 농장 조성",
             "2018 침향농장·노니농장 Organic 인증 및 완제품 생산 공장 HACCP 인증",
             "2019 노니·침향 OCOP(베트남 인민위원회 품질보증) 인증",
-            "2019 닥터노니 제품 생산 — 이슬 외 8종 (롯데·신세계·갤러리아 백화점 입점)"
+            "2019 닥터노니 제품 생산 - 이슬 외 8종 (롯데·신세계·갤러리아 백화점 입점)"
           ],
           "description": "2014년 노니발효 시스템 개발을 시작으로, 2018년 NTV Vietnam 통합법인 출범과 함께 Organic·HACCP 인증을 획득하고 식용 가능 수지유도제를 자체 개발했습니다. 2019년에는 베트남 정부 OCOP 품질보증과 국내 백화점 입점으로 신뢰의 영역을 넓혔습니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2014-2019-haccp-cleanroom-v2.png",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2014-2019-haccp-facility.jpg",
           "imageCaption": "2018 NTV Vietnam 통합법인 — Organic·HACCP 인증 클린룸 충전·포장 라인"
         },
         {
-          "era": "2020-2022",
+          "era": "2020~2022년",
           "items": [
             "2020 베트남 농공산품 엑스포 경진대회 우수상 입상",
             "2020 면세점·7대마트 입점권 획득",
@@ -96,7 +97,7 @@
           "description": "2020년 베트남 농공산품 엑스포 우수상 입상과 함께 면세점 및 주요 마트 입점권을 확보했으며, 2021년부터는 하띤성 침향농장의 20년산 침향목 분양 사업을 시작했습니다."
         },
         {
-          "era": "2023-2026",
+          "era": "2023~2026년",
           "items": [
             "2023 대라천침향 오일캡슐 베트남 건강 기능성 식품(GMP) 인증",
             "2023 침향 오일 캡슐 외 18품목의 침향제품 생산",
@@ -109,7 +110,7 @@
           ],
           "description": "2023년 베트남 건강기능성식품 GMP 인증과 18품목의 침향제품 생산 체계를 확립하고, 한경국립대학교·베트남 농람대학교와의 기술 제휴, 하노이·호찌민 쇼룸 개장으로 글로벌 거점을 다졌습니다. 2024년 한국법인 The NTV Korea 설립과 캄보디아 판매점 오픈을 거쳐 2026년 조엘라이프의 대라천 '참'침향 브랜드로 한국 시장에 본격 진출합니다.",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2023-2026-korea-launch-v2.png",
-          "imageCaption": "2026 한국 시장 진출 — 대라천 침향(大羅天 沈香) 캡슐 라인업"
+          "imageCaption": "2026 한국 시장 진출 - 대라천 침향(大羅天 沈香) 캡슐 라인업"
         }
       ]
     },
@@ -547,24 +548,6 @@
           "thumbnail": "https://img.youtube.com/vi/Wj9X0XYlbrw/hqdefault.jpg",
           "excerpt": "베트남 현지 방송 NTV와 함께한 대라천 침향단 제조 공정 완전 공개. 원목 수확부터 최종 제품까지.",
           "url": "https://www.youtube.com/watch?v=Wj9X0XYlbrw"
-        },
-        {
-          "id": "v3",
-          "title": "베트남 현지 침향 가공 현장 - 원목에서 제품까지 전 공정",
-          "source": "약초방송",
-          "date": "2023-09-19",
-          "thumbnail": "https://img.youtube.com/vi/U_UTerP2C84/hqdefault.jpg",
-          "excerpt": "귀하디귀한 베트남 침향 가공 현장 영상. 원목 수확·분쇄·추출까지 현장 그대로 담았습니다.",
-          "url": "https://www.youtube.com/watch?v=U_UTerP2C84"
-        },
-        {
-          "id": "v4",
-          "title": "하띤성 · 침향 생산 나무 현장 확인 - Aquilaria Agallocha Roxburgh",
-          "source": "Vietnam Agarwood",
-          "date": "2023-06-01",
-          "thumbnail": "https://img.youtube.com/vi/kpj5UIW9wTc/hqdefault.jpg",
-          "excerpt": "베트남 하띤성에서 Aquilaria Agallocha 침향 생산 나무를 직접 확인하는 현장 영상.",
-          "url": "https://www.youtube.com/watch?v=kpj5UIW9wTc"
         }
       ]
     },
@@ -572,37 +555,37 @@
       "tag": "THE 20-YEAR PROOF",
       "headlineLead": "침향은 비싼 것이 중요한 게 아닙니다.",
       "headlineBold": "확인 가능한 침향인지가 중요합니다.",
-      "subtitle": "그래서 우리는 — 20년을 기다린 나무에만 수지를 내립니다",
-      "intro": "조엘라이프가 20년 이상 자란 침향나무만 고집하는 데는 분명한 이유가 있습니다. 향이 깊어지는 시간은, 단축할 수 없기 때문입니다.",
-      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg",
-      "heroCaption": "20년을 넘긴 침향나무 — 수지를 축적할 준비가 끝납니다 (※ 임시 이미지, 추후 교체 예정)",
+      "subtitle": "그래서 우리는, 20년을 기다린 나무에만 수지를 내립니다",
+      "intro": "침향 수지는 분비된 뒤 약 1~2년에 걸쳐 농축·응집되며 향과 밀도가 깊어집니다. 즉, \"수지를 분비할 수 있는 나무\"가 아니라, 수지를 끝까지 유지할 수 있는 나무가 침향의 품질을 결정합니다. 조엘라이프가 20년 이상 자란 침향나무만 고집하는 이유입니다.",
+      "heroImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/twenty-year-proof-hero.png?v=2",
+      "heroCaption": "20년을 넘긴 침향나무 - 수지를 축적할 준비가 끝납니다",
       "sections": [
         {
           "label": "A",
-          "titleEn": "GROWTH STOPS, RESIN BEGINS",
-          "titleKr": "키 성장의 끝, 수지의 시작",
-          "body": "침향나무는 약 20년 전후가 되면 키 성장을 담당하는 생장점의 활동이 점차 둔화되거나 멈춥니다. 이 시기 이후 나무는 위로 자라기보다 둘레가 굵어지는 방향으로 성장하며, 비로소 수지를 만들 준비를 갖춥니다.",
-          "image": "",
-          "imageCaption": "키 성장이 멈춘 자리, 수지가 쌓이는 자리"
+          "titleEn": "GROWTH STOPS, ACCUMULATION BEGINS",
+          "titleKr": "키 성장의 끝, 축적이 시작됩니다",
+          "body": "침향나무는 약 20년 전후가 되면 키 성장을 담당하는 생장점의 활동이 둔화·정지됩니다. 이 시기 이후 나무는 위로 자라기보다 둘레가 굵어지는 방향으로 성장하며, 그동안 성장에 쓰던 에너지를 비로소 \"수지 축적\"으로 돌릴 수 있게 됩니다. 진짜 침향은 여기서 시작됩니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/migrated/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs.jpg",
+          "imageCaption": "20년 넘긴 침향나무 — Aquilaria Agallocha Roxburgh (베트남 푸꾸옥 농장)"
         },
         {
           "label": "B",
-          "titleEn": "WHY UNDER 20 YEARS FAILS",
-          "titleKr": "어린 나무는 상처를 \"치유\"합니다",
-          "body": "20년 이하의 어린 침향나무는 회복력이 강합니다. 초기 1~6개월은 수지 활동이 활발하지만, 시간이 지나며 나무는 그 상처를 \"치유된 상태\"로 인식해 조직 복구·성장에 에너지를 집중합니다. 결과적으로 형성됐던 수지는 감소하거나 사라집니다.",
-          "image": "",
+          "titleEn": "UNDER 20 — THE RESIN DISAPPEARS",
+          "titleKr": "어린나무-상처 닫고 수지 잃습니다",
+          "body": "20년 이하 어린 침향나무는 회복력이 강해 1~6개월 안에 상처를 \"치유된 상태\"로 인식합니다. 이후 에너지를 조직 복구와 성장에 집중하기 때문에 수지 분비를 지속하지 않습니다. 결국 형성됐던 수지마저 감소하거나 사라져, 1~2년의 농축 기간을 견뎌낼 수 없습니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/twenty-year-proof-b-young.png?v=2",
           "imageCaption": "어린 나무는 상처를 닫습니다 — 수지가 사라집니다"
         },
         {
           "label": "C",
-          "titleEn": "20+ YEARS — ACCUMULATION",
-          "titleKr": "성숙한 나무는 수지를 \"축적\"합니다",
-          "body": "20년 이상의 성숙한 나무는 분비 이후 약 1~2년에 걸쳐 수지가 농축·응집되며 향과 밀도가 깊어집니다. 빠른 복구가 아닌 장기간의 축적·유지 경향이 강해, 고품질 침향이 형성될 조건을 갖추게 됩니다.",
-          "image": "",
-          "imageCaption": "성숙한 나무는 향을 축적합니다 — 그것이 \"참\"침향입니다"
+          "titleEn": "20+ YEARS — ACCUMULATE & SUSTAIN",
+          "titleKr": "성숙한 나무만 끝까지 지킵니다",
+          "body": "키 성장이 마무리된 20년 전후의 나무는 상처를 빠르게 복구하기보다 방어 물질인 수지를 장기간 축적·유지하는 경향이 강합니다. 그래서 1~2년에 걸친 농축·응집을 견디며 향과 밀도가 깊어진 고품질 침향으로 발전합니다. 최소 20년산이어야 하는 결정적 이유입니다.",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/twenty-year-proof-c-mature.png?v=2",
+          "imageCaption": "성숙한 나무는 향을 끝까지 지킵니다"
         }
       ],
-      "closing": "최소 20년 — 이것이 대라천이 25년간 지켜온 *원료의 원칙*입니다.\n빠른 길은 있지만, *깊은 향에 이르는 지름길은 없습니다.*",
+      "closing": "최소 20년! 이것이 *축적할 수 있는 나무*만 골라내는 대라천의 원료 원칙입니다.\n빠른 길은 있지만, *깊은 향에 이르는 지름길은 없습니다.*",
       "closingImage": ""
     }
   },
@@ -2204,7 +2187,7 @@
       "heroBg": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/showroom/showroom-01.jpg"
     },
     "intro": {
-      "tag": "THE SHOWROOM",
+      "tag": "Daracheon Agarwood Showroom",
       "title": "천년의 향기를 직접 체험하는 공간",
       "body": "대라천 '참'침향 전시장은 단순한 매장이 아닙니다. 베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 직영 농장에서 25년 이상 자란 Aquilaria Agallocha Roxburgh 침향나무가 어떻게 천년의 향기로 거듭나는지를, 원목·수지·오일·완제품에 이르기까지 한 공간에서 보여드립니다.\n\n전통 목조 양식의 본관 내부에는 침향 원목 단면·수지 결정·증류 오일·다양한 제품 라인업이 정성스럽게 진열되어 있으며, 베트남 전통 의상(Áo dài)을 입은 전문 도슨트가 직접 안내합니다. 시향(試香)과 시음을 통해 진짜 침향만이 전하는 깊고 그윽한 향을 직접 느껴보세요."
     },
