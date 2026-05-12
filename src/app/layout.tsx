@@ -34,7 +34,7 @@ const SITE_URL = normalizeSiteUrl(
 
 // Naver 검색엔진 가이드라인: 사이트 제목 / OG 제목 ≤40자, 사이트 설명 / OG 설명 ≤80자.
 // (회사 정보 / FAQ / 키워드는 metadata.keywords + JSON-LD 로 보강.)
-const DEFAULT_TITLE = '대라천 ZOEL LIFE — 정품 침향 전문 브랜드';
+const DEFAULT_TITLE = "조엘라이프 대라천 '참'침향 - 100% 베트남산 아갈로차 침향";
 const DEFAULT_DESCRIPTION =
   "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.";
 
@@ -119,7 +119,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     // 파비콘 / apple-touch-icon 은 src/app/icon.png + apple-icon.png 로
     // Next.js 가 자동 생성. 매뉴얼 선언 제거 — 충돌 방지.
-    title: { default: title, template: '%s | 대라천 ZOEL LIFE' },
+    title: { default: title, template: "%s | 조엘라이프 대라천 '참'침향" },
     description,
     keywords,
     authors: [{ name: '대라천 ZOEL LIFE (Daracheon)', url: SITE_URL }],
