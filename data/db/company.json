@@ -1,14 +1,14 @@
 {
-  "name": "조엘라이프 주식회사",
-  "description": "조엘라이프의 대라천 '참'침향은 베트남 직영 농장 기반의 침향 전문기업에서 생산됩니다. 원산지부터 제품까지 전 과정을 자체 운영합니다.",
-  "ceo": "박병주",
-  "businessReg": "749-86-03668",
-  "mailOrderReg": "제2026-서울금천-0438호",
-  "importBizReg": "제20260001680호",
-  "privacyOfficer": "김승현",
-  "address": "서울특별시 금천구 벚꽃로36길 30, 1511호",
-  "phone": "070-4140-4086",
-  "email": "bj0202@gmail.com",
+  "name": "대라천",
+  "nameHanja": "大羅天",
+  "nameEn": "Daracheon",
+  "nameVi": "Đại La Thiên",
+  "slogan": "프리미엄 침향 전문 브랜드",
+  "sloganEn": "Premium Agarwood Since 2003",
+  "description": "대라천(大羅天)은 베트남 최고급 Aquilaria agallocha 침향을 직접 재배·가공·유통하는 프리미엄 침향 전문 브랜드입니다.",
+  "url": "https://www.daracheon.com",
+  "email": "",
+  "logo": "/images/logo.png",
   "farms": [
     {
       "name": "하띤 농장",
@@ -106,30 +106,26 @@
     }
   ],
   "social": {
-    "instagram": "https://www.instagram.com/daracheon",
-    "youtube": "https://www.youtube.com/@daracheon",
-    "line": "https://line.me/R/ti/p/@daracheon"
+    "instagram": "",
+    "youtube": "",
+    "line": ""
   },
   "companyLogo": "/images/ZOEL-LIFE-logo.png",
   "updatedAt": "2026-04-24T12:23:07.625Z",
-  "socialLinks": [
-    {
-      "label": "Instagram",
-      "url": "https://www.instagram.com/daracheon"
-    },
-    {
-      "label": "Youtube",
-      "url": "https://www.youtube.com/@daracheon"
-    },
-    {
-      "label": "Line",
-      "url": "https://line.me/R/ti/p/@daracheon"
-    }
-  ],
+  "brandLogo": "/images/logo-brand.png",
+  "ceo": "박병주",
+  "businessReg": "749-86-03668",
+  "address": "서울특별시 금천구 벚꽃로36길 30, 1511호",
+  "phone": "",
+  "foundingDate": "",
   "seo": {
-    "metaTitle": "대라천 '참'침향 — 식약처 공식 등재 Aquilaria Agallocha Roxburgh 전문 브랜드 | ZOEL LIFE",
-    "metaDescription": "조엘라이프의 대라천 '참'침향. 베트남 5개 성 200ha 직영 농장에서 25년 직접 재배한 진짜 침향. 식약처 '대한민국약전외한약(생약)규격집'·'식품공전' 공식 등재 학명 Aquilaria Agallocha Roxburgh 보증. CITES·ISO 22000·GMP 인증. 침향 오일·캡슐·침향단·침향차·선향 한국 직판.",
+    "metaTitle": "대라천 ZOEL LIFE — 정품 침향 전문 브랜드",
+    "metaDescription": "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.",
     "keywords": "침향, 대라천, 참침향, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향 캡슐, 침향환, 침향단, 침향 선향, 침향수, 침향차, 침향 스틱, 베트남 침향, 베트남 직영 침향, 프리미엄 침향, 진짜 침향, 정품 침향, Aquilaria Agallocha Roxburgh, 아퀼라리아 아갈로차 록스버그, 식약처 침향, 약전 침향, CITES 침향, 침향 구매, 침향 도매, 침향 B2B, 침향 OEM, 하띤 침향, 동나이 침향, 냐짱 침향",
-    "ogImage": "https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png"
-  }
+    "ogImage": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777360750493-65e9701d77d0ff3b1901.png"
+  },
+  "brandDesc": "조엘라이프의 대라천 '참'침향은 베트남 직영 농장 기반의 침향 전문기업에서 생산됩니다. 원산지부터 제품까지 전 과정을 자체 운영하며, 대한민국 공식 문서인 식약처 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서', '원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 등록된 공식 침향만을 다룹니다.",
+  "mailOrderReg": "제2026-서울금천-0438호",
+  "importBizReg": "제20260001680호",
+  "privacyOfficer": "김승현"
 }
