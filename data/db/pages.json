@@ -18,31 +18,31 @@
       {
         "name": "하띤",
         "nameVi": "Ha Tinh",
-        "desc": "침향의 전통 산지",
-        "image": "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280"
+        "desc": "자연 침향의 전통 산지",
+        "image": "/images/placeholders/farm-pending.png"
       },
       {
         "name": "동나이",
         "nameVi": "Dong Nai",
         "desc": "현무암 토양, 깊은 오일향",
-        "image": "https://lh3.googleusercontent.com/d/1t02AQvPDeUsqjOv-NcUpwiDWrXwZ6mgA=w1280"
+        "image": "/images/placeholders/farm-pending.png"
       },
       {
         "name": "냐짱",
         "nameVi": "Nha Trang",
-        "desc": "굵은 침향, 오랜 관리의 결과",
-        "image": "https://lh3.googleusercontent.com/d/1pCKsRdo3kix6XDUeFgdYHHomS3UJkLDX=w1280"
+        "desc": "굵은 침향, 오랜 관리",
+        "image": "/images/placeholders/farm-pending.png"
       },
       {
         "name": "푸꾸옥",
         "nameVi": "Phu Quoc",
         "desc": "고수령 침향목·체험농장",
-        "image": "https://lh3.googleusercontent.com/d/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs=w1280"
+        "image": "/images/placeholders/farm-pending.png"
       },
       {
         "name": "람동",
         "nameVi": "Lam Dong",
-        "desc": "158ha(478,000평) · 대규모 거점",
+        "desc": "158헥타르 (478,000평)",
         "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/media/lam-dong-aquilaria-cc0-1778166302982.jpg"
       }
     ],
@@ -52,9 +52,9 @@
       "subtitle": "하띤, 냐짱, 람동, 동나이, 푸꾸옥의 200ha 부지에 400만 그루",
       "body": "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 ‘진정한 침향’이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 나짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허 받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
       "images": [
-        "https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280",
-        "https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280",
-        "https://lh3.googleusercontent.com/d/1jF9DcPGhLe1-lsMDYX8ntkwyrTioAeCH=w1280"
+        "/images/placeholders/farm-pending.png",
+        "/images/placeholders/farm-pending.png",
+        "/images/placeholders/farm-pending.png"
       ]
     },
     "historyTab": {
@@ -122,7 +122,7 @@
           "name": "유기농 제품 인증서",
           "nameEn": "Organic Product Certification",
           "category": "유기농인증",
-          "thumb": "https://drive.google.com/thumbnail?id=1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq&sz=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1S2u4KwYtRvoafIznbwBEf_JX_lNB0HRq/view",
           "certNumber": "TQC.19.1082-B · 판본 02",
           "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
@@ -132,7 +132,7 @@
           "name": "유기농 원료 생산지역 인증서",
           "nameEn": "Organic Raw Material Area",
           "category": "유기농인증",
-          "thumb": "https://drive.google.com/thumbnail?id=136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR&sz=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/136xmgMvuaxhaqEJGvzm7GXqh9IzS3YvR/view",
           "certNumber": "TQC.19.1082-A · 판본 02",
           "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
@@ -142,7 +142,7 @@
           "name": "수지유도제 특허 인증서",
           "nameEn": "Resin Inducer Patent #12835",
           "category": "특허",
-          "thumb": "https://drive.google.com/thumbnail?id=1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw&sz=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1MUoMBCcX4ZZNNtLOH2fwgUv5pul1_Pgw/view",
           "certNumber": "특허번호 12835",
           "issuer": "지식재산권청 — 과학기술부 (등록 결정 21889/QĐ-SHTT, 2014/04/08) (베트남)",
@@ -152,7 +152,7 @@
           "name": "야생동·식물 식재시설 인증서",
           "nameEn": "Wild Plant Cultivation Facility R.",
           "category": "품질인증",
-          "thumb": "https://drive.google.com/thumbnail?id=1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT&sz=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1Qmq5y3WmvMt-8QbD-IRbQ3l757Px8HGT/view",
           "certNumber": "00.38/2016/GCN-QLBV&TTN",
           "issuer": "동나이성 산림보호청 — 동나이성 농업·농촌개발국 (베트남)",
@@ -162,7 +162,7 @@
           "name": "ISO 식품안전 경영시스템",
           "nameEn": "ISO 22000:2018 Food Safety M.",
           "category": "ISO인증",
-          "thumb": "https://lh3.googleusercontent.com/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1GYua-DQynYN5kR_r_rrwDFWsYg5g57t0/view",
           "certNumber": "HA 616 · 부호 616-23-01/02",
           "issuer": "ISSQ 품질표준개발연구원 (인증서에 IAF · VICAS 083-FSMS · ISSQ 로고 표기)",
@@ -172,7 +172,7 @@
           "name": "VN OCOP 품질보증서",
           "nameEn": "OCOP 4-Star Certificate",
           "category": "품질인증",
-          "thumb": "https://lh3.googleusercontent.com/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1iv8RgnBL5Xdt_qxzpgRcdxXtdH6vFRta/view",
           "certNumber": "결정번호 68/QĐ-UBND",
           "issuer": "동나이성 인민위원회 — OCOP(1코뮌1제품) 프로그램 2025 (베트남)",
@@ -192,7 +192,7 @@
           "name": "ISO 품질경영시스템 인증서",
           "nameEn": "ISO 13485:2016 Medical Device QMS",
           "category": "ISO인증",
-          "thumb": "https://lh3.googleusercontent.com/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1nj020odeHZHfwdE_PCsQk4xT6rARu4EG/view",
           "certNumber": "YT 562 · 부호 562-23-01/01",
           "issuer": "ISSQ 품질표준개발연구원 (베트남)",
@@ -202,7 +202,7 @@
           "name": "VN 농업총국 황금브랜드",
           "nameEn": "Vietnam Golden Brand Award 2025",
           "category": "수상",
-          "thumb": "https://lh3.googleusercontent.com/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1xpiojAGQAFwMOBoiudCNIwV_1ArK6a6A/view",
           "certNumber": "2025년 베트남 농업 황금브랜드 수상 (수상 브랜드: TRẦM HƯƠNG ĐẠI LA THIÊN)",
           "issuer": "베트남 농업·농촌개발 총회 — 상무위원회 / 회장 Hồ Xuân Hùng (지기관: VECI)",
@@ -222,7 +222,7 @@
           "name": "HACCP 인증서",
           "nameEn": "HACCP Codex Alimentarius",
           "category": "품질인증",
-          "thumb": "https://drive.google.com/thumbnail?id=1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5&sz=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/1_58va33_QyYOIH_wD0BDTpxCNEyrqiT5/view",
           "certNumber": "TQC.05.1082 · 판본 01 (발급 유형: 최초 인증)",
           "issuer": "TQC GLOBAL — TQC GLOBAL 시험·인증센터 / 베트남 과학기술협회연합회",
@@ -232,7 +232,7 @@
           "name": "아시아 선도기업 10대 B.",
           "nameEn": "Asia Excellent Brand 2025 — Top 10",
           "category": "수상",
-          "thumb": "https://lh3.googleusercontent.com/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_=w600",
+          "thumb": "/images/placeholders/cert-pending.png",
           "viewUrl": "https://drive.google.com/file/d/12W4V2LVy0Fj4biFyIyOu-GdkqEEbHhC_/view",
           "certNumber": "ASIA EXCELLENT BRAND No. XI · 2025",
           "issuer": "협력실행기관: VECI · VEDSU",
@@ -271,8 +271,8 @@
       "title": "과학으로 입증된 안전",
       "subtitle": "최소 26년의 시간이 만드는 한 방울의 가치",
       "images": [
-        "https://lh3.googleusercontent.com/d/13Rz2KejfZg2bt19UhNklV-Fb0n6-zN7x=w1280",
-        "https://lh3.googleusercontent.com/d/1QOBVQuJizCRU0K_YT2dtW6p32GIMQWe-=w1280"
+        "/images/placeholders/farm-pending.png",
+        "/images/placeholders/farm-pending.png"
       ],
       "heavyMetals": [
         "납(Pb)",
@@ -430,35 +430,35 @@
               "name": "원목 입고",
               "duration": "관리된 원목별 번호 순서",
               "desc": "수지가 앉혀진 침향목을 공장으로 입고",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-01-intake.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/orig-oil-01-intake.jpg"
             },
             {
               "step": "02",
               "name": "세척",
               "duration": "표피 제거, 오염물 제거",
               "desc": "표피 및 흙·먼지·외부 오염물 완전 제거",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/oil-02-%EC%84%B8%EC%B2%99.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-02-wash-v3.png"
             },
             {
               "step": "03",
               "name": "절단",
               "duration": "10~20cm 크기로 절단",
               "desc": "10~20cm로 천공된 부분 주변 기준 절단",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-03-cut.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/orig-oil-03-cut.png"
             },
             {
               "step": "04",
               "name": "수지목 분리",
               "duration": "수지 침착 부위 외 목질 부분 제거",
               "desc": "순수 수지가 침착된 핵심 부분만 선별",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-04-resin-separation.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/orig-oil-04-wood-1778550078357.jpg"
             },
             {
               "step": "05",
               "name": "이물질 제거",
               "duration": "수지앉힘 작업 시 천공 부분 속 이물질",
               "desc": "천공한 부분 속 이물질 완전 제거",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-05-debris-removal.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-05-debris-removal-v3.png"
             },
             {
               "step": "06",
@@ -472,7 +472,7 @@
               "name": "자연 건조",
               "duration": "자연광 건조, 인위적 열원 사용 금지",
               "desc": "수지 손실 막기 위해 자연광 건조",
-              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/ref-oil-07-natural-dry.png"
+              "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process-steps/orig-oil-07-natural-dry.jpg"
             },
             {
               "step": "08",
@@ -526,20 +526,22 @@
     "promoVideos": {
       "num": "04",
       "tag": "VIDEOS",
-      "title": "대라천 '참'침향 브랜드 홍보영상",
+      "title": "대라천 침향 브랜드 홍보영상",
+      "subtitle": "",
+      "body": "",
       "items": [
         {
           "id": "v1",
-          "title": "대라천 침향 — 유기농 재배 · 베트남 정부 인증 현장 | 문경수 대표",
+          "title": "대라천 침향 - 유기농 재배 · 베트남 정부 인증 현장 | 문경수 대표",
           "source": "대라천 공식",
           "date": "2024-10-01",
           "thumbnail": "https://img.youtube.com/vi/LwKK8t6AyQA/hqdefault.jpg",
-          "excerpt": "말도 많고 가짜도 많은 베트남 침향, 유기농 재배로 베트남 정부 HACCP·유기농·OCOP 인증품을 생산. 하띤성 직영 농장 23년 기록.",
+          "excerpt": "말도 많고 가짜도 많은 베트남 침향, 유기농 재배로 베트남 정부 HACCP·유기농·OCOP 인증품을 생산",
           "url": "https://www.youtube.com/watch?v=LwKK8t6AyQA"
         },
         {
           "id": "v2",
-          "title": "대라천 침향 · 침향단 — 베트남 현지 가공 전 공정 (NTV 방송)",
+          "title": "대라천 침향 · 침향단 - 베트남 현지 가공 전 공정 (NTV 방송)",
           "source": "NTV Việt Nam",
           "date": "2024-10-08",
           "thumbnail": "https://img.youtube.com/vi/Wj9X0XYlbrw/hqdefault.jpg",
@@ -548,7 +550,7 @@
         },
         {
           "id": "v3",
-          "title": "베트남 현지 침향 가공 현장 — 원목에서 제품까지 전 공정",
+          "title": "베트남 현지 침향 가공 현장 - 원목에서 제품까지 전 공정",
           "source": "약초방송",
           "date": "2023-09-19",
           "thumbnail": "https://img.youtube.com/vi/U_UTerP2C84/hqdefault.jpg",
@@ -557,7 +559,7 @@
         },
         {
           "id": "v4",
-          "title": "하띤성 · 침향 생산 나무 현장 확인 — Aquilaria Agallocha",
+          "title": "하띤성 · 침향 생산 나무 현장 확인 - Aquilaria Agallocha Roxburgh",
           "source": "Vietnam Agarwood",
           "date": "2023-06-01",
           "thumbnail": "https://img.youtube.com/vi/kpj5UIW9wTc/hqdefault.jpg",
@@ -1645,7 +1647,7 @@
         "title": "하띤 - 침향의 전통 산지",
         "body": "베트남 하띤 침향농장은 오랜 세월 침향이 형성되어 온 전통 산지로서, 자연이 만들어낸 깊은 역사성과 정통성을 그대로 간직하고 있다는 점에서 큰 특징을 지닙니다. \n\n이 지역은 예로부터 야생 침향이 발견되던 곳으로 알려져 있어, 단순한 인공 재배지를 넘어 자연 발생 침향의 가능성이 살아있는 전통적인 생산지로 평가됩니다. 또한 오랜 기간 축적된 재배 경험과 지역 고유의 기후·토양 환경이 결합되어, 침향 특유의 깊고 묵직한 향과 높은 품질을 기대할 수 있는 기반을 갖추고 있습니다.\n\n하띤 농장은 현대적인 대량 생산 중심의 농장과 달리, 자연 순환과 전통 방식을 존중하는 운영 철학을 바탕으로 하고 있어 보다 ‘정통 침향’에 가까운 가치를 지향합니다. 이는 단순한 생산지를 넘어, 침향이 지닌 역사성과 희소성, 그리고 시간의 깊이를 함께 담아내는 공간이라는 의미를 가지며, 프리미엄 원료 생산의 핵심 거점으로서 중요한 역할을 합니다.",
         "stats": [],
-        "imageSrc": "https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280",
+        "imageSrc": "/images/placeholders/farm-pending.png",
         "imageAlt": "베트남 하띤(Ha Tinh) 직영 농장",
         "imageCaption": "하띤 · Ha Tinh · 침향의 전통 산지",
         "images": [
