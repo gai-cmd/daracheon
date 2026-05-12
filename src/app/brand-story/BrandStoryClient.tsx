@@ -259,10 +259,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 <p className={styles.chapterSubtitle}>
                   {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
                 </p>
+                <div className={styles.line} style={{ margin: '20px 0 28px' }} />
                 {tabHeroes.tab0 && (
                   <div
                     style={{
-                      marginTop: 30,
+                      marginBottom: 28,
                       position: 'relative',
                       width: '100%',
                       aspectRatio: '16/9',
@@ -279,7 +280,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     />
                   </div>
                 )}
-                <div className={styles.line} style={{ margin: '24px 0' }} />
                 <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
                   {brandStoryTab?.sourceBody ??
                     '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며 25년 동안 가꿔왔습니다.'}
