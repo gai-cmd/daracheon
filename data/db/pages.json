@@ -84,7 +84,7 @@
             "2019 닥터노니 제품 생산 - 이슬 외 8종 (롯데·신세계·갤러리아 백화점 입점)"
           ],
           "description": "2014년 노니발효 시스템 개발을 시작으로, 2018년 NTV Vietnam 통합법인 출범과 함께 Organic·HACCP 인증을 획득하고 식용 가능 수지유도제를 자체 개발했습니다. 2019년에는 베트남 정부 OCOP 품질보증과 국내 백화점 입점으로 신뢰의 영역을 넓혔습니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2014-2019-haccp-facility.jpg",
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/history-2014-2019-haccp-cleanroom-v2.png",
           "imageCaption": "2018 NTV Vietnam 통합법인 — Organic·HACCP 인증 클린룸 충전·포장 라인"
         },
         {
@@ -525,7 +525,7 @@
       "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-hero-modern-1778398873.png"
     },
     "promoVideos": {
-      "num": "04",
+      "num": "05",
       "tag": "VIDEOS",
       "title": "대라천 침향 브랜드 홍보영상",
       "subtitle": "",
@@ -552,7 +552,7 @@
       ]
     },
     "twentyYearPrinciple": {
-      "tag": "THE 20-YEAR PROOF",
+      "tag": "THE 20 YEAR PROOF",
       "headlineLead": "침향은 비싼 것이 중요한 게 아닙니다.",
       "headlineBold": "확인 가능한 침향인지가 중요합니다.",
       "subtitle": "그래서 우리는, 20년을 기다린 나무에만 수지를 내립니다",
@@ -565,13 +565,13 @@
           "titleEn": "GROWTH STOPS, ACCUMULATION BEGINS",
           "titleKr": "키 성장의 끝, 축적이 시작됩니다",
           "body": "침향나무는 약 20년 전후가 되면 키 성장을 담당하는 생장점의 활동이 둔화·정지됩니다. 이 시기 이후 나무는 위로 자라기보다 둘레가 굵어지는 방향으로 성장하며, 그동안 성장에 쓰던 에너지를 비로소 \"수지 축적\"으로 돌릴 수 있게 됩니다. 진짜 침향은 여기서 시작됩니다.",
-          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/migrated/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs.jpg",
-          "imageCaption": "20년 넘긴 침향나무 — Aquilaria Agallocha Roxburgh (베트남 푸꾸옥 농장)"
+          "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/aquilaria-agallocha-roxburgh-twenty-year-a-1778596524400.png",
+          "imageCaption": "20년 넘긴 침향나무 — Aquilaria Agallocha Roxburgh"
         },
         {
           "label": "B",
           "titleEn": "UNDER 20 — THE RESIN DISAPPEARS",
-          "titleKr": "어린나무-상처 닫고 수지 잃습니다",
+          "titleKr": "어린 나무, 상처 닫고 수지 감소",
           "body": "20년 이하 어린 침향나무는 회복력이 강해 1~6개월 안에 상처를 \"치유된 상태\"로 인식합니다. 이후 에너지를 조직 복구와 성장에 집중하기 때문에 수지 분비를 지속하지 않습니다. 결국 형성됐던 수지마저 감소하거나 사라져, 1~2년의 농축 기간을 견뎌낼 수 없습니다.",
           "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/twenty-year-proof-b-young.png?v=2",
           "imageCaption": "어린 나무는 상처를 닫습니다 — 수지가 사라집니다"
