@@ -17,8 +17,9 @@ export interface StickyTabBarProps {
 
 /**
  * 페이지를 스크롤해서 탭바가 글로벌 nav(=`--nav-bar-h`) 바로 아래에 위치하도록 정렬.
- * 현재 스크롤이 탭바 sticky 시작점보다 위(=히어로 노출 상태)일 때만 동작.
- * 이미 sticky 가 적용된 상태(스크롤이 더 아래)면 점프시키지 않는다.
+ * 양방향 동작 — 사용자가 탭바보다 위에 있든 아래에 있든 클릭 시 항상 탭바를
+ * nav 바로 아래에 위치시켜, 새로 활성화된 탭 콘텐츠가 화면 최상단(01 챕터)
+ * 부터 보이도록 보장한다.
  */
 function snapScrollToTabBar() {
   const tabBar = document.getElementById('sticky-tab-bar');
@@ -29,9 +30,9 @@ function snapScrollToTabBar() {
       10,
     ) || 72;
   const rect = tabBar.getBoundingClientRect();
-  // 탭바 top 이 nav 아래(=navH) 보다 더 아래에 있으면 그만큼 더 스크롤.
+  // 탭바 top 과 nav 아래(=navH) 의 차이를 양방향으로 보정.
   const delta = rect.top - navH;
-  if (delta > 1) {
+  if (Math.abs(delta) > 1) {
     window.scrollTo({
       top: window.scrollY + delta,
       behavior: 'smooth',
