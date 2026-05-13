@@ -16,28 +16,34 @@ export interface StickyTabBarProps {
 }
 
 /**
- * 페이지를 스크롤해서 탭바가 글로벌 nav(=`--nav-bar-h`) 바로 아래에 위치하도록 정렬.
- * 양방향 동작 — 사용자가 탭바보다 위에 있든 아래에 있든 클릭 시 항상 탭바를
- * nav 바로 아래에 위치시켜, 새로 활성화된 탭 콘텐츠가 화면 최상단(01 챕터)
- * 부터 보이도록 보장한다.
+ * 탭 클릭 시 페이지를 스크롤해서 탭바가 글로벌 nav 바로 아래에 위치하도록 정렬.
+ *
+ * Why sentinel: 탭바 자체는 sticky 라서 항상 화면 상단에 떠 있고,
+ *   getBoundingClientRect().top 이 늘 navH 와 같다 (delta ≈ 0). 그래서
+ *   탭바 좌표 기반 스크롤은 작동하지 않는다. 대신 탭바 바로 *위*에 둔
+ *   sticky 가 아닌 sentinel(높이 0 div) 의 절대 위치를 기준으로 잡으면
+ *   탭바의 *자연 위치(sticky activation point)* 를 정확히 알 수 있다.
+ *
+ * rAF: setActiveTab 으로 React 가 새 탭 콘텐츠를 마운트 → DOM 높이가 변하기
+ *   직전이라 같은 frame 의 scrollTo 가 잘못된 위치로 갈 수 있어, 다음 frame
+ *   에서 실행해 정확한 좌표를 얻는다.
  */
 function snapScrollToTabBar() {
-  const tabBar = document.getElementById('sticky-tab-bar');
-  if (!tabBar) return;
-  const navH =
-    parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue('--nav-bar-h'),
-      10,
-    ) || 72;
-  const rect = tabBar.getBoundingClientRect();
-  // 탭바 top 과 nav 아래(=navH) 의 차이를 양방향으로 보정.
-  const delta = rect.top - navH;
-  if (Math.abs(delta) > 1) {
-    window.scrollTo({
-      top: window.scrollY + delta,
-      behavior: 'smooth',
-    });
-  }
+  requestAnimationFrame(() => {
+    const sentinel = document.getElementById('sticky-tab-bar-sentinel');
+    if (!sentinel) return;
+    const navH =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue('--nav-bar-h'),
+        10,
+      ) || 72;
+    const rect = sentinel.getBoundingClientRect();
+    const absoluteTop = rect.top + window.scrollY;
+    const target = Math.max(0, absoluteTop - navH);
+    if (Math.abs(window.scrollY - target) > 1) {
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    }
+  });
 }
 
 /**
@@ -70,8 +76,12 @@ export default function StickyTabBar({
   }, [activeKey]);
 
   return (
-    <nav id="sticky-tab-bar" className={styles.nav} aria-label={ariaLabel}>
-      <div className={styles.inner}>
+    <>
+      {/* sentinel: sticky 가 아닌 normal-flow div. 탭바의 sticky activation
+          좌표를 측정하기 위한 anchor. 시각적으론 0 높이라 보이지 않음. */}
+      <div id="sticky-tab-bar-sentinel" aria-hidden style={{ height: 0 }} />
+      <nav id="sticky-tab-bar" className={styles.nav} aria-label={ariaLabel}>
+        <div className={styles.inner}>
         <div className={styles.scroller} ref={scrollerRef} role="tablist">
           {tabs.map((t) => {
             const active = t.key === activeKey;
@@ -97,6 +107,7 @@ export default function StickyTabBar({
           })}
         </div>
       </div>
-    </nav>
+      </nav>
+    </>
   );
 }
