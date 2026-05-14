@@ -69,6 +69,34 @@ interface VerificationRow { num: string; label: string; meta: string }
 interface VerifiedCard { step: string; title: string; en: string; body: string }
 interface CertChip { mark: string; name: string; sub: string }
 
+interface ProblemImage { src: string; alt?: string }
+interface ProblemCard { tag: string; title: string; body: string }
+interface SpeciesRow {
+  latin: string;
+  alias: string;
+  pharmacopoeia: boolean;
+  foodCode: boolean;
+  note: string;
+}
+interface HomeProblem {
+  tag: string;
+  title: string;
+  lead: string;
+  image?: ProblemImage;
+  cards: ProblemCard[];
+  speciesTitle: string;
+  species: SpeciesRow[];
+  speciesFoot: string;
+}
+
+interface SolutionPillar { label: string; text: string }
+interface SolutionButton { label: string; href: string; variant?: 'gold' | 'outline' }
+interface HomeSolutionCta {
+  title: string;
+  pillars: SolutionPillar[];
+  buttons: SolutionButton[];
+}
+
 interface HomeData {
   hero: HomeHero;
   stats: HomeStat[];
@@ -79,6 +107,8 @@ interface HomeData {
   verification?: VerificationRow[];
   verifiedCards?: VerifiedCard[];
   certs?: CertChip[];
+  problem?: HomeProblem;
+  solutionCta?: HomeSolutionCta;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -202,6 +232,37 @@ const DEFAULT_CERTS: CertChip[] = [
   { mark: 'S', name: 'SGS', sub: '국제 검사' },
 ];
 
+const DEFAULT_PROBLEM: HomeProblem = {
+  tag: 'Notice · 침향을 고르기 전에',
+  title: '침향을 구매할 때 가장 흔한 실수는\n*"좋다"는 말만 듣고 고르는 것*입니다.',
+  lead: "SCI급 논문이 늘며 침향 제품도 빠르게 늘어나는 지금,\n'침향' 두 글자 · '아가우드' 한 단어만으로는 충분하지 않습니다.\n진짜 침향은 *학명 · 인증 · 산지* 세 가지로 확인됩니다.",
+  image: { src: '', alt: '' },
+  cards: [
+    { tag: '01 · 학명', title: '정부 공식 학명을 확인할 수 있는가?', body: "제품 설명에 '침향' · '아가우드'라고만 표기된 경우가 많습니다. 식약처 기준 학명까지 명시되어야 진짜를 분별할 수 있습니다." },
+    { tag: '02 · 인증', title: '증빙 문서가 공개되어 있는가?', body: 'CITES, 원산지 증명, 자유판매증명서, 학명·품종 인증, 정식 수입 증빙 — 진짜 침향일수록 이력을 숨기지 않습니다.' },
+    { tag: '03 · 산지', title: '어느 나라, 어느 농장에서 왔는가?', body: '베트남? 인도네시아? 중국? 시대를 막론하고 베트남이 정품 산지로 기록되어 왔습니다. 산지 이력 추적이 가능해야 합니다.' },
+  ],
+  speciesTitle: "같은 'Aquilaria' 라도, 약전 기준은 다릅니다",
+  species: [
+    { latin: 'Aquilaria agallocha Roxburgh', alias: 'AAR · 조엘라이프 침향', pharmacopoeia: true, foodCode: true, note: '한약(생약) · 식품 양쪽 모두 공식 기원 식물.' },
+    { latin: 'Aquilaria malaccensis Lam.', alias: '말라켄시스', pharmacopoeia: false, foodCode: true, note: '식용 원료로만 허용 · 한약 기원 식물은 아님.' },
+  ],
+  speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
+};
+
+const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
+  title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
+  pillars: [
+    { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
+    { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
+    { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
+  ],
+  buttons: [
+    { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },
+    { label: '조엘라이프 검증 기준 보기', href: '/brand-story', variant: 'outline' },
+  ],
+};
+
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
@@ -276,6 +337,8 @@ export default function AdminHomePage() {
   const [verification, setVerification] = useState<VerificationRow[]>(DEFAULT_VERIFICATION);
   const [verifiedCards, setVerifiedCards] = useState<VerifiedCard[]>(DEFAULT_VERIFIED_CARDS);
   const [certs, setCerts] = useState<CertChip[]>(DEFAULT_CERTS);
+  const [problem, setProblem] = useState<HomeProblem>(DEFAULT_PROBLEM);
+  const [solutionCta, setSolutionCta] = useState<HomeSolutionCta>(DEFAULT_SOLUTION_CTA);
 
   useEffect(() => {
     if (!toast) return;
@@ -302,6 +365,23 @@ export default function AdminHomePage() {
         if (Array.isArray(d?.verification)) setVerification(d.verification);
         if (Array.isArray(d?.verifiedCards)) setVerifiedCards(d.verifiedCards);
         if (Array.isArray(d?.certs)) setCerts(d.certs);
+        if (d?.problem) {
+          setProblem({
+            ...DEFAULT_PROBLEM,
+            ...d.problem,
+            image: d.problem.image ?? DEFAULT_PROBLEM.image,
+            cards: d.problem.cards ?? DEFAULT_PROBLEM.cards,
+            species: d.problem.species ?? DEFAULT_PROBLEM.species,
+          });
+        }
+        if (d?.solutionCta) {
+          setSolutionCta({
+            ...DEFAULT_SOLUTION_CTA,
+            ...d.solutionCta,
+            pillars: d.solutionCta.pillars ?? DEFAULT_SOLUTION_CTA.pillars,
+            buttons: d.solutionCta.buttons ?? DEFAULT_SOLUTION_CTA.buttons,
+          });
+        }
       } catch (err) {
         console.error('Failed to fetch home:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -334,7 +414,7 @@ export default function AdminHomePage() {
     }
   }
 
-  const ADMIN_TABS = ['히어로 & 통계', '검증 & 인증', '침향 소개', '효능 & 공정'];
+  const ADMIN_TABS = ['히어로 & 통계', '검증 & 인증', '침향 소개', '효능 & 공정', '문제 제기 & CTA'];
 
   if (loading) {
     return (
@@ -695,6 +775,143 @@ export default function AdminHomePage() {
                     </div>
                   ))}
                   <button type="button" onClick={() => setProcessSection({ ...processSection, steps: [...processSection.steps, ''], durations: [...(processSection.durations ?? []), ''] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 단계 추가</button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          </>)}
+          {activeAdminTab === 4 && (<>
+
+          {/* Problem Section */}
+          <SectionCard title="Problem · 불안 건드리기 (학명·인증·산지 + 종 비교)" onSave={() => saveSection('problem', { problem })} saving={saving === 'problem'}>
+            <div className="space-y-5">
+              <p className="text-xs text-gray-500">
+                💡 강조: 텍스트에 <code className="rounded bg-gray-100 px-1">*강조할 부분*</code> 처럼 별표로 감싸면 금색 강조로 표시됩니다.
+                줄바꿈은 그대로 줄바꿈으로 표시됩니다.
+              </p>
+              <LabeledInput label="상단 태그 (예: Notice · 침향을 고르기 전에)" value={problem.tag} onChange={(v) => setProblem({ ...problem, tag: v })} />
+              <LabeledTextarea label="제목 인용문 (*...* 로 강조 · 줄바꿈 허용)" value={problem.title} onChange={(v) => setProblem({ ...problem, title: v })} rows={3} />
+              <LabeledTextarea label="본문 리드 (*...* 로 강조 · 줄바꿈 허용)" value={problem.lead} onChange={(v) => setProblem({ ...problem, lead: v })} rows={4} />
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">우측 이미지 (인증서·도장·CITES 정물)</label>
+                <ImageUploadField
+                  value={problem.image?.src ?? ''}
+                  onChange={(url) => setProblem({ ...problem, image: { src: url, alt: problem.image?.alt ?? '' } })}
+                  subdir="pages"
+                />
+                <input
+                  type="text"
+                  value={problem.image?.alt ?? ''}
+                  onChange={(e) => setProblem({ ...problem, image: { src: problem.image?.src ?? '', alt: e.target.value } })}
+                  placeholder="이미지 대체 텍스트 (예: 인증서·도장·CITES 마크 정물)"
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">3 카드 · 학명/인증/산지 ({problem.cards.length})</label>
+                <div className="space-y-3">
+                  {problem.cards.map((c, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <input value={c.tag} onChange={(e) => { const n = [...problem.cards]; n[i] = { ...n[i], tag: e.target.value }; setProblem({ ...problem, cards: n }); }} placeholder="태그 (예: 01 · 학명)" className="w-44 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                        <input value={c.title} onChange={(e) => { const n = [...problem.cards]; n[i] = { ...n[i], title: e.target.value }; setProblem({ ...problem, cards: n }); }} placeholder="제목 (예: 정부 공식 학명을 확인할 수 있는가?)" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setProblem({ ...problem, cards: moveItem(problem.cards, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                          <button type="button" onClick={() => setProblem({ ...problem, cards: moveItem(problem.cards, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                          <button type="button" onClick={() => setProblem({ ...problem, cards: removeIndex(problem.cards, i) })} className="rounded border border-red-200 bg-white px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <textarea rows={3} value={c.body} onChange={(e) => { const n = [...problem.cards]; n[i] = { ...n[i], body: e.target.value }; setProblem({ ...problem, cards: n }); }} placeholder="본문" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setProblem({ ...problem, cards: [...problem.cards, { tag: '', title: '', body: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
+                </div>
+              </div>
+
+              <div>
+                <LabeledInput label="종 비교 섹션 제목" value={problem.speciesTitle} onChange={(v) => setProblem({ ...problem, speciesTitle: v })} />
+                <p className="mt-2 text-xs text-gray-500">학명별 약전외한약규격집/식품공전 등재 여부 비교 (✓ ✗).</p>
+                <div className="mt-3 space-y-3">
+                  {problem.species.map((s, i) => (
+                    <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <input value={s.latin} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], latin: e.target.value }; setProblem({ ...problem, species: n }); }} placeholder="학명 (예: Aquilaria agallocha Roxburgh)" className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm italic focus:border-gold-500 focus:outline-none" />
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setProblem({ ...problem, species: moveItem(problem.species, i, i - 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▲</button>
+                          <button type="button" onClick={() => setProblem({ ...problem, species: moveItem(problem.species, i, i + 1) })} className="rounded border border-gray-200 bg-white px-2 py-0.5 text-xs">▼</button>
+                          <button type="button" onClick={() => setProblem({ ...problem, species: removeIndex(problem.species, i) })} className="rounded border border-red-200 bg-white px-2 py-0.5 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                        </div>
+                      </div>
+                      <input value={s.alias} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], alias: e.target.value }; setProblem({ ...problem, species: n }); }} placeholder="별칭 (예: AAR · 조엘라이프 침향)" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="flex items-center gap-6">
+                        <label className="flex items-center gap-2 text-sm text-gray-700">
+                          <input type="checkbox" checked={s.pharmacopoeia} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], pharmacopoeia: e.target.checked }; setProblem({ ...problem, species: n }); }} />
+                          약전외한약규격집 등재
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-700">
+                          <input type="checkbox" checked={s.foodCode} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], foodCode: e.target.checked }; setProblem({ ...problem, species: n }); }} />
+                          식품공전 등재
+                        </label>
+                      </div>
+                      <textarea rows={2} value={s.note} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], note: e.target.value }; setProblem({ ...problem, species: n }); }} placeholder="설명 (예: 한약(생약) · 식품 양쪽 모두 공식 기원 식물.)" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setProblem({ ...problem, species: [...problem.species, { latin: '', alias: '', pharmacopoeia: false, foodCode: false, note: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 종 추가</button>
+                </div>
+              </div>
+
+              <LabeledTextarea label="종 비교 하단 안내문" value={problem.speciesFoot} onChange={(v) => setProblem({ ...problem, speciesFoot: v })} rows={2} />
+            </div>
+          </SectionCard>
+
+          {/* Solution CTA */}
+          <SectionCard title="Solution CTA · 검증 섹션 하단 결론 박스" onSave={() => saveSection('solutionCta', { solutionCta })} saving={saving === 'solutionCta'}>
+            <div className="space-y-5">
+              <p className="text-xs text-gray-500">
+                💡 강조: <code className="rounded bg-gray-100 px-1">*강조*</code> 별표 마커. 줄바꿈은 그대로 표시.
+              </p>
+              <LabeledTextarea label="제목 (*...* 강조 · 줄바꿈 허용)" value={solutionCta.title} onChange={(v) => setSolutionCta({ ...solutionCta, title: v })} rows={3} />
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">3 필러 ({solutionCta.pillars.length})</label>
+                <div className="space-y-2">
+                  {solutionCta.pillars.map((p, i) => (
+                    <div key={i} className="grid grid-cols-[100px_1fr_auto] items-center gap-2">
+                      <input value={p.label} onChange={(e) => { const n = [...solutionCta.pillars]; n[i] = { ...n[i], label: e.target.value }; setSolutionCta({ ...solutionCta, pillars: n }); }} placeholder="라벨" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <input value={p.text} onChange={(e) => { const n = [...solutionCta.pillars]; n[i] = { ...n[i], text: e.target.value }; setSolutionCta({ ...solutionCta, pillars: n }); }} placeholder="설명" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: moveItem(solutionCta.pillars, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: moveItem(solutionCta.pillars, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: removeIndex(solutionCta.pillars, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: [...solutionCta.pillars, { label: '', text: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 필러 추가</button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">CTA 버튼 ({solutionCta.buttons.length})</label>
+                <div className="space-y-2">
+                  {solutionCta.buttons.map((b, i) => (
+                    <div key={i} className="grid grid-cols-[1fr_1fr_120px_auto] items-center gap-2">
+                      <input value={b.label} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], label: e.target.value }; setSolutionCta({ ...solutionCta, buttons: n }); }} placeholder="라벨" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <input value={b.href} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], href: e.target.value }; setSolutionCta({ ...solutionCta, buttons: n }); }} placeholder="링크 (예: /about-agarwood)" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <select value={b.variant ?? 'gold'} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], variant: e.target.value as 'gold' | 'outline' }; setSolutionCta({ ...solutionCta, buttons: n }); }} className="rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gold-500 focus:outline-none">
+                        <option value="gold">Gold (메인)</option>
+                        <option value="outline">Outline (보조)</option>
+                      </select>
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: moveItem(solutionCta.buttons, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: moveItem(solutionCta.buttons, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: removeIndex(solutionCta.buttons, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: [...solutionCta.buttons, { label: '', href: '', variant: 'gold' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 버튼 추가</button>
                 </div>
               </div>
             </div>

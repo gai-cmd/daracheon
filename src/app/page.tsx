@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import styles from './page.module.css';
@@ -59,6 +60,53 @@ export interface HomeShowroomImage {
   body?: string;
 }
 
+export interface HomeProblemImage {
+  src: string;
+  alt?: string;
+}
+
+export interface ProblemCard {
+  tag: string;
+  title: string;
+  body: string;
+}
+
+export interface SpeciesRow {
+  latin: string;
+  alias: string;
+  pharmacopoeia: boolean;
+  foodCode: boolean;
+  note: string;
+}
+
+export interface HomeProblem {
+  tag: string;
+  title: string;
+  lead: string;
+  image?: HomeProblemImage;
+  cards: ProblemCard[];
+  speciesTitle: string;
+  species: SpeciesRow[];
+  speciesFoot: string;
+}
+
+export interface SolutionPillar {
+  label: string;
+  text: string;
+}
+
+export interface SolutionButton {
+  label: string;
+  href: string;
+  variant?: 'gold' | 'outline';
+}
+
+export interface HomeSolutionCta {
+  title: string;
+  pillars: SolutionPillar[];
+  buttons: SolutionButton[];
+}
+
 export interface HomeData {
   hero?: HomeHero;
   stats?: HomeStat[];
@@ -70,6 +118,9 @@ export interface HomeData {
   verifiedCards?: VerifiedCard[];
   certs?: CertChip[];
   showroomImage?: HomeShowroomImage;
+  problemImage?: HomeProblemImage;
+  problem?: HomeProblem;
+  solutionCta?: HomeSolutionCta;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -193,6 +244,72 @@ const PROCESS_IMAGES = [
   'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg',
 ];
 
+const DEFAULT_PROBLEM: HomeProblem = {
+  tag: 'Notice · 침향을 고르기 전에',
+  title: '침향을 구매할 때 가장 흔한 실수는\n*"좋다"는 말만 듣고 고르는 것*입니다.',
+  lead: 'SCI급 논문이 늘며 침향 제품도 빠르게 늘어나는 지금,\n\'침향\' 두 글자 · \'아가우드\' 한 단어만으로는 충분하지 않습니다.\n진짜 침향은 *학명 · 인증 · 산지* 세 가지로 확인됩니다.',
+  cards: [
+    { tag: '01 · 학명', title: '정부 공식 학명을 확인할 수 있는가?', body: "제품 설명에 '침향' · '아가우드'라고만 표기된 경우가 많습니다. 식약처 기준 학명까지 명시되어야 진짜를 분별할 수 있습니다." },
+    { tag: '02 · 인증', title: '증빙 문서가 공개되어 있는가?', body: 'CITES, 원산지 증명, 자유판매증명서, 학명·품종 인증, 정식 수입 증빙 — 진짜 침향일수록 이력을 숨기지 않습니다.' },
+    { tag: '03 · 산지', title: '어느 나라, 어느 농장에서 왔는가?', body: '베트남? 인도네시아? 중국? 시대를 막론하고 베트남이 정품 산지로 기록되어 왔습니다. 산지 이력 추적이 가능해야 합니다.' },
+  ],
+  speciesTitle: "같은 'Aquilaria' 라도, 약전 기준은 다릅니다",
+  species: [
+    { latin: 'Aquilaria agallocha Roxburgh', alias: 'AAR · 조엘라이프 침향', pharmacopoeia: true, foodCode: true, note: '한약(생약) · 식품 양쪽 모두 공식 기원 식물.' },
+    { latin: 'Aquilaria malaccensis Lam.', alias: '말라켄시스', pharmacopoeia: false, foodCode: true, note: '식용 원료로만 허용 · 한약 기원 식물은 아님.' },
+  ],
+  speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
+};
+
+const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
+  title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
+  pillars: [
+    { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
+    { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
+    { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
+  ],
+  buttons: [
+    { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },
+    { label: '조엘라이프 검증 기준 보기', href: '/brand-story', variant: 'outline' },
+  ],
+};
+
+// "*텍스트*" 마커를 <em> 으로, "\n" 을 <br /> 로 렌더링.
+// admin 에서 강조 부분과 줄바꿈을 직접 편집할 수 있게 한다.
+function renderMarked(text: string, emClass?: string): React.ReactNode {
+  const lines = text.split('\n');
+  return lines.map((line, li) => {
+    const parts: React.ReactNode[] = [];
+    let remaining = line;
+    let idx = 0;
+    while (remaining.length > 0) {
+      const start = remaining.indexOf('*');
+      if (start === -1) {
+        parts.push(remaining);
+        break;
+      }
+      if (start > 0) parts.push(remaining.slice(0, start));
+      const end = remaining.indexOf('*', start + 1);
+      if (end === -1) {
+        parts.push(remaining.slice(start));
+        break;
+      }
+      parts.push(
+        <em key={`em-${li}-${idx++}`} className={emClass}>
+          {remaining.slice(start + 1, end)}
+        </em>,
+      );
+      remaining = remaining.slice(end + 1);
+    }
+    return (
+      <span key={`line-${li}`}>
+        {parts}
+        {li < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
 // 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
@@ -241,6 +358,14 @@ export default async function HomePage() {
   const certs = home.certs ?? DEFAULT_CERTS;
   const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
   const showroomImage = home.showroomImage;
+  // problem 섹션: 신규 problem.image 우선, 없으면 legacy problemImage 사용
+  const problem: HomeProblem = home.problem
+    ? { ...DEFAULT_PROBLEM, ...home.problem, cards: home.problem.cards ?? DEFAULT_PROBLEM.cards, species: home.problem.species ?? DEFAULT_PROBLEM.species }
+    : DEFAULT_PROBLEM;
+  const problemImage = problem.image ?? home.problemImage;
+  const solutionCta: HomeSolutionCta = home.solutionCta
+    ? { ...DEFAULT_SOLUTION_CTA, ...home.solutionCta, pillars: home.solutionCta.pillars ?? DEFAULT_SOLUTION_CTA.pillars, buttons: home.solutionCta.buttons ?? DEFAULT_SOLUTION_CTA.buttons }
+    : DEFAULT_SOLUTION_CTA;
 
   return (
     <div className={styles.page}>
@@ -355,6 +480,79 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* PROBLEM — 불안 건드리기 (학명·인증·산지 + 말라켄시스 비교) */}
+      <section className={styles.problem} aria-label="침향 시장의 위험과 진짜 침향 구별 기준">
+        <div className={styles.wrap}>
+          <div className={styles.problemHeadRow}>
+            <div className={styles.problemHead}>
+              <span className={styles.problemWarning}>{problem.tag}</span>
+              <h2 className={styles.problemQuote}>{renderMarked(problem.title)}</h2>
+              <div className={styles.problemHeadLine} />
+              <p className={styles.problemLead}>{renderMarked(problem.lead)}</p>
+            </div>
+
+            {/* 우측: 다큐멘터리 정물 사진 (인증서·도장·CITES 마크) */}
+            <div className={styles.problemImageWrap}>
+              {problemImage?.src ? (
+                <Image
+                  src={problemImage.src}
+                  alt={problemImage.alt ?? '인증서·도장·CITES 마크 정물'}
+                  fill
+                  sizes="(max-width: 1000px) 100vw, 45vw"
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <div className={styles.problemImagePlaceholder} aria-hidden="true">
+                  <span>Documentary Still Life</span>
+                  <span className={styles.problemImagePlaceholderSub}>
+                    인증서 · 도장 · CITES 마크
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.problemGrid}>
+            {problem.cards.map((c, i) => (
+              <div key={`${c.tag}-${i}`} className={styles.problemCard}>
+                <div className={styles.problemCardTag}>{c.tag}</div>
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* agallocha vs malaccensis */}
+          <div className={styles.speciesCompare}>
+            <div className={styles.speciesCompareTitle}>{problem.speciesTitle}</div>
+            <div className={styles.speciesTable}>
+              {problem.species.map((s, i) => (
+                <div key={`${s.latin}-${i}`} className={styles.speciesRow}>
+                  <div className={styles.speciesLatin}>{s.latin}</div>
+                  <div className={styles.speciesAlias}>{s.alias}</div>
+                  <div className={styles.speciesMarks}>
+                    <span className={styles.speciesMark}>
+                      <span className={s.pharmacopoeia ? styles.markOk : styles.markNo}>
+                        {s.pharmacopoeia ? '✓' : '✗'}
+                      </span>{' '}
+                      약전외한약규격집
+                    </span>
+                    <span className={styles.speciesMark}>
+                      <span className={s.foodCode ? styles.markOk : styles.markNo}>
+                        {s.foodCode ? '✓' : '✗'}
+                      </span>{' '}
+                      식품공전
+                    </span>
+                  </div>
+                  <p className={styles.speciesNote}>{s.note}</p>
+                </div>
+              ))}
+            </div>
+            <p className={styles.speciesFoot}>{problem.speciesFoot}</p>
+          </div>
+        </div>
+      </section>
+
       {/* VERIFIED */}
       <section className={styles.verified} id="verified">
         <div className={styles.wrap}>
@@ -407,6 +605,30 @@ export default async function HomePage() {
                   <div className={styles.certTitle}>{c.name}</div>
                   <div className={styles.certCaption}>{c.sub}</div>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SOLUTION CTA */}
+          <div className={styles.solutionCta}>
+            <h3 className={styles.solutionCtaTitle}>{renderMarked(solutionCta.title)}</h3>
+            <div className={styles.solutionCtaPillars}>
+              {solutionCta.pillars.map((p, i) => (
+                <div key={`${p.label}-${i}`} className={styles.solutionCtaPillar}>
+                  <div className={styles.solutionCtaPillarLabel}>{p.label}</div>
+                  <div className={styles.solutionCtaPillarText}>{p.text}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.solutionCtaButtons}>
+              {solutionCta.buttons.map((b, i) => (
+                <Link
+                  key={`${b.label}-${i}`}
+                  href={b.href}
+                  className={b.variant === 'outline' ? styles.btnOutline : styles.btnGold}
+                >
+                  {b.label}
+                </Link>
               ))}
             </div>
           </div>

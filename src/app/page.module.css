@@ -445,6 +445,264 @@
 }
 @media (min-width: 1024px) { .certCaption { font-size: 0.66rem; line-height: 1.45; } }
 
+/* PROBLEM — 불안 건드리기 (Showroom → Verified 사이) */
+.problem {
+  padding: 100px 0;
+  background: #08090e;
+  position: relative;
+  border-top: 1px solid rgba(212, 168, 67, 0.1);
+}
+.problemHead { text-align: center; max-width: 820px; margin: 0 auto; }
+.problemWarning {
+  display: inline-block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+}
+.problemQuote {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  font-weight: 200;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  color: #fff;
+  margin: 0 0 16px;
+}
+.problemQuote em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 400;
+  font-family: 'Noto Serif KR', serif;
+}
+.problemLead {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.66);
+  font-weight: 300;
+  max-width: 720px;
+  margin: 24px auto 0;
+}
+
+/* picto band — 학명·인증·산지 모티프 (3 카드 위) */
+.pictoBand {
+  display: flex;
+  justify-content: center;
+  margin: 56px 0 0;
+  color: var(--accent);
+  opacity: 0.95;
+}
+.pictoBand svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+.pictoLabel {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  fill: rgba(255, 255, 255, 0.55);
+}
+
+.problemGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin: 24px 0 0;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(212, 168, 67, 0.18);
+}
+@media (min-width: 800px) { .problemGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.problemCard {
+  background: #0a0b10;
+  padding: 34px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: background 300ms;
+}
+.problemCard:hover { background: rgba(212, 168, 67, 0.05); }
+
+.problemCardTag {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.problemCard h3 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.4;
+}
+.problemCard p {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.66);
+  font-weight: 300;
+  margin: 0;
+}
+
+/* SPECIES COMPARE — agallocha vs malaccensis */
+.speciesCompare {
+  margin: 50px 0 0;
+  border: 1px solid rgba(212, 168, 67, 0.22);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 32px 28px;
+}
+@media (min-width: 800px) { .speciesCompare { padding: 36px 40px; } }
+
+.speciesCompareTitle {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.5;
+}
+.speciesCompareTitle::before {
+  content: '⚠';
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.speciesTable {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 900px) { .speciesTable { grid-template-columns: 1fr 1fr; gap: 36px; } }
+
+.speciesRow {
+  border-top: 1px solid rgba(212, 168, 67, 0.18);
+  padding-top: 22px;
+}
+.speciesLatin {
+  font-family: 'Noto Serif KR', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.speciesAlias {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+.speciesMarks {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+}
+.speciesMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.75);
+}
+.markOk { color: #6fb37a; font-weight: 700; font-size: 0.85rem; }
+.markNo { color: #c47a7a; font-weight: 700; font-size: 0.85rem; }
+.speciesNote {
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 300;
+  margin: 0;
+}
+.speciesFoot {
+  margin: 24px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid rgba(212, 168, 67, 0.18);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 300;
+}
+
+/* SOLUTION CTA — Verified 섹션 맨 끝 */
+.solutionCta {
+  margin-top: 70px;
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  background: linear-gradient(180deg, rgba(212, 168, 67, 0.04), rgba(212, 168, 67, 0.01));
+  padding: 48px 32px;
+  text-align: center;
+}
+@media (min-width: 800px) { .solutionCta { padding: 56px 48px; } }
+
+.solutionCtaTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.55;
+  color: #fff;
+  margin: 0 0 28px;
+}
+.solutionCtaTitle em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 400;
+  font-family: 'Noto Serif KR', serif;
+}
+
+.solutionCtaPillars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  max-width: 760px;
+  margin: 0 auto 36px;
+  text-align: left;
+}
+@media (min-width: 700px) { .solutionCtaPillars { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+
+.solutionCtaPillar {
+  padding: 16px 18px;
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  background: rgba(10, 11, 16, 0.6);
+}
+.solutionCtaPillarLabel {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.solutionCtaPillarText {
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 300;
+}
+
+.solutionCtaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
 /* GENERIC SECTION */
 .section {
   padding: 100px 0;
