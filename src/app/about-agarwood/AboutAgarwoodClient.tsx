@@ -854,6 +854,45 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         {renderWithNowrap(auth.check02QuoteBody)}
                       </p>
                     </div>
+
+                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 */}
+                    <div style={{ marginTop: 28 }}>
+                      <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
+                        역사적 기록에서는 <span style={{ color: 'var(--accent)', fontWeight: 500 }}>&lsquo;베트남산&rsquo;</span>을 최고로 여기고 있습니다. 수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.
+                      </p>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        {[
+                          { era: '당나라 시대', body: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
+                          { era: '송나라 시대', body: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
+                          { era: '원나라 시대', body: '안남 지역으로 현재의 베트남에 해당합니다.' },
+                          { era: '명나라 시대', body: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
+                          { era: "'향승'", body: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+                          { era: '조선 시대', body: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
+                        ].map((row, i) => (
+                          <li
+                            key={i}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'auto 1fr',
+                              alignItems: 'baseline',
+                              gap: 14,
+                              paddingLeft: 14,
+                              borderLeft: '2px solid rgba(212,168,67,0.25)',
+                            }}
+                          >
+                            <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                              {row.era}
+                            </span>
+                            <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
+                              {renderWithNowrap(row.body)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
+                        이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 <span style={{ color: 'var(--accent)', fontWeight: 500 }}>지금의 베트남 지역</span>입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.
+                      </p>
+                    </div>
                   </div>
                 </RevealOnScroll>
 
