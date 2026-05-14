@@ -72,7 +72,34 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogPostPage({
+// 임시 디버그 래퍼 — SSR 에서 던지는 진짜 에러를 화면에 노출시켜 원인 파악.
+// 원인 잡으면 제거.
+export default async function BlogPostPageWrapper({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  try {
+    return await BlogPostPage({ params });
+  } catch (err) {
+    // Next.js 의 notFound()/redirect() 는 내부적으로 throw 하는데, 그 에러의
+    // digest 가 'NEXT_NOT_FOUND' / 'NEXT_REDIRECT' 로 시작한다. 이 둘은 그대로
+    // 다시 던져서 Next 가 정상 처리하게 둔다.
+    const digest = (err as { digest?: string })?.digest ?? '';
+    if (digest.startsWith('NEXT_')) throw err;
+    const msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    const stack = err instanceof Error ? err.stack ?? '' : '';
+    return (
+      <main style={{ padding: 24, fontFamily: 'monospace', background: '#fff', color: '#900', whiteSpace: 'pre-wrap' }}>
+        <h1 style={{ fontSize: 18, marginBottom: 12 }}>[DEBUG] Blog detail render error</h1>
+        <div style={{ marginBottom: 12 }}><strong>{msg}</strong></div>
+        <pre style={{ fontSize: 12, color: '#444' }}>{stack}</pre>
+      </main>
+    );
+  }
+}
+
+async function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
