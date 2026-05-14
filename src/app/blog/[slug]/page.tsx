@@ -16,6 +16,17 @@ const SITE_URL = 'https://zoellife.com';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Vercel Node 런타임의 small-ICU 빌드는 toLocaleDateString('ko-KR', { month: 'long' })
+ * 같은 long-form 옵션을 만나면 RangeError 를 던져 페이지를 500 으로 죽인다.
+ * 안전하게 ISO 문자열을 직접 파싱해서 한국어 포맷으로 반환.
+ */
+function formatKoreanDate(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
 async function loadPost(slug: string) {
   const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
   return posts.find((p) => p.slug === slug && p.status === 'published') ?? null;
@@ -181,11 +192,7 @@ export default async function BlogPostPage({
               <span>{post.author}</span>
               <span className="opacity-40">·</span>
               <time dateTime={post.publishedAt ?? post.createdAt}>
-                {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formatKoreanDate(post.publishedAt ?? post.createdAt)}
               </time>
               {post.readingTime && (
                 <>
