@@ -33,6 +33,7 @@ const navItems: NavItem[] = [
   { label: '문의하기', href: '/admin/inquiries', icon: '◆', badgeKey: 'inquiries_new' },
   { label: 'FAQ 관리', href: '/admin/faq', icon: '▤' },
   { label: '리뷰 관리', href: '/admin/reviews', icon: '◇', badgeKey: 'reviews_pending' },
+  { label: '블로그', href: '/admin/blog', icon: '✎' },
   { label: '홈편집', href: '/admin/pages/home', icon: '⌂' },
   { label: '계정 관리', href: '/admin/users', icon: '⦿', superAdminOnly: true },
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },

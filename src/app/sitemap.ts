@@ -1,6 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
+import {
+  BLOG_CATEGORIES_FILE,
+  BLOG_POSTS_FILE,
+  type BlogCategory,
+  type BlogPost,
+} from '@/types/blog';
 
 // env 값에 줄바꿈/공백 섞이면 sitemap URL 이 깨져 검색엔진 색인 실패.
 // 모든 공백·제어문자 제거 + trailing slash 정리.
@@ -27,6 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/media`, lastModified, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${baseUrl}/reviews`, lastModified, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${baseUrl}/process`, lastModified, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/blog`, lastModified, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/privacy`, lastModified, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${baseUrl}/terms`, lastModified, changeFrequency: 'yearly', priority: 0.3 },
   ];
@@ -47,5 +54,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* DB 조회 실패 시 정적 경로만 반환 */
   }
 
-  return [...staticRoutes, ...productDetailRoutes];
+  let blogRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const [posts, categories] = await Promise.all([
+      readDataSafe<BlogPost>(BLOG_POSTS_FILE),
+      readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
+    ]);
+    const published = posts.filter((p) => p.status === 'published' && p.slug);
+    const postRoutes: MetadataRoute.Sitemap = published.map((p) => ({
+      url: `${baseUrl}/blog/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }));
+    const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
+      url: `${baseUrl}/blog/category/${c.id}`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    }));
+    blogRoutes = [...categoryRoutes, ...postRoutes];
+  } catch {
+    /* 블로그 데이터 로드 실패 시 정적 경로만 */
+  }
+
+  return [...staticRoutes, ...productDetailRoutes, ...blogRoutes];
 }

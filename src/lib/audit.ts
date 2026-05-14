@@ -16,7 +16,9 @@ export type AuditModule =
   | 'upload'
   | 'announcement'
   | 'export'
-  | 'leads';
+  | 'leads'
+  | 'blog'
+  | 'blog-categories';
 
 export type AuditAction =
   | 'create'
