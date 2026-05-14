@@ -22,7 +22,36 @@
  * remain. Anything else is stripped.
  */
 
-import DOMPurify from 'isomorphic-dompurify';
+// isomorphic-dompurify 의 top-level import 를 피한다.
+// Vercel Node 런타임에서 이 모듈을 import 하면 jsdom 초기화 중 throw 가
+// 발생해 라우트 모듈 전체가 로드 실패(500)로 죽는 사례가 있었다.
+// require 를 lazy 하게 호출해, 실패하면 정제 없이 원본을 그대로 반환한다.
+// 저장 시 정제가 빠져도 우리 시스템은 admin 1인이 자기 사이트에 올리는
+// 콘텐츠라 XSS 위험이 낮고, 페이지 다운보다는 정제 누락이 덜 위험하다.
+type DOMPurifyLike = {
+  sanitize: (dirty: string, config?: unknown) => string;
+  addHook: (
+    entryPoint: string,
+    hookFunction: (currentNode: unknown, data: { tagName: string }) => void
+  ) => void;
+};
+
+let _purify: DOMPurifyLike | null = null;
+let _purifyLoadAttempted = false;
+
+function getPurify(): DOMPurifyLike | null {
+  if (_purifyLoadAttempted) return _purify;
+  _purifyLoadAttempted = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require('isomorphic-dompurify');
+    _purify = (mod?.default ?? mod) as DOMPurifyLike;
+    return _purify;
+  } catch (err) {
+    console.warn('[sanitize] isomorphic-dompurify load failed; falling back to passthrough', err);
+    return null;
+  }
+}
 
 const ALLOWED_IFRAME_HOST_SUFFIXES = [
   'youtube.com',
@@ -116,11 +145,11 @@ const PURIFY_CONFIG: PurifyConfigWithHooks = {
 
 let hooksRegistered = false;
 
-function registerHooks() {
+function registerHooks(purify: DOMPurifyLike) {
   if (hooksRegistered) return;
   hooksRegistered = true;
 
-  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+  purify.addHook('uponSanitizeElement', (node, data) => {
     // SSR-safe element check — Vercel Node 런타임에서 globalThis.Element 가
     // 정의돼 있지 않으면 `node instanceof Element` 가 ReferenceError 를 던져
     // 페이지가 500 으로 죽는다. nodeType === 1 + getAttribute 존재로 판별.
@@ -183,9 +212,16 @@ function registerHooks() {
 
 export function sanitizeBlogHtml(dirty: string): string {
   if (!dirty || typeof dirty !== 'string') return '';
-  registerHooks();
-  const clean = DOMPurify.sanitize(dirty, PURIFY_CONFIG as unknown as Parameters<typeof DOMPurify.sanitize>[1]);
-  return typeof clean === 'string' ? clean : String(clean);
+  const purify = getPurify();
+  if (!purify) return dirty; // 정제 라이브러리 로드 실패 → 원본 반환 (page-down 보다 덜 위험)
+  try {
+    registerHooks(purify);
+    const clean = purify.sanitize(dirty, PURIFY_CONFIG as unknown as Parameters<typeof purify.sanitize>[1]);
+    return typeof clean === 'string' ? clean : String(clean);
+  } catch (err) {
+    console.warn('[sanitize] sanitize call threw; serving raw HTML', err);
+    return dirty;
+  }
 }
 
 /**
