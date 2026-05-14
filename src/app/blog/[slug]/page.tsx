@@ -9,7 +9,6 @@ import {
   type BlogCategory,
   type BlogPost,
 } from '@/types/blog';
-import { sanitizeBlogHtml } from '@/lib/blog/sanitize';
 import BlogCard from '../BlogCard';
 
 const SITE_URL = 'https://zoellife.com';
@@ -113,15 +112,11 @@ async function BlogPostPage({
   if (!post) notFound();
 
   const category = categories.find((c) => c.id === post.categoryId);
-  // 저장 시점에 이미 sanitize 거친 콘텐츠라 SSR 재정제 실패해도 안전.
-  // isomorphic-dompurify 가 일부 Node 런타임에서 throw 하는 사례가 있어
-  // 페이지 전체가 500 으로 죽지 않도록 fallback 으로 원본 HTML 사용.
-  let cleanHtml = post.content;
-  try {
-    cleanHtml = sanitizeBlogHtml(post.content);
-  } catch (err) {
-    console.warn(`[blog/${slug}] sanitize failed; serving stored HTML as-is`, err);
-  }
+  // 저장 시점(admin POST/PUT)에 이미 sanitizeBlogHtml 을 거쳐 DB 에 들어가므로
+  // SSR 에서 재정제 안 함. isomorphic-dompurify 는 Vercel Node 런타임 첫 로드 시
+  // jsdom 초기화 중 throw 하는 사례가 있어 모듈 import 자체가 라우트를 죽임 —
+  // 정제는 어드민 쓰기 경로에 한 번만 위치시키고 공개 페이지는 신뢰한다.
+  const cleanHtml = post.content;
 
   const related = posts
     .filter(
