@@ -521,13 +521,46 @@
 
 .problemCard {
   background: #0a0b10;
-  padding: 34px 28px;
+  display: flex;
+  flex-direction: column;
+  transition: background 300ms;
+  overflow: hidden;
+}
+.problemCard:hover { background: rgba(212, 168, 67, 0.05); }
+
+.problemCardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #060709;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.18);
+}
+.problemCardImagePh {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(212, 168, 67, 0.45);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(212, 168, 67, 0.04) 0,
+      rgba(212, 168, 67, 0.04) 12px,
+      transparent 12px,
+      transparent 24px
+    );
+}
+.problemCardBody {
+  padding: 28px 28px 34px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: background 300ms;
 }
-.problemCard:hover { background: rgba(212, 168, 67, 0.05); }
 
 .problemCardTag {
   font-family: 'JetBrains Mono', ui-monospace, monospace;

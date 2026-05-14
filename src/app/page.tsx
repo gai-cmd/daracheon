@@ -69,6 +69,7 @@ export interface ProblemCard {
   tag: string;
   title: string;
   body: string;
+  image?: { src: string; alt?: string };
 }
 
 export interface SpeciesRow {
@@ -515,9 +516,26 @@ export default async function HomePage() {
           <div className={styles.problemGrid}>
             {problem.cards.map((c, i) => (
               <div key={`${c.tag}-${i}`} className={styles.problemCard}>
-                <div className={styles.problemCardTag}>{c.tag}</div>
-                <h3>{c.title}</h3>
-                <p>{c.body}</p>
+                <div className={styles.problemCardImage}>
+                  {c.image?.src ? (
+                    <Image
+                      src={c.image.src}
+                      alt={c.image.alt ?? c.title}
+                      fill
+                      sizes="(max-width: 800px) 100vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div className={styles.problemCardImagePh} aria-hidden="true">
+                      <span>Documentary</span>
+                    </div>
+                  )}
+                </div>
+                <div className={styles.problemCardBody}>
+                  <div className={styles.problemCardTag}>{c.tag}</div>
+                  <h3>{c.title}</h3>
+                  <p>{c.body}</p>
+                </div>
               </div>
             ))}
           </div>

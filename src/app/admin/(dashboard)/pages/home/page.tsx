@@ -70,7 +70,7 @@ interface VerifiedCard { step: string; title: string; en: string; body: string }
 interface CertChip { mark: string; name: string; sub: string }
 
 interface ProblemImage { src: string; alt?: string }
-interface ProblemCard { tag: string; title: string; body: string }
+interface ProblemCard { tag: string; title: string; body: string; image?: ProblemImage }
 interface SpeciesRow {
   latin: string;
   alias: string;
@@ -825,6 +825,21 @@ export default function AdminHomePage() {
                         </div>
                       </div>
                       <textarea rows={3} value={c.body} onChange={(e) => { const n = [...problem.cards]; n[i] = { ...n[i], body: e.target.value }; setProblem({ ...problem, cards: n }); }} placeholder="본문" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="mt-2">
+                        <label className="mb-1 block text-xs text-gray-500">카드 이미지 (다큐멘터리 톤 권장 · 4:3 비율)</label>
+                        <ImageUploadField
+                          value={c.image?.src ?? ''}
+                          onChange={(url) => { const n = [...problem.cards]; n[i] = { ...n[i], image: { src: url, alt: n[i].image?.alt ?? '' } }; setProblem({ ...problem, cards: n }); }}
+                          subdir="pages"
+                        />
+                        <input
+                          type="text"
+                          value={c.image?.alt ?? ''}
+                          onChange={(e) => { const n = [...problem.cards]; n[i] = { ...n[i], image: { src: n[i].image?.src ?? '', alt: e.target.value } }; setProblem({ ...problem, cards: n }); }}
+                          placeholder="이미지 대체 텍스트 (예: 식약처 약전 페이지 클로즈업)"
+                          className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                      </div>
                     </div>
                   ))}
                   <button type="button" onClick={() => setProblem({ ...problem, cards: [...problem.cards, { tag: '', title: '', body: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
