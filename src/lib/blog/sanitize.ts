@@ -121,49 +121,61 @@ function registerHooks() {
   hooksRegistered = true;
 
   DOMPurify.addHook('uponSanitizeElement', (node, data) => {
-    if (!(node instanceof Element)) return;
+    // SSR-safe element check — Vercel Node 런타임에서 globalThis.Element 가
+    // 정의돼 있지 않으면 `node instanceof Element` 가 ReferenceError 를 던져
+    // 페이지가 500 으로 죽는다. nodeType === 1 + getAttribute 존재로 판별.
+    type ElLike = {
+      nodeType: number;
+      getAttribute: (k: string) => string | null;
+      hasAttribute: (k: string) => boolean;
+      setAttribute: (k: string, v: string) => void;
+      removeAttribute: (k: string) => void;
+      parentNode: { removeChild: (n: unknown) => void } | null;
+    };
+    const el = node as unknown as ElLike;
+    if (el?.nodeType !== 1 || typeof el.getAttribute !== 'function') return;
 
     // <img>: enforce allowed host list. Strip element otherwise.
     if (data.tagName === 'img') {
-      const src = node.getAttribute('src') ?? '';
+      const src = el.getAttribute('src') ?? '';
       if (!src || !isSafeImageUrl(src)) {
-        node.parentNode?.removeChild(node);
+        el.parentNode?.removeChild(el);
       }
       return;
     }
 
     // <iframe>: enforce host whitelist.
     if (data.tagName === 'iframe') {
-      const src = node.getAttribute('src') ?? '';
+      const src = el.getAttribute('src') ?? '';
       if (!src || !isSafeIframeUrl(src)) {
-        node.parentNode?.removeChild(node);
+        el.parentNode?.removeChild(el);
         return;
       }
       // Apply safe sandbox defaults — prevents top navigation, scripts already
       // restricted to the embedded host by browser origin policy.
-      if (!node.hasAttribute('allow')) {
-        node.setAttribute(
+      if (!el.hasAttribute('allow')) {
+        el.setAttribute(
           'allow',
           'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
         );
       }
-      if (!node.hasAttribute('allowfullscreen')) {
-        node.setAttribute('allowfullscreen', '');
+      if (!el.hasAttribute('allowfullscreen')) {
+        el.setAttribute('allowfullscreen', '');
       }
-      node.setAttribute('loading', 'lazy');
+      el.setAttribute('loading', 'lazy');
       return;
     }
 
     // <a target="_blank"> → force rel="noopener noreferrer" to block tab-napping.
     if (data.tagName === 'a') {
-      const href = node.getAttribute('href') ?? '';
+      const href = el.getAttribute('href') ?? '';
       if (/^\s*javascript:/i.test(href)) {
-        node.removeAttribute('href');
+        el.removeAttribute('href');
         return;
       }
-      const target = node.getAttribute('target');
+      const target = el.getAttribute('target');
       if (target === '_blank') {
-        node.setAttribute('rel', 'noopener noreferrer');
+        el.setAttribute('rel', 'noopener noreferrer');
       }
     }
   });
