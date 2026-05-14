@@ -1,0 +1,324 @@
+/*
+ * 블로그 상세 페이지 본문 표준.
+ * Legal 페이지(`LegalPage.module.css` + `LegalMarkdown.module.css`) 와 동일한
+ * 폰트·여백·색 토큰을 사용해서 사이트 전체 본문 톤을 일치시킨다.
+ * blockquote / figure / img / figcaption 만 블로그용으로 추가.
+ */
+
+/* ── Page shell ───────────────────────────────────────────── */
+.page {
+  background: linear-gradient(180deg, #0a0b10 0%, #14161f 100%);
+  color: #fdfbf7;
+  min-height: 100vh;
+}
+
+.inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+@media (min-width: 1024px) {
+  .inner {
+    padding: 0 64px;
+  }
+}
+
+/* ── Header (hero) ────────────────────────────────────────── */
+.header {
+  position: relative;
+  padding: calc(var(--nav-h, 72px) + 56px) 0 48px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
+  background:
+    radial-gradient(900px 400px at 30% 30%, rgba(212, 168, 67, 0.08), transparent 60%),
+    transparent;
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent, #d4a843);
+  margin-bottom: 18px;
+}
+.crumbs a {
+  color: inherit;
+  text-decoration: none;
+}
+.crumbs a:hover {
+  opacity: 0.8;
+}
+.crumbs span.sep {
+  opacity: 0.4;
+}
+
+.title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.excerpt {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 24px;
+  max-width: 720px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #9b938a;
+  letter-spacing: 0.04em;
+}
+.meta .dot {
+  opacity: 0.4;
+}
+
+/* ── Cover image ──────────────────────────────────────────── */
+.cover {
+  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+}
+.cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* ── Body container ───────────────────────────────────────── */
+.body {
+  padding: 56px 0 96px;
+}
+
+/* ── Article HTML (TipTap output) ─────────────────────────── */
+.article {
+  color: #d8d2c4;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.95;
+  letter-spacing: -0.005em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.article h1 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 48px 0 20px;
+  line-height: 1.3;
+}
+
+.article h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-weight: 500;
+  color: var(--accent, #d4a843);
+  margin: 56px 0 16px;
+  letter-spacing: -0.01em;
+  padding-top: 24px;
+  border-top: 1px solid rgba(212, 168, 67, 0.18);
+}
+.article > h2:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.article h3 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #ece5d4;
+  margin: 32px 0 12px;
+}
+
+.article p {
+  margin: 0 0 18px;
+}
+
+.article hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 36px 0;
+}
+
+.article ol,
+.article ul {
+  margin: 0 0 20px;
+  padding-left: 1.4em;
+}
+.article ol li,
+.article ul li {
+  margin-bottom: 8px;
+}
+
+.article strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.article em {
+  color: #ece5d4;
+  font-style: italic;
+}
+
+.article a {
+  color: var(--accent, #d4a843);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article a:hover {
+  opacity: 0.8;
+}
+
+.article blockquote {
+  margin: 28px 0;
+  padding: 4px 0 4px 20px;
+  border-left: 3px solid var(--accent, #d4a843);
+  color: rgba(255, 255, 255, 0.82);
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.85;
+}
+.article blockquote p {
+  margin: 0;
+}
+
+.article figure {
+  margin: 40px 0;
+}
+.article figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+}
+.article figcaption {
+  margin-top: 12px;
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+
+/* figure 가 아닌 단독 img 도 동일 처리 */
+.article > img,
+.article p > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 32px 0;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+}
+
+.article code {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--accent, #d4a843);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.88em;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.article pre {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+.article pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #ece5d4;
+}
+
+.article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.article th,
+.article td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.article th:last-child,
+.article td:last-child {
+  border-right: none;
+}
+.article thead th {
+  background: rgba(212, 168, 67, 0.08);
+  color: var(--accent, #d4a843);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.25);
+}
+
+/* ── Tags ─────────────────────────────────────────────────── */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 48px 0 0;
+}
+.tag {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Related posts ────────────────────────────────────────── */
+.related {
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+  padding: 64px 0;
+}
+.relatedHeading {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  font-weight: 300;
+  color: #fff;
+  margin: 0 0 24px;
+  letter-spacing: -0.01em;
+}
+.relatedGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 768px) {
+  .relatedGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

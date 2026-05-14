@@ -10,6 +10,7 @@ import {
   type BlogPost,
 } from '@/types/blog';
 import BlogCard from '../BlogCard';
+import styles from './BlogArticle.module.css';
 
 const SITE_URL = 'https://zoellife.com';
 
@@ -160,38 +161,30 @@ export default async function BlogPostPage({
       <JsonLd data={postJsonLd} />
       <JsonLd data={breadcrumb} />
 
-      <main className="min-h-screen bg-luxury-black text-luxury-cream">
-        {/* Hero */}
-        <header className="border-b border-luxury-bronze/20 px-4 py-12 md:py-16">
-          <div className="mx-auto max-w-3xl">
-            <div className="flex items-center gap-2 text-xs text-luxury-gold">
-              <Link href="/blog" className="hover:underline">
-                블로그
-              </Link>
+      <article className={styles.page}>
+        {/* Hero — Legal/Brand-Story 페이지와 동일 톤·여백 */}
+        <header className={styles.header}>
+          <div className={styles.inner}>
+            <div className={styles.crumbs}>
+              <Link href="/blog">BLOG</Link>
               {category && (
                 <>
-                  <span className="opacity-40">›</span>
-                  <Link href={`/blog/category/${category.id}`} className="hover:underline">
-                    {category.name}
-                  </Link>
+                  <span className={styles.sep}>›</span>
+                  <Link href={`/blog/category/${category.id}`}>{category.name}</Link>
                 </>
               )}
             </div>
-            <h1 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl lg:text-5xl">
-              {post.title}
-            </h1>
-            {post.excerpt && (
-              <p className="mt-4 text-base text-luxury-cream/70 md:text-lg">{post.excerpt}</p>
-            )}
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-luxury-cream/60">
+            <h1 className={styles.title}>{post.title}</h1>
+            {post.excerpt && <p className={styles.excerpt}>{post.excerpt}</p>}
+            <div className={styles.meta}>
               <span>{post.author}</span>
-              <span className="opacity-40">·</span>
+              <span className={styles.dot}>·</span>
               <time dateTime={post.publishedAt ?? post.createdAt}>
                 {formatKoreanDate(post.publishedAt ?? post.createdAt)}
               </time>
               {post.readingTime && (
                 <>
-                  <span className="opacity-40">·</span>
+                  <span className={styles.dot}>·</span>
                   <span>{post.readingTime}분 읽기</span>
                 </>
               )}
@@ -201,49 +194,40 @@ export default async function BlogPostPage({
 
         {/* Cover */}
         {post.coverImage && (
-          <div className="border-b border-luxury-bronze/20">
-            <div className="mx-auto max-w-4xl">
+          <div className={styles.cover}>
+            <div className={styles.inner}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                className="aspect-[16/9] w-full object-cover"
-              />
+              <img src={post.coverImage} alt={post.title} />
             </div>
           </div>
         )}
 
         {/* Body */}
-        <article className="px-4 py-12 md:py-16">
-          <div
-            className="mx-auto max-w-3xl prose prose-invert prose-lg max-w-none prose-headings:font-semibold prose-headings:text-luxury-cream prose-a:text-luxury-gold prose-a:no-underline hover:prose-a:underline prose-strong:text-luxury-cream prose-blockquote:border-l-luxury-gold prose-blockquote:text-luxury-cream/80 prose-code:text-luxury-gold prose-img:rounded-lg prose-img:my-6"
-            dangerouslySetInnerHTML={{ __html: cleanHtml }}
-          />
+        <section className={styles.body}>
+          <div className={styles.inner}>
+            <div
+              className={styles.article}
+              dangerouslySetInnerHTML={{ __html: cleanHtml }}
+            />
 
-          {post.tags.length > 0 && (
-            <div className="mx-auto mt-10 max-w-3xl">
-              <div className="flex flex-wrap gap-2">
+            {post.tags.length > 0 && (
+              <div className={styles.tags}>
                 {post.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-luxury-bronze/40 px-3 py-1 text-xs text-luxury-cream/70"
-                  >
+                  <span key={t} className={styles.tag}>
                     #{t}
                   </span>
                 ))}
               </div>
-            </div>
-          )}
-        </article>
+            )}
+          </div>
+        </section>
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="border-t border-luxury-bronze/20 bg-luxury-ink/30 px-4 py-12">
-            <div className="mx-auto max-w-6xl">
-              <h2 className="mb-6 text-xl font-semibold text-luxury-cream md:text-2xl">
-                관련 글
-              </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <section className={styles.related}>
+            <div className={styles.inner}>
+              <h2 className={styles.relatedHeading}>관련 글</h2>
+              <div className={styles.relatedGrid}>
                 {related.map((p) => (
                   <BlogCard key={p.id} post={p} category={categoryMap.get(p.categoryId)} />
                 ))}
@@ -251,7 +235,7 @@ export default async function BlogPostPage({
             </div>
           </section>
         )}
-      </main>
+      </article>
     </>
   );
 }
