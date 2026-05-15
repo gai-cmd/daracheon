@@ -596,21 +596,28 @@
 @media (min-width: 800px) { .speciesCompare { padding: 36px 40px; } }
 
 .speciesCompareTitle {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 24px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #fff;
+  margin-bottom: 28px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  line-height: 1.5;
+  gap: 12px;
+  line-height: 1.4;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.25);
 }
 .speciesCompareTitle::before {
   content: '⚠';
-  font-size: 1rem;
+  font-size: 1.4em;
+  color: var(--accent);
   letter-spacing: 0;
+  line-height: 1;
+}
+@media (min-width: 800px) {
+  .speciesCompareTitle { margin-bottom: 32px; padding-bottom: 22px; }
 }
 
 .speciesTable {
