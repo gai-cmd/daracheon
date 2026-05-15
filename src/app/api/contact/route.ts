@@ -75,6 +75,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+
+    // Honeypot: 폼에 사람 눈에 안 보이게 숨겨둔 `website` 필드. 봇이 자동으로
+    // 채우면 값이 들어온다. 200 으로 조용히 응답해 봇이 실패 신호로 학습하지
+    // 못하게 하고, 저장/메일/시트/텔레그램 모두 skip.
+    if (typeof body?.website === 'string' && body.website.trim().length > 0) {
+      console.warn('[Contact Form] honeypot tripped ip=%s', clientIp(request));
+      return NextResponse.json({ success: true, message: '문의가 성공적으로 접수되었습니다.' }, { status: 200 });
+    }
+
     const validated = contactSchema.parse(body);
 
     // 캐시 우회 — 다른 Lambda 인스턴스가 막 쓴 데이터를 stale 캐시로 읽어

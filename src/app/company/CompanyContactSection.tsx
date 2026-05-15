@@ -89,6 +89,7 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string>('✓ 문의가 정상 접수되었습니다');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -109,17 +110,25 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
           category: TOPIC_TO_CATEGORY[topic as (typeof TOPICS)[number]] ?? 'other',
           subject: `[${topic}] ${data.get('subject') || '문의'}`,
           message: data.get('message'),
+          // honeypot — CSS 로 숨긴 input. 사람은 못 보고 봇만 채움.
+          website: data.get('website') || '',
         }),
       });
       const body = await res.json().catch(() => ({}));
       if (res.ok) {
         const mail = body?.mailSent;
-        if (mail && (!mail.customer || !mail.admin)) {
-          console.warn('[Contact Form] 메일 일부 발송 실패', mail);
+        // 접수는 됐는데 고객 확인 메일이 실패했으면 정직하게 알림.
+        // (운영자 알림 메일 실패는 고객에게 노출하지 않음)
+        const customerMailFailed = mail && mail.customer === false;
+        if (customerMailFailed) {
+          console.warn('[Contact Form] 메일 발송 일부 실패', mail);
+          setToastMessage('✓ 접수되었습니다. 확인 메일 발송에 문제가 있어 운영자가 직접 회신드립니다.');
+        } else {
+          setToastMessage('✓ 문의가 정상 접수되었습니다');
         }
         setFormState('sent');
         setShowToast(true);
-        setTimeout(() => setShowToast(false), 2800);
+        setTimeout(() => setShowToast(false), 4000);
         form.reset();
       } else {
         const detail = Array.isArray(body?.errors) && body.errors.length > 0
@@ -211,6 +220,15 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
               </p>
 
               <form className={styles.inq} onSubmit={handleSubmit}>
+                {/*
+                  Honeypot — 사람 눈에 안 보이지만 DOM 에는 존재. 자동 봇 대부분이
+                  모든 input 을 채우려 하므로 값이 들어오면 봇으로 판단해 침묵 거부.
+                  display:none 은 일부 봇이 skip 하므로 화면 밖 + aria-hidden 사용.
+                */}
+                <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
+                  <label htmlFor="website">웹사이트 (입력하지 마세요)</label>
+                  <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+                </div>
                 <div className={styles.fld}>
                   <label>
                     문의 유형 <span className={styles.req}>*</span>
@@ -345,7 +363,7 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
       {/* TOAST */}
       {showToast && (
         <div className={styles.toast}>
-          ✓ 문의가 정상 접수되었습니다
+          {toastMessage}
         </div>
       )}
     </>

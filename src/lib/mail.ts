@@ -50,7 +50,18 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
     return sendViaResend(options, cfg.resendApiKey, fromAddr);
   }
 
-  // Dry-run mode
+  // 프로덕션에서 메일 설정이 비어있는 건 사고. dry-run 으로 ok:true 반환하면
+  // 고객 UI 에는 "정상 접수" 로 보이고 운영자도 메일 발송 실패를 모르는 silent
+  // failure 가 된다. ok:false 로 명시적으로 실패 표시 → contact API 응답의
+  // mailSent.customer/admin 에 false 로 전달되고 어드민이 즉시 인지.
+  const isProd = process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
+  if (isProd) {
+    const errMsg = 'mail not configured (SMTP_HOST or RESEND_API_KEY missing in production)';
+    console.error('[mail:NOT-CONFIGURED]', errMsg, '— to:', options.to, '| subject:', options.subject);
+    return { ok: false, error: errMsg };
+  }
+
+  // 개발 환경: dry-run 으로 콘솔 로그만.
   console.log('[mail:dry-run] sendEmail called (no SMTP_HOST or RESEND_API_KEY)');
   console.log(`  to:      ${options.to}`);
   console.log(`  subject: ${options.subject}`);
