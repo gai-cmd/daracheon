@@ -79,6 +79,11 @@ interface SpeciesRow {
   note: string;
   image?: { src: string; alt: string };
 }
+interface SpeciesDef {
+  tag: string;
+  title: string;
+  body: string;
+}
 interface HomeProblem {
   tag: string;
   title: string;
@@ -88,6 +93,8 @@ interface HomeProblem {
   speciesTitle: string;
   species: SpeciesRow[];
   speciesFoot: string;
+  speciesDefHerb?: SpeciesDef;
+  speciesDefFood?: SpeciesDef;
 }
 
 interface SolutionPillar { label: string; text: string }
@@ -269,6 +276,16 @@ const DEFAULT_PROBLEM: HomeProblem = {
     },
   ],
   speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
+  speciesDefHerb: {
+    tag: '의약품 · 한약(생약)',
+    title: '‘대한약전외한약(생약)규격집 등록’ 이란?',
+    body: '해당 한약재·생약이 식품의약품안전처의 공식 품질 기준에 따라 안전성과 유효성을 인정받아 *의약품 원료*로 등록되고, 법적으로 제조·유통·판매할 수 있음을 의미합니다.',
+  },
+  speciesDefFood: {
+    tag: '식품 · 식용 원료',
+    title: '‘식품공전 등록’ 이란?',
+    body: '해당 식품·원료가 식품의약품안전처의 국가 안전·품질 기준을 충족해, 합법적으로 제조·유통·판매할 수 있는 *공식 식품*으로 인정받았음을 의미합니다.',
+  },
 };
 
 const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
@@ -926,6 +943,62 @@ export default function AdminHomePage() {
               </div>
 
               <LabeledTextarea label="종 비교 하단 안내문" value={problem.speciesFoot} onChange={(v) => setProblem({ ...problem, speciesFoot: v })} rows={2} />
+
+              {/* 식약처 등록 기준 정의 — 두 품종에 공통 적용. 풀폭 단일 컬럼 스택 렌더링. */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">두 품종 공통 적용 — 식약처 등록 기준 정의</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    종 카드 아래에 풀폭 1열로 표시됩니다. 본문에 <code className="rounded bg-gray-100 px-1">*강조*</code> 별표 마커 사용 가능.
+                  </p>
+                </div>
+
+                <div className="rounded-md border border-amber-200 bg-amber-50/40 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-amber-700">① 의약품 · 한약(생약) 정의 (골드 라인)</p>
+                  <input
+                    value={problem.speciesDefHerb?.tag ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefHerb: { tag: e.target.value, title: problem.speciesDefHerb?.title ?? '', body: problem.speciesDefHerb?.body ?? '' } })}
+                    placeholder="태그 (예: 의약품 · 한약(생약))"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                  <input
+                    value={problem.speciesDefHerb?.title ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefHerb: { tag: problem.speciesDefHerb?.tag ?? '', title: e.target.value, body: problem.speciesDefHerb?.body ?? '' } })}
+                    placeholder="제목 (예: '대한약전외한약(생약)규격집 등록' 이란?)"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                  <textarea
+                    rows={3}
+                    value={problem.speciesDefHerb?.body ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefHerb: { tag: problem.speciesDefHerb?.tag ?? '', title: problem.speciesDefHerb?.title ?? '', body: e.target.value } })}
+                    placeholder="본문 (*의약품 원료* 처럼 별표로 강조)"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+
+                <div className="rounded-md border border-emerald-200 bg-emerald-50/30 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-emerald-700">② 식품 · 식용 원료 정의 (그린 라인)</p>
+                  <input
+                    value={problem.speciesDefFood?.tag ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefFood: { tag: e.target.value, title: problem.speciesDefFood?.title ?? '', body: problem.speciesDefFood?.body ?? '' } })}
+                    placeholder="태그 (예: 식품 · 식용 원료)"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                  <input
+                    value={problem.speciesDefFood?.title ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefFood: { tag: problem.speciesDefFood?.tag ?? '', title: e.target.value, body: problem.speciesDefFood?.body ?? '' } })}
+                    placeholder="제목 (예: '식품공전 등록' 이란?)"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                  <textarea
+                    rows={3}
+                    value={problem.speciesDefFood?.body ?? ''}
+                    onChange={(e) => setProblem({ ...problem, speciesDefFood: { tag: problem.speciesDefFood?.tag ?? '', title: problem.speciesDefFood?.title ?? '', body: e.target.value } })}
+                    placeholder="본문 (*공식 식품* 처럼 별표로 강조)"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+              </div>
             </div>
           </SectionCard>
 

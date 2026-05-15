@@ -81,6 +81,12 @@ export interface SpeciesRow {
   image?: { src: string; alt: string };
 }
 
+export interface SpeciesDef {
+  tag: string;
+  title: string;
+  body: string;
+}
+
 export interface HomeProblem {
   tag: string;
   title: string;
@@ -90,6 +96,8 @@ export interface HomeProblem {
   speciesTitle: string;
   species: SpeciesRow[];
   speciesFoot: string;
+  speciesDefHerb?: SpeciesDef;
+  speciesDefFood?: SpeciesDef;
 }
 
 export interface SolutionPillar {
@@ -281,6 +289,16 @@ const DEFAULT_PROBLEM: HomeProblem = {
     },
   ],
   speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
+  speciesDefHerb: {
+    tag: '의약품 · 한약(생약)',
+    title: '‘대한약전외한약(생약)규격집 등록’ 이란?',
+    body: '해당 한약재·생약이 식품의약품안전처의 공식 품질 기준에 따라 안전성과 유효성을 인정받아 *의약품 원료*로 등록되고, 법적으로 제조·유통·판매할 수 있음을 의미합니다.',
+  },
+  speciesDefFood: {
+    tag: '식품 · 식용 원료',
+    title: '‘식품공전 등록’ 이란?',
+    body: '해당 식품·원료가 식품의약품안전처의 국가 안전·품질 기준을 충족해, 합법적으로 제조·유통·판매할 수 있는 *공식 식품*으로 인정받았음을 의미합니다.',
+  },
 };
 
 const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
@@ -602,20 +620,23 @@ export default async function HomePage() {
             <p className={styles.speciesFoot}>{problem.speciesFoot}</p>
 
             <div className={styles.speciesDefs}>
-              <div className={styles.speciesDefHerb}>
-                <div className={styles.speciesDefTag}>의약품 · 한약(생약)</div>
-                <div className={styles.speciesDefTitle}>&lsquo;대한약전외한약(생약)규격집 등록&rsquo; 이란?</div>
-                <p className={styles.speciesDefBody}>
-                  해당 한약재·생약이 식품의약품안전처의 공식 품질 기준에 따라 안전성과 유효성을 인정받아 <em>의약품 원료</em>로 등록되고, 법적으로 제조·유통·판매할 수 있음을 의미합니다.
-                </p>
-              </div>
-              <div className={styles.speciesDefFood}>
-                <div className={styles.speciesDefTag}>식품 · 식용 원료</div>
-                <div className={styles.speciesDefTitle}>&lsquo;식품공전 등록&rsquo; 이란?</div>
-                <p className={styles.speciesDefBody}>
-                  해당 식품·원료가 식품의약품안전처의 국가 안전·품질 기준을 충족해, 합법적으로 제조·유통·판매할 수 있는 <em>공식 식품</em>으로 인정받았음을 의미합니다.
-                </p>
-              </div>
+              <p className={styles.speciesDefsLead}>
+                {renderMarked('위 두 품종에 *공통으로 적용*되는 식약처 등록 기준의 의미')}
+              </p>
+              {problem.speciesDefHerb && (
+                <div className={styles.speciesDefHerb}>
+                  <div className={styles.speciesDefTag}>{problem.speciesDefHerb.tag}</div>
+                  <div className={styles.speciesDefTitle}>{problem.speciesDefHerb.title}</div>
+                  <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefHerb.body)}</p>
+                </div>
+              )}
+              {problem.speciesDefFood && (
+                <div className={styles.speciesDefFood}>
+                  <div className={styles.speciesDefTag}>{problem.speciesDefFood.tag}</div>
+                  <div className={styles.speciesDefTitle}>{problem.speciesDefFood.title}</div>
+                  <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefFood.body)}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

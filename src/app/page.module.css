@@ -813,14 +813,31 @@
   font-weight: 300;
 }
 
-/* Definition boxes — 5 (의약품 / 황금 라인 강조) · 6 (식품 / 구별) */
+/* Definition boxes — 두 품종 공통 적용 기준이므로 풀폭 단일 컬럼으로 스택.
+   (2열로 두면 각 정의가 좌/우 카드에 1:1 매칭된다는 오해 발생) */
 .speciesDefs {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
-@media (min-width: 900px) { .speciesDefs { grid-template-columns: 1fr 1fr; gap: 20px; } }
+
+.speciesDefsLead {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 4px;
+  padding-left: 14px;
+  border-left: 2px solid rgba(212, 168, 67, 0.45);
+  line-height: 1.6;
+}
+.speciesDefsLead em {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 700;
+}
 
 .speciesDefHerb,
 .speciesDefFood {
