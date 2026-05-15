@@ -661,6 +661,36 @@
   background: rgba(196, 122, 122, 0.025);
 }
 
+/* 우측 상단 이미지 슬롯 — image 가 있는 카드만 적용 */
+.speciesCardImg {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 110px;
+  height: 110px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 67, 0.45);
+  box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+@media (min-width: 800px) {
+  .speciesCardImg { width: 140px; height: 140px; top: 26px; right: 26px; }
+}
+.speciesRowWarning .speciesCardImg {
+  border-color: rgba(196, 122, 122, 0.4);
+  filter: grayscale(0.2);
+}
+/* 이미지 있는 카드: 상단 badge + header 가 이미지를 침범하지 않게 우측 여백 */
+.speciesRowWithImg .speciesBadge,
+.speciesRowWithImg .speciesHeader {
+  padding-right: 124px;
+}
+@media (min-width: 800px) {
+  .speciesRowWithImg .speciesBadge,
+  .speciesRowWithImg .speciesHeader { padding-right: 156px; }
+}
+
 .speciesBadge {
   align-self: flex-start;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
