@@ -889,6 +889,32 @@ export default function AdminHomePage() {
                         </label>
                       </div>
                       <textarea rows={2} value={s.note} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], note: e.target.value }; setProblem({ ...problem, species: n }); }} placeholder="설명 (예: 한약(생약) · 식품 양쪽 모두 공식 기원 식물.)" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                      <div className="rounded-md border border-gray-200 bg-white p-3">
+                        <label className="mb-1 block text-xs font-medium text-gray-600">카드 우측 상단 이미지 (정사각형 권장 · 빈 값이면 슬롯 숨김)</label>
+                        <ImageUploadField
+                          value={s.image?.src ?? ''}
+                          onChange={(url) => {
+                            const n = [...problem.species];
+                            n[i] = url
+                              ? { ...n[i], image: { src: url, alt: n[i].image?.alt ?? '' } }
+                              : { ...n[i], image: undefined };
+                            setProblem({ ...problem, species: n });
+                          }}
+                          subdir="pages"
+                        />
+                        <input
+                          type="text"
+                          value={s.image?.alt ?? ''}
+                          onChange={(e) => {
+                            const n = [...problem.species];
+                            n[i] = { ...n[i], image: { src: n[i].image?.src ?? '', alt: e.target.value } };
+                            setProblem({ ...problem, species: n });
+                          }}
+                          placeholder="이미지 대체 텍스트 (예: 베트남산 아갈로차 침향 원목 단면)"
+                          className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                          disabled={!s.image?.src}
+                        />
+                      </div>
                     </div>
                   ))}
                   <button type="button" onClick={() => setProblem({ ...problem, species: [...problem.species, { latin: '', alias: '', pharmacopoeia: false, foodCode: false, note: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 종 추가</button>
