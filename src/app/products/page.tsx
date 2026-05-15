@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     images: [{
-      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/drive-13-1777031065906-uOH4D21UuNVAEeyrXQnmVeLaLJt0D7.jpg',
+      url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/01-1i2ZoP2rT3PhgGMtyTXA8A8D6bh7AJPTk.jpg',
       alt: "대라천 '참'침향 오일 캡슐 — 25년 숙성 Aquilaria Agallocha Roxburgh 정품",
     }],
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '제품 소개 — 대라천 침향 제품',
     description: '25년 숙성 Aquilaria Agallocha Roxburgh 정품 라인업.',
-    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/drive-13-1777031065906-uOH4D21UuNVAEeyrXQnmVeLaLJt0D7.jpg'],
+    images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/01-1i2ZoP2rT3PhgGMtyTXA8A8D6bh7AJPTk.jpg'],
   },
 };
 
