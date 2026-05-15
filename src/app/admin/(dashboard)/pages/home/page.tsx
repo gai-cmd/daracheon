@@ -242,10 +242,10 @@ const DEFAULT_PROBLEM: HomeProblem = {
     { tag: '02 · 인증', title: '증빙 문서가 공개되어 있는가?', body: 'CITES, 원산지 증명, 자유판매증명서, 학명·품종 인증, 정식 수입 증빙 — 진짜 침향일수록 이력을 숨기지 않습니다.' },
     { tag: '03 · 산지', title: '어느 나라, 어느 농장에서 왔는가?', body: '베트남? 인도네시아? 중국? 시대를 막론하고 베트남이 정품 산지로 기록되어 왔습니다. 산지 이력 추적이 가능해야 합니다.' },
   ],
-  speciesTitle: "같은 'Aquilaria' 라도, 약전 기준은 다릅니다",
+  speciesTitle: "같은 'Aquilaria' 라도, 식약처 고시 기준은 다릅니다",
   species: [
-    { latin: 'Aquilaria agallocha Roxburgh', alias: 'AAR · 조엘라이프 침향', pharmacopoeia: true, foodCode: true, note: '한약(생약) · 식품 양쪽 모두 공식 기원 식물.' },
-    { latin: 'Aquilaria malaccensis Lam.', alias: '말라켄시스', pharmacopoeia: false, foodCode: true, note: '식용 원료로만 허용 · 한약 기원 식물은 아님.' },
+    { latin: 'Aquilaria agallocha Roxburgh', alias: '베트남산 아퀼라리아 아갈로차 록스버그 침향', pharmacopoeia: true, foodCode: true, note: '대한약전외한약(생약)규격집 · 식품공전 양쪽 모두 공식 등록.' },
+    { latin: 'Aquilaria malaccensis Lam.', alias: '인도네시아산 말라센시스 램 침향', pharmacopoeia: false, foodCode: true, note: '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용되는 등급의 침향.' },
   ],
   speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
 };

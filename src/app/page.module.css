@@ -616,53 +616,156 @@
 .speciesTable {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
 }
-@media (min-width: 900px) { .speciesTable { grid-template-columns: 1fr 1fr; gap: 36px; } }
+@media (min-width: 900px) { .speciesTable { grid-template-columns: 1fr 1fr; gap: 24px; } }
 
 .speciesRow {
-  border-top: 1px solid rgba(212, 168, 67, 0.18);
-  padding-top: 22px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 22px 22px;
+  border: 1px solid;
+  border-radius: 2px;
 }
+@media (min-width: 800px) { .speciesRow { padding: 28px 26px 24px; } }
+
+.speciesRowOfficial {
+  border-color: rgba(212, 168, 67, 0.55);
+  background: linear-gradient(180deg, rgba(212, 168, 67, 0.09), rgba(212, 168, 67, 0.015));
+  box-shadow:
+    0 0 0 1px rgba(212, 168, 67, 0.18) inset,
+    0 12px 36px -18px rgba(212, 168, 67, 0.45);
+}
+.speciesRowOfficial::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  pointer-events: none;
+}
+
+.speciesRowWarning {
+  border-color: rgba(196, 122, 122, 0.32);
+  background: rgba(196, 122, 122, 0.025);
+}
+
+.speciesBadge {
+  align-self: flex-start;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+.speciesRowOfficial .speciesBadge {
+  color: #0e0e0e;
+  background: var(--accent);
+}
+.speciesRowWarning .speciesBadge {
+  color: #d99a9a;
+  background: rgba(196, 122, 122, 0.12);
+  border: 1px solid rgba(196, 122, 122, 0.45);
+}
+
+.speciesHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.speciesKorean {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.12rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.45;
+}
+@media (min-width: 800px) { .speciesKorean { font-size: 1.2rem; } }
+.speciesRowOfficial .speciesKorean { color: #f5e6c5; }
 .speciesLatin {
   font-family: 'Noto Serif KR', serif;
   font-style: italic;
-  font-size: 1.1rem;
-  color: #fff;
-  margin-bottom: 4px;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
   line-height: 1.4;
 }
-.speciesAlias {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 16px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  letter-spacing: 0.06em;
-}
+
 .speciesMarks {
   display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0 16px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
 }
 .speciesMark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.78);
+}
+.speciesMarkIcon {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.75);
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 50%;
+  line-height: 1;
 }
-.markOk { color: #6fb37a; font-weight: 700; font-size: 0.85rem; }
-.markNo { color: #c47a7a; font-weight: 700; font-size: 0.85rem; }
+.speciesMarkOk .speciesMarkIcon {
+  color: #6fb37a;
+  background: rgba(111, 179, 122, 0.14);
+  border: 1px solid rgba(111, 179, 122, 0.5);
+}
+.speciesMarkNo {
+  color: rgba(225, 140, 140, 0.95);
+}
+.speciesMarkNo .speciesMarkIcon {
+  color: #e26a6a;
+  background: rgba(226, 106, 106, 0.18);
+  border: 1px solid rgba(226, 106, 106, 0.6);
+  box-shadow: 0 0 0 2px rgba(226, 106, 106, 0.08);
+}
+
+.speciesSummary {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.55;
+  padding: 10px 14px;
+  border-left: 3px solid;
+}
+.speciesSummaryGood {
+  color: #f5e6c5;
+  border-color: var(--accent);
+  background: rgba(212, 168, 67, 0.1);
+}
+.speciesSummaryWarn {
+  color: #e8a8a8;
+  border-color: #e26a6a;
+  background: rgba(226, 106, 106, 0.08);
+}
+
 .speciesNote {
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   line-height: 1.75;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 300;
   margin: 0;
 }
+
 .speciesFoot {
   margin: 24px 0 0;
   padding-top: 22px;
@@ -672,6 +775,72 @@
   color: rgba(255, 255, 255, 0.62);
   font-weight: 300;
 }
+
+/* Definition boxes — 5 (의약품 / 황금 라인 강조) · 6 (식품 / 구별) */
+.speciesDefs {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 900px) { .speciesDefs { grid-template-columns: 1fr 1fr; gap: 20px; } }
+
+.speciesDefHerb,
+.speciesDefFood {
+  padding: 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 2px;
+}
+@media (min-width: 800px) {
+  .speciesDefHerb,
+  .speciesDefFood { padding: 24px 26px; }
+}
+.speciesDefHerb {
+  border: 1px solid rgba(212, 168, 67, 0.45);
+  border-left: 4px solid var(--accent);
+  background: linear-gradient(180deg, rgba(212, 168, 67, 0.08), rgba(212, 168, 67, 0.015));
+  box-shadow:
+    inset 0 0 32px rgba(212, 168, 67, 0.06),
+    0 0 0 1px rgba(212, 168, 67, 0.18);
+}
+.speciesDefFood {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 4px solid rgba(160, 195, 160, 0.55);
+  background: rgba(255, 255, 255, 0.015);
+}
+.speciesDefTag {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.speciesDefHerb .speciesDefTag { color: var(--accent); }
+.speciesDefFood .speciesDefTag { color: rgba(160, 195, 160, 0.9); }
+
+.speciesDefTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.5;
+}
+@media (min-width: 800px) { .speciesDefTitle { font-size: 1.08rem; } }
+.speciesDefBody {
+  font-size: 0.88rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  margin: 0;
+}
+.speciesDefBody em {
+  font-style: normal;
+  font-weight: 600;
+}
+.speciesDefHerb .speciesDefBody em { color: var(--accent); }
+.speciesDefFood .speciesDefBody em { color: rgba(180, 215, 180, 1); }
 
 /* SOLUTION CTA — Verified 섹션 맨 끝 */
 .solutionCta {
