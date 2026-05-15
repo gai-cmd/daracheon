@@ -9,13 +9,7 @@ import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
-import DetailPageCham from './DetailPageCham';
 import styles from './page.module.css';
-
-/** 이 슬러그는 효도선물 13섹션 풀스크롤 페이지로 별도 렌더링 */
-const CUSTOM_FULL_PAGE_SLUGS: ReadonlySet<string> = new Set([
-  'daerachoen-cham-agarwood-oil-capsule',
-]);
 
 interface ReviewRecord {
   productSlug?: string;
@@ -68,46 +62,6 @@ export default async function ProductDetailPage(
     const token = (await cookies()).get(SESSION_COOKIE)?.value;
     const session = await verifySessionToken(token);
     if (!session) notFound();
-  }
-
-  // 효도선물 풀스크롤 페이지로 분기 (이 슬러그에만 적용)
-  if (CUSTOM_FULL_PAGE_SLUGS.has(product.slug)) {
-    const productJsonLdCustom: Record<string, unknown> = {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.name,
-      ...(product.nameEn ? { alternateName: product.nameEn } : {}),
-      description: product.description,
-      sku: product.id,
-      image: product.gallery?.length ? product.gallery : (product.image ? [product.image] : undefined),
-      brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
-      category: product.category,
-      offers: {
-        '@type': 'Offer',
-        price: product.price,
-        priceCurrency: 'KRW',
-        availability: product.inStock
-          ? 'https://schema.org/InStock'
-          : 'https://schema.org/OutOfStock',
-        url: `https://zoellife.com/products/${product.slug}`,
-      },
-    };
-    const breadcrumbJsonLdCustom = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
-        { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://zoellife.com/products' },
-        { '@type': 'ListItem', position: 3, name: product.name, item: `https://zoellife.com/products/${product.slug}` },
-      ],
-    };
-    return (
-      <>
-        <JsonLd data={productJsonLdCustom} />
-        <JsonLd data={breadcrumbJsonLdCustom} />
-        <DetailPageCham product={product} />
-      </>
-    );
   }
 
   const related = products
