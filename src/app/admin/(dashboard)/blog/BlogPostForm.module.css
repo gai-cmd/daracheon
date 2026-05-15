@@ -312,6 +312,339 @@
   background: #b4452f;
 }
 
+/* ── Language tabs (ko / ja / en) ─────────────────────────── */
+.langTabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--warm-200, #e8e3d8);
+  margin-bottom: 4px;
+}
+.langTab {
+  padding: 8px 18px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--warm-600, #7a7368);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.langTab:hover:not(:disabled) {
+  color: var(--warm-900, #2a2724);
+}
+.langTab.langTabActive {
+  color: var(--warm-900, #2a2724);
+  border-bottom-color: var(--gold-500, #d4a843);
+  font-weight: 600;
+}
+.langTab:disabled {
+  color: var(--warm-400, #b8af9e);
+  cursor: not-allowed;
+}
+.langTabBadge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  border-radius: 9px;
+  background: var(--warm-200, #e8e3d8);
+  color: var(--warm-700, #4b4845);
+  font-weight: 500;
+}
+
+/* ── Review checkbox ─────────────────────────────────────── */
+.reviewCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(212, 168, 67, 0.05);
+  border: 1px solid var(--warm-300, #d0c9b8);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--warm-800, #3a3530);
+  user-select: none;
+}
+.reviewCheckbox input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold-500, #d4a843);
+  margin: 0;
+  cursor: pointer;
+}
+
+/* ── Label row (label + auto-action button) ───────────────── */
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.autoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--warm-300, #d0c9b8);
+  border-radius: 4px;
+  color: var(--warm-700, #4b4845);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.autoBtn:hover:not(:disabled) {
+  background: rgba(212, 168, 67, 0.08);
+  border-color: var(--gold-500, #d4a843);
+  color: var(--warm-900, #2a2724);
+}
+.autoBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.autoBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── SEO Search Preview ──────────────────────────────────── */
+.seoPreviewBox {
+  border: 1px solid var(--warm-200, #e8e3d8);
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 18px;
+}
+.seoPreviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--warm-200, #e8e3d8);
+  font-size: 0.78rem;
+  color: var(--warm-700, #4b4845);
+  font-weight: 500;
+}
+.seoPreviewBody {
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.seoPreviewBody.seoPreviewMobile {
+  flex-direction: column;
+  max-width: 380px;
+  margin: 0 auto;
+}
+.seoPreviewMain {
+  flex: 1;
+  min-width: 0;
+}
+.seoPreviewUrlRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.seoPreviewFavicon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--warm-200, #e8e3d8);
+  flex-shrink: 0;
+}
+.seoPreviewSiteName {
+  font-size: 0.78rem;
+  color: var(--warm-800, #3a3530);
+  font-weight: 500;
+}
+.seoPreviewUrl {
+  font-size: 0.72rem;
+  color: var(--warm-600, #7a7368);
+  word-break: break-all;
+}
+.seoPreviewTitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #1a0dab;
+  margin: 4px 0 4px;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.seoPreviewTitle:hover {
+  text-decoration: underline;
+}
+.seoPreviewDesc {
+  font-size: 0.82rem;
+  color: var(--warm-700, #4b4845);
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.seoPreviewThumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.seoPreviewMobile .seoPreviewThumb {
+  width: 100%;
+  height: 160px;
+  order: -1;
+}
+.seoPreviewThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.seoPreviewToggle {
+  display: flex;
+  gap: 4px;
+}
+.seoPreviewToggleBtn {
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  padding: 3px 6px;
+  cursor: pointer;
+  color: var(--warm-500, #948c80);
+  display: inline-flex;
+  align-items: center;
+}
+.seoPreviewToggleBtn:hover {
+  background: var(--warm-100, #f1ecdf);
+}
+.seoPreviewToggleBtn.seoPreviewToggleActive {
+  background: var(--warm-100, #f1ecdf);
+  color: var(--warm-900, #2a2724);
+}
+
+/* ── Openverse search panel ───────────────────────────────── */
+.openverseBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.openverseBar input[type='search'] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--warm-300, #d0c9b8);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.9rem;
+}
+.openverseBar input[type='search']:focus {
+  outline: none;
+  border-color: var(--gold-500, #d4a843);
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.18);
+}
+.openverseBar select {
+  padding: 8px 10px;
+  border: 1px solid var(--warm-300, #d0c9b8);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.85rem;
+}
+.openverseSearchBtn {
+  padding: 8px 16px;
+  background: var(--warm-900, #2a2724);
+  color: var(--warm-50, #faf8f3);
+  border: 0;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.openverseSearchBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.openverseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding: 4px;
+  background: #fafaf7;
+  border-radius: 4px;
+  border: 1px solid var(--warm-200, #e8e3d8);
+}
+.openverseCard {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--warm-200, #e8e3d8);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  padding: 0;
+}
+.openverseCard:hover {
+  border-color: var(--gold-500, #d4a843);
+}
+.openverseCard:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+.openverseCardImg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #f1ecdf;
+}
+.openverseCardMeta {
+  padding: 6px 8px;
+  font-size: 0.7rem;
+  color: var(--warm-700, #4b4845);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.openverseCardCreator {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.openverseCardLicense {
+  font-size: 0.65rem;
+  color: var(--warm-600, #7a7368);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.openverseStatus {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--warm-600, #7a7368);
+}
+.openverseStatusErr {
+  color: #b4452f;
+}
+.openverseAttribution {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(212, 168, 67, 0.06);
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--warm-800, #3a3530);
+  line-height: 1.5;
+}
+.openverseAttribution a {
+  color: var(--warm-900, #2a2724);
+  text-decoration: underline;
+}
+
 /* ── Restored draft banner ───────────────────────────────── */
 .restored {
   display: flex;

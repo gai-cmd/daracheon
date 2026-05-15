@@ -113,6 +113,8 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
         ? body.seoKeywords.filter((k: unknown): k is string => typeof k === 'string')
         : prev.seoKeywords,
       ogImage: typeof body?.ogImage === 'string' ? body.ogImage : prev.ogImage,
+      reviewed:
+        typeof body?.reviewed === 'boolean' ? body.reviewed : prev.reviewed,
     };
     posts[idx] = next;
     await writeData(BLOG_POSTS_FILE, posts);

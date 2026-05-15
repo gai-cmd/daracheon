@@ -43,6 +43,8 @@ export interface BlogPost {
   seoDescription?: string;
   seoKeywords?: string[];
   ogImage?: string;
+  /** 어드민 검수 완료 여부. 발행 가드는 아니고 워크플로 추적용. 미설정 = 미검수. */
+  reviewed?: boolean;
   // Stats
   viewCount?: number;
 }

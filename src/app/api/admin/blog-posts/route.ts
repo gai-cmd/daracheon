@@ -144,6 +144,7 @@ export async function POST(request: Request) {
         ? body.seoKeywords.filter((k: unknown): k is string => typeof k === 'string')
         : undefined,
       ogImage: typeof body?.ogImage === 'string' ? body.ogImage : undefined,
+      reviewed: typeof body?.reviewed === 'boolean' ? body.reviewed : false,
       viewCount: 0,
     };
 

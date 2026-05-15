@@ -63,9 +63,10 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         branding: false,
         promotion: false,
         statusbar: true,
-        language: 'ko_KR',
-        // 한국어 language pack 은 self-host 안에 포함 안 되어 있어 미설치
-        // 시 영문으로 fallback. 필요하면 별도 추가.
+        // 한국어 language pack 은 npm tinymce 패키지에 포함되어 있지 않음.
+        // 필요하면 https://www.tiny.cloud/get-tiny/language-packages/ 에서
+        // 다운로드해 public/tinymce/langs/ko_KR.js 로 배치 후 아래 주석 해제.
+        // language: 'ko_KR',
         plugins: 'link image table lists code media',
         toolbar:
           'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image table | code',
