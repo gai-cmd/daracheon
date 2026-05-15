@@ -262,6 +262,10 @@ const DEFAULT_PROBLEM: HomeProblem = {
       pharmacopoeia: false,
       foodCode: true,
       note: '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용되는 등급의 침향.',
+      image: {
+        src: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/species-card-malaccensis.jpg',
+        alt: '인도네시아산 아퀼라리아 말라센시스 침향 원목 단면 — 수지가 적고 결이 거친 식용 등급',
+      },
     },
   ],
   speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
