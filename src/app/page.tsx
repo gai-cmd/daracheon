@@ -492,9 +492,9 @@ export default async function HomePage() {
               <p className={styles.problemLead}>{renderMarked(problem.lead)}</p>
             </div>
 
-            {/* 우측: 다큐멘터리 정물 사진 (인증서·도장·CITES 마크) */}
-            <div className={styles.problemImageWrap}>
-              {problemImage?.src ? (
+            {/* 우측: 다큐멘터리 정물 사진 — 이미지가 있을 때만 표시 */}
+            {problemImage?.src && (
+              <div className={styles.problemImageWrap}>
                 <Image
                   src={problemImage.src}
                   alt={problemImage.alt ?? '인증서·도장·CITES 마크 정물'}
@@ -502,22 +502,15 @@ export default async function HomePage() {
                   sizes="(max-width: 1000px) 100vw, 45vw"
                   style={{ objectFit: 'cover' }}
                 />
-              ) : (
-                <div className={styles.problemImagePlaceholder} aria-hidden="true">
-                  <span>Documentary Still Life</span>
-                  <span className={styles.problemImagePlaceholderSub}>
-                    인증서 · 도장 · CITES 마크
-                  </span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className={styles.problemGrid}>
             {problem.cards.map((c, i) => (
               <div key={`${c.tag}-${i}`} className={styles.problemCard}>
-                <div className={styles.problemCardImage}>
-                  {c.image?.src ? (
+                {c.image?.src && (
+                  <div className={styles.problemCardImage}>
                     <Image
                       src={c.image.src}
                       alt={c.image.alt ?? c.title}
@@ -525,12 +518,8 @@ export default async function HomePage() {
                       sizes="(max-width: 800px) 100vw, 33vw"
                       style={{ objectFit: 'cover' }}
                     />
-                  ) : (
-                    <div className={styles.problemCardImagePh} aria-hidden="true">
-                      <span>Documentary</span>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
                 <div className={styles.problemCardBody}>
                   <div className={styles.problemCardTag}>{c.tag}</div>
                   <h3>{c.title}</h3>
