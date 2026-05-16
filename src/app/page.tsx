@@ -117,6 +117,27 @@ export interface HomeSolutionCta {
   buttons: SolutionButton[];
 }
 
+export type HomeSectionId =
+  | 'hero'
+  | 'trustStrip'
+  | 'showroom'
+  | 'problem'
+  | 'verified'
+  | 'agarwood'
+  | 'benefits'
+  | 'process';
+
+const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
+  'hero',
+  'trustStrip',
+  'showroom',
+  'problem',
+  'verified',
+  'agarwood',
+  'benefits',
+  'process',
+];
+
 export interface HomeData {
   hero?: HomeHero;
   stats?: HomeStat[];
@@ -131,6 +152,7 @@ export interface HomeData {
   problemImage?: HomeProblemImage;
   problem?: HomeProblem;
   solutionCta?: HomeSolutionCta;
+  sectionOrder?: HomeSectionId[];
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -158,6 +180,22 @@ const DEFAULT_VERIFICATION = [
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
 ];
+
+const DEFAULT_NOTICE: HomeNotice = {
+  tag: 'Notice — 식약처 고시 기준',
+  title: '가짜가 많을수록,\n*진짜는 드러난다*',
+  body:
+    "이젠 학명/품종부터 확인하세요!\n식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전', '한약재 관능검사 해설서'와 '한국한의학연구원 한약자원연구센터'에\n공식 등록된 침향은 *‘Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)’* 입니다.\n\n대라천 ‘참’침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.",
+  items: [
+    { num: '01', text: '대한민국약전외한약\n(생약)규격집' },
+    { num: '02', text: '식약처\n식품공전' },
+    { num: '03', text: '한약재 관능검사\n해설서' },
+    { num: '04', text: '한국한의학연구원\n한약자원연구센터' },
+  ],
+  badges: [],
+  ctaLabel: '',
+  ctaHref: '',
+};
 
 const DEFAULT_VERIFIED_CARDS = [
   {
@@ -396,6 +434,23 @@ export default async function HomePage() {
   const verification = home.verification ?? DEFAULT_VERIFICATION;
   const verifiedCards = home.verifiedCards ?? DEFAULT_VERIFIED_CARDS;
   const certs = home.certs ?? DEFAULT_CERTS;
+  const notice: HomeNotice = home.notice
+    ? {
+        ...DEFAULT_NOTICE,
+        ...home.notice,
+        items: home.notice.items && home.notice.items.length > 0 ? home.notice.items : DEFAULT_NOTICE.items,
+      }
+    : DEFAULT_NOTICE;
+  // verifiedCards 는 현재 프론트에서 렌더되지 않음 — admin 호환 위해 변수는 유지.
+  void verifiedCards;
+  const sectionOrder: HomeSectionId[] =
+    Array.isArray(home.sectionOrder) && home.sectionOrder.length > 0
+      ? home.sectionOrder.filter((id): id is HomeSectionId => DEFAULT_SECTION_ORDER.includes(id as HomeSectionId))
+      : DEFAULT_SECTION_ORDER;
+  // 누락된 섹션 ID 가 있으면 끝에 append 해 모든 섹션이 항상 렌더되게 한다.
+  for (const id of DEFAULT_SECTION_ORDER) {
+    if (!sectionOrder.includes(id)) sectionOrder.push(id);
+  }
   const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
   const showroomImage = home.showroomImage;
   // problem 섹션: 신규 problem.image 우선, 없으면 legacy problemImage 사용
@@ -419,8 +474,12 @@ export default async function HomePage() {
         fetchpriority="high"
       />
       <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
-      {/* HERO */}
-      <section className={`${styles.hero} orn-grain orn-grain--faint`}>
+      {sectionOrder.map((sectionId) => {
+        switch (sectionId) {
+          case 'hero':
+            return (
+      // === HERO ===
+      <section key="hero" className={`${styles.hero} orn-grain orn-grain--faint`}>
         <div
           className={styles.heroBg}
           style={{ backgroundImage: `url('${hero.heroBg}')` }}
@@ -464,9 +523,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* TRUST STRIP */}
-      <section className={styles.trustStrip}>
+            );
+          case 'trustStrip':
+            return (
+      // === TRUST STRIP ===
+      <section key="trustStrip" className={styles.trustStrip}>
         <div className={styles.trustStripInner}>
           {stats.map((s) => (
             <div key={s.label} className={styles.trustStat}>
@@ -477,10 +538,11 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      {/* SHOWROOM IMAGE — 트러스트 스트립 직후 */}
-      {showroomImage?.src && (
-        <section className={styles.section} aria-label="대라천 침향 전시장">
+            );
+          case 'showroom':
+            return showroomImage?.src ? (
+      // === SHOWROOM IMAGE ===
+        <section key="showroom" className={styles.section} aria-label="대라천 침향 전시장">
           <div className={styles.wrap}>
             <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
               {showroomImage.tag && <span className={styles.tag}>{showroomImage.tag}</span>}
@@ -518,10 +580,11 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-      )}
-
-      {/* PROBLEM — 불안 건드리기 (학명·인증·산지 + 말라켄시스 비교) */}
-      <section className={styles.problem} aria-label="침향 시장의 위험과 진짜 침향 구별 기준">
+            ) : null;
+          case 'problem':
+            return (
+      // === PROBLEM ===
+      <section key="problem" className={styles.problem} aria-label="침향 시장의 위험과 진짜 침향 구별 기준">
         <div className={styles.wrap}>
           <div className={styles.problemHeadRow}>
             <div className={styles.problemHead}>
@@ -641,44 +704,26 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* VERIFIED */}
-      <section className={styles.verified} id="verified">
+            );
+          case 'verified':
+            return (
+      // === VERIFIED (notice-driven head + refGrid + certs + solutionCta) ===
+      <section key="verified" className={styles.verified} id="verified">
         <div className={styles.wrap}>
           <div className={styles.verifiedHead}>
-            <span className={styles.tag}>Notice — 식약처 고시 기준</span>
-            <h2 className={styles.h2}>
-              가짜가 많을수록,
-              <br />
-              <em>진짜는 드러난다</em>
-            </h2>
+            <span className={styles.tag}>{notice.tag}</span>
+            <h2 className={styles.h2}>{renderMarked(notice.title)}</h2>
             <div className={styles.line} />
-            <p>
-              이젠 학명/품종부터 확인하세요!<br />
-              식품의약품안전처(식약처) 고시 &lsquo;대한민국약전외한약(생약)규격집&rsquo;,
-              &lsquo;식품공전&rsquo;, &lsquo;한약재 관능검사 해설서&rsquo;와
-              &lsquo;한국한의학연구원 한약자원연구센터&rsquo;에<br />
-              공식 등록된 침향은{' '}
-              <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
-                &lsquo;Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)&rsquo;
-              </em>
-              입니다.
-            </p>
-            <p>
-              대라천 &lsquo;참&rsquo;침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.
-            </p>
+            {notice.body.split('\n\n').map((para, pi) => (
+              <p key={`notice-p-${pi}`}>{renderMarked(para)}</p>
+            ))}
           </div>
 
           <div className={styles.refGrid}>
-            {[
-              { num: '01', label: '대한민국약전외한약\n(생약)규격집' },
-              { num: '02', label: '식약처\n식품공전' },
-              { num: '03', label: '한약재 관능검사\n해설서' },
-              { num: '04', label: '한국한의학연구원\n한약자원연구센터' },
-            ].map(({ num, label }) => (
-              <div key={num} className={styles.refCard}>
+            {notice.items.map(({ num, text }, idx) => (
+              <div key={`${num}-${idx}`} className={styles.refCard}>
                 <span className={styles.refNum}>{num}</span>
-                <p className={styles.refLabel}>{label.split('\n').map((line, i) => (
+                <p className={styles.refLabel}>{text.split('\n').map((line, i) => (
                   <span key={i}>{line}{i === 0 && <br />}</span>
                 ))}</p>
               </div>
@@ -723,9 +768,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* AGARWOOD INTRO */}
-      <section className={`${styles.section} ${styles.sectionAlt}`}>
+            );
+          case 'agarwood':
+            return (
+      // === AGARWOOD INTRO ===
+      <section key="agarwood" className={`${styles.section} ${styles.sectionAlt}`}>
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{agarwood.tag}</span>
@@ -759,9 +806,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* BENEFITS */}
-      <section className={styles.section} id="benefits">
+            );
+          case 'benefits':
+            return (
+      // === BENEFITS ===
+      <section key="benefits" className={styles.section} id="benefits">
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{benefits.tag}</span>
@@ -796,9 +845,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* PROCESS */}
-      <section className={`${styles.section} ${styles.sectionAlt}`} id="process">
+            );
+          case 'process':
+            return (
+      // === PROCESS ===
+      <section key="process" className={`${styles.section} ${styles.sectionAlt}`} id="process">
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{processData.tag}</span>
@@ -830,6 +881,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+            );
+          default:
+            return null;
+        }
+      })}
     </div>
   );
 }
