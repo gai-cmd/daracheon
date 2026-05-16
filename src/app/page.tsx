@@ -122,6 +122,7 @@ export type HomeSectionId =
   | 'trustStrip'
   | 'showroom'
   | 'problem'
+  | 'speciesCompare'
   | 'verified'
   | 'agarwood'
   | 'benefits'
@@ -132,6 +133,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'trustStrip',
   'showroom',
   'problem',
+  'speciesCompare',
   'verified',
   'agarwood',
   'benefits',
@@ -630,8 +632,14 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-
-          {/* agallocha vs malaccensis */}
+        </div>
+      </section>
+            );
+          case 'speciesCompare':
+            return (
+      // === SPECIES COMPARE (agallocha vs malaccensis — independent section) ===
+      <section key="speciesCompare" className={styles.problem} aria-label="아갈로차 록스버그 vs 말라센시스 — 학명별 식약처 등재 비교">
+        <div className={styles.wrap}>
           <div className={styles.speciesCompare}>
             <div className={styles.speciesCompareTitle}>{problem.speciesTitle}</div>
             <div className={styles.speciesTable}>

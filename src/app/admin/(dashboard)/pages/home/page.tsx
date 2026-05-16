@@ -112,6 +112,7 @@ type HomeSectionId =
   | 'trustStrip'
   | 'showroom'
   | 'problem'
+  | 'speciesCompare'
   | 'verified'
   | 'agarwood'
   | 'benefits'
@@ -334,6 +335,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'trustStrip',
   'showroom',
   'problem',
+  'speciesCompare',
   'verified',
   'agarwood',
   'benefits',
@@ -344,7 +346,8 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   hero: '히어로 (메인 + 3-Point Verification 우측 카드)',
   trustStrip: 'Trust Strip (4 통계)',
   showroom: '쇼룸 이미지',
-  problem: 'Problem · 침향 시장 불안 + 종 비교',
+  problem: 'Problem · 침향 시장 불안 (3 카드)',
+  speciesCompare: '종 비교 · 학명별 식약처 등재 비교 + 등록 기준 정의',
   verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 인증 + Solution CTA)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
@@ -477,6 +480,7 @@ export default function AdminHomePage() {
   const [solutionCta, setSolutionCta] = useState<HomeSolutionCta>(DEFAULT_SOLUTION_CTA);
   const [showroomImage, setShowroomImage] = useState<HomeShowroomImage>(DEFAULT_SHOWROOM);
   const [sectionOrder, setSectionOrder] = useState<HomeSectionId[]>(DEFAULT_SECTION_ORDER);
+  const [orderDirty, setOrderDirty] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -561,12 +565,16 @@ export default function AdminHomePage() {
     }
   }
 
-  // 섹션 위치 이동 — UI 즉시 반영 + 자동 저장.
-  async function moveSection(from: number, to: number) {
+  // 섹션 위치 이동 — UI 즉시 반영 + dirty 상태 표시. 저장은 명시적 버튼으로.
+  function moveSection(from: number, to: number) {
     if (to < 0 || to >= sectionOrder.length) return;
-    const next = moveItem(sectionOrder, from, to);
-    setSectionOrder(next);
-    await saveSection('sectionOrder', { sectionOrder: next });
+    setSectionOrder(moveItem(sectionOrder, from, to));
+    setOrderDirty(true);
+  }
+
+  async function saveSectionOrder() {
+    await saveSection('sectionOrder', { sectionOrder });
+    setOrderDirty(false);
   }
 
   if (loading) {
@@ -777,7 +785,18 @@ export default function AdminHomePage() {
                   <button type="button" onClick={() => setProblem({ ...problem, cards: [...problem.cards, { tag: '', title: '', body: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 카드 추가</button>
                 </div>
               </div>
+            </div>
+          </SectionCard>
+        );
 
+      case 'speciesCompare':
+        return (
+          <SectionCard title="종 비교 · 학명별 식약처 등재 비교 + 등록 기준 정의" onSave={() => saveSection('problem', { problem })} saving={saving === 'problem'}>
+            <div className="space-y-5">
+              <p className="text-xs text-gray-500">
+                💡 학명별 약전외한약규격집 · 식품공전 등재 여부를 비교하고, 두 품종 공통 적용 등록 기준 정의를 편집합니다.
+                Problem 섹션과 데이터(problem.species*)를 공유하므로, 한 곳에서 저장하면 양쪽 모두 갱신됩니다.
+              </p>
               <div>
                 <LabeledInput label="종 비교 섹션 제목" value={problem.speciesTitle} onChange={(v) => setProblem({ ...problem, speciesTitle: v })} />
                 <p className="mt-2 text-xs text-gray-500">학명별 약전외한약규격집/식품공전 등재 여부 비교 (✓ ✗).</p>
@@ -1142,10 +1161,52 @@ export default function AdminHomePage() {
 
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-2 text-3xl font-bold text-gray-900">홈 편집</h1>
-        <p className="mb-8 text-gray-500">
+        <p className="mb-6 text-gray-500">
           / (홈) 페이지의 모든 섹션을 한 곳에서 편집합니다. 각 섹션 우상단의 <strong className="text-gold-700">▲ 위로 / ▼ 아래로</strong> 버튼으로
-          순서를 바꾸면 즉시 프론트에 반영됩니다.
+          순서를 변경한 뒤 <strong className="text-gold-700">[순서 저장]</strong> 을 눌러야 사이트에 반영됩니다.
         </p>
+
+        {/* 섹션 순서 저장 바 — 변경이 있을 때만 활성. */}
+        <div
+          className={`sticky top-2 z-30 mb-6 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-sm transition-colors ${
+            orderDirty
+              ? 'border-amber-300 bg-amber-50'
+              : 'border-gray-200 bg-white'
+          }`}
+        >
+          <div className="text-sm">
+            {orderDirty ? (
+              <span className="font-medium text-amber-700">
+                ⚠ 섹션 순서가 변경되었습니다 — 아직 사이트에 반영되지 않았습니다.
+              </span>
+            ) : (
+              <span className="text-gray-500">
+                섹션 순서: 변경 사항 없음
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setSectionOrder(DEFAULT_SECTION_ORDER);
+                setOrderDirty(true);
+              }}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 hover:border-gray-400"
+              title="섹션 순서를 기본값으로 되돌립니다 (저장 전까지 사이트에 반영되지 않음)"
+            >
+              ↺ 기본 순서
+            </button>
+            <button
+              type="button"
+              onClick={saveSectionOrder}
+              disabled={!orderDirty || saving === 'sectionOrder'}
+              className="adm-btn-primary px-4 py-1.5 text-sm disabled:opacity-40"
+            >
+              {saving === 'sectionOrder' ? '저장 중…' : '순서 저장'}
+            </button>
+          </div>
+        </div>
 
         <div className="space-y-8">
           {sectionOrder.map((id, idx) => (
