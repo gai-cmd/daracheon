@@ -131,7 +131,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const literatures = data?.literatures ?? [];
   const papers = data?.papers ?? [];
   const usageTab = data?.usageTab ?? DEFAULT_USAGE;
-  const cta = data?.cta;
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
   const tabHeroes = data?.tabHeroes ?? {};
@@ -1377,65 +1376,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </section>
         </>
       )}
-
-      {/* CTA */}
-      <section className={styles.chapter} data-alt="1">
-        <div className={styles.wrap} style={{ textAlign: 'center' }}>
-          <RevealOnScroll>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                fontSize: '0.7rem',
-                letterSpacing: '0.3em',
-                color: 'var(--accent)',
-                textTransform: 'uppercase',
-                marginBottom: 16,
-              }}
-            >
-              — Explore —
-            </div>
-            <h3 style={{ marginBottom: 30, fontFamily: "'Noto Sans KR', sans-serif" }}>
-              {cta?.title ?? '침향의 세계가 궁금하시다면'}
-            </h3>
-            <div style={{ display: 'inline-flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link
-                href={cta?.buttonProductsHref ?? '/products'}
-                style={{
-                  padding: '14px 28px',
-                  background: 'var(--accent)',
-                  color: 'var(--lx-black)',
-                  border: '1px solid var(--accent)',
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                {cta?.buttonProducts ?? '제품 보기'}
-              </Link>
-              <Link
-                href={cta?.buttonBrandHref ?? '/brand-story'}
-                style={{
-                  padding: '14px 28px',
-                  background: 'transparent',
-                  color: '#fff',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.22em',
-                  textTransform: 'uppercase',
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                }}
-              >
-                {cta?.buttonBrand ?? '브랜드 스토리'}
-              </Link>
-            </div>
-          </RevealOnScroll>
-        </div>
-      </section>
 
       {/* ════════════ 논문 요약 모달 ════════════ */}
       {paperSummaryOpen && (
