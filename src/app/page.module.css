@@ -1103,3 +1103,62 @@
   transition: transform 400ms ease;
 }
 .procStep:hover .procImg { transform: scale(1.04); }
+
+/* === 섹션 메타 슬롯 (admin: 상단 태그/제목 인용문/본문 리드/하단 CTA) === */
+.sectionMetaPrefix {
+  padding: 56px 0 0;
+}
+.sectionMetaPrefix + section,
+.sectionMetaPrefix + .sectionMetaPrefix {
+  padding-top: 24px;
+}
+.metaPrefixInner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.metaTopTag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold, #d4a843);
+  border: 1px solid rgba(212, 168, 67, 0.35);
+  background: rgba(212, 168, 67, 0.05);
+  margin-bottom: 1.6rem;
+  border-radius: 2px;
+}
+.metaTitleQuote {
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 300;
+  line-height: 1.45;
+  color: #fff;
+  font-style: italic;
+  margin: 0 0 1.4rem;
+  letter-spacing: -0.01em;
+}
+.metaTitleQuote em {
+  font-style: normal;
+  color: var(--gold, #d4a843);
+  font-weight: 400;
+}
+.metaBodyLead {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 300;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.metaBodyLead em {
+  font-style: normal;
+  color: var(--gold, #d4a843);
+}
+.sectionMetaSuffix {
+  padding: 28px 0 64px;
+}
+.metaCtaWrap {
+  text-align: center;
+}

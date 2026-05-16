@@ -118,6 +118,16 @@ type HomeSectionId =
   | 'benefits'
   | 'process';
 
+interface SectionMetaCta { label: string; href: string; variant?: 'gold' | 'outline' }
+interface SectionMeta {
+  hidden?: boolean;
+  topTag?: string;
+  titleQuote?: string;
+  bodyLead?: string;
+  cta?: SectionMetaCta;
+}
+type SectionMetaMap = Partial<Record<HomeSectionId, SectionMeta>>;
+
 interface HomeData {
   hero: HomeHero;
   stats: HomeStat[];
@@ -132,6 +142,7 @@ interface HomeData {
   solutionCta?: HomeSolutionCta;
   showroomImage?: HomeShowroomImage;
   sectionOrder?: HomeSectionId[];
+  sectionMeta?: SectionMetaMap;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -401,6 +412,124 @@ function SectionCard({ title, children, onSave, saving }: { title: string; child
   );
 }
 
+// 섹션별 옵셔널 메타 슬롯 편집기 — 감추기 토글 + 상단 태그 / 제목 인용문 / 본문 리드 / 하단 CTA.
+// 값이 비어 있으면 사이트에 아무것도 추가되지 않음. (기존 섹션 구조 무영향)
+function SectionMetaEditor({
+  id,
+  value,
+  onChange,
+  onSave,
+  saving,
+}: {
+  id: HomeSectionId;
+  value: SectionMeta | undefined;
+  onChange: (next: SectionMeta) => void;
+  onSave: () => void;
+  saving: boolean;
+}) {
+  const meta: SectionMeta = value ?? {};
+  const cta: SectionMetaCta = meta.cta ?? { label: '', href: '', variant: 'gold' };
+  const update = (patch: Partial<SectionMeta>) => onChange({ ...meta, ...patch });
+  const updateCta = (patch: Partial<SectionMetaCta>) => onChange({ ...meta, cta: { ...cta, ...patch } });
+  return (
+    <details className="rounded-xl border border-emerald-200 bg-emerald-50/30 open:bg-emerald-50/60">
+      <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-emerald-900 flex items-center justify-between gap-3">
+        <span className="flex items-center gap-2">
+          <span className="text-emerald-700">⚙</span>
+          <span>섹션 옵션 — 감추기 · 상단 태그 · 제목 인용문 · 본문 리드 · 하단 CTA</span>
+        </span>
+        <span className="flex items-center gap-2 text-xs">
+          {meta.hidden && (
+            <span className="rounded-full bg-red-100 px-2 py-0.5 text-red-700">감춤</span>
+          )}
+          {(meta.topTag || meta.titleQuote || meta.bodyLead || (cta.label && cta.href)) && (
+            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">메타 적용</span>
+          )}
+        </span>
+      </summary>
+      <div className="space-y-4 px-4 pb-4 pt-2">
+        {/* Hide toggle */}
+        <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-3">
+          <input
+            type="checkbox"
+            checked={!!meta.hidden}
+            onChange={(e) => update({ hidden: e.target.checked })}
+            className="mt-0.5 h-4 w-4"
+          />
+          <div>
+            <div className="text-sm font-medium text-gray-900">이 섹션을 사이트에서 감춤</div>
+            <div className="text-xs text-gray-500">체크하면 / (홈) 에서 해당 섹션이 렌더되지 않습니다. 데이터는 보존됩니다.</div>
+          </div>
+        </label>
+
+        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-4">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            아래 슬롯은 비어 있으면 사이트에 표시되지 않습니다. 채우면 섹션 <em>위/아래</em>에 골드 톤 블록으로 추가됩니다. <br />
+            본문은 <code className="bg-gray-100 px-1 rounded">*텍스트*</code>로 강조, 줄바꿈은 그냥 엔터.
+          </p>
+
+          <LabeledInput
+            label="상단 태그 (예: Notice · 침향을 고르기 전에)"
+            value={meta.topTag ?? ''}
+            onChange={(v) => update({ topTag: v })}
+          />
+          <LabeledTextarea
+            label="제목 인용문 (*강조* · 줄바꿈 허용)"
+            value={meta.titleQuote ?? ''}
+            onChange={(v) => update({ titleQuote: v })}
+            rows={2}
+          />
+          <LabeledTextarea
+            label="본문 리드 (*강조* · 줄바꿈 허용)"
+            value={meta.bodyLead ?? ''}
+            onChange={(v) => update({ bodyLead: v })}
+            rows={3}
+          />
+
+          <div className="border-t border-gray-100 pt-4">
+            <div className="mb-2 text-sm font-medium text-gray-700">하단 CTA 버튼</div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <LabeledInput
+                label="버튼 라벨 (비우면 미표시)"
+                value={cta.label}
+                onChange={(v) => updateCta({ label: v })}
+              />
+              <LabeledInput
+                label="버튼 링크 (비우면 미표시)"
+                value={cta.href}
+                onChange={(v) => updateCta({ href: v })}
+              />
+            </div>
+            <div className="mt-3">
+              <label className="mb-1 block text-sm font-medium text-gray-700">버튼 스타일</label>
+              <select
+                value={cta.variant ?? 'gold'}
+                onChange={(e) => updateCta({ variant: e.target.value as 'gold' | 'outline' })}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+              >
+                <option value="gold">골드 (채움)</option>
+                <option value="outline">아웃라인 (테두리)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className="adm-btn-primary px-5 py-1.5 text-sm disabled:opacity-50"
+            title={`섹션 [${id}] 의 메타 슬롯 저장`}
+          >
+            {saving ? '저장 중…' : '섹션 옵션 저장'}
+          </button>
+        </div>
+      </div>
+    </details>
+  );
+}
+
 function SectionGroup({
   label,
   index,
@@ -481,6 +610,7 @@ export default function AdminHomePage() {
   const [showroomImage, setShowroomImage] = useState<HomeShowroomImage>(DEFAULT_SHOWROOM);
   const [sectionOrder, setSectionOrder] = useState<HomeSectionId[]>(DEFAULT_SECTION_ORDER);
   const [orderDirty, setOrderDirty] = useState(false);
+  const [sectionMeta, setSectionMeta] = useState<SectionMetaMap>({});
 
   useEffect(() => {
     if (!toast) return;
@@ -532,6 +662,9 @@ export default function AdminHomePage() {
           const withMissing = [...valid];
           for (const id of DEFAULT_SECTION_ORDER) if (!withMissing.includes(id)) withMissing.push(id);
           setSectionOrder(withMissing);
+        }
+        if (d?.sectionMeta && typeof d.sectionMeta === 'object') {
+          setSectionMeta(d.sectionMeta);
         }
       } catch (err) {
         console.error('Failed to fetch home:', err);
@@ -1218,6 +1351,13 @@ export default function AdminHomePage() {
               onMoveUp={() => moveSection(idx, idx - 1)}
               onMoveDown={() => moveSection(idx, idx + 1)}
             >
+              <SectionMetaEditor
+                id={id}
+                value={sectionMeta[id]}
+                onChange={(next) => setSectionMeta((prev) => ({ ...prev, [id]: next }))}
+                onSave={() => saveSection('sectionMeta', { sectionMeta })}
+                saving={saving === 'sectionMeta'}
+              />
               {renderGroupContent(id)}
             </SectionGroup>
           ))}

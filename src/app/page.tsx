@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
@@ -140,6 +141,21 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'process',
 ];
 
+// 섹션별 옵셔널 메타 슬롯 — 어드민에서 섹션 단위로 켤 수 있는 공통 부속.
+// 기존 schema 는 손대지 않고, 값이 있는 슬롯만 위/아래에 덧붙는다.
+export interface SectionMetaCta {
+  label: string;
+  href: string;
+  variant?: 'gold' | 'outline';
+}
+export interface SectionMeta {
+  hidden?: boolean;        // true → 해당 섹션 자체를 렌더하지 않음
+  topTag?: string;         // 섹션 상단 태그 (예: "Notice · 침향을 고르기 전에")
+  titleQuote?: string;     // 제목 인용문 — *...* 강조 / \n 줄바꿈 지원
+  bodyLead?: string;       // 본문 리드 — *...* 강조 / \n 줄바꿈 지원
+  cta?: SectionMetaCta;    // 섹션 하단 CTA 버튼
+}
+
 export interface HomeData {
   hero?: HomeHero;
   stats?: HomeStat[];
@@ -155,6 +171,7 @@ export interface HomeData {
   problem?: HomeProblem;
   solutionCta?: HomeSolutionCta;
   sectionOrder?: HomeSectionId[];
+  sectionMeta?: Partial<Record<HomeSectionId, SectionMeta>>;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -463,6 +480,49 @@ export default async function HomePage() {
   const solutionCta: HomeSolutionCta = home.solutionCta
     ? { ...DEFAULT_SOLUTION_CTA, ...home.solutionCta, pillars: home.solutionCta.pillars ?? DEFAULT_SOLUTION_CTA.pillars, buttons: home.solutionCta.buttons ?? DEFAULT_SOLUTION_CTA.buttons }
     : DEFAULT_SOLUTION_CTA;
+  const sectionMetaMap = home.sectionMeta ?? {};
+
+  // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
+  function renderMetaPrefix(meta?: SectionMeta) {
+    if (!meta) return null;
+    const hasAny = meta.topTag || meta.titleQuote || meta.bodyLead;
+    if (!hasAny) return null;
+    return (
+      <section className={styles.sectionMetaPrefix} aria-hidden={false}>
+        <div className={styles.wrap}>
+          <div className={styles.metaPrefixInner}>
+            {meta.topTag && <span className={styles.metaTopTag}>{meta.topTag}</span>}
+            {meta.titleQuote && (
+              <h2 className={styles.metaTitleQuote}>{renderMarked(meta.titleQuote)}</h2>
+            )}
+            {meta.bodyLead && (
+              <p className={styles.metaBodyLead}>{renderMarked(meta.bodyLead)}</p>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // 섹션 하단 CTA 버튼 — label·href 가 모두 있을 때만 렌더.
+  function renderMetaSuffix(meta?: SectionMeta) {
+    const cta = meta?.cta;
+    if (!cta?.label || !cta?.href) return null;
+    return (
+      <section className={styles.sectionMetaSuffix}>
+        <div className={styles.wrap}>
+          <div className={styles.metaCtaWrap}>
+            <Link
+              href={cta.href}
+              className={cta.variant === 'outline' ? styles.btnOutline : styles.btnGold}
+            >
+              {cta.label}
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -477,7 +537,10 @@ export default async function HomePage() {
       />
       <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
       {sectionOrder.map((sectionId) => {
-        switch (sectionId) {
+        const meta = sectionMetaMap[sectionId];
+        if (meta?.hidden) return null;
+        const sectionContent = (() => {
+          switch (sectionId) {
           case 'hero':
             return (
       // === HERO ===
@@ -892,7 +955,19 @@ export default async function HomePage() {
             );
           default:
             return null;
-        }
+          }
+        })();
+        const prefix = renderMetaPrefix(meta);
+        const suffix = renderMetaSuffix(meta);
+        if (!sectionContent && !prefix && !suffix) return null;
+        if (!prefix && !suffix) return sectionContent;
+        return (
+          <React.Fragment key={`wrap-${sectionId}`}>
+            {prefix}
+            {sectionContent}
+            {suffix}
+          </React.Fragment>
+        );
       })}
     </div>
   );
