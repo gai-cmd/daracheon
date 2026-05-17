@@ -243,6 +243,19 @@
   text-align: center;
   margin: 0 auto 60px;
 }
+.verifiedHead p {
+  font-size: 1rem;
+  line-height: 2.15;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 300;
+  margin: 0 auto 14px;
+  max-width: 900px;
+}
+.verifiedHead p em {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 500;
+}
 .tag {
   display: inline-block;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -846,6 +859,16 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
+}
+.speciesDefTitle em {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--accent);
+  letter-spacing: -0.005em;
+}
+@media (min-width: 800px) {
+  .speciesDefTitle em { font-size: 1.1rem; }
 }
 .speciesDefBody {
   display: block;

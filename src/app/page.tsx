@@ -776,14 +776,14 @@ export default async function HomePage() {
               {problem.speciesDefHerb && (
                 <div className={styles.speciesDefHerb}>
                   <div className={styles.speciesDefTag}>{problem.speciesDefHerb.tag}</div>
-                  <div className={styles.speciesDefTitle}>{problem.speciesDefHerb.title}</div>
+                  <div className={styles.speciesDefTitle}>{renderMarked(problem.speciesDefHerb.title)}</div>
                   <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefHerb.body)}</p>
                 </div>
               )}
               {problem.speciesDefFood && (
                 <div className={styles.speciesDefFood}>
                   <div className={styles.speciesDefTag}>{problem.speciesDefFood.tag}</div>
-                  <div className={styles.speciesDefTitle}>{problem.speciesDefFood.title}</div>
+                  <div className={styles.speciesDefTitle}>{renderMarked(problem.speciesDefFood.title)}</div>
                   <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefFood.body)}</p>
                 </div>
               )}
