@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -48,7 +48,7 @@ export async function GET() {
   const t0 = Date.now();
   try {
     console.log('[api:pages] GET stage=1:read begin');
-    const pages = await readSingle('pages');
+    const pages = await readSingleUncached('pages');
     console.log(`[api:pages] GET stage=1:read done (${Date.now() - t0}ms, has=${!!pages})`);
     if (!pages) {
       return NextResponse.json(
@@ -85,7 +85,7 @@ export async function PUT(request: Request) {
   // Stage 3: 기존 pages blob 로드
   let existing: PagesData;
   try {
-    const loaded = await readSingle<PagesData>('pages');
+    const loaded = await readSingleUncached<PagesData>('pages');
     existing = loaded ?? {};
     console.log(`[api:pages] PUT stage=3:load-existing keys=${Object.keys(existing).join(',')}`);
   } catch (err) {
