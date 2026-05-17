@@ -97,13 +97,7 @@ interface HomeProblem {
   speciesDefFood?: SpeciesDef;
 }
 
-interface SolutionPillar { label: string; text: string }
-interface SolutionButton { label: string; href: string; variant?: 'gold' | 'outline' }
-interface HomeSolutionCta {
-  title: string;
-  pillars: SolutionPillar[];
-  buttons: SolutionButton[];
-}
+// solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17). 여기에선 타입 없음.
 
 // === 신규 ===
 interface HomeShowroomImage { src: string; tag?: string; title?: string; body?: string }
@@ -139,7 +133,8 @@ interface HomeData {
   verifiedCards?: VerifiedCard[];
   certs?: CertChip[];
   problem?: HomeProblem;
-  solutionCta?: HomeSolutionCta;
+  // solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17).
+  // 기존 prod blob 의 home.solutionCta 데이터는 about-agarwood/page.tsx 가 fallback 으로 읽음.
   showroomImage?: HomeShowroomImage;
   sectionOrder?: HomeSectionId[];
   sectionMeta?: SectionMetaMap;
@@ -321,18 +316,7 @@ const DEFAULT_PROBLEM: HomeProblem = {
   },
 };
 
-const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
-  title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
-  pillars: [
-    { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
-    { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
-    { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
-  ],
-  buttons: [
-    { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },
-    { label: '조엘라이프 검증 기준 보기', href: '/brand-story', variant: 'outline' },
-  ],
-};
+// DEFAULT_SOLUTION_CTA 는 about-agarwood 어드민으로 이동(2026-05-17).
 
 const DEFAULT_SHOWROOM: HomeShowroomImage = {
   src: '',
@@ -606,7 +590,6 @@ export default function AdminHomePage() {
   const [verification, setVerification] = useState<VerificationRow[]>(DEFAULT_VERIFICATION);
   const [certs, setCerts] = useState<CertChip[]>(DEFAULT_CERTS);
   const [problem, setProblem] = useState<HomeProblem>(DEFAULT_PROBLEM);
-  const [solutionCta, setSolutionCta] = useState<HomeSolutionCta>(DEFAULT_SOLUTION_CTA);
   const [showroomImage, setShowroomImage] = useState<HomeShowroomImage>(DEFAULT_SHOWROOM);
   const [sectionOrder, setSectionOrder] = useState<HomeSectionId[]>(DEFAULT_SECTION_ORDER);
   const [orderDirty, setOrderDirty] = useState(false);
@@ -648,14 +631,7 @@ export default function AdminHomePage() {
             species: d.problem.species ?? DEFAULT_PROBLEM.species,
           });
         }
-        if (d?.solutionCta) {
-          setSolutionCta({
-            ...DEFAULT_SOLUTION_CTA,
-            ...d.solutionCta,
-            pillars: d.solutionCta.pillars ?? DEFAULT_SOLUTION_CTA.pillars,
-            buttons: d.solutionCta.buttons ?? DEFAULT_SOLUTION_CTA.buttons,
-          });
-        }
+        // d.solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17). 여기서 로드 안 함.
         if (d?.showroomImage) setShowroomImage({ ...DEFAULT_SHOWROOM, ...d.showroomImage });
         if (Array.isArray(d?.sectionOrder)) {
           const valid = d.sectionOrder.filter((s): s is HomeSectionId => DEFAULT_SECTION_ORDER.includes(s as HomeSectionId));
@@ -1110,55 +1086,17 @@ export default function AdminHomePage() {
               </div>
             </SectionCard>
 
-            {/* Solution CTA */}
-            <SectionCard title="Solution CTA · 검증 섹션 하단 결론 박스" onSave={() => saveSection('solutionCta', { solutionCta })} saving={saving === 'solutionCta'}>
-              <div className="space-y-5">
-                <p className="text-xs text-gray-500">
-                  💡 강조: <code className="rounded bg-gray-100 px-1">*강조*</code> 별표 마커. 줄바꿈은 그대로 표시.
-                </p>
-                <LabeledTextarea label="제목 (*...* 강조 · 줄바꿈 허용)" value={solutionCta.title} onChange={(v) => setSolutionCta({ ...solutionCta, title: v })} rows={3} />
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">3 필러 ({solutionCta.pillars.length})</label>
-                  <div className="space-y-2">
-                    {solutionCta.pillars.map((p, i) => (
-                      <div key={i} className="grid grid-cols-[100px_1fr_auto] items-center gap-2">
-                        <input value={p.label} onChange={(e) => { const n = [...solutionCta.pillars]; n[i] = { ...n[i], label: e.target.value }; setSolutionCta({ ...solutionCta, pillars: n }); }} placeholder="라벨" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                        <input value={p.text} onChange={(e) => { const n = [...solutionCta.pillars]; n[i] = { ...n[i], text: e.target.value }; setSolutionCta({ ...solutionCta, pillars: n }); }} placeholder="설명" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                        <div className="flex gap-1">
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: moveItem(solutionCta.pillars, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: moveItem(solutionCta.pillars, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: removeIndex(solutionCta.pillars, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                        </div>
-                      </div>
-                    ))}
-                    <button type="button" onClick={() => setSolutionCta({ ...solutionCta, pillars: [...solutionCta.pillars, { label: '', text: '' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 필러 추가</button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">CTA 버튼 ({solutionCta.buttons.length})</label>
-                  <div className="space-y-2">
-                    {solutionCta.buttons.map((b, i) => (
-                      <div key={i} className="grid grid-cols-[1fr_1fr_120px_auto] items-center gap-2">
-                        <input value={b.label} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], label: e.target.value }; setSolutionCta({ ...solutionCta, buttons: n }); }} placeholder="라벨" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                        <input value={b.href} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], href: e.target.value }; setSolutionCta({ ...solutionCta, buttons: n }); }} placeholder="링크 (예: /about-agarwood)" className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                        <select value={b.variant ?? 'gold'} onChange={(e) => { const n = [...solutionCta.buttons]; n[i] = { ...n[i], variant: e.target.value as 'gold' | 'outline' }; setSolutionCta({ ...solutionCta, buttons: n }); }} className="rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gold-500 focus:outline-none">
-                          <option value="gold">Gold (메인)</option>
-                          <option value="outline">Outline (보조)</option>
-                        </select>
-                        <div className="flex gap-1">
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: moveItem(solutionCta.buttons, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: moveItem(solutionCta.buttons, i, i + 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                          <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: removeIndex(solutionCta.buttons, i) })} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                        </div>
-                      </div>
-                    ))}
-                    <button type="button" onClick={() => setSolutionCta({ ...solutionCta, buttons: [...solutionCta.buttons, { label: '', href: '', variant: 'gold' }] })} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 버튼 추가</button>
-                  </div>
-                </div>
+            {/* Solution CTA 는 침향 이야기 > 진짜 침향 구별 탭으로 이동(2026-05-17).
+                /admin/pages/about-agarwood → 진짜 침향 구별 방법 에서 편집. */}
+            <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-amber-900">
+              <strong>Solution CTA 이동 안내</strong>
+              <div className="mt-1 text-amber-800">
+                &lsquo;학명·인증·산지&rsquo; 결론 박스는 침향 이야기(/about-agarwood) 의
+                &lsquo;진짜 침향 구별 방법&rsquo; 탭으로 이동했습니다. 편집은{' '}
+                <a href="/admin/pages/about-agarwood" className="underline font-semibold">/admin/pages/about-agarwood</a>{' '}
+                → &lsquo;진짜 침향 구별&rsquo; 탭에서 진행하세요.
               </div>
-            </SectionCard>
+            </div>
           </>
         );
 

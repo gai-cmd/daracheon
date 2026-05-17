@@ -39,6 +39,52 @@ function renderWithNowrap(text: string): ReactNode {
   return nodes.length > 1 ? nodes : text;
 }
 
+/**
+ * *...* 마커 → 골드 <em>, \n → <br /> 로 렌더링.
+ * 홈에서 옮긴 Solution CTA 의 title 강조용.
+ */
+function renderMarkedGold(text: string): ReactNode {
+  const lines = text.split('\n');
+  return lines.map((line, li) => {
+    const parts: ReactNode[] = [];
+    let remaining = line;
+    let idx = 0;
+    while (remaining.length > 0) {
+      const start = remaining.indexOf('*');
+      if (start === -1) {
+        parts.push(remaining);
+        break;
+      }
+      const end = remaining.indexOf('*', start + 1);
+      if (end === -1) {
+        parts.push(remaining);
+        break;
+      }
+      if (start > 0) parts.push(remaining.slice(0, start));
+      parts.push(
+        <em
+          key={`em-${li}-${idx++}`}
+          style={{
+            color: 'var(--accent)',
+            fontStyle: 'normal',
+            fontFamily: "'Noto Serif KR', serif",
+            fontWeight: 400,
+          }}
+        >
+          {remaining.slice(start + 1, end)}
+        </em>
+      );
+      remaining = remaining.slice(end + 1);
+    }
+    return (
+      <span key={`l-${li}`}>
+        {parts}
+        {li < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
 
 const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
@@ -742,6 +788,103 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     </div>
                   </RevealOnScroll>
                 )}
+
+                {/* Solution CTA — 학명·인증·산지 결론 박스. 홈에서 이동(2026-05-17). */}
+                {auth.solutionCta && auth.solutionCta.title && (
+                  <RevealOnScroll delay={140}>
+                    <div
+                      style={{
+                        marginTop: 36,
+                        border: '1px solid rgba(212,168,67,0.35)',
+                        background: 'linear-gradient(180deg, rgba(212,168,67,0.05), rgba(212,168,67,0.01))',
+                        padding: '32px 28px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: "'Noto Serif KR', serif",
+                          fontSize: 'clamp(1.2rem, 2.4vw, 1.7rem)',
+                          fontWeight: 300,
+                          letterSpacing: '-0.01em',
+                          lineHeight: 1.5,
+                          color: '#fff',
+                          marginBottom: 26,
+                        }}
+                      >
+                        {renderMarkedGold(auth.solutionCta.title)}
+                      </h3>
+                      {auth.solutionCta.pillars.length > 0 && (
+                        <div
+                          style={{
+                            display: 'grid',
+                            gap: 14,
+                            gridTemplateColumns: `repeat(auto-fit, minmax(${auth.solutionCta.pillars.length > 2 ? 200 : 240}px, 1fr))`,
+                            marginBottom: auth.solutionCta.buttons.length > 0 ? 24 : 0,
+                            textAlign: 'left',
+                          }}
+                        >
+                          {auth.solutionCta.pillars.map((p, i) => (
+                            <div
+                              key={`${p.label}-${i}`}
+                              style={{
+                                padding: '16px 18px',
+                                border: '1px solid rgba(212,168,67,0.2)',
+                                background: 'rgba(255,255,255,0.02)',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                  fontSize: '0.64rem',
+                                  letterSpacing: '0.26em',
+                                  textTransform: 'uppercase',
+                                  color: 'var(--accent)',
+                                  marginBottom: 8,
+                                }}
+                              >
+                                {p.label}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: '0.88rem',
+                                  lineHeight: 1.7,
+                                  color: 'rgba(255,255,255,0.75)',
+                                  fontWeight: 300,
+                                }}
+                              >
+                                {p.text}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {auth.solutionCta.buttons.length > 0 && (
+                        <div style={{ display: 'inline-flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+                          {auth.solutionCta.buttons.map((b, i) => {
+                            const baseStyle: React.CSSProperties = {
+                              padding: '14px 26px',
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.7rem',
+                              letterSpacing: '0.22em',
+                              textTransform: 'uppercase',
+                              textDecoration: 'none',
+                            };
+                            const styleVariant: React.CSSProperties = b.variant === 'outline'
+                              ? { ...baseStyle, background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 500 }
+                              : { ...baseStyle, background: 'var(--accent)', color: 'var(--lx-black)', border: '1px solid var(--accent)', fontWeight: 600 };
+                            return (
+                              <Link key={`${b.label}-${i}`} href={b.href} style={styleVariant}>
+                                {b.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </RevealOnScroll>
+                )}
+
                 <RevealOnScroll delay={150}>
                   <p>{auth.intro}</p>
                 </RevealOnScroll>

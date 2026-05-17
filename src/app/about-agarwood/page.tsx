@@ -134,9 +134,20 @@ export interface AuthenticitySummary {
   suffix?: string;
   line2: string;
 }
+export interface SolutionPillar { label: string; text: string }
+export interface SolutionButton { label: string; href: string; variant?: 'gold' | 'outline' }
+export interface SolutionCta {
+  title: string;
+  pillars: SolutionPillar[];
+  buttons: SolutionButton[];
+}
+
 export interface AuthenticityTab {
   subtitle: string;
   intro: string;
+  // 진짜 침향 구별 — 상단 상징 이미지 바로 아래 표시되는 결론 박스.
+  // 홈에서 이동(2026-05-17). 기존 home.solutionCta 데이터는 서버 컴포넌트가 fallback.
+  solutionCta?: SolutionCta;
   check01Title: string;
   check01Body: string;
   check01Sources: AuthenticitySource[];
@@ -179,8 +190,26 @@ export interface AboutAgarwoodData {
 }
 
 export default async function AboutAgarwoodPage() {
-  const pagesData = await readSingleUncached<{ aboutAgarwood: AboutAgarwoodData; brandStory: unknown }>('pages');
-  const data: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
+  const pagesData = await readSingleUncached<{
+    aboutAgarwood: AboutAgarwoodData;
+    home?: { solutionCta?: SolutionCta };
+    brandStory: unknown;
+  }>('pages');
+  const rawAbout: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
+  // Legacy fallback — solutionCta 는 2026-05-17 이전엔 home.solutionCta 에 저장됐다.
+  // about-agarwood 어드민에서 새로 저장하기 전까지는 기존 home 값을 그대로 노출.
+  const legacyHomeSolutionCta = pagesData?.home?.solutionCta;
+  const data: AboutAgarwoodData | null = rawAbout
+    ? {
+        ...rawAbout,
+        authenticityTab: rawAbout.authenticityTab
+          ? {
+              ...rawAbout.authenticityTab,
+              solutionCta: rawAbout.authenticityTab.solutionCta ?? legacyHomeSolutionCta,
+            }
+          : rawAbout.authenticityTab,
+      }
+    : null;
 
   // ScholarlyArticle JSON-LD — 검증된 논문 데이터(저자·연도·저널·링크
   // 모두 갖춘 항목) 만 schema 에 포함. dummy / 일부만 입력된 항목은 제외.

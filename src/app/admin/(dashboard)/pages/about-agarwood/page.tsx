@@ -83,9 +83,18 @@ interface AuthenticitySummary {
   suffix?: string;
   line2: string;
 }
+interface SolutionPillarData { label: string; text: string }
+interface SolutionButtonData { label: string; href: string; variant?: 'gold' | 'outline' }
+interface SolutionCtaData {
+  title: string;
+  pillars: SolutionPillarData[];
+  buttons: SolutionButtonData[];
+}
 interface AuthenticityTabData {
   subtitle: string;
   intro: string;
+  // 홈에서 이동(2026-05-17) — 상단 상징 이미지 바로 아래 결론 박스.
+  solutionCta?: SolutionCtaData;
   check01Title: string;
   check01Body: string;
   check01Sources: AuthenticitySource[];
@@ -339,6 +348,18 @@ export default function AdminAboutAgarwoodPage() {
   const [authenticityTab, setAuthenticityTab] = useState<AuthenticityTabData>({
     subtitle: '진짜가 아닌 가짜가 판치는 시장, 이 세 가지로 반드시 확인하세요.',
     intro: '한국에도 많은 침향 제품들이 소개됐지만, 중요한 건 오리지널에 대한 정의입니다. 가짜가 아닌 진짜를 찾아야 하는데 이에 대한 기준이 모호한 것이 현실입니다. 진짜 침향은 크게 세 가지 방법 — 학명, 산지, 증빙문서 — 으로 확인할 수 있습니다.',
+    solutionCta: {
+      title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
+      pillars: [
+        { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
+        { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
+        { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
+      ],
+      buttons: [
+        { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },
+        { label: '조엘라이프 검증 기준 보기', href: '/brand-story', variant: 'outline' },
+      ],
+    },
     check01Title: '학명을 따져봐야 한다',
     check01Body: '대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)입니다.',
     check01Sources: [
@@ -450,10 +471,19 @@ export default function AdminAboutAgarwoodPage() {
         const res = await fetch('/api/admin/pages');
         // pages / aboutAgarwood 누락 시 TypeError 방지 — brandStory 와 동일 패턴.
         const raw = (await res.json().catch(() => ({}))) as {
-          pages?: { aboutAgarwood?: Partial<AboutAgarwoodData> };
+          pages?: {
+            aboutAgarwood?: Partial<AboutAgarwoodData>;
+            // Legacy fallback — 2026-05-17 이전 home.solutionCta 에 저장된 데이터.
+            home?: { solutionCta?: SolutionCtaData };
+          };
         };
         const d = raw?.pages?.aboutAgarwood;
+        const legacyHomeSolutionCta = raw?.pages?.home?.solutionCta;
         if (!d) {
+          // about-agarwood 가 비어 있어도 legacy home.solutionCta 가 있으면 상태에 반영.
+          if (legacyHomeSolutionCta) {
+            setAuthenticityTab((prev) => ({ ...prev, solutionCta: legacyHomeSolutionCta }));
+          }
           setLoading(false);
           return;
         }
@@ -485,8 +515,13 @@ export default function AdminAboutAgarwoodPage() {
               const line2 = cmsSum.line2 ?? prev.check01Summary!.line2;
               mergedSummary = { line1, line2 };
             }
-            return { ...prev, ...cms, check01Summary: mergedSummary };
+            // solutionCta: cms 값 > legacy home > prev default 순.
+            const mergedSolutionCta = cms.solutionCta ?? legacyHomeSolutionCta ?? prev.solutionCta;
+            return { ...prev, ...cms, check01Summary: mergedSummary, solutionCta: mergedSolutionCta };
           });
+        } else if (legacyHomeSolutionCta) {
+          // authenticityTab 자체가 없어도 legacy solutionCta 만 우선 적용.
+          setAuthenticityTab((prev) => ({ ...prev, solutionCta: legacyHomeSolutionCta }));
         }
         setLiteratures(d.literatures ?? []);
         setPapers(d.papers ?? []);
@@ -999,6 +1034,144 @@ export default function AdminAboutAgarwoodPage() {
           <SectionCard title="탭 1 히어로 이미지 · 진짜 침향 구별 방법" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
             <p className="text-xs text-gray-500 mb-3">탭 상단 와이드 배너 이미지. 진위감별·검증 느낌의 이미지를 권장합니다.</p>
             <ImageUploadField label="히어로 이미지" value={tabHeroes.tab1 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab1: url })} subdir="pages" />
+          </SectionCard>
+
+          {/* Solution CTA — 홈에서 이동(2026-05-17). 상단 상징 이미지 바로 아래 표시. */}
+          <SectionCard title="Solution CTA · 학명·인증·산지 결론 박스 (상단 이미지 바로 아래)" onSave={() => saveSection('authenticityTab', { authenticityTab })} saving={saving === 'authenticityTab'}>
+            <div className="space-y-5">
+              <p className="text-xs text-gray-500">
+                💡 강조: <code className="rounded bg-gray-100 px-1">*강조*</code> 별표 마커. 줄바꿈은 그대로 표시.
+                <br />
+                ⚠ 이 박스를 비우면 (제목이 빈 문자열) 화면에서 사라집니다.
+              </p>
+              <LabeledTextarea
+                label="제목 (*...* 강조 · 줄바꿈 허용)"
+                value={authenticityTab.solutionCta?.title ?? ''}
+                onChange={(v) => setAuthenticityTab({
+                  ...authenticityTab,
+                  solutionCta: { ...(authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] }), title: v },
+                })}
+                rows={3}
+              />
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">필러 ({authenticityTab.solutionCta?.pillars.length ?? 0})</label>
+                <div className="space-y-2">
+                  {(authenticityTab.solutionCta?.pillars ?? []).map((p, i) => (
+                    <div key={i} className="grid grid-cols-[100px_1fr_auto] items-center gap-2">
+                      <input
+                        value={p.label}
+                        onChange={(e) => {
+                          const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                          const n = [...cur.pillars]; n[i] = { ...n[i], label: e.target.value };
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: n } });
+                        }}
+                        placeholder="라벨"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                      />
+                      <input
+                        value={p.text}
+                        onChange={(e) => {
+                          const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                          const n = [...cur.pillars]; n[i] = { ...n[i], text: e.target.value };
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: n } });
+                        }}
+                        placeholder="설명"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                      />
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          if (i <= 0) return;
+                          const n = [...cur.pillars]; [n[i - 1], n[i]] = [n[i], n[i - 1]];
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: n } });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          if (i >= cur.pillars.length - 1) return;
+                          const n = [...cur.pillars]; [n[i + 1], n[i]] = [n[i], n[i + 1]];
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: n } });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          const n = cur.pillars.filter((_, ii) => ii !== i);
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: n } });
+                        }} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => {
+                    const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                    setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, pillars: [...cur.pillars, { label: '', text: '' }] } });
+                  }} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 필러 추가</button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">CTA 버튼 ({authenticityTab.solutionCta?.buttons.length ?? 0})</label>
+                <div className="space-y-2">
+                  {(authenticityTab.solutionCta?.buttons ?? []).map((b, i) => (
+                    <div key={i} className="grid grid-cols-[1fr_1fr_120px_auto] items-center gap-2">
+                      <input
+                        value={b.label}
+                        onChange={(e) => {
+                          const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                          const n = [...cur.buttons]; n[i] = { ...n[i], label: e.target.value };
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }}
+                        placeholder="라벨"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                      />
+                      <input
+                        value={b.href}
+                        onChange={(e) => {
+                          const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                          const n = [...cur.buttons]; n[i] = { ...n[i], href: e.target.value };
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }}
+                        placeholder="링크 (예: /about-agarwood)"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                      />
+                      <select
+                        value={b.variant ?? 'gold'}
+                        onChange={(e) => {
+                          const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                          const n = [...cur.buttons]; n[i] = { ...n[i], variant: e.target.value as 'gold' | 'outline' };
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }}
+                        className="rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                      >
+                        <option value="gold">Gold (메인)</option>
+                        <option value="outline">Outline (보조)</option>
+                      </select>
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          if (i <= 0) return;
+                          const n = [...cur.buttons]; [n[i - 1], n[i]] = [n[i], n[i - 1]];
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          if (i >= cur.buttons.length - 1) return;
+                          const n = [...cur.buttons]; [n[i + 1], n[i]] = [n[i], n[i + 1]];
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                        <button type="button" onClick={() => {
+                          const cur = authenticityTab.solutionCta!;
+                          const n = cur.buttons.filter((_, ii) => ii !== i);
+                          setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: n } });
+                        }} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => {
+                    const cur = authenticityTab.solutionCta ?? { title: '', pillars: [], buttons: [] };
+                    setAuthenticityTab({ ...authenticityTab, solutionCta: { ...cur, buttons: [...cur.buttons, { label: '', href: '', variant: 'gold' }] } });
+                  }} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 버튼 추가</button>
+                </div>
+              </div>
+            </div>
           </SectionCard>
 
           {/* Authenticity Tab */}

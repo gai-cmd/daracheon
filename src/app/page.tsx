@@ -209,7 +209,8 @@ const DEFAULT_NOTICE: HomeNotice = {
     { num: '01', text: '대한민국약전외한약\n(생약)규격집' },
     { num: '02', text: '식약처\n식품공전' },
     { num: '03', text: '한약재 관능검사\n해설서' },
-    { num: '04', text: '한국한의학연구원\n한약자원연구센터' },
+    { num: '04', text: '원색\n한약재감별도감' },
+    { num: '05', text: '한국한의학연구원\n한약자원연구센터' },
   ],
   badges: [],
   ctaLabel: '',
@@ -358,19 +359,6 @@ const DEFAULT_PROBLEM: HomeProblem = {
   },
 };
 
-const DEFAULT_SOLUTION_CTA: HomeSolutionCta = {
-  title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
-  pillars: [
-    { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
-    { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
-    { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
-  ],
-  buttons: [
-    { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },
-    { label: '조엘라이프 검증 기준 보기', href: '/brand-story', variant: 'outline' },
-  ],
-};
-
 // "*텍스트*" 마커를 <em> 으로, "\n" 을 <br /> 로 렌더링.
 // admin 에서 강조 부분과 줄바꿈을 직접 편집할 수 있게 한다.
 function renderMarked(text: string, emClass?: string): React.ReactNode {
@@ -477,9 +465,8 @@ export default async function HomePage() {
     ? { ...DEFAULT_PROBLEM, ...home.problem, cards: home.problem.cards ?? DEFAULT_PROBLEM.cards, species: home.problem.species ?? DEFAULT_PROBLEM.species }
     : DEFAULT_PROBLEM;
   const problemImage = problem.image ?? home.problemImage;
-  const solutionCta: HomeSolutionCta = home.solutionCta
-    ? { ...DEFAULT_SOLUTION_CTA, ...home.solutionCta, pillars: home.solutionCta.pillars ?? DEFAULT_SOLUTION_CTA.pillars, buttons: home.solutionCta.buttons ?? DEFAULT_SOLUTION_CTA.buttons }
-    : DEFAULT_SOLUTION_CTA;
+  // solutionCta 는 2026-05-17 부터 about-agarwood (진짜 침향 구별 탭) 로 이동.
+  // 기존 home.solutionCta blob 데이터는 about-agarwood/page.tsx 의 legacy fallback 이 처리.
   const sectionMetaMap = home.sectionMeta ?? {};
 
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
@@ -576,13 +563,26 @@ export default async function HomePage() {
               {/* 3-Point Verification Card (edit in /admin/pages/home) */}
               <div className={styles.heroTrust}>
                 <div className={styles.heroTrustTitle}>3-Point Verification</div>
-                {verification.map((row, i) => (
-                  <div key={`${row.num}-${i}`} className={styles.heroTrustRow}>
-                    <div className={styles.heroTrustNum}>{row.num}</div>
-                    <div className={styles.heroTrustLabel}>{row.label}</div>
-                    <div className={styles.heroTrustMeta}>{row.meta}</div>
-                  </div>
-                ))}
+                {verification.map((row, i) => {
+                  const sepMatch = row.label.match(/^(.+?)\s*[-—–]\s*(.+)$/);
+                  const keyword = sepMatch ? sepMatch[1] : row.label;
+                  const rest = sepMatch ? sepMatch[2] : '';
+                  return (
+                    <div key={`${row.num}-${i}`} className={styles.heroTrustRow}>
+                      <div className={styles.heroTrustNum}>{row.num}</div>
+                      <div className={styles.heroTrustLabel}>
+                        <span className={styles.heroTrustKeyword}>{keyword}</span>
+                        {rest && (
+                          <>
+                            <span className={styles.heroTrustSep}> — </span>
+                            <span className={styles.heroTrustRest}>{rest}</span>
+                          </>
+                        )}
+                      </div>
+                      <div className={styles.heroTrustMeta}>{row.meta}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -814,29 +814,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* SOLUTION CTA */}
-          <div className={styles.solutionCta}>
-            <h3 className={styles.solutionCtaTitle}>{renderMarked(solutionCta.title)}</h3>
-            <div className={styles.solutionCtaPillars}>
-              {solutionCta.pillars.map((p, i) => (
-                <div key={`${p.label}-${i}`} className={styles.solutionCtaPillar}>
-                  <div className={styles.solutionCtaPillarLabel}>{p.label}</div>
-                  <div className={styles.solutionCtaPillarText}>{p.text}</div>
-                </div>
-              ))}
-            </div>
-            <div className={styles.solutionCtaButtons}>
-              {solutionCta.buttons.map((b, i) => (
-                <Link
-                  key={`${b.label}-${i}`}
-                  href={b.href}
-                  className={b.variant === 'outline' ? styles.btnOutline : styles.btnGold}
-                >
-                  {b.label}
-                </Link>
-              ))}
-            </div>
-          </div>
+          {/* SOLUTION CTA 는 about-agarwood (진짜 침향 구별 탭) 로 이동(2026-05-17) */}
         </div>
       </section>
             );
