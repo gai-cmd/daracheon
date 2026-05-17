@@ -123,7 +123,6 @@ export type HomeSectionId =
   | 'trustStrip'
   | 'showroom'
   | 'problem'
-  | 'speciesCompare'
   | 'verified'
   | 'agarwood'
   | 'benefits'
@@ -134,7 +133,6 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'trustStrip',
   'showroom',
   'problem',
-  'speciesCompare',
   'verified',
   'agarwood',
   'benefits',
@@ -698,11 +696,32 @@ export default async function HomePage() {
         </div>
       </section>
             );
-          case 'speciesCompare':
+          case 'verified':
             return (
-      // === SPECIES COMPARE (agallocha vs malaccensis — independent section) ===
-      <section key="speciesCompare" className={styles.problem} aria-label="아갈로차 록스버그 vs 말라센시스 — 학명별 식약처 등재 비교">
+      // === VERIFIED (notice head + refGrid + speciesCompare + certs) ===
+      <section key="verified" className={styles.verified} id="verified">
         <div className={styles.wrap}>
+          <div className={styles.verifiedHead}>
+            <span className={styles.tag}>{notice.tag}</span>
+            <h2 className={styles.h2}>{renderMarked(notice.title)}</h2>
+            <div className={styles.line} />
+            {notice.body.split('\n\n').map((para, pi) => (
+              <p key={`notice-p-${pi}`}>{renderMarked(para)}</p>
+            ))}
+          </div>
+
+          <div className={styles.refGrid}>
+            {notice.items.map(({ num, text }, idx) => (
+              <div key={`${num}-${idx}`} className={styles.refCard}>
+                <span className={styles.refNum}>{num}</span>
+                <p className={styles.refLabel}>{text.split('\n').map((line, i) => (
+                  <span key={i}>{line}{i === 0 && <br />}</span>
+                ))}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* SPECIES COMPARE — refGrid 와 certRow 사이에 삽입(2026-05-17 이동). */}
           <div className={styles.speciesCompare}>
             <div className={styles.speciesCompareTitle}>{problem.speciesTitle}</div>
             <div className={styles.speciesTable}>
@@ -754,9 +773,6 @@ export default async function HomePage() {
             <p className={styles.speciesFoot}>{problem.speciesFoot}</p>
 
             <div className={styles.speciesDefs}>
-              <p className={styles.speciesDefsLead}>
-                {renderMarked('위 두 품종에 *공통으로 적용*되는 식약처 등록 기준의 의미')}
-              </p>
               {problem.speciesDefHerb && (
                 <div className={styles.speciesDefHerb}>
                   <div className={styles.speciesDefTag}>{problem.speciesDefHerb.tag}</div>
@@ -772,33 +788,6 @@ export default async function HomePage() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      </section>
-            );
-          case 'verified':
-            return (
-      // === VERIFIED (notice-driven head + refGrid + certs + solutionCta) ===
-      <section key="verified" className={styles.verified} id="verified">
-        <div className={styles.wrap}>
-          <div className={styles.verifiedHead}>
-            <span className={styles.tag}>{notice.tag}</span>
-            <h2 className={styles.h2}>{renderMarked(notice.title)}</h2>
-            <div className={styles.line} />
-            {notice.body.split('\n\n').map((para, pi) => (
-              <p key={`notice-p-${pi}`}>{renderMarked(para)}</p>
-            ))}
-          </div>
-
-          <div className={styles.refGrid}>
-            {notice.items.map(({ num, text }, idx) => (
-              <div key={`${num}-${idx}`} className={styles.refCard}>
-                <span className={styles.refNum}>{num}</span>
-                <p className={styles.refLabel}>{text.split('\n').map((line, i) => (
-                  <span key={i}>{line}{i === 0 && <br />}</span>
-                ))}</p>
-              </div>
-            ))}
           </div>
 
           <div className={styles.certRow}>

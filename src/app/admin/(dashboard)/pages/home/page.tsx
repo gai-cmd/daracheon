@@ -106,7 +106,6 @@ type HomeSectionId =
   | 'trustStrip'
   | 'showroom'
   | 'problem'
-  | 'speciesCompare'
   | 'verified'
   | 'agarwood'
   | 'benefits'
@@ -330,7 +329,6 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'trustStrip',
   'showroom',
   'problem',
-  'speciesCompare',
   'verified',
   'agarwood',
   'benefits',
@@ -342,8 +340,7 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   trustStrip: 'Trust Strip (4 통계)',
   showroom: '쇼룸 이미지',
   problem: 'Problem · 침향 시장 불안 (3 카드)',
-  speciesCompare: '종 비교 · 학명별 식약처 등재 비교 + 등록 기준 정의',
-  verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 인증 + Solution CTA)',
+  verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교 + 인증)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
   process: 'Craftsmanship · 6단계 공정',
@@ -705,7 +702,8 @@ export default function AdminHomePage() {
     );
   }
 
-  function renderGroupContent(id: HomeSectionId): React.ReactNode {
+  // 'speciesCompare' 는 sectionOrder 에 속하지 않는 가상 키 — verified 내부에서 명시적으로 호출.
+  function renderGroupContent(id: HomeSectionId | 'speciesCompare'): React.ReactNode {
     switch (id) {
       case 'hero':
         return (
@@ -903,8 +901,8 @@ export default function AdminHomePage() {
           <SectionCard title="종 비교 · 학명별 식약처 등재 비교 + 등록 기준 정의" onSave={() => saveSection('problem', { problem })} saving={saving === 'problem'}>
             <div className="space-y-5">
               <p className="text-xs text-gray-500">
-                💡 학명별 약전외한약규격집 · 식품공전 등재 여부를 비교하고, 두 품종 공통 적용 등록 기준 정의를 편집합니다.
-                Problem 섹션과 데이터(problem.species*)를 공유하므로, 한 곳에서 저장하면 양쪽 모두 갱신됩니다.
+                💡 Verified 섹션 내부(4 인용 카드와 인증 그리드 사이)에 렌더링됩니다.
+                데이터는 problem.species* 에 저장되어 있어, 저장 시 Problem 데이터와 함께 갱신됩니다.
               </p>
               <div>
                 <LabeledInput label="종 비교 섹션 제목" value={problem.speciesTitle} onChange={(v) => setProblem({ ...problem, speciesTitle: v })} />
@@ -1065,6 +1063,9 @@ export default function AdminHomePage() {
                 </div>
               </div>
             </SectionCard>
+
+            {/* 종 비교 — refGrid 와 Certifications 사이에 인라인 렌더(2026-05-17 이동). */}
+            {renderGroupContent('speciesCompare')}
 
             {/* Certifications */}
             <SectionCard title="Certifications · 인증 칩 그리드" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
