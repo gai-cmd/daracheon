@@ -207,7 +207,8 @@ export interface HomeData {
   solutionCta?: HomeSolutionCta;
   originAuthority?: HomeOriginAuthority;
   sectionOrder?: HomeSectionId[];
-  sectionMeta?: Partial<Record<HomeSectionId, SectionMeta>>;
+  // 'speciesCompare' 는 sectionOrder 키가 아니지만, 별도 인라인 CTA 메타 슬롯을 허용한다(2026-05-17).
+  sectionMeta?: Partial<Record<HomeSectionId | 'speciesCompare', SectionMeta>>;
 }
 
 const DEFAULT_HERO: HomeHero = {
@@ -954,6 +955,22 @@ export default async function HomePage() {
                 </div>
               )}
             </div>
+
+            {/* speciesCompare 전용 하단 CTA (sectionMeta.speciesCompare.cta). 어드민에서 채워야 표시. 2026-05-17 추가. */}
+            {(() => {
+              const speciesCta = sectionMetaMap.speciesCompare?.cta;
+              if (!speciesCta?.label || !speciesCta?.href) return null;
+              return (
+                <div className={styles.metaCtaWrap}>
+                  <Link
+                    href={speciesCta.href}
+                    className={speciesCta.variant === 'outline' ? styles.btnOutline : styles.btnGold}
+                  >
+                    {speciesCta.label}
+                  </Link>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Certifications 는 sectionOrder 의 'certs' 로 분리되어 별도 섹션으로 렌더(2026-05-17). */}

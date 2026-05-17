@@ -149,7 +149,19 @@ interface SectionMeta {
   bodyLead?: string;
   cta?: SectionMetaCta;
 }
-type SectionMetaMap = Partial<Record<HomeSectionId, SectionMeta>>;
+// 'speciesCompare' 는 sectionOrder 키가 아니지만 별도 인라인 메타 슬롯(주로 하단 CTA)을 허용한다(2026-05-17).
+type SectionMetaKey = HomeSectionId | 'speciesCompare';
+type SectionMetaMap = Partial<Record<SectionMetaKey, SectionMeta>>;
+
+// 사용자 지정 — 본문 카드 아래에 항상 펼쳐진 하단 CTA 편집기를 노출할 섹션 목록(2026-05-17).
+const SECTIONS_WITH_BOTTOM_CTA: SectionMetaKey[] = [
+  'problem',
+  'speciesCompare',
+  'originAuthority',
+  'certs',
+  'benefits',
+  'showroom',
+];
 
 interface HomeData {
   hero: HomeHero;
@@ -573,6 +585,66 @@ function SectionMetaEditor({
         </div>
       </div>
     </details>
+  );
+}
+
+// 섹션 본문 카드 아래에 항상 펼친 상태로 노출되는 하단 CTA 전용 편집기(2026-05-17).
+// SectionMetaEditor 의 cta 슬롯과 동일한 데이터를 공유하므로 자동 동기화된다.
+function BottomCtaEditor({
+  id,
+  value,
+  onChange,
+  onSave,
+  saving,
+}: {
+  id: SectionMetaKey;
+  value: SectionMeta | undefined;
+  onChange: (next: SectionMeta) => void;
+  onSave: () => void;
+  saving: boolean;
+}) {
+  const meta: SectionMeta = value ?? {};
+  const cta: SectionMetaCta = meta.cta ?? { label: '', href: '', variant: 'gold' };
+  const updateCta = (patch: Partial<SectionMetaCta>) => onChange({ ...meta, cta: { ...cta, ...patch } });
+  const active = !!(cta.label && cta.href);
+  return (
+    <div className="rounded-xl border border-gold-300 bg-white p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-semibold text-gray-900">하단 CTA 버튼</div>
+          <div className="text-xs text-gray-500">섹션 본문 아래에 골드 버튼으로 표시. 라벨·링크 둘 다 채워야 표시됩니다.</div>
+        </div>
+        <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs ${active ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+          {active ? '활성' : '비활성'}
+        </span>
+      </div>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <LabeledInput label="버튼 라벨 (예: 자세히 보기)" value={cta.label} onChange={(v) => updateCta({ label: v })} />
+        <LabeledInput label="버튼 링크 (예: /products, /brand-story)" value={cta.href} onChange={(v) => updateCta({ href: v })} />
+      </div>
+      <div className="mt-3">
+        <label className="mb-1 block text-sm font-medium text-gray-700">버튼 스타일</label>
+        <select
+          value={cta.variant ?? 'gold'}
+          onChange={(e) => updateCta({ variant: e.target.value as 'gold' | 'outline' })}
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        >
+          <option value="gold">골드 (채움)</option>
+          <option value="outline">아웃라인 (테두리)</option>
+        </select>
+      </div>
+      <div className="mt-3 flex justify-end">
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          className="adm-btn-primary px-5 py-1.5 text-sm disabled:opacity-50"
+          title={`섹션 [${id}] 하단 CTA 저장`}
+        >
+          {saving ? '저장 중…' : 'CTA 저장'}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -1162,6 +1234,15 @@ export default function AdminHomePage() {
             {/* 종 비교 — refGrid 아래에 인라인 렌더(2026-05-17 이동). */}
             {renderGroupContent('speciesCompare')}
 
+            {/* 종 비교 전용 하단 CTA — sectionMeta.speciesCompare.cta 에 저장 (2026-05-17 추가). */}
+            <BottomCtaEditor
+              id="speciesCompare"
+              value={sectionMeta.speciesCompare}
+              onChange={(next) => setSectionMeta((prev) => ({ ...prev, speciesCompare: next }))}
+              onSave={() => saveSection('sectionMeta', { sectionMeta })}
+              saving={saving === 'sectionMeta'}
+            />
+
             {/* Certifications 는 'certs' 섹션으로 분리되어 sectionOrder 로 이동 가능(2026-05-17). */}
 
             {/* Solution CTA 는 침향 이야기 > 진짜 침향 구별 탭으로 이동(2026-05-17).
@@ -1507,6 +1588,15 @@ export default function AdminHomePage() {
                 saving={saving === 'sectionMeta'}
               />
               {renderGroupContent(id)}
+              {SECTIONS_WITH_BOTTOM_CTA.includes(id) && (
+                <BottomCtaEditor
+                  id={id}
+                  value={sectionMeta[id]}
+                  onChange={(next) => setSectionMeta((prev) => ({ ...prev, [id]: next }))}
+                  onSave={() => saveSection('sectionMeta', { sectionMeta })}
+                  saving={saving === 'sectionMeta'}
+                />
+              )}
             </SectionGroup>
           ))}
         </div>
