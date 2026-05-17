@@ -633,6 +633,21 @@ export default async function HomePage() {
     : DEFAULT_ORIGIN_AUTHORITY;
   const sectionMetaMap = home.sectionMeta ?? {};
 
+  // certs 섹션은 자체 타이틀/본문이 없어 sectionMeta 가 단일 편집점. admin 이 비웠을 때 fallback.
+  const DEFAULT_CERTS_META: SectionMeta = {
+    topTag: `Certifications · ${certs.length}건 공식 인증`,
+    titleQuote: '국제·국가 기관이 검증한\n*대라천 침향의 무게*',
+    bodyLead:
+      'CITES, HACCP, GMP, ORGANIC, FDA, ISO… 한 장의 인증이 아닌 *12건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.',
+  };
+  const effectiveCertsMeta: SectionMeta = {
+    ...DEFAULT_CERTS_META,
+    ...(sectionMetaMap.certs ?? {}),
+    topTag: sectionMetaMap.certs?.topTag?.trim() || DEFAULT_CERTS_META.topTag,
+    titleQuote: sectionMetaMap.certs?.titleQuote?.trim() || DEFAULT_CERTS_META.titleQuote,
+    bodyLead: sectionMetaMap.certs?.bodyLead?.trim() || DEFAULT_CERTS_META.bodyLead,
+  };
+
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
   function renderMetaPrefix(meta?: SectionMeta) {
     if (!meta) return null;
@@ -688,8 +703,10 @@ export default async function HomePage() {
       />
       <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
       {sectionOrder.map((sectionId) => {
-        const meta = sectionMetaMap[sectionId];
-        if (meta?.hidden) return null;
+        const rawMeta = sectionMetaMap[sectionId];
+        // certs 는 자체 타이틀이 없으므로 sectionMeta 가 비었더라도 기본 타이틀/본문이 prefix 로 노출되도록 보정.
+        const meta = sectionId === 'certs' ? effectiveCertsMeta : rawMeta;
+        if (rawMeta?.hidden) return null;
         const sectionContent = (() => {
           switch (sectionId) {
           case 'hero':
@@ -983,13 +1000,7 @@ export default async function HomePage() {
       // === CERTIFICATIONS ===
       <section key="certs" className={styles.section} id="certs" aria-label="대라천 침향 인증">
         <div className={styles.wrap}>
-          {/* 타이틀 영역 — verified(01) / originAuthority(02) 와 동일 패턴(problemWarning + problemQuote + originAuthIntro). 사용자 편집 예정. 2026-05-17 추가. */}
-          <div className={styles.originAuthBlock}>
-            <span className={styles.problemWarning}>Certifications · {certs.length}건 공식 인증</span>
-            <h2 className={styles.problemQuote}>{renderMarked('국제·국가 기관이 검증한\n*대라천 침향의 무게*')}</h2>
-            <p className={styles.originAuthIntro}>{renderMarked('CITES, HACCP, GMP, ORGANIC, FDA, ISO… 한 장의 인증이 아닌 *12건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.')}</p>
-          </div>
-
+          {/* 타이틀/본문은 sectionMeta.certs (admin 편집) 에서 단일 관리. renderMetaPrefix 가 섹션 위에 렌더한다. */}
           <div className={styles.certRow}>
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
