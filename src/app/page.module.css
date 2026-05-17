@@ -845,42 +845,37 @@
 }
 .speciesDefTag {
   display: inline;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  font-family: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--accent);
+  font-weight: 500;
   margin-right: 6px;
 }
 .speciesDefTag em {
   font-style: normal;
-  font-weight: 600;
-  font-size: 1.02rem;
+  font-weight: 500;
+  font-size: inherit;
   color: var(--accent);
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   text-transform: none;
   font-family: inherit;
-}
-@media (min-width: 800px) {
-  .speciesDefTag em { font-size: 1.1rem; }
 }
 .speciesDefTitle {
   display: inline;
   font-family: inherit;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
 }
 .speciesDefTitle em {
   font-style: normal;
-  font-weight: 600;
-  font-size: 1.02rem;
+  font-weight: 400;
+  font-size: inherit;
   color: var(--accent);
   letter-spacing: -0.005em;
-}
-@media (min-width: 800px) {
-  .speciesDefTitle em { font-size: 1.1rem; }
 }
 .speciesDefBody {
   display: block;
