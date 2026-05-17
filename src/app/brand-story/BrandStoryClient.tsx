@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { BrandStoryData, PromoVideoItem } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
@@ -9,6 +9,47 @@ import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import styles from './BrandStoryClient.module.css';
 import storyStyles from '@/styles/zoel/story-page.module.css';
+
+/**
+ * `*...*` 를 골드 em 으로, `\n` 을 <br/> 로 렌더링.
+ * admin 에서 입력한 강조 마커를 본문 단락에 그대로 노출하기 위한 헬퍼.
+ */
+function renderMarkedGold(text: string, keyPrefix = 'mg'): ReactNode {
+  const lines = text.split('\n');
+  return lines.map((line, li) => {
+    const parts: ReactNode[] = [];
+    let remaining = line;
+    let idx = 0;
+    while (remaining.length > 0) {
+      const start = remaining.indexOf('*');
+      if (start === -1) {
+        parts.push(remaining);
+        break;
+      }
+      const end = remaining.indexOf('*', start + 1);
+      if (end === -1) {
+        parts.push(remaining);
+        break;
+      }
+      if (start > 0) parts.push(remaining.slice(0, start));
+      parts.push(
+        <em
+          key={`${keyPrefix}-${li}-em${idx++}`}
+          style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}
+        >
+          {remaining.slice(start + 1, end)}
+        </em>,
+      );
+      remaining = remaining.slice(end + 1);
+    }
+    return (
+      <span key={`${keyPrefix}-l${li}`}>
+        {parts}
+        {li < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
 
 interface Props {
   data: BrandStoryData | null;
@@ -270,7 +311,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     <>
                       {firstPara && (
                         <p className={styles.proofLead} style={{ marginTop: 0, marginBottom: 28 }}>
-                          {firstPara}
+                          {renderMarkedGold(firstPara, 'src-first')}
                         </p>
                       )}
                       {tabHeroes.tab0 && (
@@ -295,7 +336,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                       )}
                       {remaining && (
                         <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
-                          {remaining}
+                          {renderMarkedGold(remaining, 'src-rest')}
                         </p>
                       )}
                     </>
@@ -488,7 +529,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         marginBottom: 16,
                       }}
                     >
-                      {showroom.intro.body}
+                      {renderMarkedGold(showroom.intro.body, 'showroom-body')}
                     </p>
                   )}
                   {showroom.gallery && showroom.gallery.length > 0 && (
@@ -528,7 +569,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         marginBottom: 16,
                       }}
                     >
-                      {promoVideos.body}
+                      {renderMarkedGold(promoVideos.body, 'promo-body')}
                     </p>
                   )}
                   <div
