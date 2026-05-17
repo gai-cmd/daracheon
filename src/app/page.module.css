@@ -852,6 +852,18 @@
   color: rgba(255, 255, 255, 0.4);
   margin-right: 6px;
 }
+.speciesDefTag em {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: var(--accent);
+  letter-spacing: -0.005em;
+  text-transform: none;
+  font-family: inherit;
+}
+@media (min-width: 800px) {
+  .speciesDefTag em { font-size: 1.1rem; }
+}
 .speciesDefTitle {
   display: inline;
   font-family: inherit;
