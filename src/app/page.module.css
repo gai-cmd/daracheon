@@ -273,7 +273,7 @@
 }
 .h2 {
   font-family: 'Noto Serif KR', serif;
-  font-size: 2.6rem;
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.01em;
   line-height: 1.4;
@@ -485,7 +485,7 @@
 }
 .problemQuote {
   font-family: 'Noto Serif KR', serif;
-  font-size: 2.6rem;
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.01em;
   line-height: 1.4;
@@ -1140,7 +1140,7 @@
 }
 .metaTitleQuote {
   font-family: 'Noto Serif KR', serif;
-  font-size: 2.6rem;
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   line-height: 1.4;
   color: #fff;
