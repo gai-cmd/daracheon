@@ -1243,46 +1243,49 @@
   background: linear-gradient(180deg, transparent, rgba(212, 168, 67, 0.45), transparent);
   margin: 70px auto;
 }
+/* 왕조 카드 — verified 섹션의 .refGrid/.refCard 와 동일한 그리드/카드 사이즈로 통일
+   (2 cols mobile · 5 cols desktop). 6번째 era 는 두 번째 행으로 자연스럽게 떨어짐. */
 .originAuthEras {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   margin: 36px 0 32px;
   border: 1px solid rgba(212, 168, 67, 0.18);
   background: rgba(212, 168, 67, 0.18);
-  text-align: left;
 }
 @media (min-width: 700px) {
-  .originAuthEras { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1000px) {
-  .originAuthEras { grid-template-columns: repeat(3, 1fr); }
+  .originAuthEras { grid-template-columns: repeat(5, 1fr); }
 }
 .originAuthEra {
-  background: #0c0d13;
-  padding: 22px 22px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 28px 16px;
+  background: #0a0b10;
+  gap: 10px;
   transition: background 300ms;
 }
-.originAuthEra:hover { background: rgba(212, 168, 67, 0.04); }
+.originAuthEra:hover { background: rgba(212, 168, 67, 0.06); }
 .originAuthEraName {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
   color: var(--accent, #d4a843);
-  letter-spacing: -0.01em;
 }
 .originAuthEraText {
-  font-size: 0.93rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
   font-weight: 300;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
 }
 .originAuthEraText em {
   font-style: normal;
   color: #fff;
+  font-weight: 400;
 }
 .originAuthClosing {
   font-size: 1rem;

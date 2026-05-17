@@ -865,7 +865,8 @@ export default async function HomePage() {
       <section key="verified" className={styles.verified} id="verified">
         <div className={styles.wrap}>
           <div className={styles.verifiedHead}>
-            <span className={styles.tag}>{notice.tag}</span>
+            {/* notice.tag 를 problemWarning 스타일로 렌더 — Problem 섹션의 경고 칩과 시각 톤 통일(2026-05-17). */}
+            <span className={styles.problemWarning}>{notice.tag}</span>
             <h2 className={styles.h2}>{renderMarked(notice.title)}</h2>
             <div className={styles.line} />
             {notice.body.split('\n\n').map((para, pi) => (
@@ -986,8 +987,9 @@ export default async function HomePage() {
       <section key="originAuthority" className={styles.originAuth} aria-label="역사적 기록 · 베트남 5개 지역 직영">
         <div className={styles.wrap}>
           <div className={styles.originAuthBlock}>
-            <div className={styles.originAuthNumTag}>{originAuthority.history.numTag}</div>
-            <h2 className={styles.originAuthTitle}>{renderMarked(originAuthority.history.title)}</h2>
+            {/* numTag 를 problemWarning 스타일로(verified 섹션과 시각 톤 통일). title 은 problemQuote 로 다른 섹션 H2 와 사이즈·폰트 통일(2026-05-17). */}
+            <span className={styles.problemWarning}>{originAuthority.history.numTag}</span>
+            <h2 className={styles.problemQuote}>{renderMarked(originAuthority.history.title)}</h2>
             <p className={styles.originAuthIntro}>{renderMarked(originAuthority.history.lead)}</p>
             <div className={styles.originAuthEras}>
               {originAuthority.history.eras.map((e, i) => (
