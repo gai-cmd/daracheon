@@ -1169,9 +1169,6 @@
 /* === ORIGIN AUTHORITY (식약처 고시 + 역사적 기록 + 5개 지역) ============ */
 .originAuth {
   padding: 100px 0;
-  background:
-    radial-gradient(ellipse 70% 80% at 20% 10%, rgba(212, 168, 67, 0.06), transparent 60%),
-    #0c0d13;
   border-top: 1px solid rgba(212, 168, 67, 0.12);
   border-bottom: 1px solid rgba(212, 168, 67, 0.12);
 }
