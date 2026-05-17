@@ -27,6 +27,17 @@ function extractVimeoId(url: string): string | null {
   return m ? m[1] : null;
 }
 
+/** mp4/webm/mov 등 native <video> 재생 가능한 URL 인지 판정.
+ *  Vercel Blob 의 video MIME 호스트(uploads/videos/...)도 확장자 기반으로 인식. */
+function isDirectVideoUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return /\.(mp4|webm|mov|m4v|ogv)(\?|$)/i.test(u.pathname);
+  } catch {
+    return /\.(mp4|webm|mov|m4v|ogv)(\?|$)/i.test(url);
+  }
+}
+
 interface Parts {
   days: number;
   hours: number;
@@ -89,7 +100,9 @@ export default function BroadcastCountdown({
     : vmId
       ? `https://player.vimeo.com/video/${vmId}?title=0&byline=0`
       : null;
-  const externalVod = !embedSrc && vodUrl ? vodUrl : null;
+  // 직접 업로드된 mp4/webm 등은 <video> 로 재생. 외부 카드 fallback 보다 우선.
+  const directVideo = !embedSrc && vodUrl && isDirectVideoUrl(vodUrl) ? vodUrl : null;
+  const externalVod = !embedSrc && !directVideo && vodUrl ? vodUrl : null;
 
   // 상태별 톤
   const tone: 'live' | 'ended' | 'upcoming' = isLive ? 'live' : isEnded ? 'ended' : 'upcoming';
@@ -149,6 +162,22 @@ export default function BroadcastCountdown({
               width: '100%',
               height: '100%',
               border: 0,
+              display: 'block',
+            }}
+          />
+        ) : directVideo ? (
+          <video
+            src={directVideo}
+            controls
+            preload="metadata"
+            playsInline
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              background: '#000',
               display: 'block',
             }}
           />

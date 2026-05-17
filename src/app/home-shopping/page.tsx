@@ -491,6 +491,7 @@ export default async function HomeShoppingPage({
                 if (si.experts?.length) cast.push({ label: '전문가', names: si.experts });
 
                 const yt = b.vodUrl ? extractEmbed(b.vodUrl) : null;
+                const directVid = !yt && b.vodUrl && isDirectVideoUrl(b.vodUrl) ? b.vodUrl : null;
                 return (
                   <article key={b.id} className={styles.spRow}>
                     <div className={styles.spInfo}>
@@ -530,6 +531,14 @@ export default async function HomeShoppingPage({
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                           loading="lazy"
+                        />
+                      ) : directVid ? (
+                        <video
+                          src={directVid}
+                          controls
+                          preload="metadata"
+                          playsInline
+                          style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000', display: 'block' }}
                         />
                       ) : (
                         <div className={styles.spVideoEmpty}>
@@ -596,6 +605,16 @@ function BroadcastPreviewBlock({ preview }: { preview: NonNullable<Broadcast['pr
       )}
     </div>
   );
+}
+
+/** mp4/webm 등 native <video> 재생 가능한 URL 인지 확인. */
+function isDirectVideoUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return /\.(mp4|webm|mov|m4v|ogv)(\?|$)/i.test(u.pathname);
+  } catch {
+    return /\.(mp4|webm|mov|m4v|ogv)(\?|$)/i.test(url);
+  }
 }
 
 /** YouTube/Vimeo URL 을 임베드 가능한 src 로 변환. 실패 시 null. */

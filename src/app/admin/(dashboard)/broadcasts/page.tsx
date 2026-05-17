@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { saveAdminPage } from '@/lib/adminSave';
+import VideoUploadField from '@/components/admin/VideoUploadField';
 
 type BroadcastType = 'home-shopping' | 'sponsored';
 
@@ -1173,16 +1174,14 @@ export default function AdminBroadcastsPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 영상 URL (YouTube / Vimeo)</label>
-                <input
-                  type="url"
+                <label className="mb-1.5 block text-xs font-medium text-gray-700">방송 영상 (YouTube / Vimeo URL 또는 mp4 업로드)</label>
+                <VideoUploadField
                   value={draft.vodUrl ?? ''}
-                  onChange={(e) => setDraft({ ...draft, vodUrl: e.target.value })}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  onChange={(url) => setDraft({ ...draft, vodUrl: url })}
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  공개 페이지 라이브 카드 우측 16:9 프레임에 임베드됩니다. 예정·라이브·종료 모두 동일하게 사용.
+                  공개 페이지 라이브 카드 우측 16:9 프레임에 표시됩니다. YouTube/Vimeo URL 은 임베드,
+                  업로드 mp4·webm·mov 는 native 플레이어로 재생. 최대 200MB.
                 </p>
               </div>
 
