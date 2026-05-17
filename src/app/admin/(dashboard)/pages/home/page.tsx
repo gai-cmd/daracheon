@@ -109,6 +109,7 @@ type HomeSectionId =
   | 'showroom'
   | 'problem'
   | 'verified'
+  | 'certs'
   | 'agarwood'
   | 'benefits'
   | 'process';
@@ -332,6 +333,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'showroom',
   'problem',
   'verified',
+  'certs',
   'agarwood',
   'benefits',
   'process',
@@ -342,7 +344,8 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   trustStrip: 'Trust Strip (4 통계)',
   showroom: '쇼룸 이미지',
   problem: 'Problem · 침향 시장 불안 (3 카드)',
-  verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교 + 인증)',
+  verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교)',
+  certs: 'Certifications · 12건 인증 칩 그리드',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
   process: 'Craftsmanship · 6단계 공정',
@@ -1081,28 +1084,10 @@ export default function AdminHomePage() {
               </div>
             </SectionCard>
 
-            {/* 종 비교 — refGrid 와 Certifications 사이에 인라인 렌더(2026-05-17 이동). */}
+            {/* 종 비교 — refGrid 아래에 인라인 렌더(2026-05-17 이동). */}
             {renderGroupContent('speciesCompare')}
 
-            {/* Certifications */}
-            <SectionCard title="Certifications · 인증 칩 그리드" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
-              <div className="space-y-3">
-                <p className="text-xs text-gray-500">Verified 섹션 인용 카드 아래의 인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제.</p>
-                {certs.map((c, i) => (
-                  <div key={i} className="grid grid-cols-[60px_1fr_2fr_auto] items-center gap-2">
-                    <input value={c.mark} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], mark: e.target.value }; setCerts(n); }} placeholder="C" maxLength={3} className="rounded-lg border border-gray-300 px-3 py-2 text-center font-serif text-sm focus:border-gold-500 focus:outline-none" />
-                    <input value={c.name} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], name: e.target.value }; setCerts(n); }} placeholder="이름 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                    <input value={c.sub} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], sub: e.target.value }; setCerts(n); }} placeholder="부제 (예: 국제 보호 수종)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                    <div className="flex gap-1">
-                      <button type="button" onClick={() => setCerts(moveItem(certs, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
-                      <button type="button" onClick={() => setCerts(moveItem(certs, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
-                      <button type="button" onClick={() => setCerts(removeIndex(certs, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
-                    </div>
-                  </div>
-                ))}
-                <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
-              </div>
-            </SectionCard>
+            {/* Certifications 는 'certs' 섹션으로 분리되어 sectionOrder 로 이동 가능(2026-05-17). */}
 
             {/* Solution CTA 는 침향 이야기 > 진짜 침향 구별 탭으로 이동(2026-05-17).
                 /admin/pages/about-agarwood → 진짜 침향 구별 방법 에서 편집. */}
@@ -1116,6 +1101,28 @@ export default function AdminHomePage() {
               </div>
             </div>
           </>
+        );
+
+      case 'certs':
+        return (
+          <SectionCard title="Certifications · 12건 인증 칩 그리드" onSave={() => saveSection('certs', { certs })} saving={saving === 'certs'}>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">인증 그리드. 마크(한 글자 이니셜) · 이름 · 부제. 위쪽 &quot;섹션 순서&quot; 카드에서 위치 이동 가능.</p>
+              {certs.map((c, i) => (
+                <div key={i} className="grid grid-cols-[60px_1fr_2fr_auto] items-center gap-2">
+                  <input value={c.mark} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], mark: e.target.value }; setCerts(n); }} placeholder="C" maxLength={3} className="rounded-lg border border-gray-300 px-3 py-2 text-center font-serif text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.name} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], name: e.target.value }; setCerts(n); }} placeholder="이름 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <input value={c.sub} onChange={(e) => { const n = [...certs]; n[i] = { ...n[i], sub: e.target.value }; setCerts(n); }} placeholder="부제 (예: 국제 보호 수종)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                  <div className="flex gap-1">
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
+                    <button type="button" onClick={() => setCerts(moveItem(certs, i, i + 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▼</button>
+                    <button type="button" onClick={() => setCerts(removeIndex(certs, i))} className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">삭제</button>
+                  </div>
+                </div>
+              ))}
+              <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
+            </div>
+          </SectionCard>
         );
 
       case 'agarwood':

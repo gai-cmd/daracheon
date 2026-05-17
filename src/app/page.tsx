@@ -127,6 +127,7 @@ export type HomeSectionId =
   | 'showroom'
   | 'problem'
   | 'verified'
+  | 'certs'
   | 'agarwood'
   | 'benefits'
   | 'process';
@@ -137,6 +138,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'showroom',
   'problem',
   'verified',
+  'certs',
   'agarwood',
   'benefits',
   'process',
@@ -875,6 +877,16 @@ export default async function HomePage() {
             </div>
           </div>
 
+          {/* Certifications 는 sectionOrder 의 'certs' 로 분리되어 별도 섹션으로 렌더(2026-05-17). */}
+          {/* SOLUTION CTA 는 about-agarwood (진짜 침향 구별 탭) 로 이동(2026-05-17) */}
+        </div>
+      </section>
+            );
+          case 'certs':
+            return (
+      // === CERTIFICATIONS ===
+      <section key="certs" className={styles.section} id="certs" aria-label="대라천 침향 인증">
+        <div className={styles.wrap}>
           <div className={styles.certRow}>
             <span className={styles.tag}>Certifications · {certs.length}건 인증</span>
             <div className={styles.certGrid}>
@@ -887,8 +899,6 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-
-          {/* SOLUTION CTA 는 about-agarwood (진짜 침향 구별 탭) 로 이동(2026-05-17) */}
         </div>
       </section>
             );
