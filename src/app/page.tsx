@@ -966,8 +966,14 @@ export default async function HomePage() {
       // === CERTIFICATIONS ===
       <section key="certs" className={styles.section} id="certs" aria-label="대라천 침향 인증">
         <div className={styles.wrap}>
+          {/* 타이틀 영역 — verified(01) / originAuthority(02) 와 동일 패턴(problemWarning + problemQuote + originAuthIntro). 사용자 편집 예정. 2026-05-17 추가. */}
+          <div className={styles.originAuthBlock}>
+            <span className={styles.problemWarning}>Certifications · {certs.length}건 공식 인증</span>
+            <h2 className={styles.problemQuote}>{renderMarked('국제·국가 기관이 검증한\n*대라천 침향의 무게*')}</h2>
+            <p className={styles.originAuthIntro}>{renderMarked('CITES, HACCP, GMP, ORGANIC, FDA, ISO… 한 장의 인증이 아닌 *12건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.')}</p>
+          </div>
+
           <div className={styles.certRow}>
-            <span className={styles.tag}>Certifications · {certs.length}건 인증</span>
             <div className={styles.certGrid}>
               {certs.map((c, i) => (
                 <div key={`${c.name}-${i}`} className={styles.certTile}>
