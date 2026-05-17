@@ -1168,7 +1168,7 @@
   color: var(--accent, #d4a843);
 }
 .sectionMetaSuffix {
-  padding: 28px 0 64px;
+  padding: 0 0 64px;
 }
 .metaCtaWrap {
   text-align: center;
@@ -1225,7 +1225,7 @@
   font-weight: 300;
 }
 .originAuthIntro {
-  font-size: 1.15rem;
+  font-size: 1rem;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.85);
   font-weight: 400;
