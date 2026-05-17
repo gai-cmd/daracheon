@@ -572,7 +572,7 @@ export default async function HomePage() {
                         <span className={styles.heroTrustKeyword}>{keyword}</span>
                         {rest && (
                           <>
-                            <span className={styles.heroTrustSep}> — </span>
+                            <span className={styles.heroTrustSep}> - </span>
                             <span className={styles.heroTrustRest}>{rest}</span>
                           </>
                         )}
