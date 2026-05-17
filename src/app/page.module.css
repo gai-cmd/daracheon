@@ -1243,8 +1243,9 @@
   background: linear-gradient(180deg, transparent, rgba(212, 168, 67, 0.45), transparent);
   margin: 70px auto;
 }
-/* 왕조 카드 — verified 섹션의 .refGrid/.refCard 와 동일한 그리드/카드 사이즈로 통일
-   (2 cols mobile · 5 cols desktop). 6번째 era 는 두 번째 행으로 자연스럽게 떨어짐. */
+/* 왕조 카드 — verified 섹션의 .certGrid 와 동일한 그리드(2 / 3 / 6 cols).
+   6 era 가 desktop 1024px+ 에서 한 줄에 정확히 채워진다. originAuthBlock 의 920px
+   max-width 밖으로 빼서 .wrap full-width 로 좌우 폭을 certRow/certGrid 와 일치시킴. */
 .originAuthEras {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1254,19 +1255,24 @@
   background: rgba(212, 168, 67, 0.18);
 }
 @media (min-width: 700px) {
-  .originAuthEras { grid-template-columns: repeat(5, 1fr); }
+  .originAuthEras { grid-template-columns: repeat(3, 1fr); }
 }
+@media (min-width: 1024px) {
+  .originAuthEras { grid-template-columns: repeat(6, 1fr); }
+}
+/* .certTile 과 동일한 padding/정렬/배경. desktop 에서는 padding 살짝 축소 */
 .originAuthEra {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
-  text-align: center;
-  padding: 28px 16px;
+  text-align: left;
+  padding: 32px 20px 26px;
   background: #0a0b10;
   gap: 10px;
-  transition: background 300ms;
+  transition: background 320ms ease;
 }
+@media (min-width: 1024px) { .originAuthEra { padding: 28px 16px 24px; } }
 .originAuthEra:hover { background: rgba(212, 168, 67, 0.06); }
 .originAuthEraName {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -1276,10 +1282,10 @@
   color: var(--accent, #d4a843);
 }
 .originAuthEraText {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 300;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
   margin: 0;
 }
 .originAuthEraText em {

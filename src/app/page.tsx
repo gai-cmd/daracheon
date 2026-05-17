@@ -986,19 +986,26 @@ export default async function HomePage() {
       // 5개 지역(farms) 도 별도 번호 태그 없이 history 본문 끝에 이어붙인다.
       <section key="originAuthority" className={styles.originAuth} aria-label="역사적 기록 · 베트남 5개 지역 직영">
         <div className={styles.wrap}>
+          {/* 텍스트 블록 — 920px 가독 폭으로 가운데 정렬 */}
           <div className={styles.originAuthBlock}>
             {/* numTag 를 problemWarning 스타일로(verified 섹션과 시각 톤 통일). title 은 problemQuote 로 다른 섹션 H2 와 사이즈·폰트 통일(2026-05-17). */}
             <span className={styles.problemWarning}>{originAuthority.history.numTag}</span>
             <h2 className={styles.problemQuote}>{renderMarked(originAuthority.history.title)}</h2>
             <p className={styles.originAuthIntro}>{renderMarked(originAuthority.history.lead)}</p>
-            <div className={styles.originAuthEras}>
-              {originAuthority.history.eras.map((e, i) => (
-                <div key={`${e.era}-${i}`} className={styles.originAuthEra}>
-                  <div className={styles.originAuthEraName}>{e.era}</div>
-                  <div className={styles.originAuthEraText}>{renderMarked(e.text)}</div>
-                </div>
-              ))}
-            </div>
+          </div>
+
+          {/* era 그리드 — originAuthBlock 의 max-width 밖에서 .wrap full-width 로 (certRow/certGrid 좌우 폭과 동일) */}
+          <div className={styles.originAuthEras}>
+            {originAuthority.history.eras.map((e, i) => (
+              <div key={`${e.era}-${i}`} className={styles.originAuthEra}>
+                <div className={styles.originAuthEraName}>{e.era}</div>
+                <div className={styles.originAuthEraText}>{renderMarked(e.text)}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* 마무리 + 5개 지역 텍스트 — 다시 920px 가독 폭 */}
+          <div className={styles.originAuthBlock}>
             <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
             {originAuthority.farms.text && (
               <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
