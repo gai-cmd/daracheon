@@ -40,8 +40,8 @@ function renderWithNowrap(text: string): ReactNode {
 }
 
 /**
- * `*...*` 마커 → 골드 em, 동시에 학명(라틴 두 단어+한국어 음역 괄호) 자동 nowrap.
- * check01Body / check01Sources.value 등 학명이 포함된 본문에 사용.
+ * `*...*` 마커는 별표만 떼어내고 본문 폰트 그대로 렌더 (골드 강조 없음).
+ * 학명(라틴 두 단어+한국어 음역 괄호) 부분은 renderWithNowrap 로 nowrap 유지.
  */
 function renderMarkedNowrap(text: string, keyPrefix = 'mn'): ReactNode {
   const out: ReactNode[] = [];
@@ -60,12 +60,7 @@ function renderMarkedNowrap(text: string, keyPrefix = 'mn'): ReactNode {
     }
     if (start > 0) out.push(<span key={`${keyPrefix}-${idx++}`}>{renderWithNowrap(remaining.slice(0, start))}</span>);
     out.push(
-      <em
-        key={`${keyPrefix}-em-${idx++}`}
-        style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}
-      >
-        {renderWithNowrap(remaining.slice(start + 1, end))}
-      </em>,
+      <span key={`${keyPrefix}-${idx++}`}>{renderWithNowrap(remaining.slice(start + 1, end))}</span>,
     );
     remaining = remaining.slice(end + 1);
   }
