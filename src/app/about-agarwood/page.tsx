@@ -142,6 +142,11 @@ export interface SolutionCta {
   buttons: SolutionButton[];
 }
 
+export interface AuthenticityEra {
+  era: string;
+  body: string;
+}
+
 export interface AuthenticityTab {
   subtitle: string;
   intro: string;
@@ -156,6 +161,11 @@ export interface AuthenticityTab {
   check02Body: string;
   check02QuoteSource: string;
   check02QuoteBody: string;
+  // CHECK 02 인용 박스 아래에 노출되는 시대별 산지 기록 블록 (옵션).
+  // intro/outro 는 *...* 골드 강조 마커 지원.
+  check02EraIntro?: string;
+  check02Eras?: AuthenticityEra[];
+  check02EraOutro?: string;
   check03Title: string;
   check03Body: string;
   check03Docs: AuthenticityDoc[];

@@ -90,6 +90,7 @@ interface SolutionCtaData {
   pillars: SolutionPillarData[];
   buttons: SolutionButtonData[];
 }
+interface AuthenticityEra { era: string; body: string }
 interface AuthenticityTabData {
   subtitle: string;
   intro: string;
@@ -103,6 +104,10 @@ interface AuthenticityTabData {
   check02Body: string;
   check02QuoteSource: string;
   check02QuoteBody: string;
+  // CHECK 02 인용 박스 아래 — 시대별 산지 기록 카드 + intro/outro (선택).
+  check02EraIntro?: string;
+  check02Eras?: AuthenticityEra[];
+  check02EraOutro?: string;
   check03Title: string;
   check03Body: string;
   check03Docs: AuthenticityDoc[];
@@ -376,6 +381,16 @@ export default function AdminAboutAgarwoodPage() {
     check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
     check02QuoteSource: '향승(香乘) · 명대 1611년',
     check02QuoteBody: '명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 진랍(眞臘), 상품은 점성(占城)으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.',
+    check02EraIntro: "역사적 기록에서는 *'베트남산'*을 최고로 여기고 있습니다. 수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.",
+    check02Eras: [
+      { era: '당나라 시대', body: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
+      { era: '송나라 시대', body: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
+      { era: '원나라 시대', body: '안남 지역으로 현재의 베트남에 해당합니다.' },
+      { era: '명나라 시대', body: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
+      { era: "'향승'", body: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+      { era: '조선 시대', body: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
+    ],
+    check02EraOutro: '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
     check03Title: '문서를 따져봐야 한다',
     check03Body: '진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.',
     check03Docs: [
@@ -1293,6 +1308,90 @@ export default function AdminAboutAgarwoodPage() {
                   <LabeledTextarea label="설명" value={authenticityTab.check02Body} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02Body: v })} rows={2} />
                   <LabeledInput label="인용 출처 (예: 향승(香乘) · 명대 1611년)" value={authenticityTab.check02QuoteSource} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02QuoteSource: v })} />
                   <LabeledTextarea label="인용 본문" value={authenticityTab.check02QuoteBody} onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02QuoteBody: v })} rows={4} />
+
+                  {/* 시대별 산지 기록 — intro / 카드 리스트 / outro */}
+                  <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50/60 p-4 space-y-3">
+                    <p className="text-xs text-gray-500">
+                      💡 인용 박스 아래에 노출되는 <strong>시대별 산지 기록 블록</strong>. intro/outro 는
+                      <code className="rounded bg-white border border-gray-200 px-1 mx-1">*강조*</code>로 골드 강조 가능. 세 항목 모두 비우면 블록 자체가 숨겨집니다.
+                    </p>
+                    <LabeledTextarea
+                      label="Intro 문구 (선택, *...* 골드 강조 가능)"
+                      value={authenticityTab.check02EraIntro ?? ''}
+                      onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02EraIntro: v })}
+                      rows={2}
+                    />
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        시대별 카드 ({(authenticityTab.check02Eras ?? []).length})
+                      </label>
+                      <div className="space-y-2">
+                        {(authenticityTab.check02Eras ?? []).map((row, i) => {
+                          const list = authenticityTab.check02Eras ?? [];
+                          return (
+                            <div key={i} className="grid grid-cols-[140px_1fr_auto] items-start gap-2 rounded-lg border border-gray-200 bg-white p-2">
+                              <input
+                                value={row.era}
+                                onChange={(e) => {
+                                  const n = [...list];
+                                  n[i] = { ...n[i], era: e.target.value };
+                                  setAuthenticityTab({ ...authenticityTab, check02Eras: n });
+                                }}
+                                placeholder="시대 (예: 당나라 시대)"
+                                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                              />
+                              <textarea
+                                value={row.body}
+                                onChange={(e) => {
+                                  const n = [...list];
+                                  n[i] = { ...n[i], body: e.target.value };
+                                  setAuthenticityTab({ ...authenticityTab, check02Eras: n });
+                                }}
+                                placeholder="본문 (예: 침향의 주요 산지를 교지, 임읍으로 기록...)"
+                                rows={2}
+                                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                              />
+                              <div className="flex flex-col gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => setAuthenticityTab({ ...authenticityTab, check02Eras: moveItem(list, i, i - 1) })}
+                                  className="rounded border border-gray-200 px-2 py-0.5 text-xs hover:bg-gray-50"
+                                >▲</button>
+                                <button
+                                  type="button"
+                                  onClick={() => setAuthenticityTab({ ...authenticityTab, check02Eras: moveItem(list, i, i + 1) })}
+                                  className="rounded border border-gray-200 px-2 py-0.5 text-xs hover:bg-gray-50"
+                                >▼</button>
+                                <button
+                                  type="button"
+                                  onClick={() => setAuthenticityTab({ ...authenticityTab, check02Eras: removeItem(list, i) })}
+                                  className="rounded border border-red-200 px-2 py-0.5 text-xs text-red-500 hover:bg-red-50"
+                                >삭제</button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <button
+                          type="button"
+                          onClick={() => setAuthenticityTab({
+                            ...authenticityTab,
+                            check02Eras: [...(authenticityTab.check02Eras ?? []), { era: '', body: '' }],
+                          })}
+                          className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
+                        >
+                          + 시대 카드 추가
+                        </button>
+                      </div>
+                    </div>
+
+                    <LabeledTextarea
+                      label="Outro 문구 (선택, *...* 골드 강조 가능)"
+                      value={authenticityTab.check02EraOutro ?? ''}
+                      onChange={(v) => setAuthenticityTab({ ...authenticityTab, check02EraOutro: v })}
+                      rows={3}
+                    />
+                  </div>
                 </div>
               </div>
 

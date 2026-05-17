@@ -105,6 +105,16 @@ const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   check02Body: '고문헌들이 기록한 최고 산지는 역사적으로 베트남산이 가장 높은 품질을 인정받고 있으며, 현재도 가장 비싸게 거래됩니다.',
   check02QuoteSource: '향승(香乘) · 명대 1611년',
   check02QuoteBody: '명대의 주가조가 향에 관해 기록한 책. 침향의 품질을 산지별로 상세히 기록하며 최상품은 진랍(眞臘), 상품은 점성(占城)으로 구분했는데 이는 당시 베트남 중부지역을 말합니다. 이 외에도 교지(交趾), 안남(安南) 등 베트남 원산지를 최상품으로 기록합니다.',
+  check02EraIntro: "역사적 기록에서는 *'베트남산'*을 최고로 여기고 있습니다. 수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.",
+  check02Eras: [
+    { era: '당나라 시대', body: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
+    { era: '송나라 시대', body: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
+    { era: '원나라 시대', body: '안남 지역으로 현재의 베트남에 해당합니다.' },
+    { era: '명나라 시대', body: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
+    { era: "'향승'", body: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+    { era: '조선 시대', body: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
+  ],
+  check02EraOutro: '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
   check03Title: '문서를 따져봐야 한다',
   check03Body: '진짜 침향이라면 아래 증빙 서류를 갖추고 있어야 합니다. 특히 CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.',
   check03Docs: [
@@ -997,44 +1007,47 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                     </div>
 
-                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 */}
-                    <div style={{ marginTop: 28 }}>
-                      <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
-                        역사적 기록에서는 <span style={{ color: 'var(--accent)', fontWeight: 500 }}>&lsquo;베트남산&rsquo;</span>을 최고로 여기고 있습니다. 수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.
-                      </p>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {[
-                          { era: '당나라 시대', body: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
-                          { era: '송나라 시대', body: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
-                          { era: '원나라 시대', body: '안남 지역으로 현재의 베트남에 해당합니다.' },
-                          { era: '명나라 시대', body: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
-                          { era: "'향승'", body: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
-                          { era: '조선 시대', body: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
-                        ].map((row, i) => (
-                          <li
-                            key={i}
-                            style={{
-                              display: 'grid',
-                              gridTemplateColumns: 'auto 1fr',
-                              alignItems: 'baseline',
-                              gap: 14,
-                              paddingLeft: 14,
-                              borderLeft: '2px solid rgba(212,168,67,0.25)',
-                            }}
-                          >
-                            <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                              {row.era}
-                            </span>
-                            <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
-                              {renderWithNowrap(row.body)}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                      <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
-                        이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 <span style={{ color: 'var(--accent)', fontWeight: 500 }}>지금의 베트남 지역</span>입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.
-                      </p>
-                    </div>
+                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 (admin 편집 가능) */}
+                    {((auth.check02EraIntro && auth.check02EraIntro.trim().length > 0)
+                      || (auth.check02Eras && auth.check02Eras.length > 0)
+                      || (auth.check02EraOutro && auth.check02EraOutro.trim().length > 0)) && (
+                      <div style={{ marginTop: 28 }}>
+                        {auth.check02EraIntro && auth.check02EraIntro.trim().length > 0 && (
+                          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
+                            {renderMarkedGold(auth.check02EraIntro)}
+                          </p>
+                        )}
+                        {auth.check02Eras && auth.check02Eras.length > 0 && (
+                          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {auth.check02Eras.map((row, i) => (
+                              <li
+                                key={`${row.era}-${i}`}
+                                style={{
+                                  display: 'grid',
+                                  gridTemplateColumns: 'auto 1fr',
+                                  alignItems: 'baseline',
+                                  gap: 14,
+                                  paddingLeft: 14,
+                                  borderLeft: '2px solid rgba(212,168,67,0.25)',
+                                }}
+                              >
+                                <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                                  {row.era}
+                                </span>
+                                <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
+                                  {renderWithNowrap(row.body)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {auth.check02EraOutro && auth.check02EraOutro.trim().length > 0 && (
+                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
+                            {renderMarkedGold(auth.check02EraOutro)}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </RevealOnScroll>
 
