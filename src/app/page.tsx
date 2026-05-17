@@ -121,6 +121,35 @@ export interface HomeSolutionCta {
   buttons: SolutionButton[];
 }
 
+// 새 섹션: 원산지·학명 권위 (식약처 고시 + 역사적 기록 + 5개 지역 농장) — 2026-05-17 추가.
+export interface OriginEra {
+  era: string;       // "당나라 시대"
+  text: string;      // 해당 시대의 침향 산지 기록 설명
+}
+export interface OriginAuthorityRegulationBlock {
+  numTag: string;       // "01 식약처 고시 — 아퀼라리아 아갈로차 록스버그"
+  titleLine1: string;   // "침향을 고를 때,"
+  titleLine2: string;   // "이젠 학명·품종부터 확인하세요!"
+  intro: string;        // "가짜가 많을수록 진짜가 드러납니다."
+  body: string;         // 식약처 등록 출처 본문 — *강조* / \n 줄바꿈
+}
+export interface OriginAuthorityHistoryBlock {
+  numTag: string;       // "02 역사적 기록 — 베트남이 정품 산지"
+  title: string;        // "역사적 기록에서는 '베트남산'을 최고로 여기고 있습니다."
+  lead: string;         // "수천 년 동안 이어진 문헌들이 그 가치를 증명합니다."
+  eras: OriginEra[];    // 왕조별 기록
+  closing: string;      // "이처럼 시대를 거슬러 올라가도 ..."
+}
+export interface OriginAuthorityFarmsBlock {
+  numTag: string;       // "03 베트남 5개 지역 직영"
+  text: string;         // "그 베트남산 침향을 베트남 현지 5개 지역에 농장을 두고 있다"
+}
+export interface HomeOriginAuthority {
+  regulation: OriginAuthorityRegulationBlock;
+  history: OriginAuthorityHistoryBlock;
+  farms: OriginAuthorityFarmsBlock;
+}
+
 export type HomeSectionId =
   | 'hero'
   | 'trustStrip'
@@ -128,6 +157,7 @@ export type HomeSectionId =
   | 'problem'
   | 'verified'
   | 'certs'
+  | 'originAuthority'
   | 'agarwood'
   | 'benefits'
   | 'process';
@@ -139,6 +169,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'problem',
   'verified',
   'certs',
+  'originAuthority',
   'agarwood',
   'benefits',
   'process',
@@ -173,6 +204,7 @@ export interface HomeData {
   problemImage?: HomeProblemImage;
   problem?: HomeProblem;
   solutionCta?: HomeSolutionCta;
+  originAuthority?: HomeOriginAuthority;
   sectionOrder?: HomeSectionId[];
   sectionMeta?: Partial<Record<HomeSectionId, SectionMeta>>;
 }
@@ -359,6 +391,36 @@ const DEFAULT_PROBLEM: HomeProblem = {
     tag: '식품 · 식용 원료',
     title: '‘식품공전 등록’ 이란?',
     body: '해당 식품·원료가 식품의약품안전처의 국가 안전·품질 기준을 충족해, 합법적으로 제조·유통·판매할 수 있는 *공식 식품*으로 인정받았음을 의미합니다.',
+  },
+};
+
+const DEFAULT_ORIGIN_AUTHORITY: HomeOriginAuthority = {
+  regulation: {
+    numTag: '01 식약처 고시 - 아퀼라리아 아갈로차 록스버그',
+    titleLine1: '침향을 고를 때,',
+    titleLine2: '이젠 학명·품종부터 확인하세요!',
+    intro: '*가짜가 많을수록 진짜가 드러납니다.*',
+    body:
+      "식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서',\n'원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 공식 등록 및 기재된 침향은\n*'아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'* 입니다.",
+  },
+  history: {
+    numTag: '02 역사적 기록 - 베트남이 정품 산지',
+    title: "역사적 기록에서는 *'베트남산'을 최고로 여기고 있습니다.*",
+    lead: '수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.',
+    eras: [
+      { era: '당나라 시대', text: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
+      { era: '송나라 시대', text: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
+      { era: '원나라 시대', text: '안남 지역으로 현재의 베트남에 해당합니다.' },
+      { era: '명나라 시대', text: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
+      { era: "'향승'", text: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+      { era: '조선 시대', text: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
+    ],
+    closing:
+      '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
+  },
+  farms: {
+    numTag: '03 베트남 5개 지역 직영 농장',
+    text: '역사적으로 *베트남산을 최고로 여기는* 그 베트남산 침향을, 대라천은 *베트남 현지 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동)* 에 직영 농장을 두고 직접 재배합니다.',
   },
 };
 
@@ -552,6 +614,20 @@ export default async function HomePage() {
   const problemImage = problem.image ?? home.problemImage;
   // solutionCta 는 2026-05-17 부터 about-agarwood (진짜 침향 구별 탭) 로 이동.
   // 기존 home.solutionCta blob 데이터는 about-agarwood/page.tsx 의 legacy fallback 이 처리.
+  const originAuthority: HomeOriginAuthority = home.originAuthority
+    ? {
+        regulation: { ...DEFAULT_ORIGIN_AUTHORITY.regulation, ...home.originAuthority.regulation },
+        history: {
+          ...DEFAULT_ORIGIN_AUTHORITY.history,
+          ...home.originAuthority.history,
+          eras:
+            Array.isArray(home.originAuthority.history?.eras) && home.originAuthority.history.eras.length > 0
+              ? home.originAuthority.history.eras
+              : DEFAULT_ORIGIN_AUTHORITY.history.eras,
+        },
+        farms: { ...DEFAULT_ORIGIN_AUTHORITY.farms, ...home.originAuthority.farms },
+      }
+    : DEFAULT_ORIGIN_AUTHORITY;
   const sectionMetaMap = home.sectionMeta ?? {};
 
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
@@ -898,6 +974,52 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+            );
+          case 'originAuthority':
+            return (
+      // === ORIGIN AUTHORITY (식약처 고시 + 역사적 기록 + 베트남 5개 지역 농장) ===
+      <section key="originAuthority" className={styles.originAuth} aria-label="식약처 고시 학명 · 역사적 기록 · 베트남 5개 지역 직영">
+        <div className={styles.wrap}>
+          {/* Block 01 — 식약처 고시 */}
+          <div className={styles.originAuthBlock}>
+            <div className={styles.originAuthNumTag}>{originAuthority.regulation.numTag}</div>
+            <h2 className={styles.originAuthTitle}>
+              <span className={styles.originAuthTitleSmall}>{originAuthority.regulation.titleLine1}</span>
+              <span className={styles.originAuthTitleLead}>{originAuthority.regulation.titleLine2}</span>
+            </h2>
+            <p className={styles.originAuthIntro}>{renderMarked(originAuthority.regulation.intro)}</p>
+            <p className={styles.originAuthBody}>{renderMarked(originAuthority.regulation.body)}</p>
+          </div>
+
+          {/* Divider */}
+          <div className={styles.originAuthDivider} aria-hidden="true" />
+
+          {/* Block 02 — 역사적 기록 */}
+          <div className={styles.originAuthBlock}>
+            <div className={styles.originAuthNumTag}>{originAuthority.history.numTag}</div>
+            <h2 className={styles.originAuthTitle}>{renderMarked(originAuthority.history.title)}</h2>
+            <p className={styles.originAuthIntro}>{renderMarked(originAuthority.history.lead)}</p>
+            <div className={styles.originAuthEras}>
+              {originAuthority.history.eras.map((e, i) => (
+                <div key={`${e.era}-${i}`} className={styles.originAuthEra}>
+                  <div className={styles.originAuthEraName}>{e.era}</div>
+                  <div className={styles.originAuthEraText}>{renderMarked(e.text)}</div>
+                </div>
+              ))}
+            </div>
+            <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
+          </div>
+
+          {/* Divider */}
+          <div className={styles.originAuthDivider} aria-hidden="true" />
+
+          {/* Block 03 — 베트남 5개 지역 농장 */}
+          <div className={styles.originAuthBlock}>
+            <div className={styles.originAuthNumTag}>{originAuthority.farms.numTag}</div>
+            <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
           </div>
         </div>
       </section>

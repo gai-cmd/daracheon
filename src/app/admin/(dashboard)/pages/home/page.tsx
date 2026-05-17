@@ -110,9 +110,36 @@ type HomeSectionId =
   | 'problem'
   | 'verified'
   | 'certs'
+  | 'originAuthority'
   | 'agarwood'
   | 'benefits'
   | 'process';
+
+// 식약처 고시 + 역사적 기록 + 5개 지역 농장 통합 섹션 (2026-05-17 추가).
+interface OriginEra { era: string; text: string }
+interface OriginAuthorityRegulationBlock {
+  numTag: string;
+  titleLine1: string;
+  titleLine2: string;
+  intro: string;
+  body: string;
+}
+interface OriginAuthorityHistoryBlock {
+  numTag: string;
+  title: string;
+  lead: string;
+  eras: OriginEra[];
+  closing: string;
+}
+interface OriginAuthorityFarmsBlock {
+  numTag: string;
+  text: string;
+}
+interface HomeOriginAuthority {
+  regulation: OriginAuthorityRegulationBlock;
+  history: OriginAuthorityHistoryBlock;
+  farms: OriginAuthorityFarmsBlock;
+}
 
 interface SectionMetaCta { label: string; href: string; variant?: 'gold' | 'outline' }
 interface SectionMeta {
@@ -138,6 +165,7 @@ interface HomeData {
   // solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17).
   // 기존 prod blob 의 home.solutionCta 데이터는 about-agarwood/page.tsx 가 fallback 으로 읽음.
   showroomImage?: HomeShowroomImage;
+  originAuthority?: HomeOriginAuthority;
   sectionOrder?: HomeSectionId[];
   sectionMeta?: SectionMetaMap;
 }
@@ -334,6 +362,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'problem',
   'verified',
   'certs',
+  'originAuthority',
   'agarwood',
   'benefits',
   'process',
@@ -346,9 +375,40 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   problem: 'Problem · 침향 시장 불안 (3 카드)',
   verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교)',
   certs: 'Certifications · 12건 인증 칩 그리드',
+  originAuthority: '원산지 권위 · 식약처 고시 + 역사 기록 + 5개 지역 (3블록)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
   process: 'Craftsmanship · 6단계 공정',
+};
+
+const DEFAULT_ORIGIN_AUTHORITY: HomeOriginAuthority = {
+  regulation: {
+    numTag: '01 식약처 고시 - 아퀼라리아 아갈로차 록스버그',
+    titleLine1: '침향을 고를 때,',
+    titleLine2: '이젠 학명·품종부터 확인하세요!',
+    intro: '*가짜가 많을수록 진짜가 드러납니다.*',
+    body:
+      "식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서',\n'원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 공식 등록 및 기재된 침향은\n*'아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'* 입니다.",
+  },
+  history: {
+    numTag: '02 역사적 기록 - 베트남이 정품 산지',
+    title: "역사적 기록에서는 *'베트남산'을 최고로 여기고 있습니다.*",
+    lead: '수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.',
+    eras: [
+      { era: '당나라 시대', text: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
+      { era: '송나라 시대', text: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
+      { era: '원나라 시대', text: '안남 지역으로 현재의 베트남에 해당합니다.' },
+      { era: '명나라 시대', text: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
+      { era: "'향승'", text: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+      { era: '조선 시대', text: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
+    ],
+    closing:
+      '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
+  },
+  farms: {
+    numTag: '03 베트남 5개 지역 직영 농장',
+    text: '역사적으로 *베트남산을 최고로 여기는* 그 베트남산 침향을, 대라천은 *베트남 현지 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동)* 에 직영 농장을 두고 직접 재배합니다.',
+  },
 };
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
@@ -593,6 +653,7 @@ export default function AdminHomePage() {
   const [certs, setCerts] = useState<CertChip[]>(DEFAULT_CERTS);
   const [problem, setProblem] = useState<HomeProblem>(DEFAULT_PROBLEM);
   const [showroomImage, setShowroomImage] = useState<HomeShowroomImage>(DEFAULT_SHOWROOM);
+  const [originAuthority, setOriginAuthority] = useState<HomeOriginAuthority>(DEFAULT_ORIGIN_AUTHORITY);
   const [sectionOrder, setSectionOrder] = useState<HomeSectionId[]>(DEFAULT_SECTION_ORDER);
   const [orderDirty, setOrderDirty] = useState(false);
   const [sectionMeta, setSectionMeta] = useState<SectionMetaMap>({});
@@ -635,6 +696,20 @@ export default function AdminHomePage() {
         }
         // d.solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17). 여기서 로드 안 함.
         if (d?.showroomImage) setShowroomImage({ ...DEFAULT_SHOWROOM, ...d.showroomImage });
+        if (d?.originAuthority) {
+          const oa = d.originAuthority;
+          setOriginAuthority({
+            regulation: { ...DEFAULT_ORIGIN_AUTHORITY.regulation, ...oa.regulation },
+            history: {
+              ...DEFAULT_ORIGIN_AUTHORITY.history,
+              ...oa.history,
+              eras: Array.isArray(oa.history?.eras) && oa.history.eras.length > 0
+                ? oa.history.eras
+                : DEFAULT_ORIGIN_AUTHORITY.history.eras,
+            },
+            farms: { ...DEFAULT_ORIGIN_AUTHORITY.farms, ...oa.farms },
+          });
+        }
         if (Array.isArray(d?.sectionOrder)) {
           const valid = d.sectionOrder.filter((s): s is HomeSectionId => DEFAULT_SECTION_ORDER.includes(s as HomeSectionId));
           const withMissing = [...valid];
@@ -1121,6 +1196,154 @@ export default function AdminHomePage() {
                 </div>
               ))}
               <button type="button" onClick={() => setCerts([...certs, { mark: '', name: '', sub: '' }])} className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600">+ 인증 추가</button>
+            </div>
+          </SectionCard>
+        );
+
+      case 'originAuthority':
+        return (
+          <SectionCard
+            title="원산지 권위 · 식약처 고시 + 역사 기록 + 5개 지역 (3블록)"
+            onSave={() => saveSection('originAuthority', { originAuthority })}
+            saving={saving === 'originAuthority'}
+          >
+            <div className="space-y-8">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                3개 블록이 위에서 아래로 차례대로 렌더됩니다.<br />
+                본문 입력은 <code className="bg-gray-100 px-1 rounded">*텍스트*</code> 로 골드 강조, 줄바꿈은 그냥 엔터.
+              </p>
+
+              {/* Block 01 — 식약처 고시 */}
+              <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
+                <div className="text-sm font-semibold text-amber-900">블록 01 — 식약처 고시</div>
+                <LabeledInput
+                  label="번호 태그 (예: 01 식약처 고시 - 아퀼라리아 아갈로차 록스버그)"
+                  value={originAuthority.regulation.numTag}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, numTag: v } })}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="제목 1행 (작게)"
+                    value={originAuthority.regulation.titleLine1}
+                    onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, titleLine1: v } })}
+                  />
+                  <LabeledInput
+                    label="제목 2행 (강조)"
+                    value={originAuthority.regulation.titleLine2}
+                    onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, titleLine2: v } })}
+                  />
+                </div>
+                <LabeledInput
+                  label="인트로 한 줄 (*강조* 지원)"
+                  value={originAuthority.regulation.intro}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, intro: v } })}
+                />
+                <LabeledTextarea
+                  label="본문 (*강조* · 줄바꿈 허용)"
+                  value={originAuthority.regulation.body}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, body: v } })}
+                  rows={5}
+                />
+              </div>
+
+              {/* Block 02 — 역사적 기록 */}
+              <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
+                <div className="text-sm font-semibold text-amber-900">블록 02 — 역사적 기록 (왕조별 산지)</div>
+                <LabeledInput
+                  label="번호 태그"
+                  value={originAuthority.history.numTag}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, numTag: v } })}
+                />
+                <LabeledTextarea
+                  label="제목 (*강조* 지원)"
+                  value={originAuthority.history.title}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, title: v } })}
+                  rows={2}
+                />
+                <LabeledInput
+                  label="리드 한 줄"
+                  value={originAuthority.history.lead}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, lead: v } })}
+                />
+
+                <div>
+                  <div className="mb-2 text-sm font-medium text-gray-700">왕조 · 기록</div>
+                  <div className="space-y-2">
+                    {originAuthority.history.eras.map((row, i) => (
+                      <div key={i} className="grid grid-cols-[160px_1fr_auto] items-start gap-2">
+                        <input
+                          value={row.era}
+                          onChange={(e) => {
+                            const next = [...originAuthority.history.eras];
+                            next[i] = { ...next[i], era: e.target.value };
+                            setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: next } });
+                          }}
+                          placeholder="당나라 시대"
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                        <textarea
+                          value={row.text}
+                          onChange={(e) => {
+                            const next = [...originAuthority.history.eras];
+                            next[i] = { ...next[i], text: e.target.value };
+                            setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: next } });
+                          }}
+                          placeholder="설명 (*강조* 지원)"
+                          rows={2}
+                          className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+                        />
+                        <div className="flex flex-col gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: moveItem(originAuthority.history.eras, i, i - 1) } })}
+                            className="rounded border border-gray-200 px-2 py-1 text-xs"
+                          >▲</button>
+                          <button
+                            type="button"
+                            onClick={() => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: moveItem(originAuthority.history.eras, i, i + 1) } })}
+                            className="rounded border border-gray-200 px-2 py-1 text-xs"
+                          >▼</button>
+                          <button
+                            type="button"
+                            onClick={() => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: removeIndex(originAuthority.history.eras, i) } })}
+                            className="rounded border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50"
+                          >삭제</button>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, eras: [...originAuthority.history.eras, { era: '', text: '' }] } })}
+                      className="rounded-lg border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-600 hover:border-gold-500 hover:text-gold-600"
+                    >
+                      + 왕조 추가
+                    </button>
+                  </div>
+                </div>
+
+                <LabeledTextarea
+                  label="마무리 문단 (*강조* 지원)"
+                  value={originAuthority.history.closing}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, closing: v } })}
+                  rows={4}
+                />
+              </div>
+
+              {/* Block 03 — 5개 지역 농장 */}
+              <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
+                <div className="text-sm font-semibold text-amber-900">블록 03 — 베트남 5개 지역 농장</div>
+                <LabeledInput
+                  label="번호 태그"
+                  value={originAuthority.farms.numTag}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, farms: { ...originAuthority.farms, numTag: v } })}
+                />
+                <LabeledTextarea
+                  label="본문 (*강조* · 줄바꿈 허용)"
+                  value={originAuthority.farms.text}
+                  onChange={(v) => setOriginAuthority({ ...originAuthority, farms: { ...originAuthority.farms, text: v } })}
+                  rows={3}
+                />
+              </div>
             </div>
           </SectionCard>
         );
