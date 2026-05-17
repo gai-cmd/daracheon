@@ -761,7 +761,7 @@ export default function AdminHomePage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         if (res.status === 404) {
           // No pages doc yet — keep defaults
           return;
@@ -826,7 +826,7 @@ export default function AdminHomePage() {
   async function saveSection(sectionKey: string, payload: Partial<HomeData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { home?: HomeData } }) : { pages: {} };
       const currentHome = body.pages?.home ?? { hero: DEFAULT_HERO, stats: DEFAULT_STATS };
       const merged = { ...currentHome, ...payload };

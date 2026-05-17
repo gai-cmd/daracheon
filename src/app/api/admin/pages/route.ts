@@ -53,10 +53,13 @@ export async function GET() {
     if (!pages) {
       return NextResponse.json(
         { success: false, stage: 'read', message: '페이지 데이터를 찾을 수 없습니다.' },
-        { status: 404 }
+        { status: 404, headers: { 'Cache-Control': 'no-store, must-revalidate' } }
       );
     }
-    return NextResponse.json({ pages });
+    return NextResponse.json(
+      { pages },
+      { headers: { 'Cache-Control': 'no-store, must-revalidate' } }
+    );
   } catch (error) {
     return errorResponse('read', '데이터 로드 실패', 500, error);
   }
