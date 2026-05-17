@@ -40,6 +40,39 @@ function renderWithNowrap(text: string): ReactNode {
 }
 
 /**
+ * `*...*` 마커 → 골드 em, 동시에 학명(라틴 두 단어+한국어 음역 괄호) 자동 nowrap.
+ * check01Body / check01Sources.value 등 학명이 포함된 본문에 사용.
+ */
+function renderMarkedNowrap(text: string, keyPrefix = 'mn'): ReactNode {
+  const out: ReactNode[] = [];
+  let remaining = text;
+  let idx = 0;
+  while (remaining.length > 0) {
+    const start = remaining.indexOf('*');
+    if (start === -1) {
+      out.push(<span key={`${keyPrefix}-${idx++}`}>{renderWithNowrap(remaining)}</span>);
+      break;
+    }
+    const end = remaining.indexOf('*', start + 1);
+    if (end === -1) {
+      out.push(<span key={`${keyPrefix}-${idx++}`}>{renderWithNowrap(remaining)}</span>);
+      break;
+    }
+    if (start > 0) out.push(<span key={`${keyPrefix}-${idx++}`}>{renderWithNowrap(remaining.slice(0, start))}</span>);
+    out.push(
+      <em
+        key={`${keyPrefix}-em-${idx++}`}
+        style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}
+      >
+        {renderWithNowrap(remaining.slice(start + 1, end))}
+      </em>,
+    );
+    remaining = remaining.slice(end + 1);
+  }
+  return out;
+}
+
+/**
  * *...* 마커 → 골드 <em>, \n → <br /> 로 렌더링.
  * 홈에서 옮긴 Solution CTA 의 title 강조용.
  */
@@ -912,7 +945,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       {auth.check01Title}
                     </h4>
                     <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {renderWithNowrap(auth.check01Body)}
+                      {renderMarkedNowrap(auth.check01Body, 'c01b')}
                     </p>
                     <div style={{ display: 'grid', gap: 12 }}>
                       {auth.check01Sources.map((row, i) => (
@@ -931,7 +964,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </span>
                           <div>
                             <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
-                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderWithNowrap(row.value)}</p>
+                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderMarkedNowrap(row.value, `c01s-${i}`)}</p>
                           </div>
                         </div>
                       ))}
