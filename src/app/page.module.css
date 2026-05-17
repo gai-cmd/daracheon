@@ -1293,15 +1293,17 @@
   color: #fff;
   font-weight: 400;
 }
+/* closing / farms — era 그리드와 동일한 .wrap full-width (max-width 제거).
+   어중간한 행 바꿈 방지를 위해 카드 섹션 폭 전체를 사용. */
 .originAuthClosing {
   font-size: 1rem;
   line-height: 1.9;
   color: rgba(255, 255, 255, 0.78);
   font-weight: 300;
-  max-width: 820px;
-  margin: 28px auto 0;
+  margin: 28px 0 0;
   padding: 22px 0 0;
   border-top: 1px solid rgba(212, 168, 67, 0.15);
+  text-align: center;
 }
 .originAuthClosing em {
   font-style: normal;
@@ -1313,9 +1315,9 @@
   line-height: 1.85;
   color: rgba(255, 255, 255, 0.88);
   font-weight: 400;
-  max-width: 820px;
-  margin: 18px auto 0;
+  margin: 18px 0 0;
   padding: 0;
+  text-align: center;
 }
 .originAuthFarmsText em {
   font-style: normal;

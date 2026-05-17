@@ -1004,13 +1004,11 @@ export default async function HomePage() {
             ))}
           </div>
 
-          {/* 마무리 + 5개 지역 텍스트 — 다시 920px 가독 폭 */}
-          <div className={styles.originAuthBlock}>
-            <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
-            {originAuthority.farms.text && (
-              <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
-            )}
-          </div>
+          {/* 마무리 + 5개 지역 텍스트 — era 그리드와 동일한 .wrap full-width 로 (어중간한 행 바꿈 방지) */}
+          <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
+          {originAuthority.farms.text && (
+            <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
+          )}
         </div>
       </section>
             );
