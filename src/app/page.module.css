@@ -256,6 +256,10 @@
   color: var(--accent);
   font-weight: 500;
 }
+/* 섹션 헤더 톤 통일 — originAuthority history (image 2) 기준.
+   tag = 박스 chip (gold border + monospace + uppercase)
+   h2  = Noto Serif KR 2.6rem, weight 200, 흰색 + gold em
+   .problemWarning / .problemQuote 와 정확히 동일한 시각 톤. */
 .tag {
   display: inline-block;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -263,16 +267,18 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 18px;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  border: 1px solid rgba(212, 168, 67, 0.35);
 }
 .h2 {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: 2.6rem;
   font-weight: 200;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
   color: #fff;
-  margin-bottom: 16px;
+  margin: 0 0 16px;
 }
 .h2 em {
   color: var(--accent);
@@ -479,7 +485,7 @@
 }
 .problemQuote {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  font-size: 2.6rem;
   font-weight: 200;
   letter-spacing: -0.01em;
   line-height: 1.4;
@@ -1114,42 +1120,44 @@
 }
 .metaTopTag {
   display: inline-block;
-  padding: 0.5rem 1rem;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  padding: 6px 14px;
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--gold, #d4a843);
+  color: var(--accent, #d4a843);
   border: 1px solid rgba(212, 168, 67, 0.35);
-  background: rgba(212, 168, 67, 0.05);
-  margin-bottom: 1.6rem;
+  background: transparent;
+  margin-bottom: 24px;
   border-radius: 2px;
 }
 .metaTitleQuote {
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  font-weight: 300;
-  line-height: 1.45;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 2.6rem;
+  font-weight: 200;
+  line-height: 1.4;
   color: #fff;
-  font-style: italic;
-  margin: 0 0 1.4rem;
+  margin: 0 0 16px;
   letter-spacing: -0.01em;
 }
 .metaTitleQuote em {
   font-style: normal;
-  color: var(--gold, #d4a843);
+  color: var(--accent, #d4a843);
   font-weight: 400;
+  font-family: 'Noto Serif KR', serif;
 }
 .metaBodyLead {
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.85;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.66);
   font-weight: 300;
-  max-width: 760px;
-  margin: 0 auto;
+  max-width: 720px;
+  margin: 24px auto 0;
 }
 .metaBodyLead em {
   font-style: normal;
-  color: var(--gold, #d4a843);
+  color: var(--accent, #d4a843);
 }
 .sectionMetaSuffix {
   padding: 28px 0 64px;
@@ -1323,4 +1331,57 @@
   font-style: normal;
   color: var(--accent, #d4a843);
   font-weight: 500;
+}
+
+/* 5개 지역 농장 카드 그리드 — closing 텍스트와 farmsText 사이에 삽입.
+   /media THE FIELD 와 동일한 brandStory.farms 데이터 사용. 카드 개수는 --farms-count 로 inline 주입. */
+.originAuthFarms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 28px 0 0;
+}
+@media (min-width: 768px) {
+  .originAuthFarms { grid-template-columns: repeat(var(--farms-count, 5), minmax(0, 1fr)); gap: 16px; }
+}
+.originAuthFarmCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(255, 255, 255, 0.015);
+}
+.originAuthFarmThumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #1a1d29;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+}
+.originAuthFarmKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent, #d4a843);
+}
+.originAuthFarmName {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.02rem;
+  color: #fff;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.originAuthFarmNameVi {
+  margin-left: 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+}
+.originAuthFarmDesc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.65;
+  font-weight: 300;
 }

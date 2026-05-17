@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import type { Farm } from '@/app/brand-story/page';
 import styles from './page.module.css';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
@@ -578,8 +579,9 @@ function buildHomeItemListJsonLd(siteUrl: string) {
 }
 
 export default async function HomePage() {
-  const pagesData = await readSingleSafe<{ home?: HomeData }>('pages');
+  const pagesData = await readSingleSafe<{ home?: HomeData; brandStory?: { farms?: Farm[] } }>('pages');
   const home = pagesData?.home ?? {};
+  const farms: Farm[] = pagesData?.brandStory?.farms ?? [];
   const hero = home.hero ?? DEFAULT_HERO;
   const stats = home.stats ?? DEFAULT_STATS;
   const agarwood = home.agarwood ?? DEFAULT_AGARWOOD;
@@ -1006,6 +1008,35 @@ export default async function HomePage() {
 
           {/* 마무리 + 5개 지역 텍스트 — era 그리드와 동일한 .wrap full-width 로 (어중간한 행 바꿈 방지) */}
           <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
+
+          {/* 5개 지역 직영 농장 카드 그리드 — /media THE FIELD 와 동일 데이터(brandStory.farms) 사용. 2026-05-17 추가. */}
+          {farms.length > 0 && (
+            <div className={styles.originAuthFarms} style={{ '--farms-count': farms.length } as React.CSSProperties}>
+              {farms.map((farm, i) => (
+                <div key={`${farm.nameVi}-${i}`} className={styles.originAuthFarmCard}>
+                  {farm.image && (
+                    <div className={styles.originAuthFarmThumb}>
+                      <Image
+                        src={farm.image}
+                        alt={`${farm.name} (${farm.nameVi}) 농장`}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 20vw"
+                        style={{ objectFit: 'cover' }}
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                  <div className={styles.originAuthFarmKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
+                  <div className={styles.originAuthFarmName}>
+                    {farm.name}
+                    <span className={styles.originAuthFarmNameVi}>({farm.nameVi})</span>
+                  </div>
+                  <div className={styles.originAuthFarmDesc}>{farm.desc}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {originAuthority.farms.text && (
             <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
           )}
@@ -1096,7 +1127,7 @@ export default async function HomePage() {
         <div className={styles.wrap}>
           <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
             <span className={styles.tag}>{processData.tag}</span>
-            <h2 className={styles.h2} style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.4rem)' }}>{processData.title}</h2>
+            <h2 className={styles.h2}>{processData.title}</h2>
             <div className={styles.line} />
             <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
               묘목 발아에서 정밀 채취, 최종 검수까지 — 모든 단계의 책임을 감추지 않고 공개합니다.
