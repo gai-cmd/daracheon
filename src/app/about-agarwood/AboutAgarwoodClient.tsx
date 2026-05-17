@@ -1007,47 +1007,56 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </p>
                     </div>
 
-                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 (admin 편집 가능) */}
-                    {((auth.check02EraIntro && auth.check02EraIntro.trim().length > 0)
-                      || (auth.check02Eras && auth.check02Eras.length > 0)
-                      || (auth.check02EraOutro && auth.check02EraOutro.trim().length > 0)) && (
-                      <div style={{ marginTop: 28 }}>
-                        {auth.check02EraIntro && auth.check02EraIntro.trim().length > 0 && (
-                          <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
-                            {renderMarkedGold(auth.check02EraIntro)}
-                          </p>
-                        )}
-                        {auth.check02Eras && auth.check02Eras.length > 0 && (
-                          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                            {auth.check02Eras.map((row, i) => (
-                              <li
-                                key={`${row.era}-${i}`}
-                                style={{
-                                  display: 'grid',
-                                  gridTemplateColumns: 'auto 1fr',
-                                  alignItems: 'baseline',
-                                  gap: 14,
-                                  paddingLeft: 14,
-                                  borderLeft: '2px solid rgba(212,168,67,0.25)',
-                                }}
-                              >
-                                <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                                  {row.era}
-                                </span>
-                                <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
-                                  {renderWithNowrap(row.body)}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                        {auth.check02EraOutro && auth.check02EraOutro.trim().length > 0 && (
-                          <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
-                            {renderMarkedGold(auth.check02EraOutro)}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 (admin 편집 가능).
+                        prod blob 에 신규 필드가 없는 legacy 데이터일 때 DEFAULT 로 자동 폴백.
+                        사용자가 admin 에서 명시적으로 비운 경우('' / []) 는 그 의도를 존중. */}
+                    {(() => {
+                      const eraIntro = auth.check02EraIntro !== undefined ? auth.check02EraIntro : DEFAULT_AUTHENTICITY.check02EraIntro;
+                      const eras = auth.check02Eras !== undefined ? auth.check02Eras : DEFAULT_AUTHENTICITY.check02Eras;
+                      const eraOutro = auth.check02EraOutro !== undefined ? auth.check02EraOutro : DEFAULT_AUTHENTICITY.check02EraOutro;
+                      const hasIntro = !!(eraIntro && eraIntro.trim().length > 0);
+                      const hasEras = !!(eras && eras.length > 0);
+                      const hasOutro = !!(eraOutro && eraOutro.trim().length > 0);
+                      if (!hasIntro && !hasEras && !hasOutro) return null;
+                      return (
+                        <div style={{ marginTop: 28 }}>
+                          {hasIntro && (
+                            <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
+                              {renderMarkedGold(eraIntro!)}
+                            </p>
+                          )}
+                          {hasEras && (
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                              {eras!.map((row, i) => (
+                                <li
+                                  key={`${row.era}-${i}`}
+                                  style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'auto 1fr',
+                                    alignItems: 'baseline',
+                                    gap: 14,
+                                    paddingLeft: 14,
+                                    borderLeft: '2px solid rgba(212,168,67,0.25)',
+                                  }}
+                                >
+                                  <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                                    {row.era}
+                                  </span>
+                                  <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
+                                    {renderWithNowrap(row.body)}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {hasOutro && (
+                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
+                              {renderMarkedGold(eraOutro!)}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </RevealOnScroll>
 
