@@ -184,21 +184,6 @@
   line-height: 1.5;
   font-weight: 400;
 }
-.heroTrustKeyword {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 1.45rem;
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: -0.01em;
-  margin-right: 2px;
-}
-.heroTrustSep {
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0 2px;
-}
-.heroTrustRest {
-  color: rgba(255, 255, 255, 0.8);
-}
 .heroTrustMeta {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.58rem;
