@@ -859,8 +859,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                 style={{
                                   fontSize: '0.88rem',
                                   lineHeight: 1.7,
-                                  color: 'rgba(255,255,255,0.75)',
-                                  fontWeight: 300,
+                                  color: 'var(--accent)',
+                                  fontWeight: 400,
                                 }}
                               >
                                 {p.text}
