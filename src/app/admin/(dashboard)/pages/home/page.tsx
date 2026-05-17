@@ -375,7 +375,7 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   problem: 'Problem · 침향 시장 불안 (3 카드)',
   verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교)',
   certs: 'Certifications · 12건 인증 칩 그리드',
-  originAuthority: '원산지 권위 · 식약처 고시 + 역사 기록 + 5개 지역 (3블록)',
+  originAuthority: '원산지 권위 · 역사적 기록(왕조 카드) + 5개 지역 (단일 섹션)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
   process: 'Craftsmanship · 6단계 공정',
@@ -991,7 +991,7 @@ export default function AdminHomePage() {
                 {/* 체크박스 라벨 (=프론트엔드 종 카드의 ✓/✗ 옆 텍스트) 편집 — 두 종 카드에 공통 적용. */}
                 <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <LabeledInput
-                    label="라벨 ① — 약전외한약규격집 자리 (기본: 약전외한약규격집)"
+                    label="라벨 ① — 약전외한약규격집 자리 (기본: 대한약전외한약(생약)규격집)"
                     value={problem.pharmacopoeiaLabel ?? ''}
                     onChange={(v) => setProblem({ ...problem, pharmacopoeiaLabel: v })}
                   />
@@ -1017,7 +1017,7 @@ export default function AdminHomePage() {
                       <div className="flex items-center gap-6">
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.pharmacopoeia} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], pharmacopoeia: e.target.checked }; setProblem({ ...problem, species: n }); }} />
-                          {(problem.pharmacopoeiaLabel?.trim() || '약전외한약규격집') + ' 등재'}
+                          {(problem.pharmacopoeiaLabel?.trim() || '대한약전외한약(생약)규격집') + ' 등재'}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.foodCode} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], foodCode: e.target.checked }; setProblem({ ...problem, species: n }); }} />
@@ -1203,54 +1203,22 @@ export default function AdminHomePage() {
       case 'originAuthority':
         return (
           <SectionCard
-            title="원산지 권위 · 식약처 고시 + 역사 기록 + 5개 지역 (3블록)"
+            title="원산지 권위 · 역사적 기록 + 5개 지역 (단일 섹션)"
             onSave={() => saveSection('originAuthority', { originAuthority })}
             saving={saving === 'originAuthority'}
           >
             <div className="space-y-8">
               <p className="text-xs text-gray-500 leading-relaxed">
-                3개 블록이 위에서 아래로 차례대로 렌더됩니다.<br />
+                식약처 고시 블록은 verified 섹션에서 다루므로 여기선 제거됨.<br />
+                역사적 기록(왕조 카드)과 5개 지역 농장 본문을 <strong>하나의 섹션</strong>으로 통합 렌더.<br />
                 본문 입력은 <code className="bg-gray-100 px-1 rounded">*텍스트*</code> 로 골드 강조, 줄바꿈은 그냥 엔터.
               </p>
 
-              {/* Block 01 — 식약처 고시 */}
+              {/* 역사적 기록 + 5개 지역 — 하나의 통합 블록 */}
               <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
-                <div className="text-sm font-semibold text-amber-900">블록 01 — 식약처 고시</div>
+                <div className="text-sm font-semibold text-amber-900">통합 블록 — 역사 기록(왕조 카드) + 5개 지역 농장 (한 섹션)</div>
                 <LabeledInput
-                  label="번호 태그 (예: 01 식약처 고시 - 아퀼라리아 아갈로차 록스버그)"
-                  value={originAuthority.regulation.numTag}
-                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, numTag: v } })}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <LabeledInput
-                    label="제목 1행 (작게)"
-                    value={originAuthority.regulation.titleLine1}
-                    onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, titleLine1: v } })}
-                  />
-                  <LabeledInput
-                    label="제목 2행 (강조)"
-                    value={originAuthority.regulation.titleLine2}
-                    onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, titleLine2: v } })}
-                  />
-                </div>
-                <LabeledInput
-                  label="인트로 한 줄 (*강조* 지원)"
-                  value={originAuthority.regulation.intro}
-                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, intro: v } })}
-                />
-                <LabeledTextarea
-                  label="본문 (*강조* · 줄바꿈 허용)"
-                  value={originAuthority.regulation.body}
-                  onChange={(v) => setOriginAuthority({ ...originAuthority, regulation: { ...originAuthority.regulation, body: v } })}
-                  rows={5}
-                />
-              </div>
-
-              {/* Block 02 — 역사적 기록 */}
-              <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
-                <div className="text-sm font-semibold text-amber-900">블록 02 — 역사적 기록 (왕조별 산지)</div>
-                <LabeledInput
-                  label="번호 태그"
+                  label="번호 태그 (예: 역사적 기록 - 베트남이 정품 산지)"
                   value={originAuthority.history.numTag}
                   onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, numTag: v } })}
                 />
@@ -1327,22 +1295,16 @@ export default function AdminHomePage() {
                   onChange={(v) => setOriginAuthority({ ...originAuthority, history: { ...originAuthority.history, closing: v } })}
                   rows={4}
                 />
-              </div>
 
-              {/* Block 03 — 5개 지역 농장 */}
-              <div className="rounded-lg border border-amber-200 bg-amber-50/40 p-5 space-y-4">
-                <div className="text-sm font-semibold text-amber-900">블록 03 — 베트남 5개 지역 농장</div>
-                <LabeledInput
-                  label="번호 태그"
-                  value={originAuthority.farms.numTag}
-                  onChange={(v) => setOriginAuthority({ ...originAuthority, farms: { ...originAuthority.farms, numTag: v } })}
-                />
-                <LabeledTextarea
-                  label="본문 (*강조* · 줄바꿈 허용)"
-                  value={originAuthority.farms.text}
-                  onChange={(v) => setOriginAuthority({ ...originAuthority, farms: { ...originAuthority.farms, text: v } })}
-                  rows={3}
-                />
+                <div className="border-t border-amber-200 pt-4 space-y-2">
+                  <div className="text-xs font-medium text-amber-800">↳ 5개 지역 농장 (마무리 문단 바로 다음에 이어붙음, 별도 번호 없음)</div>
+                  <LabeledTextarea
+                    label="5개 지역 농장 본문 (*강조* · 줄바꿈 허용 — 비우면 미표시)"
+                    value={originAuthority.farms.text}
+                    onChange={(v) => setOriginAuthority({ ...originAuthority, farms: { ...originAuthority.farms, text: v } })}
+                    rows={3}
+                  />
+                </div>
               </div>
             </div>
           </SectionCard>

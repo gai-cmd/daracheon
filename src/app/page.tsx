@@ -916,7 +916,7 @@ export default async function HomePage() {
                     <div className={styles.speciesMarks}>
                       <div className={`${styles.speciesMark} ${s.pharmacopoeia ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
                         <span className={styles.speciesMarkIcon}>{s.pharmacopoeia ? '✓' : '✗'}</span>
-                        <span className={styles.speciesMarkLabel}>{problem.pharmacopoeiaLabel?.trim() || '약전외한약규격집'}</span>
+                        <span className={styles.speciesMarkLabel}>{problem.pharmacopoeiaLabel?.trim() || '대한약전외한약(생약)규격집'}</span>
                       </div>
                       <div className={`${styles.speciesMark} ${s.foodCode ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
                         <span className={styles.speciesMarkIcon}>{s.foodCode ? '✓' : '✗'}</span>
@@ -926,7 +926,7 @@ export default async function HomePage() {
                     <div className={`${styles.speciesSummary} ${isOfficial ? styles.speciesSummaryGood : styles.speciesSummaryWarn}`}>
                       {isOfficial
                         ? '양쪽 모두 공식 등록'
-                        : '약전외한약규격집 미등록 — 식용 원료로만 허용'}
+                        : '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용'}
                     </div>
                     <p className={styles.speciesNote}>{s.note}</p>
                   </div>
@@ -980,24 +980,11 @@ export default async function HomePage() {
             );
           case 'originAuthority':
             return (
-      // === ORIGIN AUTHORITY (식약처 고시 + 역사적 기록 + 베트남 5개 지역 농장) ===
-      <section key="originAuthority" className={styles.originAuth} aria-label="식약처 고시 학명 · 역사적 기록 · 베트남 5개 지역 직영">
+      // === ORIGIN AUTHORITY (역사적 기록 + 5개 지역 직영 — 하나의 섹션으로 통합. 2026-05-17) ===
+      // 식약처 고시(regulation) 블록은 verified 섹션에서 다루므로 여기선 렌더하지 않음.
+      // 5개 지역(farms) 도 별도 번호 태그 없이 history 본문 끝에 이어붙인다.
+      <section key="originAuthority" className={styles.originAuth} aria-label="역사적 기록 · 베트남 5개 지역 직영">
         <div className={styles.wrap}>
-          {/* Block 01 — 식약처 고시 */}
-          <div className={styles.originAuthBlock}>
-            <div className={styles.originAuthNumTag}>{originAuthority.regulation.numTag}</div>
-            <h2 className={styles.originAuthTitle}>
-              <span className={styles.originAuthTitleSmall}>{originAuthority.regulation.titleLine1}</span>
-              <span className={styles.originAuthTitleLead}>{originAuthority.regulation.titleLine2}</span>
-            </h2>
-            <p className={styles.originAuthIntro}>{renderMarked(originAuthority.regulation.intro)}</p>
-            <p className={styles.originAuthBody}>{renderMarked(originAuthority.regulation.body)}</p>
-          </div>
-
-          {/* Divider */}
-          <div className={styles.originAuthDivider} aria-hidden="true" />
-
-          {/* Block 02 — 역사적 기록 */}
           <div className={styles.originAuthBlock}>
             <div className={styles.originAuthNumTag}>{originAuthority.history.numTag}</div>
             <h2 className={styles.originAuthTitle}>{renderMarked(originAuthority.history.title)}</h2>
@@ -1011,15 +998,9 @@ export default async function HomePage() {
               ))}
             </div>
             <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
-          </div>
-
-          {/* Divider */}
-          <div className={styles.originAuthDivider} aria-hidden="true" />
-
-          {/* Block 03 — 베트남 5개 지역 농장 */}
-          <div className={styles.originAuthBlock}>
-            <div className={styles.originAuthNumTag}>{originAuthority.farms.numTag}</div>
-            <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
+            {originAuthority.farms.text && (
+              <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
+            )}
           </div>
         </div>
       </section>
