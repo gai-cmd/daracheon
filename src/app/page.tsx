@@ -360,40 +360,122 @@ const DEFAULT_PROBLEM: HomeProblem = {
   },
 };
 
-// "*텍스트*" 마커를 <em> 으로, "\n" 을 <br /> 로 렌더링.
-// admin 에서 강조 부분과 줄바꿈을 직접 편집할 수 있게 한다.
+// admin 인라인 마크업.
+//
+//   *텍스트*               → 골드 <em> (legacy, 기존 데이터 유지)
+//   **텍스트**             → <strong> (굵게, 색 유지)
+//   [red]텍스트[/]         → 색 — gold/red/green/white/gray
+//   [lg]텍스트[/]          → 크기 — xs/sm/lg/xl/2xl (배수)
+//   [red,b,lg]텍스트[/]    → 콤마로 조합 (색·크기·b 굵게)
+//   [/red] 처럼 명시적 close 도 허용 (실제로는 [/...] 무엇이든 close)
+//   \n                     → <br />
+//   중첩 OK — parseInline 이 재귀 호출.
+const COLOR_MAP: Record<string, string> = {
+  gold: 'var(--accent, #d4a843)',
+  red: '#e07b6e',
+  green: '#7fb18c',
+  white: '#ffffff',
+  gray: 'rgba(255,255,255,0.55)',
+};
+const SIZE_MAP: Record<string, string> = {
+  xs: '0.75em',
+  sm: '0.875em',
+  lg: '1.25em',
+  xl: '1.5em',
+  '2xl': '2em',
+};
+const KNOWN_TAGS = new Set<string>([
+  ...Object.keys(COLOR_MAP),
+  ...Object.keys(SIZE_MAP),
+  'b',
+  'bold',
+]);
+
+function parseInline(
+  text: string,
+  emClass: string | undefined,
+  keyPrefix: string,
+): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  let idx = 0;
+  while (i < text.length) {
+    if (text.startsWith('**', i)) {
+      const end = text.indexOf('**', i + 2);
+      if (end !== -1) {
+        nodes.push(
+          <strong key={`${keyPrefix}-b${idx++}`}>
+            {parseInline(text.slice(i + 2, end), emClass, `${keyPrefix}-bi${idx}`)}
+          </strong>,
+        );
+        i = end + 2;
+        continue;
+      }
+    }
+    if (text[i] === '*') {
+      const end = text.indexOf('*', i + 1);
+      if (end !== -1) {
+        nodes.push(
+          <em key={`${keyPrefix}-e${idx++}`} className={emClass}>
+            {parseInline(text.slice(i + 1, end), emClass, `${keyPrefix}-ei${idx}`)}
+          </em>,
+        );
+        i = end + 1;
+        continue;
+      }
+    }
+    if (text[i] === '[') {
+      const tagEnd = text.indexOf(']', i + 1);
+      if (tagEnd !== -1) {
+        const rawTag = text.slice(i + 1, tagEnd).trim().toLowerCase();
+        const parts = rawTag.split(/[,\s+]+/).filter(Boolean);
+        const isKnown = parts.length > 0 && parts.every((p) => KNOWN_TAGS.has(p));
+        if (isKnown) {
+          // close: [/] 또는 [/anything]
+          const closeMatch = text.slice(tagEnd + 1).match(/\[\/[^\]]*\]/);
+          if (closeMatch && closeMatch.index !== undefined) {
+            const innerStart = tagEnd + 1;
+            const innerEnd = innerStart + closeMatch.index;
+            const inner = text.slice(innerStart, innerEnd);
+            const style: React.CSSProperties = {};
+            let bold = false;
+            for (const p of parts) {
+              if (COLOR_MAP[p]) style.color = COLOR_MAP[p];
+              else if (SIZE_MAP[p]) style.fontSize = SIZE_MAP[p];
+              else if (p === 'b' || p === 'bold') bold = true;
+            }
+            const childNodes = parseInline(inner, emClass, `${keyPrefix}-si${idx}`);
+            const styled = (
+              <span
+                key={`${keyPrefix}-s${idx++}`}
+                style={Object.keys(style).length ? style : undefined}
+              >
+                {bold ? <strong>{childNodes}</strong> : childNodes}
+              </span>
+            );
+            nodes.push(styled);
+            i = innerEnd + closeMatch[0].length;
+            continue;
+          }
+        }
+      }
+    }
+    let j = i + 1;
+    while (j < text.length && text[j] !== '*' && text[j] !== '[') j++;
+    nodes.push(text.slice(i, j));
+    i = j;
+  }
+  return nodes;
+}
+
 function renderMarked(text: string, emClass?: string): React.ReactNode {
   const lines = text.split('\n');
-  return lines.map((line, li) => {
-    const parts: React.ReactNode[] = [];
-    let remaining = line;
-    let idx = 0;
-    while (remaining.length > 0) {
-      const start = remaining.indexOf('*');
-      if (start === -1) {
-        parts.push(remaining);
-        break;
-      }
-      if (start > 0) parts.push(remaining.slice(0, start));
-      const end = remaining.indexOf('*', start + 1);
-      if (end === -1) {
-        parts.push(remaining.slice(start));
-        break;
-      }
-      parts.push(
-        <em key={`em-${li}-${idx++}`} className={emClass}>
-          {remaining.slice(start + 1, end)}
-        </em>,
-      );
-      remaining = remaining.slice(end + 1);
-    }
-    return (
-      <span key={`line-${li}`}>
-        {parts}
-        {li < lines.length - 1 && <br />}
-      </span>
-    );
-  });
+  return lines.map((line, li) => (
+    <span key={`line-${li}`}>
+      {parseInline(line, emClass, `${li}`)}
+      {li < lines.length - 1 && <br />}
+    </span>
+  ));
 }
 
 // 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
