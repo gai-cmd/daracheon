@@ -526,6 +526,28 @@ function SectionMetaEditor({
             본문은 <code className="bg-gray-100 px-1 rounded">*텍스트*</code>로 강조, 줄바꿈은 그냥 엔터.
           </p>
 
+          {id === 'certs' && (
+            <div className="rounded-md border border-amber-200 bg-amber-50/60 p-3 text-xs leading-relaxed text-amber-900">
+              <div className="mb-1 font-semibold">예시 (Certifications 섹션 권장 형식)</div>
+              <div className="space-y-1">
+                <div>
+                  <span className="font-medium">상단 태그:</span>{' '}
+                  <code className="rounded bg-white/70 px-1">Certifications · 12건 공식 인증</code>
+                </div>
+                <div>
+                  <span className="font-medium">제목 인용문:</span>{' '}
+                  <code className="rounded bg-white/70 px-1">{`국제·국가 기관이 검증한\\n*대라천 침향의 무게*`}</code>{' '}
+                  <span className="text-amber-700">→ 두 줄, 두 번째 줄이 골드로 강조됩니다.</span>
+                </div>
+                <div>
+                  <span className="font-medium">본문 리드:</span>{' '}
+                  <code className="rounded bg-white/70 px-1">CITES, HACCP, GMP… *12건의 공식 인증서* 로 …</code>{' '}
+                  <span className="text-amber-700">→ 골드 강조는 *…* 로 감쌉니다.</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <LabeledInput
             label="상단 태그 (예: Notice · 침향을 고르기 전에)"
             value={meta.topTag ?? ''}
