@@ -1109,8 +1109,13 @@
 /* === 섹션 메타 슬롯 (admin: 상단 태그/제목 인용문/본문 리드/하단 CTA) === */
 .sectionMetaPrefix {
   padding: 56px 0 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
-.sectionMetaPrefix + section,
+/* prefix 가 있는 섹션은 그 다음 본문 섹션의 border-top 을 제거 — 가로 라인이 prefix 위에서 한 번만 그려지도록. */
+.sectionMetaPrefix + section {
+  padding-top: 24px;
+  border-top: none;
+}
 .sectionMetaPrefix + .sectionMetaPrefix {
   padding-top: 24px;
 }
