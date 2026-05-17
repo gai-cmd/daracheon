@@ -245,11 +245,11 @@
 }
 .verifiedHead p {
   font-size: 1rem;
-  line-height: 2.15;
+  line-height: 1.9;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 300;
   margin: 0 auto 14px;
-  max-width: 900px;
+  max-width: none;
 }
 .verifiedHead p em {
   font-style: normal;

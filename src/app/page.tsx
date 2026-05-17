@@ -99,6 +99,9 @@ export interface HomeProblem {
   speciesFoot: string;
   speciesDefHerb?: SpeciesDef;
   speciesDefFood?: SpeciesDef;
+  // 종 비교 카드 안 ✓/✗ 라벨 — admin 에서 편집 가능. 비어있으면 아래 기본값.
+  pharmacopoeiaLabel?: string;
+  foodCodeLabel?: string;
 }
 
 export interface SolutionPillar {
@@ -753,11 +756,11 @@ export default async function HomePage() {
                     <div className={styles.speciesMarks}>
                       <div className={`${styles.speciesMark} ${s.pharmacopoeia ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
                         <span className={styles.speciesMarkIcon}>{s.pharmacopoeia ? '✓' : '✗'}</span>
-                        <span className={styles.speciesMarkLabel}>약전외한약규격집</span>
+                        <span className={styles.speciesMarkLabel}>{problem.pharmacopoeiaLabel?.trim() || '약전외한약규격집'}</span>
                       </div>
                       <div className={`${styles.speciesMark} ${s.foodCode ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
                         <span className={styles.speciesMarkIcon}>{s.foodCode ? '✓' : '✗'}</span>
-                        <span className={styles.speciesMarkLabel}>식품공전</span>
+                        <span className={styles.speciesMarkLabel}>{problem.foodCodeLabel?.trim() || '식품공전'}</span>
                       </div>
                     </div>
                     <div className={`${styles.speciesSummary} ${isOfficial ? styles.speciesSummaryGood : styles.speciesSummaryWarn}`}>

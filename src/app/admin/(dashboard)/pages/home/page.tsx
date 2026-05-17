@@ -95,6 +95,8 @@ interface HomeProblem {
   speciesFoot: string;
   speciesDefHerb?: SpeciesDef;
   speciesDefFood?: SpeciesDef;
+  pharmacopoeiaLabel?: string;
+  foodCodeLabel?: string;
 }
 
 // solutionCta 는 about-agarwood 어드민으로 이동(2026-05-17). 여기에선 타입 없음.
@@ -906,7 +908,22 @@ export default function AdminHomePage() {
               </p>
               <div>
                 <LabeledInput label="종 비교 섹션 제목" value={problem.speciesTitle} onChange={(v) => setProblem({ ...problem, speciesTitle: v })} />
-                <p className="mt-2 text-xs text-gray-500">학명별 약전외한약규격집/식품공전 등재 여부 비교 (✓ ✗).</p>
+                <p className="mt-2 text-xs text-gray-500">학명별 등재 여부 비교 (✓ ✗). 라벨 두 개는 아래에서 자유롭게 변경할 수 있습니다.</p>
+
+                {/* 체크박스 라벨 (=프론트엔드 종 카드의 ✓/✗ 옆 텍스트) 편집 — 두 종 카드에 공통 적용. */}
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <LabeledInput
+                    label="라벨 ① — 약전외한약규격집 자리 (기본: 약전외한약규격집)"
+                    value={problem.pharmacopoeiaLabel ?? ''}
+                    onChange={(v) => setProblem({ ...problem, pharmacopoeiaLabel: v })}
+                  />
+                  <LabeledInput
+                    label="라벨 ② — 식품공전 자리 (기본: 식품공전)"
+                    value={problem.foodCodeLabel ?? ''}
+                    onChange={(v) => setProblem({ ...problem, foodCodeLabel: v })}
+                  />
+                </div>
+
                 <div className="mt-3 space-y-3">
                   {problem.species.map((s, i) => (
                     <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-2">
@@ -922,11 +939,11 @@ export default function AdminHomePage() {
                       <div className="flex items-center gap-6">
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.pharmacopoeia} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], pharmacopoeia: e.target.checked }; setProblem({ ...problem, species: n }); }} />
-                          약전외한약규격집 등재
+                          {(problem.pharmacopoeiaLabel?.trim() || '약전외한약규격집') + ' 등재'}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.foodCode} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], foodCode: e.target.checked }; setProblem({ ...problem, species: n }); }} />
-                          식품공전 등재
+                          {(problem.foodCodeLabel?.trim() || '식품공전') + ' 등재'}
                         </label>
                       </div>
                       <textarea rows={2} value={s.note} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], note: e.target.value }; setProblem({ ...problem, species: n }); }} placeholder="설명 (예: 한약(생약) · 식품 양쪽 모두 공식 기원 식물.)" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
