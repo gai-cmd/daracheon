@@ -230,16 +230,6 @@ export default function BroadcastCountdown({
         </div>
       )}
 
-      {/* 4. 메타 푸터 */}
-      <div className="cd-meta">
-        <span className="cd-meta-channel">{channel}</span>
-        <span className="cd-meta-sep" />
-        <span>
-          {dateTimeLabel}
-          {isEnded ? ' 방영' : ''}
-        </span>
-      </div>
-
       <style jsx>{styles}</style>
     </div>
   );
@@ -347,27 +337,6 @@ const styles = `
     padding-bottom: 18px;
   }
   .cd-sep--dim { color: rgba(212, 168, 67, 0.22); }
-
-  .cd-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    color: rgba(255, 255, 255, 0.55);
-    text-transform: uppercase;
-    padding-top: 14px;
-    border-top: 1px dashed rgba(212, 168, 67, 0.18);
-  }
-  .cd-meta-channel { color: var(--accent-soft); font-weight: 500; }
-  .cd-meta-sep {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: rgba(212, 168, 67, 0.5);
-  }
 
   .cd-shell--ended .cd-caption { color: rgba(212, 168, 67, 0.85); }
 
