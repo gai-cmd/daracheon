@@ -197,7 +197,6 @@
   background: #0c0d13;
   padding: 60px 0;
   border-top: 1px solid rgba(212, 168, 67, 0.15);
-  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
 }
 .trustStripInner {
   display: grid;
@@ -238,6 +237,7 @@
 .verified {
   padding: 100px 0;
   background: #0a0b10;
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
 .verifiedHead {
   text-align: center;
@@ -963,6 +963,7 @@
 /* GENERIC SECTION */
 .section {
   padding: 100px 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
 .sectionAlt { background: #0c0d13; }
 
@@ -1170,7 +1171,6 @@
 .originAuth {
   padding: 100px 0;
   border-top: 1px solid rgba(212, 168, 67, 0.12);
-  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
 }
 .originAuthBlock {
   max-width: 920px;
