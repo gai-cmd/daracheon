@@ -7,7 +7,7 @@ import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
-import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper, Scripture } from './page';
 
 // 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
 // 외부 호환을 위해 동일 시그니처를 유지하지만 단순 wrapper 로 동작.
@@ -155,6 +155,84 @@ const DEFAULT_AUTHENTICITY: AuthenticityTab = {
   ],
 };
 
+// 경전에 실린 침향 — 소스: "불교,성경속 침향.docx" (대라천 자료, 2026-04-17)
+// 인용문은 문서 원문을 그대로 보존. admin 에서 scriptures 를 채우면 그 값이 우선되고,
+// 비어 있을 때만 이 기본값이 노출된다.
+const DEFAULT_SCRIPTURES: Scripture[] = [
+  {
+    title: '약사경 (藥師經)',
+    author: '약사여래신앙 경전',
+    year: '불교 경전',
+    topic: '수행과 공양의 정향',
+    description:
+      '약사경의 여러 의식서에서 수행 전후 정향으로 침향을 사용한다고 기록되어 있다. 공양을 올릴 때, 최상의 향료로 침향을 사용하니, 마음을 정화하고 병을 치유한다. 향기로운 침향은 수행자의 몸과 마음을 맑게 하는 수단으로 여겨졌으며, 침향은 의식 속에서 정화·치유·명상 집중을 돕는 상징적 향료로 사용되어 특히 약사여래신앙에서 중요한 역할을 한다.',
+  },
+  {
+    title: '법화경 (法華經) — 제19품 설법행자품',
+    author: '묘법연화경 (妙法蓮華經)',
+    year: '불교 경전',
+    topic: '천향(天香)으로의 상징',
+    description:
+      '"수지호지차경자, 수재세간, 유능변기천향(受持護持此經者, 雖在世間, 猶能辨其天香)" — 이 경을 받들고 지니는 이는, 비록 세상에 있으나 하늘의 향기(天香)를 분별할 수 있으니라. 이 경을 몸에 지니고 실천하는 이는 이 땅에 있으면서도 천국의 고귀한 향기, 즉 침향과 같은 신성한 향기를 맡을 수 있다는 의미로, 침향은 단순한 향료를 넘어 경전을 수행·수호하는 자의 정성을 상징하며 공덕과 성취를 은유하는 신성한 요소로 사용되었다.',
+  },
+  {
+    title: '화엄계경 (華嚴戒經) 및 관련 주석',
+    author: '화엄 수행 의례서',
+    year: '불교 경전',
+    topic: '공덕 회향(回向)의 상징',
+    description:
+      '화엄계경은 화엄 수행자의 계율과 공덕 회향을 강조한다. 경전 본문에 구체적인 향료 이름이 등장하지 않더라도, 주석과 의례서에서는 침향이 수행 도구로 설명된다. 제사·계향(戒香) 의식에서 침향이 사용되며, 그 연기로 자신의 공덕을 회향하는 상징적 행위로 보인다. 침향은 정성과 공덕의 향기를 상징하며, 이를 피움으로써 수행자는 자신의 공덕을 중생에게 회향하는 의식을 수행한다.',
+  },
+  {
+    title: '침향 송(頌) — 전통 게송',
+    author: '대라천 자료집',
+    year: '전통 게송',
+    topic: '침향에 깃든 선(禪)의 정서',
+    description:
+      '受創之木 獨立孤峙 — 상처 입은 나무가 외로이 홀로 서니, 傷中生露 滴香成寶 — 상처에서 흐른 수액이 향이 되어 산중 향 중에 보물이 되었다. 生中之死 死中之生, 是謂沈香 — 살아 있음 속의 죽음이요, 죽음 속의 생명이기에 그것이 바로 침향이라 한다. 久生香氣 入人入定 — 불 속에서 피어나는 향연은 사람을 명상으로 이끌고, 一香萬靜 無聲之樂 — 하나의 향기가 만 가지 고요를 부르고 소리 없는 기쁨을 자아내며, 念觀觀音 隨香入定 — 그 향을 따라 관세음보살을 염하면 향 속에 고요함이 깃든다. 唵嘛呢叭咪吽 — 옴 마니반메훔을 염하니, 自滅業障 消盡欲染 — 스스로의 업장이 사라져 욕망의 불꽃이 잦아들어, 氣淸心靜 沈香悠然 — 기운은 맑고 마음은 고요해 침향에 젖어 속세를 잊게 한다.',
+  },
+  {
+    title: '민수기 24:5-6',
+    author: '구약성경',
+    year: '구약',
+    topic: '여호와께서 심으신 침향목',
+    description:
+      '"야곱이여 네 장막들이, 이스라엘이여 네 거처들이 어찌 그리 아름다운고, 그 벌어짐이 골짜기 같고 강가의 동산 같으며 여호와께서 심으신 침향목들 같고 물가의 백향목들 같도다."',
+  },
+  {
+    title: '시편 45:8',
+    author: '구약성경',
+    year: '구약',
+    topic: '왕의 옷 향기',
+    description:
+      '"왕의 모든 옷은 몰약과 침향과 육계의 향기가 있으며 상아궁에서 나오는 현악은 왕을 즐겁게 하도다."',
+  },
+  {
+    title: '잠언 7:16-17',
+    author: '구약성경',
+    year: '구약',
+    topic: '침상에 뿌린 침향',
+    description:
+      '"내 침상에는 요와 애굽의 무늬 있는 이불을 폈고 몰약과 침향과 계피를 뿌렸노라."',
+  },
+  {
+    title: '아가 4:13-14',
+    author: '구약성경',
+    year: '구약',
+    topic: '동산의 각종 향 품',
+    description:
+      '"네게서 나는 것은 석류나무와 각종 아름다운 과수와 고벨화와 나도풀과 나도와 번홍화와 창포와 계수와 각종 유향과 몰약과 침향과 모든 귀한 향 품이요."',
+  },
+  {
+    title: '요한복음 19:39',
+    author: '신약성경',
+    year: '신약',
+    topic: '예수님 장사에 침향',
+    description:
+      '"일찍이 예수께 밤에 찾아왔던 니고데모도 몰약과 침향 섞은 것을 백 리트라쯤 가지고 온지라." 예수님이 돌아가신 뒤 시체를 모셔 장사 지내는 데 침향이 등장한다. 이는 침향의 살균과 방부 작용을 뒷받침하며, 실제로 침향은 이집트 미라에서도 주검 보존에 사용했다.',
+  },
+];
+
 const DEFAULT_USAGE: UsageTab = {
   tag: 'Dosage & Usage · 복용법',
   title: '복용 및 사용법',
@@ -179,7 +257,7 @@ interface Props {
   data: AboutAgarwoodData | null;
 }
 
-const TABS = ['침향이란?', '진짜 침향 구별', '문헌에 실린 침향', '논문에 실린 침향', '복용 및 사용법'] as const;
+const TABS = ['침향이란?', '진짜 침향 구별', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '복용 및 사용법'] as const;
 
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -213,6 +291,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const benefits = data?.benefits ?? [];
   const dosageSection = data?.dosageSection;
   const literatures = data?.literatures ?? [];
+  const scriptures: Scripture[] = data?.scriptures && data.scriptures.length > 0 ? data.scriptures : DEFAULT_SCRIPTURES;
   const papers = data?.papers ?? [];
   const usageTab = data?.usageTab ?? DEFAULT_USAGE;
   const officialSources = data?.officialSourcesSection;
@@ -1132,8 +1211,138 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 2: 문헌에 실린 침향 ════════════ */}
+      {/* ════════════ TAB 2: 경전에 실린 침향 ════════════ */}
       {activeTab === 2 && (
+        <>
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>01</div>
+                <div className={styles.chapterTag}>Scripture · 경전</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>경전에 실린 침향</h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p className={styles.chapterSubtitle}>
+                    침향(沈香)은 동서양의 주요 경전에서 신성한 공양물·의례의 향으로 기록되어 온 귀한 향목입니다.
+                  </p>
+                </RevealOnScroll>
+                {tabHeroes.tabScriptures && (
+                  <RevealOnScroll delay={150}>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        position: 'relative',
+                        width: '100%',
+                        aspectRatio: '16/9',
+                        border: '1px solid rgba(212,168,67,0.2)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={tabHeroes.tabScriptures}
+                        alt="경전에 실린 침향 — 상징 이미지"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 880px"
+                        style={{ objectFit: 'cover', display: 'block' }}
+                      />
+                    </div>
+                  </RevealOnScroll>
+                )}
+                {scriptures.length > 0 ? (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                      gap: 20,
+                    }}
+                  >
+                    {scriptures.map((scr, i) => (
+                      <RevealOnScroll key={scr.title + i} delay={(i % 6) * 60}>
+                        <div
+                          style={{
+                            padding: 22,
+                            border: '1px solid rgba(212,168,67,0.2)',
+                            background: 'rgba(255,255,255,0.02)',
+                            height: '100%',
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+                            <span
+                              style={{
+                                padding: '4px 10px',
+                                border: '1px solid rgba(212,168,67,0.35)',
+                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontSize: '0.62rem',
+                                letterSpacing: '0.22em',
+                                color: 'var(--accent)',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {scr.year}
+                            </span>
+                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{scr.author}</span>
+                          </div>
+                          <h4
+                            style={{
+                              fontFamily: "'Noto Serif KR', serif",
+                              fontSize: '1.05rem',
+                              color: '#fff',
+                              marginBottom: 6,
+                              fontWeight: 400,
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            {scr.title}
+                          </h4>
+                          <p
+                            style={{
+                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontSize: '0.62rem',
+                              letterSpacing: '0.2em',
+                              color: 'var(--accent-soft)',
+                              textTransform: 'uppercase',
+                              marginBottom: 10,
+                            }}
+                          >
+                            {scr.topic}
+                          </p>
+                          <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, fontWeight: 300 }}>
+                            {scr.description}
+                          </p>
+                        </div>
+                      </RevealOnScroll>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      padding: '50px 30px',
+                      textAlign: 'center',
+                      border: '1px dashed rgba(212,168,67,0.25)',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                      Coming Soon
+                    </div>
+                    경전 자료가 곧 업데이트됩니다.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+        </>
+      )}
+
+      {/* ════════════ TAB 3: 문헌에 실린 침향 ════════════ */}
+      {activeTab === 3 && (
         <>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
@@ -1262,8 +1471,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 3: 논문에 실린 침향 ════════════ */}
-      {activeTab === 3 && (
+      {/* ════════════ TAB 4: 논문에 실린 침향 ════════════ */}
+      {activeTab === 4 && (
         <>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
@@ -1478,8 +1687,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 4: 복용 및 사용법 ════════════ */}
-      {activeTab === 4 && (
+      {/* ════════════ TAB 5: 복용 및 사용법 ════════════ */}
+      {activeTab === 5 && (
         <>
         <section className={styles.chapter}>
           <div className={styles.wrap}>

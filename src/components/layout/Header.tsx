@@ -23,9 +23,10 @@ const STATIC_PAGE_TABS: Record<string, { key: string; label: string }[]> = {
   '/about-agarwood': [
     { key: '0', label: '침향이란?' },
     { key: '1', label: '진짜 침향 구별' },
-    { key: '2', label: '문헌에 실린 침향' },
-    { key: '3', label: '논문에 실린 침향' },
-    { key: '4', label: '복용 및 사용법' },
+    { key: '2', label: '경전에 실린 침향' },
+    { key: '3', label: '문헌에 실린 침향' },
+    { key: '4', label: '논문에 실린 침향' },
+    { key: '5', label: '복용 및 사용법' },
   ],
   '/brand-story': [
     { key: '0', label: '브랜드 스토리' },

@@ -85,6 +85,7 @@ export interface Benefit { title: string; description: string; image?: string }
 export interface DosageItem { num: string; title: string; body: string; image?: string }
 export interface DosageSection { tag?: string; title: string; items: DosageItem[] }
 export interface Literature { title: string; author: string; year: string; topic: string; description: string }
+export interface Scripture { title: string; author: string; year: string; topic: string; description: string }
 export interface Paper {
   title: string;
   titleKr?: string;
@@ -177,6 +178,9 @@ export interface TabHeroes {
   tab2?: string;  // 문헌에 실린 침향
   tab3?: string;  // 논문에 실린 침향
   tab4?: string;  // 복용 및 사용법
+  // 2026-05-18 추가 — 새 탭(경전에 실린 침향) 히어로 이미지.
+  // 기존 tab0..tab4 key 는 CMS 에 저장된 의미와 그대로 묶여 있어 위치만 시프트.
+  tabScriptures?: string; // 경전에 실린 침향
 }
 
 export interface AboutAgarwoodData {
@@ -194,6 +198,7 @@ export interface AboutAgarwoodData {
   dosageSection?: DosageSection;
   authenticityTab?: AuthenticityTab;
   literatures: Literature[];
+  scriptures?: Scripture[];
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
   usageTab?: UsageTab;
