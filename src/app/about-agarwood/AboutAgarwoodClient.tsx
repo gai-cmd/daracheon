@@ -40,6 +40,23 @@ function renderWithNowrap(text: string): ReactNode {
 }
 
 /**
+ * 본문 안의 "침향" 단어를 골드(var(--accent))로 강조.
+ * 한자 沈香 도 함께 처리. 복합어("침향목", "침향나무" 등)에서도 "침향" 부분만 강조.
+ */
+function highlightAgarwood(text: string): ReactNode {
+  const re = /(침향|沈香)/g;
+  const parts = text.split(re);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    part === '침향' || part === '沈香' ? (
+      <span key={i} style={{ color: 'var(--accent)', fontWeight: 500 }}>{part}</span>
+    ) : (
+      <span key={i}>{part}</span>
+    )
+  );
+}
+
+/**
  * `*...*` 마커는 별표만 떼어내고 본문 폰트 그대로 렌더 (골드 강조 없음).
  * 학명(라틴 두 단어+한국어 음역 괄호) 부분은 renderWithNowrap 로 nowrap 유지.
  */
@@ -1297,7 +1314,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               lineHeight: 1.4,
                             }}
                           >
-                            {scr.title}
+                            {highlightAgarwood(scr.title)}
                           </h4>
                           <p
                             style={{
@@ -1312,7 +1329,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             {scr.topic}
                           </p>
                           <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, fontWeight: 300 }}>
-                            {scr.description}
+                            {highlightAgarwood(scr.description)}
                           </p>
                         </div>
                       </RevealOnScroll>
