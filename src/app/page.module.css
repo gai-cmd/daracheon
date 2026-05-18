@@ -235,7 +235,7 @@
 
 /* VERIFIED */
 .verified {
-  padding: 100px 0 50px;
+  padding: 50px 0;
   background: #0a0b10;
   border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
@@ -466,7 +466,7 @@
 
 /* PROBLEM — 불안 건드리기 (Showroom → Verified 사이) */
 .problem {
-  padding: 100px 0;
+  padding: 50px 0;
   background: #08090e;
   position: relative;
   border-top: 1px solid rgba(212, 168, 67, 0.1);
@@ -962,7 +962,7 @@
 
 /* GENERIC SECTION */
 .section {
-  padding: 100px 0 50px;
+  padding: 50px 0;
   border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
 .sectionAlt { background: #0c0d13; }
@@ -1176,7 +1176,7 @@
 
 /* === ORIGIN AUTHORITY (식약처 고시 + 역사적 기록 + 5개 지역) ============ */
 .originAuth {
-  padding: 100px 0 50px;
+  padding: 50px 0;
   border-top: 1px solid rgba(212, 168, 67, 0.12);
 }
 .originAuthBlock {
