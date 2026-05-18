@@ -1168,7 +1168,7 @@
   color: var(--accent, #d4a843);
 }
 .sectionMetaSuffix {
-  padding: 0 0 64px;
+  padding: 0 0 50px;
 }
 .metaCtaWrap {
   text-align: center;
