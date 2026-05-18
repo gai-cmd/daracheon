@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const company = await readSingle<Record<string, unknown>>('company');
+    const company = await readSingleUncached<Record<string, unknown>>('company');
     if (!company) {
       return NextResponse.json(
         { success: false, message: '회사 정보를 찾을 수 없습니다.' },
         { status: 404 }
       );
     }
-    return NextResponse.json(company);
+    return NextResponse.json(company, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
   } catch (error) {
     console.error('[Admin Settings] GET Error:', error);
     return NextResponse.json(
@@ -28,7 +28,7 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
 
-    const existing = (await readSingle<Record<string, unknown>>('company')) ?? {};
+    const existing = (await readSingleUncached<Record<string, unknown>>('company')) ?? {};
     const updated = { ...existing, ...body };
     await writeSingle('company', updated);
     revalidatePath('/company', 'layout');

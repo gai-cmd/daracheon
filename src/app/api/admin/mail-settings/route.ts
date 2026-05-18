@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 
@@ -28,8 +28,8 @@ function maskSecrets(s: MailSettings): MailSettings {
 
 export async function GET() {
   try {
-    const stored = (await readSingle<MailSettings>('mail-settings')) ?? {};
-    return NextResponse.json(maskSecrets(stored));
+    const stored = (await readSingleUncached<MailSettings>('mail-settings')) ?? {};
+    return NextResponse.json(maskSecrets(stored), { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
   } catch (error) {
     console.error('[Admin MailSettings] GET Error:', error);
     return NextResponse.json(
@@ -42,7 +42,7 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = (await request.json()) as MailSettings;
-    const existing = (await readSingle<MailSettings>('mail-settings')) ?? {};
+    const existing = (await readSingleUncached<MailSettings>('mail-settings')) ?? {};
 
     // 비밀 필드: 클라이언트가 마스킹된 값 그대로 보내면 기존값 보존,
     // 빈 문자열이면 명시적 삭제, 새 값이면 교체.
@@ -91,7 +91,7 @@ export async function PUT(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = (await request.json().catch(() => ({}))) as { to?: string };
-    const settings = (await readSingle<MailSettings>('mail-settings')) ?? {};
+    const settings = (await readSingleUncached<MailSettings>('mail-settings')) ?? {};
     const to = (body.to || settings.adminEmail || '').trim();
     if (!to) {
       return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import {
   type IntegrationSettings,
@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const stored = (await readSingle<IntegrationSettings>('integration-settings')) ?? {};
+    const stored = (await readSingleUncached<IntegrationSettings>('integration-settings')) ?? {};
     const ga4 = getGa4Config();
     return NextResponse.json({
       googleSheetsUrl: stored.googleSheetsUrl ?? '',
@@ -36,7 +36,7 @@ export async function GET() {
       ga4PropertyId: ga4.propertyId ?? '',
       ga4ServiceAccountEmail: ga4.serviceAccountEmail ?? '',
       ga4ImpersonateSubject: ga4.impersonateSubject ?? '',
-    });
+    }, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
   } catch (error) {
     console.error('[Admin IntegrationSettings] GET Error:', error);
     return NextResponse.json(
@@ -49,7 +49,7 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = (await request.json()) as IntegrationSettings;
-    const existing = (await readSingle<IntegrationSettings>('integration-settings')) ?? {};
+    const existing = (await readSingleUncached<IntegrationSettings>('integration-settings')) ?? {};
 
     // 빈 입력 → 기존 토큰 유지. 비-빈 입력 → 그대로 교체.
     const incomingToken = (body.telegramBotToken ?? '').trim();

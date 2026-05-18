@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 const AnnouncementSchema = z.object({
@@ -31,8 +31,8 @@ const DEFAULT_ANNOUNCEMENT: Announcement = {
 };
 
 export async function GET() {
-  const data = await readSingle('announcement') ?? DEFAULT_ANNOUNCEMENT;
-  return NextResponse.json(data);
+  const data = await readSingleUncached('announcement') ?? DEFAULT_ANNOUNCEMENT;
+  return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 }
 
 export async function PUT(req: NextRequest) {
@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const current = await readSingle('announcement') ?? DEFAULT_ANNOUNCEMENT;
+  const current = await readSingleUncached('announcement') ?? DEFAULT_ANNOUNCEMENT;
   const updated: Announcement = {
     ...current,
     ...parsed.data,

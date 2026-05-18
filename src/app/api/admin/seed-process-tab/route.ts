@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingleUncached, writeSingle } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,7 +67,7 @@ const PROCESS_TAB = {
 
 export async function GET() {
   try {
-    const pages = (await readSingle('pages') ?? {}) as Record<string, unknown>;
+    const pages = (await readSingleUncached('pages') ?? {}) as Record<string, unknown>;
     const brandStory = ((pages.brandStory ?? {}) as Record<string, unknown>);
     const updated = { ...pages, brandStory: { ...brandStory, processTab: PROCESS_TAB } };
     await writeSingle('pages', updated);
