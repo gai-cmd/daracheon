@@ -487,7 +487,7 @@ export default function AdminProcessPage() {
               <ImageUploadField
                 label="히어로 배경 이미지"
                 value={hero.heroImage ?? ''}
-                onChange={(url) => setHero({ ...hero, heroImage: url })}
+                onChange={(url) => setHero((prev) => ({ ...prev, heroImage: url }))}
                 subdir="pages"
               />
             </div>
@@ -509,7 +509,7 @@ export default function AdminProcessPage() {
                   {sceneSection.images.map((img, i) => (
                     <div key={i} className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3">
                       <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...sceneSection.images]; n[i] = url; setSceneSection({ ...sceneSection, images: n }); }} subdir="pages" />
+                        <ImageUploadField value={img} onChange={(url) => setSceneSection((prev) => { const n = [...prev.images]; n[i] = url; return { ...prev, images: n }; })} subdir="pages" />
                       </div>
                       <div className="flex flex-col gap-1">
                         <button type="button" onClick={() => setSceneSection({ ...sceneSection, images: moveItem(sceneSection.images, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
@@ -547,7 +547,7 @@ export default function AdminProcessPage() {
                         <ImageUploadField
                           label="사진 (상단)"
                           value={ex.image}
-                          onChange={(url) => { const n = [...(sceneSection.extras ?? [])]; n[i] = { ...n[i], image: url }; setSceneSection({ ...sceneSection, extras: n }); }}
+                          onChange={(url) => setSceneSection((prev) => { const n = [...(prev.extras ?? [])]; n[i] = { ...n[i], image: url }; return { ...prev, extras: n }; })}
                           subdir="pages"
                         />
                         <input
@@ -622,7 +622,7 @@ export default function AdminProcessPage() {
                     <label className="mb-1 block text-xs text-gray-500">농장 사진 (선택 · 4:3 권장)</label>
                     <ImageUploadField
                       value={farm.image ?? ''}
-                      onChange={(url) => { const n = [...farms]; n[i] = { ...n[i], image: url }; setFarms(n); }}
+                      onChange={(url) => setFarms((prev) => { const n = [...prev]; n[i] = { ...n[i], image: url }; return n; })}
                       subdir="pages"
                     />
                   </div>
@@ -696,13 +696,13 @@ export default function AdminProcessPage() {
                             <div className="flex-1">
                               <ImageUploadField
                                 value={img}
-                                onChange={(url) => {
-                                  const n = [...chapters];
+                                onChange={(url) => setChapters((prev) => {
+                                  const n = [...prev];
                                   const list = [...(n[ci].images ?? [])];
                                   list[ii] = url;
                                   n[ci] = { ...n[ci], images: list };
-                                  setChapters(n);
-                                }}
+                                  return n;
+                                })}
                                 subdir="pages"
                               />
                             </div>
@@ -730,7 +730,7 @@ export default function AdminProcessPage() {
                       <details className="mt-3">
                         <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-700">이전 단일 이미지 (legacy imageSrc)</summary>
                         <div className="mt-2">
-                          <ImageUploadField value={ch.imageSrc ?? ''} onChange={(url) => { const n = [...chapters]; n[ci] = { ...n[ci], imageSrc: url }; setChapters(n); }} subdir="pages" />
+                          <ImageUploadField value={ch.imageSrc ?? ''} onChange={(url) => setChapters((prev) => { const n = [...prev]; n[ci] = { ...n[ci], imageSrc: url }; return n; })} subdir="pages" />
                           <p className="mt-1 text-[11px] text-gray-400">캐러셀 이미지가 비어있을 때만 노출됩니다.</p>
                         </div>
                       </details>
@@ -819,7 +819,7 @@ export default function AdminProcessPage() {
                   {certs.images.map((img, i) => (
                     <div key={i} className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-3">
                       <div className="flex-1">
-                        <ImageUploadField value={img} onChange={(url) => { const n = [...certs.images]; n[i] = url; setCerts({ ...certs, images: n }); }} subdir="pages" />
+                        <ImageUploadField value={img} onChange={(url) => setCerts((prev) => { const n = [...prev.images]; n[i] = url; return { ...prev, images: n }; })} subdir="pages" />
                       </div>
                       <div className="flex flex-col gap-1">
                         <button type="button" onClick={() => setCerts({ ...certs, images: moveItem(certs.images, i, i - 1) })} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
@@ -869,11 +869,12 @@ export default function AdminProcessPage() {
                           <div className="flex-1">
                             <ImageUploadField
                               value={img}
-                              onChange={(url) => {
-                                const n = [...certs.extraSection!.images];
+                              onChange={(url) => setCerts((prev) => {
+                                if (!prev.extraSection) return prev;
+                                const n = [...prev.extraSection.images];
                                 n[i] = url;
-                                setCerts({ ...certs, extraSection: { ...certs.extraSection!, images: n } });
-                              }}
+                                return { ...prev, extraSection: { ...prev.extraSection, images: n } };
+                              })}
                               subdir="pages"
                             />
                           </div>
