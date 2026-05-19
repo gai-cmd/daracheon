@@ -98,7 +98,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const GSC_DEFAULT = 'RvjwX2kdcOYXh_k3fkUKGQc-r_N_Yby-kb2Vb3lywpM';
   // Naver 웹마스터도구 사이트 소유확인 토큰 — zoellife.com 등록용.
   // 재발급 시 NAVER_SITE_VERIFICATION env 로 덮어쓰기.
-  const NAVER_DEFAULT = '65638b682587b3511ca3b0c3133830fbef39acdf';
+  const NAVER_DEFAULT = '78f6f8ac415595d6b1d9e8e33fca157f8194e05f';
   const verificationEntries = (() => {
     const google = process.env.GOOGLE_SITE_VERIFICATION || GSC_DEFAULT;
     const naver = process.env.NAVER_SITE_VERIFICATION || NAVER_DEFAULT;
@@ -148,9 +148,6 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: SITE_URL,
       languages: { 'ko-KR': SITE_URL, 'x-default': SITE_URL },
-      types: {
-        'application/rss+xml': `${SITE_URL}/sitemap.xml`,
-      },
     },
     robots: {
       index: true,
@@ -245,12 +242,47 @@ const siteJsonLd = {
         'query-input': 'required name=search_term_string',
       },
     },
+    // 홈을 단일 WebPage 엔티티로 선언 — Google 의 mainEntityOfPage
+    // 및 AI 엔진의 페이지·사이트 매핑에 사용.
+    {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: '대라천 ZOEL LIFE — 진짜 침향',
+      inLanguage: 'ko-KR',
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+      primaryImageOfPage: { '@id': `${SITE_URL}/#primary-image` },
+      breadcrumb: { '@id': `${SITE_URL}/#breadcrumb-home` },
+    },
+    {
+      '@type': 'ImageObject',
+      '@id': `${SITE_URL}/#primary-image`,
+      url: `${SITE_URL}${SITE_OG_IMAGE_PATH}`,
+      contentUrl: `${SITE_URL}${SITE_OG_IMAGE_PATH}`,
+      caption: SITE_OG_IMAGE_ALT,
+      inLanguage: 'ko-KR',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${SITE_URL}/#breadcrumb-home`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+      ],
+    },
     // AI Overview / Perplexity / ChatGPT Search 가 직접 인용하기 좋은
     // 답변형 FAQ. 홈에 본문은 없지만 schema 로 토픽 권위를 선언.
     {
       '@type': 'FAQPage',
       '@id': `${SITE_URL}/#faq`,
       inLanguage: 'ko-KR',
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+      // 음성 어시스턴트·AI 답변 엔진이 단답 인용할 후보 — 모든 FAQ 본문.
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: ['[itemprop=acceptedAnswer]'],
+      },
       mainEntity: [
         {
           '@type': 'Question',
@@ -369,15 +401,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="ko">
       <head>
         {/* 이미지·분석 서버 사전 연결 — DNS·TLS 핸드셰이크 비용 제거.
-            LCP 이미지(Cloudinary·Vercel Blob)는 preconnect, GA·measurement
-            은 dns-prefetch 만 (지연 로딩이라 TLS 까지 미리 잡을 필요 없음). */}
-        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+            모든 이미지는 Vercel Blob(우리 인프라)에서만 서빙하므로
+            blob 도메인만 preconnect, GA·measurement 은 dns-prefetch 만. */}
         <link rel="preconnect" href="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-        {/* hreflang — 단일 한국어 사이트지만 검색엔진 신호 차원에서 명시 */}
-        <link rel="alternate" hrefLang="ko-KR" href={SITE_URL} />
-        <link rel="alternate" hrefLang="x-default" href={SITE_URL} />
+        {/* hreflang 는 metadata.alternates.languages 가 자동 생성 — 중복 선언 제거. */}
         <JsonLd data={siteJsonLd} />
         <GoogleAnalytics />
       </head>
