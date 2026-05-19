@@ -85,24 +85,41 @@ export default async function ProductDetailPage(
       ? productReviews.reduce((s, r) => s + (r.rating ?? 0), 0) / ratingCount
       : 0;
 
+  // Google 의 Merchant listings 가이드라인을 충족하도록 hasMerchantReturnPolicy /
+  // shippingDetails 는 의도적으로 생략(직판 정책이 페이지마다 다르므로 잘못된
+  // 신호가 되지 않도록). priceValidUntil 은 기본 1년 후로 설정.
+  const priceValidUntil = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    return d.toISOString().slice(0, 10);
+  })();
+
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `https://zoellife.com/products/${product.slug}#product`,
     name: product.name,
     ...(product.nameEn ? { alternateName: product.nameEn } : {}),
     description: product.description,
     sku: product.id,
+    productID: product.id,
+    inLanguage: 'ko-KR',
     image: product.gallery?.length ? product.gallery : (product.image ? [product.image] : undefined),
-    brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
+    brand: { '@id': 'https://zoellife.com/#brand' },
+    manufacturer: { '@id': 'https://zoellife.com/#organization' },
     category: product.category,
+    isPartOf: { '@id': 'https://zoellife.com/#website' },
     offers: {
       '@type': 'Offer',
       price: product.price,
       priceCurrency: 'KRW',
+      priceValidUntil,
+      itemCondition: 'https://schema.org/NewCondition',
       availability: product.inStock
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `https://zoellife.com/products/${product.slug}`,
+      seller: { '@id': 'https://zoellife.com/#organization' },
     },
   };
   if (ratingCount > 0) {

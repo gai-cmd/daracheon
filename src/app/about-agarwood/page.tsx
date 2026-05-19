@@ -48,30 +48,46 @@ export const metadata: Metadata = {
   },
 };
 
+const SITE_URL = 'https://zoellife.com';
+
+// hero 이미지는 OG 이미지(우리 인프라)로 통일 — 외부 CDN 의존 금지(CLAUDE.md).
 const articleJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
+  '@id': `${SITE_URL}/about-agarwood#article`,
   headline: '침향이란? 침향의 정의 효능 등급 역사 완벽 가이드',
   description: '식약처 고시 공식 등록 침향의 정의, 효능, 문헌, 논문을 완벽 가이드합니다.',
-  author: { '@type': 'Organization', name: 'ZOEL LIFE' },
-  publisher: { '@type': 'Organization', name: 'ZOEL LIFE', logo: { '@type': 'ImageObject', url: 'https://zoellife.com/images/logo.png' } },
+  inLanguage: 'ko-KR',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  mainEntityOfPage: `${SITE_URL}/about-agarwood`,
+  about: { '@id': `${SITE_URL}/#brand` },
+  author: { '@id': `${SITE_URL}/#organization` },
+  publisher: { '@id': `${SITE_URL}/#organization` },
   datePublished: '2026-01-07',
   dateModified: '2026-04-17',
-  image: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',
+  image: `${SITE_URL}/opengraph-image.jpg`,
 };
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
-    { '@type': 'ListItem', position: 2, name: '침향 이야기', item: 'https://zoellife.com/about-agarwood' },
+    { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: '침향 이야기', item: `${SITE_URL}/about-agarwood` },
   ],
 };
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
+  '@id': `${SITE_URL}/about-agarwood#faq`,
+  inLanguage: 'ko-KR',
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  about: { '@id': `${SITE_URL}/#brand` },
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['[itemprop=acceptedAnswer]'],
+  },
   mainEntity: [
     { '@type': 'Question', name: '침향이란 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '침향(沈香)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지가 수십 년간 나무 속에 쌓여 굳은 향목입니다.' } },
     { '@type': 'Question', name: '공식 침향의 학명은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '대한민국약전외한약(생약)규격집과 식약처 식품공전에 공식 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)입니다.' } },

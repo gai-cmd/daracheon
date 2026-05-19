@@ -232,9 +232,13 @@ export default async function ProductsPage() {
   const collectionJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
+    '@id': 'https://zoellife.com/products#page',
     name: '제품 소개 — 대라천 침향 제품 라인업',
     url: 'https://zoellife.com/products',
     description: "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업.",
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': 'https://zoellife.com/#website' },
+    about: { '@id': 'https://zoellife.com/#brand' },
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: products.length,

@@ -52,13 +52,18 @@ const companyJsonLd = {
     {
       '@type': 'LocalBusiness',
       '@id': 'https://zoellife.com/#localbusiness',
+      // 루트 layout 의 #organization 과 동일 실체. parentOrganization 으로 연결해
+      // Knowledge Graph 가 두 노드를 동일 엔티티로 통합.
+      parentOrganization: { '@id': 'https://zoellife.com/#organization' },
       name: '대라천 ZOEL LIFE Co., Ltd.',
       alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프', '大羅天'],
       description:
         '1999년 베트남 하띤 직영 농장에서 시작해 2003년 한국에 본사를 설립한 침향 전문 기업. 원산지·원료·제조·시험 4단계 검증 체계.',
       url: 'https://zoellife.com',
-      logo: 'https://zoellife.com/images/logo.png',
-      image: 'https://zoellife.com/images/og-default.jpg',
+      // 로고/대표 이미지는 우리 인프라에 실제로 존재하는 파일만 참조한다.
+      // (이전: /images/logo.png · /images/og-default.jpg 는 파일 없음 — 404)
+      logo: 'https://zoellife.com/images/ZOEL-LIFE-logo.png',
+      image: 'https://zoellife.com/opengraph-image.jpg',
       telephone: '+82-70-4140-4086',
       email: 'contact@daracheon.com',
       foundingDate: '2003',
@@ -197,6 +202,14 @@ export default async function CompanyPage() {
       ? {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
+          '@id': 'https://zoellife.com/company#faq',
+          inLanguage: 'ko-KR',
+          isPartOf: { '@id': 'https://zoellife.com/#website' },
+          about: { '@id': 'https://zoellife.com/#brand' },
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['[itemprop=acceptedAnswer]'],
+          },
           mainEntity: faqItems.map((f) => ({
             '@type': 'Question',
             name: f.question,

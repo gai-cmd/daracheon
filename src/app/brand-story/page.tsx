@@ -162,15 +162,17 @@ export default async function BrandStoryPage() {
   const aboutPageJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
+    '@id': 'https://zoellife.com/brand-story#page',
     name: "브랜드 스토리 — 대라천 '참'침향",
     description:
       "베트남 하띤성 200ha·400만 그루 직영 농장에서 25년을 가꿔온 대라천 '참'침향의 여정.",
     url: 'https://zoellife.com/brand-story',
-    about: {
-      '@type': 'Organization',
-      '@id': 'https://zoellife.com/#localbusiness',
-      name: '대라천 ZOEL LIFE Co., Ltd.',
-    },
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': 'https://zoellife.com/#website' },
+    // 회사 엔티티는 root layout 의 #organization (홈) / company 페이지의 #localbusiness (지점)
+    // 양쪽에 정의돼 있다. 브랜드 스토리는 회사 자체에 대한 페이지이므로 #organization 참조.
+    about: { '@id': 'https://zoellife.com/#organization' },
+    mainEntity: { '@id': 'https://zoellife.com/#brand' },
   };
 
   // VideoObject 그룹 — brandStory processTab 영상 (AI 영상 검색 노출)
