@@ -186,7 +186,7 @@
   line-height: 1.2;
   color: #fff;
   margin-bottom: 16px;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 .chapterTitle em {
   color: var(--accent);
@@ -372,7 +372,7 @@
   letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.7);
   margin: 8px 0 6px;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 .proofHeadlineEm {
   color: #fff;
