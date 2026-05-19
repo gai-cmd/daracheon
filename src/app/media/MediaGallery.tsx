@@ -382,12 +382,6 @@ export default function MediaGallery({
                           />
                         )}
                       </div>
-                      <div style={{ padding: '10px 2px 0', color: 'rgba(255,255,255,0.78)' }}>
-                        <div style={{ fontSize: '0.92rem', color: '#fff' }}>{item.title}</div>
-                        <div style={{ marginTop: 4, fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
-                          {item.source}
-                        </div>
-                      </div>
                     </div>
                   ))}
                 </div>
