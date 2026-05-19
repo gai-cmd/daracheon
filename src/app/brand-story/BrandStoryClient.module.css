@@ -137,7 +137,7 @@
 
 /* CHAPTER SECTION (re-uses story-page.module pattern) */
 .chapter {
-  padding: 90px 0;
+  padding: 50px 0;
   border-bottom: 1px solid rgba(212, 168, 67, 0.10);
   background: #0a0b10;
 }

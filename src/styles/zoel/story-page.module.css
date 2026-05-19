@@ -138,7 +138,7 @@
   color: #fdfbf7;
 }
 @media (min-width: 768px) {
-  .chapter { padding: 90px 0; }
+  .chapter { padding: 50px 0; }
 }
 
 .chapterAlt {
