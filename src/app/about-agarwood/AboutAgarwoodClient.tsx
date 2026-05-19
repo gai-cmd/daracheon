@@ -1020,7 +1020,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 )}
 
                 <RevealOnScroll delay={150}>
-                  <p>{auth.intro}</p>
+                  <p style={{ marginTop: 20 }}>{auth.intro}</p>
                 </RevealOnScroll>
 
                 {/* Check 01 — 학명 */}
