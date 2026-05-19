@@ -99,7 +99,7 @@
 }
 .chapterTitle {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   line-height: 1.25;
   color: #fff;
@@ -179,7 +179,7 @@
 }
 .galleryTitle {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   color: #fff;
   letter-spacing: -0.01em;

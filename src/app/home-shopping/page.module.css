@@ -217,7 +217,7 @@
 }
 .schedHead h2 {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   color: #fff;
@@ -379,7 +379,7 @@
 }
 .synopsisHead h2 {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -478,7 +478,7 @@
 }
 .sponsored h2 {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.25;
