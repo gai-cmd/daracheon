@@ -172,7 +172,7 @@
 
 .chapterNum {
   font-family: 'Noto Serif KR', serif;
-  font-size: 3.2rem;
+  font-size: clamp(2rem, 6.5vw, 3.2rem);
   font-weight: 300;
   color: var(--accent);
   line-height: 1;
@@ -186,6 +186,7 @@
   line-height: 1.2;
   color: #fff;
   margin-bottom: 16px;
+  text-wrap: pretty;
 }
 .chapterTitle em {
   color: var(--accent);
@@ -371,6 +372,7 @@
   letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.7);
   margin: 8px 0 6px;
+  text-wrap: pretty;
 }
 .proofHeadlineEm {
   color: #fff;

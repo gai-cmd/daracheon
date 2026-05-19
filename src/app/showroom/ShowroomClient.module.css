@@ -84,7 +84,7 @@
 }
 .chapterNum {
   font-family: 'Noto Serif KR', serif;
-  font-size: 3.2rem;
+  font-size: clamp(2rem, 6.5vw, 3.2rem);
   font-weight: 300;
   color: var(--accent);
   line-height: 1;
