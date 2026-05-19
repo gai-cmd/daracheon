@@ -516,46 +516,24 @@ export default function MediaPageClient({
                       ))}
                     </div>
                   )}
-                  {certifications.extraSection && certifications.extraSection.images.length > 0 && (
-                    <div style={{ marginTop: 44 }}>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                          gap: 14,
-                        }}
-                      >
-                        {certifications.extraSection.images.map((src, idx) => (
-                          <div
-                            key={src}
-                            style={{
-                              position: 'relative',
-                              aspectRatio: '3/4',
-                              overflow: 'hidden',
-                              background: '#1a1d29',
-                              border: '1px solid rgba(212,168,67,0.18)',
-                            }}
-                          >
-                            <Image
-                              src={src}
-                              alt={`대라천 침향 추가 인증 문서 ${idx + 1}`}
-                              fill
-                              sizes="(max-width: 900px) 50vw, 240px"
-                              style={{ objectFit: 'cover' }}
-                              unoptimized
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* extraSection.images (대라천 침향 추가 인증 문서) 는 갤러리 탭의 사진 갤러리로 이동 */}
                 </div>
               </div>
             </div>
           </section>
         </>
       ) : (
-        <MediaGallery videos={gallery.videos} photos={gallery.photos} />
+        <MediaGallery
+          videos={gallery.videos}
+          photos={(certifications.extraSection?.images ?? []).map((src, idx) => ({
+            id: `cert-extra-${idx}`,
+            type: 'photo' as const,
+            title: `대라천 침향 추가 인증 문서 ${idx + 1}`,
+            source: '대라천 공식',
+            date: '',
+            image: src,
+          }))}
+        />
       )}
     </>
   );
