@@ -175,6 +175,9 @@ interface AboutAgarwoodData {
   officialSourcesSection?: OfficialSourcesSection;
   literatures: Literature[];
   scriptures?: Scripture[];
+  // 경전 탭 — 히어로 이미지 아래, 카드 그리드 위에 노출되는 도입 문단.
+  // 문단은 빈 줄(\n\n) 로 구분.
+  scriptureIntro?: string;
   papers: Paper[];
   cta: {
     title: string;
@@ -415,6 +418,8 @@ export default function AdminAboutAgarwoodPage() {
   });
   const [literatures, setLiteratures] = useState<Literature[]>([]);
   const [scriptures, setScriptures] = useState<Scripture[]>([]);
+  // 경전 탭 도입 문단 — 빈 줄(\n\n)로 문단 구분. 비워두면 코드 측 기본값 사용.
+  const [scriptureIntro, setScriptureIntro] = useState<string>('');
   const [papers, setPapers] = useState<Paper[]>([]);
   const [cta, setCta] = useState<AboutAgarwoodData['cta']>({
     title: '침향의 세계가 궁금하시다면',
@@ -552,6 +557,7 @@ export default function AdminAboutAgarwoodPage() {
         }
         setLiteratures(d.literatures ?? []);
         setScriptures(d.scriptures ?? []);
+        setScriptureIntro(d.scriptureIntro ?? '');
         setPapers(d.papers ?? []);
         if (d.cta) setCta(d.cta);
         if (d.mediaTab) setMediaTab(d.mediaTab);
@@ -1478,6 +1484,16 @@ export default function AdminAboutAgarwoodPage() {
           <SectionCard title="탭 2 히어로 이미지 · 경전에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
             <p className="text-xs text-gray-500 mb-3">불경·성경 등 경전·필사본 분위기의 이미지를 권장합니다.</p>
             <ImageUploadField label="히어로 이미지" value={tabHeroes.tabScriptures ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tabScriptures: url })} subdir="pages" />
+          </SectionCard>
+
+          {/* Scripture Intro — 히어로 이미지 아래, 경전 카드 그리드 위에 노출되는 도입 문단 */}
+          <SectionCard title="경전 탭 도입 문단" onSave={() => saveSection('scriptureIntro', { scriptureIntro })} saving={saving === 'scriptureIntro'}>
+            <p className="text-xs text-gray-500 mb-3">
+              히어로 이미지 아래, 경전 카드 위에 노출됩니다. 문단은 <b>빈 줄(엔터 두 번)</b>로 구분하세요.
+              본문 속 <code className="bg-gray-100 px-1 rounded">침향</code> / <code className="bg-gray-100 px-1 rounded">沈香</code>은 자동으로 골드 강조 처리됩니다.
+              비워두면 코드 측 기본값이 표시됩니다.
+            </p>
+            <LabeledTextarea label="도입 문단" rows={10} value={scriptureIntro} onChange={setScriptureIntro} />
           </SectionCard>
 
           {/* Scriptures */}

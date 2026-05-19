@@ -9,6 +9,12 @@ import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper, Scripture } from './page';
 
+// 경전 탭 — 히어로 이미지 아래, 카드 그리드 위에 들어가는 도입 문단 기본값.
+// admin (scriptureIntro) 에서 덮어쓸 수 있고, 빈 줄(\n\n)로 문단 구분.
+const DEFAULT_SCRIPTURE_INTRO = `침향(沈香)은 단순한 향료가 아닙니다. 불경과 성경, 이슬람 및 동양의 주요 고전과 경전에 신성한 향으로 기록되어 온 귀한 향목으로, 오래전부터 공양·명상·의례와 같은 성스러운 자리에서 사용되어 왔습니다. 수천 년의 역사 속에서 침향은 왕실과 사찰, 종교의식에 사용될 만큼 특별한 가치를 인정받아 왔습니다.
+
+특히 경전에 이름이 남을 정도로 귀하게 여겨졌다는 점은 침향의 품격과 상징성을 보여줍니다. 단순히 향이 좋은 재료를 넘어, 신성함과 존귀함의 의미를 담은 향으로 전해져 온 것입니다. 오랜 세월 동서양 문화와 신앙 속에서 귀하게 이어져 온 침향의 가치는 오늘날에도 프리미엄 원료로서 높은 평가를 받고 있습니다.`;
+
 // 스크롤 기반 reveal 애니메이션 제거 — 71곳의 IntersectionObserver가 랙을 유발하던 문제 해결.
 // 외부 호환을 위해 동일 시그니처를 유지하지만 단순 wrapper 로 동작.
 function RevealOnScroll({ children }: { children: ReactNode; direction?: string; delay?: number; className?: string }) {
@@ -309,6 +315,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const dosageSection = data?.dosageSection;
   const literatures = data?.literatures ?? [];
   const scriptures: Scripture[] = data?.scriptures && data.scriptures.length > 0 ? data.scriptures : DEFAULT_SCRIPTURES;
+  const scriptureIntro: string = (data?.scriptureIntro && data.scriptureIntro.trim()) || DEFAULT_SCRIPTURE_INTRO;
   const papers = data?.papers ?? [];
   const usageTab = data?.usageTab ?? DEFAULT_USAGE;
   const officialSources = data?.officialSourcesSection;
@@ -1023,82 +1030,89 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   <p style={{ marginTop: 20 }}>{auth.intro}</p>
                 </RevealOnScroll>
 
-                {/* Check 01 — 학명 */}
-                <RevealOnScroll delay={200}>
-                  <div style={{ marginTop: 40, marginBottom: 40 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                        CHECK · 01
-                      </span>
-                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
-                    </div>
-                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      {auth.check01Title}
-                    </h4>
-                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {renderMarkedNowrap(auth.check01Body, 'c01b')}
-                    </p>
-                    <div style={{ display: 'grid', gap: 12 }}>
-                      {auth.check01Sources.map((row, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            display: 'flex',
-                            gap: 16,
-                            padding: '14px 18px',
-                            border: '1px solid rgba(212,168,67,0.2)',
-                            background: 'rgba(212,168,67,0.03)',
-                          }}
-                        >
-                          <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--accent)', paddingTop: 3, textTransform: 'uppercase' }}>
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          <div>
-                            <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
-                            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderMarkedNowrap(row.value, `c01s-${i}`)}</p>
-                          </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ━━━━━━━━━━ Chapter 02 — Species / 학명·품종 ━━━━━━━━━━ */}
+        <section className={styles.chapter} data-alt="1">
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>02</div>
+                <div className={styles.chapterTag}>Species · 학명·품종</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>{auth.check01Title}</h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p className={styles.chapterSubtitle}>
+                    {renderMarkedNowrap(auth.check01Body, 'c01b')}
+                  </p>
+                </RevealOnScroll>
+                <RevealOnScroll delay={150}>
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    {auth.check01Sources.map((row, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          display: 'flex',
+                          gap: 16,
+                          padding: '14px 18px',
+                          border: '1px solid rgba(212,168,67,0.2)',
+                          background: 'rgba(212,168,67,0.03)',
+                        }}
+                      >
+                        <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--accent)', paddingTop: 3, textTransform: 'uppercase' }}>
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <div>
+                          <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
+                          <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderMarkedNowrap(row.value, `c01s-${i}`)}</p>
                         </div>
-                      ))}
-                    </div>
-
-                    {/* 성분명세서 텍스트 요약 */}
-                    {(() => {
-                      const summary = auth.check01Summary ?? DEFAULT_AUTHENTICITY.check01Summary!;
-                      // line1 우선 — legacy {prefix, highlight, suffix} 는 합쳐서 동일 포맷으로 변환.
-                      const line1 = summary.line1 && summary.line1.length > 0
-                        ? summary.line1
-                        : [summary.prefix ?? '', summary.highlight ? `**${summary.highlight}**` : '', summary.suffix ?? '']
-                            .filter(Boolean).join('').trim();
-                      const line2 = summary.line2 ?? '';
-                      if (!line1 && !line2) return null;
-
-                      // **...** 마커 파싱 — 골드색 강조로 변환.
-                      const renderLine1 = (text: string) => {
-                        const parts = text.split(/(\*\*[^*]+\*\*)/g);
-                        return parts.map((p, i) => {
-                          if (/^\*\*[^*]+\*\*$/.test(p)) {
-                            return (
-                              <em key={i} style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>
-                                {p.slice(2, -2)}
-                              </em>
-                            );
-                          }
-                          return <span key={i}>{p}</span>;
-                        });
-                      };
-
-                      return (
-                        <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
-                          <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
-                            {line1 && renderLine1(line1)}
-                            {line1 && line2 && <br />}
-                            {line2}
-                          </p>
-                        </div>
-                      );
-                    })()}
+                      </div>
+                    ))}
                   </div>
                 </RevealOnScroll>
+
+                {/* 성분명세서 텍스트 요약 */}
+                {(() => {
+                  const summary = auth.check01Summary ?? DEFAULT_AUTHENTICITY.check01Summary!;
+                  // line1 우선 — legacy {prefix, highlight, suffix} 는 합쳐서 동일 포맷으로 변환.
+                  const line1 = summary.line1 && summary.line1.length > 0
+                    ? summary.line1
+                    : [summary.prefix ?? '', summary.highlight ? `**${summary.highlight}**` : '', summary.suffix ?? '']
+                        .filter(Boolean).join('').trim();
+                  const line2 = summary.line2 ?? '';
+                  if (!line1 && !line2) return null;
+
+                  // **...** 마커 파싱 — 골드색 강조로 변환.
+                  const renderLine1 = (text: string) => {
+                    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+                    return parts.map((p, i) => {
+                      if (/^\*\*[^*]+\*\*$/.test(p)) {
+                        return (
+                          <em key={i} style={{ color: 'var(--accent)', fontStyle: 'normal', fontWeight: 500 }}>
+                            {p.slice(2, -2)}
+                          </em>
+                        );
+                      }
+                      return <span key={i}>{p}</span>;
+                    });
+                  };
+
+                  return (
+                    <div style={{ marginTop: 24, padding: '16px 20px', borderLeft: '2px solid rgba(212,168,67,0.4)', background: 'rgba(212,168,67,0.04)' }}>
+                      <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.78)', lineHeight: 1.85, fontWeight: 300 }}>
+                        {line1 && renderLine1(line1)}
+                        {line1 && line2 && <br />}
+                        {line2}
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 {/* Check 02 — 산지 */}
                 <RevealOnScroll delay={250}>
@@ -1266,6 +1280,31 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         sizes="(max-width: 768px) 100vw, 880px"
                         style={{ objectFit: 'cover', display: 'block' }}
                       />
+                    </div>
+                  </RevealOnScroll>
+                )}
+                {scriptureIntro && (
+                  <RevealOnScroll delay={200}>
+                    <div style={{ marginTop: 30, display: 'flex', flexDirection: 'column', gap: 18 }}>
+                      {scriptureIntro
+                        .split(/\n\s*\n/)
+                        .map((para) => para.trim())
+                        .filter(Boolean)
+                        .map((para, i) => (
+                          <p
+                            key={i}
+                            style={{
+                              fontSize: 'clamp(0.9rem, 2.5vw, 1.02rem)',
+                              lineHeight: 1.95,
+                              color: 'rgba(255,255,255,0.78)',
+                              fontWeight: 300,
+                              wordBreak: 'keep-all',
+                              overflowWrap: 'break-word',
+                            }}
+                          >
+                            {highlightAgarwood(para)}
+                          </p>
+                        ))}
                     </div>
                   </RevealOnScroll>
                 )}

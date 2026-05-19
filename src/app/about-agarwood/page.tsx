@@ -215,6 +215,9 @@ export interface AboutAgarwoodData {
   authenticityTab?: AuthenticityTab;
   literatures: Literature[];
   scriptures?: Scripture[];
+  // 경전 탭 — 히어로 이미지 아래, 카드 그리드 위에 노출되는 도입 문단.
+  // 문단은 빈 줄(\n\n)로 구분. *...* 마커는 골드 강조로 렌더링.
+  scriptureIntro?: string;
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
   usageTab?: UsageTab;
