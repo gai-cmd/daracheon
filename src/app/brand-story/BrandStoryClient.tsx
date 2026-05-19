@@ -354,17 +354,14 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 </div>
                 <div>
                   <p className={styles.proofHeadline}>
-                    {principle.headlineLead || '침향은 비싼 것이 중요한 게 아닙니다.'}
+                    {renderMarkedGold(principle.headlineLead || '침향은 비싼 것이 중요한 게 아닙니다.', 'ch02-lead')}
                   </p>
                   <p className={`${styles.proofHeadline} ${styles.proofHeadlineEm}`}>
                     {(() => {
-                      const bold = principle.headlineBold || '확인 가능한 침향인지가 중요합니다.';
-                      // "확인 가능한 침향" 부분을 강조 (em 으로 골드 컬러)
-                      const m = bold.match(/^(.*?)(확인 가능한 침향)(.*)$/);
-                      if (m) {
-                        return <>{m[1]}<em>{m[2]}</em>{m[3]}</>;
-                      }
-                      return bold;
+                      const raw = principle.headlineBold || '확인 가능한 침향인지가 중요합니다.';
+                      // *…* 마커가 없고 '확인 가능한 침향' 이 있으면 자동으로 그 부분만 골드 처리(하위 호환).
+                      const processed = raw.includes('*') ? raw : raw.replace('확인 가능한 침향', '*확인 가능한 침향*');
+                      return renderMarkedGold(processed, 'ch02-bold');
                     })()}
                   </p>
                   {principle.subtitle && (

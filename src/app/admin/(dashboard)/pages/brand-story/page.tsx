@@ -653,7 +653,7 @@ export default function AdminBrandStoryPage() {
           {/* Brand Story Tab */}
           <SectionCard title="탭 1 · 브랜드 스토리" onSave={() => saveSection('brandStoryTab', { brandStoryTab })} saving={saving === 'brandStoryTab'}>
             <div className="space-y-5">
-              <LabeledInput label="헤드라인 제목" value={brandStoryTab.headlineTitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, headlineTitle: v })} />
+              <LabeledTextarea label="헤드라인 제목 (엔터로 줄바꿈 · *…* 로 골드 강조)" value={brandStoryTab.headlineTitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, headlineTitle: v })} rows={2} />
               <LabeledInput label="헤드라인 부제목" value={brandStoryTab.headlineSubtitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, headlineSubtitle: v })} />
               <LabeledInput label="소스 태그" value={brandStoryTab.sourceTag} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, sourceTag: v })} />
               <LabeledInput label="소스 제목" value={brandStoryTab.sourceTitle} onChange={(v) => setBrandStoryTab({ ...brandStoryTab, sourceTitle: v })} />
@@ -665,8 +665,8 @@ export default function AdminBrandStoryPage() {
           <SectionCard title="섹션 02 · 20년의 약속 (THE 20-YEAR PROOF)" onSave={() => saveSection('twentyYearPrinciple', { twentyYearPrinciple })} saving={saving === 'twentyYearPrinciple'}>
             <div className="space-y-5">
               <LabeledInput label="태그 (영문)" value={twentyYearPrinciple.tag} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, tag: v })} />
-              <LabeledInput label="헤드라인 1행 — 회색 (예: '침향은 비싼 것이 중요한 게 아닙니다.')" value={twentyYearPrinciple.headlineLead} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineLead: v })} />
-              <LabeledInput label="헤드라인 2행 — 강조 ('확인 가능한 침향' 부분만 골드)" value={twentyYearPrinciple.headlineBold} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineBold: v })} />
+              <LabeledTextarea label="헤드라인 1행 — 회색 (엔터로 줄바꿈 · *…* 로 골드 강조 · 예: '침향은 비싼 것이 중요한 게 아닙니다.')" value={twentyYearPrinciple.headlineLead} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineLead: v })} rows={2} />
+              <LabeledTextarea label="헤드라인 2행 — 강조 (엔터로 줄바꿈 · *…* 로 골드 강조 · '확인 가능한 침향' 은 기본 골드)" value={twentyYearPrinciple.headlineBold} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, headlineBold: v })} rows={2} />
               <LabeledInput label="부제 (이탤릭)" value={twentyYearPrinciple.subtitle} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, subtitle: v })} />
               <LabeledTextarea label="리드 문단 (좌측 골드 보더 박스)" value={twentyYearPrinciple.intro} onChange={(v) => setTwentyYearPrinciple({ ...twentyYearPrinciple, intro: v })} rows={3} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
