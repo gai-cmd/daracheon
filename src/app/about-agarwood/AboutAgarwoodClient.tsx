@@ -1069,8 +1069,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <div>
-                          <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 500, marginBottom: 4 }}>{row.label}</p>
-                          <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>{renderMarkedNowrap(row.value, `c01s-${i}`)}</p>
+                          <p style={{ fontSize: '0.95rem', color: '#fff', fontWeight: 500, marginBottom: 6 }}>{row.label}</p>
+                          <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>{renderMarkedNowrap(row.value, `c01s-${i}`)}</p>
                         </div>
                       </div>
                     ))}
@@ -1237,10 +1237,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           background: item.highlight ? 'rgba(255,100,80,0.05)' : 'rgba(255,255,255,0.02)',
                         }}
                       >
-                        <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.92rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 6 }}>
+                        <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 8 }}>
                           {item.doc}
                         </p>
-                        <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.58)', lineHeight: 1.75, fontWeight: 300 }}>
+                        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
                           {item.desc}
                         </p>
                       </div>
