@@ -30,7 +30,7 @@ export default function LegalEditor({ pageKey, pageTitle, publicPath, defaultDoc
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         if (res.status === 404) {
           setLoading(false);
           return;

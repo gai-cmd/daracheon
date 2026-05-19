@@ -500,7 +500,7 @@ export default function AdminAboutAgarwoodPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         // pages / aboutAgarwood 누락 시 TypeError 방지 — brandStory 와 동일 패턴.
         const raw = (await res.json().catch(() => ({}))) as {
           pages?: {
@@ -577,7 +577,7 @@ export default function AdminAboutAgarwoodPage() {
   async function saveSection(sectionKey: string, payload: Partial<AboutAgarwoodData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const existing = (await res.json().catch(() => ({}))) as {
         pages?: { aboutAgarwood?: Partial<AboutAgarwoodData> };
       };

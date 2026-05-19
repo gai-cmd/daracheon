@@ -293,7 +293,7 @@ export default function AdminProcessPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         if (res.status === 404) {
           return;
         }
@@ -374,7 +374,7 @@ export default function AdminProcessPage() {
   async function saveSection(sectionKey: string, payload: Partial<ProcessData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { process?: ProcessData } }) : { pages: {} };
       const currentProcess = body.pages?.process ?? { hero: DEFAULT_HERO, sceneSection: DEFAULT_SCENE_SECTION, chapters: DEFAULT_CHAPTERS, productionVideos: DEFAULT_VIDEOS, certifications: DEFAULT_CERTS };
       const merged = { ...currentProcess, ...payload };
@@ -399,7 +399,7 @@ export default function AdminProcessPage() {
   async function saveFarms() {
     setSaving('farms');
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { brandStory?: Record<string, unknown> } }) : { pages: {} };
       const prev = body.pages?.brandStory ?? {};
       const merged = { ...prev, farms };

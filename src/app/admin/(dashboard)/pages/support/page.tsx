@@ -201,7 +201,7 @@ export default function AdminSupportPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         if (res.status === 404) {
           return;
         }
@@ -226,7 +226,7 @@ export default function AdminSupportPage() {
   async function saveSection(sectionKey: string, payload: Partial<SupportData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { support?: SupportData } }) : { pages: {} };
       const currentSupport = body.pages?.support ?? {
         hero: DEFAULT_HERO,

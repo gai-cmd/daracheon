@@ -421,7 +421,7 @@ export default function AdminBrandStoryPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         // pages / pages.brandStory 둘 다 없을 수 있음 (초기 배포, blob 미존재,
         // AI 도구가 빈 객체로 덮어쓴 경우 등). 낙관적 구조 분해는 TypeError:
         // Cannot read properties of undefined (reading 'brandStory') 를 발생시켜
@@ -497,7 +497,7 @@ export default function AdminBrandStoryPage() {
   async function saveSection(sectionKey: string, payload: Partial<BrandStoryData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       // 기존 brandStory 가 전부 비어있을 수 있음 (AI 가 전체 덮어쓰기 실수
       // 했거나 초기 상태). 빈 객체로 fallback 하면 현재 폼 state 기반으로
       // 모든 탭 payload 를 덮어써 다음 저장부터 정상화됨.
@@ -552,7 +552,7 @@ export default function AdminBrandStoryPage() {
   async function saveShowroomSection(sectionKey: string, payload: Partial<ShowroomData>) {
     setSaving(`showroom-${sectionKey}`);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const existing = (await res.json().catch(() => ({}))) as {
         pages?: { showroom?: Partial<ShowroomData> };
       };

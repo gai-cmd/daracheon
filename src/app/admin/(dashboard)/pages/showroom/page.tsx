@@ -106,7 +106,7 @@ export default function AdminShowroomPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/admin/pages');
+        const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
         const raw = (await res.json().catch(() => ({}))) as { pages?: { showroom?: Partial<ShowroomData> } };
         const d = raw?.pages?.showroom;
         if (d?.hero) setHero({ ...DEFAULT.hero, ...d.hero });
@@ -126,7 +126,7 @@ export default function AdminShowroomPage() {
   async function saveSection(sectionKey: string, payload: Partial<ShowroomData>) {
     setSaving(sectionKey);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const existing = (await res.json().catch(() => ({}))) as { pages?: { showroom?: Partial<ShowroomData> } };
       const prev = existing?.pages?.showroom ?? {};
       const merged = { ...prev, ...payload };

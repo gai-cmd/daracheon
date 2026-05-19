@@ -104,7 +104,7 @@ export default function GalleryAdminPanel() {
     try {
       const [mediaRes, pagesRes] = await Promise.all([
         fetch('/api/admin/media'),
-        fetch('/api/admin/pages'),
+        fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' }),
       ]);
       const mediaJson = await mediaRes.json();
       const allMedia = (mediaJson.media || mediaJson.items || mediaJson || []) as Array<PhotoItem | (PhotoItem & { type: string })>;
@@ -188,7 +188,7 @@ export default function GalleryAdminPanel() {
   async function persistVideos(nextBlock: ProductionVideosBlock) {
     setSavingVideos(true);
     try {
-      const res = await fetch('/api/admin/pages');
+      const res = await fetch(`/api/admin/pages?_=${Date.now()}`, { cache: 'no-store' });
       const body = res.ok ? ((await res.json()) as { pages?: { process?: Record<string, unknown> } }) : { pages: {} };
       const currentProcess = body.pages?.process ?? {};
       const merged = { ...currentProcess, productionVideos: nextBlock };
