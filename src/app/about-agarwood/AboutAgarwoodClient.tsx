@@ -1114,125 +1114,137 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   );
                 })()}
 
-                {/* Check 02 — 산지 */}
-                <RevealOnScroll delay={250}>
-                  <div style={{ marginBottom: 40 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                        CHECK · 02
-                      </span>
-                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
-                    </div>
-                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      {auth.check02Title}
-                    </h4>
-                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {renderWithNowrap(auth.check02Body)}
-                    </p>
-                    <div
-                      style={{
-                        padding: '22px 26px',
-                        border: '1px solid rgba(212,168,67,0.3)',
-                        background: 'rgba(212,168,67,0.05)',
-                        borderLeft: '4px solid var(--accent)',
-                      }}
-                    >
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
-                        {auth.check02QuoteSource}
-                      </p>
-                      <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
-                        {renderWithNowrap(auth.check02QuoteBody)}
-                      </p>
-                    </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                    {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 (admin 편집 가능).
-                        prod blob 에 신규 필드가 없는 legacy 데이터일 때 DEFAULT 로 자동 폴백.
-                        사용자가 admin 에서 명시적으로 비운 경우('' / []) 는 그 의도를 존중. */}
-                    {(() => {
-                      const eraIntro = auth.check02EraIntro !== undefined ? auth.check02EraIntro : DEFAULT_AUTHENTICITY.check02EraIntro;
-                      const eras = auth.check02Eras !== undefined ? auth.check02Eras : DEFAULT_AUTHENTICITY.check02Eras;
-                      const eraOutro = auth.check02EraOutro !== undefined ? auth.check02EraOutro : DEFAULT_AUTHENTICITY.check02EraOutro;
-                      const hasIntro = !!(eraIntro && eraIntro.trim().length > 0);
-                      const hasEras = !!(eras && eras.length > 0);
-                      const hasOutro = !!(eraOutro && eraOutro.trim().length > 0);
-                      if (!hasIntro && !hasEras && !hasOutro) return null;
-                      return (
-                        <div style={{ marginTop: 28 }}>
-                          {hasIntro && (
-                            <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
-                              {renderMarkedGold(eraIntro!)}
-                            </p>
-                          )}
-                          {hasEras && (
-                            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                              {eras!.map((row, i) => (
-                                <li
-                                  key={`${row.era}-${i}`}
-                                  style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'auto 1fr',
-                                    alignItems: 'baseline',
-                                    gap: 14,
-                                    paddingLeft: 14,
-                                    borderLeft: '2px solid rgba(212,168,67,0.25)',
-                                  }}
-                                >
-                                  <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                                    {row.era}
-                                  </span>
-                                  <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
-                                    {renderWithNowrap(row.body)}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                          {hasOutro && (
-                            <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
-                              {renderMarkedGold(eraOutro!)}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })()}
+        {/* ━━━━━━━━━━ Chapter 03 — Origin / 원산지 ━━━━━━━━━━ */}
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>03</div>
+                <div className={styles.chapterTag}>Origin · 원산지</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>{auth.check02Title}</h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p className={styles.chapterSubtitle}>
+                    {renderWithNowrap(auth.check02Body)}
+                  </p>
+                </RevealOnScroll>
+                <RevealOnScroll delay={150}>
+                  <div
+                    style={{
+                      padding: '22px 26px',
+                      border: '1px solid rgba(212,168,67,0.3)',
+                      background: 'rgba(212,168,67,0.05)',
+                      borderLeft: '4px solid var(--accent)',
+                    }}
+                  >
+                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
+                      {auth.check02QuoteSource}
+                    </p>
+                    <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
+                      {renderWithNowrap(auth.check02QuoteBody)}
+                    </p>
                   </div>
                 </RevealOnScroll>
 
-                {/* Check 03 — 증빙문서 */}
-                <RevealOnScroll delay={300}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.62rem', letterSpacing: '0.3em', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                        CHECK · 03
-                      </span>
-                      <div style={{ flex: 1, height: '1px', background: 'rgba(212,168,67,0.25)' }} />
+                {/* 역사적 기록 — 시대별 베트남산 침향 산지 기록 (admin 편집 가능).
+                    prod blob 에 신규 필드가 없는 legacy 데이터일 때 DEFAULT 로 자동 폴백.
+                    사용자가 admin 에서 명시적으로 비운 경우('' / []) 는 그 의도를 존중. */}
+                {(() => {
+                  const eraIntro = auth.check02EraIntro !== undefined ? auth.check02EraIntro : DEFAULT_AUTHENTICITY.check02EraIntro;
+                  const eras = auth.check02Eras !== undefined ? auth.check02Eras : DEFAULT_AUTHENTICITY.check02Eras;
+                  const eraOutro = auth.check02EraOutro !== undefined ? auth.check02EraOutro : DEFAULT_AUTHENTICITY.check02EraOutro;
+                  const hasIntro = !!(eraIntro && eraIntro.trim().length > 0);
+                  const hasEras = !!(eras && eras.length > 0);
+                  const hasOutro = !!(eraOutro && eraOutro.trim().length > 0);
+                  if (!hasIntro && !hasEras && !hasOutro) return null;
+                  return (
+                    <div style={{ marginTop: 28 }}>
+                      {hasIntro && (
+                        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginBottom: 18, fontWeight: 300 }}>
+                          {renderMarkedGold(eraIntro!)}
+                        </p>
+                      )}
+                      {hasEras && (
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                          {eras!.map((row, i) => (
+                            <li
+                              key={`${row.era}-${i}`}
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'auto 1fr',
+                                alignItems: 'baseline',
+                                gap: 14,
+                                paddingLeft: 14,
+                                borderLeft: '2px solid rgba(212,168,67,0.25)',
+                              }}
+                            >
+                              <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                                {row.era}
+                              </span>
+                              <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
+                                {renderWithNowrap(row.body)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {hasOutro && (
+                        <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.9, marginTop: 20, fontWeight: 300 }}>
+                          {renderMarkedGold(eraOutro!)}
+                        </p>
+                      )}
                     </div>
-                    <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.18rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
-                      {auth.check03Title}
-                    </h4>
-                    <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, marginBottom: 20, fontWeight: 300 }}>
-                      {renderWithNowrap(auth.check03Body)}
-                    </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-                      {auth.check03Docs.map((item, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            padding: '16px 18px',
-                            border: `1px solid ${item.highlight ? 'rgba(255,100,80,0.4)' : 'rgba(212,168,67,0.2)'}`,
-                            background: item.highlight ? 'rgba(255,100,80,0.05)' : 'rgba(255,255,255,0.02)',
-                          }}
-                        >
-                          <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.92rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 6 }}>
-                            {item.doc}
-                          </p>
-                          <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.58)', lineHeight: 1.75, fontWeight: 300 }}>
-                            {item.desc}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        </section>
 
+        {/* ━━━━━━━━━━ Chapter 04 — Documents / 증명 서류 ━━━━━━━━━━ */}
+        <section className={styles.chapter} data-alt="1">
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>04</div>
+                <div className={styles.chapterTag}>Documents · 증명 서류</div>
+              </div>
+              <div className={styles.chapterBody}>
+                <RevealOnScroll>
+                  <h3>{auth.check03Title}</h3>
+                </RevealOnScroll>
+                <RevealOnScroll delay={100}>
+                  <p className={styles.chapterSubtitle}>
+                    {renderWithNowrap(auth.check03Body)}
+                  </p>
+                </RevealOnScroll>
+                <RevealOnScroll delay={150}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                    {auth.check03Docs.map((item, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          padding: '16px 18px',
+                          border: `1px solid ${item.highlight ? 'rgba(255,100,80,0.4)' : 'rgba(212,168,67,0.2)'}`,
+                          background: item.highlight ? 'rgba(255,100,80,0.05)' : 'rgba(255,255,255,0.02)',
+                        }}
+                      >
+                        <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.92rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 6 }}>
+                          {item.doc}
+                        </p>
+                        <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.58)', lineHeight: 1.75, fontWeight: 300 }}>
+                          {item.desc}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </RevealOnScroll>
               </div>
