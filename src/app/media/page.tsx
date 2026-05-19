@@ -323,7 +323,7 @@ const DEFAULT_MEDIA: MediaItem[] = [
     title: '푸국 · Phu Quoc 해양성 기후 재배지',
     source: '대라천 공식',
     date: '2026-04-11',
-    image: 'https://lh3.googleusercontent.com/d/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs=w1280',
+    image: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/migrated/1G7-mche4RToYvtfBkHyLZt_qVxJJtIAs.jpg',
   },
   {
     id: 'p-default-5',

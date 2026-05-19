@@ -10,9 +10,19 @@ export async function POST(request: Request) {
   if (!token || token !== process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json({ success: false, message: '인증 실패' }, { status: 401 });
   }
+  // body 로 추가 tag 받음. 기본은 pages — 호환성 유지.
+  let extraTags: string[] = [];
   try {
-    revalidateTag('db:pages');
-    return NextResponse.json({ success: true, revalidated: ['db:pages'] });
+    const body = (await request.json().catch(() => ({}))) as { tags?: unknown };
+    if (Array.isArray(body.tags)) {
+      extraTags = body.tags.filter((t): t is string => typeof t === 'string');
+    }
+  } catch { /* ignore body parse errors */ }
+
+  const tags = ['db:pages', ...extraTags];
+  try {
+    for (const t of tags) revalidateTag(t);
+    return NextResponse.json({ success: true, revalidated: tags });
   } catch (err) {
     return NextResponse.json({ success: false, message: String(err) }, { status: 500 });
   }
