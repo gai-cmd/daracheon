@@ -938,9 +938,9 @@
   margin-top: 2px;
 }
 
-/* renderMarkedGold(text, key, /*mobileOnlyBreaks*/ true) 호출 시 사용.
-   모바일에서는 \n 가 그대로 줄바꿈으로 보이고, PC(>=768px)에서는
-   br 를 숨기고 그 자리에 공백 한 칸을 넣어 한 줄로 이어진다. */
+/* 헤드라인 등에서 \n 를 모바일에서만 줄바꿈으로 보이게 할 때 사용.
+   renderMarkedGold(..., true) 로 opt-in 하면 적용된다.
+   PC(>=768px)에서는 br 를 숨기고 공백 한 칸으로 이어붙인다. */
 .mobileOnlyBreak br { display: inline; }
 @media (min-width: 768px) {
   .mobileOnlyBreak br { display: none; }
