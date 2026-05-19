@@ -13,8 +13,12 @@ import storyStyles from '@/styles/zoel/story-page.module.css';
 /**
  * `*...*` 를 골드 em 으로, `\n` 을 <br/> 로 렌더링.
  * admin 에서 입력한 강조 마커를 본문 단락에 그대로 노출하기 위한 헬퍼.
+ *
+ * mobileOnlyBreaks=true 로 호출하면 `\n` 이 모바일에서만 줄바꿈으로
+ * 표시되고, PC(>=768px)에서는 한 줄로 이어진다. 헤드라인처럼 좁은
+ * 화면에서만 줄을 끊고 싶은 경우에 사용.
  */
-function renderMarkedGold(text: string, keyPrefix = 'mg'): ReactNode {
+function renderMarkedGold(text: string, keyPrefix = 'mg', mobileOnlyBreaks = false): ReactNode {
   const lines = text.split('\n');
   return lines.map((line, li) => {
     const parts: ReactNode[] = [];
@@ -45,7 +49,11 @@ function renderMarkedGold(text: string, keyPrefix = 'mg'): ReactNode {
     return (
       <span key={`${keyPrefix}-l${li}`}>
         {parts}
-        {li < lines.length - 1 && <br />}
+        {li < lines.length - 1 && (
+          mobileOnlyBreaks
+            ? <span className={styles.mobileOnlyBreak}><br /></span>
+            : <br />
+        )}
       </span>
     );
   });
@@ -295,7 +303,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
               <div>
                 <h2 className={styles.chapterTitle}>
-                  {renderMarkedGold(brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!', 'ch01-title')}
+                  {renderMarkedGold(brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!', 'ch01-title', true)}
                 </h2>
                 <p className={styles.chapterSubtitle}>
                   {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
