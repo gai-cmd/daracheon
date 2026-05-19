@@ -685,7 +685,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 <div className={styles.chapterTag}>{certificationsTab?.tag ?? 'CERTIFICATIONS'}</div>
               </div>
               <div>
-                <h2 className={styles.chapterTitle}>{certificationsTab?.title ?? '신뢰의 지표'}</h2>
+                <h2 className={`${styles.chapterTitle} ${styles.chapterTitleNowrap}`}>{certificationsTab?.title ?? '신뢰의 지표'}</h2>
                 <p className={styles.chapterSubtitle}>{certificationsTab?.subtitle ?? '국제가 인정하는 대라천의 품질'}</p>
                 {tabHeroes.tab1 && (
                   <div
