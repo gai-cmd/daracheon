@@ -219,6 +219,7 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
           sheets: sheetsResult.ok,
           sheetsSkipped: 'skipped' in sheetsResult ? sheetsResult.skipped : false,
           sheetsError: sheetsResult.ok ? undefined : sheetsResult.error,
+          sheetsInfo: 'info' in sheetsResult ? sheetsResult.info : undefined,
           telegram: telegramResult.ok,
           telegramSkipped: 'skipped' in telegramResult ? telegramResult.skipped : false,
           telegramError: telegramResult.ok ? undefined : telegramResult.error,

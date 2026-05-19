@@ -25,6 +25,9 @@ interface IntegrationResult {
   ok: boolean;
   error?: string;
   skipped?: boolean;
+  // 진단용 — sheet API 가 실제로 어디로 append/update 했는지 (예: "Sheet1!A2:I2").
+  // 응답에 노출되어 디버그 가능. 운영상 무해.
+  info?: string;
 }
 
 async function resolveIntegrationSettings(): Promise<IntegrationSettings> {
@@ -246,7 +249,12 @@ export async function appendToGoogleSheet(inquiry: InquiryPayload): Promise<Inte
       const text = await res.text().catch(() => '');
       return { ok: false, error: `HTTP ${res.status} ${text.slice(0, 300)}` };
     }
-    return { ok: true };
+    const respBody = (await res.json().catch(() => ({}))) as {
+      updates?: { updatedRange?: string };
+    };
+    const updatedRange = respBody.updates?.updatedRange ?? `${tabName}!?`;
+    console.log('[Google Sheets] append → %s', updatedRange);
+    return { ok: true, info: updatedRange };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
