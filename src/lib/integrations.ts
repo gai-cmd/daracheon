@@ -46,10 +46,21 @@ export interface InquiryPayload {
   name: string;
   email: string;
   phone: string;
+  company?: string;
   category: string;
   categoryLabel: string;
   subject: string;
   message: string;
+}
+
+function shortDate(iso: string): string {
+  // YYYY-MM-DD 부분만. 사용자가 보는 시트는 date-only 가 더 깔끔하다.
+  const m = iso.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : iso;
+}
+
+function companyOrName(p: { company?: string; name: string }): string {
+  return p.company && p.company.trim() ? p.company.trim() : p.name;
 }
 
 /* ───────── Google Sheets (Service Account, 직접 append) ───────── */
@@ -115,19 +126,47 @@ async function getAccessToken(): Promise<string> {
   return body.access_token;
 }
 
-const HEADER_ROW = ['일시', 'ID', '유형', '제목', '이름', '이메일', '연락처', '내용'];
-const REPLY_HEADERS = ['답변일시', '답변자', '답변'];
+// 사용자 정의 시트 레이아웃.
+// A-H 가 운영자 시야에 보이는 8개 컬럼. I 는 ID — 답변/메타 갱신 시
+// 행을 찾기 위한 운영 키. 사용자는 I 를 숨겨 두고 봐도 됨.
+const HEADER_ROW = [
+  '접수일',      // A
+  '회사명/이름', // B
+  '문의내용',    // C
+  '담당자',      // D
+  '상태',        // E
+  '답변기한',    // F
+  '답변내용',    // G
+  '완료일',      // H
+  'ID',          // I (운영 — 행 lookup 용)
+];
 
-function inquiryToRow(inq: InquiryPayload): (string | number)[] {
+const STATUS_LABEL_KO: Record<string, string> = {
+  new: '신규',
+  'in-progress': '진행중',
+  replied: '답변완료',
+  resolved: '처리완료',
+  pending: '대기',
+  closed: '종료',
+};
+
+function statusToLabel(s?: string): string {
+  if (!s) return '';
+  return STATUS_LABEL_KO[s] ?? s;
+}
+
+function inquiryToRow(inq: InquiryPayload): string[] {
+  // 신규 접수 — 담당자/답변기한/답변/완료일은 비어 있음.
   return [
-    inq.createdAt,
-    inq.id,
-    inq.categoryLabel,
-    inq.subject,
-    inq.name,
-    inq.email,
-    inq.phone || '',
-    inq.message,
+    shortDate(inq.createdAt),         // A 접수일
+    companyOrName(inq),               // B 회사명/이름
+    inq.message,                      // C 문의내용
+    '',                               // D 담당자
+    statusToLabel('new'),             // E 상태
+    '',                               // F 답변기한
+    '',                               // G 답변내용
+    '',                               // H 완료일
+    inq.id,                           // I ID (운영)
   ];
 }
 
@@ -145,13 +184,15 @@ async function resolveDefaultTabName(spreadsheetId: string, token: string): Prom
   return title;
 }
 
-// 헤더 행이 비어있으면 한 번 채운다 (idempotent: A1 이 비어있을 때만).
+// 헤더 행(A1:I1) 멱등 보장. A1 셀이 새 헤더("접수일") 와 정확히 일치하지 않으면
+// 9컬럼 헤더를 PUT 으로 덮어쓴다. 옛 레이아웃(일시/ID/유형…) 에서 마이그레이션 시
+// 헤더만 갱신 — 기존 행 자체는 건드리지 않는다 (사용자가 직접 정리하는 영역).
 async function ensureHeader(
   spreadsheetId: string,
   tabName: string,
   token: string,
 ): Promise<void> {
-  const range = encodeURIComponent(`${tabName}!A1:H1`);
+  const range = encodeURIComponent(`${tabName}!A1:I1`);
   const getUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
   const getRes = await fetch(getUrl, { headers: { Authorization: `Bearer ${token}` } });
   if (!getRes.ok) {
@@ -159,7 +200,8 @@ async function ensureHeader(
     throw new Error(`헤더 조회 실패: HTTP ${getRes.status} ${text.slice(0, 300)}`);
   }
   const body = (await getRes.json()) as { values?: string[][] };
-  if (body.values && body.values.length > 0 && body.values[0].length > 0) return;
+  const existing = body.values?.[0] ?? [];
+  if (existing[0] === HEADER_ROW[0] && existing[8] === HEADER_ROW[8]) return;
 
   const putUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
   const putRes = await fetch(putUrl, {
@@ -188,7 +230,7 @@ export async function appendToGoogleSheet(inquiry: InquiryPayload): Promise<Inte
     const tabName = cfg.googleSheetsTab || (await resolveDefaultTabName(spreadsheetId, token));
     await ensureHeader(spreadsheetId, tabName, token);
 
-    const range = encodeURIComponent(`${tabName}!A:H`);
+    const range = encodeURIComponent(`${tabName}!A:I`);
     const url =
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append` +
       `?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
@@ -210,44 +252,53 @@ export async function appendToGoogleSheet(inquiry: InquiryPayload): Promise<Inte
   }
 }
 
-/**
- * 답변 컬럼 헤더(I1:K1)를 멱등적으로 보장. 이미 동일 값이면 no-op.
- * 기존 시트가 A:H 만 갖고 있어도 자동으로 헤더가 채워진다.
- */
-async function ensureReplyHeaders(
+export interface SheetReplyPayload {
+  inquiryId: string;
+  replyAt: string;     // ISO. 답변 본문(G) 와 함께. resolved 면 완료일(H) 로도 사용.
+  replyBy?: string;
+  reply: string;
+  status?: string;     // 답변 시점의 처리 상태. E 컬럼 라벨로 변환.
+  assignee?: string;   // D 컬럼.
+  dueDate?: string;    // F 컬럼 (답변기한).
+  resolvedAt?: string; // H 컬럼 (완료일). status=resolved 일 때 admin 라우트에서 세팅.
+}
+
+export interface SheetMetaPayload {
+  inquiryId: string;
+  status?: string;
+  assignee?: string;
+  dueDate?: string;
+  resolvedAt?: string;
+}
+
+// I 컬럼(ID) 에서 inquiryId 행 인덱스 탐색. 신규 레이아웃 lookup 키.
+async function findRowByInquiryId(
   spreadsheetId: string,
   tabName: string,
   token: string,
-): Promise<void> {
-  const range = encodeURIComponent(`${tabName}!I1:K1`);
-  const getUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
-  const getRes = await fetch(getUrl, { headers: { Authorization: `Bearer ${token}` } });
-  if (getRes.ok) {
-    const body = (await getRes.json().catch(() => ({}))) as { values?: string[][] };
-    const existing = body.values?.[0];
-    if (existing && existing[0] === REPLY_HEADERS[0]) return; // 이미 채워져 있음
+  inquiryId: string,
+): Promise<{ ok: true; sheetRow: number } | { ok: false; error: string }> {
+  const idRange = encodeURIComponent(`${tabName}!I:I`);
+  const getRes = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${idRange}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (!getRes.ok) {
+    const text = await getRes.text().catch(() => '');
+    return { ok: false, error: `ID 컬럼 조회 실패: HTTP ${getRes.status} ${text.slice(0, 300)}` };
   }
-  const putUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
-  await fetch(putUrl, {
-    method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ values: [REPLY_HEADERS] }),
-  });
-}
-
-export interface SheetReplyPayload {
-  inquiryId: string;
-  replyAt: string;   // ISO
-  replyBy?: string;
-  reply: string;
+  const idBody = (await getRes.json()) as { values?: string[][] };
+  const rows = idBody.values ?? [];
+  const rowIndex = rows.findIndex((r) => (r[0] ?? '') === inquiryId);
+  if (rowIndex === -1) {
+    return { ok: false, error: `시트에서 문의 ID(${inquiryId}) 행을 찾지 못했습니다.` };
+  }
+  return { ok: true, sheetRow: rowIndex + 1 };
 }
 
 /**
- * 시트에서 ID 컬럼(B)을 검색해 해당 행의 I·J·K 셀에 답변일시·답변자·답변을 기록.
- * 행을 찾지 못하면 ok=false. 기존 행을 덮어쓰는 방식이라 동일 ID 재발송 시 최신 답변으로 갱신.
+ * 동일 ID 행의 답변 영역(G=답변내용) 과 함께 상태(E)·담당자(D)·답변기한(F)·완료일(H) 동기화.
+ * 행을 찾지 못하면 ok=false. 신규 인입 → append, 후속 갱신 → updateGoogleSheetReply.
  */
 export async function updateGoogleSheetReply(
   payload: SheetReplyPayload,
@@ -261,41 +312,107 @@ export async function updateGoogleSheetReply(
   try {
     const token = await getAccessToken();
     const tabName = cfg.googleSheetsTab || (await resolveDefaultTabName(spreadsheetId, token));
-    await ensureReplyHeaders(spreadsheetId, tabName, token);
+    await ensureHeader(spreadsheetId, tabName, token);
 
-    // ID 컬럼 (B) 전체 조회 → 행 인덱스 탐색
-    const idRange = encodeURIComponent(`${tabName}!B:B`);
-    const getRes = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${idRange}`,
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-    if (!getRes.ok) {
-      const text = await getRes.text().catch(() => '');
-      return { ok: false, error: `ID 컬럼 조회 실패: HTTP ${getRes.status} ${text.slice(0, 300)}` };
-    }
-    const idBody = (await getRes.json()) as { values?: string[][] };
-    const rows = idBody.values ?? [];
-    const rowIndex = rows.findIndex((r) => (r[0] ?? '') === payload.inquiryId);
-    if (rowIndex === -1) {
-      return { ok: false, error: `시트에서 문의 ID(${payload.inquiryId}) 행을 찾지 못했습니다.` };
-    }
-    const sheetRow = rowIndex + 1; // 1-indexed
+    const found = await findRowByInquiryId(spreadsheetId, tabName, token, payload.inquiryId);
+    if (!found.ok) return { ok: false, error: found.error };
+    const sheetRow = found.sheetRow;
 
-    const writeRange = encodeURIComponent(`${tabName}!I${sheetRow}:K${sheetRow}`);
+    const effectiveStatus = payload.status ?? 'replied';
+    const data: Array<{ range: string; values: string[][] }> = [];
+    if (payload.assignee !== undefined) {
+      data.push({ range: `${tabName}!D${sheetRow}`, values: [[payload.assignee]] });
+    }
+    data.push({ range: `${tabName}!E${sheetRow}`, values: [[statusToLabel(effectiveStatus)]] });
+    if (payload.dueDate !== undefined) {
+      data.push({ range: `${tabName}!F${sheetRow}`, values: [[payload.dueDate]] });
+    }
+    data.push({ range: `${tabName}!G${sheetRow}`, values: [[payload.reply]] });
+    if (payload.resolvedAt !== undefined) {
+      data.push({ range: `${tabName}!H${sheetRow}`, values: [[shortDate(payload.resolvedAt)]] });
+    }
+
     const putUrl =
-      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${writeRange}` +
-      `?valueInputOption=USER_ENTERED`;
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`;
     const putRes = await fetch(putUrl, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ values: [[payload.replyAt, payload.replyBy ?? '', payload.reply]] }),
+      body: JSON.stringify({ valueInputOption: 'USER_ENTERED', data }),
     });
     if (!putRes.ok) {
       const text = await putRes.text().catch(() => '');
       return { ok: false, error: `답변 기록 실패: HTTP ${putRes.status} ${text.slice(0, 300)}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+/**
+ * 담당자(D)·상태(E)·답변기한(F)·완료일(H) 만 갱신 (답변 본문 G 는 건드리지 않음).
+ * 어드민이 담당자 배정·기한 설정·상태 변경만 했을 때 호출.
+ */
+export async function updateGoogleSheetMeta(
+  payload: SheetMetaPayload,
+): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.googleSheetsUrl) return { ok: false, skipped: true, error: 'sheet url not configured' };
+
+  const spreadsheetId = extractSpreadsheetId(cfg.googleSheetsUrl);
+  if (!spreadsheetId) return { ok: false, error: '시트 URL에서 ID 를 찾지 못했습니다.' };
+
+  if (
+    payload.status === undefined &&
+    payload.assignee === undefined &&
+    payload.dueDate === undefined &&
+    payload.resolvedAt === undefined
+  ) {
+    return { ok: true, skipped: true };
+  }
+
+  try {
+    const token = await getAccessToken();
+    const tabName = cfg.googleSheetsTab || (await resolveDefaultTabName(spreadsheetId, token));
+    await ensureHeader(spreadsheetId, tabName, token);
+
+    const found = await findRowByInquiryId(spreadsheetId, tabName, token, payload.inquiryId);
+    if (!found.ok) return { ok: false, error: found.error };
+    const sheetRow = found.sheetRow;
+
+    const data: Array<{ range: string; values: string[][] }> = [];
+    if (payload.assignee !== undefined) {
+      data.push({ range: `${tabName}!D${sheetRow}`, values: [[payload.assignee]] });
+    }
+    if (payload.status !== undefined) {
+      data.push({ range: `${tabName}!E${sheetRow}`, values: [[statusToLabel(payload.status)]] });
+    }
+    if (payload.dueDate !== undefined) {
+      data.push({ range: `${tabName}!F${sheetRow}`, values: [[payload.dueDate]] });
+    }
+    if (payload.resolvedAt !== undefined) {
+      data.push({
+        range: `${tabName}!H${sheetRow}`,
+        values: [[payload.resolvedAt ? shortDate(payload.resolvedAt) : '']],
+      });
+    }
+
+    const putUrl =
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`;
+    const putRes = await fetch(putUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ valueInputOption: 'USER_ENTERED', data }),
+    });
+    if (!putRes.ok) {
+      const text = await putRes.text().catch(() => '');
+      return { ok: false, error: `메타 갱신 실패: HTTP ${putRes.status} ${text.slice(0, 300)}` };
     }
     return { ok: true };
   } catch (err) {
@@ -343,12 +460,17 @@ export async function notifyTelegram(inquiry: InquiryPayload): Promise<Integrati
 
   const lines = [
     `<b>📨 새 문의 접수</b>`,
+    `<b>접수일:</b> ${escapeHtml(shortDate(inquiry.createdAt))}`,
+    `<b>회사명/이름:</b> ${escapeHtml(companyOrName(inquiry))}`,
     `<b>유형:</b> ${escapeHtml(inquiry.categoryLabel)}${inquiry.subject ? ` · ${escapeHtml(inquiry.subject)}` : ''}`,
-    `<b>이름:</b> ${escapeHtml(inquiry.name)}`,
     `<b>이메일:</b> ${escapeHtml(inquiry.email)}`,
     `<b>연락처:</b> ${escapeHtml(inquiry.phone || '없음')}`,
+    `<b>담당자:</b> 미배정`,
+    `<b>상태:</b> ${escapeHtml(statusToLabel('new'))}`,
+    `<b>답변기한:</b> 미정`,
+    `<b>완료일:</b> -`,
     ``,
-    `<b>내용</b>`,
+    `<b>문의내용</b>`,
     escapeHtml(inquiry.message).slice(0, 1500),
     ``,
     `<i>id: ${escapeHtml(inquiry.id)}</i>`,
@@ -378,12 +500,17 @@ export async function notifyTelegram(inquiry: InquiryPayload): Promise<Integrati
 export interface ReplyPayload {
   inquiryId: string;
   customerName: string;
+  customerCompany?: string;
   customerEmail: string;
   categoryLabel: string;
   subject: string;
   question: string;
   reply: string;
   repliedBy?: string;
+  assignee?: string;
+  dueDate?: string;
+  status?: string;
+  resolvedAt?: string;
 }
 
 export async function notifyTelegramReply(p: ReplyPayload): Promise<IntegrationResult> {
@@ -392,16 +519,22 @@ export async function notifyTelegramReply(p: ReplyPayload): Promise<IntegrationR
     return { ok: false, skipped: true, error: 'telegram not configured' };
   }
 
+  const effectiveStatus = p.status ?? 'replied';
+  const customerLabel = p.customerCompany && p.customerCompany.trim() ? p.customerCompany : p.customerName;
   const lines = [
     `<b>✅ 답변 발송</b>`,
+    `<b>회사명/이름:</b> ${escapeHtml(customerLabel)} (${escapeHtml(p.customerEmail)})`,
     `<b>유형:</b> ${escapeHtml(p.categoryLabel)}${p.subject ? ` · ${escapeHtml(p.subject)}` : ''}`,
-    `<b>고객:</b> ${escapeHtml(p.customerName)} (${escapeHtml(p.customerEmail)})`,
+    `<b>담당자:</b> ${escapeHtml(p.assignee || '미배정')}`,
+    `<b>상태:</b> ${escapeHtml(statusToLabel(effectiveStatus))}`,
+    `<b>답변기한:</b> ${escapeHtml(p.dueDate || '미정')}`,
+    `<b>완료일:</b> ${escapeHtml(p.resolvedAt ? shortDate(p.resolvedAt) : '-')}`,
     p.repliedBy ? `<b>작성자:</b> ${escapeHtml(p.repliedBy)}` : '',
     ``,
     `<b>원 문의</b>`,
     escapeHtml(p.question).slice(0, 600),
     ``,
-    `<b>답변</b>`,
+    `<b>답변내용</b>`,
     escapeHtml(p.reply).slice(0, 1500),
     ``,
     `<i>id: ${escapeHtml(p.inquiryId)}</i>`,

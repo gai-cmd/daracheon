@@ -39,6 +39,7 @@ interface Inquiry {
   name: string;
   email: string;
   phone: string;
+  company?: string;     // 회사명 (선택)
   category: string;
   subject: string;
   message: string;
@@ -51,6 +52,7 @@ const contactSchema = z.object({
   name: z.string().min(1, '이름을 입력해 주세요.').max(50),
   email: z.string().email('올바른 이메일 주소를 입력해 주세요.'),
   phone: z.string().max(20).optional().default(''),
+  company: z.string().max(100).optional().default(''),
   category: z.enum(['product', 'order', 'wholesale', 'media', 'other']).optional().default('product'),
   subject: z.string().max(200).optional().default(''),
   message: z.string().min(10, '문의 내용을 10자 이상 입력해 주세요.').max(2000),
@@ -112,6 +114,7 @@ export async function POST(request: NextRequest) {
       name: validated.name,
       email: validated.email,
       phone: validated.phone,
+      company: validated.company || undefined,
       category: validated.category,
       subject: validated.subject,
       message: validated.message,
@@ -170,6 +173,7 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
       name: validated.name,
       email: validated.email,
       phone: validated.phone,
+      company: validated.company || undefined,
       category: validated.category,
       categoryLabel: categoryLabel[validated.category] ?? validated.category,
       subject: validated.subject,

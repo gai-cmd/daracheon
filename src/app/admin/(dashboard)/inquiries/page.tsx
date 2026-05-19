@@ -12,7 +12,7 @@ const SUPPORT_DEFAULT_HERO = {
 };
 
 /* ─── Types ─── */
-type InquiryStatus = 'new' | 'replied' | 'resolved';
+type InquiryStatus = 'new' | 'in-progress' | 'replied' | 'resolved';
 type InquiryCategory = 'product' | 'order' | 'wholesale' | 'media' | 'other';
 
 interface Inquiry {
@@ -20,6 +20,7 @@ interface Inquiry {
   name: string;
   email: string;
   phone: string;
+  company?: string;    // 회사명
   category: InquiryCategory;
   message: string;
   date: string;
@@ -27,17 +28,22 @@ interface Inquiry {
   reply?: string;
   replyAt?: string;
   replyBy?: string;
+  assignee?: string;   // 담당자
+  dueDate?: string;    // 답변기한 (YYYY-MM-DD)
+  resolvedAt?: string; // 완료일 (ISO)
 }
 
 /* ─── Label / Color Maps ─── */
 const statusLabel: Record<InquiryStatus, string> = {
   new: '신규',
+  'in-progress': '진행중',
   replied: '답변완료',
   resolved: '처리완료',
 };
 
 const statusColor: Record<InquiryStatus, string> = {
   new: 'bg-red-500 text-white',
+  'in-progress': 'bg-sky-500 text-white',
   replied: 'bg-amber-500 text-white',
   resolved: 'bg-emerald-600 text-white',
 };
@@ -60,9 +66,16 @@ const categoryColor: Record<InquiryCategory, string> = {
 
 /* ─── Next Status ─── */
 function getNextStatus(current: InquiryStatus): InquiryStatus | null {
-  if (current === 'new') return 'replied';
+  if (current === 'new') return 'in-progress';
+  if (current === 'in-progress') return 'replied';
   if (current === 'replied') return 'resolved';
   return null;
+}
+
+function shortDate(iso?: string): string {
+  if (!iso) return '';
+  const m = iso.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : iso;
 }
 
 function formatDateTime(iso?: string): string {
@@ -91,6 +104,9 @@ export default function InquiriesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [assigneeTexts, setAssigneeTexts] = useState<Record<string, string>>({});
+  const [dueDateTexts, setDueDateTexts] = useState<Record<string, string>>({});
+  const [companyTexts, setCompanyTexts] = useState<Record<string, string>>({});
 
   // Bulk selection
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -137,7 +153,7 @@ export default function InquiriesPage() {
       if (statusFilter !== 'all' && inq.status !== statusFilter) return false;
       if (categoryFilter !== 'all' && inq.category !== categoryFilter) return false;
       if (q) {
-        const haystack = `${inq.name} ${inq.email} ${inq.message}`.toLowerCase();
+        const haystack = `${inq.name} ${inq.company ?? ''} ${inq.email} ${inq.message}`.toLowerCase();
         if (!haystack.includes(q)) return false;
       }
       return true;
@@ -187,6 +203,48 @@ export default function InquiriesPage() {
       setInquiries(snapshot);
       setToast('상태 변경에 실패했습니다.');
       await fetchInquiries();
+    }
+  }
+
+  async function handleSaveMeta(id: string) {
+    const inq = inquiries.find((i) => i.id === id);
+    if (!inq) return;
+    const assignee = (assigneeTexts[id] ?? inq.assignee ?? '').trim();
+    const dueDate = (dueDateTexts[id] ?? inq.dueDate ?? '').trim();
+    const company = (companyTexts[id] ?? inq.company ?? '').trim();
+
+    // 옵티미스틱 — 클릭 즉시 로컬 반영. 실패시 snapshot 으로 롤백.
+    const snapshot = inquiries;
+    setInquiries((prev) =>
+      prev.map((i) =>
+        i.id === id
+          ? {
+              ...i,
+              assignee: assignee || undefined,
+              dueDate: dueDate || undefined,
+              company: company || undefined,
+            }
+          : i,
+      ),
+    );
+
+    try {
+      const res = await fetch('/api/admin/inquiries', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, assignee, dueDate, company }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setToast('회사명 · 담당자 · 답변기한이 저장되었습니다.');
+      // 편집 버퍼는 비워서 서버 값을 다시 따라가도록.
+      setAssigneeTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
+      setDueDateTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
+      setCompanyTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
+      await fetchInquiries();
+    } catch (err) {
+      console.error('Meta save error:', err);
+      setInquiries(snapshot);
+      setToast('저장에 실패했습니다.');
     }
   }
 
@@ -414,7 +472,7 @@ export default function InquiriesPage() {
             <div>
               <label className="text-xs font-medium text-neutral-500 mb-2 block">상태</label>
               <div className="flex gap-2">
-                {(['all', 'new', 'replied', 'resolved'] as const).map((s) => (
+                {(['all', 'new', 'in-progress', 'replied', 'resolved'] as const).map((s) => (
                   <button
                     key={s}
                     onClick={() => setStatusFilter(s)}
@@ -464,6 +522,7 @@ export default function InquiriesPage() {
                 className="px-2 py-1 text-xs border border-neutral-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-gold-500"
               >
                 <option value="new">신규</option>
+                <option value="in-progress">진행중</option>
                 <option value="replied">답변완료</option>
                 <option value="resolved">처리완료</option>
               </select>
@@ -537,9 +596,20 @@ export default function InquiriesPage() {
                       className="cursor-pointer"
                       onClick={() => setExpandedId(isExpanded ? null : inq.id)}
                     >
-                      <p className="text-sm font-medium text-neutral-900">{inq.name}</p>
+                      <p className="text-sm font-medium text-neutral-900">
+                        {inq.company ? <><span>{inq.company}</span> <span className="text-neutral-500 font-normal">/ {inq.name}</span></> : inq.name}
+                      </p>
                       {inq.phone && (
                         <p className="text-[0.7rem] text-neutral-400 mt-0.5">{inq.phone}</p>
+                      )}
+                      {(inq.assignee || inq.dueDate || inq.resolvedAt) && (
+                        <p className="text-[0.7rem] text-neutral-500 mt-0.5">
+                          {inq.assignee && <span>담당 {inq.assignee}</span>}
+                          {inq.assignee && (inq.dueDate || inq.resolvedAt) && <span> · </span>}
+                          {inq.dueDate && <span>기한 {inq.dueDate}</span>}
+                          {inq.dueDate && inq.resolvedAt && <span> · </span>}
+                          {inq.resolvedAt && <span>완료 {shortDate(inq.resolvedAt)}</span>}
+                        </p>
                       )}
                     </div>
 
@@ -597,6 +667,46 @@ export default function InquiriesPage() {
                           <span>이메일: <strong className="text-neutral-700">{inq.email}</strong></span>
                           {inq.phone && <span>전화: <strong className="text-neutral-700">{inq.phone}</strong></span>}
                           <span>접수일: <strong className="text-neutral-700">{inq.date}</strong></span>
+                          <span>완료일: <strong className="text-neutral-700">{inq.resolvedAt ? shortDate(inq.resolvedAt) : '-'}</strong></span>
+                        </div>
+
+                        {/* Company / Assignee / Due Date — 회사명·담당자·답변기한 */}
+                        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end">
+                          <div>
+                            <label className="text-xs font-medium text-neutral-500 mb-1 block">회사명</label>
+                            <input
+                              type="text"
+                              value={companyTexts[inq.id] ?? inq.company ?? ''}
+                              onChange={(e) => setCompanyTexts((prev) => ({ ...prev, [inq.id]: e.target.value }))}
+                              placeholder="회사명 (선택)"
+                              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-neutral-500 mb-1 block">담당자</label>
+                            <input
+                              type="text"
+                              value={assigneeTexts[inq.id] ?? inq.assignee ?? ''}
+                              onChange={(e) => setAssigneeTexts((prev) => ({ ...prev, [inq.id]: e.target.value }))}
+                              placeholder="담당자 이름"
+                              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-neutral-500 mb-1 block">답변기한</label>
+                            <input
+                              type="date"
+                              value={dueDateTexts[inq.id] ?? inq.dueDate ?? ''}
+                              onChange={(e) => setDueDateTexts((prev) => ({ ...prev, [inq.id]: e.target.value }))}
+                              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleSaveMeta(inq.id)}
+                            className="px-4 py-2 bg-white border border-neutral-300 text-xs font-medium text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors h-fit"
+                          >
+                            저장
+                          </button>
                         </div>
 
                         {/* Answer History */}

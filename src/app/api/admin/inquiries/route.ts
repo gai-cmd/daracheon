@@ -3,13 +3,14 @@ import { readDataUncached, writeData } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
-import { notifyTelegramReply, updateGoogleSheetReply } from '@/lib/integrations';
+import { notifyTelegramReply, updateGoogleSheetReply, updateGoogleSheetMeta } from '@/lib/integrations';
 
 interface Inquiry {
   id: string;
   name: string;
   email: string;
   phone?: string;
+  company?: string;    // 회사명
   category: string;
   subject?: string;
   message: string;
@@ -18,6 +19,9 @@ interface Inquiry {
   reply?: string;
   replyAt?: string;
   replyBy?: string;
+  assignee?: string;   // 담당자
+  dueDate?: string;    // 답변기한 (YYYY-MM-DD)
+  resolvedAt?: string; // 완료일 (ISO). status='resolved' 일 때 자동 세팅.
 }
 
 const validStatuses = ['new', 'replied', 'resolved', 'pending', 'in-progress', 'closed'] as const;
@@ -74,11 +78,38 @@ export async function PATCH(request: Request) {
       for (const id of ids) {
         const idx = inquiries.findIndex((inq) => inq.id === id);
         if (idx === -1) { notFoundIds.push(id); continue; }
-        inquiries[idx] = { ...inquiries[idx], status: body.status };
+        const prevStatus = inquiries[idx].status;
+        const next: Inquiry = { ...inquiries[idx], status: body.status };
+        // resolved 진입/이탈에 따라 완료일 자동 관리 (단일 PATCH 와 동일 규칙).
+        if (body.status === 'resolved' && !next.resolvedAt) {
+          next.resolvedAt = new Date().toISOString();
+        } else if (prevStatus === 'resolved' && body.status !== 'resolved') {
+          delete next.resolvedAt;
+        }
+        inquiries[idx] = next;
         updatedIds.push(id);
       }
       if (updatedIds.length > 0) {
         await writeData('inquiries', inquiries);
+      }
+      // 시트 E·H 컬럼 동기화 — 행 단위 호출이라 N건이면 N API 호출.
+      // fire-and-forget: 시트 실패가 어드민 응답을 막지 않도록.
+      for (const id of updatedIds) {
+        const target = inquiries.find((q) => q.id === id);
+        updateGoogleSheetMeta({
+          inquiryId: id,
+          status: body.status,
+          resolvedAt:
+            body.status === 'resolved'
+              ? (target?.resolvedAt ?? new Date().toISOString())
+              : '',
+        }).then((r) => {
+          if (!r.ok && !r.skipped) {
+            console.error('[Admin Inquiries] bulk updateGoogleSheetMeta error:', id, r.error);
+          }
+        }).catch((err: unknown) => {
+          console.error('[Admin Inquiries] bulk updateGoogleSheetMeta threw:', id, err);
+        });
       }
       await logAdmin('inquiries', 'status_change', {
         summary: `문의 일괄 상태 변경: ${updatedIds.length}건 → ${body.status}`,
@@ -102,7 +133,8 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if (!body.status || !validStatuses.includes(body.status)) {
+    // 담당자/예정일만 갱신할 때는 status 생략 허용. 제공되면 유효성 검사.
+    if (body.status !== undefined && !validStatuses.includes(body.status)) {
       return NextResponse.json(
         {
           success: false,
@@ -124,7 +156,56 @@ export async function PATCH(request: Request) {
 
     const previousStatus = inquiries[index].status;
     const previousReply = inquiries[index].reply;
-    const updated: Inquiry = { ...inquiries[index], status: body.status };
+    const previousAssignee = inquiries[index].assignee;
+    const previousDueDate = inquiries[index].dueDate;
+    const previousCompany = inquiries[index].company;
+    const nextStatus = body.status ?? previousStatus;
+    const updated: Inquiry = { ...inquiries[index], status: nextStatus };
+
+    // 완료일(resolvedAt) 자동 관리. resolved 로 전환되는 첫 시점에 ISO 기록.
+    // resolved 에서 빠져나가면 비움 — 사용자가 상태를 되돌렸을 때 완료일이 남아있으면 혼란.
+    if (nextStatus === 'resolved') {
+      if (!updated.resolvedAt) updated.resolvedAt = new Date().toISOString();
+    } else if (previousStatus === 'resolved' && nextStatus !== 'resolved') {
+      delete updated.resolvedAt;
+    }
+
+    let assigneeChanged = false;
+    let dueDateChanged = false;
+    let companyChanged = false;
+
+    if (typeof body.company === 'string') {
+      const trimmed = body.company.trim();
+      if (trimmed.length > 0) {
+        if (trimmed !== previousCompany) companyChanged = true;
+        updated.company = trimmed;
+      } else {
+        if (previousCompany !== undefined) companyChanged = true;
+        delete updated.company;
+      }
+    }
+
+    if (typeof body.assignee === 'string') {
+      const trimmed = body.assignee.trim();
+      if (trimmed.length > 0) {
+        if (trimmed !== previousAssignee) assigneeChanged = true;
+        updated.assignee = trimmed;
+      } else {
+        if (previousAssignee !== undefined) assigneeChanged = true;
+        delete updated.assignee;
+      }
+    }
+
+    if (typeof body.dueDate === 'string') {
+      const trimmed = body.dueDate.trim();
+      if (trimmed.length > 0) {
+        if (trimmed !== previousDueDate) dueDateChanged = true;
+        updated.dueDate = trimmed;
+      } else {
+        if (previousDueDate !== undefined) dueDateChanged = true;
+        delete updated.dueDate;
+      }
+    }
 
     let isNewReply = false;
 
@@ -218,12 +299,17 @@ export async function PATCH(request: Request) {
       notifyTelegramReply({
         inquiryId: updated.id,
         customerName: updated.name,
+        customerCompany: updated.company,
         customerEmail: updated.email,
         categoryLabel: catDisplay,
         subject: subjectDisplay,
         question: updated.message,
         reply: updated.reply,
         repliedBy: updated.replyBy,
+        assignee: updated.assignee,
+        dueDate: updated.dueDate,
+        status: updated.status,
+        resolvedAt: updated.resolvedAt,
       }).then((r) => {
         if (!r.ok && !r.skipped) {
           console.error('[Admin Inquiries] notifyTelegramReply error:', r.error);
@@ -238,12 +324,38 @@ export async function PATCH(request: Request) {
         replyAt: updated.replyAt ?? new Date().toISOString(),
         replyBy: updated.replyBy,
         reply: updated.reply,
+        assignee: updated.assignee,
+        dueDate: updated.dueDate,
+        status: updated.status,
+        resolvedAt: updated.resolvedAt,
       }).then((r) => {
         if (!r.ok && !r.skipped) {
           console.error('[Admin Inquiries] updateGoogleSheetReply error:', r.error);
         }
       }).catch((err: unknown) => {
         console.error('[Admin Inquiries] updateGoogleSheetReply threw:', err);
+      });
+    } else if (assigneeChanged || dueDateChanged || companyChanged || previousStatus !== nextStatus) {
+      // 답변 본문은 안 건드렸지만 담당자/기한/상태가 바뀐 경우 — 시트 메타만 갱신.
+      // (답변 보낼 때는 updateGoogleSheetReply 가 이미 메타까지 동기화하므로 중복 호출 안 함)
+      updateGoogleSheetMeta({
+        inquiryId: updated.id,
+        status: previousStatus !== nextStatus ? updated.status : undefined,
+        assignee: assigneeChanged ? (updated.assignee ?? '') : undefined,
+        dueDate: dueDateChanged ? (updated.dueDate ?? '') : undefined,
+        // 완료일은 상태 변동에 종속. resolved 진입 시 세팅, 이탈 시 클리어.
+        resolvedAt:
+          previousStatus !== nextStatus
+            ? nextStatus === 'resolved'
+              ? updated.resolvedAt
+              : ''
+            : undefined,
+      }).then((r) => {
+        if (!r.ok && !r.skipped) {
+          console.error('[Admin Inquiries] updateGoogleSheetMeta error:', r.error);
+        }
+      }).catch((err: unknown) => {
+        console.error('[Admin Inquiries] updateGoogleSheetMeta threw:', err);
       });
     }
 
@@ -253,8 +365,14 @@ export async function PATCH(request: Request) {
       targetId: body.id,
       summary: replyUpdated
         ? `문의 답변 작성 (${body.id})`
-        : `문의 상태 변경: ${previousStatus} → ${body.status}`,
-      meta: { previousStatus, newStatus: body.status },
+        : `문의 상태 변경: ${previousStatus} → ${nextStatus}`,
+      meta: {
+        previousStatus,
+        newStatus: nextStatus,
+        assigneeChanged,
+        dueDateChanged,
+        companyChanged,
+      },
     });
 
     return NextResponse.json({

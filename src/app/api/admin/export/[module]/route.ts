@@ -10,16 +10,42 @@ type SupportedModule = 'inquiries' | 'reviews' | 'products';
 
 const COLUMN_MAP: Record<SupportedModule, CsvColumn<Record<string, unknown>>[]> = {
   inquiries: [
-    { key: 'id', label: 'ID' },
     { key: 'date', label: '접수일' },
+    { key: 'company', label: '회사명', format: (v, row) => String((v as string) ?? row.name ?? '') },
     { key: 'name', label: '이름' },
+    { key: 'message', label: '문의내용' },
+    { key: 'assignee', label: '담당자' },
+    {
+      key: 'status',
+      label: '상태',
+      format: (v) => {
+        const map: Record<string, string> = {
+          new: '신규',
+          'in-progress': '진행중',
+          replied: '답변완료',
+          resolved: '처리완료',
+          pending: '대기',
+          closed: '종료',
+        };
+        return map[String(v)] ?? String(v ?? '');
+      },
+    },
+    { key: 'dueDate', label: '답변기한' },
+    { key: 'reply', label: '답변내용' },
+    {
+      key: 'resolvedAt',
+      label: '완료일',
+      format: (v) => {
+        if (!v) return '';
+        const m = String(v).match(/^(\d{4}-\d{2}-\d{2})/);
+        return m ? m[1] : String(v);
+      },
+    },
+    { key: 'id', label: 'ID' },
     { key: 'email', label: '이메일' },
     { key: 'phone', label: '연락처' },
     { key: 'category', label: '카테고리' },
     { key: 'subject', label: '제목' },
-    { key: 'message', label: '문의 내용' },
-    { key: 'status', label: '상태' },
-    { key: 'reply', label: '답변 내용' },
     { key: 'replyAt', label: '답변일시' },
     { key: 'replyBy', label: '답변자' },
   ],

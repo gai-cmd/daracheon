@@ -11,6 +11,7 @@ interface Inquiry {
   name: string;
   email: string;
   phone?: string;
+  company?: string;
   category: string;
   subject?: string;
   message: string;
@@ -19,6 +20,9 @@ interface Inquiry {
   reply?: string;
   replyAt?: string;
   replyBy?: string;
+  assignee?: string;
+  dueDate?: string;
+  resolvedAt?: string;
 }
 
 const VALID_STATUSES = new Set(['new', 'replied', 'resolved', 'pending', 'in-progress', 'closed']);
@@ -72,11 +76,15 @@ export async function POST(request: Request) {
         name,
         email,
         phone: get('phone') || undefined,
+        company: get('company') || undefined,
         category: get('category') || '기타',
         subject: get('subject') || undefined,
         message,
         date,
         status,
+        assignee: get('assignee') || undefined,
+        dueDate: get('dueDate') || get('due_date') || undefined,
+        resolvedAt: get('resolvedAt') || get('resolved_at') || undefined,
       };
 
       const existingIdx = inquiries.findIndex((q) => q.id === id);
