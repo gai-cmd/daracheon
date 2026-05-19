@@ -745,59 +745,12 @@
 }
 
 /* ── 생산 공정 두 그룹 (침향 생산과정 / 침향 오일 생산과정) ── */
-.processGroupSection {
+/* 각 그룹은 상위 chapterGrid 밖에서 별도의 chapterGrid row 로 렌더링됨.
+   row 사이 구분선 + 간격만 담당. */
+.processGroupChapterRow {
   margin-top: 56px;
   padding-top: 56px;
   border-top: 1px solid rgba(212, 168, 67, 0.2);
-}
-.processGroupSection:first-child {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
-}
-.processGroupHeaderRow {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-.processGroupBadge {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.8rem, 5vw, 2.8rem);
-  font-weight: 300;
-  color: var(--accent);
-  letter-spacing: -0.02em;
-  line-height: 1;
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-.processGroupTitleEn {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 4px;
-}
-.processGroupTitle {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
-  font-weight: 200;
-  color: #fff;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  text-wrap: pretty;
-  word-break: keep-all;
-}
-.processGroupDesc {
-  font-size: 0.93rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.9;
-  font-weight: 300;
-  margin-bottom: 28px;
-  word-break: keep-all;
 }
 
 /* 레이아웃: 측면 이미지 제거 — 스텝 그리드가 전체 폭 사용 */

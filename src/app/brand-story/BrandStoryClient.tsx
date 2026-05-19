@@ -1064,57 +1064,8 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
             )}
 
-            {/* 두 개 공정 섹션 */}
-            {processGroups.length > 0 ? (
-              processGroups.map((group, gi) => (
-                <div key={gi} className={styles.processGroupSection}>
-                  {/* 그룹 헤더 — chapter 수준 위계로 격상 (02, 03 …) */}
-                  <div className={styles.processGroupHeaderRow}>
-                    <span className={styles.processGroupBadge}>{String(gi + 2).padStart(2, '0')}</span>
-                    {group.titleEn && <span className={styles.processGroupTitleEn}>{group.titleEn}</span>}
-                    <h3 className={styles.processGroupTitle}>{group.title}</h3>
-                  </div>
-
-                  {/* 설명 */}
-                  {group.description && (
-                    <p className={styles.processGroupDesc}>{group.description}</p>
-                  )}
-
-                  {/* 스텝 그리드 — 측면 이미지 제거, 카드 자체에 단계별 이미지 가미 */}
-                  <div className={styles.processGroupLayout}>
-                    <div className={styles.stepGridDetailed}>
-                      {group.steps.map((step, si) => (
-                        <div key={si} className={styles.stepCardDetailed}>
-                          <div className={styles.stepCardImg}>
-                            {step.image ? (
-                              <Image
-                                src={step.image}
-                                alt={`${group.title} ${step.name}`}
-                                fill
-                                sizes="(max-width: 580px) 50vw, (max-width: 1050px) 33vw, 25vw"
-                                style={{ objectFit: 'cover' }}
-                              />
-                            ) : (
-                              <span className={styles.stepCardImgPlaceholder}>{String(si + 1).padStart(2, '0')}</span>
-                            )}
-                          </div>
-                          <div className={styles.stepCardBody}>
-                            <div className={styles.stepNum} style={{ margin: '0 0 6px' }}>{String(si + 1).padStart(2, '0')}</div>
-                            <div className={styles.stepCardName}>{step.name}</div>
-                            {step.duration && <div className={styles.stepCardDuration}>{step.duration}</div>}
-                            {step.desc && <div className={styles.stepCardDesc}>{step.desc}</div>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 공정 사진 갤러리(group.photos) 렌더링은 영구 제거 — 단계별 카드 이미지로 대체.
-                      어드민에서도 photos 편집 영역을 삭제했고, 데이터에 잔존하더라도 더 이상 노출되지 않음. */}
-                </div>
-              ))
-            ) : (
-              /* fallback: processGroups 미설정 시 기존 단순 스텝 그리드 */
+            {/* fallback: processGroups 미설정 시 기존 단순 스텝 그리드 (우측 컬럼 안에 유지) */}
+            {processGroups.length === 0 && (
               <div className={styles.stepGrid}>
                 {processSteps.map((step, i) => (
                   <div key={i} className={styles.stepCard}>
@@ -1130,6 +1081,51 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             {/* Factory Footage 섹션은 /media 갤러리(01 영상 갤러리) 로 이동 */}
               </div>
             </div>
+
+            {/* 두 개 공정 섹션 — 상위 chapterGrid 밖에서 각각 별도의 2열 chapterGrid row 로 렌더링 (02, 03 …) */}
+            {processGroups.map((group, gi) => (
+              <div key={gi} className={styles.processGroupChapterRow}>
+                <div className={styles.chapterGrid}>
+                  <div>
+                    <div className={styles.chapterNum}>{String(gi + 2).padStart(2, '0')}</div>
+                    {group.titleEn && <div className={styles.chapterTag}>{group.titleEn}</div>}
+                  </div>
+                  <div>
+                    <h3 className={styles.chapterTitle}>{group.title}</h3>
+                    {group.description && (
+                      <p className={styles.chapterSubtitle}>{group.description}</p>
+                    )}
+                    <div className={styles.processGroupLayout}>
+                      <div className={styles.stepGridDetailed}>
+                        {group.steps.map((step, si) => (
+                          <div key={si} className={styles.stepCardDetailed}>
+                            <div className={styles.stepCardImg}>
+                              {step.image ? (
+                                <Image
+                                  src={step.image}
+                                  alt={`${group.title} ${step.name}`}
+                                  fill
+                                  sizes="(max-width: 580px) 50vw, (max-width: 1050px) 33vw, 25vw"
+                                  style={{ objectFit: 'cover' }}
+                                />
+                              ) : (
+                                <span className={styles.stepCardImgPlaceholder}>{String(si + 1).padStart(2, '0')}</span>
+                              )}
+                            </div>
+                            <div className={styles.stepCardBody}>
+                              <div className={styles.stepNum} style={{ margin: '0 0 6px' }}>{String(si + 1).padStart(2, '0')}</div>
+                              <div className={styles.stepCardName}>{step.name}</div>
+                              {step.duration && <div className={styles.stepCardDuration}>{step.duration}</div>}
+                              {step.desc && <div className={styles.stepCardDesc}>{step.desc}</div>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
