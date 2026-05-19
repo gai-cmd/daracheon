@@ -1068,11 +1068,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             {processGroups.length > 0 ? (
               processGroups.map((group, gi) => (
                 <div key={gi} className={styles.processGroupSection}>
-                  {/* 그룹 헤더 */}
+                  {/* 그룹 헤더 — chapter 수준 위계로 격상 (02, 03 …) */}
                   <div className={styles.processGroupHeaderRow}>
-                    <span className={styles.processGroupBadge}>{String(gi + 1).padStart(2, '0')}</span>
-                    <h3 className={styles.processGroupTitle}>{group.title}</h3>
+                    <span className={styles.processGroupBadge}>{String(gi + 2).padStart(2, '0')}</span>
                     {group.titleEn && <span className={styles.processGroupTitleEn}>{group.titleEn}</span>}
+                    <h3 className={styles.processGroupTitle}>{group.title}</h3>
                   </div>
 
                   {/* 설명 */}

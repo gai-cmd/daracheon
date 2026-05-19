@@ -757,36 +757,39 @@
 }
 .processGroupHeaderRow {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 .processGroupBadge {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: rgba(212, 168, 67, 0.1);
-  border: 1px solid rgba(212, 168, 67, 0.35);
-  padding: 4px 11px;
-  flex-shrink: 0;
-}
-.processGroupTitle {
   font-family: 'Noto Serif KR', serif;
-  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   font-weight: 300;
-  color: #fff;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 .processGroupTitleEn {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.56rem;
-  letter-spacing: 0.24em;
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+.processGroupTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 200;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: pretty;
+  word-break: keep-all;
 }
 .processGroupDesc {
   font-size: 0.93rem;
