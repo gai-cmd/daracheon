@@ -295,7 +295,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               </div>
               <div>
                 <h2 className={styles.chapterTitle}>
-                  {brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!'}
+                  {renderMarkedGold(brandStoryTab?.headlineTitle ?? '100% 베트남산, 아갈로차 침향나무만!', 'ch01-title')}
                 </h2>
                 <p className={styles.chapterSubtitle}>
                   {brandStoryTab?.headlineSubtitle ?? '200ha 부지에 400만 그루 이상의 침향나무가 자라는 생명의 터전'}
