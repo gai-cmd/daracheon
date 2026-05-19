@@ -365,7 +365,7 @@
 /* ── THE 20-YEAR PROOF ── 마케팅 헤드라인 + A/B/C 섹션 + 클로징 박스 ── */
 .proofHeadline {
   font-family: 'Noto Serif KR', serif;
-  font-size: 2.6rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   font-weight: 200;
   line-height: 1.35;
   letter-spacing: -0.02em;
