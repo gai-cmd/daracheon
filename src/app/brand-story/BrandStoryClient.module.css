@@ -758,6 +758,7 @@
   display: grid;
   gap: 24px;
   grid-template-columns: 1fr;
+  margin-top: 28px;
 }
 
 /* legacy: group.image 측면 이미지 (사용 중단). 혹시 남아있어도 노출 안 되게. */
