@@ -387,7 +387,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
                     <p className={styles.chapterSubtitle}>
-                      {definition?.subtitle ?? '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)'}
+                      {definition?.subtitle ?? '좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다.'}
                     </p>
                   </RevealOnScroll>
                   {tabHeroes.tab0 && (
@@ -415,17 +415,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   <RevealOnScroll delay={200}>
                     <p>
                       {definition?.body ??
-                        '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.'}
-                    </p>
-                  </RevealOnScroll>
-                  <RevealOnScroll delay={230}>
-                    <p style={{ marginTop: 18, color: 'var(--accent)', fontWeight: 500 }}>
-                      좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다.
-                    </p>
-                  </RevealOnScroll>
-                  <RevealOnScroll delay={260}>
-                    <p style={{ marginTop: 14 }}>
-                      대라천 &lsquo;참&rsquo;침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 &lsquo;참&rsquo;침향은 당분간 누구도 흉내내기 어려운 &lsquo;명품&rsquo;이 될 것입니다.
+                        '대라천 ‘참’침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 ‘참’침향은 당분간 누구도 흉내내기 어려운 ‘명품’이 될 것입니다.'}
                     </p>
                   </RevealOnScroll>
                   {definition?.images && definition.images.filter(Boolean).length > 0 && (
