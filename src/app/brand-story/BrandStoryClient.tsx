@@ -355,7 +355,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
 
             {/* 02 — THE 20-YEAR PROOF: 왜 20년 이상된 침향나무만 고집하는가 */}
             {principle && (
-              <div className={`${styles.chapterGrid} ${styles.subSectionDivider}`}>
+              <div className={styles.chapterGrid} style={{ marginTop: 64 }}>
                 <div>
                   <div className={styles.chapterNum}>02</div>
                   <div className={styles.chapterTag}>{principle.tag || 'THE 20-YEAR PROOF'}</div>
