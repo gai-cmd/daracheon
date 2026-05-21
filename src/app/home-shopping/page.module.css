@@ -1012,7 +1012,7 @@
   gap: 24px;
 }
 @media (min-width: 720px) {
-  .nsGrid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .nsGrid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
 }
 .nsCard {
   background: linear-gradient(135deg, rgba(212, 168, 67, 0.05) 0%, rgba(20, 22, 32, 0.6) 100%);
