@@ -527,7 +527,7 @@ export default async function HomeShoppingPage({
                 </div>
                 <div>
                   <dt>구성</dt>
-                  <dd>대라천 ‘참’침향오일 · 1빈 557,650원</dd>
+                  <dd>대라천 ‘참’침향오일 · 1병 557,650원</dd>
                 </div>
                 <div>
                   <dt>결과</dt>
@@ -719,8 +719,9 @@ export default async function HomeShoppingPage({
                 if (si.guests?.length) cast.push({ label: '게스트', names: si.guests });
                 if (si.experts?.length) cast.push({ label: '전문가', names: si.experts });
 
-                const yt = b.vodUrl ? extractEmbed(b.vodUrl) : null;
-                const directVid = !yt && b.vodUrl && isDirectVideoUrl(b.vodUrl) ? b.vodUrl : null;
+                const effectiveVod = b.vodUrl || sponsoredVodFallback(b);
+                const yt = effectiveVod ? extractEmbed(effectiveVod) : null;
+                const directVid = !yt && effectiveVod && isDirectVideoUrl(effectiveVod) ? effectiveVod : null;
                 return (
                   <article key={b.id} className={styles.spRow}>
                     <div className={styles.spInfo}>
@@ -846,21 +847,40 @@ function isDirectVideoUrl(url: string): boolean {
   }
 }
 
-/** YouTube/Vimeo URL 을 임베드 가능한 src 로 변환. 실패 시 null. */
+/** YouTube `t=90s` / `t=1m30s` / `start=90` 등을 초로 환산. 실패 시 0. */
+function parseYouTubeStartSeconds(raw: string | null): number {
+  if (!raw) return 0;
+  const n = Number(raw);
+  if (Number.isFinite(n) && n > 0) return Math.floor(n);
+  // 1h2m3s / 2m30s / 45s 형태 파싱
+  const m = raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/i);
+  if (!m) return 0;
+  const h = Number(m[1] ?? 0);
+  const min = Number(m[2] ?? 0);
+  const s = Number(m[3] ?? 0);
+  return h * 3600 + min * 60 + s;
+}
+
+/** YouTube/Vimeo URL 을 임베드 가능한 src 로 변환. 실패 시 null.
+ *  YouTube 의 `t` / `start` 시작 시간 파라미터는 임베드 URL 의 `start` 로 보존. */
 function extractEmbed(url: string): string | null {
   try {
     const u = new URL(url);
     // youtu.be/<id>
     if (u.hostname === 'youtu.be') {
       const id = u.pathname.replace(/^\//, '').split('?')[0];
-      return id ? `https://www.youtube.com/embed/${id}` : null;
+      if (!id) return null;
+      const start = parseYouTubeStartSeconds(u.searchParams.get('t') ?? u.searchParams.get('start'));
+      return `https://www.youtube.com/embed/${id}${start > 0 ? `?start=${start}` : ''}`;
     }
     // youtube.com/watch?v=<id> / shorts/<id> / embed/<id>
     if (u.hostname.endsWith('youtube.com') || u.hostname.endsWith('youtube-nocookie.com')) {
+      const start = parseYouTubeStartSeconds(u.searchParams.get('t') ?? u.searchParams.get('start'));
+      const suffix = start > 0 ? `?start=${start}` : '';
       const v = u.searchParams.get('v');
-      if (v) return `https://www.youtube.com/embed/${v}`;
+      if (v) return `https://www.youtube.com/embed/${v}${suffix}`;
       const m = u.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/);
-      if (m) return `https://www.youtube.com/embed/${m[1]}`;
+      if (m) return `https://www.youtube.com/embed/${m[1]}${suffix}`;
     }
     // vimeo.com/<id>
     if (u.hostname.endsWith('vimeo.com')) {
@@ -871,4 +891,15 @@ function extractEmbed(url: string): string | null {
   } catch {
     return null;
   }
+}
+
+/** 협찬방송이 어드민에서 vodUrl 미입력 상태일 때 노출할 코드측 fallback.
+ *  ‘퍼펙트 라이프 287회’는 4:30 부터 침향 본편이 시작되므로 `t=270` 으로 시작. */
+function sponsoredVodFallback(b: Broadcast): string | null {
+  const title = b.showInfo?.title?.trim();
+  const episode = b.showInfo?.episode?.trim();
+  if (title === '퍼펙트 라이프' && episode === '287회') {
+    return 'https://www.youtube.com/watch?v=sUSdoAHiNXU&t=270s';
+  }
+  return null;
 }
