@@ -125,9 +125,18 @@ function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
 const STATUS_LABEL: Record<Broadcast['status'], string> = {
   scheduled: '예정',
   live: 'ON AIR',
-  ended: '종료',
+  ended: '완료',
   canceled: '취소',
 };
+
+/** scheduled 상태인데 방송 시각이 이미 지난 경우 표시상 ended 로 간주.
+ *  어드민이 status 를 갱신하지 않더라도 편성표에 '예정' 으로 박혀 보이는 사고 방지. */
+function effectiveStatus(b: Broadcast): Broadcast['status'] {
+  if (b.status === 'scheduled' && new Date(b.scheduledAt).getTime() < Date.now()) {
+    return 'ended';
+  }
+  return b.status;
+}
 
 // Fallback broadcasts sourced from data/db/broadcasts.json
 // plus additional synthetic entries to cover a realistic schedule spread.
@@ -675,17 +684,24 @@ export default async function HomeShoppingPage({
                       )}
                     </div>
                     <div className={styles.schedAction}>
-                      {b.status === 'live' && b.vodUrl ? (
-                        <a href="#live" className={styles.btnLive}>
-                          ● LIVE
-                        </a>
-                      ) : b.status === 'ended' && b.vodUrl ? (
-                        <a href="#live" className={styles.btnNotify}>
-                          다시보기 →
-                        </a>
-                      ) : (
-                        <span className={styles.schedStatus}>{STATUS_LABEL[b.status]}</span>
-                      )}
+                      {(() => {
+                        const eff = effectiveStatus(b);
+                        if (eff === 'live' && b.vodUrl) {
+                          return (
+                            <a href="#live" className={styles.btnLive}>
+                              ● LIVE
+                            </a>
+                          );
+                        }
+                        if (eff === 'ended' && b.vodUrl) {
+                          return (
+                            <a href="#live" className={styles.btnNotify}>
+                              다시보기 →
+                            </a>
+                          );
+                        }
+                        return <span className={styles.schedStatus}>{STATUS_LABEL[eff]}</span>;
+                      })()}
                     </div>
                   </div>
                 );
