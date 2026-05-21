@@ -764,9 +764,14 @@ export default async function HomeShoppingPage({
                         <span>
                           <b>방송</b> · {formatBroadcastDateTime(b.scheduledAt)}
                         </span>
-                        <span className={styles.spStatus} data-status={b.status}>
-                          {STATUS_LABEL[b.status]}
-                        </span>
+                        {(() => {
+                          const eff = effectiveStatus(b);
+                          return (
+                            <span className={styles.spStatus} data-status={eff}>
+                              {STATUS_LABEL[eff]}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
                     <div className={styles.spVideo}>
