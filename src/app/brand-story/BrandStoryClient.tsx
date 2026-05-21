@@ -343,7 +343,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         </div>
                       )}
                       {remaining && (
-                        <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 16 }}>
+                        <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300 }}>
                           {renderMarkedGold(remaining, 'src-rest')}
                         </p>
                       )}
