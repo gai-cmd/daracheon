@@ -140,6 +140,25 @@
 }
 .liveMeta b { color: var(--accent-soft); font-weight: 500; margin-right: 4px; }
 
+/* HERO 우측 슬롯 — featured 가 없을 때 NS 재방송 영상을 BroadcastCountdown 자리에 인라인 모니터로. */
+.heroVod {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 67, 0.32);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+.heroVod iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 .btnLive {
   display: inline-block;
@@ -816,4 +835,226 @@
   color: var(--accent);
   font-size: 0.7rem;
   line-height: 1.85;
+}
+
+/* NS 홈쇼핑 제작 영상 갤러리 — sponsored .spVideo 박스 골격을 재사용하되
+   2x2 그리드로 배열. 컬러는 sponsored(보라) 와 구분하여 accent(골드) 라인. */
+.ns {
+  padding: 80px 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  background: #0a0b10;
+  color: #fdfbf7;
+}
+.nsHead {
+  margin-bottom: 36px;
+  max-width: 880px;
+}
+.nsKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.nsHead h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #fff;
+}
+.nsHead h2 em {
+  color: var(--accent);
+  font-style: normal;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 400;
+}
+.nsLede {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.96rem;
+  line-height: 1.85;
+  font-weight: 300;
+  max-width: 720px;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+/* SOLD-OUT 배너 — NS 매진 화면 + 텍스트 강조. 갤러리 그리드 위에 위치. */
+.nsSoldOut {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-bottom: 44px;
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(20, 22, 32, 0.6) 70%);
+  border: 1px solid rgba(220, 38, 38, 0.32);
+  border-left: 3px solid rgba(220, 38, 38, 0.8);
+}
+@media (min-width: 900px) {
+  .nsSoldOut {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 40px;
+    padding: 36px;
+    align-items: center;
+  }
+}
+.nsSoldOutFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(220, 38, 38, 0.32);
+}
+.nsSoldOutFrame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.nsSoldOutStamp {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 10px 22px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: #fff;
+  background: rgba(220, 38, 38, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+  transform: rotate(-6deg);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.nsSoldOutMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.nsSoldOutKicker {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  color: #fff;
+  background: rgba(220, 38, 38, 0.92);
+  text-transform: uppercase;
+}
+.nsSoldOutTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.3rem, 3.6vw, 1.85rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  color: #fff;
+  margin: 0;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+.nsSoldOutTitle em {
+  color: #ff6b6b;
+  font-style: normal;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 500;
+}
+.nsSoldOutBody {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.95rem;
+  line-height: 1.85;
+  font-weight: 300;
+  word-break: keep-all;
+  text-wrap: pretty;
+  margin: 0;
+}
+.nsSoldOutFacts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 4px 0 0;
+  padding: 16px 18px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+@media (min-width: 540px) {
+  .nsSoldOutFacts { grid-template-columns: repeat(3, 1fr); }
+}
+.nsSoldOutFacts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.nsSoldOutFacts dt {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  color: rgba(255, 107, 107, 0.85);
+  text-transform: uppercase;
+}
+.nsSoldOutFacts dd {
+  margin: 0;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.nsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 720px) {
+  .nsGrid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+}
+.nsCard {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.05) 0%, rgba(20, 22, 32, 0.6) 100%);
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  border-left: 3px solid rgba(212, 168, 67, 0.55);
+  transition: border-color 300ms, transform 300ms;
+}
+.nsCard:hover { border-color: rgba(212, 168, 67, 0.4); }
+.nsVideo {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.18);
+}
+.nsVideo iframe,
+.nsVideo video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: contain;
+}
+.nsCardMeta {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nsCardKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  color: rgba(212, 168, 67, 0.85);
+  text-transform: uppercase;
+}
+.nsCardTitle {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
 }

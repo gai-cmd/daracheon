@@ -270,6 +270,58 @@ const DEFAULT_BROADCASTS: Broadcast[] = [
   },
 ];
 
+function formatChannelLogo(channel: string): string {
+  const c = channel.toUpperCase();
+  if (c.includes('롯데') || c.includes('LOTTE')) return 'L';
+  if (c.includes('현대') || c.includes('HYUNDAI')) return 'H';
+  if (c.includes('CJ')) return 'C';
+  if (c.includes('GS')) return 'G';
+  if (c.includes('NS')) return 'N';
+  return c.slice(0, 1);
+}
+
+const KST = 'Asia/Seoul';
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return {
+    day: new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: KST }).format(d),
+    monthYear: new Intl.DateTimeFormat('ko-KR', { year: '2-digit', month: 'short', timeZone: KST })
+      .format(d)
+      .toUpperCase(),
+    time: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: KST }),
+  };
+}
+
+/** NS 홈쇼핑에서 제작한 브랜드 영상 4종. Google Drive preview iframe 으로 임베드.
+ *  외부 CDN 의존 금지 원칙에 따라 Drive 직접 링크 대신 임베드 전용 URL 만 사용. */
+const NS_BRAND_VIDEOS: Array<{ id: string; kicker: string; title: string; driveId: string }> = [
+  {
+    id: 'ns-title',
+    kicker: 'OPENING',
+    title: '대라천 침향 — 타이틀',
+    driveId: '1L2hVnJG9QNKShQ1kGqzFpisiXQR4lR3b',
+  },
+  {
+    id: 'ns-showroom',
+    kicker: 'SHOWROOM',
+    title: '대라천 침향 — 쇼룸',
+    driveId: '1bNPTv_a9dJaQdcBM4RD5aDdQFOcwxM1T',
+  },
+  {
+    id: 'ns-vietnam',
+    kicker: 'ON-SITE',
+    title: '대라천 침향 — 베트남 현지',
+    driveId: '1QvOxmRz6xbW56RLZQ2lNm7gZ9ahxBBZ0',
+  },
+  {
+    id: 'ns-ceo',
+    kicker: 'INTERVIEW',
+    title: '대라천 침향 — 문경수 대표',
+    driveId: '1ZRhqhEh--Z8fhEhdEka7a9EOKx8cky2d',
+  },
+];
+
 export default async function HomeShoppingPage({
   searchParams,
 }: {
@@ -391,15 +443,119 @@ export default async function HomeShoppingPage({
               <div>
                 <div className={styles.liveTag}>
                   <span className={styles.liveDot} />
-                  Coming Soon · 다음 방송 준비 중
+                  REPLAY · NS 홈쇼핑 방송 다시보기
                 </div>
-                <h2>곧 다음 편성을 공개합니다</h2>
-                <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: 1.8, fontWeight: 300 }}>
-                  편성 일정이 확정되는 대로 이곳에 안내드립니다.
+                <h2>
+                  NS홈쇼핑 — <em>대라천 ‘참’침향오일</em>
+                  <br />
+                  방송 중 <em>완판</em>되었습니다
+                </h2>
+                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
+                  NS Shop+ 창립 25주년 대고객 감사 프로젝트 단독 편성이 편성 시간 안에 매진으로 마감되었습니다.
+                  다음 편성은 확정되는 대로 본 페이지에 안내드리며, 그 전까지는 NS홈쇼핑이 직접 제작한 방송 영상으로
+                  대라천 ‘참’침향의 디테일을 확인하실 수 있습니다.
                 </p>
+                <div className={styles.liveMeta}>
+                  <span><b>채널</b> · NS Shop+</span>
+                  <span><b>방송</b> · 창립 25주년 대고객 감사 프로젝트</span>
+                  <span><b>결과</b> · 방송 중 완판</span>
+                </div>
+                <div className={styles.ctas}>
+                  <a href="#ns-videos" className={styles.btnNotify}>
+                    제작 영상 전체 보기 →
+                  </a>
+                  <a href="tel:070-4140-4086" className={styles.btnLive}>
+                    ● 전화 주문 070-4140-4086
+                  </a>
+                </div>
+              </div>
+              <div>
+                <div className={styles.heroVod}>
+                  <iframe
+                    src={`https://drive.google.com/file/d/${NS_BRAND_VIDEOS[1].driveId}/preview`}
+                    title="NS홈쇼핑 — 대라천 침향 쇼룸 (방송 다시보기)"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* NS 홈쇼핑 제작 브랜드 영상 — 방송 종료 후 다시보기 갤러리 */}
+      <section className={styles.ns} id="ns-videos">
+        <div className={styles.wrap}>
+          <div className={styles.nsHead}>
+            <div className={styles.nsKicker}>NS Shop+ · 방송 제작 영상</div>
+            <h2>
+              NS홈쇼핑이 담은 <em>대라천 침향</em>
+            </h2>
+            <p className={styles.nsLede}>
+              NS홈쇼핑이 직접 제작한 브랜드 영상 4편을 다시 보실 수 있습니다. 베트남 현지 채취 현장부터
+              문경수 대표 인터뷰, 쇼룸 투어까지 — 방송에서 미처 다 담지 못한 ‘진짜 침향’의 디테일을 확인하세요.
+            </p>
+          </div>
+
+          {/* SOLD-OUT 배너 — NS Shop+ 창립 25주년 대고객 감사 프로젝트 방송에서 매진된 인증 화면. */}
+          <div className={styles.nsSoldOut}>
+            <div className={styles.nsSoldOutFrame}>
+              <img
+                src="/images/ns-broadcast-soldout.jpg"
+                alt="NS홈쇼핑 창립 25주년 대고객 감사 프로젝트 — 대라천 참 침향오일 방송 매진 화면"
+                loading="lazy"
+              />
+              <span className={styles.nsSoldOutStamp} aria-hidden>SOLD&nbsp;OUT</span>
+            </div>
+            <div className={styles.nsSoldOutMeta}>
+              <div className={styles.nsSoldOutKicker}>완판 · SOLD OUT</div>
+              <h3 className={styles.nsSoldOutTitle}>
+                NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em>
+                <br />
+                대라천 ‘참’침향오일 — <em>방송 중 매진</em>
+              </h3>
+              <p className={styles.nsSoldOutBody}>
+                NS Shop+ 단독 편성으로 진행된 ‘대라천 참 침향오일’ 방송이 편성 시간 안에 완판되었습니다.
+                지원해 주신 모든 고객님께 감사드리며, 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.
+              </p>
+              <dl className={styles.nsSoldOutFacts}>
+                <div>
+                  <dt>채널</dt>
+                  <dd>NS Shop+</dd>
+                </div>
+                <div>
+                  <dt>구성</dt>
+                  <dd>대라천 ‘참’침향오일 · 1빈 557,650원</dd>
+                </div>
+                <div>
+                  <dt>결과</dt>
+                  <dd>방송 중 완판</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div className={styles.nsGrid}>
+            {NS_BRAND_VIDEOS.map((v) => (
+              <article key={v.id} className={styles.nsCard}>
+                <div className={styles.nsVideo}>
+                  <iframe
+                    src={`https://drive.google.com/file/d/${v.driveId}/preview`}
+                    title={v.title}
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+                <div className={styles.nsCardMeta}>
+                  <span className={styles.nsCardKicker}>{v.kicker}</span>
+                  <span className={styles.nsCardTitle}>{v.title}</span>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -465,6 +621,79 @@ export default async function HomeShoppingPage({
           );
         })()
       )}
+
+      {/* SCHEDULE · 홈쇼핑 방영 리스트 — 과거 종료 방송 + 다가올 예정 방송을 한 표에. */}
+      <section className={styles.sched} id="sched">
+        <div className={styles.wrap}>
+          <div className={styles.schedHead}>
+            <h2>
+              홈쇼핑 <em>방영 리스트</em>
+            </h2>
+          </div>
+
+          <div className={styles.schedList}>
+            {sorted.length === 0 ? (
+              <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
+            ) : (
+              sorted.map((b) => {
+                const logo = formatChannelLogo(b.channel);
+                const dt = formatDate(b.scheduledAt);
+                return (
+                  <div key={b.id} className={styles.schedRow}>
+                    <div className={styles.schedDate}>
+                      <span className={styles.schedDateDay}>{dt.day}</span>
+                      {dt.monthYear}
+                    </div>
+                    <div className={styles.schedCh}>
+                      <div className={styles.schedChLogo}>{logo}</div>
+                      <div className={styles.schedChInfo}>
+                        <span className={styles.schedChName}>{b.channel}</span>
+                        <span className={styles.schedChTime}>{dt.time}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className={styles.schedProdTitle}>{b.description ?? '대라천 침향 특별 방송'}</div>
+                      <div className={styles.schedProdOffer}>
+                        {b.specialPrice ? (
+                          <>
+                            특별가 <b>₩{b.specialPrice.toLocaleString()}</b>
+                            {b.discountRate ? ` · −${b.discountRate}%` : ''}
+                          </>
+                        ) : (
+                          '방송 중 특별가 공개'
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.schedHost}>
+                      {b.host ? (
+                        <>
+                          <b>{b.host}</b>
+                          쇼호스트
+                        </>
+                      ) : (
+                        <span>—</span>
+                      )}
+                    </div>
+                    <div className={styles.schedAction}>
+                      {b.status === 'live' && b.vodUrl ? (
+                        <a href="#live" className={styles.btnLive}>
+                          ● LIVE
+                        </a>
+                      ) : b.status === 'ended' && b.vodUrl ? (
+                        <a href="#live" className={styles.btnNotify}>
+                          다시보기 →
+                        </a>
+                      ) : (
+                        <span className={styles.schedStatus}>{STATUS_LABEL[b.status]}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* SPONSORED · 협찬방송 — 한 행 2열(설명 좌 · 영상 우) 으로 정렬,
           홈쇼핑의 LIVE 카드 골격을 차용하되 보라 액센트로 차별화. */}
