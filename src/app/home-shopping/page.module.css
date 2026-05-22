@@ -1012,6 +1012,21 @@
 @media (min-width: 720px) {
   .nsGrid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
 }
+.nsCardBtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+}
+.nsCardBtn:focus-visible .nsCard { outline: 2px solid var(--accent); outline-offset: 3px; }
+.nsCardBtn:hover .nsCard { border-color: rgba(212, 168, 67, 0.45); transform: translateY(-2px); }
+.nsCardBtn:hover .nsPlayBadge { background: var(--accent); color: #0a0b10; transform: scale(1.06); }
+
 .nsCard {
   background: linear-gradient(135deg, rgba(212, 168, 67, 0.05) 0%, rgba(20, 22, 32, 0.6) 100%);
   border: 1px solid rgba(212, 168, 67, 0.18);
@@ -1022,17 +1037,42 @@
 .nsVideo {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: #1a1d29;
   overflow: hidden;
   border-bottom: 1px solid rgba(212, 168, 67, 0.18);
 }
-.nsVideo iframe,
-.nsVideo video {
+.nsVideo > video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  border: 0;
+  object-fit: cover;
   display: block;
-  object-fit: contain;
+  pointer-events: none;
+}
+.nsPlayBadge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(212, 168, 67, 0.92);
+  color: #0a0b10;
+  font-size: 1.4rem;
+  padding-left: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  transition: background 220ms, color 220ms, transform 220ms;
+  z-index: 2;
+}
+.nsThumbScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.55) 100%);
+  z-index: 1;
 }
 .nsCardMeta {
   padding: 18px 22px 22px;

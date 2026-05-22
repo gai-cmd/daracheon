@@ -4,6 +4,7 @@ import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import { autoSplitMixed, formatBroadcastDateTime } from '@/lib/broadcasts';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import JsonLd from '@/components/ui/JsonLd';
+import NsBrandVideoGallery, { type NsBrandVideo } from './NsBrandVideoGallery';
 import styles from './page.module.css';
 
 const SITE_URL = 'https://zoellife.com';
@@ -302,32 +303,33 @@ function formatDate(iso: string) {
   };
 }
 
-/** NS 홈쇼핑에서 제작한 브랜드 영상 4종. Google Drive preview iframe 으로 임베드.
- *  외부 CDN 의존 금지 원칙에 따라 Drive 직접 링크 대신 임베드 전용 URL 만 사용. */
-const NS_BRAND_VIDEOS: Array<{ id: string; kicker: string; title: string; driveId: string }> = [
+/** NS 홈쇼핑이 제작한 브랜드 영상 4종 — Drive 에서 다운받아 Vercel Blob 에 업로드된 mp4.
+ *  외부 CDN 의존 금지 원칙에 따라 자체 인프라(Blob)에서만 호스팅.
+ *  추후 어드민에서 편집 가능하도록 pages.json 의 homeShopping.nsVideos 로 옮길 수 있음. */
+const NS_BRAND_VIDEOS_FALLBACK: NsBrandVideo[] = [
   {
     id: 'ns-title',
     kicker: 'OPENING',
     title: '대라천 침향 — 타이틀',
-    driveId: '1L2hVnJG9QNKShQ1kGqzFpisiXQR4lR3b',
+    url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/ns-brand-videos/ns-title-5zHJXMWFYrgkS9w071NjKlJypJLIje.mp4',
   },
   {
     id: 'ns-showroom',
     kicker: 'SHOWROOM',
     title: '대라천 침향 — 쇼룸',
-    driveId: '1bNPTv_a9dJaQdcBM4RD5aDdQFOcwxM1T',
+    url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/ns-brand-videos/ns-showroom-uV5DLMRkwrdC8J0scFqDa3qgNszM3C.mp4',
   },
   {
     id: 'ns-vietnam',
     kicker: 'ON-SITE',
     title: '대라천 침향 — 베트남 현지',
-    driveId: '1QvOxmRz6xbW56RLZQ2lNm7gZ9ahxBBZ0',
+    url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/ns-brand-videos/ns-vietnam-bKw2D2xTmDJIyc0MEfj5nloZzcDs5D.mp4',
   },
   {
     id: 'ns-ceo',
     kicker: 'INTERVIEW',
     title: '대라천 침향 — 문경수 대표',
-    driveId: '1ZRhqhEh--Z8fhEhdEka7a9EOKx8cky2d',
+    url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/ns-brand-videos/ns-ceo-jywrU6pqSUDkXkrI0wOKd8UnphiAZK.mp4',
   },
 ];
 
@@ -340,8 +342,14 @@ export default async function HomeShoppingPage({
   // Uncached read — 어드민에서 vodUrl 등을 비웠을 때 즉시 반영. 캐시 태그
   // 전파 지연으로 stale 가 보이는 사고를 막는다. 트래픽 낮으니 OK.
   const dbBroadcasts = await readDataUncached<Broadcast>('broadcasts');
-  const pagesData = await readSingleSafe<{ homeShopping?: { hero?: HomeShoppingHero } }>('pages');
+  const pagesData = await readSingleSafe<{
+    homeShopping?: { hero?: HomeShoppingHero; nsVideos?: NsBrandVideo[] };
+  }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
+  const nsVideos: NsBrandVideo[] =
+    pagesData?.homeShopping?.nsVideos && pagesData.homeShopping.nsVideos.length > 0
+      ? pagesData.homeShopping.nsVideos
+      : NS_BRAND_VIDEOS_FALLBACK;
   const allRawBeforeSplit = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
   // mixed 레코드(홈쇼핑+협찬방송 동거)를 in-memory 로 분리. 어드민 GET 에서
   // 영구 저장하므로 첫 어드민 방문 후엔 멱등 no-op.
@@ -479,15 +487,21 @@ export default async function HomeShoppingPage({
                 </div>
               </div>
               <div>
-                <div className={styles.heroVod}>
-                  <iframe
-                    src={`https://drive.google.com/file/d/${NS_BRAND_VIDEOS[1].driveId}/preview`}
-                    title="NS홈쇼핑 — 대라천 침향 쇼룸 (방송 다시보기)"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
+                {(() => {
+                  const heroVideo = nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0];
+                  if (!heroVideo) return null;
+                  return (
+                    <div className={styles.heroVod}>
+                      <video
+                        src={heroVideo.url}
+                        title={`NS홈쇼핑 — ${heroVideo.title} (방송 다시보기)`}
+                        controls
+                        preload="metadata"
+                        playsInline
+                      />
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}
@@ -546,25 +560,7 @@ export default async function HomeShoppingPage({
             </div>
           </div>
 
-          <div className={styles.nsGrid}>
-            {NS_BRAND_VIDEOS.map((v) => (
-              <article key={v.id} className={styles.nsCard}>
-                <div className={styles.nsVideo}>
-                  <iframe
-                    src={`https://drive.google.com/file/d/${v.driveId}/preview`}
-                    title={v.title}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
-                <div className={styles.nsCardMeta}>
-                  <span className={styles.nsCardKicker}>{v.kicker}</span>
-                  <span className={styles.nsCardTitle}>{v.title}</span>
-                </div>
-              </article>
-            ))}
-          </div>
+          <NsBrandVideoGallery videos={nsVideos} />
         </div>
       </section>
 
