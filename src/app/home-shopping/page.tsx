@@ -17,10 +17,72 @@ interface HomeShoppingHero {
   lede: string;
 }
 
+interface NsHead {
+  kicker: string;
+  titleLead: string;
+  titleEmphasis: string;
+  lede: string;
+}
+
+interface NsSoldOut {
+  imageUrl: string;
+  imageAlt: string;
+  stampLabel: string;
+  kicker: string;
+  titleHtml: string;
+  body: string;
+  factChannel: string;
+  factComposition: string;
+  factResult: string;
+}
+
+interface NsHeroFallback {
+  tag: string;
+  titleHtml: string;
+  body: string;
+  metaChannel: string;
+  metaShow: string;
+  metaResult: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryHref: string;
+  ctaPhone: string;
+}
+
 const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
   titleLine1: 'TV 홈쇼핑',
   titleEmphasis: '편성표 · 다시보기',
   lede: '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.',
+};
+
+const DEFAULT_NS_HEAD: NsHead = {
+  kicker: 'NS Shop+ · 방송 제작 영상',
+  titleLead: 'NS홈쇼핑이 담은 ',
+  titleEmphasis: '대라천 침향',
+  lede: 'NS홈쇼핑이 직접 제작한 브랜드 영상 4편을 다시 보실 수 있습니다. 베트남 현지 채취 현장부터 문경수 대표 인터뷰, 쇼룸 투어까지 — 방송에서 미처 다 담지 못한 ‘진짜 침향’의 디테일을 확인하세요.',
+};
+
+const DEFAULT_NS_SOLD_OUT: NsSoldOut = {
+  imageUrl: '/images/ns-broadcast-soldout.jpg',
+  imageAlt: 'NS홈쇼핑 창립 25주년 대고객 감사 프로젝트 — 대라천 참 침향오일 방송 매진 화면',
+  stampLabel: 'SOLD OUT',
+  kicker: '완판 · SOLD OUT',
+  titleHtml: 'NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em><br />대라천 ‘참’침향오일 — <em>방송 중 매진</em>',
+  body: 'NS Shop+ 단독 편성으로 진행된 ‘대라천 참 침향오일’ 방송이 편성 시간 안에 완판되었습니다. 지원해 주신 모든 고객님께 감사드리며, 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.',
+  factChannel: 'NS Shop+',
+  factComposition: '대라천 ‘참’침향오일 · 1병 557,650원',
+  factResult: '방송 중 완판',
+};
+
+const DEFAULT_NS_HERO_FALLBACK: NsHeroFallback = {
+  tag: 'REPLAY · NS 홈쇼핑 방송 다시보기',
+  titleHtml: 'NS홈쇼핑 — <em>대라천 ‘참’침향오일</em><br />방송 중 <em>완판</em>되었습니다',
+  body: 'NS Shop+ 창립 25주년 대고객 감사 프로젝트 단독 편성이 편성 시간 안에 매진으로 마감되었습니다. 다음 편성은 확정되는 대로 본 페이지에 안내드리며, 그 전까지는 NS홈쇼핑이 직접 제작한 방송 영상으로 대라천 ‘참’침향의 디테일을 확인하실 수 있습니다.',
+  metaChannel: 'NS Shop+',
+  metaShow: '창립 25주년 대고객 감사 프로젝트',
+  metaResult: '방송 중 완판',
+  ctaPrimaryLabel: '제작 영상 전체 보기 →',
+  ctaPrimaryHref: '#ns-videos',
+  ctaPhone: '070-4140-4086',
 };
 
 export const metadata: Metadata = {
@@ -343,9 +405,18 @@ export default async function HomeShoppingPage({
   // 전파 지연으로 stale 가 보이는 사고를 막는다. 트래픽 낮으니 OK.
   const dbBroadcasts = await readDataUncached<Broadcast>('broadcasts');
   const pagesData = await readSingleSafe<{
-    homeShopping?: { hero?: HomeShoppingHero; nsVideos?: NsBrandVideo[] };
+    homeShopping?: {
+      hero?: HomeShoppingHero;
+      nsHead?: Partial<NsHead>;
+      nsSoldOut?: Partial<NsSoldOut>;
+      nsHeroFallback?: Partial<NsHeroFallback>;
+      nsVideos?: NsBrandVideo[];
+    };
   }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
+  const nsHead: NsHead = { ...DEFAULT_NS_HEAD, ...pagesData?.homeShopping?.nsHead };
+  const nsSoldOut: NsSoldOut = { ...DEFAULT_NS_SOLD_OUT, ...pagesData?.homeShopping?.nsSoldOut };
+  const nsHeroFallback: NsHeroFallback = { ...DEFAULT_NS_HERO_FALLBACK, ...pagesData?.homeShopping?.nsHeroFallback };
   const nsVideos: NsBrandVideo[] =
     pagesData?.homeShopping?.nsVideos && pagesData.homeShopping.nsVideos.length > 0
       ? pagesData.homeShopping.nsVideos
@@ -460,30 +531,28 @@ export default async function HomeShoppingPage({
               <div>
                 <div className={styles.liveTag}>
                   <span className={styles.liveDot} />
-                  REPLAY · NS 홈쇼핑 방송 다시보기
+                  {nsHeroFallback.tag}
                 </div>
-                <h2>
-                  NS홈쇼핑 — <em>대라천 ‘참’침향오일</em>
-                  <br />
-                  방송 중 <em>완판</em>되었습니다
-                </h2>
+                <h2 dangerouslySetInnerHTML={{ __html: nsHeroFallback.titleHtml }} />
                 <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
-                  NS Shop+ 창립 25주년 대고객 감사 프로젝트 단독 편성이 편성 시간 안에 매진으로 마감되었습니다.
-                  다음 편성은 확정되는 대로 본 페이지에 안내드리며, 그 전까지는 NS홈쇼핑이 직접 제작한 방송 영상으로
-                  대라천 ‘참’침향의 디테일을 확인하실 수 있습니다.
+                  {nsHeroFallback.body}
                 </p>
                 <div className={styles.liveMeta}>
-                  <span><b>채널</b> · NS Shop+</span>
-                  <span><b>방송</b> · 창립 25주년 대고객 감사 프로젝트</span>
-                  <span><b>결과</b> · 방송 중 완판</span>
+                  {nsHeroFallback.metaChannel && <span><b>채널</b> · {nsHeroFallback.metaChannel}</span>}
+                  {nsHeroFallback.metaShow && <span><b>방송</b> · {nsHeroFallback.metaShow}</span>}
+                  {nsHeroFallback.metaResult && <span><b>결과</b> · {nsHeroFallback.metaResult}</span>}
                 </div>
                 <div className={styles.ctas}>
-                  <a href="#ns-videos" className={styles.btnNotify}>
-                    제작 영상 전체 보기 →
-                  </a>
-                  <a href="tel:070-4140-4086" className={styles.btnLive}>
-                    ● 전화 주문 070-4140-4086
-                  </a>
+                  {nsHeroFallback.ctaPrimaryLabel && nsHeroFallback.ctaPrimaryHref && (
+                    <a href={nsHeroFallback.ctaPrimaryHref} className={styles.btnNotify}>
+                      {nsHeroFallback.ctaPrimaryLabel}
+                    </a>
+                  )}
+                  {nsHeroFallback.ctaPhone && (
+                    <a href={`tel:${nsHeroFallback.ctaPhone}`} className={styles.btnLive}>
+                      ● 전화 주문 {nsHeroFallback.ctaPhone}
+                    </a>
+                  )}
                 </div>
               </div>
               <div>
@@ -512,50 +581,54 @@ export default async function HomeShoppingPage({
       <section className={styles.ns} id="ns-videos">
         <div className={styles.wrap}>
           <div className={styles.nsHead}>
-            <div className={styles.nsKicker}>NS Shop+ · 방송 제작 영상</div>
+            <div className={styles.nsKicker}>{nsHead.kicker}</div>
             <h2>
-              NS홈쇼핑이 담은 <em>대라천 침향</em>
+              {nsHead.titleLead}
+              <em>{nsHead.titleEmphasis}</em>
             </h2>
-            <p className={styles.nsLede}>
-              NS홈쇼핑이 직접 제작한 브랜드 영상 4편을 다시 보실 수 있습니다. 베트남 현지 채취 현장부터
-              문경수 대표 인터뷰, 쇼룸 투어까지 — 방송에서 미처 다 담지 못한 ‘진짜 침향’의 디테일을 확인하세요.
-            </p>
+            <p className={styles.nsLede}>{nsHead.lede}</p>
           </div>
 
           {/* SOLD-OUT 배너 — NS Shop+ 창립 25주년 대고객 감사 프로젝트 방송에서 매진된 인증 화면. */}
           <div className={styles.nsSoldOut}>
             <div className={styles.nsSoldOutFrame}>
               <img
-                src="/images/ns-broadcast-soldout.jpg"
-                alt="NS홈쇼핑 창립 25주년 대고객 감사 프로젝트 — 대라천 참 침향오일 방송 매진 화면"
+                src={nsSoldOut.imageUrl}
+                alt={nsSoldOut.imageAlt}
                 loading="lazy"
               />
-              <span className={styles.nsSoldOutStamp} aria-hidden>SOLD&nbsp;OUT</span>
+              {nsSoldOut.stampLabel && (
+                <span className={styles.nsSoldOutStamp} aria-hidden>
+                  {nsSoldOut.stampLabel.replace(/ /g, ' ')}
+                </span>
+              )}
             </div>
             <div className={styles.nsSoldOutMeta}>
-              <div className={styles.nsSoldOutKicker}>완판 · SOLD OUT</div>
-              <h3 className={styles.nsSoldOutTitle}>
-                NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em>
-                <br />
-                대라천 ‘참’침향오일 — <em>방송 중 매진</em>
-              </h3>
-              <p className={styles.nsSoldOutBody}>
-                NS Shop+ 단독 편성으로 진행된 ‘대라천 참 침향오일’ 방송이 편성 시간 안에 완판되었습니다.
-                지원해 주신 모든 고객님께 감사드리며, 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.
-              </p>
+              {nsSoldOut.kicker && <div className={styles.nsSoldOutKicker}>{nsSoldOut.kicker}</div>}
+              <h3
+                className={styles.nsSoldOutTitle}
+                dangerouslySetInnerHTML={{ __html: nsSoldOut.titleHtml }}
+              />
+              {nsSoldOut.body && <p className={styles.nsSoldOutBody}>{nsSoldOut.body}</p>}
               <dl className={styles.nsSoldOutFacts}>
-                <div>
-                  <dt>채널</dt>
-                  <dd>NS Shop+</dd>
-                </div>
-                <div>
-                  <dt>구성</dt>
-                  <dd>대라천 ‘참’침향오일 · 1병 557,650원</dd>
-                </div>
-                <div>
-                  <dt>결과</dt>
-                  <dd>방송 중 완판</dd>
-                </div>
+                {nsSoldOut.factChannel && (
+                  <div>
+                    <dt>채널</dt>
+                    <dd>{nsSoldOut.factChannel}</dd>
+                  </div>
+                )}
+                {nsSoldOut.factComposition && (
+                  <div>
+                    <dt>구성</dt>
+                    <dd>{nsSoldOut.factComposition}</dd>
+                  </div>
+                )}
+                {nsSoldOut.factResult && (
+                  <div>
+                    <dt>결과</dt>
+                    <dd>{nsSoldOut.factResult}</dd>
+                  </div>
+                )}
               </dl>
             </div>
           </div>
