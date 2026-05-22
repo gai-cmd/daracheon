@@ -1095,6 +1095,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     {group.description && (
                       <p className={styles.chapterSubtitle}>{group.description}</p>
                     )}
+                    {group.body && (
+                      <p style={{ whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.95, color: 'rgba(255,255,255,0.72)', fontWeight: 300, marginBottom: 24 }}>
+                        {group.body}
+                      </p>
+                    )}
                     <div className={styles.processGroupLayout}>
                       <div className={styles.stepGridDetailed}>
                         {group.steps.map((step, si) => (

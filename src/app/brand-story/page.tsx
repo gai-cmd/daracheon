@@ -72,7 +72,7 @@ export interface ProcessChapter { title: string; titleEn: string; description: s
 export interface ProcessStat { value: string; label: string }
 export interface ProcessStep { step: string; name: string; duration?: string; desc: string; image?: string }
 export interface ProcessPhoto { src: string; caption?: string }
-export interface ProcessGroup { title: string; titleEn: string; description: string; image?: string; steps: ProcessStep[]; photos?: ProcessPhoto[] }
+export interface ProcessGroup { title: string; titleEn: string; description: string; body?: string; image?: string; steps: ProcessStep[]; photos?: ProcessPhoto[] }
 export interface BrandStoryTabHeroes {
   tab0?: string; // 브랜드 스토리
   tab1?: string; // 다양한 인증

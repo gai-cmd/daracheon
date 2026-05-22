@@ -74,6 +74,7 @@ interface ProcessGroup {
   title: string;
   titleEn: string;
   description: string;
+  body?: string;
   image?: string;
   steps: ProcessStep[];
   photos?: ProcessPhoto[];
@@ -1334,11 +1335,22 @@ export default function AdminBrandStoryPage() {
                           className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                         />
                         <div className="sm:col-span-2">
+                          <label className="block text-xs text-gray-500 mb-1">강조 한 줄 (골드 이탤릭으로 표시)</label>
                           <textarea
-                            placeholder="공정 소개 설명 (선택)"
-                            rows={3}
+                            placeholder="예: 좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다."
+                            rows={2}
                             value={group.description}
                             onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], description: e.target.value }; setProcessTab({ ...processTab, processGroups: n }); }}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs text-gray-500 mb-1">본문 (화이트 본문으로 표시 · 선택)</label>
+                          <textarea
+                            placeholder="예: 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한…"
+                            rows={4}
+                            value={group.body ?? ''}
+                            onChange={(e) => { const n = [...processTab.processGroups]; n[gi] = { ...n[gi], body: e.target.value }; setProcessTab({ ...processTab, processGroups: n }); }}
                             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
                           />
                         </div>
