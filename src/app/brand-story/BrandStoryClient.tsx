@@ -1054,7 +1054,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
 
             {/* Stats */}
             {processStats.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, margin: '0 0 64px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, margin: 0 }}>
                 {processStats.map((s) => (
                   <div key={s.label} style={{ padding: '20px 16px', border: '1px solid rgba(212,168,67,0.25)', background: 'rgba(255,255,255,0.02)', textAlign: 'center' }}>
                     <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.6rem', color: 'var(--accent)', fontWeight: 400, lineHeight: 1, marginBottom: 8 }}>{s.value}</div>

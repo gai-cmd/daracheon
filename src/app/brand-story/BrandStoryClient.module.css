@@ -748,8 +748,8 @@
 /* 각 그룹은 상위 chapterGrid 밖에서 별도의 chapterGrid row 로 렌더링됨.
    row 사이 구분선 + 간격만 담당. */
 .processGroupChapterRow {
-  margin-top: 56px;
-  padding-top: 56px;
+  margin-top: 50px;
+  padding-top: 48px;
   border-top: 1px solid rgba(212, 168, 67, 0.2);
 }
 
