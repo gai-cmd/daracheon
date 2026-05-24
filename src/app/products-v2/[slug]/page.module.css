@@ -1,0 +1,268 @@
+/* 상품 상세 v2 — 통이미지 흐름 재구성. 기존 사이트 다크·골드 톤 계승. */
+
+.page { background: #0a0b10; color: #fdfbf7; }
+
+.draftBanner {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--accent-deep, #7a5d1d); color: #fff;
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 8px 16px;
+}
+
+.wrap, .section {
+  max-width: var(--max-w, 1440px);
+  margin: 0 auto;
+}
+
+/* 공통 섹션 패딩 */
+.section {
+  padding: clamp(72px, 10vw, 132px) 28px;
+  border-top: 1px solid rgba(212, 168, 67, 0.1);
+}
+@media (min-width: 1024px) { .section { padding-left: 64px; padding-right: 64px; } }
+.elev { background: #0d0f16; }
+.center { text-align: center; }
+
+.sectionHead { margin-bottom: 40px; }
+.center .sectionHead { margin-left: auto; margin-right: auto; max-width: 760px; }
+.sectionTag {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.sectionTitle {
+  font-family: 'Noto Serif KR', serif; font-weight: 200;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  letter-spacing: -0.02em; line-height: 1.25; color: #fff;
+  text-wrap: balance;
+}
+.sectionLede {
+  margin-top: 16px; font-size: 1rem; line-height: 1.85;
+  font-weight: 300; color: rgba(255, 255, 255, 0.7);
+}
+.headLight .sectionTitle { color: #fff; }
+
+.h2 {
+  font-family: 'Noto Serif KR', serif; font-weight: 200;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem); color: #fff;
+  letter-spacing: -0.02em; line-height: 1.25; margin: 6px 0 18px;
+  text-wrap: balance;
+}
+.bodyText { font-size: 1rem; line-height: 1.9; font-weight: 300; color: rgba(255, 255, 255, 0.74); max-width: 640px; }
+.bodyTextCenter {
+  font-size: 0.98rem; line-height: 1.9; font-weight: 300; color: rgba(255, 255, 255, 0.72);
+  max-width: 1100px; margin: 0 auto;
+  /* 긴 한 문장은 데스크톱에서 1행으로 — 좁은 화면에서만 자연스럽게 줄바꿈 */
+  text-wrap: balance;
+}
+.headline {
+  font-family: 'Noto Serif KR', serif; font-weight: 300;
+  font-size: clamp(1.4rem, 3vw, 2rem); color: var(--accent); margin: 0 0 22px;
+}
+.tag {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+
+/* ── 01 BRAND hero ── */
+.brand {
+  min-height: 88vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; position: relative;
+  background-size: cover; background-position: center;
+  padding: 120px 24px 80px;
+}
+.brandInner { display: flex; flex-direction: column; align-items: center; }
+.brandTag {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem; letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 28px;
+}
+.brandHanja {
+  font-family: 'Noto Serif KR', serif; font-weight: 500;
+  font-size: clamp(3rem, 9vw, 6rem); letter-spacing: 0.14em;
+  color: #fff; line-height: 1; text-shadow: 0 2px 40px rgba(0,0,0,0.6);
+}
+.brandKo {
+  margin-top: 18px; font-family: 'Noto Serif KR', serif; font-weight: 300;
+  font-size: clamp(1.2rem, 3vw, 1.7rem); letter-spacing: 0.05em; color: rgba(255,255,255,0.92);
+}
+.gline { width: 56px; height: 1px; background: var(--accent); margin: 32px 0; }
+.brandTagline { font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.78); max-width: 520px; line-height: 1.8; }
+.scrollHint {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(255,255,255,0.5);
+  animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translate(-50%,0);} 50% { transform: translate(-50%,6px);} }
+
+/* ── 02 PRODUCT ── */
+.productGrid { display: grid; grid-template-columns: 1fr; gap: 44px; align-items: center; }
+@media (min-width: 900px) { .productGrid { grid-template-columns: 1.15fr 1fr; gap: 70px; } }
+.productMedia {
+  aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: linear-gradient(180deg, #1a1d29, #0f1119);
+}
+.productMedia img { width: 100%; height: 100%; object-fit: cover; }
+.productLead {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.74rem; letter-spacing: 0.16em; color: var(--accent-soft); margin-bottom: 14px;
+}
+.badgeLine {
+  display: inline-block; margin-top: 26px;
+  font-family: 'Noto Serif KR', serif; font-size: 0.95rem; letter-spacing: 0.06em;
+  color: var(--accent); padding-top: 18px; border-top: 1px solid rgba(212,168,67,0.2);
+}
+
+/* ── 03 FROM VIETNAM · cert ── */
+.certCard {
+  display: flex; align-items: center; gap: 24px; text-align: left;
+  max-width: 540px; margin: 44px auto 0;
+  padding: 26px 30px; border: 1px solid rgba(212,168,67,0.3);
+  background: rgba(212,168,67,0.05); border-radius: 4px;
+}
+.certBadge {
+  font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700;
+  font-size: 1.4rem; letter-spacing: 0.1em; color: var(--accent);
+  flex-shrink: 0; padding-right: 24px; border-right: 1px solid rgba(212,168,67,0.3);
+}
+.certBody h3 { font-family: 'Noto Serif KR', serif; font-weight: 400; font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
+.certBody p { font-size: 0.85rem; line-height: 1.65; font-weight: 300; color: rgba(255,255,255,0.65); }
+
+/* ── 04 AGALOCHA · grade pyramid ── */
+.sciName { font-family: 'Noto Serif KR', serif; font-size: clamp(1.3rem, 3vw, 2rem); color: var(--accent); margin: 0 0 20px; }
+.sciName em { font-style: italic; }
+.gradeNote { font-size: 0.92rem; color: rgba(255,255,255,0.62); margin: 40px auto 24px; max-width: 600px; }
+.gradePyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.gradeRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px; border-radius: 3px; color: #fff;
+}
+.gradeLabel { font-weight: 500; font-size: 0.92rem; }
+.gradeDensity { font-size: 0.78rem; opacity: 0.85; margin-left: 20px; }
+.gr0 { width: 46%; min-width: 280px; background: linear-gradient(90deg,#b88c2d,#d4a843); }
+.gr1 { width: 62%; min-width: 320px; background: rgba(184,140,45,0.55); }
+.gr2 { width: 80%; min-width: 360px; background: rgba(184,140,45,0.32); }
+.gr3 { width: 100%; max-width: 560px; background: rgba(255,255,255,0.07); }
+.gradeTop { box-shadow: 0 8px 30px -8px rgba(212,168,67,0.45); color: #0a0b10; }
+.gradeTop .gradeLabel { font-weight: 700; }
+.gradeAxis {
+  display: flex; justify-content: space-between; width: 100%; max-width: 560px;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.62rem;
+  letter-spacing: 0.16em; color: rgba(255,255,255,0.45);
+}
+
+/* ── 05 AGANWOOD ── */
+.split { display: grid; grid-template-columns: 1fr; gap: 44px; align-items: center; }
+@media (min-width: 900px) { .split { grid-template-columns: 1.7fr 1fr; gap: 56px; } }
+
+/* 섹션 사진 밴드 (From Vietnam · Aganwood) */
+.mediaBand {
+  margin-top: 48px;
+  aspect-ratio: 21 / 9; overflow: hidden; border-radius: 3px;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: linear-gradient(180deg, #1a1d29, #0f1119);
+}
+.mediaBand img { width: 100%; height: 100%; object-fit: cover; }
+.aganStats { display: flex; flex-direction: column; gap: 28px; }
+.aganStat { border-left: 2px solid var(--accent); padding-left: 22px; }
+.aganNum { display: block; font-family: 'Noto Serif KR', serif; font-weight: 300; font-size: clamp(2.6rem, 6vw, 4rem); color: var(--accent); line-height: 1; }
+.aganNum small { font-size: 0.28em; margin-left: 8px; color: rgba(255,255,255,0.7); letter-spacing: 0.04em; }
+.aganLabel { display: block; margin-top: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.62); }
+
+/* ── 06 AGANWOOD OIL · yield pyramid ── */
+.oil { background-color: #0a0b10; background-size: cover; background-position: center; }
+.yieldPyramid { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 44px; }
+.yieldRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 28px; border: 1px solid rgba(212,168,67,0.28);
+  background: rgba(212,168,67,0.05); border-radius: 3px;
+}
+.yieldLabel { font-size: 0.84rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.62); }
+.yieldVal { font-family: 'Noto Serif KR', serif; font-weight: 400; font-size: 1.4rem; color: #fff; margin-left: 32px; }
+.yieldVal small { font-size: 0.5em; margin-left: 4px; color: var(--accent-soft); }
+.y_wide { width: 100%; max-width: 560px; }
+.y_mid { width: 74%; max-width: 420px; }
+.y_narrow { width: 50%; max-width: 300px; border-color: var(--accent); background: rgba(212,168,67,0.12); }
+.yieldPercent {
+  margin-top: 14px; font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.82rem; letter-spacing: 0.18em; color: var(--accent);
+}
+
+/* ── 07 NEEDS · persona grid ── */
+.personaGrid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 640px) { .personaGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .personaGrid { grid-template-columns: repeat(3, 1fr); gap: 26px; } }
+.persona { margin: 0; }
+.personaImg {
+  aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, #1a1d29, #0f1119);
+}
+.personaImg img { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--ease-out); }
+.persona:hover .personaImg img { transform: scale(1.04); }
+.persona figcaption { margin-top: 14px; font-size: 0.95rem; font-weight: 300; color: rgba(255,255,255,0.82); }
+
+/* ── 08 제품 정보 ── */
+.infoGrid { display: grid; grid-template-columns: 1fr; gap: 44px; align-items: start; }
+@media (min-width: 900px) { .infoGrid { grid-template-columns: 1fr 1.1fr; gap: 64px; } }
+.infoMedia {
+  aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; position: sticky; top: 90px;
+  border: 1px solid rgba(212,168,67,0.18);
+  background: linear-gradient(180deg, #1a1d29, #0f1119);
+}
+.infoMedia img { width: 100%; height: 100%; object-fit: cover; }
+.specs { border-top: 1px solid rgba(212,168,67,0.15); margin-bottom: 36px; }
+.specRow { display: grid; grid-template-columns: 120px 1fr; gap: 18px; padding: 16px 0; border-bottom: 1px solid rgba(212,168,67,0.12); }
+.specRow dt { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.specRow dd { font-size: 0.9rem; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.85); }
+.usageHead {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+  margin: 26px 0 14px;
+}
+.usageList { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.usageList li { display: flex; gap: 12px; align-items: flex-start; font-size: 0.9rem; line-height: 1.7; font-weight: 300; color: rgba(255,255,255,0.78); }
+.usageList li::before { content: ''; margin-top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.warn li::before { background: var(--danger, #c46a55); }
+
+/* ── 09 보증 + 구매 ── */
+.badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 32px 0 48px; }
+.badge {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem; letter-spacing: 0.14em; color: var(--accent);
+  padding: 8px 16px; border: 1px solid rgba(212,168,67,0.3); border-radius: var(--r-pill, 999px);
+}
+.purchase { display: inline-flex; flex-direction: column; align-items: center; gap: 8px; }
+.purchase .optionRow { justify-content: center; }
+
+.priceBox { margin: 0; }
+.optionRow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.optionBtn {
+  padding: 11px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.8); font-size: 0.85rem; font-weight: 300; cursor: pointer;
+  border-radius: 2px; transition: all 250ms;
+}
+.optionBtn:hover { border-color: var(--accent-soft); }
+.optionActive { border-color: var(--accent); color: var(--accent); background: rgba(212,168,67,0.08); }
+.price { font-family: 'Noto Serif KR', serif; font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 300; color: #fff; }
+
+.ctas { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.btnGold, .btnOutline {
+  display: inline-block; padding: 14px 26px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600;
+  text-decoration: none; border: 1px solid; transition: all 300ms;
+}
+.btnGold { background: var(--accent); color: var(--lx-black); border-color: var(--accent); }
+.btnGold:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+.btnOutline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); font-weight: 500; }
+.btnOutline:hover { border-color: var(--accent); color: var(--accent); }
