@@ -416,13 +416,6 @@
   grid-template-columns: 1fr;
   gap: 36px;
 }
-@media (min-width: 900px) {
-  .synopsisGrid {
-    grid-template-columns: 1.4fr 1fr;
-    gap: 64px;
-    align-items: start;
-  }
-}
 .synopsisBody p {
   font-size: 1.02rem;
   line-height: 1.95;
@@ -430,7 +423,6 @@
   font-weight: 300;
   word-break: keep-all;
   text-wrap: pretty;
-  max-width: 720px;
 }
 
 .synopsisCast,
@@ -442,6 +434,12 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+/* 캐스트 패널이 본문 아래 전체 너비를 차지할 때, 항목을 가로로 흘려 채운다 */
+.synopsisCast {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px 40px;
 }
 .synopsisDates {
   margin-top: 16px;
@@ -696,6 +694,57 @@
   font-size: 0.5rem;
 }
 
+/* 유효기간 만료 → 인라인 대신 외부 유튜브 아웃링크 카드 */
+.spVideoLink {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  text-decoration: none;
+  padding: 24px 22px;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(176, 132, 230, 0.18), transparent 60%),
+    linear-gradient(180deg, #14101b, #08070d);
+  transition: background 300ms;
+}
+.spVideoLink:hover {
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(176, 132, 230, 0.28), transparent 60%),
+    linear-gradient(180deg, #1a1426, #0b0a11);
+}
+.spVideoLinkPlay {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(176, 132, 230, 0.5);
+  color: #b489e8;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 35%, rgba(176, 132, 230, 0.2), transparent 70%);
+}
+.spVideoLinkPlay svg {
+  width: 26px;
+  height: 26px;
+}
+.spVideoLinkChannel {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: -0.005em;
+}
+.spVideoLinkCta {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #b489e8;
+}
+
 /* PREVIEW · 방송 다시보기 요약 (YouTube 챕터식)
    - synopsis 섹션 하단, sponsored 카드 하단에서 모두 동일 모양으로 노출 */
 .spPreviewWrap {
@@ -835,6 +884,105 @@
   color: var(--accent);
   font-size: 0.7rem;
   line-height: 1.85;
+}
+
+/* ─────────────────────────────────────────────
+   RECAP · 방송 다시보기 요약 섹션
+   공개 토글이 켜진 home-shopping 회차의 미리보기를 회차별 카드로 나열.
+   synopsis 와 같은 다크 골드 톤을 쓰되, 회차 메타(채널·일시·상태) 헤더를 얹는다.
+   ───────────────────────────────────────────── */
+.recap {
+  padding: 80px 0;
+  background: linear-gradient(180deg, #0a0b10 0%, #0c0d14 100%);
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
+  color: #fdfbf7;
+}
+.recapHead {
+  margin-bottom: 44px;
+  max-width: 880px;
+}
+.recapKicker {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.recapHead h2 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #fff;
+}
+.recapHead h2 em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 400;
+}
+.recapList {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.recapCard {
+  border: 1px solid rgba(212, 168, 67, 0.16);
+  background: rgba(10, 11, 16, 0.4);
+  padding: 24px;
+}
+@media (min-width: 800px) {
+  .recapCard { padding: 32px 36px; }
+}
+.recapCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed rgba(212, 168, 67, 0.18);
+}
+.recapCardCh {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+}
+.recapCardDate {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.6);
+  font-feature-settings: 'tnum' 1;
+}
+.recapCardStatus {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  color: var(--accent-soft);
+}
+.recapCardStatus[data-status='live'] {
+  color: #ff5a5a;
+  border-color: rgba(255, 90, 90, 0.4);
+}
+.recapCardStatus[data-status='ended'] {
+  color: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+/* recap 카드 안에서는 .preview 의 상단 마진을 제거 — 카드 메타와 자연스럽게 이어지게. */
+.recapCard .preview {
+  margin-top: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+}
+/* 섹션 헤더가 이미 'Recap · 방송 다시보기 요약' 을 표기하므로 카드 내부 키커는 숨긴다. */
+.recapCard .previewKicker {
+  display: none;
 }
 
 /* NS 홈쇼핑 제작 영상 갤러리 — sponsored .spVideo 박스 골격을 재사용하되

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { readDataUncached, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
-import { autoSplitMixed, formatBroadcastDateTime } from '@/lib/broadcasts';
+import { autoSplitMixed, formatBroadcastDateTime, isInlineExpired, toWatchUrl } from '@/lib/broadcasts';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import JsonLd from '@/components/ui/JsonLd';
 import NsBrandVideoGallery, { type NsBrandVideo } from './NsBrandVideoGallery';
@@ -455,6 +455,12 @@ export default async function HomeShoppingPage({
     featured = { ...featured, status: 'ended' };
   }
 
+  // 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 전체.
+  // featured 1건에 묶지 않고, 어드민에서 작성·공개한 모든 회차를 카드로 노출한다.
+  const recaps = sorted.filter(
+    (b) => b.preview?.enabled && b.preview.isPublic && hasPreviewContent(b.preview)
+  );
+
   const broadcastJsonLd = buildBroadcastJsonLd(all);
 
   return (
@@ -520,6 +526,7 @@ export default async function HomeShoppingPage({
                   channel={featured.channel}
                   status={featured.status}
                   vodUrl={featured.vodUrl}
+                  inlineUntil={featured.inlineUntil}
                   showTitle={featured.showInfo?.title}
                   showEpisode={featured.showInfo?.episode}
                   showLogo={featured.showInfo?.logo || undefined}
@@ -690,14 +697,46 @@ export default async function HomeShoppingPage({
                     </dl>
                   )}
                 </div>
-
-                {featured.preview?.enabled && featured.preview.isPublic && (
-                  <BroadcastPreviewBlock preview={featured.preview} />
-                )}
               </div>
             </section>
           );
         })()
+      )}
+
+      {/* RECAP · 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 전체.
+          어드민 '방송 미리보기 · 다시보기' 에서 작성·공개한 헤드라인·요약·챕터·핵심포인트를
+          회차별 카드로 노출 (YouTube 챕터 스타일). */}
+      {recaps.length > 0 && (
+        <section className={styles.recap} id="recap">
+          <div className={styles.wrap}>
+            <div className={styles.recapHead}>
+              <div className={styles.recapKicker}>Recap · 방송 다시보기 요약</div>
+              <h2>
+                침향 방송 <em>핵심 요약</em>
+              </h2>
+            </div>
+
+            <div className={styles.recapList}>
+              {recaps.map((b) => {
+                const eff = effectiveStatus(b);
+                return (
+                  <article key={b.id} className={styles.recapCard}>
+                    <div className={styles.recapCardMeta}>
+                      <span className={styles.recapCardCh}>{b.channel}</span>
+                      <span className={styles.recapCardDate}>
+                        {formatBroadcastDateTime(b.scheduledAt)}
+                      </span>
+                      <span className={styles.recapCardStatus} data-status={eff}>
+                        {STATUS_LABEL[eff]}
+                      </span>
+                    </div>
+                    <BroadcastPreviewBlock preview={b.preview!} />
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
       )}
 
       {/* SCHEDULE · 홈쇼핑 방영 리스트 — 과거 종료 방송 + 다가올 예정 방송을 한 표에. */}
@@ -805,8 +844,12 @@ export default async function HomeShoppingPage({
                 if (si.experts?.length) cast.push({ label: '전문가', names: si.experts });
 
                 const effectiveVod = b.vodUrl || sponsoredVodFallback(b);
-                const yt = effectiveVod ? extractEmbed(effectiveVod) : null;
-                const directVid = !yt && effectiveVod && isDirectVideoUrl(effectiveVod) ? effectiveVod : null;
+                // 유효기간이 지나면 인라인 임베드를 막고 외부 유튜브 아웃링크로 전환.
+                const expired = isInlineExpired(b);
+                const yt = !expired && effectiveVod ? extractEmbed(effectiveVod) : null;
+                const directVid =
+                  !expired && !yt && effectiveVod && isDirectVideoUrl(effectiveVod) ? effectiveVod : null;
+                const outlink = expired && effectiveVod ? toWatchUrl(effectiveVod) : null;
                 return (
                   <article key={b.id} className={styles.spRow}>
                     <div className={styles.spInfo}>
@@ -860,6 +903,22 @@ export default async function HomeShoppingPage({
                           playsInline
                           style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000', display: 'block' }}
                         />
+                      ) : outlink ? (
+                        <a
+                          className={styles.spVideoLink}
+                          href={outlink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span className={styles.spVideoLinkPlay} aria-hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
+                              <circle cx="12" cy="12" r="10" />
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M10 8.5l5 3.5-5 3.5v-7z" />
+                            </svg>
+                          </span>
+                          <span className={styles.spVideoLinkChannel}>{si.title ?? b.channel}</span>
+                          <span className={styles.spVideoLinkCta}>유튜브에서 시청 →</span>
+                        </a>
                       ) : (
                         <div className={styles.spVideoEmpty}>
                           <span className={styles.spVideoEmptyDot}>●</span>
@@ -880,6 +939,17 @@ export default async function HomeShoppingPage({
         </section>
       )}
     </>
+  );
+}
+
+/** 미리보기에 실제 노출할 콘텐츠가 하나라도 있는지. BroadcastPreviewBlock 의 렌더 가드와 동일.
+ *  recap 섹션에서 빈 미리보기(토글만 켜진 회차)를 걸러내는 데 쓴다. */
+function hasPreviewContent(preview: NonNullable<Broadcast['preview']>): boolean {
+  return Boolean(
+    preview.headline ||
+      preview.summary ||
+      (preview.highlights?.length ?? 0) > 0 ||
+      (preview.keyPoints?.length ?? 0) > 0
   );
 }
 
