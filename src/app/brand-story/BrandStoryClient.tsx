@@ -672,6 +672,54 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                       </button>
                     ))}
                   </div>
+
+                  {/* 썸네일 그리드 아래 — 전체 너비 대표 영상 (인라인 임베드) */}
+                  {promoVideos.featuredVideoUrl && (() => {
+                    const fid = extractYouTubeId(promoVideos.featuredVideoUrl);
+                    const fDrive = promoVideos.featuredVideoUrl.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^#]*id=)([A-Za-z0-9_-]+)/);
+                    const fSrc = fid
+                      ? `https://www.youtube.com/embed/${fid}?rel=0&modestbranding=1`
+                      : fDrive
+                        ? `https://drive.google.com/file/d/${fDrive[1]}/preview`
+                        : null;
+                    if (!fSrc) return null;
+                    return (
+                      <figure style={{ margin: '32px 0 0' }}>
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            aspectRatio: '16 / 9',
+                            overflow: 'hidden',
+                            background: '#000',
+                            border: '1px solid rgba(212,168,67,0.22)',
+                          }}
+                        >
+                          <iframe
+                            src={fSrc}
+                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allowFullScreen
+                            loading="lazy"
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                            title={promoVideos.featuredVideoTitle ?? '대라천 침향 대표 영상'}
+                          />
+                        </div>
+                        {promoVideos.featuredVideoTitle && (
+                          <figcaption
+                            style={{
+                              marginTop: 12,
+                              fontSize: '0.92rem',
+                              lineHeight: 1.6,
+                              color: 'rgba(255,255,255,0.7)',
+                              fontWeight: 300,
+                            }}
+                          >
+                            {promoVideos.featuredVideoTitle}
+                          </figcaption>
+                        )}
+                      </figure>
+                    );
+                  })()}
                 </div>
               </div>
             )}

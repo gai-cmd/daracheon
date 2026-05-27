@@ -96,6 +96,10 @@ export interface PromoVideosData {
   subtitle?: string;
   body?: string;
   items: PromoVideoItem[];
+  /** 썸네일 그리드 아래에 전체 너비로 임베드되는 대표 영상 URL (선택). YouTube/Drive 임베드 지원 */
+  featuredVideoUrl?: string;
+  /** featuredVideoUrl 캡션 (선택) */
+  featuredVideoTitle?: string;
 }
 
 export interface TwentyYearPrincipleSection {

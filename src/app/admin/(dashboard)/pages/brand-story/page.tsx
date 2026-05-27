@@ -23,6 +23,8 @@ interface PromoVideosData {
   subtitle?: string;
   body?: string;
   items: PromoVideoItem[];
+  featuredVideoUrl?: string;
+  featuredVideoTitle?: string;
 }
 
 interface Farm {
@@ -956,6 +958,13 @@ export default function AdminBrandStoryPage() {
               </div>
               <LabeledInput label="부제목 (선택)" value={promoVideos.subtitle ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, subtitle: v })} />
               <LabeledTextarea label="본문 (선택)" value={promoVideos.body ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, body: v })} rows={3} />
+
+              {/* 썸네일 그리드 아래 전체 너비 대표 영상 (인라인 임베드) */}
+              <div className="border-t border-gray-100 pt-5 space-y-3">
+                <label className="text-sm font-medium text-gray-700">대표 영상 (선택) — 썸네일 그리드 아래 전체 너비 임베드</label>
+                <LabeledInput label="대표 영상 URL" value={promoVideos.featuredVideoUrl ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, featuredVideoUrl: v })} />
+                <LabeledInput label="대표 영상 캡션 (선택)" value={promoVideos.featuredVideoTitle ?? ''} onChange={(v) => setPromoVideos({ ...promoVideos, featuredVideoTitle: v })} />
+              </div>
 
               {/* 영상 목록 */}
               <div className="border-t border-gray-100 pt-5">
