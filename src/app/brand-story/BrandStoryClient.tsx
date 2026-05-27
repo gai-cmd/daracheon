@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { BrandStoryData, PromoVideoItem } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
@@ -73,6 +73,82 @@ const TAB_LIST = [
 function extractYouTubeId(url: string): string | null {
   const m = url.match(/(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/);
   return m ? m[1] : null;
+}
+
+/** YouTube IFrame API 를 한 번만 로드해 window.YT 를 보장. */
+function loadYouTubeApi(): Promise<unknown> {
+  const w = window as unknown as { YT?: { Player?: unknown }; onYouTubeIframeAPIReady?: () => void };
+  if (w.YT && w.YT.Player) return Promise.resolve(w.YT);
+  return new Promise((resolve) => {
+    const prev = w.onYouTubeIframeAPIReady;
+    w.onYouTubeIframeAPIReady = () => {
+      if (typeof prev === 'function') prev();
+      resolve(w.YT);
+    };
+    if (!document.getElementById('yt-iframe-api')) {
+      const s = document.createElement('script');
+      s.id = 'yt-iframe-api';
+      s.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(s);
+    }
+  });
+}
+
+/**
+ * brand-story 05 대표 영상 전용 플레이어.
+ * - 자동재생 안 함(사용자가 재생 버튼을 눌러야 시작)
+ * - start 초부터 시작(캡슐 인트로 스킵)
+ * - 재생 시 볼륨 50% (음소거 아님) — IFrame API 로만 가능
+ */
+function FeaturedYouTubePlayer({ videoId, start, title }: { videoId: string; start: number; title?: string }) {
+  const mountRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    let player: { destroy?: () => void } | null = null;
+
+    loadYouTubeApi().then((YT) => {
+      if (cancelled || !mountRef.current) return;
+      const YTCtor = YT as { Player: new (el: HTMLElement, cfg: unknown) => { destroy?: () => void } };
+      player = new YTCtor.Player(mountRef.current, {
+        videoId,
+        width: '100%',
+        height: '100%',
+        playerVars: {
+          start: start || 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          // autoplay 미지정 → 사용자가 직접 재생
+        },
+        events: {
+          onReady: (e: { target: { unMute: () => void; setVolume: (v: number) => void } }) => {
+            try {
+              e.target.unMute();
+              e.target.setVolume(50);
+            } catch {
+              /* noop */
+            }
+          },
+        },
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      try {
+        player?.destroy?.();
+      } catch {
+        /* noop */
+      }
+    };
+  }, [videoId, start]);
+
+  return (
+    <div style={{ position: 'absolute', inset: 0 }} aria-label={title}>
+      <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
+    </div>
+  );
 }
 
 function PromoVideoModal({ item, onClose }: { item: PromoVideoItem; onClose: () => void }) {
@@ -678,15 +754,10 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                     const fid = extractYouTubeId(promoVideos.featuredVideoUrl);
                     const fDrive = promoVideos.featuredVideoUrl.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^#]*id=)([A-Za-z0-9_-]+)/);
                     // URL 의 t= / start= 초 단위 시작 지점(예: youtu.be/ID?t=3) 을 파싱.
-                    // 캡슐 인트로(0~3초) 를 건너뛰고 대라천 본 영상부터 보이게 하기 위함.
+                    // 캡슐 인트로(0~3초) 를 건너뛰고 대라천 본 영상부터 시작하기 위함.
                     const fStartMatch = promoVideos.featuredVideoUrl.match(/[?&](?:t|start)=(\d+)/);
                     const fStart = fStartMatch ? parseInt(fStartMatch[1], 10) : 0;
-                    const fSrc = fid
-                      ? `https://www.youtube.com/embed/${fid}?rel=0&modestbranding=1&autoplay=1&mute=1&playsinline=1${fStart ? `&start=${fStart}` : ''}`
-                      : fDrive
-                        ? `https://drive.google.com/file/d/${fDrive[1]}/preview`
-                        : null;
-                    if (!fSrc) return null;
+                    if (!fid && !fDrive) return null;
                     return (
                       <figure style={{ margin: '32px 0 0' }}>
                         <div
@@ -699,14 +770,22 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             border: '1px solid rgba(212,168,67,0.22)',
                           }}
                         >
-                          <iframe
-                            src={fSrc}
-                            allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                            allowFullScreen
-                            loading="lazy"
-                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-                            title={promoVideos.featuredVideoTitle ?? '대라천 침향 대표 영상'}
-                          />
+                          {fid ? (
+                            <FeaturedYouTubePlayer
+                              videoId={fid}
+                              start={fStart}
+                              title={promoVideos.featuredVideoTitle ?? '대라천 침향 대표 영상'}
+                            />
+                          ) : (
+                            <iframe
+                              src={`https://drive.google.com/file/d/${fDrive![1]}/preview`}
+                              allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                              allowFullScreen
+                              loading="lazy"
+                              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                              title={promoVideos.featuredVideoTitle ?? '대라천 침향 대표 영상'}
+                            />
+                          )}
                         </div>
                         {promoVideos.featuredVideoTitle && (
                           <figcaption
