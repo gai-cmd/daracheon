@@ -460,10 +460,14 @@ export default async function HomeShoppingPage({
   // (영상 없는 ‘예정’ 방송이 featured 로 잡혀 모니터가 비어 보이던 문제 대응)
   const nsMonitorFallbackUrl = (nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0])?.url;
 
-  // 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 전체.
-  // featured 1건에 묶지 않고, 어드민에서 작성·공개한 모든 회차를 카드로 노출한다.
+  // 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 중 '이미 방영된' 회차만.
+  // '다시보기'이므로 예정(upcoming) 방송은 제외 — 편성표와 중복 노출되던 문제 대응.
   const recaps = sorted.filter(
-    (b) => b.preview?.enabled && b.preview.isPublic && hasPreviewContent(b.preview)
+    (b) =>
+      effectiveStatus(b) === 'ended' &&
+      b.preview?.enabled &&
+      b.preview.isPublic &&
+      hasPreviewContent(b.preview)
   );
 
   const broadcastJsonLd = buildBroadcastJsonLd(all);
