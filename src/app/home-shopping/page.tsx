@@ -455,6 +455,11 @@ export default async function HomeShoppingPage({
     featured = { ...featured, status: 'ended' };
   }
 
+  // featured 방송에 자체 영상이 없을 때 상단 모니터(BroadcastCountdown 미디어 프레임)를
+  // 빈 ‘방송 예정’ 포스터로 두지 않고 NS홈쇼핑 제작 브랜드 영상으로 채운다.
+  // (영상 없는 ‘예정’ 방송이 featured 로 잡혀 모니터가 비어 보이던 문제 대응)
+  const nsMonitorFallbackUrl = (nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0])?.url;
+
   // 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 전체.
   // featured 1건에 묶지 않고, 어드민에서 작성·공개한 모든 회차를 카드로 노출한다.
   const recaps = sorted.filter(
@@ -468,122 +473,6 @@ export default async function HomeShoppingPage({
       {broadcastJsonLd.map((d, i) => (
         <JsonLd key={i} data={d} />
       ))}
-      {/* HERO + LIVE CARD */}
-      <section className={styles.hero} id="live">
-        <div className={styles.wrap}>
-          <div className={styles.heroHead}>
-            <h1>
-              {hero.titleLine1}
-              <br />
-              <em>{hero.titleEmphasis}</em>
-            </h1>
-            <p className={styles.lede}>
-              {hero.lede}
-            </p>
-          </div>
-
-          {featured ? (
-            <div className={styles.live}>
-              <div>
-                <div className={styles.liveTag}>
-                  <span className={styles.liveDot} />
-                  {featured.status === 'live'
-                    ? 'ON AIR · 지금 방송 중'
-                    : featured.status === 'ended'
-                      ? 'REPLAY · 지난 방송 다시보기'
-                      : 'NEXT LIVE · 다음 방송'}
-                </div>
-                <h2>
-                  {featured.channel}
-                  {featured.specialPrice ? (
-                    <>
-                      {' — '}
-                      <em>특별가 {featured.specialPrice.toLocaleString()}원</em>
-                    </>
-                  ) : null}
-                </h2>
-                {featured.description && (
-                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
-                    {featured.description}
-                  </p>
-                )}
-                <div className={styles.liveMeta}>
-                  {featured.host && <span><b>MC</b> · {featured.host}</span>}
-                  <span>
-                    <b>일시</b> · {formatBroadcastDateTime(featured.scheduledAt)}
-                  </span>
-                  {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
-                </div>
-                <div className={styles.ctas}>
-                  <a href="tel:070-4140-4086" className={styles.btnLive}>
-                    ● 전화 주문 070-4140-4086
-                  </a>
-                </div>
-              </div>
-              <div>
-                <BroadcastCountdown
-                  scheduledAt={featured.scheduledAt}
-                  channel={featured.channel}
-                  status={featured.status}
-                  vodUrl={featured.vodUrl}
-                  inlineUntil={featured.inlineUntil}
-                  showTitle={featured.showInfo?.title}
-                  showEpisode={featured.showInfo?.episode}
-                  showLogo={featured.showInfo?.logo || undefined}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className={styles.live}>
-              <div>
-                <div className={styles.liveTag}>
-                  <span className={styles.liveDot} />
-                  {nsHeroFallback.tag}
-                </div>
-                <h2 dangerouslySetInnerHTML={{ __html: nsHeroFallback.titleHtml }} />
-                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
-                  {nsHeroFallback.body}
-                </p>
-                <div className={styles.liveMeta}>
-                  {nsHeroFallback.metaChannel && <span><b>채널</b> · {nsHeroFallback.metaChannel}</span>}
-                  {nsHeroFallback.metaShow && <span><b>방송</b> · {nsHeroFallback.metaShow}</span>}
-                  {nsHeroFallback.metaResult && <span><b>결과</b> · {nsHeroFallback.metaResult}</span>}
-                </div>
-                <div className={styles.ctas}>
-                  {nsHeroFallback.ctaPrimaryLabel && nsHeroFallback.ctaPrimaryHref && (
-                    <a href={nsHeroFallback.ctaPrimaryHref} className={styles.btnNotify}>
-                      {nsHeroFallback.ctaPrimaryLabel}
-                    </a>
-                  )}
-                  {nsHeroFallback.ctaPhone && (
-                    <a href={`tel:${nsHeroFallback.ctaPhone}`} className={styles.btnLive}>
-                      ● 전화 주문 {nsHeroFallback.ctaPhone}
-                    </a>
-                  )}
-                </div>
-              </div>
-              <div>
-                {(() => {
-                  const heroVideo = nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0];
-                  if (!heroVideo) return null;
-                  return (
-                    <div className={styles.heroVod}>
-                      <video
-                        src={heroVideo.url}
-                        title={`NS홈쇼핑 — ${heroVideo.title} (방송 다시보기)`}
-                        controls
-                        preload="metadata"
-                        playsInline
-                      />
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* NS 홈쇼핑 제작 브랜드 영상 — 방송 종료 후 다시보기 갤러리 */}
       <section className={styles.ns} id="ns-videos">
         <div className={styles.wrap}>
@@ -641,6 +530,122 @@ export default async function HomeShoppingPage({
           </div>
 
           <NsBrandVideoGallery videos={nsVideos} />
+        </div>
+      </section>
+
+      {/* HERO + LIVE CARD */}
+      <section className={styles.hero} id="live">
+        <div className={styles.wrap}>
+          <div className={styles.heroHead}>
+            <h1>
+              {hero.titleLine1}
+              <br />
+              <em>{hero.titleEmphasis}</em>
+            </h1>
+            <p className={styles.lede}>
+              {hero.lede}
+            </p>
+          </div>
+
+          {featured ? (
+            <div className={styles.live}>
+              <div>
+                <div className={styles.liveTag}>
+                  <span className={styles.liveDot} />
+                  {featured.status === 'live'
+                    ? 'ON AIR · 지금 방송 중'
+                    : featured.status === 'ended'
+                      ? 'REPLAY · 지난 방송 다시보기'
+                      : 'NEXT LIVE · 다음 방송'}
+                </div>
+                <h2>
+                  {featured.channel}
+                  {featured.specialPrice ? (
+                    <>
+                      {' — '}
+                      <em>특별가 {featured.specialPrice.toLocaleString()}원</em>
+                    </>
+                  ) : null}
+                </h2>
+                {featured.description && (
+                  <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
+                    {featured.description}
+                  </p>
+                )}
+                <div className={styles.liveMeta}>
+                  {featured.host && <span><b>MC</b> · {featured.host}</span>}
+                  <span>
+                    <b>일시</b> · {formatBroadcastDateTime(featured.scheduledAt)}
+                  </span>
+                  {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
+                </div>
+                <div className={styles.ctas}>
+                  <a href="tel:070-4140-4086" className={styles.btnLive}>
+                    ● 전화 주문 070-4140-4086
+                  </a>
+                </div>
+              </div>
+              <div>
+                <BroadcastCountdown
+                  scheduledAt={featured.scheduledAt}
+                  channel={featured.channel}
+                  status={featured.status}
+                  vodUrl={featured.vodUrl || nsMonitorFallbackUrl}
+                  inlineUntil={featured.inlineUntil}
+                  showTitle={featured.showInfo?.title}
+                  showEpisode={featured.showInfo?.episode}
+                  showLogo={featured.showInfo?.logo || undefined}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className={styles.live}>
+              <div>
+                <div className={styles.liveTag}>
+                  <span className={styles.liveDot} />
+                  {nsHeroFallback.tag}
+                </div>
+                <h2 dangerouslySetInnerHTML={{ __html: nsHeroFallback.titleHtml }} />
+                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, maxWidth: 720 }}>
+                  {nsHeroFallback.body}
+                </p>
+                <div className={styles.liveMeta}>
+                  {nsHeroFallback.metaChannel && <span><b>채널</b> · {nsHeroFallback.metaChannel}</span>}
+                  {nsHeroFallback.metaShow && <span><b>방송</b> · {nsHeroFallback.metaShow}</span>}
+                  {nsHeroFallback.metaResult && <span><b>결과</b> · {nsHeroFallback.metaResult}</span>}
+                </div>
+                <div className={styles.ctas}>
+                  {nsHeroFallback.ctaPrimaryLabel && nsHeroFallback.ctaPrimaryHref && (
+                    <a href={nsHeroFallback.ctaPrimaryHref} className={styles.btnNotify}>
+                      {nsHeroFallback.ctaPrimaryLabel}
+                    </a>
+                  )}
+                  {nsHeroFallback.ctaPhone && (
+                    <a href={`tel:${nsHeroFallback.ctaPhone}`} className={styles.btnLive}>
+                      ● 전화 주문 {nsHeroFallback.ctaPhone}
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div>
+                {(() => {
+                  const heroVideo = nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0];
+                  if (!heroVideo) return null;
+                  return (
+                    <div className={styles.heroVod}>
+                      <video
+                        src={heroVideo.url}
+                        title={`NS홈쇼핑 — ${heroVideo.title} (방송 다시보기)`}
+                        controls
+                        preload="metadata"
+                        playsInline
+                      />
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

@@ -48,6 +48,7 @@ interface Broadcast {
   regularPrice?: number | null;
   discountRate?: number | null;
   vodUrl?: string | null;
+  inlineUntil?: string | null;
   description?: string | null;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
   salesCount?: number | null;
@@ -1183,6 +1184,44 @@ export default function AdminBroadcastsPage() {
                   공개 페이지 라이브 카드 우측 16:9 프레임에 표시됩니다. YouTube/Vimeo URL 은 임베드,
                   업로드 mp4·webm·mov 는 native 플레이어로 재생. 최대 200MB.
                 </p>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-700">
+                  인라인 영상 유효기간 <span className="font-normal text-gray-400">(이후 외부 유튜브 링크로 전환)</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="datetime-local"
+                    step={60}
+                    value={fmtDateTimeLocal(draft.inlineUntil)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setDraft({ ...draft, inlineUntil: v ? new Date(v).toISOString() : null });
+                    }}
+                    style={{ colorScheme: 'light' }}
+                    className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900"
+                  />
+                  {draft.inlineUntil && (
+                    <button
+                      type="button"
+                      onClick={() => setDraft({ ...draft, inlineUntil: null })}
+                      className="shrink-0 rounded-md border border-gray-200 px-3 py-2 text-xs text-gray-500 hover:bg-gray-50"
+                    >
+                      해제
+                    </button>
+                  )}
+                </div>
+                <p className="mt-1 text-[11px] text-gray-400">
+                  비워두면 영구히 인라인 재생됩니다. 설정한 날짜·시각이 지나면 공개 페이지에서
+                  영상이 인라인 재생 대신 <b>외부 유튜브 링크</b>로 전환됩니다(협찬 노출 기간 만료 대응).
+                </p>
+                {draft.inlineUntil &&
+                  new Date(draft.inlineUntil).getTime() < Date.now() && (
+                    <p className="mt-1 text-[11px] font-medium text-amber-600">
+                      ⚠ 현재 유효기간이 지났습니다 — 공개 페이지에서 외부 링크로 노출 중입니다.
+                    </p>
+                  )}
               </div>
 
               <div>

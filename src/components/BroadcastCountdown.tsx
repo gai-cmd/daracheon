@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { formatBroadcastDateTime } from '@/lib/broadcasts';
+import { formatBroadcastDateTime, isInlineExpired, toWatchUrl } from '@/lib/broadcasts';
 
 interface Props {
   scheduledAt: string;
   channel: string;
   status: string;
   vodUrl?: string;
+  /** 인라인 영상 유효기간(ISO). 지나면 임베드 대신 외부 링크 카드로 노출. */
+  inlineUntil?: string;
   showTitle?: string;
   showEpisode?: string;
   showLogo?: string;
@@ -52,6 +54,7 @@ export default function BroadcastCountdown({
   channel,
   status,
   vodUrl,
+  inlineUntil,
   showTitle,
   showEpisode,
   showLogo,
@@ -93,16 +96,20 @@ export default function BroadcastCountdown({
   const dateTimeLabel = formatBroadcastDateTime(scheduledAt);
 
   /* ─── 통합 — 모든 상태가 동일한 4단 구조: 캡션 → 미디어 → 카운트다운 → 메타 ─── */
-  const ytId = vodUrl ? extractYouTubeId(vodUrl) : null;
-  const vmId = !ytId && vodUrl ? extractVimeoId(vodUrl) : null;
+  // 유효기간이 지나면 인라인(임베드/native) 을 막고 외부 링크 카드로만 노출.
+  // now 가 아직 null(첫 페인트) 이면 만료로 단정하지 않는다.
+  const expired = now !== null && isInlineExpired({ inlineUntil }, now);
+  const ytId = !expired && vodUrl ? extractYouTubeId(vodUrl) : null;
+  const vmId = !expired && !ytId && vodUrl ? extractVimeoId(vodUrl) : null;
   const embedSrc = ytId
     ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`
     : vmId
       ? `https://player.vimeo.com/video/${vmId}?title=0&byline=0`
       : null;
   // 직접 업로드된 mp4/webm 등은 <video> 로 재생. 외부 카드 fallback 보다 우선.
-  const directVideo = !embedSrc && vodUrl && isDirectVideoUrl(vodUrl) ? vodUrl : null;
-  const externalVod = !embedSrc && !directVideo && vodUrl ? vodUrl : null;
+  const directVideo = !expired && !embedSrc && vodUrl && isDirectVideoUrl(vodUrl) ? vodUrl : null;
+  const externalVod =
+    !embedSrc && !directVideo && vodUrl ? (expired ? toWatchUrl(vodUrl) : vodUrl) : null;
 
   // 상태별 톤
   const tone: 'live' | 'ended' | 'upcoming' = isLive ? 'live' : isEnded ? 'ended' : 'upcoming';

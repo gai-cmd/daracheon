@@ -59,6 +59,8 @@ export interface Broadcast {
   regularPrice?: number;
   discountRate?: number;
   vodUrl?: string;
+  /** 인라인 영상 유효기간(ISO). 지나면 공개 페이지가 외부 유튜브 아웃링크로 전환. */
+  inlineUntil?: string;
   description?: string;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
   salesCount?: number;
@@ -88,6 +90,7 @@ const baseSchema = z.object({
   regularPrice: z.coerce.number().int().min(0).optional().nullable(),
   discountRate: z.coerce.number().min(0).max(100).optional().nullable(),
   vodUrl: z.string().url('올바른 URL을 입력하세요.').or(z.literal('')).optional().nullable(),
+  inlineUntil: z.string().datetime().or(z.literal('')).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
   status: z.enum(statusValues).optional(),
   salesCount: z.coerce.number().int().min(0).optional().nullable(),
@@ -197,6 +200,7 @@ export async function POST(request: Request) {
       ...(data.regularPrice !== undefined ? { regularPrice: data.regularPrice as number } : {}),
       ...(data.discountRate !== undefined ? { discountRate: data.discountRate as number } : {}),
       ...(data.vodUrl ? { vodUrl: data.vodUrl as string } : {}),
+      ...(data.inlineUntil ? { inlineUntil: data.inlineUntil as string } : {}),
       ...(data.description ? { description: data.description as string } : {}),
       ...(data.salesCount !== undefined ? { salesCount: data.salesCount as number } : {}),
       ...(data.feedback ? { feedback: data.feedback as string } : {}),

@@ -57,6 +57,9 @@ export interface Broadcast {
   regularPrice?: number;
   discountRate?: number;
   vodUrl?: string;
+  /** 인라인(임베드) 영상 유효기간(ISO). 이 시각이 지나면 공개 페이지에서
+   *  인라인 재생 대신 외부 유튜브 아웃링크로 전환한다. 미설정 시 영구 인라인. */
+  inlineUntil?: string;
   description?: string;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
   salesCount?: number;
@@ -104,6 +107,49 @@ export function formatBroadcastDateTime(iso: string): string {
   const dayPeriod = (timeParts.find((p) => p.type === 'dayPeriod')?.value ?? '').toUpperCase();
 
   return `${year}. ${month}. ${day}. (${weekday}) ${dayPeriod} ${hour}:${minute}`;
+}
+
+/**
+ * 인라인 임베드 유효기간 만료 여부.
+ * - `inlineUntil` 미설정/빈값/파싱불가 → false (영구 인라인).
+ * - 설정된 시각을 현재가 지났으면 → true (아웃링크로 전환해야 함).
+ * 서버 렌더(now=Date.now())와 클라이언트 카운트다운 양쪽에서 동일하게 검증한다.
+ */
+export function isInlineExpired(
+  b: { inlineUntil?: string | null },
+  now: number = Date.now()
+): boolean {
+  if (!b.inlineUntil) return false;
+  const t = new Date(b.inlineUntil).getTime();
+  if (Number.isNaN(t)) return false;
+  return now > t;
+}
+
+/**
+ * 임의의 YouTube/Vimeo/일반 URL 을 외부 시청용 링크로 정규화.
+ * YouTube embed/`youtu.be` 는 `watch?v=` 형태로, 그 외에는 원본 URL 을 그대로 돌려준다.
+ * (아웃링크 전환 시 임베드 URL 이 아니라 일반 시청 페이지로 보내기 위함)
+ */
+export function toWatchUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') {
+      const id = u.pathname.replace(/^\//, '').split('?')[0];
+      const t = u.searchParams.get('t');
+      return id ? `https://www.youtube.com/watch?v=${id}${t ? `&t=${t}` : ''}` : url;
+    }
+    if (u.hostname.endsWith('youtube.com') || u.hostname.endsWith('youtube-nocookie.com')) {
+      if (u.searchParams.get('v')) return url; // 이미 watch URL
+      const m = u.pathname.match(/^\/(?:embed|shorts|live|v)\/([^/]+)/);
+      if (m) {
+        const t = u.searchParams.get('start') ?? u.searchParams.get('t');
+        return `https://www.youtube.com/watch?v=${m[1]}${t ? `&t=${t}` : ''}`;
+      }
+    }
+    return url;
+  } catch {
+    return url;
+  }
 }
 
 /**
