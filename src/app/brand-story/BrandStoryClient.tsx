@@ -677,8 +677,12 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   {promoVideos.featuredVideoUrl && (() => {
                     const fid = extractYouTubeId(promoVideos.featuredVideoUrl);
                     const fDrive = promoVideos.featuredVideoUrl.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?[^#]*id=)([A-Za-z0-9_-]+)/);
+                    // URL 의 t= / start= 초 단위 시작 지점(예: youtu.be/ID?t=3) 을 파싱.
+                    // 캡슐 인트로(0~3초) 를 건너뛰고 대라천 본 영상부터 보이게 하기 위함.
+                    const fStartMatch = promoVideos.featuredVideoUrl.match(/[?&](?:t|start)=(\d+)/);
+                    const fStart = fStartMatch ? parseInt(fStartMatch[1], 10) : 0;
                     const fSrc = fid
-                      ? `https://www.youtube.com/embed/${fid}?rel=0&modestbranding=1`
+                      ? `https://www.youtube.com/embed/${fid}?rel=0&modestbranding=1&autoplay=1&mute=1&playsinline=1${fStart ? `&start=${fStart}` : ''}`
                       : fDrive
                         ? `https://drive.google.com/file/d/${fDrive[1]}/preview`
                         : null;
@@ -697,7 +701,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         >
                           <iframe
                             src={fSrc}
-                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                             allowFullScreen
                             loading="lazy"
                             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
