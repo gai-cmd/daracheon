@@ -83,7 +83,12 @@ const baseSchema = z.object({
   channel: z.string().min(1, '방송사는 필수입니다.').max(60),
   scheduledAt: z.string().min(1, '방송 일시는 필수입니다.'),
   // default 제거 — partial PUT 에서 미전송 필드가 덮어써지는 사고 방지.
-  durationMinutes: z.coerce.number().int().min(5).max(480).optional(),
+  durationMinutes: z.coerce
+    .number()
+    .int()
+    .min(5, '방송 시간(분)은 5~480 사이로 입력하세요.')
+    .max(480, '방송 시간(분)은 5~480 사이로 입력하세요.')
+    .optional(),
   host: z.string().max(80).optional().nullable(),
   productIds: z.array(z.string()).optional(),
   specialPrice: z.coerce.number().int().min(0).optional().nullable(),

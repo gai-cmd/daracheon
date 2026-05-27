@@ -288,6 +288,12 @@ export default function AdminBroadcastsPage() {
       const payload: Record<string, unknown> = { ...draft };
       if (isAddMode) delete (payload as Record<string, unknown>).id;
 
+      // 방송 시간(분) 정규화 — 입력 중 NaN/빈값이거나 onBlur 클램프가 아직
+      // 반영되지 않은 채 저장을 눌러도 항상 유효한 정수를 보내도록 보정.
+      // (NaN 은 JSON 직렬화 시 null → 서버 zod min(5) 에서 0 으로 강제돼 저장이 거부되던 버그 대응)
+      const dm = Number(payload.durationMinutes);
+      payload.durationMinutes = Number.isFinite(dm) && dm >= 5 ? Math.min(480, Math.floor(dm)) : 60;
+
       const res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
