@@ -76,7 +76,7 @@ const DEFAULT_NS_SOLD_OUT: NsSoldOut = {
   titleHtml: 'NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em><br />대라천 ‘참’침향오일 — <em>방송 중 매진</em>',
   body: 'NS Shop+ 단독 편성으로 진행된 ‘대라천 참 침향오일’ 방송이 편성 시간 안에 완판되었습니다. 지원해 주신 모든 고객님께 감사드리며, 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.',
   factChannel: 'NS Shop+',
-  factComposition: '대라천 ‘참’침향오일 · 1병 557,650원',
+  factComposition: '대라천 ‘참’침향오일 · 특별가 300,000원',
   factResult: '방송 중 완판',
 };
 
