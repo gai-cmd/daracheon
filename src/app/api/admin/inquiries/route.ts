@@ -287,7 +287,9 @@ export async function PATCH(request: Request) {
 
       sendEmail({
         to: updated.email,
-        subject: '[대라천] 문의하신 내용에 답변이 도착했습니다',
+        // 제목 끝의 [#inq-...] 토큰 — 고객 답장을 인박스 폴링이 이 문의로
+        // 매칭하는 키. 절대 제거 금지.
+        subject: `[대라천] 문의하신 내용에 답변이 도착했습니다 [#${updated.id}]`,
         html,
         text: `안녕하세요, ${updated.name}님.\n\n문의하신 내용에 대한 답변입니다.\n\n[답변 내용]\n${updated.reply}\n\n감사합니다.\nZOEL LIFE · 대라천\n전화: 070-4140-4086`,
       }).catch((err: unknown) => {
@@ -392,6 +394,60 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const body = await request.json();
+
+    // Bulk path: body.ids = string[]. 한 번의 read-modify-write 로 N건 삭제 →
+    // 건별 DELETE 직렬 호출의 cross-Lambda race (Blob list() propagation lag)
+    // 차단. 일괄 상태변경(PATCH)과 동일한 방어 패턴.
+    if (Array.isArray(body.ids)) {
+      const ids: string[] = body.ids.filter((x: unknown): x is string => typeof x === 'string');
+      if (ids.length === 0) {
+        return NextResponse.json(
+          { success: false, message: 'ids 배열이 비어있습니다.' },
+          { status: 400, headers: NO_STORE_HEADERS },
+        );
+      }
+      const inquiries = await readDataUncached('inquiries');
+      const idSet = new Set(ids);
+      const deletedIds = inquiries.filter((inq) => idSet.has(inq.id)).map((inq) => inq.id);
+      const notFoundIds = ids.filter((id) => !deletedIds.includes(id));
+
+      if (deletedIds.length === 0) {
+        return NextResponse.json(
+          { success: false, message: '삭제할 문의를 찾을 수 없습니다.', notFoundIds },
+          { status: 404, headers: NO_STORE_HEADERS },
+        );
+      }
+
+      // 고객 PII 다건 삭제 전 1회 스냅샷 — 실수·악의적 일괄 삭제 시 복원 가능.
+      // 실패해도 삭제는 진행 (백업이 삭제를 막으면 안 됨, 단일 삭제와 동일 정책).
+      const snapId = await snapshotBeforeDestructive(
+        undefined,
+        `inquiries bulk delete ${deletedIds.length}건`,
+      );
+
+      const remaining = inquiries.filter((inq) => !idSet.has(inq.id));
+      await writeData('inquiries', remaining);
+
+      await logAdmin('inquiries', 'delete', {
+        summary: `문의 일괄 삭제: ${deletedIds.length}건`,
+        meta: {
+          ids: deletedIds,
+          notFoundIds,
+          count: deletedIds.length,
+          ...(snapId ? { preDeleteSnapshot: snapId } : {}),
+        },
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: `${deletedIds.length}건 삭제됨${notFoundIds.length ? `, ${notFoundIds.length}건 누락` : ''}`,
+          deletedIds,
+          notFoundIds,
+        },
+        { headers: NO_STORE_HEADERS },
+      );
+    }
 
     if (!body.id || typeof body.id !== 'string') {
       return NextResponse.json(

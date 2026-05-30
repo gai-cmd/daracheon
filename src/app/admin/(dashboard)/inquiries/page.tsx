@@ -31,6 +31,16 @@ interface Inquiry {
   assignee?: string;   // 담당자
   dueDate?: string;    // 답변기한 (YYYY-MM-DD)
   resolvedAt?: string; // 완료일 (ISO)
+  inbound?: InboundReply[]; // 고객이 메일로 보낸 답신 (IMAP 폴링 누적)
+}
+
+interface InboundReply {
+  at: string;
+  from: string;
+  fromName?: string;
+  subject: string;
+  body: string;
+  messageId?: string;
 }
 
 /* ─── Label / Color Maps ─── */
@@ -112,6 +122,7 @@ export default function InquiriesPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState<InquiryStatus>('resolved');
   const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   /* ─── Toast auto-hide ─── */
   useEffect(() => {
@@ -299,6 +310,48 @@ export default function InquiriesPage() {
       console.error('Delete error:', err);
       const msg = err instanceof Error ? err.message : '오류';
       setToast(`삭제 실패: ${msg}`);
+    }
+  }
+
+  async function handleBulkDelete() {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    if (
+      !window.confirm(
+        `선택한 ${ids.length}건의 문의를 삭제하시겠습니까?\n고객 문의 내용이 제거됩니다. 삭제 직전 자동 백업이 생성되어 복원 가능합니다.`,
+      )
+    )
+      return;
+
+    const idSet = new Set(ids);
+    // 옵티미스틱 제거 — 실패 시 snapshot 으로 롤백 후 서버 결과로 정합화.
+    const snapshot = inquiries;
+    setInquiries((prev) => prev.filter((i) => !idSet.has(i.id)));
+    setSelectedIds(new Set());
+    if (expandedId && idSet.has(expandedId)) setExpandedId(null);
+    setIsBulkDeleting(true);
+    try {
+      const res = await fetch('/api/admin/inquiries', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data?.success === false) {
+        throw new Error(data?.message || `HTTP ${res.status}`);
+      }
+      const deleted = Array.isArray(data?.deletedIds) ? data.deletedIds.length : ids.length;
+      const missing = Array.isArray(data?.notFoundIds) ? data.notFoundIds.length : 0;
+      setToast(missing ? `${deleted}건 삭제 완료, ${missing}건 누락` : `${deleted}건을 삭제했습니다.`);
+      if (missing > 0) await fetchInquiries();
+    } catch (err) {
+      console.error('Bulk delete error:', err);
+      setInquiries(snapshot); // 롤백
+      const msg = err instanceof Error ? err.message : '오류';
+      setToast(`일괄 삭제 실패: ${msg}`);
+      await fetchInquiries();
+    } finally {
+      setIsBulkDeleting(false);
     }
   }
 
@@ -535,8 +588,15 @@ export default function InquiriesPage() {
               </button>
             </div>
             <button
+              onClick={handleBulkDelete}
+              disabled={isBulkDeleting}
+              className="ml-auto px-3 py-1.5 text-xs font-medium rounded-lg border border-red-300 text-red-700 bg-white hover:bg-red-50 disabled:opacity-50 transition-colors"
+            >
+              {isBulkDeleting ? '삭제 중...' : '선택 삭제'}
+            </button>
+            <button
               onClick={() => setSelectedIds(new Set())}
-              className="ml-auto text-xs text-neutral-500 hover:text-neutral-700"
+              className="text-xs text-neutral-500 hover:text-neutral-700"
             >
               선택 해제
             </button>
@@ -719,6 +779,29 @@ export default function InquiriesPage() {
                                 {inq.replyAt && <span>답변일시: {formatDateTime(inq.replyAt)}</span>}
                                 {inq.replyBy && <span>답변자: {inq.replyBy}</span>}
                               </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 고객 답신 (메일로 받은 답장) */}
+                        {inq.inbound && inq.inbound.length > 0 && (
+                          <div>
+                            <label className="text-xs font-medium text-neutral-500 mb-1 block">
+                              고객 답신 ({inq.inbound.length})
+                            </label>
+                            <div className="space-y-2">
+                              {inq.inbound.map((m, i) => (
+                                <div
+                                  key={m.messageId ?? `${m.at}-${i}`}
+                                  className="bg-blue-50 rounded-lg border border-blue-200 p-4 space-y-1"
+                                >
+                                  <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">{m.body}</p>
+                                  <div className="flex flex-wrap gap-3 text-xs text-neutral-400 pt-1">
+                                    <span>보낸사람: {m.fromName ? `${m.fromName} <${m.from}>` : m.from}</span>
+                                    <span>수신: {formatDateTime(m.at)}</span>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
