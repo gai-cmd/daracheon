@@ -95,21 +95,15 @@ export async function POST(req: NextRequest) {
     return ack();
   }
 
-  // 4) 트리거 접두어
-  const trimmed = text.replace(/^\s+/, '');
-  const trigger = trimmed.match(/^답변\s*[)\]:：>.]\s*/);
-  if (!trigger) {
-    await sendTelegramMessage(
-      `ℹ️ 이 문의(${inquiryId})를 고객에게 답변하시려면 메시지를 <b>답변)</b> 으로 시작해 주세요.\n예) <code>답변) 안녕하세요, 문의 주셔서 감사합니다...</code>`,
-    ).catch(() => {});
-    await logDebug({ ...base, outcome: 'no-trigger-hint-sent' });
-    return ack();
-  }
+  // 4) 카드 답장이면(=원 문의 ID 포함) 그 본문이 곧 고객 답변. 접두어 불필요.
+  //    운영자가 습관적으로 "답변)" 을 붙이면 그 접두어만 떼고 본문을 사용한다.
+  let replyText = text.trim();
+  const legacyPrefix = replyText.match(/^답변\s*[)\]:：>.]\s*/);
+  if (legacyPrefix) replyText = replyText.slice(legacyPrefix[0].length).trim();
 
-  const replyText = trimmed.slice(trigger[0].length).trim();
-  if (!replyText) {
-    await sendTelegramMessage(`⚠️ 보낼 답변 내용이 비어 있습니다. (${inquiryId})`).catch(() => {});
-    await logDebug({ ...base, outcome: 'empty-reply' });
+  // 빈 내용·봇 명령(/...)은 무시.
+  if (!replyText || replyText.startsWith('/')) {
+    await logDebug({ ...base, outcome: 'empty-or-command' });
     return ack();
   }
 
