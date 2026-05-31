@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readSingleUncached } from '@/lib/db';
+import { readSingleUncached, writeSingle, readDataUncached } from '@/lib/db';
 import { replyToInquiryById } from '@/lib/inquiry-reply';
 import { sendTelegramMessage } from '@/lib/integrations';
 
@@ -8,25 +8,15 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 /**
- * 텔레그램 리플라이 수신 웹훅.
+ * 텔레그램 리플라이 수신 웹훅. (DEBUG 로깅 임시 포함 — telegram-webhook-debug blob)
  *
- * 운영자가 봇이 올린 "📨 새 문의" 알림에 **답장(Reply)** 으로, 맨 앞에
- * "답변)" 을 붙여 메시지를 보내면 → 그 내용이 고객에게 메일로 발송되고
- * 관리자 저장·구글시트·텔레그램 통지(replyToInquiryById)까지 한 번에 처리된다.
- *
- * "답변)" 접두어를 강제하는 이유: 같은 채널에서 오가는 내부 대화(그냥 친 답장)가
- * 실수로 고객에게 발송되는 것을 막기 위함.
- *
- * 인증: setWebhook 시 등록한 secret_token 을 Telegram 이 매 호출마다
- *   X-Telegram-Bot-Api-Secret-Token 헤더로 보낸다. telegram-bot-state.webhookSecret 과 대조.
+ * 운영자가 봇의 "📨 새 문의" 알림에 답장(Reply)으로 "답변)" 접두어를 붙여
+ * 보내면 → 고객 답변 메일 + 관리자 저장 + 시트 + 텔레그램 통지(replyToInquiryById).
  */
 
-interface BotState {
-  webhookSecret?: string;
-}
-interface IntegrationLite {
-  telegramChatId?: string;
-}
+interface BotState { webhookSecret?: string }
+interface IntegrationLite { telegramChatId?: string }
+interface DebugRecord { at: string; outcome: string; [k: string]: unknown }
 
 // 알림 메시지 본문의 "id: inq-123" 또는 "[#inq-123]" 에서 문의 ID 추출.
 function extractInquiryId(text: string): string | null {
@@ -34,82 +24,113 @@ function extractInquiryId(text: string): string | null {
   return m ? m[0] : null;
 }
 
+async function logDebug(rec: DebugRecord) {
+  try {
+    const prev = (await readSingleUncached<{ records?: DebugRecord[] }>('telegram-webhook-debug')) ?? {};
+    const records = Array.isArray(prev.records) ? prev.records : [];
+    records.push(rec);
+    await writeSingle('telegram-webhook-debug', { records: records.slice(-25) });
+  } catch { /* 디버그 실패는 무시 */ }
+}
+
+interface TelegramMessage {
+  text?: string;
+  chat?: { id?: number | string; type?: string };
+  from?: { first_name?: string; username?: string };
+  reply_to_message?: { text?: string; from?: { username?: string; is_bot?: boolean } };
+}
+
 export async function POST(req: NextRequest) {
-  // Telegram 재시도 폭주 방지를 위해, 인증만 통과하면 처리 결과와 무관하게 200.
   const ack = () => NextResponse.json({ ok: true });
 
-  // 1) secret_token 검증
+  // 1) secret 검증
   const state = (await readSingleUncached<BotState>('telegram-bot-state')) ?? {};
   const provided = req.headers.get('x-telegram-bot-api-secret-token');
-  if (!state.webhookSecret || provided !== state.webhookSecret) {
+  const secretOk = !!state.webhookSecret && provided === state.webhookSecret;
+  if (!secretOk) {
+    await logDebug({ at: new Date().toISOString(), outcome: 'auth-fail', hasStoredSecret: !!state.webhookSecret, providedPresent: !!provided });
     return NextResponse.json({ ok: false }, { status: 401 });
   }
 
   let update: unknown;
-  try {
-    update = await req.json();
-  } catch {
+  try { update = await req.json(); } catch {
+    await logDebug({ at: new Date().toISOString(), outcome: 'bad-json' });
     return ack();
   }
 
-  const u = update as {
-    message?: TelegramMessage;
-    channel_post?: TelegramMessage;
-    edited_message?: TelegramMessage;
-  };
+  const u = update as { message?: TelegramMessage; channel_post?: TelegramMessage; edited_message?: TelegramMessage };
+  const updateKeys = Object.keys(u as Record<string, unknown>);
   const msg = u.message ?? u.channel_post ?? u.edited_message;
-  if (!msg || typeof msg.text !== 'string') return ack();
 
-  // 2) 설정된 운영 채팅에서 온 것만 처리
-  const integ = (await readSingleUncached<IntegrationLite>('integration-settings')) ?? {};
-  if (integ.telegramChatId && String(msg.chat?.id) !== String(integ.telegramChatId)) {
+  if (!msg || typeof msg.text !== 'string') {
+    await logDebug({ at: new Date().toISOString(), outcome: 'no-text-msg', updateKeys });
     return ack();
   }
 
-  // 3) 봇 알림(📨/✅ 카드 — id 포함)에 대한 답장인지 먼저 판별.
-  //    카드 답장이 아니면(원 문의 ID 없음) 일반 대화로 보고 조용히 무시.
+  const integ = (await readSingleUncached<IntegrationLite>('integration-settings')) ?? {};
   const text = msg.text;
   const sourceText = msg.reply_to_message?.text ?? '';
   const inquiryId = extractInquiryId(sourceText);
-  if (!inquiryId) return ack();
+  const base = {
+    at: new Date().toISOString(),
+    chatId: String(msg.chat?.id ?? ''),
+    chatType: msg.chat?.type,
+    cfgChatId: String(integ.telegramChatId ?? ''),
+    text: text.slice(0, 80),
+    isReply: !!msg.reply_to_message,
+    replyToFromBot: msg.reply_to_message?.from?.is_bot ?? null,
+    replyToText: sourceText.slice(0, 80),
+    inquiryId,
+  };
 
-  // 4) 트리거 접두어("답변)" / "답변:" / "답변]" 등) 검사. 없으면 사용법 힌트.
-  //    silent 실패 대신 봇이 즉시 안내 → 운영자가 무엇이 잘못됐는지 바로 인지.
+  // 2) 운영 채팅 확인
+  if (integ.telegramChatId && String(msg.chat?.id) !== String(integ.telegramChatId)) {
+    await logDebug({ ...base, outcome: 'chat-mismatch' });
+    return ack();
+  }
+
+  // 3) 카드 답장(원 문의 ID 포함)인지
+  if (!inquiryId) {
+    await logDebug({ ...base, outcome: 'not-card-reply' });
+    return ack();
+  }
+
+  // 4) 트리거 접두어
   const trimmed = text.replace(/^\s+/, '');
   const trigger = trimmed.match(/^답변\s*[)\]:：>.]\s*/);
   if (!trigger) {
     await sendTelegramMessage(
       `ℹ️ 이 문의(${inquiryId})를 고객에게 답변하시려면 메시지를 <b>답변)</b> 으로 시작해 주세요.\n예) <code>답변) 안녕하세요, 문의 주셔서 감사합니다...</code>`,
     ).catch(() => {});
+    await logDebug({ ...base, outcome: 'no-trigger-hint-sent' });
     return ack();
   }
 
   const replyText = trimmed.slice(trigger[0].length).trim();
   if (!replyText) {
     await sendTelegramMessage(`⚠️ 보낼 답변 내용이 비어 있습니다. (${inquiryId})`).catch(() => {});
+    await logDebug({ ...base, outcome: 'empty-reply' });
     return ack();
   }
 
+  // 5) 적용 전, 문의 존재 여부 진단 (stale read 등으로 못 찾는 케이스 식별)
+  let foundInBlob = false;
+  try {
+    const all = (await readDataUncached('inquiries')) as Array<{ id?: string }>;
+    foundInBlob = all.some((q) => q.id === inquiryId);
+  } catch { /* ignore */ }
+
   const repliedBy = msg.from?.first_name || msg.from?.username || '텔레그램';
-
-  // 5) 답변 적용 (저장 + 고객 메일 + 시트 + "✅ 답변 발송" 텔레그램 통지)
   const result = await replyToInquiryById(inquiryId, replyText, repliedBy);
-  if (!result.ok) {
-    await sendTelegramMessage(
-      `⚠️ 답변 전송 실패 (${inquiryId}): ${result.error ?? '알 수 없는 오류'}`,
-    ).catch(() => {});
-  } else if (!result.emailOk) {
-    await sendTelegramMessage(
-      `⚠️ ${inquiryId}: 저장은 됐지만 고객 메일 발송에 실패했습니다. 메일 설정을 확인하세요.`,
-    ).catch(() => {});
-  }
-  // 성공 시: replyToInquiryById 가 "✅ 답변 발송" 카드를 채널에 이미 올린다.
-  return ack();
-}
 
-interface TelegramMessage {
-  text?: string;
-  chat?: { id?: number | string };
-  from?: { first_name?: string; username?: string };
-  reply_to_message?: { text?: string };
+  if (!result.ok) {
+    await sendTelegramMessage(`⚠️ 답변 전송 실패 (${inquiryId}): ${result.error ?? '알 수 없는 오류'}`).catch(() => {});
+    await logDebug({ ...base, outcome: 'apply-failed', foundInBlob, error: result.error });
+  } else if (!result.emailOk) {
+    await sendTelegramMessage(`⚠️ ${inquiryId}: 저장은 됐지만 고객 메일 발송에 실패했습니다.`).catch(() => {});
+    await logDebug({ ...base, outcome: 'applied-email-failed', foundInBlob });
+  } else {
+    await logDebug({ ...base, outcome: 'applied-ok', foundInBlob });
+  }
+  return ack();
 }
