@@ -136,17 +136,58 @@ export async function POST(request: NextRequest) {
     const mailSettings = await readSingleSafe<MailSettingsLite>('mail-settings');
     const adminEmail = mailSettings?.adminEmail?.trim() || process.env.ADMIN_EMAIL;
 
+    const catDisplay = categoryLabel[validated.category] ?? validated.category;
+    // 고객 메일 본문에 echo 되는 사용자 입력은 HTML escape (렌더 깨짐·주입 방지).
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     const customerMailPromise = sendEmail({
       to: validated.email,
-      subject: `[대라천] ${subjectLine}문의가 접수되었습니다.`,
-      text: `안녕하세요, ${validated.name}님.\n\n문의해 주셔서 감사합니다.\n문의 내용이 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 답변 드리겠습니다.\n\n─────────────────────────\n[문의 유형] ${categoryLabel[validated.category] ?? validated.category}${validated.subject ? `\n[제목] ${validated.subject}` : ''}\n[문의 내용]\n${validated.message}\n─────────────────────────\n\n대라천 고객지원팀 드림`,
-      html: `<p>안녕하세요, <strong>${validated.name}</strong>님.</p>
-<p>문의해 주셔서 감사합니다.<br>문의 내용이 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 답변 드리겠습니다.</p>
-<hr>
-<p><strong>문의 유형:</strong> ${categoryLabel[validated.category] ?? validated.category}${validated.subject ? `<br><strong>제목:</strong> ${validated.subject}` : ''}<br>
-<strong>문의 내용:</strong><br>${validated.message.replace(/\n/g, '<br>')}</p>
-<hr>
-<p>대라천 고객지원팀 드림</p>`,
+      // 제목 끝의 [#inq-...] 토큰 — 고객이 이 메일에 답장하면 인박스 폴링이
+      // 어느 문의인지 매칭하는 키. 절대 제거 금지.
+      subject: `[대라천] ${subjectLine}문의가 접수되었습니다. [#${newInquiry.id}]`,
+      text: `안녕하세요, ${validated.name}님.\n\n대라천에 문의해 주셔서 감사합니다.\n보내주신 내용은 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 담당자가 답변드리겠습니다.\n\n─────────────────────────\n[문의 유형] ${catDisplay}${validated.subject ? `\n[제목] ${validated.subject}` : ''}\n[접수번호] ${newInquiry.id}\n[문의 내용]\n${validated.message}\n─────────────────────────\n\n추가로 궁금하신 점은 이 메일에 그대로 회신해 주세요.\n\nZOEL LIFE · 대라천 고객지원팀\n전화: 070-4140-4086`,
+      html: `<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+<body style="margin:0; padding:0; background:#f5f3ee; font-family:'Apple SD Gothic Neo','맑은 고딕',sans-serif;">
+  <div style="max-width:600px; margin:24px auto; background:#fff; border:1px solid #e7e2d6; border-radius:10px; overflow:hidden;">
+    <div style="background:#1a1a0e; padding:28px 32px;">
+      <p style="color:#c9a84c; font-size:12px; letter-spacing:0.16em; margin:0 0 8px;">ZOEL LIFE · 대라천</p>
+      <h1 style="color:#fff; font-size:21px; font-weight:600; margin:0;">문의가 정상적으로 접수되었습니다</h1>
+    </div>
+    <div style="padding:32px;">
+      <p style="color:#333; font-size:15px; line-height:1.85; margin:0 0 8px;">
+        안녕하세요, <strong>${esc(validated.name)}</strong>님.
+      </p>
+      <p style="color:#555; font-size:14px; line-height:1.85; margin:0 0 26px;">
+        대라천에 문의해 주셔서 진심으로 감사드립니다.<br />
+        보내주신 내용은 정상적으로 접수되었으며, <strong style="color:#1a1a0e;">영업일 기준 1~2일 이내</strong>에 담당자가 답변드리겠습니다.
+      </p>
+
+      <div style="background:#faf8f3; border:1px solid #ece6d8; border-radius:8px; padding:20px 22px; margin-bottom:26px;">
+        <p style="font-size:11px; color:#a59a82; letter-spacing:0.08em; margin:0 0 10px; text-transform:uppercase;">접수 내역</p>
+        <table style="width:100%; border-collapse:collapse; font-size:13px; color:#444;">
+          <tr><td style="padding:5px 0; width:84px; color:#999;">문의 유형</td><td style="padding:5px 0; color:#1a1a0e; font-weight:600;">${esc(catDisplay)}</td></tr>
+          ${validated.subject ? `<tr><td style="padding:5px 0; color:#999;">제목</td><td style="padding:5px 0; color:#1a1a0e; font-weight:600;">${esc(validated.subject)}</td></tr>` : ''}
+          <tr><td style="padding:5px 0; color:#999;">접수번호</td><td style="padding:5px 0; color:#888; font-size:12px;">${esc(newInquiry.id)}</td></tr>
+        </table>
+        <div style="border-top:1px solid #ece6d8; margin-top:12px; padding-top:14px;">
+          <p style="font-size:11px; color:#999; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.08em;">문의 내용</p>
+          <p style="font-size:14px; color:#333; line-height:1.85; margin:0; white-space:pre-wrap;">${esc(validated.message)}</p>
+        </div>
+      </div>
+
+      <p style="font-size:13px; color:#666; line-height:1.8; margin:0 0 24px;">
+        추가로 궁금하신 점이 있으시면 <strong>이 메일에 그대로 회신</strong>해 주세요. 담당자에게 바로 전달됩니다.
+      </p>
+
+      <div style="border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#999; line-height:1.9;">
+        <strong style="color:#555;">ZOEL LIFE · 대라천 고객지원팀</strong><br />
+        전화: 070-4140-4086<br />
+        <span style="font-size:11px;">평일 09:00 – 18:00 (점심 12:00 – 13:00 / 주말·공휴일 휴무)</span>
+      </div>
+    </div>
+  </div>
+</body></html>`,
     });
 
     const adminMailPromise = adminEmail && adminEmail.includes('@')
