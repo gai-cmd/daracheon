@@ -28,8 +28,6 @@ interface IntegrationLite {
   telegramChatId?: string;
 }
 
-const REPLY_PREFIX = '답변)';
-
 // 알림 메시지 본문의 "id: inq-123" 또는 "[#inq-123]" 에서 문의 ID 추출.
 function extractInquiryId(text: string): string | null {
   const m = text.match(/inq-\d+/i);
@@ -68,21 +66,25 @@ export async function POST(req: NextRequest) {
     return ack();
   }
 
-  // 3) 트리거: "답변)" 접두어
+  // 3) 봇 알림(📨/✅ 카드 — id 포함)에 대한 답장인지 먼저 판별.
+  //    카드 답장이 아니면(원 문의 ID 없음) 일반 대화로 보고 조용히 무시.
   const text = msg.text;
-  if (!text.startsWith(REPLY_PREFIX)) return ack();
-
-  // 4) 봇 알림에 대한 답장에서 문의 ID 추출
   const sourceText = msg.reply_to_message?.text ?? '';
   const inquiryId = extractInquiryId(sourceText);
-  if (!inquiryId) {
+  if (!inquiryId) return ack();
+
+  // 4) 트리거 접두어("답변)" / "답변:" / "답변]" 등) 검사. 없으면 사용법 힌트.
+  //    silent 실패 대신 봇이 즉시 안내 → 운영자가 무엇이 잘못됐는지 바로 인지.
+  const trimmed = text.replace(/^\s+/, '');
+  const trigger = trimmed.match(/^답변\s*[)\]:：>.]\s*/);
+  if (!trigger) {
     await sendTelegramMessage(
-      '⚠️ 답변을 보낼 원 문의를 찾지 못했습니다. 봇이 올린 "📨 새 문의" 알림에 <b>답장(Reply)</b>으로 보내주세요.',
+      `ℹ️ 이 문의(${inquiryId})를 고객에게 답변하시려면 메시지를 <b>답변)</b> 으로 시작해 주세요.\n예) <code>답변) 안녕하세요, 문의 주셔서 감사합니다...</code>`,
     ).catch(() => {});
     return ack();
   }
 
-  const replyText = text.slice(REPLY_PREFIX.length).trim();
+  const replyText = trimmed.slice(trigger[0].length).trim();
   if (!replyText) {
     await sendTelegramMessage(`⚠️ 보낼 답변 내용이 비어 있습니다. (${inquiryId})`).catch(() => {});
     return ack();
