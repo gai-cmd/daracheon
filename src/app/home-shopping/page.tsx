@@ -581,7 +581,6 @@ export default async function HomeShoppingPage({
                   <span>
                     <b>일시</b> · {formatBroadcastDateTime(featured.scheduledAt)}
                   </span>
-                  {featured.discountRate ? <span><b>할인</b> · {featured.discountRate}%</span> : null}
                 </div>
                 <div className={styles.ctas}>
                   <a href="tel:070-4140-4086" className={styles.btnLive}>
