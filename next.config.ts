@@ -38,7 +38,10 @@ const nextConfig: NextConfig = {
     //   실제 사용하는 도메인으로 좁히세요.
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://openapi.map.naver.com https://oapi.map.naver.com https://*.pstatic.net",
+      // youtube.com / s.ytimg.com: brand-story 05 대표영상이 YouTube IFrame API
+      //   (youtube.com/iframe_api → www-widgetapi.js) 스크립트를 로드. 빠지면 대표
+      //   영상이 검은 박스로 재생 불가(그리드 모달은 frame-src 라 영향 없음).
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://openapi.map.naver.com https://oapi.map.naver.com https://*.pstatic.net https://www.youtube.com https://s.ytimg.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net",
