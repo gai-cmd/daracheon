@@ -409,13 +409,20 @@ export default async function HomeShoppingPage({
       hero?: HomeShoppingHero;
       nsHead?: Partial<NsHead>;
       nsSoldOut?: Partial<NsSoldOut>;
+      nsSoldOuts?: Partial<NsSoldOut>[];
       nsHeroFallback?: Partial<NsHeroFallback>;
       nsVideos?: NsBrandVideo[];
     };
   }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
   const nsHead: NsHead = { ...DEFAULT_NS_HEAD, ...pagesData?.homeShopping?.nsHead };
-  const nsSoldOut: NsSoldOut = { ...DEFAULT_NS_SOLD_OUT, ...pagesData?.homeShopping?.nsSoldOut };
+  // 매진 배너는 1개 이상 노출 가능(1차·2차 …). nsSoldOuts 배열이 있으면 그대로,
+  // 없으면 레거시 단일 nsSoldOut(또는 기본값)을 한 장짜리 배열로 승격.
+  const nsSoldOutsRaw = pagesData?.homeShopping?.nsSoldOuts;
+  const soldOutList: NsSoldOut[] =
+    Array.isArray(nsSoldOutsRaw) && nsSoldOutsRaw.length > 0
+      ? nsSoldOutsRaw.map((s) => ({ ...DEFAULT_NS_SOLD_OUT, ...s }))
+      : [{ ...DEFAULT_NS_SOLD_OUT, ...pagesData?.homeShopping?.nsSoldOut }];
   const nsHeroFallback: NsHeroFallback = { ...DEFAULT_NS_HERO_FALLBACK, ...pagesData?.homeShopping?.nsHeroFallback };
   const nsVideos: NsBrandVideo[] =
     pagesData?.homeShopping?.nsVideos && pagesData.homeShopping.nsVideos.length > 0
@@ -489,49 +496,51 @@ export default async function HomeShoppingPage({
             <p className={styles.nsLede}>{nsHead.lede}</p>
           </div>
 
-          {/* SOLD-OUT 배너 — NS Shop+ 창립 25주년 대고객 감사 프로젝트 방송에서 매진된 인증 화면. */}
-          <div className={styles.nsSoldOut}>
+          {/* SOLD-OUT 배너 — NS Shop+ 방송에서 매진된 인증 화면. 1차·2차 … 순서대로 스택. */}
+          {soldOutList.map((so, i) => (
+            <div className={styles.nsSoldOut} key={`${so.imageUrl}-${i}`}>
             <div className={styles.nsSoldOutFrame}>
               <img
-                src={nsSoldOut.imageUrl}
-                alt={nsSoldOut.imageAlt}
+                src={so.imageUrl}
+                alt={so.imageAlt}
                 loading="lazy"
               />
-              {nsSoldOut.stampLabel && (
+              {so.stampLabel && (
                 <span className={styles.nsSoldOutStamp} aria-hidden>
-                  {nsSoldOut.stampLabel.replace(/ /g, ' ')}
+                  {so.stampLabel.replace(/ /g, ' ')}
                 </span>
               )}
             </div>
             <div className={styles.nsSoldOutMeta}>
-              {nsSoldOut.kicker && <div className={styles.nsSoldOutKicker}>{nsSoldOut.kicker}</div>}
+              {so.kicker && <div className={styles.nsSoldOutKicker}>{so.kicker}</div>}
               <h3
                 className={styles.nsSoldOutTitle}
-                dangerouslySetInnerHTML={{ __html: nsSoldOut.titleHtml }}
+                dangerouslySetInnerHTML={{ __html: so.titleHtml }}
               />
-              {nsSoldOut.body && <p className={styles.nsSoldOutBody}>{nsSoldOut.body}</p>}
+              {so.body && <p className={styles.nsSoldOutBody}>{so.body}</p>}
               <dl className={styles.nsSoldOutFacts}>
-                {nsSoldOut.factChannel && (
+                {so.factChannel && (
                   <div>
                     <dt>채널</dt>
-                    <dd>{nsSoldOut.factChannel}</dd>
+                    <dd>{so.factChannel}</dd>
                   </div>
                 )}
-                {nsSoldOut.factComposition && (
+                {so.factComposition && (
                   <div>
                     <dt>구성</dt>
-                    <dd>{nsSoldOut.factComposition}</dd>
+                    <dd>{so.factComposition}</dd>
                   </div>
                 )}
-                {nsSoldOut.factResult && (
+                {so.factResult && (
                   <div>
                     <dt>결과</dt>
-                    <dd>{nsSoldOut.factResult}</dd>
+                    <dd>{so.factResult}</dd>
                   </div>
                 )}
               </dl>
             </div>
-          </div>
+            </div>
+          ))}
 
           <NsBrandVideoGallery videos={nsVideos} />
         </div>

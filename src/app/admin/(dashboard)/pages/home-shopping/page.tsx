@@ -51,6 +51,7 @@ interface HomeShoppingPageData {
   hero: HomeShoppingHero;
   nsHead?: NsHead;
   nsSoldOut?: NsSoldOut;
+  nsSoldOuts?: NsSoldOut[];
   nsHeroFallback?: NsHeroFallback;
   nsVideos?: NsVideo[];
 }
@@ -145,12 +146,12 @@ function SectionCard({ title, description, children, onSave, saving }: { title: 
 
 export default function AdminHomeShoppingHeroPage() {
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<null | 'hero' | 'nsHead' | 'nsSoldOut' | 'nsHeroFallback' | 'nsVideos'>(null);
+  const [saving, setSaving] = useState<null | 'hero' | 'nsHead' | 'nsSoldOuts' | 'nsHeroFallback' | 'nsVideos'>(null);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   const [hero, setHero] = useState<HomeShoppingHero>(DEFAULT_HERO);
   const [nsHead, setNsHead] = useState<NsHead>(DEFAULT_NS_HEAD);
-  const [nsSoldOut, setNsSoldOut] = useState<NsSoldOut>(DEFAULT_NS_SOLD_OUT);
+  const [nsSoldOuts, setNsSoldOuts] = useState<NsSoldOut[]>([DEFAULT_NS_SOLD_OUT]);
   const [nsHeroFallback, setNsHeroFallback] = useState<NsHeroFallback>(DEFAULT_NS_HERO_FALLBACK);
   const [nsVideos, setNsVideos] = useState<NsVideo[]>([]);
 
@@ -169,7 +170,11 @@ export default function AdminHomeShoppingHeroPage() {
         const d = data.pages?.homeShopping;
         if (d?.hero) setHero({ ...DEFAULT_HERO, ...d.hero });
         if (d?.nsHead) setNsHead({ ...DEFAULT_NS_HEAD, ...d.nsHead });
-        if (d?.nsSoldOut) setNsSoldOut({ ...DEFAULT_NS_SOLD_OUT, ...d.nsSoldOut });
+        if (d?.nsSoldOuts && d.nsSoldOuts.length > 0) {
+          setNsSoldOuts(d.nsSoldOuts.map((s) => ({ ...DEFAULT_NS_SOLD_OUT, ...s })));
+        } else if (d?.nsSoldOut) {
+          setNsSoldOuts([{ ...DEFAULT_NS_SOLD_OUT, ...d.nsSoldOut }]);
+        }
         if (d?.nsHeroFallback) setNsHeroFallback({ ...DEFAULT_NS_HERO_FALLBACK, ...d.nsHeroFallback });
         if (d?.nsVideos) setNsVideos(d.nsVideos);
       } catch (err) {
@@ -331,57 +336,80 @@ export default function AdminHomeShoppingHeroPage() {
             </div>
           </SectionCard>
 
-          {/* 4. NS Sold-Out — 매진 배너 */}
+          {/* 4. NS Sold-Out — 매진 배너(들). 1차·2차 … 여러 장 순서대로 노출. */}
           <SectionCard
             title="NS · 완판(Sold-Out) 배너"
-            description="영상 갤러리 위쪽에 노출되는 매진 인증 배너. 좌측 매진 이미지 + 우측 카피."
-            onSave={() => savePartial('nsSoldOut', nsSoldOut, 'nsSoldOut')}
-            saving={saving === 'nsSoldOut'}
+            description="영상 갤러리 위쪽에 노출되는 매진 인증 배너. 여러 장(1차·2차 …)을 위에서부터 순서대로 노출합니다. 좌측 매진 이미지 + 우측 카피."
+            onSave={() => savePartial('nsSoldOuts', nsSoldOuts, 'nsSoldOuts')}
+            saving={saving === 'nsSoldOuts'}
           >
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <LabeledInput
-                  label="이미지 URL"
-                  value={nsSoldOut.imageUrl}
-                  onChange={(v) => setNsSoldOut({ ...nsSoldOut, imageUrl: v })}
-                  hint="예: /images/ns-broadcast-soldout.jpg 또는 Vercel Blob URL"
-                />
-                <LabeledInput
-                  label="이미지 alt (대체 텍스트)"
-                  value={nsSoldOut.imageAlt}
-                  onChange={(v) => setNsSoldOut({ ...nsSoldOut, imageAlt: v })}
-                />
-              </div>
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <LabeledInput
-                  label="스탬프 라벨 (이미지 위 회전 배지, 빈 값이면 숨김)"
-                  value={nsSoldOut.stampLabel}
-                  onChange={(v) => setNsSoldOut({ ...nsSoldOut, stampLabel: v })}
-                />
-                <LabeledInput
-                  label="키커 (kicker)"
-                  value={nsSoldOut.kicker}
-                  onChange={(v) => setNsSoldOut({ ...nsSoldOut, kicker: v })}
-                />
-              </div>
-              <LabeledTextarea
-                label="제목 (HTML, em/br 사용 가능)"
-                value={nsSoldOut.titleHtml}
-                onChange={(v) => setNsSoldOut({ ...nsSoldOut, titleHtml: v })}
-                rows={3}
-                hint="예: NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em><br />..."
-              />
-              <LabeledTextarea
-                label="본문 (body)"
-                value={nsSoldOut.body}
-                onChange={(v) => setNsSoldOut({ ...nsSoldOut, body: v })}
-                rows={4}
-              />
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                <LabeledInput label="Fact — 채널" value={nsSoldOut.factChannel} onChange={(v) => setNsSoldOut({ ...nsSoldOut, factChannel: v })} />
-                <LabeledInput label="Fact — 구성" value={nsSoldOut.factComposition} onChange={(v) => setNsSoldOut({ ...nsSoldOut, factComposition: v })} />
-                <LabeledInput label="Fact — 결과" value={nsSoldOut.factResult} onChange={(v) => setNsSoldOut({ ...nsSoldOut, factResult: v })} />
-              </div>
+            <div className="space-y-8">
+              {nsSoldOuts.map((so, i) => (
+                <div key={i} className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="font-mono text-xs uppercase tracking-widest text-gray-500">배너 #{i + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => setNsSoldOuts((prev) => prev.filter((_, idx) => idx !== i))}
+                      className="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
+                    >
+                      이 배너 삭제
+                    </button>
+                  </div>
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                      <LabeledInput
+                        label="이미지 URL"
+                        value={so.imageUrl}
+                        onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, imageUrl: v } : it)))}
+                        hint="예: /images/ns-broadcast-soldout.jpg 또는 Vercel Blob URL"
+                      />
+                      <LabeledInput
+                        label="이미지 alt (대체 텍스트)"
+                        value={so.imageAlt}
+                        onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, imageAlt: v } : it)))}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                      <LabeledInput
+                        label="스탬프 라벨 (이미지 위 회전 배지, 빈 값이면 숨김)"
+                        value={so.stampLabel}
+                        onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, stampLabel: v } : it)))}
+                      />
+                      <LabeledInput
+                        label="키커 (kicker)"
+                        value={so.kicker}
+                        onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, kicker: v } : it)))}
+                      />
+                    </div>
+                    <LabeledTextarea
+                      label="제목 (HTML, em/br 사용 가능)"
+                      value={so.titleHtml}
+                      onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, titleHtml: v } : it)))}
+                      rows={3}
+                      hint="예: NS홈쇼핑 창립 25주년 <em>대고객 감사 프로젝트</em><br />..."
+                    />
+                    <LabeledTextarea
+                      label="본문 (body)"
+                      value={so.body}
+                      onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, body: v } : it)))}
+                      rows={4}
+                    />
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                      <LabeledInput label="Fact — 채널" value={so.factChannel} onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, factChannel: v } : it)))} />
+                      <LabeledInput label="Fact — 구성" value={so.factComposition} onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, factComposition: v } : it)))} />
+                      <LabeledInput label="Fact — 결과" value={so.factResult} onChange={(v) => setNsSoldOuts((prev) => prev.map((it, idx) => (idx === i ? { ...it, factResult: v } : it)))} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setNsSoldOuts((prev) => [...prev, { ...DEFAULT_NS_SOLD_OUT }])}
+                className="w-full rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm font-medium text-gray-600 hover:border-gold-500 hover:text-gold-600"
+              >
+                + 매진 배너 추가
+              </button>
             </div>
           </SectionCard>
 
