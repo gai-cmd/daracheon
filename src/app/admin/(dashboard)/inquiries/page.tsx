@@ -245,13 +245,18 @@ export default function InquiriesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, assignee, dueDate, company }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || body?.success === false) throw new Error(body?.message || `HTTP ${res.status}`);
       setToast('회사명 · 담당자 · 답변기한이 저장되었습니다.');
       // 편집 버퍼는 비워서 서버 값을 다시 따라가도록.
       setAssigneeTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
       setDueDateTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
       setCompanyTexts((prev) => { const n = { ...prev }; delete n[id]; return n; });
-      await fetchInquiries();
+      // 서버 권위 레코드로 교체. 즉시 재조회는 쓰기 직후 전파지연으로 옛 값을
+      // 돌려줄 수 있어(옵티미스틱 덮어씀) 하지 않는다.
+      if (body?.inquiry) {
+        setInquiries((prev) => prev.map((i) => (i.id === id ? body.inquiry : i)));
+      }
     } catch (err) {
       console.error('Meta save error:', err);
       setInquiries(snapshot);
@@ -263,24 +268,42 @@ export default function InquiriesPage() {
     const text = replyTexts[id]?.trim();
     if (!text) return;
 
+    const snapshot = inquiries;
+    const nowIso = new Date().toISOString();
+    // 옵티미스틱 — 저장 즉시 로컬 반영. blob read-after-write 전파지연(최대 ~60초)으로
+    // 재조회가 직전 답변을 돌려줘도 화면이 방금 보낸 답변을 유지한다. (2번째 답변이
+    // "저장 안 됨"으로 보이던 원인: 쓰기 직후 stale GET 이 옛 답변으로 덮어씀)
+    setInquiries((prev) =>
+      prev.map((i) =>
+        i.id === id ? { ...i, reply: text, replyAt: nowIso, status: 'replied' as InquiryStatus } : i,
+      ),
+    );
+    // 키 자체를 제거해야 textarea 가 inq.reply 로 fallback 됨.
+    // ''로 비우면 ?? 가 빈 문자열을 통과시켜 답변이 사라진 것처럼 보임.
+    setReplyTexts((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+
     try {
       const res = await fetch('/api/admin/inquiries', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, reply: text, status: 'replied' }),
       });
-      if (!res.ok) throw new Error('Reply save failed');
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || body?.success === false) throw new Error(body?.message || 'Reply save failed');
       setToast('답변을 보냈습니다.');
-      // 키 자체를 제거해야 textarea 가 inq.reply 로 fallback 됨.
-      // ''로 비우면 ?? 가 빈 문자열을 통과시켜 답변이 사라진 것처럼 보임.
-      setReplyTexts((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-      await fetchInquiries();
+      // 서버가 돌려준 권위 레코드로 교체 (replyAt/replyBy 등 확정값). 즉시 재조회는
+      // 하지 않는다 — 쓰기 직후 GET 은 전파지연으로 옛 답변을 줄 수 있어 옵티미스틱을 덮어쓴다.
+      if (body?.inquiry) {
+        setInquiries((prev) => prev.map((i) => (i.id === id ? body.inquiry : i)));
+      }
     } catch (err) {
       console.error('Reply save error:', err);
+      setInquiries(snapshot);
+      setReplyTexts((prev) => ({ ...prev, [id]: text })); // 편집 내용 복원
       setToast('답변 저장에 실패했습니다.');
     }
   }
