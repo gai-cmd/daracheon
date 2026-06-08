@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readData, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Review } from '@/data/reviews';
@@ -14,7 +14,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const reviews = await readData('reviews');
+    // union-aware read — outbox 에만 있는(배열 쓰기 전) 신규 리뷰도 관리자 목록에
+    // 즉시 노출해 승인 가능하게 (readData 캐시 경로는 outbox 를 못 봄).
+    const reviews = await readDataUncached('reviews');
     const total = reviews.length;
     const avgRating =
       total > 0
@@ -65,7 +67,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const reviews = await readData('reviews');
+    const reviews = await readDataForWrite('reviews');
     const idSet = new Set<string>(body.ids as string[]);
     let updatedCount = 0;
 
@@ -76,7 +78,7 @@ export async function PATCH(request: Request) {
       }
     }
 
-    await writeData('reviews', reviews);
+    await writeDataMerged('reviews', reviews);
     revalidateReviews();
 
     await logAdmin('reviews', 'bulk_update', {
@@ -108,7 +110,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const reviews = await readData('reviews');
+    const reviews = await readDataForWrite('reviews');
     const index = reviews.findIndex((r) => r.id === body.id);
 
     if (index === -1) {
@@ -119,7 +121,7 @@ export async function PUT(request: Request) {
     }
 
     reviews[index] = { ...reviews[index], ...body };
-    await writeData('reviews', reviews);
+    await writeDataMerged('reviews', reviews);
     revalidateReviews();
 
     await logAdmin('reviews', 'update', {
@@ -151,7 +153,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const reviews = await readData('reviews');
+    const reviews = await readDataForWrite('reviews');
     const index = reviews.findIndex((r) => r.id === body.id);
 
     if (index === -1) {
@@ -164,7 +166,8 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `reviews delete ${body.id}`);
 
     const removed = reviews.splice(index, 1)[0];
-    await writeData('reviews', reviews);
+    // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않도록.
+    await writeDataMerged('reviews', reviews, { removedIds: [body.id] });
     revalidateReviews();
 
     await logAdmin('reviews', 'delete', {

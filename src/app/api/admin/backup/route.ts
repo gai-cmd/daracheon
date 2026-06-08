@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData, readSingle, writeSingle } from '@/lib/db';
+import { readData, restoreData, readSingle, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -111,7 +111,9 @@ export async function POST(request: Request) {
       }
       const value = payload.data[key];
       if (Array.isArray(value)) {
-        await writeData(key, value);
+        // restoreData — 복원 전 tombstone 제거로 과거 삭제 흔적이 복원 레코드를
+        // 재삭제하지 못하게 한다 (full-replace, merge 아님).
+        await restoreData(key, value);
         restored.push(key);
       }
     }

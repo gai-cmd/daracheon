@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { readData, writeData } from '@/lib/db';
+import { readData, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
 export type AuditModule =
@@ -85,10 +85,12 @@ export async function logAdmin(
       ...(options.meta ? { meta: options.meta } : {}),
     };
 
-    const entries = await readData(LOG_FILE);
+    const entries = await readDataForWrite<AuditEntry>(LOG_FILE);
     entries.push(entry);
-    if (entries.length > MAX_ENTRIES) entries.splice(0, entries.length - MAX_ENTRIES);
-    await writeData(LOG_FILE, entries);
+    // MAX_ENTRIES 트림으로 밀려난 entry 는 removedIds 로 전달 — merge 시 부활 방지.
+    const trimmed =
+      entries.length > MAX_ENTRIES ? entries.splice(0, entries.length - MAX_ENTRIES) : [];
+    await writeDataMerged(LOG_FILE, entries, { removedIds: trimmed.map((e) => e.id) });
   } catch (error) {
     console.error('[Audit] failed to write entry:', error);
   }

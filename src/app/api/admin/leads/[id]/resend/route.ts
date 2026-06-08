@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { listLeads } from '@/lib/leads';
-import { writeData } from '@/lib/db';
+import type { Lead } from '@/lib/leads';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { sendEditionVerification } from '@/lib/edition-mail';
 import { logAdmin } from '@/lib/audit';
 
@@ -22,7 +22,8 @@ function siteUrl(req: NextRequest): string {
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const leads = await listLeads();
+    // 토큰 재발급 시 같은 파일을 덮어쓰는 쓰기 흐름 — 쓰기 베이스 전용 read.
+    const leads = await readDataForWrite<Lead>('leads');
     const idx = leads.findIndex((l) => l.id === id);
     if (idx === -1) {
       return NextResponse.json({ success: false, message: '해당 리드를 찾을 수 없습니다.' }, { status: 404 });
@@ -41,7 +42,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         status: 'pending',
         expiresAt: new Date(now.getTime() + EXPIRY_DAYS * 24 * 60 * 60 * 1000).toISOString(),
       };
-      await writeData('leads', leads);
+      // 단순 항목 수정 — removedIds 불필요. 동시 추가 리드는 merge 가 보존.
+      await writeDataMerged('leads', leads);
     }
 
     const finalLead = leads[idx];

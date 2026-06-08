@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readData, readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product, ProductVariant } from '@/data/products';
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const products = await readData('products');
+    const products = await readDataForWrite('products');
     const normalizedVariants = validateAndNormalizeVariants(body.variants);
     const triad = normalizePriceTriad(body.originalPrice, body.price, body.discountRate);
 
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
     };
 
     products.push(newProduct);
-    await writeData('products', products);
+    await writeDataMerged('products', products);
     revalidateProducts();
 
     await logAdmin('products', 'create', {
@@ -166,7 +166,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const products = await readDataUncached('products');
+    const products = await readDataForWrite('products');
     const index = products.findIndex((p) => p.id === body.id);
 
     if (index === -1) {
@@ -201,7 +201,7 @@ export async function PUT(request: Request) {
     if (triad.discountRate !== undefined) merged.discountRate = triad.discountRate;
     else delete merged.discountRate;
     products[index] = merged;
-    await writeData('products', products);
+    await writeDataMerged('products', products);
     revalidateProducts();
 
     await logAdmin('products', 'update', {
@@ -233,7 +233,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const products = await readDataUncached('products');
+    const products = await readDataForWrite('products');
     const index = products.findIndex((p) => p.id === body.id);
 
     if (index === -1) {
@@ -246,7 +246,8 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `products delete ${body.id}`);
 
     const removed = products.splice(index, 1)[0];
-    await writeData('products', products);
+    // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않도록.
+    await writeDataMerged('products', products, { removedIds: [body.id] });
     revalidateProducts();
 
     await logAdmin('products', 'delete', {

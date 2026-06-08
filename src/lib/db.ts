@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { createHash } from 'crypto';
 import { put, list, del } from '@vercel/blob';
 import { revalidateTag, unstable_cache } from 'next/cache';
 
@@ -100,6 +101,220 @@ function fsWriteRaw(filename: string, data: unknown) {
 
 // Sentinel: blob 에 명백히 없음. 일시 장애(fetch 실패 등)는 throw 로 구분.
 const NOT_FOUND = Symbol('not_found');
+
+/* ─────────────────────────────────────────────────────────
+   Outbox + Tombstone — append 유실 방지 & 삭제 의도 영속
+   ─────────────────────────────────────────────────────────
+   배열 전체를 덮어쓰는 JSON store 는 어떤 read-modify-write 라도
+   (전파 지연·stale 베이스 조합으로) 동시 추가 레코드를 잃거나, stale
+   writer 가 이미 삭제된 레코드를 되살릴 수 있다. 두 메커니즘으로 봉인:
+
+   1) Outbox (OUTBOX_FILES): append 레코드를 배열과 별개로 레코드별
+      blob `outbox/<file>/<id>.json` 에 사본 저장. union-aware read/write
+      가 배열에 없는 사본을 복원하므로 추가 유실이 구조적으로 불가능.
+
+   2) Tombstone (TOMBSTONE_FILES): 삭제(removedIds)된 레코드의 key 를
+      `tomb/<file>/<key>.json` 에 영속 기록. union 과 writeDataMerged 가
+      tombstone key 를 항상 제외하므로, outbox 사본이 남아 있거나 stale
+      writer 가 next 에 삭제분을 담고 있어도 부활하지 않는다.
+
+   설계 핵심:
+   - id/key 는 blob pathname 에서 추출 — 콘텐츠 fetch 성공에 청소를
+     묶지 않는다 (fetch 한 번 실패로 삭제가 되살아나던 결함 차단).
+   - union 은 base 에 없는 레코드만 콘텐츠 fetch (불필요 read 최소화).
+   - list 는 커서로 전량 순회 (limit 잘림으로 인한 사각지대 제거). */
+const OUTBOX_FILES = new Set(['inquiries', 'leads', 'reviews']);
+// 삭제 의도 영속이 필요한 파일: 고객 데이터(부활=PII/스팸 재출현) + 보안
+// 토큰(소비된 토큰 재사용 차단) + 관리자 계정(탈퇴/해임된 admin 부활 차단).
+const TOMBSTONE_FILES = new Set([
+  'inquiries', 'leads', 'reviews', 'password-reset-tokens', 'admin-users',
+]);
+const OUTBOX_HEAL_AGE_MS = 10 * 60 * 1000;        // 배열 수렴 확인 후 사본 청소까지 대기
+const TOMBSTONE_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 삭제 흔적 보존 기간 (key 만, PII 아님)
+const OUTBOX_PAGE_LIMIT = 1000;
+
+function outboxPrefix(filename: string) {
+  return `${BLOB_PREFIX}outbox/${filename}/`;
+}
+function tombPrefix(filename: string) {
+  return `${BLOB_PREFIX}tomb/${filename}/`;
+}
+
+// 파일별 레코드 식별 키 (중앙 등록 — read/write/outbox/tomb 모든 경로가 동일
+// 키를 쓰도록 보장). 기본은 .id. id 가 없는 파일만 여기 등록.
+const FILE_KEY: Record<string, (r: unknown) => string | undefined> = {
+  'admin-users': (r) => (r as { email?: string }).email,
+  'password-reset-tokens': (r) => (r as { token?: string }).token,
+};
+function keyOf(filename: string, r: unknown): string | null {
+  const fn = FILE_KEY[filename];
+  if (fn) {
+    const k = fn(r);
+    return typeof k === 'string' && k.length > 0 ? k : null;
+  }
+  if (r && typeof r === 'object' && typeof (r as { id?: unknown }).id === 'string') {
+    return (r as { id: string }).id;
+  }
+  return null;
+}
+
+// blob pathname 용 가역 인코딩 (base64url — 문자는 [A-Za-z0-9_-] 라 항상 안전).
+// 이메일(@,.)·해시 등 어떤 키든 pathname 으로 쓸 수 있다. 디코드 없이도
+// "키 K 가 tombstone 인가" 는 encKey(K) 의 집합 멤버십으로 판정하므로,
+// list 결과(인코딩된 pathname segment)와 직접 비교한다.
+function encKey(key: string): string | null {
+  if (!key) return null;
+  const e = Buffer.from(key, 'utf8').toString('base64url');
+  if (e.length <= 200) return e;
+  // 비현실적으로 긴 키(예: RFC 최대 길이 이메일)도 절대 null 이 되지 않게 —
+  // null 은 tombstone 미기록 → 부활 창. 고정 길이 해시로 강등. 충돌 확률은
+  // sha256 무작위성으로 무시 가능(~2^-256). ('h_' 접두는 가독 구분일 뿐.)
+  return 'h_' + createHash('sha256').update(key, 'utf8').digest('base64url');
+}
+function encKeyOf(filename: string, r: unknown): string | null {
+  const k = keyOf(filename, r);
+  return k === null ? null : encKey(k);
+}
+
+interface BlobRef {
+  enc: string;   // pathname segment = encKey(원본 키)
+  url: string;
+  uploadedAt: number;
+}
+
+// prefix 하위 blob 을 커서로 전량 나열하고 pathname 끝의 인코딩 키만 뽑는다
+// (콘텐츠 fetch 없음 — 청소/제외 판정은 이것만으로 충분).
+async function listKeyed(prefix: string): Promise<BlobRef[]> {
+  const out: BlobRef[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await list({ prefix, limit: OUTBOX_PAGE_LIMIT, cursor });
+    for (const b of page.blobs) {
+      if (!b.pathname.startsWith(prefix)) continue;
+      const rest = b.pathname.slice(prefix.length);
+      if (!rest.endsWith('.json')) continue;
+      const enc = rest.slice(0, -5);
+      if (enc) out.push({ enc, url: b.url, uploadedAt: new Date(b.uploadedAt).getTime() });
+    }
+    cursor = page.hasMore ? page.cursor : undefined;
+  } while (cursor);
+  return out;
+}
+
+// tombstone 목록 — 재시도 포함. 모든 시도 실패 시 throw (fail-closed: 호출자가
+// '삭제 여부를 확인 못 함' 을 인지하고 부활 위험 동작을 건너뛸 수 있게).
+async function loadTombRefs(filename: string): Promise<BlobRef[]> {
+  if (!hasBlob || !TOMBSTONE_FILES.has(filename)) return [];
+  let lastErr: unknown;
+  for (let a = 0; a < BLOB_READ_MAX_ATTEMPTS; a++) {
+    if (a > 0) await sleep(BLOB_READ_BACKOFF_MS[a] ?? 500);
+    try {
+      return await listKeyed(tombPrefix(filename));
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr ?? new Error(`[db:tomb] ${filename}: list 실패`);
+}
+
+// tombstone 1건 삭제 (재시도). 재생성(revive) 시 부활 차단 해제의 핵심이라
+// best-effort 가 아니라 재시도한다. url 이 있으면 그것으로, 없으면 pathname 으로.
+async function delTombstone(filename: string, enc: string, url?: string): Promise<void> {
+  const target = url ?? `${tombPrefix(filename)}${enc}.json`;
+  for (let a = 0; a < BLOB_READ_MAX_ATTEMPTS; a++) {
+    if (a > 0) await sleep(BLOB_READ_BACKOFF_MS[a] ?? 500);
+    try {
+      await del(target);
+      return;
+    } catch (err) {
+      if (a === BLOB_READ_MAX_ATTEMPTS - 1) {
+        console.warn(`[db:tomb] ${filename}: revive del 실패 — 재생성 레코드가 일시적으로 가려질 수 있음`, err);
+      }
+    }
+  }
+}
+
+// 삭제 의도 영속 — 인코딩 키별 tombstone blob 생성 (await, 부활 차단의 핵심).
+async function putTombstones(filename: string, keys: string[], nowMs: number): Promise<void> {
+  if (!hasBlob || !TOMBSTONE_FILES.has(filename)) return;
+  const encs = keys.map((k) => encKey(k)).filter((e): e is string => e !== null);
+  await Promise.all(
+    encs.map((e) =>
+      put(`${tombPrefix(filename)}${e}.json`, JSON.stringify({ at: nowMs }), {
+        access: 'public',
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        contentType: 'application/json',
+        cacheControlMaxAge: 0,
+      }).catch((err) => console.warn(`[db:tomb] ${filename}: put 실패`, err)),
+    ),
+  );
+}
+
+// 읽기 베이스 정합화: (1) tombstone 키는 base 에서 제거(읽기 자가치유 —
+// 어떤 경위로 부활해 배열에 남아도 조회/다음 쓰기에서 사라짐), (2) outbox
+// 파일은 배열에 없는 사본을 복원. tombstone list 가 끝내 실패하면 부활
+// 위험을 피하기 위해 outbox 복원을 건너뛴다(fail-closed). 누락분만 fetch.
+async function reconcile<T>(filename: string, base: T[]): Promise<T[]> {
+  if (!hasBlob) return base;
+  const isOutbox = OUTBOX_FILES.has(filename);
+  const isTomb = TOMBSTONE_FILES.has(filename);
+  if (!isOutbox && !isTomb) return base;
+
+  let tomb = new Set<string>();
+  let tombOk = true;
+  if (isTomb) {
+    try {
+      tomb = new Set((await loadTombRefs(filename)).map((r) => r.enc));
+    } catch (err) {
+      tombOk = false;
+      console.warn(`[db:tomb] ${filename}: list 실패 — 자가치유/복원 보류`, err);
+    }
+  }
+
+  let result = base;
+  if (tomb.size > 0) {
+    const before = result.length;
+    result = result.filter((r) => {
+      const e = encKeyOf(filename, r);
+      return e === null || !tomb.has(e);
+    });
+    if (result.length !== before) {
+      console.warn(`[db:tomb] ${filename}: 조회 자가치유 — 부활분 ${before - result.length}건 제외`);
+    }
+  }
+
+  // outbox 복원 — tomb 확인이 실패했으면(tombOk=false) 부활 위험을 피해 건너뜀.
+  if (isOutbox && tombOk) {
+    let refs: BlobRef[] = [];
+    try {
+      refs = await listKeyed(outboxPrefix(filename));
+    } catch (err) {
+      console.warn(`[db:outbox] ${filename}: list 실패 — 복원 생략`, err);
+      return result;
+    }
+    const have = new Set(result.map((r) => encKeyOf(filename, r)).filter((e): e is string => e !== null));
+    const missing = refs.filter((r) => !have.has(r.enc) && !tomb.has(r.enc));
+    if (missing.length > 0) {
+      const fetched: T[] = [];
+      await Promise.all(
+        missing.map(async (r) => {
+          try {
+            const res = await fetch(`${r.url}?_=${Date.now()}`, { cache: 'no-store' });
+            if (res.ok) fetched.push((await res.json()) as T);
+          } catch {
+            /* 항목 단위 실패는 무시 — 다음 접근에서 재시도 */
+          }
+        }),
+      );
+      if (fetched.length > 0) {
+        console.warn(`[db:outbox] ${filename}: 배열 누락 ${fetched.length}건 복원`);
+        result = [...result, ...fetched];
+      }
+    }
+  }
+  return result;
+}
 
 // 3상태 반환: 데이터 / 명백히 없음(NOT_FOUND) / 일시 장애(throw)
 // fs seed fallback 은 NOT_FOUND 에만 적용되어야 함. 일시 장애를
@@ -276,25 +491,41 @@ export async function readData<T = any>(filename: string): Promise<T[]> {
 }
 
 // unstable_cache 를 우회해 blob 에서 직접 읽는다.
-// ⚠️ display(조회) 용도 전용 — NOT_FOUND 시 fs 시드로 폴백하므로
-// read-modify-write 의 베이스로 쓰면 시드 덮어쓰기 유실 위험.
+// ⚠️ display(조회) 용도 전용 — NOT_FOUND/장애 시 시드·LKG 폴백으로
+// 가용성을 우선하므로 read-modify-write 의 베이스로 쓰면 유실 위험.
 // 쓰기 베이스가 필요하면 readDataForWrite + writeDataMerged 를 사용할 것.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function readDataUncached<T = any>(filename: string): Promise<T[]> {
   if (hasBlob) {
-    const result = await blobReadRawUncached(filename);
-    if (result === NOT_FOUND) {
-      // Blob에 파일이 명백히 없음(NOT_FOUND) → fs 시드로 fallback.
-      // 일시 장애(throw)와 달리 "아직 한 번도 저장 안 된" 케이스이므로
-      // 시드를 베이스라인으로 사용해도 stale 오염이 발생하지 않는다.
-      const seed = fsReadRaw(filename);
-      return Array.isArray(seed) ? (seed as T[]) : [];
+    try {
+      const result = await blobReadRawUncached(filename);
+      if (result === NOT_FOUND) {
+        // Blob에 파일이 명백히 없음(NOT_FOUND) → fs 시드로 fallback.
+        const seed = fsReadRaw(filename);
+        const base = Array.isArray(seed) ? (seed as T[]) : [];
+        return await reconcile(filename, base);
+      }
+      if (Array.isArray(result)) {
+        lastKnownGood.set(filename, result);
+        // reconcile — tombstone 자가치유 + outbox 누락 복원.
+        return await reconcile(filename, result as T[]);
+      }
+      return [];
+    } catch (err) {
+      // display 전용이므로 가용성 우선: 일시 장애는 LKG → seed → [] 로 강등.
+      // (쓰기 경로는 readDataForWrite 가 별도로 throw 한다) 강등 베이스에도
+      // reconcile 을 적용해 동시-장애 구간에도 정합 뷰를 제공.
+      console.warn(`[db:read] ${filename}: uncached read 실패 — LKG/seed 폴백 (display)`, err);
+      const lkg = lastKnownGood.get(filename);
+      const base = Array.isArray(lkg)
+        ? (lkg as T[])
+        : (() => { const s = fsReadRaw(filename); return Array.isArray(s) ? (s as T[]) : []; })();
+      try {
+        return await reconcile(filename, base);
+      } catch {
+        return base;
+      }
     }
-    if (Array.isArray(result)) {
-      lastKnownGood.set(filename, result);
-      return result as T[];
-    }
-    return [];
   }
   const data = fsReadRaw(filename);
   return Array.isArray(data) ? (data as T[]) : [];
@@ -322,7 +553,8 @@ export async function readDataForWrite<T = any>(filename: string): Promise<T[]> 
   if (result !== NOT_FOUND) {
     if (Array.isArray(result)) {
       lastKnownGood.set(filename, result);
-      return result as T[];
+      // reconcile — tombstone 자가치유 + outbox 누락 복원으로 정합 쓰기 베이스.
+      return await reconcile(filename, result as T[]);
     }
     // 비배열(단일객체/오염) 을 조용히 [] 로 바꾸면 이어지는 쓰기가 파일을
     // 통째로 교체한다 — 배열 파일이 아니면 명백한 오용이므로 거부.
@@ -337,45 +569,84 @@ export async function readDataForWrite<T = any>(filename: string): Promise<T[]> 
         'list() 전파 지연 의심 — 유실 방지를 위해 쓰기 베이스 제공을 거부합니다. 잠시 후 재시도하세요.'
     );
   }
-  return [];
+  return await reconcile(filename, [] as T[]);
 }
 
 export interface WriteMergedOptions {
-  /** 이번 쓰기에서 의도적으로 삭제하는 레코드 id — merge 부활 대상에서 제외 */
+  /** 이번 쓰기에서 의도적으로 삭제/소비하는 레코드 키 — 영구 부활 차단(tombstone) */
   removedIds?: string[];
+  /** 의도적 재생성(예: 삭제됐던 이메일로 admin 재발급) — 기존 tombstone 을 무시하고
+   *  이 키들은 살린다. removedIds 와 동시에 한 키를 넣지 말 것. */
+  revivedIds?: string[];
+  /** @deprecated 파일별 키는 FILE_KEY 에 중앙 등록 — 이 옵션은 무시된다. */
+  keyFn?: (r: unknown) => string | undefined;
 }
 
-// lost-update 방지 쓰기 — put 직전에 blob 을 한 번 더 읽어, next 에는 없는데
-// 현재 blob 에는 있는 레코드(= base read 이후 다른 인스턴스가 추가한 것)를
-// 되살린 뒤 쓴다. 베이스가 stale 이어도 동시 추가분이 사라지지 않는다.
-// 의도적 삭제는 removedIds 로 명시해 부활을 막는다. fresh read 실패 시에는
-// merge 없이 진행 (사용자 저장이 read 블립에 막히면 안 됨 — 기존과 동일 동작).
-export async function writeDataMerged<T extends { id?: unknown }>(
+// lost-update 방지 + 삭제 의도 영속 쓰기.
+//  1) put 직전 fresh 재읽기로 'next 에 없는데 blob 엔 있는' 동시 추가분을 보존.
+//  2) outbox 사본에만 있는(배열에서 빠진) 레코드도 복원.
+//  3) tombstone(removedIds 영속 기록)에 든 키는 merged 결과에서 항상 제외 —
+//     outbox 잔존이나 stale writer 의 next 에 삭제분이 있어도 부활 불가.
+//     단 revivedIds(의도적 재생성)는 예외로 살린다.
+// fresh read 실패 시 merge 는 생략하되, tombstone 제외와 outbox 복원은 수행.
+// 키 추출은 FILE_KEY 중앙 등록(keyOf) — 키 없는 레코드는 merge/tombstone no-op.
+export async function writeDataMerged<T>(
   filename: string,
   next: T[],
   options: WriteMergedOptions = {},
 ): Promise<void> {
+  const key = (r: unknown) => keyOf(filename, r);
+  const enc = (r: unknown) => encKeyOf(filename, r);
+  const removed = new Set(options.removedIds ?? []);
+  const revived = new Set(options.revivedIds ?? []);
+  // 교집합 가드: 같은 키가 삭제+재생성에 동시에 오면 재생성이 이긴다(고아 tombstone 방지).
+  for (const k of revived) removed.delete(k);
+  const removedEnc = new Set([...removed].map((k) => encKey(k)).filter((e): e is string => e !== null));
+  const revivedEnc = new Set([...revived].map((k) => encKey(k)).filter((e): e is string => e !== null));
+  const nowMs = Date.now();
+
+  // tombstone 목록 1회 로드 (재시도 포함). 제외 필터·청소·revive del 이 공유한다.
+  // 실패(tombOk=false) 시 부활 위험 동작(outbox 복원)은 보류한다.
+  let tombRefs: BlobRef[] = [];
+  let tombOk = true;
+  if (TOMBSTONE_FILES.has(filename)) {
+    try {
+      tombRefs = await loadTombRefs(filename);
+    } catch (err) {
+      tombOk = false;
+      console.warn(`[db:tomb] ${filename}: list 실패 — 부활 위험 동작(outbox 복원) 보류`, err);
+    }
+  }
+
+  // 의도적 재생성: 해당 tombstone 을 list 로 얻은 url 로 삭제(재시도) — 영구 부활
+  // 차단 해제의 핵심이므로 best-effort 가 아니라 재시도한다. in-memory 에서도 빼서
+  // 이번 쓰기는 무조건 보존(아래 tombEnc 에서 revived 제외).
+  if (revivedEnc.size > 0) {
+    const urlByEnc = new Map(tombRefs.map((t) => [t.enc, t.url]));
+    await Promise.all([...revivedEnc].map((e) => delTombstone(filename, e, urlByEnc.get(e))));
+  }
+  // 삭제 의도를 영속 — 이후 단계가 모두 이 tombstone 을 신뢰한다.
+  if (removed.size > 0) await putTombstones(filename, [...removed], nowMs);
+
   let merged = next;
+  let freshEnc: Set<string> | null = null;
   try {
     const freshRaw = hasBlob ? await blobReadRawUncached(filename) : fsReadRaw(filename);
     if (freshRaw === NOT_FOUND && next.length > 0) {
-      // 이번 수정이 겨냥한 바로 그 시그니처(데이터가 있어야 하는데 인덱스에
-      // 안 보임) — merge 는 불가능하지만 최소한 흔적은 남긴다.
       console.warn(`[db:write-merged] ${filename}: fresh read NOT_FOUND — merge 생략 (list 전파 지연 의심)`);
     }
     if (Array.isArray(freshRaw)) {
       const fresh = freshRaw as T[];
-      const nextIds = new Set(
-        next.map((r) => r?.id).filter((id): id is string => typeof id === 'string'),
-      );
-      const removed = new Set(options.removedIds ?? []);
-      const resurrected = fresh.filter(
-        (r) => typeof r?.id === 'string' && !nextIds.has(r.id) && !removed.has(r.id),
-      );
+      freshEnc = new Set(fresh.map(enc).filter((e): e is string => e !== null));
+      const nextEnc = new Set(next.map(enc).filter((e): e is string => e !== null));
+      const resurrected = fresh.filter((r) => {
+        const e = enc(r);
+        return e !== null && !nextEnc.has(e) && !removedEnc.has(e);
+      });
       if (resurrected.length > 0) {
         console.warn(
           `[db:write-merged] ${filename}: 동시 쓰기 감지 — ${resurrected.length}건 보존`,
-          resurrected.map((r) => r.id),
+          resurrected.map(key),
         );
         merged = [...next, ...resurrected];
       }
@@ -383,7 +654,171 @@ export async function writeDataMerged<T extends { id?: unknown }>(
   } catch (err) {
     console.warn(`[db:write-merged] ${filename}: merge 용 fresh read 실패 — merge 생략`, err);
   }
+
+  const tombEnc = new Set(tombRefs.map((t) => t.enc));
+  for (const e of removedEnc) tombEnc.add(e);
+  for (const e of revivedEnc) tombEnc.delete(e); // 재생성 키는 제외 대상에서 뺀다
+
+  // outbox 복원 — 배열에서 빠진 append 사본을 되살린다. tomb 확인 실패 시
+  // 부활 위험을 피해 복원 자체를 건너뛴다(fail-closed).
+  let outboxRefs: BlobRef[] = [];
+  if (hasBlob && OUTBOX_FILES.has(filename) && tombOk) {
+    try {
+      outboxRefs = await listKeyed(outboxPrefix(filename));
+    } catch (err) {
+      console.warn(`[db:outbox] ${filename}: list 실패 — 쓰기 복원 생략`, err);
+    }
+    if (outboxRefs.length > 0) {
+      const haveEnc = new Set(merged.map(enc).filter((e): e is string => e !== null));
+      const missing = outboxRefs.filter((e) => !haveEnc.has(e.enc) && !tombEnc.has(e.enc));
+      if (missing.length > 0) {
+        const fetched: T[] = [];
+        await Promise.all(
+          missing.map(async (e) => {
+            try {
+              const res = await fetch(`${e.url}?_=${Date.now()}`, { cache: 'no-store' });
+              if (res.ok) fetched.push((await res.json()) as T);
+            } catch { /* 다음 접근에서 재시도 */ }
+          }),
+        );
+        if (fetched.length > 0) {
+          console.warn(`[db:outbox] ${filename}: 배열 누락 ${fetched.length}건을 쓰기에 복원`);
+          merged = [...merged, ...fetched];
+        }
+      }
+    }
+  }
+
+  // tombstone 제외 — 삭제 의도가 outbox 복원·stale next 어느 쪽으로도 부활 못 하게
+  // 최종 결과에서 한 번 더 걸러낸다 (revivedIds 는 위에서 tombEnc 에서 빠졌으므로 보존).
+  if (tombEnc.size > 0) {
+    const before = merged.length;
+    merged = merged.filter((r) => {
+      const e = enc(r);
+      return e === null || !tombEnc.has(e);
+    });
+    if (merged.length !== before) {
+      console.warn(`[db:tomb] ${filename}: 삭제 의도 적용 — ${before - merged.length}건 제외`);
+    }
+  }
+
   await writeRaw(filename, merged);
+
+  // ── 청소 (fire-and-forget; pathname 기반이라 콘텐츠 fetch 실패와 무관) ──
+  // outbox: 삭제(tombstone) entry 즉시 제거 + '배열 영속 확인 후 10분 경과' 제거.
+  //         방금 복원된 신규 entry 는 freshEnc 에 없어 보존.
+  for (const e of outboxRefs) {
+    const isTombstoned = tombEnc.has(e.enc);
+    const healed = freshEnc?.has(e.enc) === true && nowMs - e.uploadedAt > OUTBOX_HEAL_AGE_MS;
+    if (isTombstoned || healed) {
+      del(e.url).catch((err) => console.warn(`[db:outbox] ${filename}: entry 청소 실패`, err));
+    }
+  }
+  // tombstone: 대응 outbox entry 가 없고 TTL(90일) 경과한 것만 제거 (위에서 로드한 tombRefs 재사용).
+  if (tombRefs.length > 0) {
+    const liveOutbox = new Set(outboxRefs.map((e) => e.enc));
+    for (const t of tombRefs) {
+      if (!liveOutbox.has(t.enc) && nowMs - t.uploadedAt > TOMBSTONE_TTL_MS) {
+        del(t.url).catch(() => {});
+      }
+    }
+  }
+}
+
+// 고객 유입 레코드의 내구성 있는 append.
+// ① 레코드별 outbox blob 을 먼저 생성 (create — 다른 쓰기와 충돌 불가)
+// ② 배열에 merged write. ②가 실패해도 ①이 성공했으면 레코드는 이미
+//    내구 저장된 상태 — 이후 읽기/쓰기의 outbox union 이 자동 복원하므로
+//    접수 자체는 성공으로 처리한다 (merged: false 로 구분만).
+export async function appendData<T extends { id: string }>(
+  filename: string,
+  record: T,
+): Promise<{ merged: boolean }> {
+  let durable = false;
+  if (hasBlob && OUTBOX_FILES.has(filename)) {
+    const e = encKey(record.id);
+    if (e) {
+      try {
+        await put(`${outboxPrefix(filename)}${e}.json`, JSON.stringify(record, null, 2), {
+          access: 'public',
+          addRandomSuffix: false,
+          allowOverwrite: true,
+          contentType: 'application/json',
+          cacheControlMaxAge: 0,
+        });
+        durable = true;
+      } catch (err) {
+        console.warn(`[db:append] ${filename}: outbox put 실패 — 배열 쓰기로만 진행`, err);
+      }
+    } else {
+      console.warn(`[db:append] ${filename}: id(${record.id}) 인코딩 실패 — outbox 생략`);
+    }
+  }
+  try {
+    const base = await readDataForWrite<T>(filename);
+    if (!base.some((r) => r.id === record.id)) base.push(record);
+    await writeDataMerged(filename, base);
+    return { merged: true };
+  } catch (err) {
+    if (durable) {
+      console.error(
+        `[db:append] ${filename}: 배열 쓰기 실패 — outbox 영속분(${record.id})이 다음 접근에서 자동 복원됨`,
+        err,
+      );
+      return { merged: false };
+    }
+    throw err;
+  }
+}
+
+// 파일의 모든 tombstone 을 제거 (백업 복원 전용). 복원은 스냅샷을 '권위 있는
+// 진실'로 보는 full-replace 이므로, 과거 삭제로 남은 tombstone 이 복원된 레코드를
+// 다시 지우지 못하게 먼저 비운다. list·del 모두 재시도(재삭제 필터가 재시도하는
+// 만큼 청소도 끈질겨야 비대칭 유실이 없다). 끝내 실패하면 false 반환 →
+// restoreData 가 fail-closed 로 복원을 중단(거짓 success 후 재삭제 방지).
+export async function purgeTombstones(filename: string): Promise<boolean> {
+  if (!hasBlob || !TOMBSTONE_FILES.has(filename)) return true;
+  let refs: BlobRef[];
+  try {
+    refs = await loadTombRefs(filename); // 재시도 포함, 실패 시 throw
+  } catch (err) {
+    console.warn(`[db:tomb] ${filename}: purge list 실패 — 복원 중단 신호`, err);
+    return false;
+  }
+  if (refs.length === 0) return true;
+  const results = await Promise.all(
+    refs.map(async (r) => {
+      for (let a = 0; a < BLOB_READ_MAX_ATTEMPTS; a++) {
+        if (a > 0) await sleep(BLOB_READ_BACKOFF_MS[a] ?? 500);
+        try { await del(r.url); return true; } catch { /* 재시도 */ }
+      }
+      return false;
+    }),
+  );
+  const ok = results.every(Boolean);
+  console.log(`[db:tomb] ${filename}: 복원 위해 tombstone ${refs.length}건 제거 (성공=${ok})`);
+  return ok;
+}
+
+// 백업 복원 전용 쓰기 — 스냅샷 배열로 full-replace 하되, 먼저 tombstone 을
+// 비워 복원된(과거 삭제된) 레코드가 reconcile/merge 필터에 다시 지워지지 않게 한다.
+// merge 안 함(복원은 의도적 전체 교체). outbox-only 의 post-snapshot append 는
+// 다음 read 의 reconcile 이 보존한다. tombstone 청소가 끝내 실패하면 throw —
+// 거짓 success 로 복원분이 조용히 재삭제되는 것보다, 명확히 실패시켜 재시도를
+// 유도한다(복원 호출자는 pre-restore 스냅샷 롤백 포인트를 이미 갖는다).
+// 잔여 한계: del 성공 후에도 Blob list 인덱스 전파 지연(수초) 동안 같은 파일에
+// 쓰기가 일어나면 stale tombstone 으로 복원분이 재삭제될 수 있다 — 복원은 드물고
+// 의도적인 작업이라 수용 가능한 잔여 창으로 둔다.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function restoreData<T = any>(filename: string, data: T[]): Promise<void> {
+  const purged = await purgeTombstones(filename); // 먼저 삭제 흔적 제거 → 복원 레코드 생존 보장
+  if (!purged) {
+    throw new Error(
+      `[db] ${filename}: 복원 전 tombstone 정리에 실패했습니다. 복원된 데이터가 ` +
+        '재삭제될 위험이 있어 복원을 중단합니다. 잠시 후 다시 시도하세요. (pre-restore 스냅샷으로 롤백 가능)'
+    );
+  }
+  await writeRaw(filename, data);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

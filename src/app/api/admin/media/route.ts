@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const media = await readDataUncached('media');
+    const media = await readDataForWrite('media');
 
     const newItem: MediaItem = {
       id: body.id || `m-${Date.now()}`,
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     };
 
     media.push(newItem);
-    await writeData('media', media);
+    await writeDataMerged('media', media);
 
     await logAdmin('media', 'create', {
       targetId: newItem.id,
@@ -88,7 +88,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const media = await readDataUncached('media');
+    const media = await readDataForWrite('media');
     const index = media.findIndex((m) => m.id === body.id);
 
     if (index === -1) {
@@ -99,7 +99,7 @@ export async function PUT(request: Request) {
     }
 
     media[index] = { ...media[index], ...body };
-    await writeData('media', media);
+    await writeDataMerged('media', media);
 
     await logAdmin('media', 'update', {
       targetId: body.id,
@@ -130,7 +130,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const media = await readDataUncached('media');
+    const media = await readDataForWrite('media');
     const index = media.findIndex((m) => m.id === body.id);
 
     if (index === -1) {
@@ -143,7 +143,8 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `media delete ${body.id}`);
 
     const removed = media.splice(index, 1)[0];
-    await writeData('media', media);
+    // 삭제 의도를 removedIds 로 명시 — merge 가 동시 추가분만 보존하고 삭제는 부활시키지 않게.
+    await writeDataMerged('media', media, { removedIds: [body.id] });
 
     await logAdmin('media', 'delete', {
       targetId: body.id,

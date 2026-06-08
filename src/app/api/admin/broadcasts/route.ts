@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import { autoSplitMixed, type Broadcast as SharedBroadcast } from '@/lib/broadcasts';
@@ -157,10 +157,16 @@ function normalize(input: Record<string, unknown>): Record<string, unknown> {
 
 export async function GET() {
   try {
-    const raw = (await readDataUncached<Broadcast>('broadcasts')) as SharedBroadcast[];
+    // 마이그레이션 시 같은 파일에 write-back 하므로 쓰기 베이스용 read 사용
+    // (시드 폴백 베이스로 덮어쓰면 누적 레코드 유실 — 2026-06-07 사고 메커니즘).
+    const raw = (await readDataForWrite<Broadcast>('broadcasts')) as SharedBroadcast[];
     const { migrated, list } = autoSplitMixed(raw);
     if (migrated) {
-      await writeData('broadcasts', list);
+      // 전체 목록 교체 쓰기 — 베이스에 있었지만 최종 목록에 없는 id 만 의도적 제거로 명시.
+      // (현재 autoSplitMixed 는 레코드를 제거하지 않아 보통 빈 배열이지만, 레시피를 방어적으로 적용)
+      const keptIds = new Set(list.map((b) => b.id));
+      const removedIds = raw.map((b) => b.id).filter((bid) => !keptIds.has(bid));
+      await writeDataMerged('broadcasts', list, { removedIds });
       revalidateBroadcasts();
       await logAdmin('broadcasts', 'update', {
         targetId: 'auto-split',
@@ -215,9 +221,9 @@ export async function POST(request: Request) {
       updatedAt: now,
     };
 
-    const broadcasts = await readDataUncached('broadcasts');
+    const broadcasts = await readDataForWrite('broadcasts');
     broadcasts.push(item);
-    await writeData('broadcasts', broadcasts);
+    await writeDataMerged('broadcasts', broadcasts);
     revalidateBroadcasts();
 
     await logAdmin('broadcasts', 'create', {
@@ -247,7 +253,7 @@ export async function PUT(request: Request) {
     }
 
     const { id, ...rest } = parsed.data;
-    const broadcasts = await readDataUncached('broadcasts');
+    const broadcasts = await readDataForWrite('broadcasts');
     const index = broadcasts.findIndex((b) => b.id === id);
     if (index === -1) {
       return NextResponse.json(
@@ -279,7 +285,7 @@ export async function PUT(request: Request) {
     }
     merged.updatedAt = nowIso;
     broadcasts[index] = merged as unknown as Broadcast;
-    await writeData('broadcasts', broadcasts);
+    await writeDataMerged('broadcasts', broadcasts);
     revalidateBroadcasts();
 
     await logAdmin('broadcasts', 'update', {
@@ -306,7 +312,7 @@ export async function DELETE(request: Request) {
         { status: 400 }
       );
     }
-    const broadcasts = await readDataUncached('broadcasts');
+    const broadcasts = await readDataForWrite('broadcasts');
     const index = broadcasts.findIndex((b) => b.id === body.id);
     if (index === -1) {
       return NextResponse.json(
@@ -317,7 +323,8 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `broadcasts delete ${body.id}`);
 
     const removed = broadcasts.splice(index, 1)[0];
-    await writeData('broadcasts', broadcasts);
+    // 삭제 의도를 removedIds 로 명시 — merge 가 동시 추가분만 보존하고 삭제는 부활시키지 않게.
+    await writeDataMerged('broadcasts', broadcasts, { removedIds: [body.id] });
     revalidateBroadcasts();
     await logAdmin('broadcasts', 'delete', {
       targetId: body.id,

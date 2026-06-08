@@ -1,5 +1,5 @@
 import { list, put, del } from '@vercel/blob';
-import { readData, readSingle, writeData, writeSingle, isBlobEnabled } from './db';
+import { readDataUncached, readSingle, writeSingle, restoreData, isBlobEnabled } from './db';
 import { pushSnapshotToGitHub, isGitHubBackupConfigured, fetchGitHubBackup, listGitHubBackups, type GitHubBackupEntry } from './backup-github';
 import { sendEmailBackup, isEmailBackupConfigured } from './backup-email';
 import { encryptString, decryptString, isEncryptionConfigured, looksEncrypted } from './backup-crypto';
@@ -76,7 +76,9 @@ export async function createSnapshot(
   const data: Partial<Record<DbKey | SingletonKey, unknown>> = {};
   for (const f of DB_FILES) {
     try {
-      data[f] = await readData(f);
+      // unstable_cache 우회 — pre-delete 등 삭제 직전 스냅샷이 최대 5분
+      // stale 한 캐시가 아니라 blob 의 최신 데이터를 담도록 uncached 로 읽는다.
+      data[f] = await readDataUncached(f);
     } catch (err) {
       // 일시 장애도 스냅샷을 막지 말고 빈 배열로 대체. 로그만 남김.
       console.error(`[backup] read failed for ${f}`, err);
@@ -324,7 +326,11 @@ export async function restoreFromPayload(
     }
     const value = payload.data[key];
     if (Array.isArray(value)) {
-      await writeData(key, value);
+      // 의도적 전체 교체(full-replace) — 복원은 스냅샷 시점 상태로 되돌리는 것이
+      // 목적이므로 writeDataMerged 로 바꾸면 안 된다 (merge 가 복원을 오염시킴).
+      // restoreData 는 먼저 tombstone 을 비워, 과거 삭제로 남은 흔적이 복원된
+      // 레코드를 reconcile/merge 단계에서 다시 지우지 못하게 한다.
+      await restoreData(key, value);
       restored.push(key);
     } else if (value === undefined || value === null) {
       missingInBackup.push(key);

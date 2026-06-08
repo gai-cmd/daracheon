@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import {
   BLOG_CATEGORIES_FILE,
@@ -85,8 +85,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const categories = await readDataUncached<BlogCategory>(BLOG_CATEGORIES_FILE);
-    const posts = await readDataUncached<BlogPost>(BLOG_POSTS_FILE);
+    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
+    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
     const categoryIdRaw = typeof body?.categoryId === 'string' ? body.categoryId : '';
     const categoryId =
       categoryIdRaw && categories.some((c) => c.id === categoryIdRaw)
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
         createdAt: seedNow,
         updatedAt: seedNow,
       });
-      await writeData(BLOG_CATEGORIES_FILE, categories);
+      await writeDataMerged(BLOG_CATEGORIES_FILE, categories);
     }
 
     const slugBase =
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
     };
 
     posts.push(post);
-    await writeData(BLOG_POSTS_FILE, posts);
+    await writeDataMerged(BLOG_POSTS_FILE, posts);
     revalidateBlog(post.slug, post.categoryId);
     await logAdmin('blog', 'create', {
       targetId: post.id,
@@ -178,7 +178,7 @@ export async function PATCH(request: Request) {
     }
     const status = normalizeStatus(body?.status);
     const idSet = new Set<string>(body.ids as string[]);
-    const posts = await readDataUncached<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
     const now = new Date().toISOString();
     let updated = 0;
     for (const p of posts) {
@@ -190,7 +190,7 @@ export async function PATCH(request: Request) {
       }
     }
     if (updated > 0) {
-      await writeData(BLOG_POSTS_FILE, posts);
+      await writeDataMerged(BLOG_POSTS_FILE, posts);
       revalidateBlog();
       await logAdmin('blog', 'bulk_update', {
         summary: `블로그 일괄 ${status === 'published' ? '발행' : '비공개'}: ${updated}건`,

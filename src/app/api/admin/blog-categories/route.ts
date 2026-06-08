@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import {
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const categories = await readDataUncached<BlogCategory>(BLOG_CATEGORIES_FILE);
+    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
     const baseId = typeof body?.id === 'string' && body.id ? slugify(body.id) : slugify(name);
     let id = baseId || 'category';
     let n = 2;
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     };
 
     categories.push(next);
-    await writeData(BLOG_CATEGORIES_FILE, categories);
+    await writeDataMerged(BLOG_CATEGORIES_FILE, categories);
     revalidateBlogPaths();
     await logAdmin('blog-categories', 'create', {
       targetId: id,
@@ -100,7 +100,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const categories = await readDataUncached<BlogCategory>(BLOG_CATEGORIES_FILE);
+    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
     const idx = categories.findIndex((c) => c.id === body.id);
     if (idx === -1) {
       return NextResponse.json(
@@ -119,7 +119,7 @@ export async function PUT(request: Request) {
       updatedAt: new Date().toISOString(),
     };
     categories[idx] = next;
-    await writeData(BLOG_CATEGORIES_FILE, categories);
+    await writeDataMerged(BLOG_CATEGORIES_FILE, categories);
     revalidateBlogPaths();
     await logAdmin('blog-categories', 'update', {
       targetId: next.id,
@@ -147,7 +147,7 @@ export async function DELETE(request: Request) {
     }
     const reassignTo = typeof body?.reassignTo === 'string' ? body.reassignTo : undefined;
 
-    const categories = await readDataUncached<BlogCategory>(BLOG_CATEGORIES_FILE);
+    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
     const target = categories.find((c) => c.id === body.id);
     if (!target) {
       return NextResponse.json(
@@ -156,7 +156,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const posts = await readDataUncached<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
     const inUse = posts.filter((p) => p.categoryId === body.id);
 
     if (inUse.length > 0) {
@@ -196,10 +196,11 @@ export async function DELETE(request: Request) {
           p.updatedAt = now;
         }
       }
-      await writeData(BLOG_POSTS_FILE, posts);
+      await writeDataMerged(BLOG_POSTS_FILE, posts);
 
       const next = categories.filter((c) => c.id !== body.id);
-      await writeData(BLOG_CATEGORIES_FILE, next);
+      // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않도록.
+      await writeDataMerged(BLOG_CATEGORIES_FILE, next, { removedIds: [body.id] });
       revalidateBlogPaths();
       await logAdmin('blog-categories', 'delete', {
         targetId: body.id,
@@ -214,9 +215,9 @@ export async function DELETE(request: Request) {
       });
     }
 
-    // 빈 카테고리 — 단순 삭제
+    // 빈 카테고리 — 단순 삭제 (삭제 id 는 removedIds 로 명시해 merge 부활 방지)
     const next = categories.filter((c) => c.id !== body.id);
-    await writeData(BLOG_CATEGORIES_FILE, next);
+    await writeDataMerged(BLOG_CATEGORIES_FILE, next, { removedIds: [body.id] });
     revalidateBlogPaths();
     await logAdmin('blog-categories', 'delete', {
       targetId: body.id,
@@ -251,7 +252,7 @@ export async function PATCH(request: Request) {
         .map((o: { id: string; order: number }) => [o.id, o.order])
     );
 
-    const categories = await readDataUncached<BlogCategory>(BLOG_CATEGORIES_FILE);
+    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
     const now = new Date().toISOString();
     let mutated = false;
     for (const c of categories) {
@@ -263,7 +264,7 @@ export async function PATCH(request: Request) {
       }
     }
     if (mutated) {
-      await writeData(BLOG_CATEGORIES_FILE, categories);
+      await writeDataMerged(BLOG_CATEGORIES_FILE, categories);
       revalidateBlogPaths();
       await logAdmin('blog-categories', 'update', {
         summary: `블로그 카테고리 순서 변경 (${map.size}개)`,

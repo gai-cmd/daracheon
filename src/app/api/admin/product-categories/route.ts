@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { readData, readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product } from '@/data/products';
@@ -107,10 +107,10 @@ export async function PUT(request: Request) {
     const finalIds = new Set(finalList.map((c) => c.id));
     const labelEnById = new Map(finalList.map((c) => [c.id, c.labelEn]));
 
-    // 기존 카테고리 + 제품 로드.
-    const prevCategories = await readData<ProductCategory>('productCategories');
+    // 기존 카테고리 + 제품 로드 (둘 다 이후 다시 쓰는 RMW 베이스).
+    const prevCategories = await readDataForWrite<ProductCategory>('productCategories');
     const prevIds = new Set(prevCategories.map((c) => c.id));
-    const products = await readData<Product>('products');
+    const products = await readDataForWrite<Product>('products');
 
     // rename 맵: originalId(기존 DB 에 존재) → 새 id (서로 다를 때만).
     const renameMap = new Map<string, string>();
@@ -179,10 +179,14 @@ export async function PUT(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, 'product-categories replace');
 
     // 제품 변경분이 있으면 먼저 저장 (실패 시 카테고리는 그대로).
+    // 카테고리 필드 수정만 있고 삭제는 없으므로 removedIds 불필요.
     if (mutated) {
-      await writeData('products', updatedProducts);
+      await writeDataMerged('products', updatedProducts);
     }
-    await writeData('productCategories', finalList);
+    // 전체 목록 교체 — 베이스에 있었지만 최종 목록에서 빠진 id 는
+    // removedIds 로 명시해야 merge 가 삭제를 부활시키지 않는다.
+    const removedCategoryIds = Array.from(prevIds).filter((id) => !finalIds.has(id));
+    await writeDataMerged('productCategories', finalList, { removedIds: removedCategoryIds });
     revalidateAll();
 
     const summaryParts: string[] = [`카테고리 ${finalList.length}개`];

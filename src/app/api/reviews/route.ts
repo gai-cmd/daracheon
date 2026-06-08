@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readData, writeData } from '@/lib/db';
+import { readData, writeData, appendData } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
 import type { Review } from '@/data/reviews';
 
@@ -78,6 +78,7 @@ async function checkRateLimit(ip: string): Promise<boolean> {
   }
 }
 
+// 'rate-limit' 파일: 임시 데이터, 유실 무해 — 안전 프리미티브 의도적 미적용.
 async function recordRateLimitEntry(ip: string): Promise<void> {
   try {
     const entries = await readData<RateLimitEntry>('rate-limit');
@@ -147,9 +148,9 @@ export async function POST(request: Request) {
       verified: false,
     };
 
-    const reviews = await readData('reviews');
-    reviews.push(newReview);
-    await writeData('reviews', reviews);
+    // 내구성 append — outbox 사본을 먼저 남기고 배열에 merged write.
+    // 배열 쓰기가 어떤 경위로 레코드를 잃어도 outbox union 이 자동 복원.
+    await appendData('reviews', newReview);
 
     // 레이트 리밋 기록
     if (ip) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createLead, listLeads, recentByEmail } from '@/lib/leads';
+import { createLead, recentByEmail, type Lead } from '@/lib/leads';
+import { readDataForWrite } from '@/lib/db';
 import { sendEditionVerification } from '@/lib/edition-mail';
 
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -59,7 +60,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const v = requestSchema.parse(body);
 
-    const all = await listLeads();
+    // 중복신청 검사는 쓰기 직전 가드 — 캐시·시드 폴백 없는 readDataForWrite 로
+    // outbox 에만 있는(배열 쓰기 전) 신청까지 포함해 확인.
+    const all = await readDataForWrite<Lead>('leads');
     const recent = recentByEmail(all, v.email, RATE_WINDOW_MS);
     if (recent.length > 0) {
       return NextResponse.json(

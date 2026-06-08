@@ -5,7 +5,7 @@ import {
   SESSION_MAX_AGE_SECONDS,
   createSessionToken,
 } from '@/lib/auth';
-import { readData, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import type { AuditEntry } from '@/lib/audit';
 import { verifyPassword, type AdminUser } from '@/lib/admin-users';
 import { verifyTOTPOnce } from '@/lib/totp';
@@ -29,7 +29,7 @@ async function auditLogin(
   summary: string
 ) {
   try {
-    const entries = await readData('audit-log');
+    const entries = await readDataForWrite<AuditEntry>('audit-log');
     entries.push({
       id: `a-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
       at: new Date().toISOString(),
@@ -39,8 +39,9 @@ async function auditLogin(
       action,
       summary,
     });
-    if (entries.length > 2000) entries.splice(0, entries.length - 2000);
-    await writeData('audit-log', entries);
+    // 2000건 트림으로 밀려난 entry 는 removedIds 로 전달 — merge 시 부활 방지.
+    const trimmed = entries.length > 2000 ? entries.splice(0, entries.length - 2000) : [];
+    await writeDataMerged('audit-log', entries, { removedIds: trimmed.map((e) => e.id) });
   } catch (err) {
     console.error('[Audit] login log failed:', err);
   }
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
     let matchedDbUser: AdminUser | undefined;
 
     try {
-      const users = await readData('admin-users');
+      const users = await readDataForWrite<AdminUser>('admin-users');
       const userIndex = users.findIndex((u) => u.email === normalizedEmail);
       if (userIndex >= 0) {
         const user = users[userIndex];
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
                 auditLogin(normalizedEmail, user.role, 'login_locked', `2FA 실패 ${MAX_ATTEMPTS}회로 ${LOCK_MINUTES}분 잠금`);
               }
               users[userIndex] = user;
-              await writeData('admin-users', users);
+              await writeDataMerged('admin-users', users);
               return NextResponse.json(
                 { success: false, message: '2단계 인증 코드가 올바르지 않습니다.', requiresTotp: true },
                 { status: 401 }
@@ -120,7 +121,7 @@ export async function POST(request: Request) {
           user.failedAttempts = 0;
           delete user.lockedUntil;
           users[userIndex] = user;
-          await writeData('admin-users', users);
+          await writeDataMerged('admin-users', users);
         } else {
           // 비밀번호 실패
           user.failedAttempts = (user.failedAttempts ?? 0) + 1;
@@ -131,7 +132,7 @@ export async function POST(request: Request) {
             auditLogin(normalizedEmail, user.role, 'login_failed', `비밀번호 실패 (${user.failedAttempts}/${MAX_ATTEMPTS})`);
           }
           users[userIndex] = user;
-          await writeData('admin-users', users);
+          await writeDataMerged('admin-users', users);
         }
       }
     } catch (dbErr) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readDataForWrite, writeDataMerged, readSingleSafe } from '@/lib/db';
+import { readDataForWrite, appendData, readSingleSafe } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
 import { appendToGoogleSheet, notifyTelegram, sendTelegramMessage, type InquiryPayload } from '@/lib/integrations';
 
@@ -126,9 +126,9 @@ export async function POST(request: NextRequest) {
       createdAt: nowIso,
     };
 
-    inquiries.push(newInquiry);
-    // merged write — base read 이후 다른 인스턴스가 추가한 레코드를 보존.
-    await writeDataMerged('inquiries', inquiries);
+    // 내구성 append — outbox 사본을 먼저 남기고 배열에 merged write.
+    // 배열 쓰기가 어떤 경위로 레코드를 잃어도 outbox union 이 자동 복원.
+    await appendData('inquiries', newInquiry);
 
     // ID 만 로그. 이름/이메일/메시지는 감사 로그/모니터링에 남기지 않음.
     console.log('[Contact Form] 새 문의 접수 id=%s', newInquiry.id);

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const faq = await readDataUncached('faq');
+    const faq = await readDataForWrite('faq');
 
     const newItem: FaqItem = {
       id: body.id || `faq-${Date.now()}`,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     };
 
     faq.push(newItem);
-    await writeData('faq', faq);
+    await writeDataMerged('faq', faq);
     revalidateFaq();
 
     await logAdmin('faq', 'create', {
@@ -96,7 +96,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const faq = await readDataUncached('faq');
+    const faq = await readDataForWrite('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {
@@ -114,7 +114,7 @@ export async function PUT(request: Request) {
     };
 
     faq[index] = updated;
-    await writeData('faq', faq);
+    await writeDataMerged('faq', faq);
     revalidateFaq();
 
     await logAdmin('faq', 'update', {
@@ -146,7 +146,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const faq = await readDataUncached('faq');
+    const faq = await readDataForWrite('faq');
     const index = faq.findIndex((f) => f.id === body.id);
 
     if (index === -1) {
@@ -159,7 +159,8 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `faq delete ${body.id}`);
 
     const removed = faq.splice(index, 1)[0];
-    await writeData('faq', faq);
+    // 삭제 의도를 removedIds 로 명시 — merge 가 동시 추가분만 보존하고 삭제는 부활시키지 않게.
+    await writeDataMerged('faq', faq, { removedIds: [body.id] });
     revalidateFaq();
 
     await logAdmin('faq', 'delete', {

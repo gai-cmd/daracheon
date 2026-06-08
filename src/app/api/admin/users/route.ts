@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readData, writeData } from '@/lib/db';
+import { readData, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { hashPassword, type AdminUser } from '@/lib/admin-users';
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     const { email, password, role } = parsed.data;
     const normalized = email.trim().toLowerCase();
 
-    const users = await readData('admin-users');
+    const users = await readDataForWrite('admin-users');
     if (users.some((u) => u.email === normalized)) {
       return NextResponse.json(
         { success: false, message: '이미 존재하는 이메일입니다.' },
@@ -73,7 +73,9 @@ export async function POST(request: Request) {
       updatedAt: now,
     };
     users.push(user);
-    await writeData('admin-users', users);
+    // revivedIds — 과거 삭제됐던 이메일로 재발급하는 경우, 남아있을 수 있는
+    // tombstone 을 무시하고 새 계정을 살린다 (의도적 재생성). 키는 FILE_KEY 중앙 등록.
+    await writeDataMerged('admin-users', users, { revivedIds: [normalized] });
 
     await logAdmin('settings', 'create', {
       targetId: normalized,
@@ -130,7 +132,7 @@ export async function PUT(request: Request) {
     const { email, role, password } = parsed.data;
     const normalized = email.trim().toLowerCase();
 
-    const users = await readData('admin-users');
+    const users = await readDataForWrite('admin-users');
     const idx = users.findIndex((u) => u.email === normalized);
     if (idx === -1) {
       return NextResponse.json(
@@ -146,7 +148,7 @@ export async function PUT(request: Request) {
       updatedAt: new Date().toISOString(),
     };
     users[idx] = updated;
-    await writeData('admin-users', users);
+    await writeDataMerged('admin-users', users);
 
     const summaryParts: string[] = [];
     if (role) summaryParts.push(`역할=${role}`);
@@ -172,7 +174,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, message: 'email 필수' }, { status: 400 });
     }
     const normalized = parsed.data.email.trim().toLowerCase();
-    const users = await readData('admin-users');
+    const users = await readDataForWrite('admin-users');
     const idx = users.findIndex((u) => u.email === normalized);
     if (idx === -1) {
       return NextResponse.json({ success: false, message: '계정을 찾을 수 없습니다.' }, { status: 404 });
@@ -197,7 +199,9 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `admin-user delete ${normalized}`);
 
     users.splice(idx, 1);
-    await writeData('admin-users', users);
+    // 삭제 의도를 removedIds 로 명시 — tombstone(키=email, FILE_KEY 중앙 등록)에
+    // 영속 기록되어 동시 로그인 write 등 stale writer 가 해임된 admin 을 부활시키지 못한다.
+    await writeDataMerged('admin-users', users, { removedIds: [normalized] });
 
     await logAdmin('settings', 'delete', {
       targetId: normalized,

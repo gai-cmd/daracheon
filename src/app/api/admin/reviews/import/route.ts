@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { parseCSV, buildHeaderMap, cellGetter } from '@/lib/csv-parser';
 import type { Review } from '@/data/reviews';
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const reviews = await readData('reviews');
+    const reviews = await readDataForWrite('reviews');
     let created = 0;
     let updated = 0;
     const errors: Array<{ row: number; message: string }> = [];
@@ -74,7 +74,8 @@ export async function POST(request: Request) {
       }
     }
 
-    await writeData('reviews', reviews);
+    // upsert(신규/수정)만 있고 삭제 없음 — removedIds 불필요.
+    await writeDataMerged('reviews', reviews);
 
     await logAdmin('reviews', 'bulk_update', {
       summary: `리뷰 CSV import: 신규 ${created}, 수정 ${updated}, 오류 ${errors.length}`,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import type { Product } from '@/data/products';
 
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const products = await readData('products');
+    const products = await readDataForWrite('products');
     const byId = new Map(products.map((p) => [p.id, p]));
     const bySlug = new Map(products.map((p) => [p.slug, p]));
 
@@ -211,7 +211,8 @@ export async function POST(request: Request) {
       }
     }
 
-    await writeData('products', products);
+    // import 는 추가/수정(upsert)만 하고 삭제는 없으므로 removedIds 불필요.
+    await writeDataMerged('products', products);
 
     await logAdmin('products', 'bulk_update', {
       summary: `CSV 일괄 import: 신규 ${created}건, 수정 ${updated}건, 오류 ${errors.length}건`,

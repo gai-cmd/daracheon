@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { readData, writeData } from '@/lib/db';
+import { readData, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
 import { logAdmin } from '@/lib/audit';
 import { hashPassword, type AdminUser } from '@/lib/admin-users';
@@ -38,17 +38,21 @@ export async function POST(request: Request) {
 
     if (user) {
       const rawToken = crypto.randomBytes(32).toString('hex');
-      const tokens = await readData('password-reset-tokens');
+      const tokens = await readDataForWrite<ResetToken>('password-reset-tokens');
       const expiresAt = new Date(Date.now() + TOKEN_TTL_MINUTES * 60_000).toISOString();
       tokens.push({
         token: hashToken(rawToken),
         email: emailRaw,
         expiresAt,
       });
-      // 만료/사용된 토큰 정리
+      // 만료/사용된 토큰 정리. 청소로 제거되는 토큰은 removedIds 로 명시해
+      // merge 부활을 차단 (ResetToken 은 id 필드가 없어 token 해시를 식별자로 전달).
       const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-      const cleaned = tokens.filter((t) => !t.used && new Date(t.expiresAt).getTime() > cutoff);
-      await writeData('password-reset-tokens', cleaned);
+      const isLive = (t: ResetToken) => !t.used && new Date(t.expiresAt).getTime() > cutoff;
+      const cleaned = tokens.filter(isLive);
+      const prunedIds = tokens.filter((t) => !isLive(t)).map((t) => t.token);
+      // ResetToken 은 id 가 없으니 token 해시를 키로 — merge·tombstone 이 동작하도록.
+      await writeDataMerged('password-reset-tokens', cleaned, { removedIds: prunedIds });
 
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
       const resetUrl = `${siteUrl}/admin/password-reset?token=${rawToken}&email=${encodeURIComponent(emailRaw)}`;
@@ -111,7 +115,7 @@ export async function PUT(request: Request) {
     }
 
     const hashed = hashToken(token);
-    const tokens = await readData('password-reset-tokens');
+    const tokens = await readDataForWrite<ResetToken>('password-reset-tokens');
     const matchIdx = tokens.findIndex(
       (t) => t.token === hashed && t.email === email && !t.used && new Date(t.expiresAt).getTime() > Date.now()
     );
@@ -122,7 +126,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const users = await readData('admin-users');
+    const users = await readDataForWrite('admin-users');
     const uIdx = users.findIndex((u) => u.email === email);
     if (uIdx === -1) {
       return NextResponse.json({ success: false, message: '계정을 찾을 수 없습니다.' }, { status: 404 });
@@ -137,12 +141,13 @@ export async function PUT(request: Request) {
     if (users[uIdx].lockedUntil) {
       delete users[uIdx].lockedUntil;
     }
-    await writeData('admin-users', users);
+    await writeDataMerged('admin-users', users);
 
-    // 사용된 토큰은 used 플래그 대신 즉시 삭제. 공격자가 토큰 DB 를
-    // 훔쳐도 재활용 불가.
+    // 사용된 토큰은 즉시 삭제 + tombstone 으로 소비 사실을 영속 기록.
+    // 토큰 DB 가 stale writer 에 의해 LWW 로 덮어써져도(동시 발급 등) 소비된
+    // 토큰은 tombstone 으로 영구 부활 차단 → 단일사용 보장(재사용 공격 차단).
     tokens.splice(matchIdx, 1);
-    await writeData('password-reset-tokens', tokens);
+    await writeDataMerged('password-reset-tokens', tokens, { removedIds: [hashed] });
 
     await logAdmin('auth', 'update', {
       targetId: email,
