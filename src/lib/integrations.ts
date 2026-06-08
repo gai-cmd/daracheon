@@ -573,6 +573,89 @@ export async function notifyTelegramReply(p: ReplyPayload): Promise<IntegrationR
   }
 }
 
+/* ───────── 인바운드(고객 답신) 통지 + 시트 이력 ───────── */
+
+export interface InboundNotifyPayload {
+  inquiryId?: string;
+  from: string;
+  fromName?: string;
+  subject: string;
+  body: string;
+}
+
+/** 고객이 메일로 답신을 보냈을 때 운영팀 텔레그램 채널에 통지. */
+export async function notifyTelegramInbound(p: InboundNotifyPayload): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.telegramBotToken || !cfg.telegramChatId) {
+    return { ok: false, skipped: true, error: 'telegram not configured' };
+  }
+
+  const senderLabel = p.fromName ? `${p.fromName} <${p.from}>` : p.from;
+  const lines = [
+    `<b>📥 고객 답신 수신</b>`,
+    `<b>보낸사람:</b> ${escapeHtml(senderLabel)}`,
+    `<b>제목:</b> ${escapeHtml(p.subject || '(제목 없음)')}`,
+    p.inquiryId ? `<b>문의 매칭:</b> ${escapeHtml(p.inquiryId)}` : `<b>문의 매칭:</b> ⚠️ 미매칭 (수동 확인 필요)`,
+    ``,
+    `<b>내용</b>`,
+    escapeHtml(p.body).slice(0, 1500) || '(본문 없음)',
+  ];
+  return sendTelegramMessage(lines.join('\n'));
+}
+
+export interface InboundSheetPayload {
+  inquiryId?: string;
+  at: string;       // ISO 수신 시각
+  from: string;
+  fromName?: string;
+  subject: string;
+  body: string;
+}
+
+/** 고객 답신을 시트에 새 행으로 누적 (상태=고객답신, ID=원 문의 ID 또는 빈값). */
+export async function logInboundToSheet(p: InboundSheetPayload): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.googleSheetsUrl) return { ok: false, skipped: true, error: 'sheet url not configured' };
+
+  const spreadsheetId = extractSpreadsheetId(cfg.googleSheetsUrl);
+  if (!spreadsheetId) return { ok: false, error: '시트 URL에서 ID 를 찾지 못했습니다.' };
+
+  try {
+    const token = await getAccessToken();
+    const tabName = cfg.googleSheetsTab || (await resolveDefaultTabName(spreadsheetId, token));
+    await ensureHeader(spreadsheetId, tabName, token);
+
+    const row = [
+      shortDate(p.at),                                  // A 접수일(수신일)
+      p.fromName ? `${p.fromName} (${p.from})` : p.from, // B 회사명/이름
+      `[고객답신] ${p.subject ? p.subject + ' — ' : ''}${p.body}`, // C 문의내용
+      '',                                               // D 담당자
+      '고객답신',                                        // E 상태
+      '',                                               // F 답변기한
+      '',                                               // G 답변내용
+      '',                                               // H 완료일
+      p.inquiryId ?? '',                                // I ID
+    ];
+
+    const range = encodeURIComponent(`${tabName}!A:I`);
+    const url =
+      `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append` +
+      `?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [row] }),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      return { ok: false, error: `HTTP ${res.status} ${text.slice(0, 300)}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 /* ───────── 텔레그램 진단: 봇이 본 채팅 목록 ───────── */
 
 export interface TelegramChatHint {

@@ -769,6 +769,11 @@ interface MailSettingsForm {
   mailFrom: string;
   adminEmail: string;
   resendApiKey: string;
+  imapHost: string;
+  imapPort: number | '';
+  imapUser: string;
+  imapPass: string;
+  inboundEnabled: boolean;
 }
 
 function MailSettingsSection({
@@ -782,6 +787,7 @@ function MailSettingsSection({
 }) {
   const [loading, setLoading] = useState(true);
   const [testing, setTesting] = useState(false);
+  const [testingImap, setTestingImap] = useState(false);
   const [form, setForm] = useState<MailSettingsForm>({
     smtpHost: '',
     smtpPort: 465,
@@ -790,6 +796,11 @@ function MailSettingsSection({
     mailFrom: '',
     adminEmail: '',
     resendApiKey: '',
+    imapHost: '',
+    imapPort: 993,
+    imapUser: '',
+    imapPass: '',
+    inboundEnabled: false,
   });
 
   useEffect(() => {
@@ -804,11 +815,34 @@ function MailSettingsSection({
           mailFrom: data.mailFrom ?? '',
           adminEmail: data.adminEmail ?? '',
           resendApiKey: data.resendApiKey ?? '',
+          imapHost: data.imapHost ?? '',
+          imapPort: data.imapPort ?? 993,
+          imapUser: data.imapUser ?? '',
+          imapPass: data.imapPass ?? '',
+          inboundEnabled: data.inboundEnabled ?? false,
         });
       })
       .catch(() => onToast('메일 설정 로드 실패'))
       .finally(() => setLoading(false));
   }, [onToast]);
+
+  // Gmail 원클릭 프리셋 — zoellife.one@gmail.com 송·수신 표준값 자동 입력.
+  // 앱 비밀번호 두 칸만 채우면 됨.
+  function applyGmailPreset() {
+    setForm((f) => ({
+      ...f,
+      smtpHost: 'smtp.gmail.com',
+      smtpPort: 465,
+      smtpUser: f.smtpUser || 'zoellife.one@gmail.com',
+      mailFrom: f.mailFrom || '대라천 고객지원 <zoellife.one@gmail.com>',
+      adminEmail: f.adminEmail || 'zoellife.one@gmail.com',
+      imapHost: 'imap.gmail.com',
+      imapPort: 993,
+      imapUser: f.imapUser || 'zoellife.one@gmail.com',
+      inboundEnabled: true,
+    }));
+    onToast('Gmail 표준값을 채웠습니다. 앱 비밀번호 입력 후 저장하세요.');
+  }
 
   async function save() {
     setSaving(true);
@@ -819,6 +853,7 @@ function MailSettingsSection({
         body: JSON.stringify({
           ...form,
           smtpPort: typeof form.smtpPort === 'number' ? form.smtpPort : Number(form.smtpPort) || 465,
+          imapPort: typeof form.imapPort === 'number' ? form.imapPort : Number(form.imapPort) || 993,
         }),
       });
       if (!res.ok) throw new Error('save failed');
@@ -828,12 +863,30 @@ function MailSettingsSection({
         ...f,
         smtpPass: data.settings?.smtpPass ?? '',
         resendApiKey: data.settings?.resendApiKey ?? '',
+        imapPass: data.settings?.imapPass ?? '',
       }));
       onToast('메일 설정 저장 완료');
     } catch {
       onToast('메일 설정 저장 실패');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function testImap() {
+    setTestingImap(true);
+    try {
+      const res = await fetch('/api/admin/mail-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'test-imap' }),
+      });
+      const data = await res.json();
+      onToast(data.success ? `수신 연결 OK: ${data.message}` : `수신 연결 실패: ${data.message}`);
+    } catch (err) {
+      onToast(`수신 연결 실패: ${err instanceof Error ? err.message : '오류'}`);
+    } finally {
+      setTestingImap(false);
     }
   }
 
@@ -881,6 +934,19 @@ function MailSettingsSection({
         16자를 발급해 SMTP_PASS 에 입력. <br />
         값을 비워두면 Vercel 환경변수(<code className="text-xs bg-gray-100 px-1">SMTP_*</code>)를 사용합니다.
       </p>
+
+      <div className="mb-5">
+        <button
+          type="button"
+          onClick={applyGmailPreset}
+          className="px-4 py-2 bg-gold-50 text-gold-800 border border-gold-300 rounded-lg text-sm font-medium hover:bg-gold-100 transition-colors"
+        >
+          ⚡ Gmail 빠른 설정 (zoellife.one@gmail.com)
+        </button>
+        <span className="ml-3 text-xs text-gray-400">
+          호스트·포트·계정을 자동 입력합니다. 앱 비밀번호 두 칸만 채우면 송·수신 완료.
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <LabeledInput label="SMTP Host" value={form.smtpHost} onChange={(v) => setForm({ ...form, smtpHost: v })} />
@@ -930,17 +996,74 @@ function MailSettingsSection({
           />
           <p className="mt-1 text-xs text-gray-400">SMTP Host 가 비어있고 이 값이 설정되면 Resend HTTP API 사용.</p>
         </div>
+
+        {/* 수신(IMAP) — 고객 답신 폴링 */}
+        <div className="md:col-span-2 border-t border-gray-100 pt-5 mt-1">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-semibold text-gray-800">받는 메일 · 고객 답신 수신 (IMAP)</h3>
+            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.inboundEnabled}
+                onChange={(e) => setForm({ ...form, inboundEnabled: e.target.checked })}
+                className="rounded border-gray-300"
+              />
+              수신 폴링 사용
+            </label>
+          </div>
+          <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+            고객이 답장한 메일을 5분 간격으로 가져와 텔레그램·구글시트·관리자 히스토리에 반영합니다.
+            계정/비밀번호를 비우면 위 SMTP 계정·앱 비밀번호를 그대로 사용합니다 (같은 Gmail 앱 비밀번호).
+          </p>
+        </div>
+        <LabeledInput label="IMAP Host" value={form.imapHost} onChange={(v) => setForm({ ...form, imapHost: v })} />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">IMAP Port</label>
+          <input
+            type="number"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+            value={form.imapPort}
+            onChange={(e) => setForm({ ...form, imapPort: e.target.value === '' ? '' : Number(e.target.value) })}
+          />
+          <p className="mt-1 text-xs text-gray-400">Gmail: 993 (SSL)</p>
+        </div>
+        <LabeledInput
+          label="IMAP User (비우면 SMTP 계정 사용)"
+          value={form.imapUser}
+          onChange={(v) => setForm({ ...form, imapUser: v })}
+        />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">IMAP Password (비우면 SMTP 앱 비밀번호 사용)</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+            value={form.imapPass}
+            onChange={(e) => setForm({ ...form, imapPass: e.target.value })}
+          />
+          <p className="mt-1 text-xs text-gray-400">저장 후 ●●●● 로 마스킹. 비워두면 SMTP 비밀번호 재사용.</p>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={sendTest}
-          disabled={testing}
-          className="px-5 py-2.5 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
-        >
-          {testing ? '발송 중...' : '테스트 메일 발송'}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={sendTest}
+            disabled={testing}
+            className="px-5 py-2.5 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
+          >
+            {testing ? '발송 중...' : '테스트 메일 발송'}
+          </button>
+          <button
+            type="button"
+            onClick={testImap}
+            disabled={testingImap}
+            className="px-5 py-2.5 bg-white text-gray-800 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-60"
+          >
+            {testingImap ? '확인 중...' : '수신 연결 테스트'}
+          </button>
+        </div>
         <SaveButton onClick={save} loading={saving} />
       </div>
     </section>

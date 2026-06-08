@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { readSingleUncached, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
+import { testImapConnection } from '@/lib/inbound';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,12 @@ export interface MailSettings {
   mailFrom?: string;
   adminEmail?: string;
   resendApiKey?: string;   // 대안 경로
+  // 수신(IMAP) — 고객 답신 폴링용. user/pass 비우면 smtpUser/smtpPass 재사용(같은 Gmail 앱비번).
+  imapHost?: string;
+  imapPort?: number;
+  imapUser?: string;
+  imapPass?: string;
+  inboundEnabled?: boolean; // 켜져 있어야 cron 이 인박스를 폴링.
   updatedAt?: string;
 }
 
@@ -23,6 +30,7 @@ function maskSecrets(s: MailSettings): MailSettings {
     ...s,
     smtpPass: s.smtpPass ? PASSWORD_MASK : '',
     resendApiKey: s.resendApiKey ? PASSWORD_MASK : '',
+    imapPass: s.imapPass ? PASSWORD_MASK : '',
   };
 }
 
@@ -52,6 +60,8 @@ export async function PUT(request: Request) {
       body.resendApiKey === PASSWORD_MASK
         ? existing.resendApiKey
         : body.resendApiKey;
+    const nextImapPass =
+      body.imapPass === PASSWORD_MASK ? existing.imapPass : body.imapPass;
 
     const updated: MailSettings = {
       smtpHost: (body.smtpHost ?? '').trim(),
@@ -61,6 +71,11 @@ export async function PUT(request: Request) {
       mailFrom: (body.mailFrom ?? '').trim(),
       adminEmail: (body.adminEmail ?? '').trim(),
       resendApiKey: nextResendKey ?? '',
+      imapHost: (body.imapHost ?? '').trim(),
+      imapPort: Number(body.imapPort) || undefined,
+      imapUser: (body.imapUser ?? '').trim(),
+      imapPass: nextImapPass ?? '',
+      inboundEnabled: !!body.inboundEnabled,
       updatedAt: new Date().toISOString(),
     };
 
@@ -87,10 +102,27 @@ export async function PUT(request: Request) {
   }
 }
 
-// 테스트 발송: 저장된 설정으로 ADMIN_EMAIL (또는 body.to) 에 한 통 보냄
+// 테스트 발송: 저장된 설정으로 ADMIN_EMAIL (또는 body.to) 에 한 통 보냄.
+// action='test-imap' 이면 메일 발송 대신 IMAP 수신 연결만 점검.
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { to?: string };
+    const body = (await request.json().catch(() => ({}))) as { to?: string; action?: string };
+
+    if (body.action === 'test-imap') {
+      const result = await testImapConnection();
+      await logAdmin('mail-settings', 'test', {
+        summary: 'IMAP 수신 연결 테스트',
+        meta: { ok: result.ok, error: result.error, info: result.info },
+      });
+      if (!result.ok) {
+        return NextResponse.json(
+          { success: false, message: result.error ?? 'IMAP 연결 실패' },
+          { status: 500 },
+        );
+      }
+      return NextResponse.json({ success: true, message: result.info ?? 'IMAP 연결 성공' });
+    }
+
     const settings = (await readSingleUncached<MailSettings>('mail-settings')) ?? {};
     const to = (body.to || settings.adminEmail || '').trim();
     if (!to) {
