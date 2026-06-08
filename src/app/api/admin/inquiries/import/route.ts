@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readData, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { parseCSV, buildHeaderMap, cellGetter } from '@/lib/csv-parser';
 
@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const inquiries = await readData('inquiries');
+    // 쓰기 베이스는 캐시·시드 폴백 없이 — stale 베이스로 덮어쓰면 기존 문의 유실.
+    const inquiries = await readDataForWrite('inquiries');
     let created = 0;
     let updated = 0;
     const errors: Array<{ row: number; message: string }> = [];
@@ -97,7 +98,7 @@ export async function POST(request: Request) {
       }
     }
 
-    await writeData('inquiries', inquiries);
+    await writeDataMerged('inquiries', inquiries);
 
     await logAdmin('inquiries', 'bulk_update', {
       summary: `문의 CSV import: 신규 ${created}, 수정 ${updated}, 오류 ${errors.length}`,

@@ -1,4 +1,4 @@
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { notifyTelegramReply, updateGoogleSheetReply } from '@/lib/integrations';
@@ -127,7 +127,18 @@ export async function replyToInquiryById(
   const reply = replyText.trim();
   if (!reply) return { ok: false, error: '답변 내용이 비어 있습니다.' };
 
-  const inquiries = (await readDataUncached('inquiries')) as InquiryRecord[];
+  // 쓰기 베이스 전용 read — 시드 폴백 금지. 2026-06-07 사고: 텔레그램 답변이
+  // 빌드 시점 시드를 베이스로 전체 배열을 덮어써 신규 문의 1건이 유실됐다.
+  let inquiries: InquiryRecord[];
+  try {
+    inquiries = await readDataForWrite<InquiryRecord>('inquiries');
+  } catch (err) {
+    // 읽기 실패는 결과 객체로 변환해 웹훅의 "⚠️ 답변 전송 실패" 텔레그램
+    // 통지를 보장한다 (조용한 유실 대신 시끄러운 실패). 쓰기(put) 실패는
+    // 의도적으로 throw 로 둠 — 웹훅 500 → Telegram 이 update 를 재전송하므로
+    // 재시도로 회복된다.
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
   const idx = inquiries.findIndex((q) => q.id === inquiryId);
   if (idx === -1) return { ok: false, error: `문의(${inquiryId})를 찾을 수 없습니다.` };
 
@@ -142,7 +153,8 @@ export async function replyToInquiryById(
   };
   if (repliedBy && repliedBy.trim()) updated.replyBy = repliedBy.trim();
   inquiries[idx] = updated;
-  await writeData('inquiries', inquiries);
+  // merged write — base read 이후 들어온 신규 문의를 보존.
+  await writeDataMerged('inquiries', inquiries);
 
   const catDisplay = CATEGORY_LABEL[updated.category] ?? updated.category;
   const subjectDisplay = updated.subject ?? updated.message.slice(0, 40);

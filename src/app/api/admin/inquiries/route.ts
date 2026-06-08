@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readDataUncached, writeData } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
@@ -73,7 +73,7 @@ export async function PATCH(request: Request) {
         );
       }
       const ids: string[] = body.ids.filter((x: unknown): x is string => typeof x === 'string');
-      const inquiries = await readDataUncached('inquiries');
+      const inquiries = await readDataForWrite('inquiries');
       const updatedIds: string[] = [];
       const notFoundIds: string[] = [];
       for (const id of ids) {
@@ -91,7 +91,7 @@ export async function PATCH(request: Request) {
         updatedIds.push(id);
       }
       if (updatedIds.length > 0) {
-        await writeData('inquiries', inquiries);
+        await writeDataMerged('inquiries', inquiries);
       }
       // 시트 E·H 컬럼 동기화 — 행 단위 호출이라 N건이면 N API 호출.
       // fire-and-forget: 시트 실패가 어드민 응답을 막지 않도록.
@@ -145,7 +145,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const inquiries = await readDataUncached('inquiries');
+    const inquiries = await readDataForWrite('inquiries');
     const index = inquiries.findIndex((inq) => inq.id === body.id);
 
     if (index === -1) {
@@ -230,7 +230,7 @@ export async function PATCH(request: Request) {
     }
 
     inquiries[index] = updated;
-    await writeData('inquiries', inquiries);
+    await writeDataMerged('inquiries', inquiries);
 
     // 새 답변이 작성되었을 때 고객에게 이메일 발송
     if (isNewReply && updated.email && updated.reply) {
@@ -373,7 +373,7 @@ export async function DELETE(request: Request) {
           { status: 400, headers: NO_STORE_HEADERS },
         );
       }
-      const inquiries = await readDataUncached('inquiries');
+      const inquiries = await readDataForWrite('inquiries');
       const idSet = new Set(ids);
       const deletedIds = inquiries.filter((inq) => idSet.has(inq.id)).map((inq) => inq.id);
       const notFoundIds = ids.filter((id) => !deletedIds.includes(id));
@@ -393,7 +393,11 @@ export async function DELETE(request: Request) {
       );
 
       const remaining = inquiries.filter((inq) => !idSet.has(inq.id));
-      await writeData('inquiries', remaining);
+      // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않으면서,
+      // base read 이후 들어온 신규 문의는 보존. deletedIds(베이스∩요청)가
+      // 아니라 요청 전체 ids 를 전달 — stale 베이스에서 안 보였던 삭제
+      // 대상이 fresh 에서 부활하는 구멍 방지.
+      await writeDataMerged('inquiries', remaining, { removedIds: ids });
 
       await logAdmin('inquiries', 'delete', {
         summary: `문의 일괄 삭제: ${deletedIds.length}건`,
@@ -423,7 +427,7 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const inquiries = await readDataUncached('inquiries');
+    const inquiries = await readDataForWrite('inquiries');
     const index = inquiries.findIndex((inq) => inq.id === body.id);
 
     if (index === -1) {
@@ -438,7 +442,7 @@ export async function DELETE(request: Request) {
     const snapId = await snapshotBeforeDestructive(undefined, `inquiries delete ${body.id}`);
 
     inquiries.splice(index, 1);
-    await writeData('inquiries', inquiries);
+    await writeDataMerged('inquiries', inquiries, { removedIds: [body.id] });
 
     await logAdmin('inquiries', 'delete', {
       targetId: body.id,

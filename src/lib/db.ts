@@ -7,10 +7,13 @@ import { revalidateTag, unstable_cache } from 'next/cache';
  * Persistent JSON store — 3-tier resilient read pipeline.
  *
  * Write path (prod):
- *   blob del → blob put → revalidateTag('db:<file>') → post-write verify.
- *   `revalidateTag` flushes Next's shared data cache globally, so every
- *   serverless instance picks up the new value on its next read. Admin
- *   PUT also calls revalidatePath for the public URLs.
+ *   blob put(allowOverwrite) → revalidateTag('db:<file>') → post-write verify.
+ *   ⚠️ put 전에 del 금지 — del→put 은 list() 인덱스에서 파일이 사라져 보이는
+ *   구간을 만들고(인덱스는 eventually consistent), 그 NOT_FOUND 가 시드
+ *   폴백을 타면 빌드 시점 스냅샷으로 덮어써 누적 데이터가 유실된다
+ *   (2026-06-07 inquiries 사고). `revalidateTag` flushes Next's shared
+ *   data cache globally, so every serverless instance picks up the new
+ *   value on its next read. Admin PUT also calls revalidatePath.
  *
  * Read path (prod, *Safe variants used by RSC pages):
  *   T1. blob fetch with up to 3 retries (250/500ms backoff) — absorbs
@@ -105,11 +108,15 @@ const NOT_FOUND = Symbol('not_found');
 //
 // Retry policy: transient failures (list/fetch throws, HTTP 5xx, HTTP
 // 404 on the content URL right after a put — CDN propagation lag) get
-// up to 3 attempts with backoff. Definitive NOT_FOUND (list returns no
-// match) is returned immediately without retry — it's not a blip.
+// up to 3 attempts with backoff. list() no-match 도 즉시 확정하지 않고
+// 재시도한다 — Vercel Blob 의 list 인덱스는 eventually consistent 라
+// 실재하는 파일이 일시적으로 안 보일 수 있고, 그걸 NOT_FOUND 로 확정하면
+// fs 시드 폴백 → 시드 베이스 덮어쓰기(데이터 유실)로 이어진다.
+// 모든 시도가 no-match 일 때만 NOT_FOUND, 일부만 no-match 면 throw (모호).
 async function blobReadRawUncached(filename: string): Promise<unknown | typeof NOT_FOUND> {
   const t0 = Date.now();
   let lastErr: unknown = null;
+  let noMatchCount = 0;
 
   for (let attempt = 0; attempt < BLOB_READ_MAX_ATTEMPTS; attempt++) {
     if (attempt > 0) await sleep(BLOB_READ_BACKOFF_MS[attempt] ?? 500);
@@ -117,8 +124,10 @@ async function blobReadRawUncached(filename: string): Promise<unknown | typeof N
       const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
       const match = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
       if (!match) {
-        console.log(`[db:read] ${filename}: NOT_FOUND (list returned ${blobs.length} entries)`);
-        return NOT_FOUND;
+        noMatchCount++;
+        const note = attempt < BLOB_READ_MAX_ATTEMPTS - 1 ? ' — retrying' : '';
+        console.warn(`[db:read] ${filename}: attempt ${attempt + 1} list() no-match (${blobs.length} entries)${note}`);
+        continue;
       }
       // Vercel Blob 은 우리가 cacheControlMaxAge:0 으로 put 해도 응답에
       // public,max-age=60 을 강제로 붙인다. ?v=uploadedAt 만으론 부족 —
@@ -148,6 +157,12 @@ async function blobReadRawUncached(filename: string): Promise<unknown | typeof N
     }
   }
 
+  // 전 시도 일관되게 no-match → 진짜 없는 것으로 확정.
+  if (noMatchCount === BLOB_READ_MAX_ATTEMPTS) {
+    console.log(`[db:read] ${filename}: NOT_FOUND (no-match ${noMatchCount}/${BLOB_READ_MAX_ATTEMPTS} attempts, ${Date.now() - t0}ms)`);
+    return NOT_FOUND;
+  }
+
   // All retries exhausted — caller decides whether to fall back (readSingleSafe)
   // or propagate (readSingle / admin PUT).
   throw lastErr ?? new Error(`[db] blob read failed ${filename} after ${BLOB_READ_MAX_ATTEMPTS} attempts`);
@@ -175,21 +190,16 @@ async function blobReadRaw(filename: string): Promise<unknown | typeof NOT_FOUND
 }
 
 async function blobWriteRaw(filename: string, data: unknown) {
-  // 기존 CDN cache entry 의 TTL(default 1년) 무효화를 위해 put 전에 del.
-  // del 실패는 무시(blob 미존재 or 동시 경합).
+  // ⚠️ put 전에 del 하지 않는다 (2026-06-07 inquiries 유실 사고의 원인).
+  // del→put 사이/직후에 list() 인덱스에서 파일이 사라진 것처럼 보이는 구간이
+  // 생기고(인덱스는 eventually consistent — del 은 반영됐는데 put 이 아직인
+  // 리플리카가 수 분간 NOT_FOUND 를 돌려줄 수 있음), 그 NOT_FOUND 가
+  // readDataUncached 의 fs 시드 폴백을 타면 빌드 시점 스냅샷이 쓰기 베이스가
+  // 되어 그 이후 누적 레코드가 통째로 덮어써진다.
+  // allowOverwrite put 은 같은 pathname 의 in-place 갱신이라 인덱스에서
+  // 사라지는 구간이 없다. CDN 캐시는 모든 read 가 unique query 로 우회하므로
+  // del 에 의한 무효화가 필요 없다.
   const t0 = Date.now();
-  let delResult: 'deleted' | 'none' | 'error' = 'none';
-  try {
-    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${filename}.json`, limit: 1 });
-    const existing = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${filename}.json`);
-    if (existing) {
-      await del(existing.url);
-      delResult = 'deleted';
-    }
-  } catch (err) {
-    delResult = 'error';
-    console.warn(`[db:write] ${filename}: pre-write del skipped`, err);
-  }
   const putRes = await put(`${BLOB_PREFIX}${filename}.json`, JSON.stringify(data, null, 2), {
     access: 'public',
     addRandomSuffix: false,
@@ -197,7 +207,7 @@ async function blobWriteRaw(filename: string, data: unknown) {
     contentType: 'application/json',
     cacheControlMaxAge: 0,
   });
-  console.log(`[db:write] ${filename}: OK (${Date.now() - t0}ms, del=${delResult}, url=${putRes.url})`);
+  console.log(`[db:write] ${filename}: OK (${Date.now() - t0}ms, url=${putRes.url})`);
 }
 
 async function readRaw(filename: string): Promise<unknown | null> {
@@ -266,9 +276,9 @@ export async function readData<T = any>(filename: string): Promise<T[]> {
 }
 
 // unstable_cache 를 우회해 blob 에서 직접 읽는다.
-// 어드민 write 경로(PUT/DELETE)에서 사용 — 직전 write 가 다른 Lambda
-// 인스턴스에서 발생했을 때 revalidateTag 전파 지연으로 stale cache 를
-// 읽어 정상 데이터를 덮어쓰는 문제를 방지한다.
+// ⚠️ display(조회) 용도 전용 — NOT_FOUND 시 fs 시드로 폴백하므로
+// read-modify-write 의 베이스로 쓰면 시드 덮어쓰기 유실 위험.
+// 쓰기 베이스가 필요하면 readDataForWrite + writeDataMerged 를 사용할 것.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function readDataUncached<T = any>(filename: string): Promise<T[]> {
   if (hasBlob) {
@@ -293,6 +303,87 @@ export async function readDataUncached<T = any>(filename: string): Promise<T[]> 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function writeData<T = any>(filename: string, data: T[]): Promise<void> {
   await writeRaw(filename, data);
+}
+
+// read-modify-write 의 "쓰기 베이스" 전용 read.
+// readDataUncached 와 달리 NOT_FOUND 를 번들 시드로 메우지 않는다.
+// 빌드 시점 시드를 베이스로 수정 후 통째로 쓰면 빌드 이후 누적된 레코드가
+// 전부 덮어써진다 (2026-06-07 inquiries 유실 사고의 메커니즘). 데이터가
+// 존재했던 흔적(LKG 또는 비어있지 않은 시드)이 있는데 blob 에서 안 보이면
+// list() 전파 지연으로 간주하고 throw — 쓰기 자체를 실패시키는 것이
+// 조용한 유실보다 낫다. 시드조차 비어 있는 진짜 첫 부트스트랩만 [] 로 시작.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readDataForWrite<T = any>(filename: string): Promise<T[]> {
+  if (!hasBlob) {
+    const data = fsReadRaw(filename);
+    return Array.isArray(data) ? (data as T[]) : [];
+  }
+  const result = await blobReadRawUncached(filename); // 일시 장애는 throw 그대로 전파
+  if (result !== NOT_FOUND) {
+    if (Array.isArray(result)) {
+      lastKnownGood.set(filename, result);
+      return result as T[];
+    }
+    // 비배열(단일객체/오염) 을 조용히 [] 로 바꾸면 이어지는 쓰기가 파일을
+    // 통째로 교체한다 — 배열 파일이 아니면 명백한 오용이므로 거부.
+    throw new Error(`[db] ${filename}: 배열 파일이 아닙니다 (readDataForWrite 오용 또는 내용 오염).`);
+  }
+  const lkg = lastKnownGood.get(filename);
+  const seed = fsReadRaw(filename);
+  const hadData = (Array.isArray(lkg) && lkg.length > 0) || (Array.isArray(seed) && seed.length > 0);
+  if (hadData) {
+    throw new Error(
+      `[db] ${filename}: blob 에서 NOT_FOUND 지만 기존 데이터 흔적(LKG/seed)이 있습니다. ` +
+        'list() 전파 지연 의심 — 유실 방지를 위해 쓰기 베이스 제공을 거부합니다. 잠시 후 재시도하세요.'
+    );
+  }
+  return [];
+}
+
+export interface WriteMergedOptions {
+  /** 이번 쓰기에서 의도적으로 삭제하는 레코드 id — merge 부활 대상에서 제외 */
+  removedIds?: string[];
+}
+
+// lost-update 방지 쓰기 — put 직전에 blob 을 한 번 더 읽어, next 에는 없는데
+// 현재 blob 에는 있는 레코드(= base read 이후 다른 인스턴스가 추가한 것)를
+// 되살린 뒤 쓴다. 베이스가 stale 이어도 동시 추가분이 사라지지 않는다.
+// 의도적 삭제는 removedIds 로 명시해 부활을 막는다. fresh read 실패 시에는
+// merge 없이 진행 (사용자 저장이 read 블립에 막히면 안 됨 — 기존과 동일 동작).
+export async function writeDataMerged<T extends { id?: unknown }>(
+  filename: string,
+  next: T[],
+  options: WriteMergedOptions = {},
+): Promise<void> {
+  let merged = next;
+  try {
+    const freshRaw = hasBlob ? await blobReadRawUncached(filename) : fsReadRaw(filename);
+    if (freshRaw === NOT_FOUND && next.length > 0) {
+      // 이번 수정이 겨냥한 바로 그 시그니처(데이터가 있어야 하는데 인덱스에
+      // 안 보임) — merge 는 불가능하지만 최소한 흔적은 남긴다.
+      console.warn(`[db:write-merged] ${filename}: fresh read NOT_FOUND — merge 생략 (list 전파 지연 의심)`);
+    }
+    if (Array.isArray(freshRaw)) {
+      const fresh = freshRaw as T[];
+      const nextIds = new Set(
+        next.map((r) => r?.id).filter((id): id is string => typeof id === 'string'),
+      );
+      const removed = new Set(options.removedIds ?? []);
+      const resurrected = fresh.filter(
+        (r) => typeof r?.id === 'string' && !nextIds.has(r.id) && !removed.has(r.id),
+      );
+      if (resurrected.length > 0) {
+        console.warn(
+          `[db:write-merged] ${filename}: 동시 쓰기 감지 — ${resurrected.length}건 보존`,
+          resurrected.map((r) => r.id),
+        );
+        merged = [...next, ...resurrected];
+      }
+    }
+  } catch (err) {
+    console.warn(`[db:write-merged] ${filename}: merge 용 fresh read 실패 — merge 생략`, err);
+  }
+  await writeRaw(filename, merged);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

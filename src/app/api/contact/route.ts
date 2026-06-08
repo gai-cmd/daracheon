@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readDataUncached, writeData, readSingleSafe } from '@/lib/db';
+import { readDataForWrite, writeDataMerged, readSingleSafe } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
-import { appendToGoogleSheet, notifyTelegram, type InquiryPayload } from '@/lib/integrations';
+import { appendToGoogleSheet, notifyTelegram, sendTelegramMessage, type InquiryPayload } from '@/lib/integrations';
 
 interface MailSettingsLite { adminEmail?: string }
 
@@ -67,6 +67,8 @@ const categoryLabel: Record<string, string> = {
 };
 
 export async function POST(request: NextRequest) {
+  // 저장 실패 시 운영자 경보용 — try 안에서 검증 통과한 신원만 담는다.
+  let attempted: { name: string; email: string } | null = null;
   try {
     const ip = clientIp(request);
     if (!checkRate(ip)) {
@@ -87,10 +89,11 @@ export async function POST(request: NextRequest) {
     }
 
     const validated = contactSchema.parse(body);
+    attempted = { name: validated.name, email: validated.email };
 
-    // 캐시 우회 — 다른 Lambda 인스턴스가 막 쓴 데이터를 stale 캐시로 읽어
-    // 새 문의가 누락된 배열을 덮어쓰는 데이터 유실 방지.
-    const inquiries = await readDataUncached('inquiries');
+    // 쓰기 베이스 전용 read — 캐시 우회 + NOT_FOUND 시 시드 폴백 거부.
+    // (시드를 베이스로 쓰면 빌드 이후 누적 문의가 통째로 덮어써진다)
+    const inquiries = await readDataForWrite('inquiries');
 
     // 동일 이메일 5분 내 중복 투입 차단 (봇이 이메일만 바꿔가며 공격하면
     // 막을 수 없으므로 IP rate limit 과 함께 사용). 너무 길면 QA/실수 재제출이
@@ -124,7 +127,8 @@ export async function POST(request: NextRequest) {
     };
 
     inquiries.push(newInquiry);
-    await writeData('inquiries', inquiries);
+    // merged write — base read 이후 다른 인스턴스가 추가한 레코드를 보존.
+    await writeDataMerged('inquiries', inquiries);
 
     // ID 만 로그. 이름/이메일/메시지는 감사 로그/모니터링에 남기지 않음.
     console.log('[Contact Form] 새 문의 접수 id=%s', newInquiry.id);
@@ -277,8 +281,16 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
     }
 
     console.error('[Contact Form Error]', error);
+    // 저장 단계 실패 시 고객은 500 만 보고 재시도하지 않을 수 있다 —
+    // 운영자에게 시도 사실을 알려 수동 후속이 가능하게 한다 (best effort).
+    if (attempted) {
+      const reason = error instanceof Error ? error.message : String(error);
+      sendTelegramMessage(
+        `⚠️ 문의 접수 실패 — 수동 확인 필요\n이름: ${attempted.name}\n이메일: ${attempted.email}\n사유: ${reason.slice(0, 300)}`,
+      ).catch(() => {});
+    }
     return NextResponse.json(
-      { success: false, message: '서버 오류가 발생했습니다.' },
+      { success: false, message: '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' },
       { status: 500 }
     );
   }
