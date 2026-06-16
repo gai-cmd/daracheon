@@ -5,6 +5,7 @@ import { autoSplitMixed, formatBroadcastDateTime, isInlineExpired, toWatchUrl } 
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import JsonLd from '@/components/ui/JsonLd';
 import NsBrandVideoGallery, { type NsBrandVideo } from './NsBrandVideoGallery';
+import BroadcastCalendar, { type CalBroadcast } from './BroadcastCalendar';
 import styles from './page.module.css';
 
 const SITE_URL = 'https://zoellife.com';
@@ -145,8 +146,9 @@ function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
                 '@type': 'Offer',
                 price: b.specialPrice,
                 priceCurrency: 'KRW',
-                availability:
-                  b.status === 'live' || b.status === 'scheduled'
+                availability: b.soldOut
+                  ? 'https://schema.org/SoldOut'
+                  : b.status === 'live' || b.status === 'scheduled'
                     ? 'https://schema.org/InStock'
                     : 'https://schema.org/Discontinued',
                 url: `${SITE_URL}/home-shopping`,
@@ -354,15 +356,67 @@ function formatChannelLogo(channel: string): string {
 
 const KST = 'Asia/Seoul';
 
-function formatDate(iso: string) {
+/** ISO → KST 연/월/일 + 'PM 9:40' 형태 시간 라벨. 달력 셀 배치는 KST 기준이라
+ *  클라이언트 타임존과 무관하게 서버에서 파생값을 계산해 내려보낸다. */
+function kstParts(iso: string): { year: number; month: number; day: number; timeLabel: string } {
   const d = new Date(iso);
-  return {
-    day: new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: KST }).format(d),
-    monthYear: new Intl.DateTimeFormat('ko-KR', { year: '2-digit', month: 'short', timeZone: KST })
-      .format(d)
-      .toUpperCase(),
-    time: d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', timeZone: KST }),
-  };
+  const dp = new Intl.DateTimeFormat('en-US', {
+    timeZone: KST,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(d);
+  const num = (t: string) => Number(dp.find((p) => p.type === t)?.value ?? '0');
+  const tp = new Intl.DateTimeFormat('en-US', {
+    timeZone: KST,
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).formatToParts(d);
+  const hour = tp.find((p) => p.type === 'hour')?.value ?? '';
+  const minute = tp.find((p) => p.type === 'minute')?.value ?? '';
+  const ap = (tp.find((p) => p.type === 'dayPeriod')?.value ?? '').toUpperCase();
+  return { year: num('year'), month: num('month'), day: num('day'), timeLabel: `${ap} ${hour}:${minute}` };
+}
+
+/** 오늘(KST)을 'Y-M-D'(zero-pad 없음) 로 — 달력 셀 키와 동일 포맷. */
+function kstTodayKey(): string {
+  const p = new Intl.DateTimeFormat('en-US', {
+    timeZone: KST,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(new Date());
+  const v = (t: string) => Number(p.find((x) => x.type === t)?.value ?? '0');
+  return `${v('year')}-${v('month')}-${v('day')}`;
+}
+
+/** 홈쇼핑 방송 목록 → 달력/카드용 직렬화. effectiveStatus 로 '예정/지난' 을
+ *  시각 기준으로 보정하고, soldOut 플래그를 그대로 실어 보낸다. */
+function buildCalEvents(list: Broadcast[], nowMs: number): CalBroadcast[] {
+  return list.map((b) => {
+    const eff = effectiveStatus(b);
+    const isPast = eff !== 'live' && new Date(b.scheduledAt).getTime() < nowMs;
+    const p = kstParts(b.scheduledAt);
+    return {
+      id: b.id,
+      channel: b.channel,
+      channelLogo: formatChannelLogo(b.channel),
+      year: p.year,
+      month: p.month,
+      day: p.day,
+      timeLabel: p.timeLabel,
+      dateTimeLabel: formatBroadcastDateTime(b.scheduledAt),
+      title: b.description || b.preview?.headline || '대라천 침향 특별 방송',
+      ...(b.specialPrice ? { specialPrice: b.specialPrice } : {}),
+      ...(b.discountRate ? { discountRate: b.discountRate } : {}),
+      ...(b.host ? { host: b.host } : {}),
+      status: eff,
+      isPast,
+      soldOut: Boolean(b.soldOut),
+      hasReplay: eff === 'ended' && Boolean(b.vodUrl),
+    };
+  });
 }
 
 /** NS 홈쇼핑이 제작한 브랜드 영상 4종 — Drive 에서 다운받아 Vercel Blob 에 업로드된 mp4.
@@ -467,15 +521,9 @@ export default async function HomeShoppingPage({
   // (영상 없는 ‘예정’ 방송이 featured 로 잡혀 모니터가 비어 보이던 문제 대응)
   const nsMonitorFallbackUrl = (nsVideos.find((v) => v.id === 'ns-showroom') ?? nsVideos[0])?.url;
 
-  // 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 중 '이미 방영된' 회차만.
-  // '다시보기'이므로 예정(upcoming) 방송은 제외 — 편성표와 중복 노출되던 문제 대응.
-  const recaps = sorted.filter(
-    (b) =>
-      effectiveStatus(b) === 'ended' &&
-      b.preview?.enabled &&
-      b.preview.isPublic &&
-      hasPreviewContent(b.preview)
-  );
+  // 편성 캘린더 — 홈쇼핑(공개) 회차 전체를 KST 파생값으로 직렬화해 클라이언트에 전달.
+  const calEvents = buildCalEvents(sorted, now);
+  const todayKey = kstTodayKey();
 
   const broadcastJsonLd = buildBroadcastJsonLd(all);
 
@@ -720,119 +768,20 @@ export default async function HomeShoppingPage({
         })()
       )}
 
-      {/* RECAP · 방송 다시보기 요약 — 공개 토글이 켜진 home-shopping 회차 전체.
-          어드민 '방송 미리보기 · 다시보기' 에서 작성·공개한 헤드라인·요약·챕터·핵심포인트를
-          회차별 카드로 노출 (YouTube 챕터 스타일). */}
-      {recaps.length > 0 && (
-        <section className={styles.recap} id="recap">
-          <div className={styles.wrap}>
-            <div className={styles.recapHead}>
-              <div className={styles.recapKicker}>Recap · 방송 다시보기 요약</div>
-              <h2>
-                침향 방송 <em>핵심 요약</em>
-              </h2>
-            </div>
-
-            <div className={styles.recapList}>
-              {recaps.map((b) => {
-                const eff = effectiveStatus(b);
-                return (
-                  <article key={b.id} className={styles.recapCard}>
-                    <div className={styles.recapCardMeta}>
-                      <span className={styles.recapCardCh}>{b.channel}</span>
-                      <span className={styles.recapCardDate}>
-                        {formatBroadcastDateTime(b.scheduledAt)}
-                      </span>
-                      <span className={styles.recapCardStatus} data-status={eff}>
-                        {STATUS_LABEL[eff]}
-                      </span>
-                    </div>
-                    <BroadcastPreviewBlock preview={b.preview!} />
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* SCHEDULE · 홈쇼핑 방영 리스트 — 과거 종료 방송 + 다가올 예정 방송을 한 표에. */}
+      {/* SCHEDULE · 홈쇼핑 편성 캘린더 — 월 달력 + 예정/지난 방송 탭 + 회차 카드. */}
       <section className={styles.sched} id="sched">
         <div className={styles.wrap}>
           <div className={styles.schedHead}>
             <h2>
-              홈쇼핑 <em>방영 리스트</em>
+              홈쇼핑 <em>편성 캘린더</em>
             </h2>
           </div>
 
-          <div className={styles.schedList}>
-            {sorted.length === 0 ? (
-              <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
-            ) : (
-              sorted.map((b) => {
-                const logo = formatChannelLogo(b.channel);
-                const dt = formatDate(b.scheduledAt);
-                return (
-                  <div key={b.id} className={styles.schedRow}>
-                    <div className={styles.schedDate}>
-                      <span className={styles.schedDateDay}>{dt.day}</span>
-                      {dt.monthYear}
-                    </div>
-                    <div className={styles.schedCh}>
-                      <div className={styles.schedChLogo}>{logo}</div>
-                      <div className={styles.schedChInfo}>
-                        <span className={styles.schedChName}>{b.channel}</span>
-                        <span className={styles.schedChTime}>{dt.time}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className={styles.schedProdTitle}>{b.description ?? '대라천 침향 특별 방송'}</div>
-                      <div className={styles.schedProdOffer}>
-                        {b.specialPrice ? (
-                          <>
-                            특별가 <b>₩{b.specialPrice.toLocaleString()}</b>
-                            {b.discountRate ? ` · −${b.discountRate}%` : ''}
-                          </>
-                        ) : (
-                          '방송 중 특별가 공개'
-                        )}
-                      </div>
-                    </div>
-                    <div className={styles.schedHost}>
-                      {b.host ? (
-                        <>
-                          <b>{b.host}</b>
-                          쇼호스트
-                        </>
-                      ) : (
-                        <span>—</span>
-                      )}
-                    </div>
-                    <div className={styles.schedAction}>
-                      {(() => {
-                        const eff = effectiveStatus(b);
-                        if (eff === 'live' && b.vodUrl) {
-                          return (
-                            <a href="#live" className={styles.btnLive}>
-                              ● LIVE
-                            </a>
-                          );
-                        }
-                        if (eff === 'ended' && b.vodUrl) {
-                          return (
-                            <a href="#live" className={styles.btnNotify}>
-                              다시보기 →
-                            </a>
-                          );
-                        }
-                        return <span className={styles.schedStatus}>{STATUS_LABEL[eff]}</span>;
-                      })()}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          {calEvents.length === 0 ? (
+            <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
+          ) : (
+            <BroadcastCalendar broadcasts={calEvents} todayKey={todayKey} />
+          )}
         </div>
       </section>
 
@@ -956,17 +905,6 @@ export default async function HomeShoppingPage({
         </section>
       )}
     </>
-  );
-}
-
-/** 미리보기에 실제 노출할 콘텐츠가 하나라도 있는지. BroadcastPreviewBlock 의 렌더 가드와 동일.
- *  recap 섹션에서 빈 미리보기(토글만 켜진 회차)를 걸러내는 데 쓴다. */
-function hasPreviewContent(preview: NonNullable<Broadcast['preview']>): boolean {
-  return Boolean(
-    preview.headline ||
-      preview.summary ||
-      (preview.highlights?.length ?? 0) > 0 ||
-      (preview.keyPoints?.length ?? 0) > 0
   );
 }
 

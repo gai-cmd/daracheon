@@ -63,6 +63,8 @@ export interface Broadcast {
   inlineUntil?: string;
   description?: string;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
+  /** 매진(완판) 여부. 어드민 토글. 공개 편성표에서 '완료' 대신 '매진' 노출. */
+  soldOut?: boolean;
   salesCount?: number;
   feedback?: string;
   showInfo?: BroadcastShowInfo;
@@ -98,6 +100,7 @@ const baseSchema = z.object({
   inlineUntil: z.string().datetime().or(z.literal('')).optional().nullable(),
   description: z.string().max(2000).optional().nullable(),
   status: z.enum(statusValues).optional(),
+  soldOut: z.coerce.boolean().optional().nullable(),
   salesCount: z.coerce.number().int().min(0).optional().nullable(),
   feedback: z.string().max(4000).optional().nullable(),
   showInfo: z
@@ -206,6 +209,7 @@ export async function POST(request: Request) {
       durationMinutes: (data.durationMinutes as number) ?? 60,
       productIds: (data.productIds as string[]) ?? [],
       status: (data.status as Broadcast['status']) ?? 'scheduled',
+      ...(data.soldOut !== undefined ? { soldOut: Boolean(data.soldOut) } : {}),
       ...(data.host ? { host: data.host as string } : {}),
       ...(data.specialPrice !== undefined ? { specialPrice: data.specialPrice as number } : {}),
       ...(data.regularPrice !== undefined ? { regularPrice: data.regularPrice as number } : {}),

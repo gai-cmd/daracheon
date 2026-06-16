@@ -51,6 +51,7 @@ interface Broadcast {
   inlineUntil?: string | null;
   description?: string | null;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
+  soldOut?: boolean | null;
   salesCount?: number | null;
   feedback?: string | null;
   showInfo?: BroadcastShowInfo | null;
@@ -401,6 +402,28 @@ export default function AdminBroadcastsPage() {
     }
   }
 
+  /** 리스트 행에서 매진/판매중 즉시 토글. PUT 으로 soldOut 만 갱신. */
+  async function toggleSoldOut(b: Broadcast) {
+    const next = !(b.soldOut ?? false);
+    try {
+      const res = await fetch('/api/admin/broadcasts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: b.id, soldOut: next }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setToast(data.message ?? '매진 상태 변경에 실패했습니다.');
+        return;
+      }
+      setItems((prev) => prev.map((it) => (it.id === b.id ? { ...it, soldOut: next } : it)));
+      setToast(next ? '매진으로 표시했습니다.' : '매진 표시를 해제했습니다.');
+    } catch (err) {
+      console.error('[Admin Broadcasts] toggle soldOut error:', err);
+      setToast('매진 상태 변경 중 오류가 발생했습니다.');
+    }
+  }
+
   function updateShowInfo(patch: Partial<BroadcastShowInfo>) {
     if (!draft) return;
     const cur = draft.showInfo ?? {};
@@ -643,12 +666,26 @@ export default function AdminBroadcastsPage() {
                         <span className="text-xs text-gray-400">— (협찬방송)</span>
                       ) : (
                         <>
-                          {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
-                          {b.discountRate ? (
-                            <span className="ml-2 rounded bg-red-700 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
-                              -{b.discountRate}%
-                            </span>
-                          ) : null}
+                          <div>
+                            {b.specialPrice ? `${b.specialPrice.toLocaleString('ko-KR')}원` : '-'}
+                            {b.discountRate ? (
+                              <span className="ml-2 rounded bg-red-700 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white">
+                                -{b.discountRate}%
+                              </span>
+                            ) : null}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => toggleSoldOut(b)}
+                            title={b.soldOut ? '매진 — 클릭 시 판매중으로' : '판매중 — 클릭 시 매진 표시'}
+                            className={`mt-1.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[0.62rem] font-semibold tracking-wide transition ${
+                              b.soldOut
+                                ? 'border-red-700 bg-red-700 text-white hover:bg-red-800'
+                                : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50'
+                            }`}
+                          >
+                            {b.soldOut ? '● 매진' : '판매중'}
+                          </button>
                         </>
                       )}
                     </td>
@@ -1291,6 +1328,33 @@ export default function AdminBroadcastsPage() {
                     className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   />
                 </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50/50 p-3">
+                <div>
+                  <div className="text-xs font-semibold text-red-700">매진(완판) 표시</div>
+                  <p className="mt-0.5 text-[11px] text-gray-500">
+                    켜면 공개 편성표·달력에서 <code>완료</code> 대신 <b>매진</b> 뱃지(빨강)로 노출됩니다.
+                  </p>
+                </div>
+                <label className="flex cursor-pointer items-center gap-2 text-xs text-gray-700">
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, soldOut: !(draft.soldOut ?? false) })}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                      draft.soldOut ? 'bg-red-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+                        draft.soldOut ? 'translate-x-4' : 'translate-x-0.5'
+                      }`}
+                    />
+                  </button>
+                  <span className={`font-semibold ${draft.soldOut ? 'text-red-700' : 'text-gray-400'}`}>
+                    {draft.soldOut ? '매진' : '판매중'}
+                  </span>
+                </label>
               </div>
 
               {(draft.status === 'ended' || draft.feedback) && (

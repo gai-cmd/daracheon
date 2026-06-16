@@ -377,6 +377,307 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+/* ─────────────────────────────────────────────
+   BROADCAST CALENDAR — 월 달력 + 예정/지난 탭 + 회차 카드
+   sched 섹션(다크 골드)과 동일 톤. 좌측 달력 / 우측 카드 2열.
+   ───────────────────────────────────────────── */
+.cal { display: flex; flex-direction: column; }
+
+.calTabs {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  margin-bottom: 32px;
+}
+.calTab {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: none;
+  padding: 11px 22px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-right: 1px solid rgba(212, 168, 67, 0.15);
+  transition: all 300ms;
+}
+.calTab:last-child { border-right: none; }
+.calTabActive {
+  background: var(--accent);
+  color: var(--lx-black);
+  font-weight: 600;
+}
+.calTabCount {
+  display: inline-block;
+  margin-left: 8px;
+  opacity: 0.7;
+  font-feature-settings: 'tnum' 1;
+}
+.calTabActive .calTabCount { opacity: 0.85; }
+
+.calLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 960px) {
+  .calLayout {
+    grid-template-columns: minmax(300px, 360px) 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+}
+
+/* 달력 패널 */
+.calPanel {
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(10, 11, 16, 0.45);
+  padding: 22px;
+}
+@media (min-width: 960px) {
+  .calPanel { position: sticky; top: calc(var(--nav-h) + 16px); }
+}
+.calMonthBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.calMonthLabel {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.calMonthDot { color: var(--accent); margin: 0 4px; }
+.calNavBtn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  background: transparent;
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 220ms;
+}
+.calNavBtn:hover:not(:disabled) { background: var(--accent); color: var(--lx-black); }
+.calNavBtn:disabled { opacity: 0.25; cursor: default; }
+
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.calWeekday {
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  padding-bottom: 10px;
+}
+.calWeekdaySun { color: rgba(255, 138, 138, 0.75); }
+.calWeekdaySat { color: rgba(138, 178, 255, 0.75); }
+
+.calCellEmpty { aspect-ratio: 1; }
+.calCell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  padding-top: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font: inherit;
+  cursor: default;
+  transition: background 220ms, border-color 220ms;
+}
+.calDayNum {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+.calCellToday {
+  border-color: rgba(212, 168, 67, 0.45);
+}
+.calCellToday .calDayNum { color: var(--accent); font-weight: 600; }
+.calCellEvent { cursor: pointer; }
+.calCellEvent:hover { background: rgba(212, 168, 67, 0.08); }
+.calCellEvent .calDayNum { color: #fff; }
+
+.calDots {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+  align-items: center;
+}
+.calDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.calDot_upcoming { background: var(--accent); }
+.calDot_soldout { background: #ff4d4d; }
+.calDot_done { background: rgba(255, 255, 255, 0.45); }
+.calDot_live { background: #ff3838; box-shadow: 0 0 0 0 rgba(255, 60, 60, 0.6); animation: livePulse 1.6s infinite; }
+
+.calLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
+}
+.calLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* 카드 리스트 */
+.calList {
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+.calEmpty {
+  padding: 48px 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.92rem;
+}
+.calRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 18px;
+  padding: 22px 24px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.1);
+  align-items: center;
+  transition: background 300ms, box-shadow 300ms;
+}
+.calRow:last-child { border-bottom: none; }
+.calRow:hover { background: rgba(212, 168, 67, 0.04); }
+.calRowHighlight {
+  background: rgba(212, 168, 67, 0.1);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.calRowDate { text-align: center; }
+.calRowDay {
+  display: block;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.calRowMon {
+  display: block;
+  margin-top: 5px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.calRowMain { min-width: 0; }
+.calRowCh {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+.calRowChLogo {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: 'Noto Serif KR', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+.calRowTime { color: rgba(255, 255, 255, 0.45); letter-spacing: 0.08em; }
+.calRowTitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.5;
+  margin-bottom: 7px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+.calRowOffer {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+.calRowOffer b { color: var(--accent); font-weight: 500; }
+.calRowHost { color: rgba(255, 255, 255, 0.4); }
+
+.calRowSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.calBadge {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 5px 11px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.calBadge_upcoming { color: var(--accent); border-color: rgba(212, 168, 67, 0.45); }
+.calBadge_live { color: #fff; background: #ff3838; border-color: #ff3838; }
+.calBadge_soldout { color: #fff; background: #d62828; border-color: #d62828; letter-spacing: 0.2em; }
+.calBadge_done { color: rgba(255, 255, 255, 0.6); border-color: rgba(255, 255, 255, 0.2); }
+.calBadge_canceled { color: rgba(255, 180, 120, 0.85); border-color: rgba(255, 180, 120, 0.35); }
+
+.calReplay {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 220ms;
+}
+.calReplay:hover { border-color: var(--accent); }
+
 /* SHOW SYNOPSIS */
 .synopsis {
   padding: 80px 0;

@@ -62,6 +62,9 @@ export interface Broadcast {
   inlineUntil?: string;
   description?: string;
   status: 'scheduled' | 'live' | 'ended' | 'canceled';
+  /** 매진(완판) 여부. 어드민이 직접 토글한다. true 면 공개 편성표/달력에서
+   *  '완료' 대신 '매진' 뱃지(빨강)로 노출. status 와 독립적인 별도 플래그. */
+  soldOut?: boolean;
   salesCount?: number;
   feedback?: string;
   showInfo?: BroadcastShowInfo;
