@@ -532,6 +532,23 @@ export default async function HomeShoppingPage({
       {broadcastJsonLd.map((d, i) => (
         <JsonLd key={i} data={d} />
       ))}
+      {/* SCHEDULE · 홈쇼핑 편성 캘린더 — 페이지 최상단. 월 달력 + 예정/지난 방송 탭 + 회차 카드. */}
+      <section className={styles.sched} id="sched">
+        <div className={styles.wrap}>
+          <div className={styles.schedHead}>
+            <h2>
+              홈쇼핑 <em>편성 캘린더</em>
+            </h2>
+          </div>
+
+          {calEvents.length === 0 ? (
+            <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
+          ) : (
+            <BroadcastCalendar broadcasts={calEvents} todayKey={todayKey} />
+          )}
+        </div>
+      </section>
+
       {/* NS 홈쇼핑 제작 브랜드 영상 — 방송 종료 후 다시보기 갤러리 */}
       <section className={styles.ns} id="ns-videos">
         <div className={styles.wrap}>
@@ -767,23 +784,6 @@ export default async function HomeShoppingPage({
           );
         })()
       )}
-
-      {/* SCHEDULE · 홈쇼핑 편성 캘린더 — 월 달력 + 예정/지난 방송 탭 + 회차 카드. */}
-      <section className={styles.sched} id="sched">
-        <div className={styles.wrap}>
-          <div className={styles.schedHead}>
-            <h2>
-              홈쇼핑 <em>편성 캘린더</em>
-            </h2>
-          </div>
-
-          {calEvents.length === 0 ? (
-            <div className={styles.empty}>등록된 방송 일정이 없습니다.</div>
-          ) : (
-            <BroadcastCalendar broadcasts={calEvents} todayKey={todayKey} />
-          )}
-        </div>
-      </section>
 
       {/* SPONSORED · 협찬방송 — 한 행 2열(설명 좌 · 영상 우) 으로 정렬,
           홈쇼핑의 LIVE 카드 골격을 차용하되 보라 액센트로 차별화. */}

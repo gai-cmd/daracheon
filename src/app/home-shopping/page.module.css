@@ -221,8 +221,8 @@
 
 /* SCHEDULE */
 .sched {
-  padding: 80px 0;
-  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  /* 페이지 최상단 섹션 — 고정 헤더(--nav-h)를 피하고, 위쪽 구분선은 두지 않는다. */
+  padding: var(--nav-h) 0 80px;
   background: #0a0b10;
   color: #fdfbf7;
 }
