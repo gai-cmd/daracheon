@@ -8,6 +8,8 @@ export interface Review {
   content: string;
   date: string;
   verified: boolean;
+  /** QR 후기 유도로 유입된 경우 출처 QR slug (어트리뷰션) */
+  qrSlug?: string;
 }
 
 export const reviews: Review[] = [

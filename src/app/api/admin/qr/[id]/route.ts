@@ -23,6 +23,8 @@ const patchSchema = z.object({
   couponEnabled: z.boolean().optional(),
   couponDiscount: z.string().max(60).optional(),
   couponValidDays: z.number().int().min(1).max(3650).optional(),
+  reviewMode: z.boolean().optional(),
+  reviewProduct: z.string().max(120).optional(),
   defaultStyle: z.enum(['white-black', 'transparent-white', 'transparent-gold']).optional(),
   active: z.boolean().optional(),
 });

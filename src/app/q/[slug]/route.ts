@@ -45,9 +45,12 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: strin
   // 화면에서 '동의 없이 계속' 가능. 동의는 혜택 인센티브로만 유도).
   const decided = !!req.cookies.get('zql_consent')?.value || !!req.cookies.get('zql_decline')?.value;
   const needConsent = !!qr.collectInfo && !decided;
-  const finalUrl = needConsent
-    ? new URL(`/scan/${encodeURIComponent(slug)}?to=${encodeURIComponent(destPath)}`, origin).toString()
-    : redirectUrl;
+  // 후기 유도 QR 은 후기 작성 화면으로 (최우선). 그 외 동의 수집 → 동의 화면. 기본 → 목적지.
+  const finalUrl = qr.reviewMode
+    ? new URL(`/review/${encodeURIComponent(slug)}`, origin).toString()
+    : needConsent
+      ? new URL(`/scan/${encodeURIComponent(slug)}?to=${encodeURIComponent(destPath)}`, origin).toString()
+      : redirectUrl;
 
   const res = NextResponse.redirect(finalUrl, 302);
   const base = { secure: isProd, sameSite: 'lax' as const, path: '/' };

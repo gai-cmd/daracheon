@@ -42,6 +42,10 @@ export interface QrCode {
   couponDiscount?: string;
   /** 쿠폰 유효기간(일). 비우면 30일 */
   couponValidDays?: number;
+  /** 후기 유도 모드 — 스캔 시 후기 작성 화면으로 (제품 패키지/동봉카드용) */
+  reviewMode?: boolean;
+  /** 후기 작성 폼 기본 제품명 (이 QR 이 붙은 제품) */
+  reviewProduct?: string;
   /** 어드민 미리보기 기본 프리셋 (3종 모두 항상 다운로드 가능) */
   defaultStyle: QrStyleId;
   active: boolean;
@@ -49,7 +53,7 @@ export interface QrCode {
   updatedAt: string;
 }
 
-export type QrEventType = 'scan' | 'pageview' | 'cta' | 'consent';
+export type QrEventType = 'scan' | 'pageview' | 'cta' | 'consent' | 'review';
 
 /** 연령대 선택지 */
 export type AgeBand = '10대' | '20대' | '30대' | '40대' | '50대' | '60대+' | '비공개';
@@ -103,8 +107,14 @@ export interface QrEvent {
   /** 선택 입력 연락처 (이메일/전화) — 동의 시에만 */
   contact?: string;
   name?: string;
-  /** 발급된 할인 쿠폰 코드 (couponEnabled QR 동의 시) */
+  /** 발급된 할인 쿠폰 코드 (couponEnabled QR 동의/후기 시) */
   couponCode?: string;
+
+  // ── review 전용 (후기 유도) ──
+  /** 작성 별점 (1~5) */
+  rating?: number;
+  /** 후기 대상 제품 */
+  product?: string;
 }
 
 /** 발급된 할인 쿠폰 (내구 저장 + 사용 처리 관리) */
@@ -180,6 +190,10 @@ export interface QrAnalytics {
     /** 연락처를 남긴 횟수 */
     withContact: number;
   };
+  /** 후기 유도 — 작성 건수 */
+  reviews: number;
+  /** 후기 평균 별점 (0~5) */
+  avgRating: number;
   /** 지도 표시용 접속 위치 클러스터 */
   scanLocations: ScanLocation[];
   /** slug 별 스캔 (전체 보기에서 QR 랭킹) */

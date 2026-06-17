@@ -88,6 +88,7 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
   const pageviews = events.filter((e) => e.type === 'pageview');
   const ctas = events.filter((e) => e.type === 'cta');
   const consents = events.filter((e) => e.type === 'consent');
+  const reviewEvents = events.filter((e) => e.type === 'review');
 
   // 고유 방문자: 비-null vid distinct + null vid(프라이버시 거부) 스캔은 각각 1로.
   const vids = new Set<string>();
@@ -214,6 +215,11 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
     byAge: topBuckets(byAge),
     byGender: topBuckets(byGender),
     consent: { prompts: consents.length, consented: consentedCount, withContact },
+    reviews: reviewEvents.length,
+    avgRating: (() => {
+      const rated = reviewEvents.filter((r) => typeof r.rating === 'number');
+      return rated.length ? Math.round((rated.reduce((s, r) => s + (r.rating ?? 0), 0) / rated.length) * 10) / 10 : 0;
+    })(),
     scanLocations,
     ...(opts.slug ? {} : { bySlug: topBuckets(bySlug, 50) }),
   };

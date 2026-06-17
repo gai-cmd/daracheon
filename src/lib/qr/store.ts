@@ -57,6 +57,8 @@ export interface CreateQrInput {
   couponEnabled?: boolean;
   couponDiscount?: string;
   couponValidDays?: number;
+  reviewMode?: boolean;
+  reviewProduct?: string;
   defaultStyle: QrStyleId;
   active?: boolean;
   /** 선택: 사람이 읽기 쉬운 커스텀 slug (영숫자/하이픈). 비우면 자동 생성. */
@@ -94,6 +96,8 @@ export async function createQrCode(input: CreateQrInput): Promise<QrCode> {
     ...(input.couponEnabled ? { couponEnabled: true } : {}),
     ...(input.couponDiscount ? { couponDiscount: input.couponDiscount.trim() } : {}),
     ...(typeof input.couponValidDays === 'number' ? { couponValidDays: input.couponValidDays } : {}),
+    ...(input.reviewMode ? { reviewMode: true } : {}),
+    ...(input.reviewProduct ? { reviewProduct: input.reviewProduct.trim() } : {}),
     defaultStyle: input.defaultStyle,
     active: input.active ?? true,
     createdAt: now,

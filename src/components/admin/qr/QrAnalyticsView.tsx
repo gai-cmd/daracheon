@@ -234,7 +234,15 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
             </div>
           )}
 
-          {t.scans === 0 && (
+          {/* 후기 유도 (reviewMode QR) */}
+          {data!.reviews > 0 && (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <Stat label="후기 작성" value={data!.reviews.toLocaleString()} sub="QR 유도 작성 건수" />
+              <Stat label="평균 별점" value={`★ ${data!.avgRating.toFixed(1)}`} />
+            </div>
+          )}
+
+          {t.scans === 0 && data!.reviews === 0 && (
             <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center text-sm text-gray-500">
               아직 스캔 데이터가 없습니다. QR을 인쇄·배포한 뒤 스캔이 발생하면 여기에 집계됩니다.
             </p>

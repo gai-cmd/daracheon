@@ -23,6 +23,8 @@ const createSchema = z.object({
   couponEnabled: z.boolean().optional(),
   couponDiscount: z.string().max(60).optional(),
   couponValidDays: z.number().int().min(1).max(3650).optional(),
+  reviewMode: z.boolean().optional(),
+  reviewProduct: z.string().max(120).optional(),
   defaultStyle: z.enum(['white-black', 'transparent-white', 'transparent-gold']),
   active: z.boolean().optional(),
   customSlug: z.string().max(40).optional(),
