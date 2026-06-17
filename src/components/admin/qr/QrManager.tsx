@@ -21,13 +21,27 @@ const PAGE_OPTIONS: { path: string; label: string }[] = [
   { path: '/blog', label: '블로그' },
 ];
 
+// 폼 내부용 target — 안정적인 React key(_k)를 부여해 중간 행 삭제 시 인덱스-key
+// 재조정으로 입력값이 뒤섞이거나 "리셋"되는 현상을 차단. 저장 시 _k 는 제거.
+interface DraftTarget extends QrTarget {
+  _k: string;
+}
+let _keySeq = 0;
+function newKey(): string {
+  _keySeq += 1;
+  return `t${_keySeq}_${Math.random().toString(36).slice(2, 7)}`;
+}
+function toDraftTargets(targets: QrTarget[]): DraftTarget[] {
+  return (targets.length ? targets : [{ path: '/' }]).map((t) => ({ ...t, _k: newKey() }));
+}
+
 interface Draft {
   id?: string;
   name: string;
   placement: string;
   description: string;
   routingMode: 'single' | 'rotate';
-  targets: QrTarget[];
+  targets: DraftTarget[];
   utmContent: string;
   defaultStyle: QrStyleId;
   active: boolean;
@@ -40,7 +54,7 @@ function emptyDraft(): Draft {
     placement: '',
     description: '',
     routingMode: 'single',
-    targets: [{ path: '/', label: '홈' }],
+    targets: [{ path: '/', label: '홈', _k: newKey() }],
     utmContent: '',
     defaultStyle: 'white-black',
     active: true,
@@ -90,14 +104,16 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
   /* ───── form helpers (모두 함수형 setState — 연속 변경 race 방지) ───── */
   const patchDraft = (p: Partial<Draft>) => setDraft((d) => (d ? { ...d, ...p } : d));
-  const updateTarget = (i: number, p: Partial<QrTarget>) =>
+  const updateTarget = (k: string, p: Partial<QrTarget>) =>
     setDraft((d) =>
-      d ? { ...d, targets: d.targets.map((t, idx) => (idx === i ? { ...t, ...p } : t)) } : d,
+      d ? { ...d, targets: d.targets.map((t) => (t._k === k ? { ...t, ...p } : t)) } : d,
     );
   const addTarget = () =>
-    setDraft((d) => (d ? { ...d, targets: [...d.targets, { path: '/products', weight: 1 }] } : d));
-  const removeTarget = (i: number) =>
-    setDraft((d) => (d ? { ...d, targets: d.targets.filter((_, idx) => idx !== i) } : d));
+    setDraft((d) =>
+      d ? { ...d, targets: [...d.targets, { path: '/products', weight: 1, _k: newKey() }] } : d,
+    );
+  const removeTarget = (k: string) =>
+    setDraft((d) => (d ? { ...d, targets: d.targets.filter((t) => t._k !== k) } : d));
 
   const openCreate = () => setDraft(emptyDraft());
   const openEdit = (qr: QrCode) =>
@@ -107,7 +123,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       placement: qr.placement ?? '',
       description: qr.description ?? '',
       routingMode: qr.routingMode,
-      targets: qr.targets.length ? qr.targets : [{ path: '/' }],
+      targets: toDraftTargets(qr.targets),
       utmContent: qr.utmContent ?? '',
       defaultStyle: qr.defaultStyle,
       active: qr.active,
@@ -120,8 +136,11 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       setToast('이름을 입력하세요.');
       return;
     }
-    const targets = draft.targets.filter((t) => t.path.trim());
-    if (targets.length === 0) {
+    // _k(폼 전용 key) 제거 후 전송.
+    const clean = draft.targets
+      .filter((t) => t.path.trim())
+      .map(({ _k, ...rest }) => ({ ...rest, path: rest.path.trim() }));
+    if (clean.length === 0) {
       setToast('목적지를 최소 1개 입력하세요.');
       return;
     }
@@ -132,7 +151,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
         placement: draft.placement.trim() || undefined,
         description: draft.description.trim() || undefined,
         routingMode: draft.routingMode,
-        targets: draft.routingMode === 'single' ? [targets[0]] : targets,
+        targets: draft.routingMode === 'single' ? [clean[0]] : clean,
         utmContent: draft.utmContent.trim() || undefined,
         defaultStyle: draft.defaultStyle,
         active: draft.active,
@@ -181,22 +200,6 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
     } catch {
       setCodes((prev) => prev.map((c) => (c.id === qr.id ? { ...c, active: qr.active } : c)));
       setToast('상태 변경 실패');
-    }
-  };
-
-  const remove = async (qr: QrCode) => {
-    if (!confirm(`'${qr.name}' QR을 삭제하시겠습니까?\n\n⚠️ 이미 인쇄·배포한 스티커가 있다면 스캔 시 홈으로 이동합니다.`)) return;
-    try {
-      const r = await fetch(`/api/admin/qr/${qr.id}`, { method: 'DELETE' });
-      const j = await r.json();
-      if (j?.success) {
-        setToast('삭제되었습니다.');
-        setCodes((prev) => prev.filter((c) => c.id !== qr.id));
-      } else {
-        setToast(j?.message ?? '삭제 실패');
-      }
-    } catch {
-      setToast('삭제 중 오류가 발생했습니다.');
     }
   };
 
@@ -291,11 +294,12 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                         <button
                           type="button"
                           onClick={() => toggleActive(qr)}
+                          title={qr.active ? '활성 — 스캔이 목적지로 이동하고 기록됩니다' : '비활성 — 스캔 시 홈으로 이동하며 기록되지 않습니다. 눌러서 활성화'}
                           className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                            qr.active ? 'bg-sage-100 text-sage-700' : 'bg-warm-200 text-warm-600'
+                            qr.active ? 'bg-sage-100 text-sage-700' : 'bg-terracotta-bg text-terracotta'
                           }`}
                         >
-                          {qr.active ? '활성' : '비활성'}
+                          {qr.active ? '활성' : '비활성 · 미기록'}
                         </button>
                       </td>
                       <td className="px-4 py-3">
@@ -305,9 +309,6 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                           </button>
                           <button type="button" className="text-xs font-medium text-warm-700 hover:underline" onClick={() => openEdit(qr)}>
                             편집
-                          </button>
-                          <button type="button" className="text-xs font-medium text-terracotta hover:underline" onClick={() => remove(qr)}>
-                            삭제
                           </button>
                         </div>
                       </td>
@@ -422,13 +423,13 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                   목적지 {draft.routingMode === 'rotate' ? '(여러 개 + 가중치)' : ''}
                 </span>
                 <div className="space-y-2">
-                  {(draft.routingMode === 'single' ? draft.targets.slice(0, 1) : draft.targets).map((t, i) => (
-                    <div key={i} className="flex items-center gap-2">
+                  {(draft.routingMode === 'single' ? draft.targets.slice(0, 1) : draft.targets).map((t) => (
+                    <div key={t._k} className="flex items-center gap-2">
                       <input
                         list="qr-page-options"
                         className="flex-1 rounded-lg border border-warm-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
                         value={t.path}
-                        onChange={(e) => updateTarget(i, { path: e.target.value })}
+                        onChange={(e) => updateTarget(t._k, { path: e.target.value })}
                         placeholder="/products"
                       />
                       {draft.routingMode === 'rotate' && (
@@ -437,12 +438,17 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                             type="number"
                             min={1}
                             className="w-20 rounded-lg border border-warm-300 px-2 py-2 text-sm"
-                            value={t.weight ?? 1}
-                            onChange={(e) => updateTarget(i, { weight: Math.max(1, Number(e.target.value) || 1) })}
+                            value={t.weight ?? ''}
+                            onChange={(e) =>
+                              updateTarget(t._k, {
+                                weight: e.target.value === '' ? undefined : Math.max(1, Number(e.target.value) || 1),
+                              })
+                            }
+                            placeholder="1"
                             title="가중치 (클수록 자주 노출)"
                           />
                           {draft.targets.length > 1 && (
-                            <button type="button" className="text-terracotta" onClick={() => removeTarget(i)} title="삭제">
+                            <button type="button" className="text-terracotta" onClick={() => removeTarget(t._k)} title="이 목적지 제거">
                               ✕
                             </button>
                           )}

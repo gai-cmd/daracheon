@@ -5,11 +5,13 @@ import MiniBarChart from '@/components/admin/MiniBarChart';
 import type { QrAnalytics, CountBucket } from '@/lib/qr/types';
 
 const RANGES = [
+  { days: 1, label: '오늘(실시간)' },
   { days: 7, label: '7일' },
   { days: 30, label: '30일' },
   { days: 90, label: '90일' },
   { days: 365, label: '1년' },
 ];
+const REALTIME_POLL_MS = 20_000;
 
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
@@ -56,29 +58,42 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
   const [days, setDays] = useState(30);
   const [data, setData] = useState<QrAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [nonce, setNonce] = useState(0);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const realtime = days <= 1;
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const qs = new URLSearchParams({ slug: slug ?? 'all', days: String(days) });
+    const qs = new URLSearchParams({ slug: slug ?? 'all', days: String(days), fresh: '1' });
     fetch(`/api/admin/qr/analytics?${qs}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((j) => {
-        if (!cancelled && j?.success) setData(j.analytics);
+        if (!cancelled && j?.success) {
+          setData(j.analytics);
+          setUpdatedAt(new Date().toLocaleTimeString('ko-KR'));
+        }
       })
       .catch(() => {})
       .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;
     };
-  }, [slug, days]);
+  }, [slug, days, nonce]);
+
+  // 실시간(오늘) 선택 시 자동 갱신.
+  useEffect(() => {
+    if (!realtime) return;
+    const t = setInterval(() => setNonce((n) => n + 1), REALTIME_POLL_MS);
+    return () => clearInterval(t);
+  }, [realtime]);
 
   const t = data?.totals;
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {RANGES.map((r) => (
             <button
               key={r.days}
@@ -92,8 +107,25 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
             </button>
           ))}
         </div>
-        {loading && <span className="text-xs text-warm-400">불러오는 중…</span>}
+        <div className="flex items-center gap-2 text-xs text-warm-500">
+          {realtime && (
+            <span className="inline-flex items-center gap-1 text-sage-600">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sage-500" /> 실시간
+            </span>
+          )}
+          {updatedAt && <span>업데이트 {updatedAt}</span>}
+          <button
+            type="button"
+            onClick={() => setNonce((n) => n + 1)}
+            className="rounded-lg border border-warm-300 bg-white px-2.5 py-1.5 font-medium text-warm-700 hover:bg-warm-100"
+          >
+            {loading ? '갱신 중…' : '↻ 새로고침'}
+          </button>
+        </div>
       </div>
+      <p className="-mt-2 text-[11px] text-warm-400">
+        ※ 스캔/이동 기록은 저장소 전파로 인해 발생 후 <b>최대 1분</b> 뒤 집계에 반영됩니다. 비활성 QR은 스캔해도 기록되지 않습니다.
+      </p>
 
       {t && (
         <>

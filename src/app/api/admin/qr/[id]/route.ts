@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getQrCode, updateQrCode, deleteQrCode, sanitizeInternalPath } from '@/lib/qr/store';
+import { getQrCode, updateQrCode, sanitizeInternalPath } from '@/lib/qr/store';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -62,20 +62,19 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
   }
 }
 
+// QR 삭제는 의도적으로 막는다 — 인쇄·배포된 스티커가 가리키는 /q/<slug> 는
+// 영구 공개 계약이라, 레코드를 지우면 추적 단절 + 슬러그 재사용 위험이 생긴다.
+// "삭제" 대신 비활성(active:false)으로 전환한다(스캔 시 안전 폴백, 추적 보존).
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await ctx.params;
-    const existing = await getQrCode(id);
-    const ok = await deleteQrCode(id);
-    if (!ok) return NextResponse.json({ success: false, message: '찾을 수 없습니다.' }, { status: 404 });
-
-    await logAdmin('qr-codes', 'delete', {
-      targetId: id,
-      summary: `QR 삭제: ${existing?.name ?? id} (/q/${existing?.slug ?? '?'})`,
-    });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('[Admin QR] DELETE Error:', error);
-    return NextResponse.json({ success: false, message: '서버 오류가 발생했습니다.' }, { status: 500 });
-  }
+  const { id } = await ctx.params;
+  return NextResponse.json(
+    {
+      success: false,
+      message:
+        'QR은 삭제할 수 없습니다(인쇄물 보호). 더 이상 쓰지 않으려면 비활성으로 전환하세요. ' +
+        '비활성 QR을 스캔하면 홈으로 안전하게 이동합니다.',
+      id,
+    },
+    { status: 405 },
+  );
 }
