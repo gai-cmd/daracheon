@@ -28,6 +28,7 @@
     "mailparser": "^3.9.8",
     "next": "^15.1.0",
     "nodemailer": "^8.0.7",
+    "qrcode-generator": "^1.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tinymce": "^7.9.2",

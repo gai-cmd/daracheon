@@ -1,0 +1,86 @@
+import { after, NextRequest, NextResponse } from 'next/server';
+import { getQrBySlug, resolveDestination, buildRedirectUrl } from '@/lib/qr/store';
+import { recordEvent } from '@/lib/qr/events';
+import { getClientEnv, isPrefetch, isPrivacyOptOut, genEventId, randomHex } from '@/lib/qr/collect';
+import { signQrSession } from '@/lib/qr/token';
+import type { QrEvent } from '@/lib/qr/types';
+
+/**
+ * 영구 QR 리다이렉트 — /q/<slug>.
+ *
+ * 인쇄된 QR 이 인코딩하는 불변 URL. 핫패스 원칙:
+ *   목적지 해석(캐시된 readData) → 쿠키 발급 → 302.  ← blob 쓰기 없음.
+ * 스캔 로깅은 next/after 로 응답 후 비차단 수행 → 리다이렉트 지연 0,
+ * Blob 장애 시에도 인쇄된 코드는 정상 리다이렉트(가용성 우선).
+ *
+ * 없는/비활성 slug 는 절대 404 내지 않고 홈으로 안전 폴백(인쇄물 영구 보존).
+ */
+
+export const dynamic = 'force-dynamic';
+
+const SAFE_FALLBACK = '/';
+const isProd = process.env.NODE_ENV === 'production';
+
+export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: string }> }) {
+  const { slug } = await ctx.params;
+  const origin = req.nextUrl.origin;
+
+  const qr = await getQrBySlug(slug);
+  if (!qr || !qr.active) {
+    return NextResponse.redirect(new URL(SAFE_FALLBACK, origin), 302);
+  }
+
+  const destPath = resolveDestination(qr);
+  const redirectUrl = buildRedirectUrl(origin, qr, destPath);
+
+  const h = req.headers;
+  const optOut = isPrivacyOptOut(h);
+  const existingVid = req.cookies.get('zql_vid')?.value;
+  const isRevisit = !!existingVid;
+  const vid = optOut ? null : existingVid || randomHex(24);
+  const qsid = randomHex(24);
+  const token = await signQrSession({ slug, qsid });
+
+  const res = NextResponse.redirect(redirectUrl, 302);
+  const base = { secure: isProd, sameSite: 'lax' as const, path: '/' };
+  // 서명된 세션 — 비콘 이벤트(pageview/cta) 귀속 + 위조 방지. HttpOnly.
+  res.cookies.set('zql_qsid', token, { ...base, httpOnly: true, maxAge: 30 * 60 });
+  // 비콘 게이트 플래그 — 클라이언트가 "QR 세션인가" 판정용으로 읽음(민감정보 없음).
+  res.cookies.set('zql_track', '1', { ...base, httpOnly: false, maxAge: 30 * 60 });
+  // 방문자 식별(재방문 측정) — 랜덤 불투명값, 원본 IP/UA 미저장. opt-out 이면 미설정.
+  if (vid) {
+    res.cookies.set('zql_vid', vid, { ...base, httpOnly: true, maxAge: 180 * 24 * 60 * 60 });
+  }
+
+  // 스캔 로깅 — 봇/프리페치 제외, 응답 후 비차단.
+  const env = getClientEnv(h);
+  if (!env.isBot && !isPrefetch(h)) {
+    const ev: QrEvent = {
+      id: genEventId(),
+      type: 'scan',
+      at: new Date().toISOString(),
+      slug,
+      qsid,
+      vid: vid ?? '',
+      dest: destPath,
+      isRevisit,
+      country: env.country,
+      region: env.region,
+      city: env.city,
+      device: env.device,
+      os: env.os,
+      browser: env.browser,
+      lang: env.lang,
+      referrer: h.get('referer') ?? undefined,
+    };
+    after(async () => {
+      try {
+        await recordEvent(ev);
+      } catch (err) {
+        console.warn('[qr:/q] scan 로깅 실패', err);
+      }
+    });
+  }
+
+  return res;
+}

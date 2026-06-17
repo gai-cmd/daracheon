@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer';
 import ChromeGate from '@/components/layout/ChromeGate';
 import JsonLd from '@/components/ui/JsonLd';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import QrBeacon from '@/components/analytics/QrBeacon';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { readDataSafe, readSingleSafe, readSingleUncached } from '@/lib/db';
@@ -422,6 +423,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
         <VercelAnalytics />
         <SpeedInsights />
+        {/* QR 유입 세션 한정 동선·CTA 비콘 (zql_track 쿠키 게이트 + GPC 존중) */}
+        <QrBeacon />
       </body>
     </html>
   );
