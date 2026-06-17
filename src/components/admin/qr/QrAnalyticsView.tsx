@@ -211,6 +211,29 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
             )}
           </div>
 
+          {/* 동의 수집 인구통계 (collectInfo QR) */}
+          {data!.consent.prompts > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-900">동의 수집 (인구통계)</h3>
+                <span className="rounded bg-gold-100 px-1.5 py-0.5 text-[10px] font-medium text-gold-700">개인정보 동의 기반</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <Stat label="동의 화면 노출" value={data!.consent.prompts.toLocaleString()} />
+                <Stat label="동의 완료" value={data!.consent.consented.toLocaleString()} />
+                <Stat
+                  label="동의율"
+                  value={`${data!.consent.prompts > 0 ? Math.round((data!.consent.consented / data!.consent.prompts) * 100) : 0}%`}
+                />
+                <Stat label="연락처 수집" value={data!.consent.withContact.toLocaleString()} />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Breakdown title="연령대" data={data!.byAge} unit="명" />
+                <Breakdown title="성별" data={data!.byGender} unit="명" />
+              </div>
+            </div>
+          )}
+
           {t.scans === 0 && (
             <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center text-sm text-gray-500">
               아직 스캔 데이터가 없습니다. QR을 인쇄·배포한 뒤 스캔이 발생하면 여기에 집계됩니다.

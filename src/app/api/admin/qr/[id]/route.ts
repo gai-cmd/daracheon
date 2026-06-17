@@ -18,6 +18,8 @@ const patchSchema = z.object({
   routingMode: z.enum(['single', 'rotate']).optional(),
   targets: z.array(targetSchema).min(1).max(50).optional(),
   utmContent: z.string().max(120).optional(),
+  collectInfo: z.boolean().optional(),
+  collectBenefitText: z.string().max(200).optional(),
   defaultStyle: z.enum(['white-black', 'transparent-white', 'transparent-gold']).optional(),
   active: z.boolean().optional(),
 });

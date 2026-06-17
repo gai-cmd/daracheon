@@ -41,7 +41,15 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: strin
   const qsid = randomHex(24);
   const token = await signQrSession({ slug, qsid });
 
-  const res = NextResponse.redirect(redirectUrl, 302);
+  // 동의 수집 QR: 아직 동의/거부를 결정 안 했으면 동의 화면으로 (진입 차단 아님 —
+  // 화면에서 '동의 없이 계속' 가능. 동의는 혜택 인센티브로만 유도).
+  const decided = !!req.cookies.get('zql_consent')?.value || !!req.cookies.get('zql_decline')?.value;
+  const needConsent = !!qr.collectInfo && !decided;
+  const finalUrl = needConsent
+    ? new URL(`/scan/${encodeURIComponent(slug)}?to=${encodeURIComponent(destPath)}`, origin).toString()
+    : redirectUrl;
+
+  const res = NextResponse.redirect(finalUrl, 302);
   const base = { secure: isProd, sameSite: 'lax' as const, path: '/' };
   // 서명된 세션 — 비콘 이벤트(pageview/cta) 귀속 + 위조 방지. HttpOnly.
   res.cookies.set('zql_qsid', token, { ...base, httpOnly: true, maxAge: 30 * 60 });

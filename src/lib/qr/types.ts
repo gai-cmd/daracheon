@@ -32,6 +32,10 @@ export interface QrCode {
   targets: QrTarget[];
   /** utm_content 오버라이드 (예: 스티커 버전 A/B). 비우면 slug 기반 기본값. */
   utmContent?: string;
+  /** 스캔 시 개인정보(연령·성별 등) 동의 수집 화면을 띄울지. 진입은 막지 않고 혜택으로 유도. */
+  collectInfo?: boolean;
+  /** 동의 유도 문구 (예: "동의 시 추가 구매 할인 혜택"). 비우면 기본 문구. */
+  collectBenefitText?: string;
   /** 어드민 미리보기 기본 프리셋 (3종 모두 항상 다운로드 가능) */
   defaultStyle: QrStyleId;
   active: boolean;
@@ -39,7 +43,11 @@ export interface QrCode {
   updatedAt: string;
 }
 
-export type QrEventType = 'scan' | 'pageview' | 'cta';
+export type QrEventType = 'scan' | 'pageview' | 'cta' | 'consent';
+
+/** 연령대 선택지 */
+export type AgeBand = '10대' | '20대' | '30대' | '40대' | '50대' | '60대+' | '비공개';
+export type Gender = '남성' | '여성' | '비공개';
 
 export interface QrEvent {
   id: string;
@@ -80,6 +88,15 @@ export interface QrEvent {
   ctaType?: string;
   ctaLabel?: string;
   ctaHref?: string;
+
+  // ── consent 전용 (스캔 시 동의 수집) ──
+  /** 동의 여부 (false = 동의 화면에서 '동의 없이 계속') */
+  consented?: boolean;
+  age?: AgeBand;
+  gender?: Gender;
+  /** 선택 입력 연락처 (이메일/전화) — 동의 시에만 */
+  contact?: string;
+  name?: string;
 }
 
 /* ───────── 분석 집계 결과 (어드민 분석 탭에 그대로 전달) ───────── */
@@ -127,6 +144,17 @@ export interface QrAnalytics {
   byCta: CountBucket[];
   /** 유입 퍼널: 스캔 → 사이트 탐색(2P+) → CTA */
   funnel: { scans: number; engaged: number; cta: number };
+  /** 동의 수집 (연령·성별) — collectInfo QR 한정 */
+  byAge: CountBucket[];
+  byGender: CountBucket[];
+  consent: {
+    /** 동의 화면을 본 횟수(동의+거부) */
+    prompts: number;
+    /** 동의한 횟수 */
+    consented: number;
+    /** 연락처를 남긴 횟수 */
+    withContact: number;
+  };
   /** 지도 표시용 접속 위치 클러스터 */
   scanLocations: ScanLocation[];
   /** slug 별 스캔 (전체 보기에서 QR 랭킹) */

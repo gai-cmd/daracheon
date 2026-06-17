@@ -87,6 +87,7 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
   const scans = events.filter((e) => e.type === 'scan');
   const pageviews = events.filter((e) => e.type === 'pageview');
   const ctas = events.filter((e) => e.type === 'cta');
+  const consents = events.filter((e) => e.type === 'consent');
 
   // 고유 방문자: 비-null vid distinct + null vid(프라이버시 거부) 스캔은 각각 1로.
   const vids = new Set<string>();
@@ -161,6 +162,19 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
   const byCta = new Map<string, number>();
   for (const c of ctas) bump(byCta, c.ctaType, '기타');
 
+  // 동의 수집(인구통계) — 동의한 건만 연령·성별 집계
+  const byAge = new Map<string, number>();
+  const byGender = new Map<string, number>();
+  let consentedCount = 0;
+  let withContact = 0;
+  for (const c of consents) {
+    if (!c.consented) continue;
+    consentedCount++;
+    if (c.contact) withContact++;
+    if (c.age) bump(byAge, c.age, '비공개');
+    if (c.gender) bump(byGender, c.gender, '비공개');
+  }
+
   // scansByDay: 빈 날짜를 0으로 채워 추이 그래프 막대 폭을 일정하게 (그래프 비대 방지)
   const scansByDay = kstDayRange(opts.from, opts.to).map((key) => ({ key, count: byDay.get(key) ?? 0 }));
   const scansByHour = Array.from({ length: 24 }, (_, h) => ({ key: pad2(h), count: byHour.get(pad2(h)) ?? 0 }));
@@ -197,6 +211,9 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
     topPages: topBuckets(topPages, 15),
     byCta: topBuckets(byCta),
     funnel: { scans: scans.length, engaged, cta: ctaSessions },
+    byAge: topBuckets(byAge),
+    byGender: topBuckets(byGender),
+    consent: { prompts: consents.length, consented: consentedCount, withContact },
     scanLocations,
     ...(opts.slug ? {} : { bySlug: topBuckets(bySlug, 50) }),
   };

@@ -43,6 +43,8 @@ interface Draft {
   routingMode: 'single' | 'rotate';
   targets: DraftTarget[];
   utmContent: string;
+  collectInfo: boolean;
+  collectBenefitText: string;
   defaultStyle: QrStyleId;
   active: boolean;
   customSlug: string;
@@ -56,6 +58,8 @@ function emptyDraft(): Draft {
     routingMode: 'single',
     targets: [{ path: '/', label: '홈', _k: newKey() }],
     utmContent: '',
+    collectInfo: false,
+    collectBenefitText: '',
     defaultStyle: 'white-black',
     active: true,
     customSlug: '',
@@ -125,6 +129,8 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       routingMode: qr.routingMode,
       targets: toDraftTargets(qr.targets),
       utmContent: qr.utmContent ?? '',
+      collectInfo: qr.collectInfo ?? false,
+      collectBenefitText: qr.collectBenefitText ?? '',
       defaultStyle: qr.defaultStyle,
       active: qr.active,
       customSlug: '',
@@ -153,6 +159,8 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
         routingMode: draft.routingMode,
         targets: draft.routingMode === 'single' ? [clean[0]] : clean,
         utmContent: draft.utmContent.trim() || undefined,
+        collectInfo: draft.collectInfo,
+        collectBenefitText: draft.collectBenefitText.trim() || undefined,
         defaultStyle: draft.defaultStyle,
         active: draft.active,
         ...(draft.id ? {} : draft.customSlug.trim() ? { customSlug: draft.customSlug.trim() } : {}),
@@ -485,6 +493,27 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                     placeholder="예: box-a / flyer-2026"
                   />
                 </label>
+              </div>
+
+              {/* 동의 수집 (개인정보·인구통계) */}
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={draft.collectInfo} onChange={(e) => patchDraft({ collectInfo: e.target.checked })} />
+                  <span className="text-sm font-medium text-gray-800">스캔 시 개인정보 동의 수집 (연령·성별·연락처)</span>
+                </label>
+                {draft.collectInfo && (
+                  <div className="mt-2">
+                    <input
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                      value={draft.collectBenefitText}
+                      onChange={(e) => patchDraft({ collectBenefitText: e.target.value })}
+                      placeholder="동의 유도 혜택 문구 (예: 추가 구매 할인 혜택)"
+                    />
+                    <p className="mt-1.5 text-[11px] text-gray-500">
+                      스캔 시 동의 화면을 띄웁니다. <b>진입은 막지 않으며</b>, 미동의 시 위 혜택 대상에서만 제외됩니다(PIPA 안전).
+                    </p>
+                  </div>
+                )}
               </div>
 
               <label className="flex items-center gap-2">

@@ -18,6 +18,8 @@ const createSchema = z.object({
   routingMode: z.enum(['single', 'rotate']),
   targets: z.array(targetSchema).min(1, '목적지를 최소 1개 입력하세요.').max(50),
   utmContent: z.string().max(120).optional(),
+  collectInfo: z.boolean().optional(),
+  collectBenefitText: z.string().max(200).optional(),
   defaultStyle: z.enum(['white-black', 'transparent-white', 'transparent-gold']),
   active: z.boolean().optional(),
   customSlug: z.string().max(40).optional(),
