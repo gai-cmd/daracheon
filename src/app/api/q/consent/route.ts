@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { recordEvent } from '@/lib/qr/events';
 import { getClientEnv, genEventId } from '@/lib/qr/collect';
 import { verifyQrSession } from '@/lib/qr/token';
-import type { QrEvent } from '@/lib/qr/types';
+import type { QrEvent, AgeBand, Gender } from '@/lib/qr/types';
 
 /**
  * QR 스캔 동의 수집 (연령·성별·연락처).
@@ -16,10 +16,12 @@ export const dynamic = 'force-dynamic';
 const isProd = process.env.NODE_ENV === 'production';
 const MAX_BODY = 2048;
 
+// age/gender 는 lenient string — 동의 자체(쿠키·기록)가 인구통계 값 파싱 실패로
+// 무음 실패하지 않게 한다(실제 클라이언트는 고정 enum 값을 보냄).
 const bodySchema = z.object({
   consented: z.boolean(),
-  age: z.enum(['10대', '20대', '30대', '40대', '50대', '60대+', '비공개']).optional(),
-  gender: z.enum(['남성', '여성', '비공개']).optional(),
+  age: z.string().max(16).optional(),
+  gender: z.string().max(16).optional(),
   contact: z.string().max(120).optional(),
   name: z.string().max(60).optional(),
 });
@@ -72,8 +74,8 @@ export async function POST(req: NextRequest) {
         // 동의한 경우에만 개인정보 저장
         ...(body.consented
           ? {
-              ...(body.age ? { age: body.age } : {}),
-              ...(body.gender ? { gender: body.gender } : {}),
+              ...(body.age ? { age: body.age as AgeBand } : {}),
+              ...(body.gender ? { gender: body.gender as Gender } : {}),
               ...(body.contact?.trim() ? { contact: body.contact.trim() } : {}),
               ...(body.name?.trim() ? { name: body.name.trim() } : {}),
             }
