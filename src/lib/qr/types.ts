@@ -63,6 +63,9 @@ export interface QrEvent {
   country?: string;
   region?: string;
   city?: string;
+  /** 접속 위치 위/경도 (지도 표시용 대략값) */
+  lat?: number;
+  lng?: number;
   device?: DeviceType;
   os?: string;
   browser?: string;
@@ -104,11 +107,17 @@ export interface QrAnalytics {
   scansByDay: CountBucket[];
   /** 시간대(0~23)별 스캔 */
   scansByHour: CountBucket[];
+  /** 요일별 스캔 (월~일) */
+  byWeekday: CountBucket[];
   byDevice: CountBucket[];
   byOs: CountBucket[];
   byBrowser: CountBucket[];
   byCountry: CountBucket[];
+  /** 접속 지역 (시·도) */
+  byRegion: CountBucket[];
   byCity: CountBucket[];
+  /** 접속 언어 */
+  byLanguage: CountBucket[];
   byReferrer: CountBucket[];
   /** 목적지 경로별 분산 결과 */
   byDestination: CountBucket[];
@@ -116,6 +125,17 @@ export interface QrAnalytics {
   topPages: CountBucket[];
   /** CTA 유형별 클릭 */
   byCta: CountBucket[];
+  /** 유입 퍼널: 스캔 → 사이트 탐색(2P+) → CTA */
+  funnel: { scans: number; engaged: number; cta: number };
+  /** 지도 표시용 접속 위치 클러스터 */
+  scanLocations: ScanLocation[];
   /** slug 별 스캔 (전체 보기에서 QR 랭킹) */
   bySlug?: CountBucket[];
+}
+
+export interface ScanLocation {
+  lat: number;
+  lng: number;
+  count: number;
+  label: string; // 도시/지역 이름
 }

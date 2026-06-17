@@ -67,6 +67,8 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: strin
       country: env.country,
       region: env.region,
       city: env.city,
+      lat: env.lat,
+      lng: env.lng,
       device: env.device,
       os: env.os,
       browser: env.browser,

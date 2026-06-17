@@ -1,4 +1,4 @@
-import type { QrEvent, QrAnalytics, CountBucket } from './types';
+import type { QrEvent, QrAnalytics, CountBucket, ScanLocation } from './types';
 
 /**
  * 이벤트 배열 → 어드민 분석 집계 (온리드, 순수 함수).
@@ -6,13 +6,48 @@ import type { QrEvent, QrAnalytics, CountBucket } from './types';
  */
 
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토']; // getUTCDay 인덱스
+const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // 표시 순서: 월~일
+const LANG_LABELS: Record<string, string> = {
+  ko: '한국어', ja: '日本語', en: 'English', vi: 'Tiếng Việt', zh: '中文', th: 'ไทย',
+};
 
-function kstParts(iso: string): { day: string; hour: number } | null {
+function pad2(n: number): string {
+  return String(n).padStart(2, '0');
+}
+function dayStr(d: Date): string {
+  return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
+}
+
+function kstParts(iso: string): { day: string; hour: number; weekday: number } | null {
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return null;
   const d = new Date(t + KST_OFFSET_MS);
-  const day = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-  return { day, hour: d.getUTCHours() };
+  return { day: dayStr(d), hour: d.getUTCHours(), weekday: d.getUTCDay() };
+}
+
+/** [from, to] 의 KST 일자 문자열 (zero-fill 용). to 기준 최근 cap 일로 제한. */
+function kstDayRange(from: Date, to: Date, cap = 120): string[] {
+  const kstMidnight = (x: Date) => {
+    const d = new Date(x.getTime() + KST_OFFSET_MS);
+    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  };
+  const end = kstMidnight(to);
+  let start = kstMidnight(from);
+  const minStart = new Date(end);
+  minStart.setUTCDate(end.getUTCDate() - (cap - 1));
+  if (start < minStart) start = minStart;
+  const out: string[] = [];
+  for (const cur = new Date(start); cur <= end; cur.setUTCDate(cur.getUTCDate() + 1)) {
+    out.push(dayStr(cur));
+  }
+  return out;
+}
+
+function langLabel(lang?: string): string {
+  if (!lang) return '(미상)';
+  const base = lang.toLowerCase().slice(0, 2);
+  return LANG_LABELS[base] ?? lang.slice(0, 12);
 }
 
 function topBuckets(counts: Map<string, number>, limit = 12): CountBucket[] {
@@ -64,40 +99,60 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
   }
   const uniqueVisitors = vids.size + nullVidScans;
 
-  // 참여율: 스캔 세션(qsid) 중 사이트 내 추가 페이지를 1개 이상 본 비율.
+  // 참여율 + 퍼널: 스캔 세션(qsid) 중 사이트 탐색(2P+)·CTA 도달.
   const scanQsids = new Set(scans.map((s) => s.qsid).filter(Boolean));
   const qsidsWithPageview = new Set(pageviews.map((p) => p.qsid).filter(Boolean));
+  const qsidsWithCta = new Set(ctas.map((c) => c.qsid).filter(Boolean));
   let engaged = 0;
-  for (const q of scanQsids) if (qsidsWithPageview.has(q)) engaged++;
+  let ctaSessions = 0;
+  for (const q of scanQsids) {
+    if (qsidsWithPageview.has(q)) engaged++;
+    if (qsidsWithCta.has(q)) ctaSessions++;
+  }
   const engagementRate = scanQsids.size > 0 ? engaged / scanQsids.size : 0;
 
   // 차원별 카운터
   const byDay = new Map<string, number>();
   const byHour = new Map<string, number>();
+  const byWeekdayMap = new Map<number, number>();
   const byDevice = new Map<string, number>();
   const byOs = new Map<string, number>();
   const byBrowser = new Map<string, number>();
   const byCountry = new Map<string, number>();
+  const byRegion = new Map<string, number>();
   const byCity = new Map<string, number>();
+  const byLanguage = new Map<string, number>();
   const byReferrer = new Map<string, number>();
   const byDestination = new Map<string, number>();
   const bySlug = new Map<string, number>();
+  // 지도용 위치 클러스터 (도시/지역 단위 centroid)
+  const locMap = new Map<string, { sumLat: number; sumLng: number; count: number; label: string }>();
 
   for (const s of scans) {
     const parts = kstParts(s.at);
     if (parts) {
       byDay.set(parts.day, (byDay.get(parts.day) ?? 0) + 1);
-      const hk = String(parts.hour).padStart(2, '0');
-      byHour.set(hk, (byHour.get(hk) ?? 0) + 1);
+      byHour.set(pad2(parts.hour), (byHour.get(pad2(parts.hour)) ?? 0) + 1);
+      byWeekdayMap.set(parts.weekday, (byWeekdayMap.get(parts.weekday) ?? 0) + 1);
     }
     bump(byDevice, s.device);
     bump(byOs, s.os);
     bump(byBrowser, s.browser);
     bump(byCountry, s.country, '(미상)');
+    bump(byRegion, s.region, '(미상)');
     bump(byCity, s.city, '(미상)');
+    bump(byLanguage, langLabel(s.lang), '(미상)');
     byReferrer.set(referrerHost(s.referrer), (byReferrer.get(referrerHost(s.referrer)) ?? 0) + 1);
     bump(byDestination, s.dest, '/');
     bump(bySlug, s.slug);
+    if (typeof s.lat === 'number' && typeof s.lng === 'number') {
+      const key = s.city || s.region || s.country || `${s.lat.toFixed(2)},${s.lng.toFixed(2)}`;
+      const loc = locMap.get(key) ?? { sumLat: 0, sumLng: 0, count: 0, label: key };
+      loc.sumLat += s.lat;
+      loc.sumLng += s.lng;
+      loc.count++;
+      locMap.set(key, loc);
+    }
   }
 
   const topPages = new Map<string, number>();
@@ -106,14 +161,15 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
   const byCta = new Map<string, number>();
   for (const c of ctas) bump(byCta, c.ctaType, '기타');
 
-  // scansByDay: 날짜순 정렬(추이 그래프용)
-  const scansByDay = [...byDay.entries()]
-    .map(([key, count]) => ({ key, count }))
-    .sort((a, b) => a.key.localeCompare(b.key));
-  const scansByHour = Array.from({ length: 24 }, (_, h) => {
-    const key = String(h).padStart(2, '0');
-    return { key, count: byHour.get(key) ?? 0 };
-  });
+  // scansByDay: 빈 날짜를 0으로 채워 추이 그래프 막대 폭을 일정하게 (그래프 비대 방지)
+  const scansByDay = kstDayRange(opts.from, opts.to).map((key) => ({ key, count: byDay.get(key) ?? 0 }));
+  const scansByHour = Array.from({ length: 24 }, (_, h) => ({ key: pad2(h), count: byHour.get(pad2(h)) ?? 0 }));
+  const byWeekday = WEEKDAY_ORDER.map((idx) => ({ key: WEEKDAY_LABELS[idx], count: byWeekdayMap.get(idx) ?? 0 }));
+
+  const scanLocations: ScanLocation[] = [...locMap.values()]
+    .map((l) => ({ lat: l.sumLat / l.count, lng: l.sumLng / l.count, count: l.count, label: l.label }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 200);
 
   return {
     slug: opts.slug,
@@ -128,15 +184,20 @@ export function aggregate(allEvents: QrEvent[], opts: AggregateOptions): QrAnaly
     },
     scansByDay,
     scansByHour,
+    byWeekday,
     byDevice: topBuckets(byDevice),
     byOs: topBuckets(byOs),
     byBrowser: topBuckets(byBrowser),
     byCountry: topBuckets(byCountry),
+    byRegion: topBuckets(byRegion),
     byCity: topBuckets(byCity),
+    byLanguage: topBuckets(byLanguage),
     byReferrer: topBuckets(byReferrer),
     byDestination: topBuckets(byDestination),
     topPages: topBuckets(topPages, 15),
     byCta: topBuckets(byCta),
+    funnel: { scans: scans.length, engaged, cta: ctaSessions },
+    scanLocations,
     ...(opts.slug ? {} : { bySlug: topBuckets(bySlug, 50) }),
   };
 }

@@ -20,6 +20,15 @@ export interface GeoInfo {
   country?: string;
   region?: string;
   city?: string;
+  /** Vercel 엣지가 추정한 접속 위치 위/경도 (대략값 — 도시 단위, 개인 식별 불가) */
+  lat?: number;
+  lng?: number;
+}
+
+function num(v: string | null): number | undefined {
+  if (!v) return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 export function getGeo(h: Headers): GeoInfo {
@@ -27,6 +36,8 @@ export function getGeo(h: Headers): GeoInfo {
     country: h.get('x-vercel-ip-country')?.trim() || undefined,
     region: safeDecode(h.get('x-vercel-ip-country-region')),
     city: safeDecode(h.get('x-vercel-ip-city')),
+    lat: num(h.get('x-vercel-ip-latitude')),
+    lng: num(h.get('x-vercel-ip-longitude')),
   };
 }
 
