@@ -217,14 +217,14 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
   return (
     <div className="space-y-6">
       {/* 탭 */}
-      <div className="flex gap-2 border-b border-warm-200">
+      <div className="flex gap-2 border-b border-gray-200">
         {(['list', 'analytics'] as const).map((tk) => (
           <button
             key={tk}
             type="button"
             onClick={() => setTab(tk)}
             className={`-mb-px border-b-2 px-4 py-2 text-sm font-semibold transition ${
-              tab === tk ? 'border-gold-400 text-gold-700' : 'border-transparent text-warm-500 hover:text-warm-700'
+              tab === tk ? 'border-gold-400 text-gold-700' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             {tk === 'list' ? 'QR 목록 & 원본' : '분석'}
@@ -234,28 +234,33 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
       {tab === 'list' && (
         <>
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-warm-600">
-              인쇄된 QR(<code className="rounded bg-warm-100 px-1">/q/코드</code>)은 영구 고정 — 목적지는 언제든 바꿀 수 있습니다.
-            </p>
-            <button type="button" className="adm-btn-primary" onClick={openCreate}>
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">
+                등록된 QR{codes.length > 0 ? ` · ${codes.length}개` : ''}
+              </h2>
+              <p className="mt-0.5 text-sm text-gray-600">
+                인쇄된 QR(<code className="rounded bg-gray-100 px-1">/q/코드</code>)은 영구 고정 — 목적지는 언제든 바꿀 수 있습니다.
+              </p>
+            </div>
+            <button type="button" className="adm-btn-primary shrink-0" onClick={openCreate}>
               + 새 QR 만들기
             </button>
           </div>
 
           {loading ? (
-            <p className="py-12 text-center text-sm text-warm-400">불러오는 중…</p>
+            <p className="py-12 text-center text-sm text-gray-400">불러오는 중…</p>
           ) : sortedCodes.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-warm-300 bg-warm-50 p-10 text-center">
-              <p className="text-sm text-warm-600">아직 만든 QR이 없습니다.</p>
+            <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+              <p className="text-sm text-gray-600">아직 만든 QR이 없습니다.</p>
               <button type="button" className="adm-btn-primary mt-3" onClick={openCreate}>
                 첫 QR 만들기
               </button>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-warm-200 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
               <table className="w-full text-sm">
-                <thead className="bg-warm-50 text-left text-xs text-warm-600">
+                <thead className="bg-gray-50 text-left text-xs text-gray-600">
                   <tr>
                     <th className="px-4 py-3 font-medium">이름 / 위치</th>
                     <th className="px-4 py-3 font-medium">유입 URL</th>
@@ -264,16 +269,16 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                     <th className="px-4 py-3 text-right font-medium">관리</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-warm-100">
+                <tbody className="divide-y divide-gray-100">
                   {sortedCodes.map((qr) => (
-                    <tr key={qr.id} className="hover:bg-warm-50/50">
+                    <tr key={qr.id} className="hover:bg-gray-50/50">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-warm-900">{qr.name}</p>
-                        {qr.placement && <p className="text-xs text-warm-500">{qr.placement}</p>}
+                        <p className="font-medium text-gray-900">{qr.name}</p>
+                        {qr.placement && <p className="text-xs text-gray-500">{qr.placement}</p>}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
-                          <code className="rounded bg-warm-100 px-1.5 py-0.5 text-xs text-warm-700">/q/{qr.slug}</code>
+                          <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">/q/{qr.slug}</code>
                           <button
                             type="button"
                             onClick={() => copyUrl(qr.slug)}
@@ -285,7 +290,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-xs text-warm-600">{destSummary(qr)}</span>
+                        <span className="text-xs text-gray-600">{destSummary(qr)}</span>
                         {qr.routingMode === 'rotate' && (
                           <span className="ml-1 rounded bg-gold-50 px-1 text-[10px] text-gold-700">분산</span>
                         )}
@@ -307,7 +312,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                           <button type="button" className="text-xs font-medium text-gold-700 hover:underline" onClick={() => setStudioFor(qr)}>
                             원본
                           </button>
-                          <button type="button" className="text-xs font-medium text-warm-700 hover:underline" onClick={() => openEdit(qr)}>
+                          <button type="button" className="text-xs font-medium text-gray-700 hover:underline" onClick={() => openEdit(qr)}>
                             편집
                           </button>
                         </div>
@@ -329,10 +334,10 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-warm-900">{studioFor.name} — QR 원본</h3>
-                <p className="text-xs text-warm-500">/q/{studioFor.slug}</p>
+                <h3 className="text-lg font-bold text-gray-900">{studioFor.name} — QR 원본</h3>
+                <p className="text-xs text-gray-500">/q/{studioFor.slug}</p>
               </div>
-              <button type="button" className="text-warm-400 hover:text-warm-700" onClick={() => setStudioFor(null)}>
+              <button type="button" className="text-gray-400 hover:text-gray-700" onClick={() => setStudioFor(null)}>
                 ✕
               </button>
             </div>
@@ -345,7 +350,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       {draft && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/40 p-4" onClick={() => !saving && setDraft(null)}>
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="mb-4 text-lg font-bold text-warm-900">{draft.id ? 'QR 편집' : '새 QR 만들기'}</h3>
+            <h3 className="mb-4 text-lg font-bold text-gray-900">{draft.id ? 'QR 편집' : '새 QR 만들기'}</h3>
 
             <datalist id="qr-page-options">
               {PAGE_OPTIONS.map((o) => (
@@ -358,18 +363,18 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-warm-700">이름 *</span>
+                  <span className="mb-1 block text-sm font-medium text-gray-700">이름 *</span>
                   <input
-                    className="w-full rounded-lg border border-warm-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
                     value={draft.name}
                     onChange={(e) => patchDraft({ name: e.target.value })}
                     placeholder="예: 제품 박스 후면 스티커"
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-warm-700">부착 위치/매체</span>
+                  <span className="mb-1 block text-sm font-medium text-gray-700">부착 위치/매체</span>
                   <input
-                    className="w-full rounded-lg border border-warm-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
                     value={draft.placement}
                     onChange={(e) => patchDraft({ placement: e.target.value })}
                     placeholder="예: 제품 패키지 / 명함 / 전단 / 박람회"
@@ -379,23 +384,23 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
               {!draft.id && (
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-warm-700">커스텀 코드 (선택)</span>
+                  <span className="mb-1 block text-sm font-medium text-gray-700">커스텀 코드 (선택)</span>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-sm text-warm-500">/q/</span>
+                    <span className="text-sm text-gray-500">/q/</span>
                     <input
-                      className="flex-1 rounded-lg border border-warm-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
                       value={draft.customSlug}
                       onChange={(e) => patchDraft({ customSlug: e.target.value })}
                       placeholder="비우면 자동 생성 (영숫자/하이픈)"
                     />
                   </div>
-                  <span className="mt-1 block text-[11px] text-warm-500">⚠️ 인쇄 후에는 코드를 바꿀 수 없습니다(영구 고정).</span>
+                  <span className="mt-1 block text-[11px] text-gray-500">⚠️ 인쇄 후에는 코드를 바꿀 수 없습니다(영구 고정).</span>
                 </label>
               )}
 
               {/* 라우팅 모드 */}
               <div>
-                <span className="mb-1 block text-sm font-medium text-warm-700">유입 방식</span>
+                <span className="mb-1 block text-sm font-medium text-gray-700">유입 방식</span>
                 <div className="flex gap-2">
                   {(
                     [
@@ -408,7 +413,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                       type="button"
                       onClick={() => patchDraft({ routingMode: m.v })}
                       className={`rounded-lg border px-3 py-2 text-xs font-medium ${
-                        draft.routingMode === m.v ? 'border-gold-400 bg-gold-50 text-gold-700' : 'border-warm-300 bg-white text-warm-700'
+                        draft.routingMode === m.v ? 'border-gold-400 bg-gold-50 text-gold-700' : 'border-gray-300 bg-white text-gray-700'
                       }`}
                     >
                       {m.t}
@@ -419,7 +424,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
               {/* 목적지 (유입 URL 변경/추가) */}
               <div>
-                <span className="mb-1 block text-sm font-medium text-warm-700">
+                <span className="mb-1 block text-sm font-medium text-gray-700">
                   목적지 {draft.routingMode === 'rotate' ? '(여러 개 + 가중치)' : ''}
                 </span>
                 <div className="space-y-2">
@@ -427,7 +432,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                     <div key={t._k} className="flex items-center gap-2">
                       <input
                         list="qr-page-options"
-                        className="flex-1 rounded-lg border border-warm-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
+                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-gold-500/30"
                         value={t.path}
                         onChange={(e) => updateTarget(t._k, { path: e.target.value })}
                         placeholder="/products"
@@ -437,7 +442,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                           <input
                             type="number"
                             min={1}
-                            className="w-20 rounded-lg border border-warm-300 px-2 py-2 text-sm"
+                            className="w-20 rounded-lg border border-gray-300 px-2 py-2 text-sm"
                             value={t.weight ?? ''}
                             onChange={(e) =>
                               updateTarget(t._k, {
@@ -466,9 +471,9 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-warm-700">기본 디자인</span>
+                  <span className="mb-1 block text-sm font-medium text-gray-700">기본 디자인</span>
                   <select
-                    className="w-full rounded-lg border border-warm-300 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
                     value={draft.defaultStyle}
                     onChange={(e) => patchDraft({ defaultStyle: e.target.value as QrStyleId })}
                   >
@@ -480,9 +485,9 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="mb-1 block text-sm font-medium text-warm-700">UTM content (선택)</span>
+                  <span className="mb-1 block text-sm font-medium text-gray-700">UTM content (선택)</span>
                   <input
-                    className="w-full rounded-lg border border-warm-300 px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
                     value={draft.utmContent}
                     onChange={(e) => patchDraft({ utmContent: e.target.value })}
                     placeholder="예: box-a / flyer-2026"
@@ -492,7 +497,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={draft.active} onChange={(e) => patchDraft({ active: e.target.checked })} />
-                <span className="text-sm text-warm-700">활성 (스캔 시 목적지로 이동)</span>
+                <span className="text-sm text-gray-700">활성 (스캔 시 목적지로 이동)</span>
               </label>
             </div>
 
@@ -509,7 +514,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       )}
 
       {toast && (
-        <div className="animate-fade-in fixed bottom-6 right-6 z-[100] rounded-lg bg-warm-900 px-4 py-3 text-sm text-white shadow-lg">
+        <div className="animate-fade-in fixed bottom-6 right-6 z-[100] rounded-lg bg-gray-900 px-4 py-3 text-sm text-white shadow-lg">
           {toast}
         </div>
       )}

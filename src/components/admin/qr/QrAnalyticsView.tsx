@@ -15,10 +15,10 @@ const REALTIME_POLL_MS = 20_000;
 
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="rounded-xl border border-warm-200 bg-white p-4 shadow-sm">
-      <p className="text-xs text-warm-600">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-warm-900">{value}</p>
-      {sub && <p className="mt-0.5 text-[11px] text-warm-500">{sub}</p>}
+    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <p className="text-xs text-gray-600">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
+      {sub && <p className="mt-0.5 text-[11px] text-gray-500">{sub}</p>}
     </div>
   );
 }
@@ -26,24 +26,24 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
 function Breakdown({ title, data, unit = '건' }: { title: string; data: CountBucket[]; unit?: string }) {
   const max = Math.max(...data.map((d) => d.count), 1);
   return (
-    <div className="rounded-xl border border-warm-200 bg-white p-5 shadow-sm">
-      <h4 className="mb-3 text-sm font-semibold text-warm-800">{title}</h4>
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h4 className="mb-3 text-sm font-semibold text-gray-800">{title}</h4>
       {data.length === 0 ? (
-        <p className="text-xs text-warm-400">데이터 없음</p>
+        <p className="text-xs text-gray-400">데이터 없음</p>
       ) : (
         <ul className="space-y-2">
           {data.map((d) => (
             <li key={d.key} className="flex items-center gap-3">
-              <span className="w-28 shrink-0 truncate text-xs text-warm-700" title={d.key}>
+              <span className="w-28 shrink-0 truncate text-xs text-gray-700" title={d.key}>
                 {d.label || d.key}
               </span>
-              <span className="relative h-4 flex-1 overflow-hidden rounded bg-warm-100">
+              <span className="relative h-4 flex-1 overflow-hidden rounded bg-gray-100">
                 <span
                   className="absolute inset-y-0 left-0 rounded bg-gold-400"
                   style={{ width: `${(d.count / max) * 100}%` }}
                 />
               </span>
-              <span className="w-14 shrink-0 text-right text-xs font-medium text-warm-700">
+              <span className="w-14 shrink-0 text-right text-xs font-medium text-gray-700">
                 {d.count.toLocaleString()}{unit}
               </span>
             </li>
@@ -100,14 +100,14 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
               type="button"
               onClick={() => setDays(r.days)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                days === r.days ? 'bg-warm-900 text-white' : 'bg-white text-warm-700 border border-warm-300 hover:bg-warm-100'
+                days === r.days ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
               }`}
             >
               {r.label}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2 text-xs text-warm-500">
+        <div className="flex items-center gap-2 text-xs text-gray-500">
           {realtime && (
             <span className="inline-flex items-center gap-1 text-sage-600">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-sage-500" /> 실시간
@@ -117,13 +117,13 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
           <button
             type="button"
             onClick={() => setNonce((n) => n + 1)}
-            className="rounded-lg border border-warm-300 bg-white px-2.5 py-1.5 font-medium text-warm-700 hover:bg-warm-100"
+            className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 font-medium text-gray-700 hover:bg-gray-100"
           >
             {loading ? '갱신 중…' : '↻ 새로고침'}
           </button>
         </div>
       </div>
-      <p className="-mt-2 text-[11px] text-warm-400">
+      <p className="-mt-2 text-[11px] text-gray-400">
         ※ 스캔/이동 기록은 저장소 전파로 인해 발생 후 <b>최대 1분</b> 뒤 집계에 반영됩니다. 비활성 QR은 스캔해도 기록되지 않습니다.
       </p>
 
@@ -168,7 +168,7 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
           )}
 
           {t.scans === 0 && (
-            <p className="rounded-lg border border-dashed border-warm-300 bg-warm-50 p-4 text-center text-sm text-warm-500">
+            <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-center text-sm text-gray-500">
               아직 스캔 데이터가 없습니다. QR을 인쇄·배포한 뒤 스캔이 발생하면 여기에 집계됩니다.
             </p>
           )}

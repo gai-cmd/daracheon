@@ -107,7 +107,7 @@ export default function QrImageStudio({
       {/* 미리보기 */}
       <div>
         <div
-          className="flex aspect-square items-center justify-center rounded-xl border border-warm-300 p-4"
+          className="flex aspect-square items-center justify-center rounded-xl border border-gray-300 p-4"
           style={
             style.transparent
               ? {
@@ -123,14 +123,14 @@ export default function QrImageStudio({
           // 자체 생성 SVG (외부 리소스 없음) — XSS 위험 없음
           dangerouslySetInnerHTML={{ __html: previewSvg }}
         />
-        <p className="mt-2 text-xs text-warm-600">{style.hint}</p>
-        <p className="mt-1 break-all text-[11px] text-warm-500">{url}</p>
+        <p className="mt-2 text-xs text-gray-600">{style.hint}</p>
+        <p className="mt-1 break-all text-[11px] text-gray-500">{url}</p>
       </div>
 
       {/* 컨트롤 */}
       <div className="space-y-4">
         <div>
-          <p className="mb-2 text-sm font-semibold text-warm-800">디자인 (3종)</p>
+          <p className="mb-2 text-sm font-semibold text-gray-800">디자인 (3종)</p>
           <div className="flex flex-wrap gap-2">
             {QR_STYLES.map((s) => (
               <button
@@ -140,7 +140,7 @@ export default function QrImageStudio({
                 className={`rounded-lg border px-3 py-2 text-xs font-medium transition ${
                   styleId === s.id
                     ? 'border-gold-400 bg-gold-50 text-gold-700'
-                    : 'border-warm-300 bg-white text-warm-700 hover:bg-warm-100'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 {s.label}
@@ -150,7 +150,7 @@ export default function QrImageStudio({
         </div>
 
         <div>
-          <p className="mb-2 text-sm font-semibold text-warm-800">다운로드</p>
+          <p className="mb-2 text-sm font-semibold text-gray-800">다운로드</p>
           <div className="flex flex-wrap items-center gap-2">
             <button type="button" className="adm-btn-primary" disabled={busy === 'png'} onClick={onPng}>
               {busy === 'png' ? '생성 중…' : 'PNG 원본 (고해상)'}
@@ -164,7 +164,7 @@ export default function QrImageStudio({
             <select
               value={pdfMm}
               onChange={(e) => setPdfMm(Number(e.target.value))}
-              className="rounded-lg border border-warm-300 bg-white px-2 py-2 text-xs text-warm-700"
+              className="rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs text-gray-700"
               aria-label="PDF 크기(mm)"
             >
               {PDF_SIZES.map((mm) => (
@@ -174,7 +174,7 @@ export default function QrImageStudio({
               ))}
             </select>
           </div>
-          <ul className="mt-3 space-y-1 text-xs text-warm-600">
+          <ul className="mt-3 space-y-1 text-xs text-gray-600">
             <li>· <b>PNG</b> — 스티커 인쇄용 {PNG_SIZE}px 고해상. 투명 배경은 투명 그대로 유지됩니다.</li>
             <li>· <b>SVG</b> — 무한 확대해도 깨지지 않는 벡터. 디자인 툴(일러스트 등) 편집용.</li>
             <li>· <b>PDF</b> — 인쇄소 전달용 벡터 PDF. 크기(mm) 지정 가능.</li>
