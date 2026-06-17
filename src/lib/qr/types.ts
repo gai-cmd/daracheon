@@ -36,6 +36,12 @@ export interface QrCode {
   collectInfo?: boolean;
   /** 동의 유도 문구 (예: "동의 시 추가 구매 할인 혜택"). 비우면 기본 문구. */
   collectBenefitText?: string;
+  /** 동의 완료 시 할인 쿠폰 자동 발급 */
+  couponEnabled?: boolean;
+  /** 할인 내용 표기 (예: "10%" 또는 "5,000원 할인") */
+  couponDiscount?: string;
+  /** 쿠폰 유효기간(일). 비우면 30일 */
+  couponValidDays?: number;
   /** 어드민 미리보기 기본 프리셋 (3종 모두 항상 다운로드 가능) */
   defaultStyle: QrStyleId;
   active: boolean;
@@ -97,6 +103,25 @@ export interface QrEvent {
   /** 선택 입력 연락처 (이메일/전화) — 동의 시에만 */
   contact?: string;
   name?: string;
+  /** 발급된 할인 쿠폰 코드 (couponEnabled QR 동의 시) */
+  couponCode?: string;
+}
+
+/** 발급된 할인 쿠폰 (내구 저장 + 사용 처리 관리) */
+export interface Coupon {
+  code: string;
+  slug: string;
+  qrName?: string;
+  discount: string;
+  contact?: string;
+  name?: string;
+  age?: AgeBand;
+  gender?: Gender;
+  issuedAt: string;
+  validUntil: string;
+  /** 사용 처리됨 (별도 마커에서 병합) */
+  used?: boolean;
+  usedAt?: string;
 }
 
 /* ───────── 분석 집계 결과 (어드민 분석 탭에 그대로 전달) ───────── */

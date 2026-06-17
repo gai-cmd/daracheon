@@ -3,13 +3,15 @@ import { z } from 'zod';
 import { recordEvent } from '@/lib/qr/events';
 import { getClientEnv, genEventId } from '@/lib/qr/collect';
 import { verifyQrSession } from '@/lib/qr/token';
+import { getQrBySlug } from '@/lib/qr/store';
+import { genCouponCode, issueCoupon } from '@/lib/qr/coupons';
 import type { QrEvent, AgeBand, Gender } from '@/lib/qr/types';
 
 /**
- * QR 스캔 동의 수집 (연령·성별·연락처).
+ * QR 스캔 동의 수집 (연령·성별·연락처) + 동의 시 할인 쿠폰 자동 발급.
  * 진입은 막지 않으며(동의는 혜택 인센티브), '동의 없이 계속'도 기록(consented:false).
  * 위조 방지: POST · Origin 동일 · 서명된 zql_qsid 검증 · zod. 결과로 재프롬프트
- * 방지 쿠키를 설정한다(동의=180일, 거부=7일 뒤 재안내 가능).
+ * 방지 쿠키 설정(동의=180일, 거부=7일). 쿠폰 발급 시 코드를 응답으로 반환.
  */
 
 export const dynamic = 'force-dynamic';
@@ -26,37 +28,72 @@ const bodySchema = z.object({
   name: z.string().max(60).optional(),
 });
 
+interface CouponOut {
+  code: string;
+  discount: string;
+  validUntil: string;
+}
+
 export async function POST(req: NextRequest) {
-  // 항상 성공 형태로 응답해 클라이언트가 목적지로 진행할 수 있게 한다.
-  const ok = () => NextResponse.json({ success: true });
+  const respond = (coupon?: CouponOut) => NextResponse.json({ success: true, coupon: coupon ?? null });
   try {
     const origin = req.headers.get('origin');
-    if (origin && origin !== req.nextUrl.origin) return ok();
+    if (origin && origin !== req.nextUrl.origin) return respond();
 
     const session = await verifyQrSession(req.cookies.get('zql_qsid')?.value);
     const raw = await req.text();
-    if (raw.length > MAX_BODY) return ok();
+    if (raw.length > MAX_BODY) return respond();
     let json: unknown;
     try {
       json = JSON.parse(raw || '{}');
     } catch {
-      return ok();
+      return respond();
     }
     const parsed = bodySchema.safeParse(json);
-    if (!parsed.success) return ok();
+    if (!parsed.success) return respond();
     const body = parsed.data;
 
-    const res = ok();
+    // 쿠폰 발급 (동의 + 세션 + couponEnabled QR)
+    let coupon: CouponOut | undefined;
+    let couponCode: string | undefined;
+    if (body.consented && session) {
+      const qr = await getQrBySlug(session.slug);
+      if (qr?.couponEnabled) {
+        const discount = qr.couponDiscount?.trim() || '할인 혜택';
+        const validDays = qr.couponValidDays && qr.couponValidDays > 0 ? qr.couponValidDays : 30;
+        const validUntil = new Date(Date.now() + validDays * 24 * 60 * 60 * 1000).toISOString();
+        for (let i = 0; i < 6; i++) {
+          const code = genCouponCode();
+          const issued = await issueCoupon({
+            code,
+            slug: qr.slug,
+            qrName: qr.name,
+            discount,
+            ...(body.contact?.trim() ? { contact: body.contact.trim() } : {}),
+            ...(body.name?.trim() ? { name: body.name.trim() } : {}),
+            ...(body.age ? { age: body.age as AgeBand } : {}),
+            ...(body.gender ? { gender: body.gender as Gender } : {}),
+            issuedAt: new Date().toISOString(),
+            validUntil,
+          }).catch(() => false);
+          if (issued) {
+            couponCode = code;
+            coupon = { code, discount, validUntil };
+            break;
+          }
+        }
+      }
+    }
+
+    const res = respond(coupon);
     const base = { secure: isProd, sameSite: 'lax' as const, path: '/' };
     if (body.consented) {
       res.cookies.set('zql_consent', '1', { ...base, httpOnly: false, maxAge: 180 * 24 * 60 * 60 });
       res.cookies.delete('zql_decline');
     } else {
-      // 거부 — 7일간 재안내 안 함
       res.cookies.set('zql_decline', '1', { ...base, httpOnly: false, maxAge: 7 * 24 * 60 * 60 });
     }
 
-    // 세션이 있을 때만 이벤트 귀속 (동의 화면은 /q 를 거쳐 오므로 정상 케이스엔 존재)
     if (session) {
       const env = getClientEnv(req.headers);
       const vid = req.cookies.get('zql_vid')?.value ?? '';
@@ -71,13 +108,13 @@ export async function POST(req: NextRequest) {
         country: env.country,
         region: env.region,
         city: env.city,
-        // 동의한 경우에만 개인정보 저장
         ...(body.consented
           ? {
               ...(body.age ? { age: body.age as AgeBand } : {}),
               ...(body.gender ? { gender: body.gender as Gender } : {}),
               ...(body.contact?.trim() ? { contact: body.contact.trim() } : {}),
               ...(body.name?.trim() ? { name: body.name.trim() } : {}),
+              ...(couponCode ? { couponCode } : {}),
             }
           : {}),
       };
@@ -89,6 +126,6 @@ export async function POST(req: NextRequest) {
     }
     return res;
   } catch {
-    return ok();
+    return respond();
   }
 }

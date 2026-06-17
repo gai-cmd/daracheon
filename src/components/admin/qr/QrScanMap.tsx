@@ -19,9 +19,11 @@ interface NaverMapsApi {
     fitBounds: (b: unknown) => void;
     setCenter: (latlng: unknown) => void;
     setZoom: (z: number) => void;
+    destroy?: () => void;
   };
   Circle: new (opts: object) => unknown;
   Marker: new (opts: object) => unknown;
+  Position?: Record<string, number>;
 }
 function getNaverMaps(): NaverMapsApi | undefined {
   return (window as unknown as { naver?: { maps?: NaverMapsApi } }).naver?.maps;
@@ -36,9 +38,21 @@ export default function QrScanMap({ locations }: { locations: ScanLocation[] }) 
     const maps = getNaverMaps();
     if (!ref.current || !maps || locations.length === 0) return;
     const max = Math.max(...locations.map((l) => l.count), 1);
+    // 이전 지도/오버레이 제거 (재생성 시 중첩 방지)
+    ref.current.innerHTML = '';
     const map = new maps.Map(ref.current, {
       zoom: 7,
       center: new maps.LatLng(locations[0].lat, locations[0].lng),
+      // ── 인터랙션 명시 (이동·확대·축소) ──
+      draggable: true,
+      pinchZoom: true,
+      scrollWheel: true,
+      keyboardShortcuts: true,
+      disableDoubleClickZoom: false,
+      disableDoubleTapZoom: false,
+      disableKineticPan: false,
+      zoomControl: true,
+      zoomControlOptions: maps.Position ? { position: maps.Position.TOP_RIGHT } : undefined,
       mapTypeControl: false,
       scaleControl: false,
       mapDataControl: false,
@@ -76,10 +90,12 @@ export default function QrScanMap({ locations }: { locations: ScanLocation[] }) 
     }
   }
 
+  // 데이터 '내용'이 바뀔 때만 재생성 (매 렌더/폴링마다 재생성 → 이동·줌 리셋되던 문제 방지)
+  const sig = JSON.stringify(locations);
   useEffect(() => {
     if (ready && getNaverMaps()) draw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, locations]);
+  }, [ready, sig]);
 
   if (locations.length === 0) {
     return (

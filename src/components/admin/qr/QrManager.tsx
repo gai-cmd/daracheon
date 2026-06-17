@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QrImageStudio from './QrImageStudio';
 import QrAnalyticsView from './QrAnalyticsView';
+import QrCoupons from './QrCoupons';
 import { QR_STYLES, type QrStyleId } from '@/lib/qr/presets';
 import type { QrCode, QrTarget } from '@/lib/qr/types';
 
@@ -45,6 +46,9 @@ interface Draft {
   utmContent: string;
   collectInfo: boolean;
   collectBenefitText: string;
+  couponEnabled: boolean;
+  couponDiscount: string;
+  couponValidDays: string;
   defaultStyle: QrStyleId;
   active: boolean;
   customSlug: string;
@@ -60,6 +64,9 @@ function emptyDraft(): Draft {
     utmContent: '',
     collectInfo: false,
     collectBenefitText: '',
+    couponEnabled: false,
+    couponDiscount: '',
+    couponValidDays: '30',
     defaultStyle: 'white-black',
     active: true,
     customSlug: '',
@@ -75,7 +82,7 @@ function destSummary(qr: QrCode): string {
 export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
   const [codes, setCodes] = useState<QrCode[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'list' | 'analytics'>('list');
+  const [tab, setTab] = useState<'list' | 'analytics' | 'coupons'>('list');
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
   const [studioFor, setStudioFor] = useState<QrCode | null>(null);
@@ -131,6 +138,9 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       utmContent: qr.utmContent ?? '',
       collectInfo: qr.collectInfo ?? false,
       collectBenefitText: qr.collectBenefitText ?? '',
+      couponEnabled: qr.couponEnabled ?? false,
+      couponDiscount: qr.couponDiscount ?? '',
+      couponValidDays: String(qr.couponValidDays ?? 30),
       defaultStyle: qr.defaultStyle,
       active: qr.active,
       customSlug: '',
@@ -161,6 +171,9 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
         utmContent: draft.utmContent.trim() || undefined,
         collectInfo: draft.collectInfo,
         collectBenefitText: draft.collectBenefitText.trim() || undefined,
+        couponEnabled: draft.collectInfo && draft.couponEnabled,
+        couponDiscount: draft.couponDiscount.trim() || undefined,
+        couponValidDays: Number(draft.couponValidDays) || 30,
         defaultStyle: draft.defaultStyle,
         active: draft.active,
         ...(draft.id ? {} : draft.customSlug.trim() ? { customSlug: draft.customSlug.trim() } : {}),
@@ -226,7 +239,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
     <div className="space-y-6">
       {/* 탭 */}
       <div className="flex gap-2 border-b border-gray-200">
-        {(['list', 'analytics'] as const).map((tk) => (
+        {(['list', 'analytics', 'coupons'] as const).map((tk) => (
           <button
             key={tk}
             type="button"
@@ -235,7 +248,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
               tab === tk ? 'border-gold-400 text-gold-700' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tk === 'list' ? 'QR 목록 & 원본' : '분석'}
+            {tk === 'list' ? 'QR 목록 & 원본' : tk === 'analytics' ? '분석' : '쿠폰'}
           </button>
         ))}
       </div>
@@ -327,6 +340,8 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       )}
 
       {tab === 'analytics' && <QrAnalyticsView />}
+
+      {tab === 'coupons' && <QrCoupons />}
 
       {/* ───── 원본 다운로드 모달 ───── */}
       {studioFor && (
@@ -502,16 +517,44 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                   <span className="text-sm font-medium text-gray-800">스캔 시 개인정보 동의 수집 (연령·성별·연락처)</span>
                 </label>
                 {draft.collectInfo && (
-                  <div className="mt-2">
+                  <div className="mt-2 space-y-2">
                     <input
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
                       value={draft.collectBenefitText}
                       onChange={(e) => patchDraft({ collectBenefitText: e.target.value })}
                       placeholder="동의 유도 혜택 문구 (예: 추가 구매 할인 혜택)"
                     />
-                    <p className="mt-1.5 text-[11px] text-gray-500">
+                    <p className="text-[11px] text-gray-500">
                       스캔 시 동의 화면을 띄웁니다. <b>진입은 막지 않으며</b>, 미동의 시 위 혜택 대상에서만 제외됩니다(PIPA 안전).
                     </p>
+
+                    {/* 쿠폰 자동 발급 */}
+                    <div className="rounded-lg border border-gold-200 bg-gold-50/40 p-2.5">
+                      <label className="flex items-center gap-2">
+                        <input type="checkbox" checked={draft.couponEnabled} onChange={(e) => patchDraft({ couponEnabled: e.target.checked })} />
+                        <span className="text-sm font-medium text-gray-800">🎁 동의 완료 시 할인 쿠폰 자동 발급</span>
+                      </label>
+                      {draft.couponEnabled && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <input
+                            className="min-w-[140px] flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                            value={draft.couponDiscount}
+                            onChange={(e) => patchDraft({ couponDiscount: e.target.value })}
+                            placeholder="할인 내용 (예: 10% / 5,000원)"
+                          />
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="number"
+                              min={1}
+                              className="w-20 rounded-lg border border-gray-300 px-2 py-2 text-sm"
+                              value={draft.couponValidDays}
+                              onChange={(e) => patchDraft({ couponValidDays: e.target.value })}
+                            />
+                            <span className="text-xs text-gray-500">일 유효</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

@@ -24,11 +24,13 @@ export default function ScanConsent({ benefitText, destUrl }: { benefitText?: st
   const [name, setName] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [coupon, setCoupon] = useState<{ code: string; discount: string; validUntil: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   async function post(consented: boolean) {
     setBusy(true);
     try {
-      await fetch('/api/q/consent', {
+      const r = await fetch('/api/q/consent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
@@ -37,11 +39,17 @@ export default function ScanConsent({ benefitText, destUrl }: { benefitText?: st
             : { consented: false },
         ),
       });
+      const j = await r.json().catch(() => ({}));
+      // 쿠폰이 발급되면 코드를 먼저 보여주고, 사용자가 직접 '쇼핑하러 가기'.
+      if (consented && j?.coupon?.code) {
+        setCoupon(j.coupon);
+        setBusy(false);
+        return;
+      }
     } catch {
       /* 기록 실패해도 이동 */
-    } finally {
-      window.location.href = destUrl;
     }
+    window.location.href = destUrl;
   }
 
   const canSubmit = agreed && !!age && !!gender && !busy;
@@ -55,6 +63,38 @@ export default function ScanConsent({ benefitText, destUrl }: { benefitText?: st
     fontSize: 14,
     cursor: 'pointer',
   });
+
+  // ── 쿠폰 발급 성공 화면 ──
+  if (coupon) {
+    const until = coupon.validUntil.slice(0, 10);
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: '#0a0b10' }}>
+        <div style={{ width: '100%', maxWidth: 420, background: INK, border: '1px solid rgba(212,168,67,0.35)', borderRadius: 18, padding: '32px 24px', color: IVORY, textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 6 }}>🎁</div>
+          <h1 style={{ fontSize: 19, fontWeight: 700, margin: '0 0 4px' }}>할인 쿠폰이 발급되었습니다</h1>
+          <p style={{ fontSize: 13.5, color: 'rgba(253,251,247,0.7)', marginBottom: 18 }}>{coupon.discount} · {until}까지 사용 가능</p>
+          <div style={{ border: '1.5px dashed rgba(212,168,67,0.6)', borderRadius: 12, padding: '16px 12px', marginBottom: 14, background: 'rgba(212,168,67,0.08)' }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 26, fontWeight: 700, letterSpacing: '0.12em', color: GOLD }}>{coupon.code}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => { navigator.clipboard?.writeText(coupon.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {}); }}
+            style={{ width: '100%', padding: '12px', borderRadius: 12, border: '1px solid rgba(212,168,67,0.5)', background: 'transparent', color: GOLD, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 10 }}
+          >
+            {copied ? '복사됨 ✓' : '코드 복사'}
+          </button>
+          <button
+            type="button"
+            onClick={() => { window.location.href = destUrl; }}
+            style={{ width: '100%', padding: '14px', borderRadius: 12, border: 'none', background: GOLD, color: '#1a1206', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}
+          >
+            쇼핑하러 가기 →
+          </button>
+          <p style={{ fontSize: 11, color: 'rgba(253,251,247,0.4)', marginTop: 12 }}>주문/문의 시 위 코드를 제시하시면 할인이 적용됩니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: '#0a0b10' }}>

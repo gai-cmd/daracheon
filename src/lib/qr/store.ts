@@ -54,6 +54,9 @@ export interface CreateQrInput {
   utmContent?: string;
   collectInfo?: boolean;
   collectBenefitText?: string;
+  couponEnabled?: boolean;
+  couponDiscount?: string;
+  couponValidDays?: number;
   defaultStyle: QrStyleId;
   active?: boolean;
   /** 선택: 사람이 읽기 쉬운 커스텀 slug (영숫자/하이픈). 비우면 자동 생성. */
@@ -88,6 +91,9 @@ export async function createQrCode(input: CreateQrInput): Promise<QrCode> {
     ...(input.utmContent ? { utmContent: input.utmContent.trim() } : {}),
     ...(input.collectInfo ? { collectInfo: true } : {}),
     ...(input.collectBenefitText ? { collectBenefitText: input.collectBenefitText.trim() } : {}),
+    ...(input.couponEnabled ? { couponEnabled: true } : {}),
+    ...(input.couponDiscount ? { couponDiscount: input.couponDiscount.trim() } : {}),
+    ...(typeof input.couponValidDays === 'number' ? { couponValidDays: input.couponValidDays } : {}),
     defaultStyle: input.defaultStyle,
     active: input.active ?? true,
     createdAt: now,
