@@ -258,69 +258,61 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
               </button>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-left text-xs text-gray-600">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">이름 / 위치</th>
-                    <th className="px-4 py-3 font-medium">유입 URL</th>
-                    <th className="px-4 py-3 font-medium">목적지</th>
-                    <th className="px-4 py-3 font-medium">상태</th>
-                    <th className="px-4 py-3 text-right font-medium">관리</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {sortedCodes.map((qr) => (
-                    <tr key={qr.id} className="hover:bg-gray-50/50">
-                      <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900">{qr.name}</p>
-                        {qr.placement && <p className="text-xs text-gray-500">{qr.placement}</p>}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">/q/{qr.slug}</code>
-                          <button
-                            type="button"
-                            onClick={() => copyUrl(qr.slug)}
-                            className="text-xs text-gold-600 hover:text-gold-700"
-                            title="전체 URL 복사"
-                          >
-                            복사
-                          </button>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs text-gray-600">{destSummary(qr)}</span>
-                        {qr.routingMode === 'rotate' && (
-                          <span className="ml-1 rounded bg-gold-50 px-1 text-[10px] text-gold-700">분산</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => toggleActive(qr)}
-                          title={qr.active ? '활성 — 스캔이 목적지로 이동하고 기록됩니다' : '비활성 — 스캔 시 홈으로 이동하며 기록되지 않습니다. 눌러서 활성화'}
-                          className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                            qr.active ? 'bg-sage-100 text-sage-700' : 'bg-terracotta-bg text-terracotta'
-                          }`}
-                        >
-                          {qr.active ? '활성' : '비활성 · 미기록'}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <button type="button" className="text-xs font-medium text-gold-700 hover:underline" onClick={() => setStudioFor(qr)}>
-                            원본
-                          </button>
-                          <button type="button" className="text-xs font-medium text-gray-700 hover:underline" onClick={() => openEdit(qr)}>
-                            편집
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            // div 카드 레이아웃 — 공개 사이트 dark-theme.css 가 table/td/th 글씨를
+            // ivory(!important)로 강제해 어드민 표 텍스트가 흰색이 되던 문제 회피.
+            // (다른 어드민 화면과 동일하게 div + text-gray-* 사용)
+            <div className="space-y-2">
+              {sortedCodes.map((qr) => (
+                <div
+                  key={qr.id}
+                  className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                >
+                  {/* 이름 / 위치 */}
+                  <div className="min-w-[160px] flex-1">
+                    <div className="font-medium text-gray-900">{qr.name}</div>
+                    {qr.placement && <div className="mt-0.5 text-xs text-gray-500">{qr.placement}</div>}
+                  </div>
+                  {/* 유입 URL */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-700">/q/{qr.slug}</span>
+                    <button
+                      type="button"
+                      onClick={() => copyUrl(qr.slug)}
+                      className="text-xs font-medium text-gold-600 hover:text-gold-700"
+                      title="전체 URL 복사"
+                    >
+                      복사
+                    </button>
+                  </div>
+                  {/* 목적지 */}
+                  <div className="min-w-[160px] flex-1 text-xs text-gray-600">
+                    {destSummary(qr)}
+                    {qr.routingMode === 'rotate' && (
+                      <span className="ml-1 rounded bg-gold-100 px-1 text-[10px] font-medium text-gold-700">분산</span>
+                    )}
+                  </div>
+                  {/* 상태 */}
+                  <button
+                    type="button"
+                    onClick={() => toggleActive(qr)}
+                    title={qr.active ? '활성 — 스캔이 목적지로 이동하고 기록됩니다' : '비활성 — 스캔 시 홈으로 이동하며 기록되지 않습니다. 눌러서 활성화'}
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
+                      qr.active ? 'bg-sage-100 text-sage-700' : 'bg-terracotta-bg text-terracotta'
+                    }`}
+                  >
+                    {qr.active ? '활성' : '비활성 · 미기록'}
+                  </button>
+                  {/* 관리 */}
+                  <div className="flex shrink-0 gap-3">
+                    <button type="button" className="text-xs font-medium text-gold-700 hover:underline" onClick={() => setStudioFor(qr)}>
+                      원본
+                    </button>
+                    <button type="button" className="text-xs font-medium text-gray-700 hover:underline" onClick={() => openEdit(qr)}>
+                      편집
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </>
