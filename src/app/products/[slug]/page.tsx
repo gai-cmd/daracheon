@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { readDataSafe, readDataUncached } from '@/lib/db';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
+import { getGuide } from '@/data/productGuides';
 import JsonLd from '@/components/ui/JsonLd';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
@@ -210,6 +211,11 @@ export default async function ProductDetailPage(
               <Link href="/company#contact" className={styles.btnGold}>
                 제품 문의 →
               </Link>
+              {getGuide(product.slug) && (
+                <Link href={`/guide#${product.slug}`} className={styles.btnOutline}>
+                  📖 복용법·사용설명서
+                </Link>
+              )}
               <Link href="/home-shopping" className={styles.btnOutline}>
                 홈쇼핑 방송 확인
               </Link>

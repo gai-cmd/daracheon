@@ -124,6 +124,17 @@ export default function Header({ mainNav, brandLogo, productCategories = [] }: H
           </ul>
 
           <div className={styles.navActions}>
+            {/* 제품 사용설명서 — 포장 글씨가 작은 분들을 위한 복용·제품 안내 (문의하기 옆) */}
+            <Link
+              href="/guide"
+              className={styles.navCta}
+              aria-label="제품 사용설명서"
+              style={{ background: 'transparent', borderColor: 'rgba(212,168,67,0.5)', color: '#d4a843' }}
+            >
+              <span className={styles.navCtaIcon} aria-hidden>📖</span>
+              <span className={styles.navCtaLabel}>제품 사용설명서</span>
+            </Link>
+
             {/* 문의하기 CTA — PC·모바일 모두 항상 노출.
                 회사소개 페이지의 #contact 앵커로 직행. */}
             <Link
