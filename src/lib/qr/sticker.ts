@@ -37,8 +37,8 @@ export interface StickerOptions {
   bg?: string;
 }
 
-/** QR 자체 흰 여백(모듈) — 스캔 신뢰성을 위한 quiet zone. */
-const QUIET = 4;
+/** QR 자체 흰 여백(모듈) — quiet zone. 소형 스티커라 3 모듈로 축소(jsQR 스캔 검증). */
+const QUIET = 3;
 
 /**
  * 중앙 녹아웃(흰 후광=실제 클리어 영역) 크기 — 데이터 영역(quiet zone 제외) 대비 비율.
@@ -96,11 +96,15 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
 
   const V = sizeMm * 10; // 0.1mm 단위 캔버스
   const edge = Math.round(V * 0.027); // 바깥 흰 와꾸 여백 (~0.8mm @30)
-  const gap = Math.round(V * 0.02); // QR 과 캡션 사이 간격 (~0.6mm @30)
-  const capH = captionText ? Math.round(V * 0.155) : 0; // 캡션 밴드 높이 (~4.65mm @30)
+  // 하단 캡션 — 폰트를 폭 기준(100% 장평)으로 먼저 계산해 밴드 높이를 글자에 딱 맞춤.
+  const capFont = captionText
+    ? Math.min(V * 0.082, (V * 0.9 * 0.98) / Math.max(1, [...captionText].length * estimateAdvanceEm(captionText)))
+    : 0;
+  const capGap = captionText ? Math.round(V * 0.012) : 0; // QR 흰 여백 바로 아래 최소 간격 (~0.36mm @30)
+  const capH = captionText ? Math.round(capGap + capFont + V * 0.02) : 0; // 간격+글자+하단여백
 
   // QR 블록(데이터+quiet zone 포함) 정사각 — 폭과 캡션 위 세로공간에 동시에 맞춤.
-  const block = Math.min(V - edge * 2, V - edge * 2 - gap - capH);
+  const block = Math.min(V - edge * 2, V - edge * 2 - capH);
   const blockX = (V - block) / 2;
   const blockY = edge;
 
@@ -149,16 +153,10 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
       `font-family="${FONT_STACK}" font-weight="800" font-size="${fmt(fontSize)}" fill="${textColor}">${escapeXml(centerText)}</text>`;
   }
 
-  // ── 하단 안내 문구 ── 100% 장평, 폭에 맞춰 폰트 자동 축소(강제 압축 없음).
+  // ── 하단 안내 문구 ── QR 흰 여백 바로 아래(최소 간격)에 100% 장평으로 배치.
   let caption = '';
   if (captionText) {
-    const capMaxW = V * 0.9;
-    const capChars = [...captionText].length;
-    const capAdv = estimateAdvanceEm(captionText);
-    const capFont = Math.min(capH * 0.5, (capMaxW * 0.98) / Math.max(1, capChars * capAdv));
-    // QR 과 캡션 사이 간격을 기존의 1/2 로 — 캡션을 밴드 중앙이 아니라 QR 쪽으로 끌어올림.
-    const fullTopGap = gap + capH / 2 - capFont / 2; // 기존 QR바닥 → 글자상단 간격
-    const capCenterY = blockY + block + fullTopGap / 2 + capFont / 2;
+    const capCenterY = blockY + block + capGap + capFont / 2;
     caption =
       `<text x="${fmt(cx)}" y="${fmt(capCenterY)}" text-anchor="middle" dominant-baseline="central" ` +
       `font-family="${FONT_STACK}" font-weight="700" font-size="${fmt(capFont)}" fill="${textColor}">${escapeXml(captionText)}</text>`;
