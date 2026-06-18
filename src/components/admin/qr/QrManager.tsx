@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import QrImageStudio from './QrImageStudio';
 import QrAnalyticsView from './QrAnalyticsView';
 import QrCoupons from './QrCoupons';
+import SerialManager from './SerialManager';
 import { QR_STYLES, type QrStyleId } from '@/lib/qr/presets';
 import type { QrCode, QrTarget } from '@/lib/qr/types';
 
@@ -86,7 +87,7 @@ function destSummary(qr: QrCode): string {
 export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
   const [codes, setCodes] = useState<QrCode[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'list' | 'analytics' | 'coupons'>('list');
+  const [tab, setTab] = useState<'list' | 'analytics' | 'coupons' | 'serials'>('list');
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
   const [studioFor, setStudioFor] = useState<QrCode | null>(null);
@@ -247,7 +248,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
     <div className="space-y-6">
       {/* 탭 */}
       <div className="flex gap-2 border-b border-gray-200">
-        {(['list', 'analytics', 'coupons'] as const).map((tk) => (
+        {(['list', 'analytics', 'coupons', 'serials'] as const).map((tk) => (
           <button
             key={tk}
             type="button"
@@ -256,7 +257,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
               tab === tk ? 'border-gold-400 text-gold-700' : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            {tk === 'list' ? 'QR 목록 & 원본' : tk === 'analytics' ? '분석' : '쿠폰'}
+            {tk === 'list' ? 'QR 목록 & 원본' : tk === 'analytics' ? '분석' : tk === 'coupons' ? '쿠폰' : '정품인증'}
           </button>
         ))}
       </div>
@@ -350,6 +351,8 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
       {tab === 'analytics' && <QrAnalyticsView />}
 
       {tab === 'coupons' && <QrCoupons />}
+
+      {tab === 'serials' && <SerialManager siteOrigin={siteOrigin} />}
 
       {/* ───── 원본 다운로드 모달 ───── */}
       {studioFor && (
