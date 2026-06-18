@@ -105,8 +105,12 @@ export default function QrStickerStudio({ url, slug }: { url: string; slug: stri
             backgroundPosition: '0 0,0 7px,7px -7px,-7px 0',
           }}
         >
-          {/* 자체 생성 SVG(사용자 입력은 escapeXml 처리) — XSS 위험 없음 */}
-          <div className="w-full" dangerouslySetInnerHTML={{ __html: previewSvg }} />
+          {/* 자체 생성 SVG(사용자 입력은 escapeXml 처리) — XSS 위험 없음.
+              주입 SVG 를 컨테이너에 맞게 반응형으로 강제(고정 px 가 박스를 넘쳐 와꾸 밖으로 삐져나오는 것 방지). */}
+          <div
+            className="w-full [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
+            dangerouslySetInnerHTML={{ __html: previewSvg }}
+          />
         </div>
         <p className="mt-2 text-center text-xs text-gray-500">실제 인쇄 크기 {sizeMm}mm × {sizeMm}mm</p>
         <p className="mt-1 break-all text-center text-[11px] text-gray-400">{url}</p>
