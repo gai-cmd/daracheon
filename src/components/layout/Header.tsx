@@ -124,10 +124,11 @@ export default function Header({ mainNav, brandLogo, productCategories = [] }: H
           </ul>
 
           <div className={styles.navActions}>
-            {/* 제품상세 — 포장 글씨가 작은 분들을 위한 복용·제품 안내 (문의하기 옆) */}
+            {/* 제품상세 — 포장 글씨가 작은 분들을 위한 복용·제품 안내 (문의하기 옆).
+                PC(≥1024px) 에서만 상단 노출. 모바일에서는 우하단 플로팅 버튼(.guideFab)으로 대체. */}
             <Link
               href="/guide"
-              className={styles.navCta}
+              className={`${styles.navCta} ${styles.guideCtaTop}`}
               aria-label="제품상세"
               style={{ background: 'transparent', borderColor: 'rgba(212,168,67,0.5)', color: '#d4a843' }}
             >
@@ -160,6 +161,18 @@ export default function Header({ mainNav, brandLogo, productCategories = [] }: H
           </div>
         </div>
       </nav>
+
+      {/* 모바일 전용 — 제품상세 우하단 스티키 플로팅 버튼.
+          PC 에서는 CSS 로 숨김(상단 헤더 CTA 가 담당). z-index 는 모바일 메뉴
+          오버레이(49) 아래라, 햄버거 메뉴를 열면 자연스럽게 가려진다. */}
+      <Link
+        href="/guide"
+        className={styles.guideFab}
+        aria-label="제품상세"
+      >
+        <span className={styles.guideFabIcon} aria-hidden>📖</span>
+        <span>제품상세</span>
+      </Link>
 
       {mobileOpen && (
         <div className={styles.mobileOverlay}>

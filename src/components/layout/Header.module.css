@@ -139,6 +139,67 @@
   .navCtaIcon { font-size: 0.9rem; }
 }
 
+/* ─── 제품상세 — PC 상단 CTA vs 모바일 우하단 플로팅 버튼 ───
+   PC(≥1024px): 상단 헤더 CTA(.guideCtaTop) 유지.
+   모바일(<1024px): 상단 CTA 는 숨기고, 우하단 스티키 플로팅 버튼(.guideFab)으로 대체. */
+
+/* PC 전용 상단 제품상세 CTA — 모바일에서는 숨김 (.navCta 와 합쳐 specificity 확보) */
+@media (max-width: 1023px) {
+  .navCta.guideCtaTop { display: none; }
+}
+
+/* 우하단 플로팅 버튼 — 기본(데스크톱)은 숨김, 모바일에서만 노출 */
+.guideFab { display: none; }
+
+@media (max-width: 1023px) {
+  .guideFab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    position: fixed;
+    right: 16px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+    z-index: 40; /* 모바일 메뉴 오버레이(z-index:49) 아래 → 메뉴 열면 가려짐 */
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: rgba(10, 11, 16, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid var(--accent, #d4a843);
+    color: var(--accent, #d4a843);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    box-shadow:
+      0 8px 24px -6px rgba(0, 0, 0, 0.65),
+      0 0 0 4px rgba(212, 168, 67, 0.08);
+    transition: transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
+    animation: guideFabIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .guideFab:active {
+    transform: scale(0.96);
+    background: rgba(212, 168, 67, 0.16);
+  }
+  .guideFabIcon { font-size: 1rem; line-height: 1; }
+}
+
+/* 아주 좁은 화면 — 라벨 유지하되 약간 컴팩트 */
+@media (max-width: 360px) {
+  .guideFab { padding: 10px 15px; font-size: 0.82rem; }
+}
+
+@keyframes guideFabIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 모션 최소화 선호 사용자 — 진입 애니메이션 제거 */
+@media (prefers-reduced-motion: reduce) {
+  .guideFab { animation: none; }
+}
+
 /* Mobile hamburger + overlay */
 .hamburger {
   display: flex;
