@@ -32,6 +32,7 @@ const navItems: NavItem[] = [
   { label: '이용약관', href: '/admin/pages/terms', icon: '▥' },
   { label: '문의하기', href: '/admin/inquiries', icon: '◆', badgeKey: 'inquiries_new' },
   { label: 'FAQ 관리', href: '/admin/faq', icon: '▤' },
+  { label: '제품 사용설명서', href: '/admin/guide', icon: '📖' },
   { label: 'QR코드 관리', href: '/admin/qr-codes', icon: '▦' },
   { label: '리뷰 관리', href: '/admin/reviews', icon: '◇', badgeKey: 'reviews_pending' },
   { label: '블로그', href: '/admin/blog', icon: '✎' },

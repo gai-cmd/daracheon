@@ -1,14 +1,20 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { productGuides } from '@/data/productGuides';
+import { readDataSafe } from '@/lib/db';
+import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 
 export const metadata: Metadata = {
   title: '제품 사용설명서 · 복용 가이드',
   description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
 };
 
-// 어르신도 보기 쉽게 — 큰 글씨·고대비·넉넉한 간격.
-export default function GuidePage() {
+export const dynamic = 'force-dynamic';
+
+// 어르신도 보기 쉽게 — 큰 글씨·고대비·넉넉한 간격. 콘텐츠는 어드민 편집(blob), 미설정 시 코드 기본값.
+export default async function GuidePage() {
+  const stored = await readDataSafe<ProductGuide>('product-guides');
+  const productGuides = stored.length > 0 ? stored : defaultGuides;
+
   return (
     <main className="mx-auto max-w-3xl px-5 pb-24 pt-28 text-[#fdfbf7]">
       <header className="mb-10 text-center">

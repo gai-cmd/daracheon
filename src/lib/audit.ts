@@ -19,7 +19,8 @@ export type AuditModule =
   | 'leads'
   | 'blog'
   | 'blog-categories'
-  | 'qr-codes';
+  | 'qr-codes'
+  | 'product-guides';
 
 export type AuditAction =
   | 'create'
