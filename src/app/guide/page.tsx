@@ -28,30 +28,29 @@ export default async function GuidePage() {
             <h1>
               제품 <em>상세</em>
             </h1>
-            <p className={styles.lede}>
-              포장의 작은 글씨 대신, 복용 방법과 제품 정보를 큰 글씨로 한곳에 정리했습니다.
+            <p className={styles.lede} style={{ lineHeight: 2 }}>
+              대라천 <span style={{ color: 'var(--accent)' }}>‘참’</span> 침향오일은{' '}
+              <i>Aquilaria Agallocha</i> (Roxb) 품종에서 생산된 침향오일만을 사용했으며,
+              위생적인 시설에서 소비자의 건강관리를 위해 엄격한 품질관리를 거쳐 생산된 제품으로,{' '}
+              <strong style={{ color: 'var(--accent)', fontWeight: 400 }}>그 품질을 보증합니다.</strong>
             </p>
           </div>
         </div>
       </section>
 
-      {/* 제품별 챕터 */}
-      {productGuides.map((g, gi) => (
+      {/* 제품별 챕터 — 번호/태그 없이 중앙 정렬된 단일 칼럼 */}
+      {productGuides.map((g) => (
         <section key={g.slug} id={g.slug} className={styles.chapter}>
           <div className={styles.wrap}>
-            <div className={styles.chapterGrid}>
-              <div>
-                <div className={styles.chapterNum}>{String(gi + 1).padStart(2, '0')}</div>
-                <div className={styles.chapterTag}>Product · 제품상세</div>
-              </div>
-              <div className={styles.chapterBody}>
+            <div className={styles.chapterBody} style={{ maxWidth: 860, margin: '0 auto' }}>
+              <div style={{ textAlign: 'center' }}>
                 {g.image && (
                   <div
                     style={{
                       position: 'relative',
                       width: '100%',
                       maxWidth: 460,
-                      margin: '0 auto 32px',
+                      margin: '0 auto 28px',
                       aspectRatio: '1 / 1',
                       border: '1px solid rgba(212,168,67,0.2)',
                       borderRadius: 4,
@@ -69,46 +68,50 @@ export default async function GuidePage() {
                 )}
 
                 <h3>{g.name}</h3>
-                {g.tagline && <p className={styles.chapterSubtitle}>{g.tagline}</p>}
+                {g.tagline && (
+                  <p className={styles.chapterSubtitle} style={{ textAlign: 'center' }}>
+                    {g.tagline}
+                  </p>
+                )}
+              </div>
 
-                <div style={{ marginTop: 26, display: 'grid', gap: 18 }}>
-                  {g.sections.map((s) => (
-                    <div
-                      key={s.title}
+              <div style={{ marginTop: 30, display: 'grid', gap: 18 }}>
+                {g.sections.map((s) => (
+                  <div
+                    key={s.title}
+                    style={{
+                      border: '1px solid rgba(212,168,67,0.22)',
+                      background: 'rgba(212,168,67,0.04)',
+                      borderRadius: 4,
+                      padding: '22px 24px',
+                    }}
+                  >
+                    <h4
                       style={{
-                        border: '1px solid rgba(212,168,67,0.22)',
-                        background: 'rgba(212,168,67,0.04)',
-                        borderRadius: 4,
-                        padding: '22px 24px',
+                        fontFamily: "'Noto Serif KR', serif",
+                        fontSize: '1.16rem',
+                        color: 'var(--accent-soft)',
+                        fontWeight: 500,
+                        marginBottom: 16,
+                        lineHeight: 1.4,
                       }}
                     >
-                      <h4
-                        style={{
-                          fontFamily: "'Noto Serif KR', serif",
-                          fontSize: '1.16rem',
-                          color: 'var(--accent-soft)',
-                          fontWeight: 500,
-                          marginBottom: 16,
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {s.title}
-                      </h4>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {s.body.map((line, i) => (
-                          <li key={i} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'baseline' }}>
-                            <span style={{ color: 'var(--accent)', fontSize: '0.5rem', lineHeight: 2.4 }} aria-hidden>
-                              ●
-                            </span>
-                            <span style={{ fontSize: 'clamp(0.92rem, 2.5vw, 1.04rem)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.95, fontWeight: 300 }}>
-                              {line}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
+                      {s.title}
+                    </h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {s.body.map((line, i) => (
+                        <li key={i} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'baseline' }}>
+                          <span style={{ color: 'var(--accent)', fontSize: '0.5rem', lineHeight: 2.4 }} aria-hidden>
+                            ●
+                          </span>
+                          <span style={{ fontSize: 'clamp(0.92rem, 2.5vw, 1.04rem)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.95, fontWeight: 300 }}>
+                            {line}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
