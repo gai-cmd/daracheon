@@ -390,7 +390,18 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                 ✕
               </button>
             </div>
-            <QrStickerStudio url={qrUrl(stickerFor.slug)} slug={stickerFor.slug} />
+            <QrStickerStudio
+              url={qrUrl(stickerFor.slug)}
+              slug={stickerFor.slug}
+              qrId={stickerFor.id}
+              initialCenterText={stickerFor.stickerCenterText}
+              initialCaptionText={stickerFor.stickerCaptionText}
+              initialSizeMm={stickerFor.stickerSizeMm}
+              onSaved={(msg) => {
+                setToast(msg);
+                fetchCodes();
+              }}
+            />
           </div>
         </div>
       )}

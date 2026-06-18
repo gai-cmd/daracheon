@@ -192,11 +192,11 @@ export default function QrAnalyticsView({ slug }: { slug?: string }) {
           </div>
 
           {/* 접속 위치 지도 */}
-          <QrScanMap locations={data!.scanLocations} />
+          <QrScanMap locations={data!.scanLocations} totalScans={data!.totals.scans} />
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Breakdown title="지역 (시·도)" data={data!.byRegion} unit="회" />
-            <Breakdown title="도시" data={data!.byCity} unit="회" />
+            <Breakdown title="지역 (시·도) · IP 추정" data={data!.byRegion} unit="회" />
+            <Breakdown title="도시 · IP 추정" data={data!.byCity} unit="회" />
             <Breakdown title="국가" data={data!.byCountry} unit="회" />
             <Breakdown title="언어" data={data!.byLanguage} unit="회" />
             <Breakdown title="기기" data={data!.byDevice} unit="회" />

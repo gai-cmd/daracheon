@@ -46,6 +46,12 @@ export interface QrCode {
   reviewMode?: boolean;
   /** 후기 작성 폼 기본 제품명 (이 QR 이 붙은 제품) */
   reviewProduct?: string;
+  /** 스티커 디자인 — 정중앙 라벨 문구(저장값). 빈 문자열이면 라벨 없음. */
+  stickerCenterText?: string;
+  /** 스티커 디자인 — 하단 안내 문구(저장값). */
+  stickerCaptionText?: string;
+  /** 스티커 인쇄 크기(mm). 기본 30. */
+  stickerSizeMm?: number;
   /** 어드민 미리보기 기본 프리셋 (3종 모두 항상 다운로드 가능) */
   defaultStyle: QrStyleId;
   active: boolean;

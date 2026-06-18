@@ -3,6 +3,7 @@ import { getQrBySlug, resolveDestination, buildRedirectUrl } from '@/lib/qr/stor
 import { recordEvent } from '@/lib/qr/events';
 import { getClientEnv, isPrefetch, isPrivacyOptOut, genEventId, randomHex } from '@/lib/qr/collect';
 import { signQrSession } from '@/lib/qr/token';
+import { SESSION_COOKIE } from '@/lib/auth';
 import type { QrEvent } from '@/lib/qr/types';
 
 /**
@@ -63,9 +64,11 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: strin
     res.cookies.set('zql_vid', vid, { ...base, httpOnly: true, maxAge: 180 * 24 * 60 * 60 });
   }
 
-  // 스캔 로깅 — 봇/프리페치 제외, 응답 후 비차단.
+  // 스캔 로깅 — 봇/프리페치/어드민 본인 제외, 응답 후 비차단.
+  // 어드민 세션 쿠키가 있으면 사이트 운영자가 직접 열어본 것(테스트) → 통계 오염 방지로 미기록.
+  const isAdminSelf = !!req.cookies.get(SESSION_COOKIE)?.value;
   const env = getClientEnv(h);
-  if (!env.isBot && !isPrefetch(h)) {
+  if (!env.isBot && !isPrefetch(h) && !isAdminSelf) {
     const ev: QrEvent = {
       id: genEventId(),
       type: 'scan',

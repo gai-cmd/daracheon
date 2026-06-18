@@ -50,10 +50,27 @@ async function svgToPngBlob(svg: string, px: number): Promise<Blob> {
   );
 }
 
-export default function QrStickerStudio({ url, slug }: { url: string; slug: string }) {
-  const [centerText, setCenterText] = useState('제품상세');
-  const [captionText, setCaptionText] = useState('스캔후 제품상세를 확인하세요');
-  const [sizeMm, setSizeMm] = useState(30);
+export default function QrStickerStudio({
+  url,
+  slug,
+  qrId,
+  initialCenterText,
+  initialCaptionText,
+  initialSizeMm,
+  onSaved,
+}: {
+  url: string;
+  slug: string;
+  qrId: string;
+  initialCenterText?: string;
+  initialCaptionText?: string;
+  initialSizeMm?: number;
+  onSaved?: (message: string) => void;
+}) {
+  // 저장된 값이 있으면 그걸로 시작(빈 문자열 저장도 존중 — ?? 는 null/undefined 만 폴백).
+  const [centerText, setCenterText] = useState(initialCenterText ?? '제품상세');
+  const [captionText, setCaptionText] = useState(initialCaptionText ?? '스캔후 제품상세를 확인하세요');
+  const [sizeMm, setSizeMm] = useState(initialSizeMm ?? 30);
   const [busy, setBusy] = useState<string | null>(null);
 
   // QR 은 중앙 녹아웃 복원을 위해 항상 EC 레벨 H 로 인코딩.
@@ -89,6 +106,26 @@ export default function QrStickerStudio({ url, slug }: { url: string; slug: stri
   const onSvg = () => {
     const svg = renderStickerSvg(matrix, { px: pxForSize(sizeMm), sizeMm, centerText, captionText });
     downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), `${fileBase}.svg`);
+  };
+  const onSave = async () => {
+    setBusy('save');
+    try {
+      const r = await fetch(`/api/admin/qr/${qrId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stickerCenterText: centerText.trim(),
+          stickerCaptionText: captionText.trim(),
+          stickerSizeMm: sizeMm,
+        }),
+      });
+      const j = await r.json();
+      onSaved?.(j?.success ? '스티커 디자인이 저장되었습니다.' : j?.message ?? '저장에 실패했습니다.');
+    } catch {
+      onSaved?.('저장 중 오류가 발생했습니다.');
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (
@@ -158,6 +195,16 @@ export default function QrStickerStudio({ url, slug }: { url: string; slug: stri
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-sm font-semibold text-gray-800">저장</p>
+          <button type="button" className="adm-btn-primary" disabled={busy === 'save'} onClick={onSave}>
+            {busy === 'save' ? '저장 중…' : '💾 디자인 저장'}
+          </button>
+          <p className="mt-1.5 text-[11px] text-gray-500">
+            가운데 문구·부수 문구·크기를 이 QR에 저장합니다. 다음에 열면 저장된 값으로 시작합니다.
+          </p>
         </div>
 
         <div>

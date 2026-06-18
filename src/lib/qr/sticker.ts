@@ -13,7 +13,7 @@ import { modulesToPath } from './render';
  * - 모듈은 정사각 유지(라운드/곡선 미적용) — 30mm 소형 + 중앙 녹아웃이 이미 스캔을
  *   압박하므로 가장 안전한 정사각으로. (재디자인 요소는 와꾸/라벨/문구 합성으로 제공)
  * - 중앙 녹아웃 크기는 jsQR 경험적 스윕으로 결정한 안전 상한 이하로 고정.
- * - 텍스트는 textLength+lengthAdjust 로 폭을 강제해 폰트 측정 의존을 제거(틀 밖 침범 방지).
+ * - 텍스트는 100% 장평 유지(글자 가로압축 없음) + 폭에 맞춰 폰트 자동 축소로 틀 안에 균형 배치.
  *
  * 제품/문구가 바뀌어도 옵션만 갈아끼우면 되는 데이터 구동 — 모든 QR·제품에 범용.
  */
@@ -45,8 +45,26 @@ const QUIET = 4;
  * jsQR 스윕으로 0.38×0.28 까지 복원 PASS 확인 → 여유 마진 두고 채택.
  * 안쪽 골드 배지는 이 흰 영역 내부에 들어가므로 스캔성은 흰 영역 크기로만 결정.
  */
-const CENTER_W_FRAC = 0.34;
-const CENTER_H_FRAC = 0.24;
+const CENTER_MAX_W_FRAC = 0.38; // 중앙 라벨(흰 후광) 최대 폭 — jsQR PASS 검증 한도 내
+const CENTER_MAX_H_FRAC = 0.26; // 실제 크기는 글자 수에 맞춰 이 한도 안에서 축소(장평 100% 유지)
+
+/** 평균 글자 advance(em) 추정 — 한글/CJK·전각 ≈ 1.0, 그 외(라틴·숫자·괄호·공백) ≈ 0.55. */
+function estimateAdvanceEm(text: string): number {
+  const chars = [...text];
+  if (chars.length === 0) return 1;
+  let sum = 0;
+  for (const ch of chars) {
+    const c = ch.codePointAt(0) ?? 0;
+    const wide =
+      (c >= 0x1100 && c <= 0x115f) ||
+      (c >= 0xac00 && c <= 0xd7a3) ||
+      (c >= 0x3040 && c <= 0x30ff) ||
+      (c >= 0x3400 && c <= 0x9fff) ||
+      (c >= 0xff00 && c <= 0xff60);
+    sum += wide ? 1.0 : 0.55;
+  }
+  return sum / chars.length;
+}
 
 /** XML 텍스트 노드/속성용 escape (사용자 입력이 SVG 로 들어가므로 필수). */
 function escapeXml(s: string): string {
@@ -101,41 +119,46 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
     `<path d="${qrPath}" fill="${qrColor}"/>` +
     `</g>`;
 
-  // ── 정중앙 라벨 ── 흰 후광(녹아웃·QR 과 분리) + 골드 배지 + 짙고 굵은 글씨 → 눈에 띄게.
+  // ── 정중앙 라벨 ── 흰 후광(녹아웃) + 골드 배지 + 짙고 굵은 글씨.
+  // 글자는 100% 장평 유지(강제 압축 없음), 폰트를 자동 축소해 배지가 글자를 균형있게 감싼다.
   let centerLabel = '';
   if (centerText) {
-    const pw = dataPx * CENTER_W_FRAC; // 흰 후광(=실제 클리어 영역) 폭
-    const ph = dataPx * CENTER_H_FRAC; // 흰 후광 높이
-    const halo = Math.min(pw, ph) * 0.12; // 골드 배지 둘레 흰 분리 링 두께
-    const bw = pw - halo * 2; // 골드 배지 폭
-    const bh = ph - halo * 2; // 골드 배지 높이
-    const padX = bw * 0.12;
-    const fontSize = bh * 0.66;
+    const chars = [...centerText].length;
+    const adv = estimateAdvanceEm(centerText);
+    const padXr = 0.5, padYr = 0.42, haloR = 0.42; // 폰트 대비 좌우/상하 패딩·흰 후광 비율
+    const maxW = dataPx * CENTER_MAX_W_FRAC;
+    const maxH = dataPx * CENTER_MAX_H_FRAC;
+    // 폭·높이 한도 안에서 100% 장평으로 담기는 폰트 크기:
+    //   maxW = chars·fs·adv + 2·fs·padXr + 2·fs·haloR,  maxH = fs + 2·fs·padYr + 2·fs·haloR
+    const fsByW = maxW / (chars * adv + 2 * padXr + 2 * haloR);
+    const fsByH = maxH / (1 + 2 * padYr + 2 * haloR);
+    const fontSize = Math.min(fsByW, fsByH);
+    const textW = chars * fontSize * adv;
+    const padX = fontSize * padXr, padY = fontSize * padYr, halo = fontSize * haloR;
+    const bw = textW + padX * 2, bh = fontSize + padY * 2; // 골드 배지(글자를 감쌈)
+    const pw = bw + halo * 2, ph = bh + halo * 2; // 흰 후광(녹아웃)
     const stroke = Math.max(unit * 0.5, V * 0.004);
     const badgeBorder = '#9e7825'; // gold-600 — 배지 윤곽 또렷하게
     centerLabel =
-      // 흰 후광(녹아웃) — QR 모듈과 골드 배지를 깔끔히 분리
       `<rect x="${fmt(cx - pw / 2)}" y="${fmt(cy - ph / 2)}" width="${fmt(pw)}" height="${fmt(ph)}" ` +
-      `rx="${fmt(ph * 0.3)}" ry="${fmt(ph * 0.3)}" fill="${bg}"/>` +
-      // 골드 배지
+      `rx="${fmt(ph * 0.32)}" ry="${fmt(ph * 0.32)}" fill="${bg}"/>` +
       `<rect x="${fmt(cx - bw / 2)}" y="${fmt(cy - bh / 2)}" width="${fmt(bw)}" height="${fmt(bh)}" ` +
-      `rx="${fmt(bh * 0.32)}" ry="${fmt(bh * 0.32)}" fill="${accentColor}" stroke="${badgeBorder}" stroke-width="${fmt(stroke)}"/>` +
-      // 짙고 굵은 글씨
+      `rx="${fmt(bh * 0.34)}" ry="${fmt(bh * 0.34)}" fill="${accentColor}" stroke="${badgeBorder}" stroke-width="${fmt(stroke)}"/>` +
       `<text x="${fmt(cx)}" y="${fmt(cy)}" text-anchor="middle" dominant-baseline="central" ` +
-      `font-family="${FONT_STACK}" font-weight="800" font-size="${fmt(fontSize)}" fill="${textColor}" ` +
-      `textLength="${fmt(bw - padX * 2)}" lengthAdjust="spacingAndGlyphs">${escapeXml(centerText)}</text>`;
+      `font-family="${FONT_STACK}" font-weight="800" font-size="${fmt(fontSize)}" fill="${textColor}">${escapeXml(centerText)}</text>`;
   }
 
-  // ── 하단 안내 문구 ──
+  // ── 하단 안내 문구 ── 100% 장평, 폭에 맞춰 폰트 자동 축소(강제 압축 없음).
   let caption = '';
   if (captionText) {
     const capCenterY = blockY + block + gap + capH / 2;
-    const capW = V * 0.86;
-    const capFont = capH * 0.5;
+    const capMaxW = V * 0.9;
+    const capChars = [...captionText].length;
+    const capAdv = estimateAdvanceEm(captionText);
+    const capFont = Math.min(capH * 0.5, (capMaxW * 0.98) / Math.max(1, capChars * capAdv));
     caption =
       `<text x="${fmt(cx)}" y="${fmt(capCenterY)}" text-anchor="middle" dominant-baseline="central" ` +
-      `font-family="${FONT_STACK}" font-weight="700" font-size="${fmt(capFont)}" fill="${textColor}" ` +
-      `textLength="${fmt(capW)}" lengthAdjust="spacingAndGlyphs">${escapeXml(captionText)}</text>`;
+      `font-family="${FONT_STACK}" font-weight="700" font-size="${fmt(capFont)}" fill="${textColor}">${escapeXml(captionText)}</text>`;
   }
 
   const bgRect = `<rect width="${V}" height="${V}" rx="${fmt(V * 0.05)}" ry="${fmt(V * 0.05)}" fill="${bg}"/>`;

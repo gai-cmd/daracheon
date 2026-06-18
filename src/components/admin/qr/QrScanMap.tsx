@@ -29,7 +29,7 @@ function getNaverMaps(): NaverMapsApi | undefined {
   return (window as unknown as { naver?: { maps?: NaverMapsApi } }).naver?.maps;
 }
 
-export default function QrScanMap({ locations }: { locations: ScanLocation[] }) {
+export default function QrScanMap({ locations, totalScans }: { locations: ScanLocation[]; totalScans?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
@@ -97,21 +97,33 @@ export default function QrScanMap({ locations }: { locations: ScanLocation[] }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, sig]);
 
+  // 지도에 표시된 스캔 수 vs 전체 스캔 수 — 좌표 없는 스캔은 지도에 안 찍히므로 정직하게 표기.
+  const mappedScans = locations.reduce((s, l) => s + l.count, 0);
+  const hiddenScans = typeof totalScans === 'number' ? Math.max(0, totalScans - mappedScans) : 0;
+
   if (locations.length === 0) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h4 className="mb-2 text-sm font-semibold text-gray-800">접속 위치 지도</h4>
-        <p className="text-xs text-gray-400">아직 위치 데이터가 없습니다. (스캔이 쌓이면 도시별 접속 위치가 지도에 표시됩니다)</p>
+        <p className="text-xs text-gray-400">
+          {hiddenScans > 0
+            ? `스캔 ${hiddenScans}건이 있으나 IP 기반 위치 좌표가 없어 지도에 표시할 수 없습니다.`
+            : '아직 위치 데이터가 없습니다. (스캔이 쌓이면 도시별 접속 위치가 지도에 표시됩니다)'}
+        </p>
       </div>
     );
   }
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-1 flex items-center justify-between">
         <h4 className="text-sm font-semibold text-gray-800">접속 위치 지도</h4>
-        <span className="text-[11px] text-gray-400">원 크기 = 스캔 수 · 위치는 도시 단위 대략값</span>
+        <span className="text-[11px] text-gray-400">원 크기 = 스캔 수</span>
       </div>
+      <p className="mb-3 text-[11px] leading-relaxed text-amber-700">
+        ⚠ 위치는 GPS가 아니라 <b>IP 기반 추정값</b>입니다. 실제 위치와 다를 수 있고, 특히 <b>모바일은 통신사 위치</b>로 잡혀 크게 어긋날 수 있습니다.
+        {hiddenScans > 0 && <> 좌표가 없어 지도에 표시되지 않은 스캔이 <b>{hiddenScans}건</b> 있습니다.</>}
+      </p>
       {clientId ? (
         <>
           <Script

@@ -25,6 +25,9 @@ const patchSchema = z.object({
   couponValidDays: z.number().int().min(1).max(3650).optional(),
   reviewMode: z.boolean().optional(),
   reviewProduct: z.string().max(120).optional(),
+  stickerCenterText: z.string().max(40).optional(),
+  stickerCaptionText: z.string().max(80).optional(),
+  stickerSizeMm: z.number().int().min(20).max(100).optional(),
   defaultStyle: z.enum(['white-black', 'transparent-white', 'transparent-gold']).optional(),
   active: z.boolean().optional(),
 });
