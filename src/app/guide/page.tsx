@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
+import styles from '@/styles/zoel/story-page.module.css';
 import { readDataSafe } from '@/lib/db';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 
@@ -10,75 +12,122 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
-// 어르신도 보기 쉽게 — 큰 글씨·고대비·넉넉한 간격. 콘텐츠는 어드민 편집(blob), 미설정 시 코드 기본값.
+// 침향 이야기(/about-agarwood)와 동일한 story-page 레이아웃·타이포(Noto Serif KR)로 통일.
+// 콘텐츠는 어드민 편집(blob), 미설정 시 코드 기본값.
 export default async function GuidePage() {
   const stored = await readDataSafe<ProductGuide>('product-guides');
   const productGuides = stored.length > 0 ? stored : defaultGuides;
 
   return (
-    <main className="mx-auto max-w-3xl px-5 pb-24 pt-28 text-[#fdfbf7]">
-      <header className="mb-12 text-center">
-        <p className="section-tag">ZOEL LIFE · 대라천</p>
-        <h1 className="section-title-kr">제품상세</h1>
-        <p className="mx-auto mt-4 max-w-xl text-base leading-8 text-white/70">
-          포장의 작은 글씨 대신, <b className="font-medium text-gold-400">복용 방법과 제품 정보</b>를 큰 글씨로 정리했습니다.
-        </p>
-      </header>
+    <>
+      {/* HERO — about-agarwood 와 동일 구조 */}
+      <section className={styles.hero}>
+        <div className={styles.wrap}>
+          <div className={styles.kicker}>제품상세 · Product Guide</div>
+          <div className={styles.heroMain}>
+            <h1>
+              제품 <em>상세</em>
+            </h1>
+            <p className={styles.lede}>
+              포장의 작은 글씨 대신, 복용 방법과 제품 정보를 큰 글씨로 한곳에 정리했습니다.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* 제품이 여러 개면 목차 */}
-      {productGuides.length > 1 && (
-        <nav className="mb-10 flex flex-wrap justify-center gap-2">
-          {productGuides.map((g) => (
-            <a key={g.slug} href={`#${g.slug}`} className="rounded-full border border-white/20 px-4 py-2 text-base text-white/85 hover:border-gold-400 hover:text-gold-300">
-              {g.name}
-            </a>
-          ))}
-        </nav>
-      )}
+      {/* 제품별 챕터 */}
+      {productGuides.map((g, gi) => (
+        <section key={g.slug} id={g.slug} className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>{String(gi + 1).padStart(2, '0')}</div>
+                <div className={styles.chapterTag}>Product · 제품상세</div>
+              </div>
+              <div className={styles.chapterBody}>
+                {g.image && (
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: 460,
+                      margin: '0 auto 32px',
+                      aspectRatio: '1 / 1',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      borderRadius: 4,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={g.image}
+                      alt={g.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 460px"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                )}
 
-      <div className="space-y-16">
-        {productGuides.map((g) => (
-          <section key={g.slug} id={g.slug} className="scroll-mt-28">
-            <div className="mb-6 flex flex-col items-center text-center">
-              {g.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={g.image} alt={g.name} className="mb-4 h-44 w-44 rounded-2xl object-cover shadow-lg" />
-              )}
-              <h2 className="font-serif text-2xl sm:text-3xl">{g.name}</h2>
-              {g.tagline && <p className="mt-2 text-base text-gold-400">{g.tagline}</p>}
-            </div>
+                <h3>{g.name}</h3>
+                {g.tagline && <p className={styles.chapterSubtitle}>{g.tagline}</p>}
 
-            <div className="space-y-5">
-              {g.sections.map((s) => (
-                <div key={s.title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-                  <h3 className="mb-4 flex items-center gap-2 font-serif text-xl text-gold-400 sm:text-2xl">
-                    <span className="inline-block h-5 w-1.5 rounded bg-gold-400" />
-                    {s.title}
-                  </h3>
-                  <ul className="space-y-3">
-                    {s.body.map((line, i) => (
-                      <li key={i} className="flex gap-3 text-base leading-relaxed text-white/90 sm:text-lg">
-                        <span className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full bg-gold-400/70" />
-                        <span>{line}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div style={{ marginTop: 26, display: 'grid', gap: 18 }}>
+                  {g.sections.map((s) => (
+                    <div
+                      key={s.title}
+                      style={{
+                        border: '1px solid rgba(212,168,67,0.22)',
+                        background: 'rgba(212,168,67,0.04)',
+                        borderRadius: 4,
+                        padding: '22px 24px',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          fontFamily: "'Noto Serif KR', serif",
+                          fontSize: '1.16rem',
+                          color: 'var(--accent-soft)',
+                          fontWeight: 500,
+                          marginBottom: 16,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {s.title}
+                      </h4>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        {s.body.map((line, i) => (
+                          <li key={i} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'baseline' }}>
+                            <span style={{ color: 'var(--accent)', fontSize: '0.5rem', lineHeight: 2.4 }} aria-hidden>
+                              ●
+                            </span>
+                            <span style={{ fontSize: 'clamp(0.92rem, 2.5vw, 1.04rem)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.95, fontWeight: 300 }}>
+                              {line}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </section>
-        ))}
-      </div>
+          </div>
+        </section>
+      ))}
 
-      {/* 안내 + 문의 */}
-      <div className="mt-16 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center">
-        <p className="text-base leading-relaxed text-white/60">
-          더 궁금하신 점이 있으시면 언제든 문의해 주세요. 친절히 안내해 드리겠습니다.
-        </p>
-        <Link href="/company#contact" className="btn btn-gold mt-6">
-          문의하기
-        </Link>
-      </div>
-    </main>
+      {/* 문의 CTA */}
+      <section className={styles.chapter}>
+        <div className={styles.wrap}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.02rem)', color: 'rgba(255,255,255,0.72)', lineHeight: 1.95, fontWeight: 300, marginBottom: 24 }}>
+              더 궁금하신 점이 있으시면 언제든 문의해 주세요. 친절히 안내해 드리겠습니다.
+            </p>
+            <Link href="/company#contact" className="btn btn-gold">
+              문의하기
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

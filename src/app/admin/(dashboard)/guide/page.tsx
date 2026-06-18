@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import ImageUploadField from '@/components/admin/ImageUploadField';
 
 interface EditSection {
   title: string;
@@ -129,10 +130,17 @@ export default function GuideAdminPage() {
                   <span className="mb-1 block text-xs text-gray-600">slug (제품 상세 연결용 · 영문)</span>
                   <input className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono" value={g.slug} onChange={(e) => updGuide(gi, { slug: e.target.value })} placeholder="daerachoen-..." />
                 </label>
-                <label className="block">
-                  <span className="mb-1 block text-xs text-gray-600">대표 이미지 URL (선택)</span>
-                  <input className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" value={g.image} onChange={(e) => updGuide(gi, { image: e.target.value })} />
-                </label>
+                <div className="block">
+                  <ImageUploadField
+                    label="대표 이미지 (업로드 또는 URL · 선택)"
+                    value={g.image}
+                    onChange={(url) => updGuide(gi, { image: url })}
+                    subdir="products"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    제품 상세의 대표 이미지를 쓰려면 해당 이미지 URL을 붙여넣거나, 같은 이미지를 업로드하세요.
+                  </p>
+                </div>
                 <label className="block">
                   <span className="mb-1 block text-xs text-gray-600">한 줄 소개 (선택)</span>
                   <input className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" value={g.tagline} onChange={(e) => updGuide(gi, { tagline: e.target.value })} />
