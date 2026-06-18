@@ -144,18 +144,21 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
       `rx="${fmt(ph * 0.32)}" ry="${fmt(ph * 0.32)}" fill="${bg}"/>` +
       `<rect x="${fmt(cx - bw / 2)}" y="${fmt(cy - bh / 2)}" width="${fmt(bw)}" height="${fmt(bh)}" ` +
       `rx="${fmt(bh * 0.34)}" ry="${fmt(bh * 0.34)}" fill="${accentColor}" stroke="${badgeBorder}" stroke-width="${fmt(stroke)}"/>` +
-      `<text x="${fmt(cx)}" y="${fmt(cy)}" text-anchor="middle" dominant-baseline="central" ` +
+      // 한글 글꼴은 dominant-baseline="central" 에서 약간 위로 앉아 → fontSize 의 약 8% 아래로 보정해 상자 정중앙.
+      `<text x="${fmt(cx)}" y="${fmt(cy + fontSize * 0.08)}" text-anchor="middle" dominant-baseline="central" ` +
       `font-family="${FONT_STACK}" font-weight="800" font-size="${fmt(fontSize)}" fill="${textColor}">${escapeXml(centerText)}</text>`;
   }
 
   // ── 하단 안내 문구 ── 100% 장평, 폭에 맞춰 폰트 자동 축소(강제 압축 없음).
   let caption = '';
   if (captionText) {
-    const capCenterY = blockY + block + gap + capH / 2;
     const capMaxW = V * 0.9;
     const capChars = [...captionText].length;
     const capAdv = estimateAdvanceEm(captionText);
     const capFont = Math.min(capH * 0.5, (capMaxW * 0.98) / Math.max(1, capChars * capAdv));
+    // QR 과 캡션 사이 간격을 기존의 1/2 로 — 캡션을 밴드 중앙이 아니라 QR 쪽으로 끌어올림.
+    const fullTopGap = gap + capH / 2 - capFont / 2; // 기존 QR바닥 → 글자상단 간격
+    const capCenterY = blockY + block + fullTopGap / 2 + capFont / 2;
     caption =
       `<text x="${fmt(cx)}" y="${fmt(capCenterY)}" text-anchor="middle" dominant-baseline="central" ` +
       `font-family="${FONT_STACK}" font-weight="700" font-size="${fmt(capFont)}" fill="${textColor}">${escapeXml(captionText)}</text>`;
