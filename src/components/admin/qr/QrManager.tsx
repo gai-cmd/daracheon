@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QrImageStudio from './QrImageStudio';
+import QrStickerStudio from './QrStickerStudio';
 import QrAnalyticsView from './QrAnalyticsView';
 import QrCoupons from './QrCoupons';
 import SerialManager from './SerialManager';
@@ -91,6 +92,7 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
   const [studioFor, setStudioFor] = useState<QrCode | null>(null);
+  const [stickerFor, setStickerFor] = useState<QrCode | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -337,6 +339,9 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
                     <button type="button" className="text-xs font-medium text-gold-700 hover:underline" onClick={() => setStudioFor(qr)}>
                       원본
                     </button>
+                    <button type="button" className="text-xs font-medium text-gold-700 hover:underline" onClick={() => setStickerFor(qr)}>
+                      스티커
+                    </button>
                     <button type="button" className="text-xs font-medium text-gray-700 hover:underline" onClick={() => openEdit(qr)}>
                       편집
                     </button>
@@ -368,6 +373,24 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
               </button>
             </div>
             <QrImageStudio url={qrUrl(studioFor.slug)} slug={studioFor.slug} defaultStyle={studioFor.defaultStyle} />
+          </div>
+        </div>
+      )}
+
+      {/* ───── 스티커 디자인 모달 ───── */}
+      {stickerFor && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/40 p-4" onClick={() => setStickerFor(null)}>
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">{stickerFor.name} — 스티커 디자인</h3>
+                <p className="text-xs text-gray-500">/q/{stickerFor.slug} · 흰 와꾸 + 가운데 문구 + 안내 문구</p>
+              </div>
+              <button type="button" className="text-gray-400 hover:text-gray-700" onClick={() => setStickerFor(null)}>
+                ✕
+              </button>
+            </div>
+            <QrStickerStudio url={qrUrl(stickerFor.slug)} slug={stickerFor.slug} />
           </div>
         </div>
       )}
