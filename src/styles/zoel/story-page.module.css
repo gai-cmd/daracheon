@@ -93,6 +93,22 @@
   }
 }
 
+/* heroMainWide — 우측 lede 가 본문(품질보증 문구처럼) 길 때 사용.
+   좌측 h1 좁게(1fr) / 우측 텍스트 넓게(1.85fr) — 문장이 중앙부터
+   우측 끝까지 넓은 폭으로 깔려 우측 쏠림이 사라진다. 모바일은 세로 스택. */
+.heroMainWide {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .heroMainWide {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.85fr);
+    gap: 56px;
+  }
+}
+
 .hero h1 {
   font-family: 'Noto Serif KR', serif;
   font-size: clamp(1.7rem, 5vw, 4.4rem);

@@ -24,11 +24,11 @@ export default async function GuidePage() {
       <section className={styles.hero}>
         <div className={styles.wrap}>
           <div className={styles.kicker}>제품상세 · Product Guide</div>
-          <div className={styles.heroMain}>
+          <div className={styles.heroMainWide}>
             <h1>
               제품 <em>상세</em>
             </h1>
-            <p className={styles.lede} style={{ lineHeight: 2 }}>
+            <p className={styles.lede} style={{ lineHeight: 2, maxWidth: 900 }}>
               대라천 <span style={{ color: 'var(--accent)' }}>‘참’</span> 침향오일은{' '}
               <i>Aquilaria Agallocha</i> (Roxb) 품종에서 생산된 침향오일만을 사용했으며,
               위생적인 시설에서 소비자의 건강관리를 위해 엄격한 품질관리를 거쳐 생산된 제품으로,{' '}
