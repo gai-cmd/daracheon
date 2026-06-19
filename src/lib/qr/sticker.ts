@@ -96,12 +96,10 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
 
   const V = sizeMm * 10; // 0.1mm 단위 캔버스
   const edge = Math.round(V * 0.027); // 바깥 흰 와꾸 여백 (~0.8mm @30)
-  // 하단 캡션 — 폰트를 폭 기준(100% 장평)으로 먼저 계산해 밴드 높이를 글자에 딱 맞춤.
-  const capFont = captionText
-    ? Math.min(V * 0.082, (V * 0.9 * 0.98) / Math.max(1, [...captionText].length * estimateAdvanceEm(captionText)))
-    : 0;
+  // 하단 캡션 — 세로 공간은 최대 폰트 기준으로 확보(실제 폰트는 폭에 맞춰 ≤ 이 값).
+  const capFontMax = captionText ? V * 0.082 : 0;
   const capGap = captionText ? Math.round(V * 0.012) : 0; // QR 흰 여백 바로 아래 최소 간격 (~0.36mm @30)
-  const capH = captionText ? Math.round(capGap + capFont + V * 0.02) : 0; // 간격+글자+하단여백
+  const capH = captionText ? Math.round(capGap + capFontMax + V * 0.02) : 0; // 간격+글자+하단여백
 
   // QR 블록(데이터+quiet zone 포함) 정사각 — 폭과 캡션 위 세로공간에 동시에 맞춤.
   const block = Math.min(V - edge * 2, V - edge * 2 - capH);
@@ -153,12 +151,17 @@ export function renderStickerSvg(matrix: boolean[][], opts: StickerOptions = {})
       `font-family="${FONT_STACK}" font-weight="800" font-size="${fmt(fontSize)}" fill="${textColor}">${escapeXml(centerText)}</text>`;
   }
 
-  // ── 하단 안내 문구 ── QR 흰 여백 바로 아래(최소 간격)에 100% 장평으로 배치.
+  // ── 하단 안내 문구 ── QR 흰 여백 바로 아래(최소 간격) · 좌측정렬(QR 다크모듈 좌측에 맞춤).
   let caption = '';
   if (captionText) {
-    const capCenterY = blockY + block + capGap + capFont / 2;
+    const capLeft = blockX + QUIET * unit; // QR 다크모듈 좌측 라인
+    const availW = V - edge - capLeft; // 우측 여백까지 가용 폭
+    const capChars = [...captionText].length;
+    const capAdv = estimateAdvanceEm(captionText);
+    const capFont = Math.min(capFontMax, (availW * 0.99) / Math.max(1, capChars * capAdv));
+    const capBaseY = blockY + block + capGap + capFont / 2;
     caption =
-      `<text x="${fmt(cx)}" y="${fmt(capCenterY)}" text-anchor="middle" dominant-baseline="central" ` +
+      `<text x="${fmt(capLeft)}" y="${fmt(capBaseY)}" text-anchor="start" dominant-baseline="central" ` +
       `font-family="${FONT_STACK}" font-weight="700" font-size="${fmt(capFont)}" fill="${textColor}">${escapeXml(captionText)}</text>`;
   }
 
