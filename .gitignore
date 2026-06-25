@@ -76,3 +76,10 @@ scripts/production-video-thumbs/
 
 # TinyMCE self-host 정적 자산 (prebuild 가 node_modules/tinymce 에서 복사)
 /public/tinymce
+
+# 스크립트 생성 마케팅 이미지(빌드 산출물) — git 추적 불필요
+/dist/
+
+# 로컬 임시/스크래치 파일
+tmpmedia-live.html
+_workflow_prompt.txt

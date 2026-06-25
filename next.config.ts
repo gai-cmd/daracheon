@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    // 침향 논문 아카이브: /thesis → public/thesis/index.html 정적 파일.
+    // (Next public 폴더는 디렉터리 인덱스를 자동 제공하지 않으므로 명시 rewrite)
+    return [
+      { source: '/thesis', destination: '/thesis/index.html' },
+      { source: '/thesis/', destination: '/thesis/index.html' },
+    ];
+  },
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
     // img-src: Next.config 의 remotePatterns 와 일치시켜야 이미지 깨지지 않음.

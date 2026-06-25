@@ -96,6 +96,7 @@ export default function Footer({ socialLinks = [], company }: Props) {
             <Link href="/privacy">개인정보처리방침</Link>
             <Link href="/terms">이용약관</Link>
             <Link href="/admin">관리자</Link>
+            <a href="/thesis">thesis</a>
           </div>
         </div>
       </div>
