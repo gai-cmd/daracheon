@@ -58,6 +58,93 @@ function dotVariant(b: CalBroadcast): string {
   return 'upcoming';
 }
 
+/** 단일 월 그리드 — 6월·7월을 나란히 보여주기 위해 한 달치 달력을 분리한 컴포넌트.
+ *  monthIdx 는 year*12 + (month-1). 클릭 가능한 셀은 해당 일자의 첫 방송으로 포커스. */
+function MonthGrid({
+  monthIdx,
+  byKey,
+  todayY,
+  todayM,
+  todayD,
+  onPick,
+}: {
+  monthIdx: number;
+  byKey: Map<string, CalBroadcast[]>;
+  todayY: number;
+  todayM: number;
+  todayD: number;
+  onPick: (b: CalBroadcast) => void;
+}) {
+  const viewYear = Math.floor(monthIdx / 12);
+  const viewMon = (monthIdx % 12) + 1;
+
+  const cells = useMemo(() => {
+    const firstWeekday = new Date(Date.UTC(viewYear, viewMon - 1, 1)).getUTCDay();
+    const daysInMonth = new Date(Date.UTC(viewYear, viewMon, 0)).getUTCDate();
+    const out: (number | null)[] = [];
+    for (let i = 0; i < firstWeekday; i++) out.push(null);
+    for (let d = 1; d <= daysInMonth; d++) out.push(d);
+    while (out.length % 7 !== 0) out.push(null);
+    return out;
+  }, [viewYear, viewMon]);
+
+  return (
+    <div className={styles.calMonth}>
+      <div className={styles.calMonthName}>
+        {viewYear}<span className={styles.calMonthDot}>·</span>{viewMon}월
+      </div>
+      <div className={styles.calGrid}>
+        {WEEKDAYS.map((w, i) => (
+          <div
+            key={w}
+            className={`${styles.calWeekday} ${i === 0 ? styles.calWeekdaySun : ''} ${
+              i === 6 ? styles.calWeekdaySat : ''
+            }`}
+          >
+            {w}
+          </div>
+        ))}
+        {cells.map((d, i) => {
+          if (d === null) return <div key={`pad-${i}`} className={styles.calCellEmpty} />;
+          const events = byKey.get(dayKey(viewYear, viewMon, d)) ?? [];
+          const isToday = viewYear === todayY && viewMon === todayM && d === todayD;
+          const hasEvent = events.length > 0;
+          return (
+            <button
+              type="button"
+              key={`d-${d}`}
+              className={`${styles.calCell} ${isToday ? styles.calCellToday : ''} ${
+                hasEvent ? styles.calCellEvent : ''
+              }`}
+              onClick={hasEvent ? () => onPick(events[0]) : undefined}
+              disabled={!hasEvent}
+              aria-label={
+                hasEvent
+                  ? `${viewMon}월 ${d}일 ${events.map((e) => `${e.channel} ${badgeOf(e).label}`).join(', ')}`
+                  : `${viewMon}월 ${d}일`
+              }
+            >
+              <span className={styles.calDayNum}>{d}</span>
+              {hasEvent && (
+                <span className={styles.calDots}>
+                  {events.slice(0, 3).map((e) => (
+                    <span
+                      key={e.id}
+                      className={`${styles.calDot} ${
+                        styles[`calDot_${dotVariant(e)}` as keyof typeof styles] ?? ''
+                      }`}
+                    />
+                  ))}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function BroadcastCalendar({
   broadcasts,
   todayKey,
@@ -111,19 +198,10 @@ export default function BroadcastCalendar({
     return { min: Math.min(...idxs), max: Math.max(...idxs) };
   }, [broadcasts, todayKey]);
 
-  const viewYear = Math.floor(viewMonth / 12);
-  const viewMon = (viewMonth % 12) + 1;
-
-  // 달력 셀 — 앞 패딩(첫 날 요일) + 1..말일
-  const cells = useMemo(() => {
-    const firstWeekday = new Date(Date.UTC(viewYear, viewMon - 1, 1)).getUTCDay();
-    const daysInMonth = new Date(Date.UTC(viewYear, viewMon, 0)).getUTCDate();
-    const out: (number | null)[] = [];
-    for (let i = 0; i < firstWeekday; i++) out.push(null);
-    for (let d = 1; d <= daysInMonth; d++) out.push(d);
-    while (out.length % 7 !== 0) out.push(null);
-    return out;
-  }, [viewYear, viewMon]);
+  // 두 달 창(6월·7월처럼 연속 2개월)을 한눈에 — 첫 달(viewMonth)과 다음 달(viewMonth+1).
+  const monthA = viewMonth;
+  const monthB = viewMonth + 1;
+  const rangeLabel = `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월 – ${(monthB % 12) + 1}월`;
 
   const list = useMemo(() => {
     const arr = tab === 'upcoming' ? [...upcoming] : [...past];
@@ -182,7 +260,7 @@ export default function BroadcastCalendar({
       </div>
 
       <div className={styles.calLayout}>
-        {/* 달력 패널 */}
+        {/* 달력 패널 — 연속 2개월(예: 6월·7월)을 한 화면에 */}
         <div className={styles.calPanel}>
           <div className={styles.calMonthBar}>
             <button
@@ -194,9 +272,7 @@ export default function BroadcastCalendar({
             >
               ‹
             </button>
-            <div className={styles.calMonthLabel}>
-              {viewYear}<span className={styles.calMonthDot}>·</span>{viewMon}월
-            </div>
+            <div className={styles.calMonthLabel}>{rangeLabel}</div>
             <button
               type="button"
               className={styles.calNavBtn}
@@ -208,53 +284,23 @@ export default function BroadcastCalendar({
             </button>
           </div>
 
-          <div className={styles.calGrid}>
-            {WEEKDAYS.map((w, i) => (
-              <div
-                key={w}
-                className={`${styles.calWeekday} ${i === 0 ? styles.calWeekdaySun : ''} ${
-                  i === 6 ? styles.calWeekdaySat : ''
-                }`}
-              >
-                {w}
-              </div>
-            ))}
-            {cells.map((d, i) => {
-              if (d === null) return <div key={`pad-${i}`} className={styles.calCellEmpty} />;
-              const events = byKey.get(dayKey(viewYear, viewMon, d)) ?? [];
-              const isToday = viewYear === todayY && viewMon === todayM && d === todayD;
-              const hasEvent = events.length > 0;
-              return (
-                <button
-                  type="button"
-                  key={`d-${d}`}
-                  className={`${styles.calCell} ${isToday ? styles.calCellToday : ''} ${
-                    hasEvent ? styles.calCellEvent : ''
-                  }`}
-                  onClick={hasEvent ? () => focusEvent(events[0]) : undefined}
-                  disabled={!hasEvent}
-                  aria-label={
-                    hasEvent
-                      ? `${viewMon}월 ${d}일 ${events.map((e) => `${e.channel} ${badgeOf(e).label}`).join(', ')}`
-                      : `${viewMon}월 ${d}일`
-                  }
-                >
-                  <span className={styles.calDayNum}>{d}</span>
-                  {hasEvent && (
-                    <span className={styles.calDots}>
-                      {events.slice(0, 3).map((e) => (
-                        <span
-                          key={e.id}
-                          className={`${styles.calDot} ${
-                            styles[`calDot_${dotVariant(e)}` as keyof typeof styles] ?? ''
-                          }`}
-                        />
-                      ))}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+          <div className={styles.calMonths}>
+            <MonthGrid
+              monthIdx={monthA}
+              byKey={byKey}
+              todayY={todayY}
+              todayM={todayM}
+              todayD={todayD}
+              onPick={focusEvent}
+            />
+            <MonthGrid
+              monthIdx={monthB}
+              byKey={byKey}
+              todayY={todayY}
+              todayM={todayM}
+              todayD={todayD}
+              onPick={focusEvent}
+            />
           </div>
 
           <div className={styles.calLegend}>

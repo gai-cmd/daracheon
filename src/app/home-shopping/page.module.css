@@ -453,6 +453,24 @@
   font-variant-numeric: tabular-nums;
 }
 .calMonthDot { color: var(--accent); margin: 0 4px; }
+
+/* 두 달(6월·7월)을 세로로 쌓아 한눈에 — 좁은 사이드 컬럼에서도 둘 다 보이게 */
+.calMonths {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.calMonthName {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.02rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+}
 .calNavBtn {
   width: 34px;
   height: 34px;
