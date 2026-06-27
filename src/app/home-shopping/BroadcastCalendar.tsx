@@ -67,6 +67,7 @@ function MonthGrid({
   todayM,
   todayD,
   onPick,
+  showName = false,
 }: {
   monthIdx: number;
   byKey: Map<string, CalBroadcast[]>;
@@ -74,6 +75,7 @@ function MonthGrid({
   todayM: number;
   todayD: number;
   onPick: (b: CalBroadcast) => void;
+  showName?: boolean;
 }) {
   const viewYear = Math.floor(monthIdx / 12);
   const viewMon = (monthIdx % 12) + 1;
@@ -90,9 +92,11 @@ function MonthGrid({
 
   return (
     <div className={styles.calMonth}>
-      <div className={styles.calMonthName}>
-        {viewYear}<span className={styles.calMonthDot}>·</span>{viewMon}월
-      </div>
+      {showName && (
+        <div className={styles.calMonthName}>
+          {viewYear}<span className={styles.calMonthDot}>·</span>{viewMon}월
+        </div>
+      )}
       <div className={styles.calGrid}>
         {WEEKDAYS.map((w, i) => (
           <div
@@ -296,6 +300,7 @@ export default function BroadcastCalendar({
               todayM={todayM}
               todayD={todayD}
               onPick={focusEvent}
+              showName={twoMonth}
             />
             {twoMonth && (
               <MonthGrid
@@ -305,6 +310,7 @@ export default function BroadcastCalendar({
                 todayM={todayM}
                 todayD={todayD}
                 onPick={focusEvent}
+                showName
               />
             )}
           </div>
