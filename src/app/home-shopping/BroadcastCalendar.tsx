@@ -198,10 +198,14 @@ export default function BroadcastCalendar({
     return { min: Math.min(...idxs), max: Math.max(...idxs) };
   }, [broadcasts, todayKey]);
 
-  // 두 달 창(6월·7월처럼 연속 2개월)을 한눈에 — 첫 달(viewMonth)과 다음 달(viewMonth+1).
+  // 지난 방송 탭만 연속 2개월(예: 6월·7월)을 한눈에 — 첫 달(viewMonth)과 다음 달(viewMonth+1).
+  // 예정 탭은 단일 월.
+  const twoMonth = tab === 'past';
   const monthA = viewMonth;
   const monthB = viewMonth + 1;
-  const rangeLabel = `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월 – ${(monthB % 12) + 1}월`;
+  const monthBarLabel = twoMonth
+    ? `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월 – ${(monthB % 12) + 1}월`
+    : `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월`;
 
   const list = useMemo(() => {
     const arr = tab === 'upcoming' ? [...upcoming] : [...past];
@@ -272,7 +276,7 @@ export default function BroadcastCalendar({
             >
               ‹
             </button>
-            <div className={styles.calMonthLabel}>{rangeLabel}</div>
+            <div className={styles.calMonthLabel}>{monthBarLabel}</div>
             <button
               type="button"
               className={styles.calNavBtn}
@@ -293,14 +297,16 @@ export default function BroadcastCalendar({
               todayD={todayD}
               onPick={focusEvent}
             />
-            <MonthGrid
-              monthIdx={monthB}
-              byKey={byKey}
-              todayY={todayY}
-              todayM={todayM}
-              todayD={todayD}
-              onPick={focusEvent}
-            />
+            {twoMonth && (
+              <MonthGrid
+                monthIdx={monthB}
+                byKey={byKey}
+                todayY={todayY}
+                todayM={todayM}
+                todayD={todayD}
+                onPick={focusEvent}
+              />
+            )}
           </div>
 
           <div className={styles.calLegend}>
