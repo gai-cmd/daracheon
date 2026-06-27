@@ -528,9 +528,14 @@
   border-color: rgba(212, 168, 67, 0.45);
 }
 .calCellToday .calDayNum { color: var(--accent); font-weight: 600; }
+/* 지난 날짜 — 옅은 배경으로 '지난 방송' 영역을 시각화 */
+.calCellPast { background: rgba(255, 255, 255, 0.05); }
+.calCellPast .calDayNum { color: rgba(255, 255, 255, 0.4); }
 .calCellEvent { cursor: pointer; }
 .calCellEvent:hover { background: rgba(212, 168, 67, 0.08); }
 .calCellEvent .calDayNum { color: #fff; }
+/* 지난 날짜에 방송이 있으면 배경은 유지하되 숫자는 보이게 */
+.calCellPast.calCellEvent .calDayNum { color: rgba(255, 255, 255, 0.75); }
 
 .calDots {
   display: flex;
@@ -568,6 +573,15 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.55);
 }
+/* 범례 — 지난 방송(옅은 배경) 표식 */
+.calLegendPast {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
 
 /* 카드 리스트 */
 .calList {
@@ -592,9 +606,16 @@
 }
 .calRow:last-child { border-bottom: none; }
 .calRow:hover { background: rgba(212, 168, 67, 0.04); }
+/* 지난 방송 카드 — 옅은 배경 + 흐리게(완료/매진). hover/highlight 시엔 또렷하게. */
+.calRowPast {
+  background: rgba(255, 255, 255, 0.025);
+  opacity: 0.6;
+}
+.calRowPast:hover { opacity: 1; }
 .calRowHighlight {
   background: rgba(212, 168, 67, 0.1);
   box-shadow: inset 3px 0 0 var(--accent);
+  opacity: 1;
 }
 
 .calRowDate { text-align: center; }

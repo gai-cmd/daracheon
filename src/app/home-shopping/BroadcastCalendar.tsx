@@ -28,8 +28,6 @@ export interface CalBroadcast {
   hasReplay: boolean;
 }
 
-type Tab = 'upcoming' | 'past';
-
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 function monthIndex(year: number, month: number): number {
@@ -113,13 +111,16 @@ function MonthGrid({
           const events = byKey.get(dayKey(viewYear, viewMon, d)) ?? [];
           const isToday = viewYear === todayY && viewMon === todayM && d === todayD;
           const hasEvent = events.length > 0;
+          // 오늘 이전 날짜는 옅은 배경으로 '지난' 영역을 시각화
+          const isPastDay =
+            viewYear * 10000 + viewMon * 100 + d < todayY * 10000 + todayM * 100 + todayD;
           return (
             <button
               type="button"
               key={`d-${d}`}
               className={`${styles.calCell} ${isToday ? styles.calCellToday : ''} ${
-                hasEvent ? styles.calCellEvent : ''
-              }`}
+                isPastDay ? styles.calCellPast : ''
+              } ${hasEvent ? styles.calCellEvent : ''}`}
               onClick={hasEvent ? () => onPick(events[0]) : undefined}
               disabled={!hasEvent}
               aria-label={
@@ -156,15 +157,6 @@ export default function BroadcastCalendar({
   broadcasts: CalBroadcast[];
   todayKey: string;
 }) {
-  const upcoming = useMemo(
-    () => broadcasts.filter((b) => !b.isPast && b.status !== 'canceled'),
-    [broadcasts]
-  );
-  const past = useMemo(
-    () => broadcasts.filter((b) => b.isPast || b.status === 'canceled'),
-    [broadcasts]
-  );
-
   const byKey = useMemo(() => {
     const m = new Map<string, CalBroadcast[]>();
     for (const b of broadcasts) {
@@ -174,61 +166,38 @@ export default function BroadcastCalendar({
     return m;
   }, [broadcasts]);
 
-  /** 탭별 기본 표시 월 — 예정: 가장 가까운 예정 방송 월, 지난: 가장 최근 방송 월 */
-  function tabDefaultMonth(tab: Tab): number {
-    const arr = tab === 'upcoming' ? upcoming : past;
-    if (arr.length > 0) {
-      const sorted = [...arr].sort(
-        (a, b) =>
-          a.year * 10000 + a.month * 100 + a.day - (b.year * 10000 + b.month * 100 + b.day)
-      );
-      const pick = tab === 'upcoming' ? sorted[0] : sorted[sorted.length - 1];
-      return monthIndex(pick.year, pick.month);
-    }
-    const [ty, tm] = todayKey.split('-').map(Number);
-    return monthIndex(ty, tm);
-  }
-
-  const initialTab: Tab = upcoming.length > 0 ? 'upcoming' : 'past';
-  const [tab, setTab] = useState<Tab>(initialTab);
-  const [viewMonth, setViewMonth] = useState<number>(() => tabDefaultMonth(initialTab));
-  const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [todayY, todayM, todayD] = todayKey.split('-').map(Number);
 
   // 네비게이션 가능 범위 — 이벤트가 있는 월 ± 오늘
   const monthBounds = useMemo(() => {
     const idxs = broadcasts.map((b) => monthIndex(b.year, b.month));
-    const [ty, tm] = todayKey.split('-').map(Number);
-    idxs.push(monthIndex(ty, tm));
+    idxs.push(monthIndex(todayY, todayM));
     return { min: Math.min(...idxs), max: Math.max(...idxs) };
-  }, [broadcasts, todayKey]);
+  }, [broadcasts, todayY, todayM]);
 
-  // 지난 방송 탭만 연속 2개월(예: 6월·7월)을 한눈에 — 첫 달(viewMonth)과 다음 달(viewMonth+1).
-  // 예정 탭은 단일 월.
-  const twoMonth = tab === 'past';
+  // 탭 없이 항상 연속 2개월(이번 달·다음 달)을 한 화면에. 기본은 오늘이 속한 달부터
+  // (예: 6월 → 6·7월). 범위를 벗어나지 않게 클램프.
+  const defaultMonth = useMemo(() => {
+    const t = monthIndex(todayY, todayM);
+    return Math.min(Math.max(t, monthBounds.min), monthBounds.max);
+  }, [todayY, todayM, monthBounds]);
+
+  const [viewMonth, setViewMonth] = useState<number>(defaultMonth);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
   const monthA = viewMonth;
   const monthB = viewMonth + 1;
-  const monthBarLabel = twoMonth
-    ? `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월 – ${(monthB % 12) + 1}월`
-    : `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월`;
+  const monthBarLabel = `${Math.floor(monthA / 12)}. ${(monthA % 12) + 1}월 – ${(monthB % 12) + 1}월`;
 
+  // 예정·지난 구분 없이 전체를 시간순(오름차순)으로. 지난 방송은 흐리게 표시한다.
   const list = useMemo(() => {
-    const arr = tab === 'upcoming' ? [...upcoming] : [...past];
-    arr.sort(
+    return [...broadcasts].sort(
       (a, b) =>
         a.year * 10000 + a.month * 100 + a.day - (b.year * 10000 + b.month * 100 + b.day)
     );
-    return tab === 'past' ? arr.reverse() : arr;
-  }, [tab, upcoming, past]);
-
-  function selectTab(next: Tab) {
-    setTab(next);
-    setViewMonth(tabDefaultMonth(next));
-  }
+  }, [broadcasts]);
 
   function focusEvent(b: CalBroadcast) {
-    // 다른 탭의 날짜를 클릭하면 해당 탭으로 전환(월은 유지)
-    const targetTab: Tab = b.isPast || b.status === 'canceled' ? 'past' : 'upcoming';
-    if (targetTab !== tab) setTab(targetTab);
     setHighlightId(b.id);
     if (typeof document !== 'undefined') {
       requestAnimationFrame(() => {
@@ -241,34 +210,10 @@ export default function BroadcastCalendar({
     window.setTimeout(() => setHighlightId((cur) => (cur === b.id ? null : cur)), 1600);
   }
 
-  const [todayY, todayM, todayD] = todayKey.split('-').map(Number);
-
   return (
     <div className={styles.cal}>
-      {/* 탭 */}
-      <div className={styles.calTabs} role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'upcoming'}
-          className={`${styles.calTab} ${tab === 'upcoming' ? styles.calTabActive : ''}`}
-          onClick={() => selectTab('upcoming')}
-        >
-          예정<span className={styles.calTabCount}>{upcoming.length}</span>
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'past'}
-          className={`${styles.calTab} ${tab === 'past' ? styles.calTabActive : ''}`}
-          onClick={() => selectTab('past')}
-        >
-          지난 방송<span className={styles.calTabCount}>{past.length}</span>
-        </button>
-      </div>
-
       <div className={styles.calLayout}>
-        {/* 달력 패널 — 연속 2개월(예: 6월·7월)을 한 화면에 */}
+        {/* 달력 패널 — 연속 2개월(예: 6월·7월)을 한 화면에. 지난 날짜는 옅은 배경. */}
         <div className={styles.calPanel}>
           <div className={styles.calMonthBar}>
             <button
@@ -300,19 +245,17 @@ export default function BroadcastCalendar({
               todayM={todayM}
               todayD={todayD}
               onPick={focusEvent}
-              showName={twoMonth}
+              showName
             />
-            {twoMonth && (
-              <MonthGrid
-                monthIdx={monthB}
-                byKey={byKey}
-                todayY={todayY}
-                todayM={todayM}
-                todayD={todayD}
-                onPick={focusEvent}
-                showName
-              />
-            )}
+            <MonthGrid
+              monthIdx={monthB}
+              byKey={byKey}
+              todayY={todayY}
+              todayM={todayM}
+              todayD={todayD}
+              onPick={focusEvent}
+              showName
+            />
           </div>
 
           <div className={styles.calLegend}>
@@ -325,23 +268,27 @@ export default function BroadcastCalendar({
             <span className={styles.calLegendItem}>
               <span className={`${styles.calDot} ${styles.calDot_done}`} />완료
             </span>
+            <span className={styles.calLegendItem}>
+              <span className={styles.calLegendPast} />지난 방송
+            </span>
           </div>
         </div>
 
-        {/* 카드 리스트 (탭 필터) */}
+        {/* 카드 리스트 — 전체 시간순, 지난 방송은 흐리게 */}
         <div className={styles.calList}>
           {list.length === 0 ? (
-            <div className={styles.calEmpty}>
-              {tab === 'upcoming' ? '예정된 방송이 없습니다.' : '지난 방송이 없습니다.'}
-            </div>
+            <div className={styles.calEmpty}>등록된 방송이 없습니다.</div>
           ) : (
             list.map((b) => {
               const badge = badgeOf(b);
+              const dim = b.isPast || b.status === 'canceled';
               return (
                 <div
                   key={b.id}
                   id={`cal-card-${b.id}`}
-                  className={`${styles.calRow} ${highlightId === b.id ? styles.calRowHighlight : ''}`}
+                  className={`${styles.calRow} ${dim ? styles.calRowPast : ''} ${
+                    highlightId === b.id ? styles.calRowHighlight : ''
+                  }`}
                 >
                   <div className={styles.calRowDate}>
                     <span className={styles.calRowDay}>{String(b.day).padStart(2, '0')}</span>
