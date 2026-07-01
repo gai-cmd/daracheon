@@ -325,6 +325,38 @@ html.admin-dark input::placeholder, html.admin-dark textarea::placeholder {
   color: #6b6b66 !important;
 }
 
+/* ── Quiet Luxury palette (warm / gold / sage / terracotta) ──────────
+   리뉴얼된 admin 화면은 gray 대신 warm 스케일을 쓴다. gray 리매핑만으로는
+   bg-white(→#1a1a17) 위의 text-warm-900(#1F1F1F)이 그대로 남아 "어두운 글자 +
+   어두운 배경 = 안 보임" 이 된다. gray 리매핑과 동일하게 warm 스케일도 반전한다. */
+/* warm surfaces: 밝은 배경 → 어둡게 */
+html.admin-dark .bg-warm-50 { background-color: #0f0f0d !important; }
+html.admin-dark .bg-warm-100 { background-color: #1f1f1c !important; }
+html.admin-dark .bg-warm-200 { background-color: #2d2d28 !important; }
+/* warm text: 어두운 글자 → 밝게 (bg-white/warm 위에서 읽히도록) */
+html.admin-dark .text-warm-900 { color: #f5f5f5 !important; }
+html.admin-dark .text-warm-800 { color: #e5e5e5 !important; }
+html.admin-dark .text-warm-700 { color: #d4d4d4 !important; }
+html.admin-dark .text-warm-600 { color: #a3a3a3 !important; }
+/* text-warm-50 은 이미 밝은 글자(어두운 버튼 위) — 반전하지 않음 */
+html.admin-dark .border-warm-200 { border-color: #35352e !important; }
+html.admin-dark .border-warm-300 { border-color: #404038 !important; }
+html.admin-dark .hover\:bg-warm-50:hover { background-color: #252522 !important; }
+html.admin-dark .hover\:bg-warm-100:hover { background-color: #2d2d28 !important; }
+/* 밝은 강조 배경(배지/토스트 tint) → 어두운 tint */
+html.admin-dark .bg-gold-50 { background-color: rgba(212,168,67,0.12) !important; }
+html.admin-dark .bg-gold-100 { background-color: rgba(212,168,67,0.16) !important; }
+html.admin-dark .bg-sage-50 { background-color: rgba(74,103,65,0.15) !important; }
+html.admin-dark .bg-sage-100 { background-color: rgba(74,103,65,0.20) !important; }
+html.admin-dark .bg-terracotta-bg { background-color: rgba(180,69,47,0.15) !important; }
+/* 어두운 강조 텍스트 → 밝은 강조색으로 (어두운 배경 대비 확보) */
+html.admin-dark .text-gold-600,
+html.admin-dark .text-gold-700,
+html.admin-dark .text-gold-800 { color: #d4a843 !important; }
+html.admin-dark .text-sage-600,
+html.admin-dark .text-sage-700 { color: #a8bfa0 !important; }
+html.admin-dark .text-terracotta { color: #e07a63 !important; }
+
 /* ═══════════════════════════════════════════════════════════════
    Admin Design System — Quiet Luxury
    adm-* 클래스는 admin JSX에서만 사용 → 공개 사이트 영향 없음
