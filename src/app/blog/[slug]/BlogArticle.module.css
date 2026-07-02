@@ -281,6 +281,21 @@
   border-bottom: 1px solid rgba(212, 168, 67, 0.25);
 }
 
+/* ── Inline SVG charts ────────────────────────────────────────
+   본문 차트는 밝은 흙빛 팔레트(짙은 글자)로 그려지므로, 다크 아티클
+   배경 위에서 글자가 묻히지 않도록 밝은 카드 표면을 강제한다. */
+.article svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 24px auto;
+  background: #f4eee3;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 /* ── Tags ─────────────────────────────────────────────────── */
 .tags {
   display: flex;
