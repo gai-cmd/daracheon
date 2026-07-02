@@ -101,6 +101,10 @@ const ALLOWED_TAGS = [
   'iframe',
   'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'colgroup', 'col',
   'div', 'span',
+  // 인라인 SVG 차트/도해 — 블로그 본문의 데이터 시각화용.
+  // use/image/foreignObject/animate 등 외부참조·스크립트 계열은 의도적으로 제외.
+  'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'line',
+  'polyline', 'polygon', 'text', 'tspan', 'defs', 'marker',
 ];
 
 const ALLOWED_ATTR = [
@@ -114,6 +118,12 @@ const ALLOWED_ATTR = [
   'allow', 'allowfullscreen', 'frameborder',
   // TipTap task list markers
   'data-list-type', 'data-task-list',
+  // SVG 차트 속성 (DOMPurify 는 소문자로 비교)
+  'viewbox', 'preserveaspectratio', 'xmlns', 'role', 'aria-label', 'aria-hidden',
+  'd', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'points',
+  'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linecap',
+  'stroke-linejoin', 'text-anchor', 'dominant-baseline', 'font-size',
+  'font-weight', 'font-family', 'transform', 'opacity', 'fill-opacity',
 ];
 
 interface PurifyHookEvent {
@@ -126,7 +136,6 @@ interface PurifyConfigWithHooks {
   FORBID_TAGS: string[];
   FORBID_ATTR: string[];
   ALLOW_DATA_ATTR: boolean;
-  USE_PROFILES: { html: boolean };
 }
 
 const PURIFY_CONFIG: PurifyConfigWithHooks = {
@@ -140,7 +149,8 @@ const PURIFY_CONFIG: PurifyConfigWithHooks = {
     'onchange', 'onsubmit', 'onkeydown', 'onkeyup', 'onkeypress',
   ],
   ALLOW_DATA_ATTR: true,
-  USE_PROFILES: { html: true },
+  // USE_PROFILES 를 함께 주면 DOMPurify 가 프로필 allowlist 로 ALLOWED_TAGS 를
+  // 덮어써서(svg 등 커스텀 태그 전부 무시) 명시 목록이 죽는다 — 넣지 말 것.
 };
 
 let hooksRegistered = false;
