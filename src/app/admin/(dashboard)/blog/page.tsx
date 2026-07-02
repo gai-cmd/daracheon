@@ -223,6 +223,7 @@ export default function AdminBlogPage() {
               <th className="w-10 px-3 py-2">
                 <input type="checkbox" checked={allChecked} onChange={toggleAll} />
               </th>
+              <th className="w-20 px-3 py-2">썸네일</th>
               <th className="px-3 py-2">제목</th>
               <th className="px-3 py-2">카테고리</th>
               <th className="px-3 py-2">상태</th>
@@ -234,13 +235,13 @@ export default function AdminBlogPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-3 py-10 text-center text-warm-600">
+                <td colSpan={8} className="px-3 py-10 text-center text-warm-600">
                   로딩 중…
                 </td>
               </tr>
             ) : posts.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-3 py-10 text-center text-warm-600">
+                <td colSpan={8} className="px-3 py-10 text-center text-warm-600">
                   글이 없습니다. 첫 글을 작성해보세요.
                 </td>
               </tr>
@@ -253,6 +254,23 @@ export default function AdminBlogPage() {
                       checked={selectedIds.has(p.id)}
                       onChange={() => toggleOne(p.id)}
                     />
+                  </td>
+                  <td className="px-3 py-2">
+                    <Link href={`/admin/blog/${p.id}`} className="block">
+                      {p.coverImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.coverImage}
+                          alt=""
+                          loading="lazy"
+                          className="h-12 w-16 rounded border border-warm-200 object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-16 items-center justify-center rounded border border-warm-200 bg-warm-100 text-[10px] text-warm-500">
+                          없음
+                        </div>
+                      )}
+                    </Link>
                   </td>
                   <td className="px-3 py-2">
                     <Link href={`/admin/blog/${p.id}`} className="font-medium text-warm-900 hover:underline">
@@ -290,10 +308,18 @@ export default function AdminBlogPage() {
                     <button
                       type="button"
                       onClick={() => setDeleteTarget(p)}
-                      className="text-xs text-terracotta hover:underline"
+                      className="mr-2 text-xs text-terracotta hover:underline"
                     >
                       삭제
                     </button>
+                    <a
+                      href={`/blog/${p.slug}?preview=1`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded border border-warm-300 px-2 py-1 text-xs text-warm-800 hover:bg-warm-100"
+                    >
+                      미리보기
+                    </a>
                   </td>
                 </tr>
               ))

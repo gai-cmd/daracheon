@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { readDataSafe } from '@/lib/db';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import {
   BLOG_CATEGORIES_FILE,
   BLOG_POSTS_FILE,
@@ -27,18 +29,30 @@ function formatKoreanDate(iso: string): string {
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
 
-async function loadPost(slug: string) {
+async function loadPost(slug: string, allowDraft = false) {
   const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
-  return posts.find((p) => p.slug === slug && p.status === 'published') ?? null;
+  return (
+    posts.find((p) => p.slug === slug && (allowDraft || p.status === 'published')) ?? null
+  );
+}
+
+/** 관리자 세션이 유효할 때만 true — 초안 미리보기 게이트. */
+async function isAdmin(): Promise<boolean> {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return (await verifySessionToken(token)) !== null;
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await loadPost(slug);
+  const { preview } = await searchParams;
+  const allowDraft = Boolean(preview) && (await isAdmin());
+  const post = await loadPost(slug, allowDraft);
   if (!post) return { title: '글을 찾을 수 없습니다 — 대라천 블로그' };
 
   const title = post.seoTitle ?? `${post.title} — 대라천 블로그`;
@@ -49,6 +63,7 @@ export async function generateMetadata({
     title,
     description,
     keywords: post.seoKeywords ?? post.tags,
+    ...(allowDraft ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical: `${SITE_URL}/blog/${post.slug}` },
     openGraph: {
       type: 'article',
@@ -74,16 +89,21 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   const { slug } = await params;
+  const { preview } = await searchParams;
+  const allowDraft = Boolean(preview) && (await isAdmin());
   const [post, posts, categories] = await Promise.all([
-    loadPost(slug),
+    loadPost(slug, allowDraft),
     readDataSafe<BlogPost>(BLOG_POSTS_FILE),
     readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
   ]);
   if (!post) notFound();
+  const isDraftPreview = post.status !== 'published';
 
   const category = categories.find((c) => c.id === post.categoryId);
   // 저장 시점(admin POST/PUT)에 이미 sanitizeBlogHtml 을 거쳐 DB 에 들어가므로
@@ -158,6 +178,21 @@ export default async function BlogPostPage({
     <>
       <JsonLd data={postJsonLd} />
       <JsonLd data={breadcrumb} />
+
+      {isDraftPreview && (
+        <div
+          style={{
+            background: '#b88c2d',
+            color: '#fff',
+            textAlign: 'center',
+            padding: '10px 16px',
+            fontSize: 14,
+            fontWeight: 600,
+          }}
+        >
+          초안 미리보기 — 아직 발행되지 않은 글입니다. 관리자에게만 보이며 검색엔진에 노출되지 않습니다.
+        </div>
+      )}
 
       <article className={styles.page}>
         {/* Hero — Legal/Brand-Story 페이지와 동일 톤·여백 */}
