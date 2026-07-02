@@ -141,11 +141,13 @@ h1, h2, h3, h4, h5, h6 {
   color: inherit !important;
 }
 
-/* Any inline color: var(--lx-black) / color:#0a0b10 / color:#14161f */
-[style*="color:#0a0b10"],
-[style*="color: #0a0b10"],
-[style*="color:#14161f"],
-[style*="color: #14161f"] {
+/* Any inline color: var(--lx-black) / color:#0a0b10 / color:#14161f
+   ⚠ [data-reading-surface] 내부 제외 — 밝은 리딩 카드 위에서는
+   어두운 인라인 색이 정상이므로 아이보리로 뒤집으면 안 된다. */
+[style*="color:#0a0b10"]:not([data-reading-surface] *),
+[style*="color: #0a0b10"]:not([data-reading-surface] *),
+[style*="color:#14161f"]:not([data-reading-surface] *),
+[style*="color: #14161f"]:not([data-reading-surface] *) {
   color: #fdfbf7 !important;
 }
 
@@ -162,14 +164,19 @@ input::placeholder, textarea::placeholder {
 }
 label, .form-label { color: rgba(253,251,247,0.75) !important; }
 
-/* Tables (archive style) */
-table { background: transparent !important; color: #fdfbf7 !important; }
-th, td {
+/* Tables (archive style)
+   ⚠ [data-reading-surface] 내부는 제외 — 블로그 본문처럼 "다크 크롬 위
+   밝은 리딩 카드"로 렌더되는 영역은 밝은 배경 + 어두운 잉크를 쓰므로,
+   여기서 아이보리 글자를 강제하면 글씨가 배경에 묻혀 사라진다.
+   (60개 블로그 글 표 텍스트 불가시 버그의 근본 원인) */
+table:not([data-reading-surface] *) { background: transparent !important; color: #fdfbf7 !important; }
+th:not([data-reading-surface] *),
+td:not([data-reading-surface] *) {
   border-color: rgba(212,168,67,0.14) !important;
   color: #fdfbf7 !important;
 }
-th { background: #14161f !important; color: var(--accent-soft) !important; }
-tr:nth-child(even) td { background: rgba(255,255,255,0.02) !important; }
+th:not([data-reading-surface] *) { background: #14161f !important; color: var(--accent-soft) !important; }
+tr:nth-child(even) td:not([data-reading-surface] *) { background: rgba(255,255,255,0.02) !important; }
 
 /* Buttons — keep gold primary, flip outline-dark to outline-light */
 .btn-outline-dark {

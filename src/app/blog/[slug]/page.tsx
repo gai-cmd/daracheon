@@ -238,8 +238,12 @@ export default async function BlogPostPage({
         {/* Body */}
         <section className={styles.body}>
           <div className={styles.inner}>
+            {/* data-reading-surface: dark-theme.css 의 전역 !important 규칙
+                (table/th/td 아이보리 글자 강제 등)이 밝은 리딩 카드 내부로
+                새어 들어오지 않도록 제외 마커를 단다. */}
             <div
               className={styles.article}
+              data-reading-surface
               dangerouslySetInnerHTML={{ __html: cleanHtml }}
             />
 
