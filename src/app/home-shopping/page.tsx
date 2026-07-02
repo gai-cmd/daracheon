@@ -398,6 +398,7 @@ function buildCalEvents(list: Broadcast[], nowMs: number): CalBroadcast[] {
     const eff = effectiveStatus(b);
     const isPast = eff !== 'live' && new Date(b.scheduledAt).getTime() < nowMs;
     const p = kstParts(b.scheduledAt);
+    const tbd = Boolean(b.timeTbd);
     return {
       id: b.id,
       channel: b.channel,
@@ -405,8 +406,10 @@ function buildCalEvents(list: Broadcast[], nowMs: number): CalBroadcast[] {
       year: p.year,
       month: p.month,
       day: p.day,
-      timeLabel: p.timeLabel,
-      dateTimeLabel: formatBroadcastDateTime(b.scheduledAt),
+      timeLabel: tbd ? '시간 미정' : p.timeLabel,
+      dateTimeLabel: tbd
+        ? `${p.year}. ${p.month}. ${p.day}. 시간 미정`
+        : formatBroadcastDateTime(b.scheduledAt),
       title: b.description || b.preview?.headline || '대라천 침향 특별 방송',
       ...(b.specialPrice ? { specialPrice: b.specialPrice } : {}),
       ...(b.discountRate ? { discountRate: b.discountRate } : {}),
