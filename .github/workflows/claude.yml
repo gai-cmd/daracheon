@@ -1,0 +1,45 @@
+name: Claude Code
+
+# GitHub 에서 @claude 를 태그하면 이 리포의 GitHub Actions 안에서 Claude Code 가 돈다.
+# 슬랙 클라우드 세션과 달리 여기에는 리포 secrets(BLOB_READ_WRITE_TOKEN 등)가 있으므로,
+# Claude 가 코드 수정 → 배포(deploy-blob 워크플로 트리거/스크립트 실행)까지 끝낼 수 있다.
+#
+# 사전 준비(둘 다 필요):
+#   1) https://github.com/apps/claude 에서 gai-cmd/daracheon 에 Claude GitHub App 설치
+#   2) secret 등록 — 정책상 metered API 대신 구독 토큰 권장:
+#        로컬에서  claude setup-token  → 나온 값을  CLAUDE_CODE_OAUTH_TOKEN  으로 등록
+#      (대안) ANTHROPIC_API_KEY 를 등록하고 아래 with 를 anthropic_api_key 로 교체
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 대안(정책 확인 후): anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
