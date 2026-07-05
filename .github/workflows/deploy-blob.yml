@@ -1,0 +1,66 @@
+name: Deploy content to Vercel Blob
+
+# 왜 필요한가: 사이트는 런타임에 Vercel Blob 을 읽는다(force-dynamic).
+# 시드(data/db/*.json) 를 main 에 머지해도 Blob 을 직접 쓰지 않으면 라이브 반영이 안 된다.
+# 슬랙/Claude 세션이 브랜치 커밋·PR 까지 하고 배포에서 막히던 마지막 단계를,
+# GitHub Actions(=Blob 토큰 보유) 가 대신 완료한다. 어떤 Claude 표면이든 "머지 → 자동 배포".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/db/**.json'
+  workflow_dispatch:
+    inputs:
+      files:
+        description: '배포할 db 파일명(확장자 없이, 공백 구분). 기본: pages'
+        default: 'pages'
+        required: false
+
+concurrency:
+  group: deploy-blob
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci || npm install
+
+      - name: Determine files to deploy
+        id: files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            list="${{ github.event.inputs.files }}"
+          else
+            # push 이벤트: 이번 커밋에서 실제로 바뀐 data/db/*.json 만 (런타임 데이터 오배포 방지)
+            list=$(git diff --name-only HEAD~1 HEAD -- 'data/db/*.json' \
+              | sed 's#data/db/##; s#\.json$##' | tr '\n' ' ')
+          fi
+          echo "list=${list}" >> "$GITHUB_OUTPUT"
+          echo "deploy list: [${list}]"
+
+      - name: Push seed to production Blob
+        if: steps.files.outputs.list != ''
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          BLOB_DATA_PREFIX: ${{ secrets.BLOB_DATA_PREFIX }}
+        run: node scripts/deploy-db-to-blob.mjs ${{ steps.files.outputs.list }}
+
+      - name: Upload pre-overwrite backups
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-backups
+          path: backups/blob
+          if-no-files-found: ignore
+          retention-days: 14

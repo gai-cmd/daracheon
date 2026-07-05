@@ -73,6 +73,9 @@ scripts/production-video-thumbs/
 
 # 빌드 파이프라인 부품은 scripts/ ignore 의 예외 — git 추적 필요
 !scripts/copy-tinymce.mjs
+# CI 배포 파이프라인이 의존 — 반드시 git 추적
+!scripts/deploy-db-to-blob.mjs
+!scripts/setup-github-secrets.sh
 
 # TinyMCE self-host 정적 자산 (prebuild 가 node_modules/tinymce 에서 복사)
 /public/tinymce
