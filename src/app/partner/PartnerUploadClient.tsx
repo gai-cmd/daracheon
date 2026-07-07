@@ -577,8 +577,11 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
         setMessage({ kind: 'err', text: json.message ?? t.actionFailed });
         return;
       }
+      const savedId = editingId;
       setEditingId(null);
-      loadSubmissions();
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === savedId ? { ...s, title: editTitle.trim(), note: editNote.trim() || undefined } : s))
+      );
     } catch {
       setMessage({ kind: 'err', text: t.actionFailed });
     } finally {
@@ -602,7 +605,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
       }
       setDeleteArmId(null);
       setMessage({ kind: 'ok', text: t.deleted });
-      loadSubmissions();
+      setSubmissions((prev) => prev.filter((s) => s.id !== id));
     } catch {
       setMessage({ kind: 'err', text: t.actionFailed });
     } finally {

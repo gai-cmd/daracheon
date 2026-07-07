@@ -132,7 +132,14 @@ export default function SubmissionsAdminPanel() {
       setToast(action === 'approve' ? '승인 완료 — /media 에 게시되었습니다.' : '반려 처리되었습니다.');
       setRejectingId(null);
       setRejectReason('');
-      fetchAll();
+      // 즉시 로컬 반영 — blob 전파 지연 중 재조회 시 처리 전 상태가 다시 보이는 오인 방지.
+      setSubmissions((prev) =>
+        prev.map((s) =>
+          s.id === id
+            ? { ...s, status: action === 'approve' ? 'approved' : 'rejected', reviewedAt: new Date().toISOString(), ...(reason ? { rejectReason: reason } : {}) }
+            : s
+        )
+      );
     } catch {
       setToast('처리 중 오류가 발생했습니다.');
     } finally {

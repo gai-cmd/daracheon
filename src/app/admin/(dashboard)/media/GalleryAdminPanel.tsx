@@ -173,7 +173,9 @@ export default function GalleryAdminPanel() {
       if (!res.ok) throw new Error('Delete failed');
       setToast('사진이 삭제되었습니다.');
       setDeletePhotoId(null);
-      await fetchAll();
+      // 즉시 로컬 반영 — blob 전파 지연(수 초) 동안 재조회하면 삭제 전 데이터가
+      // 다시 보여 "삭제 안 됨" 으로 오인된다 (2026-07-07). 재조회는 하지 않는다.
+      setPhotos((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       console.error('Photo delete error:', err);
       setToast('삭제에 실패했습니다.');
