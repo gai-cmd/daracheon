@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import { PARTNER_COOKIE, verifyPartnerToken } from '@/lib/partner-auth';
 
 const PUBLIC_ADMIN_PATHS = new Set([
   '/admin/login',
@@ -62,6 +63,30 @@ button{width:100%;padding:11px;background:#4493f8;color:#fff;border:0;border-rad
       status: 401,
       headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
     });
+  }
+
+  // 외부 위탁업체 업로드 포털(/partner) — 관리자와 완전 분리된 별도 쿠키 인증.
+  // 파트너 세션으로는 /admin·/api/admin 접근 불가 (아래 관리자 블록은 관리자
+  // 쿠키만 검사), 반대로 관리자 쿠키도 여기서는 무효.
+  const isPartnerPage = pathname.startsWith('/partner');
+  const isPartnerApi = pathname.startsWith('/api/partner');
+  if (isPartnerPage || isPartnerApi) {
+    const isPublicPartnerPath =
+      pathname === '/partner/login' || pathname.startsWith('/api/partner/auth/');
+    if (isPublicPartnerPath) return NextResponse.next();
+
+    const partnerToken = request.cookies.get(PARTNER_COOKIE)?.value;
+    const partnerSession = await verifyPartnerToken(partnerToken);
+    if (!partnerSession) {
+      if (isPartnerApi) {
+        return NextResponse.json(
+          { success: false, message: '인증이 필요합니다.' },
+          { status: 401 }
+        );
+      }
+      return NextResponse.redirect(new URL('/partner/login', request.url));
+    }
+    return NextResponse.next();
   }
 
   const isAdminPage = pathname.startsWith('/admin');

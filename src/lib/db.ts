@@ -125,9 +125,11 @@ const NOT_FOUND = Symbol('not_found');
    - list 는 커서로 전량 순회 (limit 잘림으로 인한 사각지대 제거). */
 const OUTBOX_FILES = new Set(['inquiries', 'leads', 'reviews']);
 // 삭제 의도 영속이 필요한 파일: 고객 데이터(부활=PII/스팸 재출현) + 보안
-// 토큰(소비된 토큰 재사용 차단) + 관리자 계정(탈퇴/해임된 admin 부활 차단).
+// 토큰(소비된 토큰 재사용 차단) + 관리자 계정(탈퇴/해임된 admin 부활 차단)
+// + 파트너 계정(해지된 위탁업체 계정 부활 차단).
 const TOMBSTONE_FILES = new Set([
   'inquiries', 'leads', 'reviews', 'password-reset-tokens', 'admin-users',
+  'partner-accounts',
 ]);
 const OUTBOX_HEAL_AGE_MS = 10 * 60 * 1000;        // 배열 수렴 확인 후 사본 청소까지 대기
 const TOMBSTONE_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 삭제 흔적 보존 기간 (key 만, PII 아님)
