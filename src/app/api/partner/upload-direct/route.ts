@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 import { PARTNER_COOKIE, verifyPartnerToken } from '@/lib/partner-auth';
+import { findValidPartnerAccount } from '@/lib/partner-accounts';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
   try {
     const store = await cookies();
     const session = await verifyPartnerToken(store.get(PARTNER_COOKIE)?.value);
-    if (!session) {
+    if (!session || !(await findValidPartnerAccount(session))) {
       return NextResponse.json({ success: false, message: '인증이 필요합니다.' }, { status: 401 });
     }
 

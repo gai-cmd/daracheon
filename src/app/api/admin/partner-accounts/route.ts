@@ -143,6 +143,7 @@ export async function PUT(request: Request) {
     } else if (parsed.data.action === 'reset-password') {
       newPassword = parsed.data.password ?? crypto.randomBytes(9).toString('base64url');
       account.passwordHash = hashPassword(newPassword);
+      account.passwordChangedAt = new Date().toISOString(); // 기존 발급 세션 전부 무효화
       account.failedAttempts = 0;
       delete account.lockedUntil;
       summary = `파트너 계정 비밀번호 재설정: ${account.loginId}`;

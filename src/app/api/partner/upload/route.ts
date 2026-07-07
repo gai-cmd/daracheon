@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { PARTNER_COOKIE, verifyPartnerToken } from '@/lib/partner-auth';
+import { findValidPartnerAccount } from '@/lib/partner-accounts';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,7 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   // middleware 가 1차 차단하지만 route 자체에서도 재검증 (심층 방어).
   const store = await cookies();
   const session = await verifyPartnerToken(store.get(PARTNER_COOKIE)?.value);
-  if (!session) {
+  if (!session || !(await findValidPartnerAccount(session))) {
     return NextResponse.json({ success: false, message: '인증이 필요합니다.' }, { status: 401 });
   }
 

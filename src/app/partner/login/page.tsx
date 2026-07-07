@@ -10,6 +10,7 @@ const STRINGS = {
     desc: '베트남 현장 사진·영상 업로드 전용 페이지입니다.\n발급받은 계정으로 로그인하세요.',
     loginId: '아이디',
     password: '비밀번호',
+    idHint: '관리자에게 발급받은 아이디입니다 — 이메일·관리자 계정이 아닙니다.',
     submit: '로그인',
     submitting: '확인 중…',
   },
@@ -19,6 +20,7 @@ const STRINGS = {
     desc: 'Trang tải ảnh & video hiện trường Việt Nam.\nĐăng nhập bằng tài khoản được cấp.',
     loginId: 'Tên đăng nhập',
     password: 'Mật khẩu',
+    idHint: 'Tên đăng nhập do quản trị viên cấp — không phải email.',
     submit: 'Đăng nhập',
     submitting: 'Đang kiểm tra…',
   },
@@ -153,6 +155,9 @@ export default function PartnerLoginPage() {
               required
               style={inputStyle}
             />
+            <div style={{ fontSize: '0.74rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: -4 }}>
+              {t.idHint}
+            </div>
             <input
               type="password"
               value={password}

@@ -34,12 +34,30 @@ const STRINGS = {
     done: '제출 완료! 관리자 승인 후 사이트에 게시됩니다.',
     failed: '업로드에 실패했습니다. 네트워크 확인 후 다시 시도해주세요.',
     tooBigFallback: '이 파일은 크기가 커서 업로드할 수 없습니다.',
-    mySubmissions: '내 제출 내역',
+    mySubmissions: '내 갤러리 · 제출 내역',
     status: { pending: '승인 대기', approved: '게시됨', rejected: '반려' } as Record<string, string>,
     rejectReason: '반려 사유',
     empty: '아직 제출한 내역이 없습니다.',
     removeFile: '제거',
     weather: '날씨',
+    edit: '수정',
+    del: '삭제',
+    delConfirm: '정말 삭제',
+    delCancel: '취소',
+    save: '저장',
+    cancel: '취소',
+    deleted: '삭제되었습니다.',
+    approvedLock: '게시된 항목의 삭제는 관리자에게 문의하세요.',
+    actionFailed: '처리에 실패했습니다. 다시 시도해주세요.',
+    pwChange: '비밀번호 변경',
+    pwCurrent: '현재 비밀번호',
+    pwNew: '새 비밀번호 (8자 이상)',
+    pwNew2: '새 비밀번호 확인',
+    pwSubmit: '변경하기',
+    pwBusy: '변경 중…',
+    pwDone: '비밀번호가 변경되었습니다. 다른 기기에서는 다시 로그인해야 합니다.',
+    pwMismatch: '새 비밀번호가 일치하지 않습니다.',
+    pwShort: '새 비밀번호는 8자 이상이어야 합니다.',
   },
   vi: {
     kicker: 'ZOEL LIFE · Field Upload',
@@ -67,12 +85,30 @@ const STRINGS = {
     done: 'Đã gửi! Sau khi quản trị viên duyệt sẽ hiển thị trên website.',
     failed: 'Tải lên thất bại. Kiểm tra mạng và thử lại.',
     tooBigFallback: 'Tệp này quá lớn, không thể tải lên.',
-    mySubmissions: 'Lịch sử gửi của tôi',
+    mySubmissions: 'Thư viện của tôi · Lịch sử gửi',
     status: { pending: 'Chờ duyệt', approved: 'Đã đăng', rejected: 'Bị từ chối' } as Record<string, string>,
     rejectReason: 'Lý do từ chối',
     empty: 'Chưa có mục nào được gửi.',
     removeFile: 'Xóa',
     weather: 'Thời tiết',
+    edit: 'Sửa',
+    del: 'Xóa',
+    delConfirm: 'Xóa thật',
+    delCancel: 'Hủy',
+    save: 'Lưu',
+    cancel: 'Hủy',
+    deleted: 'Đã xóa.',
+    approvedLock: 'Mục đã đăng — liên hệ quản trị viên để xóa.',
+    actionFailed: 'Thao tác thất bại. Vui lòng thử lại.',
+    pwChange: 'Đổi mật khẩu',
+    pwCurrent: 'Mật khẩu hiện tại',
+    pwNew: 'Mật khẩu mới (tối thiểu 8 ký tự)',
+    pwNew2: 'Xác nhận mật khẩu mới',
+    pwSubmit: 'Cập nhật',
+    pwBusy: 'Đang cập nhật…',
+    pwDone: 'Đã đổi mật khẩu. Các thiết bị khác cần đăng nhập lại.',
+    pwMismatch: 'Mật khẩu mới không khớp.',
+    pwShort: 'Mật khẩu mới tối thiểu 8 ký tự.',
   },
 } as const;
 
@@ -92,6 +128,7 @@ interface SubmissionView {
   id: string;
   status: 'pending' | 'approved' | 'rejected';
   title: string;
+  note?: string;
   files: { url: string; type: 'photo' | 'video' }[];
   submittedAt: string;
   capturedAt?: string;
@@ -142,6 +179,17 @@ const STATUS_COLORS: Record<string, { bg: string; fg: string }> = {
   rejected: { bg: 'rgba(240,114,106,0.15)', fg: '#f0726a' },
 };
 
+const actionBtn = (bg: string, fg: string, outline = false): React.CSSProperties => ({
+  padding: '7px 16px',
+  background: bg,
+  color: fg,
+  border: outline ? `1px solid ${fg === 'rgba(255,255,255,0.6)' ? 'rgba(255,255,255,0.25)' : fg}` : 0,
+  borderRadius: '999px',
+  fontSize: '0.8rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+});
+
 /* ─── Component ────────────────────────────────────────── */
 
 export default function PartnerUploadClient({ partnerName }: { partnerName: string }) {
@@ -157,6 +205,21 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionView[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 갤러리 편집/삭제
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editNote, setEditNote] = useState('');
+  const [deleteArmId, setDeleteArmId] = useState<string | null>(null);
+  const [rowBusyId, setRowBusyId] = useState<string | null>(null);
+
+  // 비밀번호 변경
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwCurrent, setPwCurrent] = useState('');
+  const [pwNew, setPwNew] = useState('');
+  const [pwNew2, setPwNew2] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwMsg, setPwMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
 
   const t = STRINGS[lang];
 
@@ -364,6 +427,98 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
     router.replace('/partner/login');
   };
 
+  /* ─── 갤러리 편집/삭제 ─── */
+
+  const startEdit = (s: SubmissionView) => {
+    setEditingId(s.id);
+    setEditTitle(s.title);
+    setEditNote(s.note ?? '');
+    setDeleteArmId(null);
+  };
+
+  const saveEdit = async () => {
+    if (!editingId || !editTitle.trim() || rowBusyId) return;
+    setRowBusyId(editingId);
+    try {
+      const res = await fetch('/api/partner/submissions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editingId, title: editTitle.trim(), note: editNote }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setMessage({ kind: 'err', text: json.message ?? t.actionFailed });
+        return;
+      }
+      setEditingId(null);
+      loadSubmissions();
+    } catch {
+      setMessage({ kind: 'err', text: t.actionFailed });
+    } finally {
+      setRowBusyId(null);
+    }
+  };
+
+  const deleteSubmission = async (id: string) => {
+    if (rowBusyId) return;
+    setRowBusyId(id);
+    try {
+      const res = await fetch('/api/partner/submissions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setMessage({ kind: 'err', text: json.message ?? t.actionFailed });
+        return;
+      }
+      setDeleteArmId(null);
+      setMessage({ kind: 'ok', text: t.deleted });
+      loadSubmissions();
+    } catch {
+      setMessage({ kind: 'err', text: t.actionFailed });
+    } finally {
+      setRowBusyId(null);
+    }
+  };
+
+  /* ─── 비밀번호 변경 ─── */
+
+  const changePassword = async () => {
+    if (pwBusy) return;
+    setPwMsg(null);
+    if (pwNew.length < 8) {
+      setPwMsg({ kind: 'err', text: t.pwShort });
+      return;
+    }
+    if (pwNew !== pwNew2) {
+      setPwMsg({ kind: 'err', text: t.pwMismatch });
+      return;
+    }
+    setPwBusy(true);
+    try {
+      const res = await fetch('/api/partner/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: pwCurrent, newPassword: pwNew }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setPwMsg({ kind: 'err', text: json.message ?? t.actionFailed });
+        return;
+      }
+      setPwCurrent('');
+      setPwNew('');
+      setPwNew2('');
+      setPwMsg({ kind: 'ok', text: t.pwDone });
+    } catch {
+      setPwMsg({ kind: 'err', text: t.actionFailed });
+    } finally {
+      setPwBusy(false);
+    }
+  };
+
   /* ─── Render ─── */
 
   return (
@@ -398,21 +553,91 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
         <h1 style={{ fontSize: '1.35rem', fontWeight: 600, fontFamily: "'Noto Serif KR', serif", margin: 0 }}>
           {t.title}
         </h1>
-        <button
-          type="button"
-          onClick={onLogout}
-          style={{
-            background: 'transparent',
-            border: 0,
-            color: 'rgba(255,255,255,0.45)',
-            fontSize: '0.78rem',
-            cursor: 'pointer',
-            textDecoration: 'underline',
-          }}
-        >
-          {t.hello(partnerName)} · {t.logout}
-        </button>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'baseline', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={() => { setPwOpen((v) => !v); setPwMsg(null); }}
+            style={{
+              background: 'transparent',
+              border: 0,
+              color: '#d4a843',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            {t.pwChange}
+          </button>
+          <button
+            type="button"
+            onClick={onLogout}
+            style={{
+              background: 'transparent',
+              border: 0,
+              color: 'rgba(255,255,255,0.45)',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            {t.hello(partnerName)} · {t.logout}
+          </button>
+        </div>
       </div>
+
+      {/* 비밀번호 변경 */}
+      {pwOpen && (
+        <div style={{ ...card, display: 'grid', gap: 10, marginBottom: 20 }}>
+          <div style={{ ...monoKicker, fontSize: '0.62rem' }}>{t.pwChange}</div>
+          <input
+            type="password"
+            value={pwCurrent}
+            onChange={(e) => setPwCurrent(e.target.value)}
+            placeholder={t.pwCurrent}
+            autoComplete="current-password"
+            style={inputStyle}
+          />
+          <input
+            type="password"
+            value={pwNew}
+            onChange={(e) => setPwNew(e.target.value)}
+            placeholder={t.pwNew}
+            autoComplete="new-password"
+            style={inputStyle}
+          />
+          <input
+            type="password"
+            value={pwNew2}
+            onChange={(e) => setPwNew2(e.target.value)}
+            placeholder={t.pwNew2}
+            autoComplete="new-password"
+            style={inputStyle}
+          />
+          {pwMsg && (
+            <div style={{ fontSize: '0.82rem', lineHeight: 1.6, color: pwMsg.kind === 'ok' ? '#8fbf82' : '#f0726a' }}>
+              {pwMsg.text}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={changePassword}
+            disabled={pwBusy || !pwCurrent || !pwNew || !pwNew2}
+            style={{
+              padding: '12px',
+              background: pwBusy ? 'rgba(212,168,67,0.35)' : '#b88c2d',
+              color: '#0a0b10',
+              border: 0,
+              borderRadius: '999px',
+              fontSize: '0.92rem',
+              fontWeight: 700,
+              cursor: pwBusy ? 'default' : 'pointer',
+              opacity: !pwCurrent || !pwNew || !pwNew2 ? 0.5 : 1,
+            }}
+          >
+            {pwBusy ? t.pwBusy : t.pwSubmit}
+          </button>
+        </div>
+      )}
 
       {/* 업로드 카드 */}
       <div style={{ ...card, display: 'grid', gap: 16 }}>
@@ -645,13 +870,25 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           <div style={{ display: 'grid', gap: 10 }}>
             {submissions.map((s) => {
               const c = STATUS_COLORS[s.status] ?? STATUS_COLORS.pending;
+              const isEditing = editingId === s.id;
+              const isRowBusy = rowBusyId === s.id;
               return (
                 <div key={s.id} style={{ ...card, padding: '14px 16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.92rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {s.title}
-                      </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          maxLength={120}
+                          style={{ ...inputStyle, padding: '9px 12px', fontSize: '0.9rem' }}
+                        />
+                      ) : (
+                        <div style={{ fontSize: '0.92rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {s.title}
+                        </div>
+                      )}
                       <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
                         {s.files.length} file · {(s.capturedAt ?? s.submittedAt).replace('T', ' ').slice(0, 16)}
                         {s.weather && ` · ${t.weather} ${Math.round(s.weather.tempC)}°C${s.weather.text ? ` (${s.weather.text})` : ''}`}
@@ -671,11 +908,100 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
                       {t.status[s.status] ?? s.status}
                     </span>
                   </div>
+
+                  {/* 파일 갤러리 — 탭하면 원본 열기 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(84px, 1fr))', gap: 6, marginTop: 10 }}>
+                    {s.files.map((f, i) => (
+                      <a
+                        key={`${s.id}-${i}`}
+                        href={f.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'block',
+                          aspectRatio: '1',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          background: '#1a1d29',
+                          border: '1px solid rgba(212,168,67,0.18)',
+                          position: 'relative',
+                        }}
+                      >
+                        {f.type === 'photo' ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={f.url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <>
+                            <video src={f.url} muted playsInline preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', color: '#fff', textShadow: '0 1px 4px #000' }}>▶</span>
+                          </>
+                        )}
+                      </a>
+                    ))}
+                  </div>
+
+                  {/* 메모 (편집 모드) */}
+                  {isEditing && (
+                    <textarea
+                      value={editNote}
+                      onChange={(e) => setEditNote(e.target.value)}
+                      placeholder={t.notePlaceholder}
+                      rows={2}
+                      maxLength={2000}
+                      style={{ ...inputStyle, marginTop: 10, padding: '9px 12px', fontSize: '0.85rem', resize: 'vertical', fontFamily: 'inherit' }}
+                    />
+                  )}
+                  {!isEditing && s.note && (
+                    <div style={{ marginTop: 8, fontSize: '0.8rem', color: 'rgba(255,255,255,0.55)', whiteSpace: 'pre-line' }}>
+                      {s.note}
+                    </div>
+                  )}
+
                   {s.status === 'rejected' && s.rejectReason && (
                     <div style={{ marginTop: 8, fontSize: '0.78rem', color: '#f0726a' }}>
                       {t.rejectReason}: {s.rejectReason}
                     </div>
                   )}
+
+                  {/* 액션: pending=수정+삭제, rejected=삭제, approved=잠금 안내 */}
+                  <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                    {isEditing ? (
+                      <>
+                        <button type="button" onClick={saveEdit} disabled={isRowBusy || !editTitle.trim()} style={actionBtn('#b88c2d', '#0a0b10')}>
+                          {t.save}
+                        </button>
+                        <button type="button" onClick={() => setEditingId(null)} disabled={isRowBusy} style={actionBtn('transparent', 'rgba(255,255,255,0.6)', true)}>
+                          {t.cancel}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {s.status === 'pending' && (
+                          <button type="button" onClick={() => startEdit(s)} disabled={isRowBusy} style={actionBtn('transparent', '#d4a843', true)}>
+                            {t.edit}
+                          </button>
+                        )}
+                        {s.status !== 'approved' &&
+                          (deleteArmId === s.id ? (
+                            <>
+                              <button type="button" onClick={() => deleteSubmission(s.id)} disabled={isRowBusy} style={actionBtn('#c0392b', '#fff')}>
+                                {isRowBusy ? '…' : t.delConfirm}
+                              </button>
+                              <button type="button" onClick={() => setDeleteArmId(null)} disabled={isRowBusy} style={actionBtn('transparent', 'rgba(255,255,255,0.6)', true)}>
+                                {t.delCancel}
+                              </button>
+                            </>
+                          ) : (
+                            <button type="button" onClick={() => { setDeleteArmId(s.id); setEditingId(null); }} style={actionBtn('transparent', '#f0726a', true)}>
+                              {t.del}
+                            </button>
+                          ))}
+                        {s.status === 'approved' && (
+                          <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>{t.approvedLock}</span>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               );
             })}
