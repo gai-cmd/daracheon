@@ -35,18 +35,33 @@ export function isValidLoginId(id: string): boolean {
 
 /**
  * 세션이 가리키는 계정이 지금도 유효한지 재확인 (서버 라우트 전용).
- * - 계정 삭제/비활성화 즉시 차단
+ * - 계정 삭제/비활성화 차단
  * - 비밀번호 변경/재설정(passwordChangedAt) 이전에 발급된 세션 차단
  *   → 유출·구기기 세션은 비번만 바꾸면 전부 무효화된다.
  * 조회 실패 시 null (fail-closed — 업로드는 재시도 가능한 작업).
+ *
+ * 성능: 계정 목록 blob 읽기는 웜 인스턴스 30초 캐시. 파일별 업로드 토큰
+ * 발급마다 blob list+fetch(+tombstone list) 왕복이 붙어 다중 사진 업로드가
+ * 파일당 1~3초씩 느려지던 병목 제거. 비활성화/비번변경의 차단 반영이
+ * 인스턴스당 최대 30초 지연되는 트레이드오프는 수용 (판정 자체는 매 호출
+ * 최신 세션 issuedAt 으로 수행).
  */
+let accountsCache: { at: number; accounts: PartnerAccount[] } | null = null;
+const ACCOUNTS_CACHE_MS = 30_000;
+
 export async function findValidPartnerAccount(session: {
   accountId: string;
   issuedAt: number;
 }): Promise<PartnerAccount | null> {
   try {
-    const { readDataUncached } = await import('@/lib/db');
-    const accounts = await readDataUncached<PartnerAccount>(PARTNER_ACCOUNTS_FILE);
+    let accounts: PartnerAccount[];
+    if (accountsCache && Date.now() - accountsCache.at < ACCOUNTS_CACHE_MS) {
+      accounts = accountsCache.accounts;
+    } else {
+      const { readDataUncached } = await import('@/lib/db');
+      accounts = await readDataUncached<PartnerAccount>(PARTNER_ACCOUNTS_FILE);
+      accountsCache = { at: Date.now(), accounts };
+    }
     const account = accounts.find((a) => a.id === session.accountId);
     if (!account || !account.active) return null;
     if (
@@ -59,4 +74,9 @@ export async function findValidPartnerAccount(session: {
   } catch {
     return null;
   }
+}
+
+/** 계정 데이터 변경(로그인 기록 제외한 생성·수정·비번변경) 직후 호출해 캐시 무효화 */
+export function invalidatePartnerAccountsCache() {
+  accountsCache = null;
 }

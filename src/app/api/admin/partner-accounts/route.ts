@@ -7,6 +7,7 @@ import {
   PARTNER_ACCOUNTS_FILE,
   normalizeLoginId,
   isValidLoginId,
+  invalidatePartnerAccountsCache,
   type PartnerAccount,
 } from '@/lib/partner-accounts';
 import { logAdmin } from '@/lib/audit';
@@ -91,6 +92,7 @@ export async function POST(request: Request) {
     // 같은 loginId 가 과거에 삭제됐던 계정이면 tombstone 이 남아 있을 수 있다 —
     // 의도적 재생성이므로 revivedIds 로 되살린다.
     await writeDataMerged(PARTNER_ACCOUNTS_FILE, accounts, { revivedIds: [account.id] });
+    invalidatePartnerAccountsCache();
 
     await logAdmin('settings', 'create', {
       targetId: account.id,
@@ -156,6 +158,7 @@ export async function PUT(request: Request) {
     account.updatedAt = new Date().toISOString();
     accounts[idx] = account;
     await writeDataMerged(PARTNER_ACCOUNTS_FILE, accounts);
+    invalidatePartnerAccountsCache();
 
     await logAdmin('settings', 'update', { targetId: account.id, summary });
 
@@ -185,6 +188,7 @@ export async function DELETE(request: Request) {
 
     const removed = accounts.splice(idx, 1)[0];
     await writeDataMerged(PARTNER_ACCOUNTS_FILE, accounts, { removedIds: [body.id] });
+    invalidatePartnerAccountsCache();
 
     await logAdmin('settings', 'delete', {
       targetId: body.id,

@@ -9,6 +9,7 @@ import {
 } from '@/lib/partner-auth';
 import {
   PARTNER_ACCOUNTS_FILE,
+  invalidatePartnerAccountsCache,
   type PartnerAccount,
 } from '@/lib/partner-accounts';
 import { hashPassword, verifyPassword } from '@/lib/admin-users';
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
     account.updatedAt = now;
     accounts[idx] = account;
     await writeDataMerged(PARTNER_ACCOUNTS_FILE, accounts);
+    invalidatePartnerAccountsCache();
 
     // 현재 기기는 끊기지 않도록 새 세션 즉시 재발급 (issuedAt ≥ passwordChangedAt).
     const token = await createPartnerToken({

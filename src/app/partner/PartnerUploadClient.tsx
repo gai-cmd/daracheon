@@ -58,6 +58,7 @@ const STRINGS = {
     pwDone: '비밀번호가 변경되었습니다. 다른 기기에서는 다시 로그인해야 합니다.',
     pwMismatch: '새 비밀번호가 일치하지 않습니다.',
     pwShort: '새 비밀번호는 8자 이상이어야 합니다.',
+    wifiTip: '대용량 영상은 네트워크에 따라 오래 걸립니다 — Wi-Fi 권장',
   },
   vi: {
     kicker: 'ZOEL LIFE · Field Upload',
@@ -109,6 +110,7 @@ const STRINGS = {
     pwDone: 'Đã đổi mật khẩu. Các thiết bị khác cần đăng nhập lại.',
     pwMismatch: 'Mật khẩu mới không khớp.',
     pwShort: 'Mật khẩu mới tối thiểu 8 ký tự.',
+    wifiTip: 'Video dung lượng lớn có thể mất nhiều thời gian — nên dùng Wi-Fi',
   },
 } as const;
 
@@ -144,6 +146,59 @@ interface DeviceLoc {
 }
 
 const DIRECT_FALLBACK_MAX = 4 * 1024 * 1024;
+/** 동시 업로드 파일 수 — 순차 업로드의 토큰왕복 누적 지연 제거 */
+const UPLOAD_CONCURRENCY = 3;
+/** 이 크기 이상 사진은 클라이언트에서 리사이즈 후 전송 (현장 모바일 업링크 절약) */
+const COMPRESS_THRESHOLD = 1.5 * 1024 * 1024;
+const COMPRESS_MAX_DIM = 2560;
+
+function typeFromExt(name: string): string {
+  const ext = name.toLowerCase().split('.').pop() ?? '';
+  const map: Record<string, string> = {
+    jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+    heic: 'image/heic', heif: 'image/heif',
+    mp4: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm',
+  };
+  return map[ext] ?? '';
+}
+
+/**
+ * 사진 클라이언트 압축 — 최대 2560px JPEG 로 리사이즈.
+ * 폰 원본(4~12MB)이 갤러리 노출에 과한 해상도라 전송량을 1/5~1/10 로 줄인다.
+ * 촬영시각·GPS 는 압축 전에 EXIF 에서 이미 추출해 별도 전송하므로 손실 없음.
+ * HEIC 미지원 브라우저 등 디코드 실패 시 null → 원본 그대로 업로드.
+ */
+async function compressPhoto(
+  file: File
+): Promise<{ blob: Blob; contentType: string; name: string } | null> {
+  if (file.size < COMPRESS_THRESHOLD) return null;
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, COMPRESS_MAX_DIM / Math.max(bmp.width, bmp.height));
+    const w = Math.max(1, Math.round(bmp.width * scale));
+    const h = Math.max(1, Math.round(bmp.height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.drawImage(bmp, 0, 0, w, h);
+    bmp.close();
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', 0.82));
+    if (!blob || blob.size >= file.size) return null;
+    return {
+      blob,
+      contentType: 'image/jpeg',
+      name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+    };
+  } catch {
+    return null;
+  }
+}
+
+function fmtMB(bytes: number): string {
+  return (bytes / 1024 / 1024).toFixed(1);
+}
 
 /* ─── Styles (조엘라이프 디자인 토큰) ───────────────────── */
 
@@ -202,6 +257,12 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
   const [gpsState, setGpsState] = useState<'idle' | 'waiting' | 'ok' | 'denied'>('idle');
   const [busy, setBusy] = useState<'no' | 'uploading' | 'saving'>('no');
   const [overallProgress, setOverallProgress] = useState(0);
+  const [byteProgress, setByteProgress] = useState<{
+    done: number;
+    total: number;
+    filesDone: number;
+    filesTotal: number;
+  } | null>(null);
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionView[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -344,50 +405,92 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
     setBusy('uploading');
     setMessage(null);
     setOverallProgress(0);
-
-    const totalBytes = picked.reduce((s, p) => s + p.file.size, 0);
-    const uploadedFiles: { url: string; type: 'photo' | 'video'; contentType: string; size: number; name?: string }[] = [];
+    setByteProgress(null);
 
     try {
-      let doneBytes = 0;
+      // 1) 사진 압축 (영상·소용량은 원본). iOS 가 file.type 을 비워 보내는
+      //    경우가 있어 확장자 기반으로 contentType 을 보정한다.
+      const payloads: { p: PickedFile; blob: Blob; contentType: string; name: string }[] = [];
       for (const p of picked) {
-        const safeName = p.file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80);
-        const pathname = `uploads/partner/${Date.now()}-${safeName}`;
-        let url: string;
-        try {
-          const blob = await upload(pathname, p.file, {
-            access: 'public',
-            handleUploadUrl: '/api/partner/upload',
-            multipart: p.file.size > 8 * 1024 * 1024,
-            onUploadProgress: ({ percentage }) => {
-              const current = doneBytes + (p.file.size * percentage) / 100;
-              setOverallProgress(Math.min(99, Math.round((current / totalBytes) * 100)));
-            },
-          });
-          url = blob.url;
-        } catch (err) {
-          // 클라이언트 직행 업로드 실패 (로컬 dev 등) → 소용량은 서버 경유 폴백
-          if (p.file.size <= DIRECT_FALLBACK_MAX) {
-            const fd = new FormData();
-            fd.append('file', p.file);
-            const res = await fetch('/api/partner/upload-direct', { method: 'POST', body: fd });
-            const json = await res.json();
-            if (!res.ok || !json.success) throw err;
-            url = json.url;
-          } else {
-            throw err;
+        let blob: Blob = p.file;
+        let contentType = p.file.type || typeFromExt(p.file.name);
+        let name = p.file.name;
+        if (p.type === 'photo') {
+          const compressed = await compressPhoto(p.file);
+          if (compressed) {
+            blob = compressed.blob;
+            contentType = compressed.contentType;
+            name = compressed.name;
           }
         }
-        doneBytes += p.file.size;
-        setOverallProgress(Math.min(99, Math.round((doneBytes / totalBytes) * 100)));
-        uploadedFiles.push({
-          url,
-          type: p.type,
-          contentType: p.file.type || 'application/octet-stream',
-          size: p.file.size,
-          name: p.file.name,
-        });
+        if (!contentType) contentType = p.type === 'video' ? 'video/mp4' : 'image/jpeg';
+        payloads.push({ p, blob, contentType, name });
       }
+
+      const totalBytes = payloads.reduce((s, x) => s + x.blob.size, 0);
+      const perFileLoaded = new Array<number>(payloads.length).fill(0);
+      const updateProgress = () => {
+        const done = perFileLoaded.reduce((a, b) => a + b, 0);
+        setOverallProgress(Math.min(99, Math.round((done / totalBytes) * 100)));
+        setByteProgress({
+          done,
+          total: totalBytes,
+          filesDone: perFileLoaded.filter((b, i) => b >= payloads[i].blob.size).length,
+          filesTotal: payloads.length,
+        });
+      };
+      updateProgress();
+
+      // 2) 병렬 업로드 (동시 3) — 순차 방식의 파일당 토큰왕복 누적 지연 제거.
+      const urls = new Array<string>(payloads.length);
+      let nextIdx = 0;
+      const worker = async () => {
+        for (;;) {
+          const i = nextIdx++;
+          if (i >= payloads.length) return;
+          const x = payloads[i];
+          const safeName = x.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80);
+          const pathname = `uploads/partner/${Date.now()}-${i}-${safeName}`;
+          try {
+            const blob = await upload(pathname, x.blob, {
+              access: 'public',
+              handleUploadUrl: '/api/partner/upload',
+              contentType: x.contentType,
+              multipart: x.blob.size > 8 * 1024 * 1024,
+              onUploadProgress: ({ loaded }) => {
+                perFileLoaded[i] = Math.min(loaded, x.blob.size);
+                updateProgress();
+              },
+            });
+            urls[i] = blob.url;
+          } catch (err) {
+            // 클라이언트 직행 업로드 실패 (로컬 dev 등) → 소용량은 서버 경유 폴백
+            if (x.blob.size <= DIRECT_FALLBACK_MAX) {
+              const fd = new FormData();
+              fd.append('file', new File([x.blob], x.name, { type: x.contentType }));
+              const res = await fetch('/api/partner/upload-direct', { method: 'POST', body: fd });
+              const json = await res.json();
+              if (!res.ok || !json.success) throw err;
+              urls[i] = json.url;
+            } else {
+              throw err;
+            }
+          }
+          perFileLoaded[i] = x.blob.size;
+          updateProgress();
+        }
+      };
+      await Promise.all(
+        Array.from({ length: Math.min(UPLOAD_CONCURRENCY, payloads.length) }, worker)
+      );
+
+      const uploadedFiles = payloads.map((x, i) => ({
+        url: urls[i],
+        type: x.p.type,
+        contentType: x.contentType,
+        size: x.blob.size,
+        name: x.name,
+      }));
 
       setBusy('saving');
       const res = await fetch('/api/partner/submissions', {
@@ -419,6 +522,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
     } finally {
       setBusy('no');
       setOverallProgress(0);
+      setByteProgress(null);
     }
   };
 
@@ -848,16 +952,26 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           {busy === 'uploading' ? t.submitting(overallProgress) : busy === 'saving' ? t.saving : t.submit}
         </button>
         {busy === 'uploading' && (
-          <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
-            <div
-              style={{
-                height: '100%',
-                width: `${overallProgress}%`,
-                background: '#b88c2d',
-                transition: 'width 300ms ease',
-              }}
-            />
-          </div>
+          <>
+            <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
+              <div
+                style={{
+                  height: '100%',
+                  width: `${overallProgress}%`,
+                  background: '#b88c2d',
+                  transition: 'width 300ms ease',
+                }}
+              />
+            </div>
+            {byteProgress && (
+              <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', textAlign: 'center', lineHeight: 1.6 }}>
+                {fmtMB(byteProgress.done)} / {fmtMB(byteProgress.total)} MB · {byteProgress.filesDone}/{byteProgress.filesTotal}
+                {byteProgress.total > 50 * 1024 * 1024 && (
+                  <div style={{ color: 'rgba(212,168,67,0.7)' }}>{t.wifiTip}</div>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
 
