@@ -77,8 +77,13 @@ export default function SubmissionsAdminPanel() {
   const [newLoginId, setNewLoginId] = useState('');
   const [newName, setNewName] = useState('');
   const [newMemo, setNewMemo] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [issuedPassword, setIssuedPassword] = useState<{ loginId: string; password: string } | null>(null);
+
+  // 비번 재설정 인라인 폼 (행 단위)
+  const [resetTargetId, setResetTargetId] = useState<string | null>(null);
+  const [resetPassword, setResetPassword] = useState('');
 
   useEffect(() => {
     if (!toast) return;
@@ -142,6 +147,10 @@ export default function SubmissionsAdminPanel() {
       setToast('아이디와 이름을 입력하세요.');
       return;
     }
+    if (newPassword && newPassword.length < 8) {
+      setToast('비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
     setCreatingAccount(true);
     try {
       const res = await fetch('/api/admin/partner-accounts', {
@@ -150,6 +159,7 @@ export default function SubmissionsAdminPanel() {
         body: JSON.stringify({
           loginId: newLoginId.trim(),
           name: newName.trim(),
+          ...(newPassword ? { password: newPassword } : {}),
           ...(newMemo.trim() ? { memo: newMemo.trim() } : {}),
         }),
       });
@@ -162,6 +172,7 @@ export default function SubmissionsAdminPanel() {
       setNewLoginId('');
       setNewName('');
       setNewMemo('');
+      setNewPassword('');
       fetchAll();
     } catch {
       setToast('계정 생성 중 오류가 발생했습니다.');
@@ -170,13 +181,21 @@ export default function SubmissionsAdminPanel() {
     }
   };
 
-  const accountAction = async (id: string, action: 'toggle-active' | 'reset-password') => {
+  const accountAction = async (
+    id: string,
+    action: 'toggle-active' | 'reset-password',
+    password?: string
+  ) => {
+    if (password && password.length < 8) {
+      setToast('비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
     setBusyId(id);
     try {
       const res = await fetch('/api/admin/partner-accounts', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, action }),
+        body: JSON.stringify({ id, action, ...(password ? { password } : {}) }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -186,6 +205,8 @@ export default function SubmissionsAdminPanel() {
       if (action === 'reset-password' && json.password) {
         setIssuedPassword({ loginId: json.account.loginId, password: json.password });
       }
+      setResetTargetId(null);
+      setResetPassword('');
       fetchAll();
     } catch {
       setToast('처리 중 오류가 발생했습니다.');
@@ -465,6 +486,17 @@ export default function SubmissionsAdminPanel() {
                 />
               </label>
               <label className="text-xs text-gray-500">
+                비밀번호 (8자 이상)
+                <input
+                  type="text"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="직접 입력 (비우면 자동 생성)"
+                  autoComplete="off"
+                  className="mt-1 block w-44 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm"
+                />
+              </label>
+              <label className="text-xs text-gray-500">
                 메모 (선택)
                 <input
                   type="text"
@@ -482,7 +514,6 @@ export default function SubmissionsAdminPanel() {
               >
                 {creatingAccount ? '생성 중…' : '+ 계정 생성'}
               </button>
-              <span className="text-xs text-gray-400">비밀번호는 자동 생성되어 1회 표시됩니다.</span>
             </div>
 
             {/* 계정 목록 */}
@@ -504,31 +535,62 @@ export default function SubmissionsAdminPanel() {
                     <span className="ml-auto text-xs text-gray-400">
                       최근 로그인: {a.lastLoginAt ? fmtDate(a.lastLoginAt) : '없음'}
                     </span>
-                    <div className="flex gap-1.5">
-                      <button
-                        type="button"
-                        disabled={busyId === a.id}
-                        onClick={() => accountAction(a.id, 'toggle-active')}
-                        className="rounded border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
-                      >
-                        {a.active ? '비활성화' : '활성화'}
-                      </button>
-                      <button
-                        type="button"
-                        disabled={busyId === a.id}
-                        onClick={() => accountAction(a.id, 'reset-password')}
-                        className="rounded border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
-                      >
-                        비번 재설정
-                      </button>
-                      <button
-                        type="button"
-                        disabled={busyId === a.id}
-                        onClick={() => deleteAccount(a.id, a.loginId)}
-                        className="rounded border border-red-200 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50"
-                      >
-                        삭제
-                      </button>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {resetTargetId === a.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={resetPassword}
+                            onChange={(e) => setResetPassword(e.target.value)}
+                            placeholder="새 비밀번호 (비우면 자동 생성)"
+                            autoComplete="off"
+                            className="w-52 rounded border border-amber-300 px-2.5 py-1 font-mono text-xs"
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            disabled={busyId === a.id}
+                            onClick={() => accountAction(a.id, 'reset-password', resetPassword || undefined)}
+                            className="rounded bg-amber-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-600"
+                          >
+                            {busyId === a.id ? '적용 중…' : '적용'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setResetTargetId(null); setResetPassword(''); }}
+                            className="rounded border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                          >
+                            취소
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === a.id}
+                            onClick={() => accountAction(a.id, 'toggle-active')}
+                            className="rounded border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                          >
+                            {a.active ? '비활성화' : '활성화'}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === a.id}
+                            onClick={() => { setResetTargetId(a.id); setResetPassword(''); }}
+                            className="rounded border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                          >
+                            비번 재설정
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === a.id}
+                            onClick={() => deleteAccount(a.id, a.loginId)}
+                            className="rounded border border-red-200 px-2.5 py-1 text-xs text-red-600 hover:bg-red-50"
+                          >
+                            삭제
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
