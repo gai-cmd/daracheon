@@ -51,14 +51,16 @@ const STRINGS = {
     actionFailed: '처리에 실패했습니다. 다시 시도해주세요.',
     pwChange: '비밀번호 변경',
     pwCurrent: '현재 비밀번호',
-    pwNew: '새 비밀번호 (8자 이상)',
+    pwNew: '새 비밀번호 (4자 이상)',
     pwNew2: '새 비밀번호 확인',
     pwSubmit: '변경하기',
     pwBusy: '변경 중…',
     pwDone: '비밀번호가 변경되었습니다. 다른 기기에서는 다시 로그인해야 합니다.',
     pwMismatch: '새 비밀번호가 일치하지 않습니다.',
-    pwShort: '새 비밀번호는 8자 이상이어야 합니다.',
+    pwShort: '새 비밀번호는 4자 이상이어야 합니다.',
     wifiTip: '대용량 영상은 네트워크에 따라 오래 걸립니다 — Wi-Fi 권장',
+    preparing: '파일 준비 중…',
+    stalled: '네트워크 응답이 없어 업로드를 중단했습니다. 다시 시도해주세요.',
   },
   vi: {
     kicker: 'ZOEL LIFE · Field Upload',
@@ -103,14 +105,16 @@ const STRINGS = {
     actionFailed: 'Thao tác thất bại. Vui lòng thử lại.',
     pwChange: 'Đổi mật khẩu',
     pwCurrent: 'Mật khẩu hiện tại',
-    pwNew: 'Mật khẩu mới (tối thiểu 8 ký tự)',
+    pwNew: 'Mật khẩu mới (tối thiểu 4 ký tự)',
     pwNew2: 'Xác nhận mật khẩu mới',
     pwSubmit: 'Cập nhật',
     pwBusy: 'Đang cập nhật…',
     pwDone: 'Đã đổi mật khẩu. Các thiết bị khác cần đăng nhập lại.',
     pwMismatch: 'Mật khẩu mới không khớp.',
-    pwShort: 'Mật khẩu mới tối thiểu 8 ký tự.',
+    pwShort: 'Mật khẩu mới tối thiểu 4 ký tự.',
     wifiTip: 'Video dung lượng lớn có thể mất nhiều thời gian — nên dùng Wi-Fi',
+    preparing: 'Đang chuẩn bị tệp…',
+    stalled: 'Mạng không phản hồi, đã dừng tải lên. Vui lòng thử lại.',
   },
 } as const;
 
@@ -255,7 +259,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
   const [note, setNote] = useState('');
   const [deviceLoc, setDeviceLoc] = useState<DeviceLoc | null>(null);
   const [gpsState, setGpsState] = useState<'idle' | 'waiting' | 'ok' | 'denied'>('idle');
-  const [busy, setBusy] = useState<'no' | 'uploading' | 'saving'>('no');
+  const [busy, setBusy] = useState<'no' | 'preparing' | 'uploading' | 'saving'>('no');
   const [overallProgress, setOverallProgress] = useState(0);
   const [byteProgress, setByteProgress] = useState<{
     done: number;
@@ -402,7 +406,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
       return;
     }
 
-    setBusy('uploading');
+    setBusy('preparing');
     setMessage(null);
     setOverallProgress(0);
     setByteProgress(null);
@@ -427,9 +431,17 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
         payloads.push({ p, blob, contentType, name });
       }
 
+      setBusy('uploading');
       const totalBytes = payloads.reduce((s, x) => s + x.blob.size, 0);
       const perFileLoaded = new Array<number>(payloads.length).fill(0);
+      // 60초간 1바이트도 진행이 없으면 중단 — 무한 0% 대신 명확한 오류 표시
+      const controller = new AbortController();
+      let lastProgressAt = Date.now();
+      const watchdog = setInterval(() => {
+        if (Date.now() - lastProgressAt > 60_000) controller.abort();
+      }, 5_000);
       const updateProgress = () => {
+        lastProgressAt = Date.now();
         const done = perFileLoaded.reduce((a, b) => a + b, 0);
         setOverallProgress(Math.min(99, Math.round((done / totalBytes) * 100)));
         setByteProgress({
@@ -457,8 +469,9 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
               handleUploadUrl: '/api/partner/upload',
               contentType: x.contentType,
               multipart: x.blob.size > 8 * 1024 * 1024,
-              onUploadProgress: ({ loaded }) => {
-                perFileLoaded[i] = Math.min(loaded, x.blob.size);
+              abortSignal: controller.signal,
+              onUploadProgress: ({ percentage }) => {
+                perFileLoaded[i] = Math.min(x.blob.size, (x.blob.size * percentage) / 100);
                 updateProgress();
               },
             });
@@ -480,9 +493,14 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           updateProgress();
         }
       };
-      await Promise.all(
-        Array.from({ length: Math.min(UPLOAD_CONCURRENCY, payloads.length) }, worker)
-      );
+      try {
+        await Promise.all(
+          Array.from({ length: Math.min(UPLOAD_CONCURRENCY, payloads.length) }, worker)
+        );
+      } finally {
+        clearInterval(watchdog);
+      }
+      if (controller.signal.aborted) throw new Error('stalled');
 
       const uploadedFiles = payloads.map((x, i) => ({
         url: urls[i],
@@ -518,7 +536,8 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
       loadSubmissions();
     } catch (err) {
       console.error('[partner] submit failed:', err);
-      setMessage({ kind: 'err', text: t.failed });
+      const stalled = err instanceof Error && err.message === 'stalled';
+      setMessage({ kind: 'err', text: stalled ? t.stalled : t.failed });
     } finally {
       setBusy('no');
       setOverallProgress(0);
@@ -592,7 +611,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
   const changePassword = async () => {
     if (pwBusy) return;
     setPwMsg(null);
-    if (pwNew.length < 8) {
+    if (pwNew.length < 4) {
       setPwMsg({ kind: 'err', text: t.pwShort });
       return;
     }
@@ -949,7 +968,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
             cursor: busy !== 'no' ? 'default' : 'pointer',
           }}
         >
-          {busy === 'uploading' ? t.submitting(overallProgress) : busy === 'saving' ? t.saving : t.submit}
+          {busy === 'preparing' ? t.preparing : busy === 'uploading' ? t.submitting(overallProgress) : busy === 'saving' ? t.saving : t.submit}
         </button>
         {busy === 'uploading' && (
           <>
@@ -1121,6 +1140,9 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
             })}
           </div>
         )}
+      </div>
+      <div style={{ opacity: 0.28, fontSize: '0.62rem', textAlign: 'center', marginTop: 28, letterSpacing: '0.1em' }}>
+        ZOEL FIELD UPLOAD v1.4
       </div>
     </div>
   );

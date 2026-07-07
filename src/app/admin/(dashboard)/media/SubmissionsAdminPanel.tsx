@@ -147,8 +147,8 @@ export default function SubmissionsAdminPanel() {
       setToast('아이디와 이름을 입력하세요.');
       return;
     }
-    if (newPassword && newPassword.length < 8) {
-      setToast('비밀번호는 8자 이상이어야 합니다.');
+    if (newPassword && newPassword.length < 4) {
+      setToast('비밀번호는 4자 이상이어야 합니다.');
       return;
     }
     setCreatingAccount(true);
@@ -186,8 +186,8 @@ export default function SubmissionsAdminPanel() {
     action: 'toggle-active' | 'reset-password',
     password?: string
   ) => {
-    if (password && password.length < 8) {
-      setToast('비밀번호는 8자 이상이어야 합니다.');
+    if (password && password.length < 4) {
+      setToast('비밀번호는 4자 이상이어야 합니다.');
       return;
     }
     setBusyId(id);
@@ -486,7 +486,7 @@ export default function SubmissionsAdminPanel() {
                 />
               </label>
               <label className="text-xs text-gray-500">
-                비밀번호 (8자 이상)
+                비밀번호 (4자 이상)
                 <input
                   type="text"
                   value={newPassword}

@@ -20,7 +20,7 @@ export const dynamic = 'force-dynamic';
 
 const schema = z.object({
   currentPassword: z.string().min(1).max(200),
-  newPassword: z.string().min(8).max(200),
+  newPassword: z.string().min(4).max(200),
 });
 
 export async function POST(request: Request) {
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const parsed = schema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: '새 비밀번호는 8자 이상이어야 합니다. / Mật khẩu mới tối thiểu 8 ký tự.' },
+        { success: false, message: '새 비밀번호는 4자 이상이어야 합니다. / Mật khẩu mới tối thiểu 4 ký tự.' },
         { status: 400 }
       );
     }

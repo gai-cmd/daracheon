@@ -40,7 +40,7 @@ export async function GET() {
 const createSchema = z.object({
   loginId: z.string().min(3).max(32),
   name: z.string().min(1).max(60),
-  password: z.string().min(8).max(200).optional(),
+  password: z.string().min(4).max(200).optional(),
   memo: z.string().max(300).optional(),
 });
 
@@ -114,7 +114,7 @@ const updateSchema = z.object({
   action: z.enum(['toggle-active', 'reset-password', 'update']),
   name: z.string().min(1).max(60).optional(),
   memo: z.string().max(300).optional(),
-  password: z.string().min(8).max(200).optional(),
+  password: z.string().min(4).max(200).optional(),
 });
 
 export async function PUT(request: Request) {
