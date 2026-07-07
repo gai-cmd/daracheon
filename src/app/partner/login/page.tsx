@@ -32,7 +32,7 @@ const inputStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
   color: '#fff',
   border: '1px solid rgba(212,168,67,0.25)',
-  borderRadius: 'var(--r-sm, 10px)',
+  borderRadius: '10px',
   fontSize: '1rem',
   outline: 'none',
 };
@@ -101,10 +101,10 @@ export default function PartnerLoginPage() {
               onClick={() => switchLang(l)}
               style={{
                 padding: '6px 14px',
-                borderRadius: 'var(--r-pill, 999px)',
-                border: `1px solid ${lang === l ? 'var(--accent, #b88c2d)' : 'rgba(255,255,255,0.2)'}`,
+                borderRadius: '999px',
+                border: `1px solid ${lang === l ? '#b88c2d' : 'rgba(255,255,255,0.2)'}`,
                 background: lang === l ? 'rgba(212,168,67,0.15)' : 'transparent',
-                color: lang === l ? 'var(--accent-soft, #d4a843)' : 'rgba(255,255,255,0.6)',
+                color: lang === l ? '#d4a843' : 'rgba(255,255,255,0.6)',
                 fontSize: '0.8rem',
                 cursor: 'pointer',
                 fontWeight: 600,
@@ -117,9 +117,9 @@ export default function PartnerLoginPage() {
 
         <div
           style={{
-            background: 'var(--lx-ink, #14161f)',
+            background: '#14161f',
             border: '1px solid rgba(212,168,67,0.25)',
-            borderRadius: 'var(--r-lg, 24px)',
+            borderRadius: '24px',
             padding: '36px 28px',
           }}
         >
@@ -129,7 +129,7 @@ export default function PartnerLoginPage() {
               fontSize: '0.68rem',
               letterSpacing: '0.24em',
               textTransform: 'uppercase',
-              color: 'var(--accent, #b88c2d)',
+              color: '#b88c2d',
               marginBottom: 10,
             }}
           >
@@ -171,10 +171,10 @@ export default function PartnerLoginPage() {
               style={{
                 marginTop: 6,
                 padding: '14px',
-                background: busy ? 'rgba(212,168,67,0.4)' : 'var(--accent, #b88c2d)',
+                background: busy ? 'rgba(212,168,67,0.4)' : '#b88c2d',
                 color: '#0a0b10',
                 border: 0,
-                borderRadius: 'var(--r-pill, 999px)',
+                borderRadius: '999px',
                 fontSize: '1rem',
                 fontWeight: 700,
                 cursor: busy ? 'default' : 'pointer',

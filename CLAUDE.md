@@ -1,7 +1,29 @@
 # 대라천 (zoellife.com) 프로젝트 헌법
 
 > 이 파일은 프로젝트 루트에 두며, Claude Code 가 자동으로 컨텍스트에 로드한다.
-> 워크스페이스 룰(`D:\99_개인\website\CLAUDE.md`) 과 글로벌 룰을 보충한다.
+> **이 파일이 이 프로젝트의 단일 규칙 소스다.** (예전의 워크스페이스 룰 `D:\…\CLAUDE.md`·글로벌 룰
+> 참조는 윈도우 환경 잔재였고, 현재 작업 머신은 macOS — 그런 외부 룰 파일은 없다.)
+
+## 🖥 작업 환경 (macOS)
+
+- 작업 디렉터리: `/Users/gai/personal/daerachoen` (git remote `gai-cmd/daracheon`).
+- **배포 = main 푸시**. 이 머신은 SSH 키가 GitHub 미등록이라 `gh` 토큰으로 **HTTPS 푸시**한다
+  (`git -c credential.helper='!gh auth git-credential' push https://github.com/gai-cmd/daracheon.git main`).
+- 프로덕션 콘텐츠(Blob) 직접 읽기/쓰기 레시피·자격증명 위치는 **Claude 메모리**(`MEMORY.md`)에 정리돼 있다.
+
+## 🎨 CSS 토큰 함정 — dark-theme.css 가 변수 의미를 리맵한다
+
+`src/styles/zoel/dark-theme.css` 는 `:root` 에서 라이트 토큰을 다크 값으로 **반전 재정의**한다:
+`--lx-ivory`=블랙, `--lx-sand`/`--lx-cream`=다크 슬레이트, **`--lx-ink`=크림(#fdfbf7)**.
+즉 tokens.css 의 정의값을 보고 `var(--lx-ink)` 를 "어두운 잉크색"으로 쓰면 런타임엔 크림색이
+나온다 (2026-07-07 /partner/login 텍스트 실종 사고 원인). 추가로 dark-theme 는 body·input·label·
+h1~h6 등에 전역 `!important` 색상을 강제한다.
+
+**규칙**:
+- 새 화면(특히 /admin·/partner 처럼 자체 완결 UI)은 전역 토큰 var() 에 의존하지 말고
+  고정 hex 리터럴 또는 자체 스코프 변수를 쓴다.
+- 전역 토큰을 쓰려면 tokens.css 가 아니라 **dark-theme.css 의 재정의값**을 기준으로 판단한다.
+- 새 페이지는 배포 전 실제 브라우저 렌더링(스크린샷)으로 텍스트 대비를 확인한다.
 
 ## 🚫 외부 CDN 의존 금지 (불변 원칙)
 

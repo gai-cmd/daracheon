@@ -2,6 +2,11 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 // 외부 위탁업체 전용 포털 — 검색엔진 노출 금지.
+//
+// ⚠️ /partner 하위 전체: 전역 CSS 변수(var(--lx-*, --accent, --r-*)) 사용 금지.
+// dark-theme.css 가 :root 에서 토큰의 "의미"를 리맵한다 (--lx-ink=크림,
+// --lx-ivory=블랙으로 반전) — 변수를 쓰면 의도와 반대 색이 나와 텍스트가
+// 배경에 묻힌다 (2026-07-07 로그인 화면 사고). 항상 고정 hex 리터럴만 사용.
 export const metadata: Metadata = {
   title: 'ZOEL LIFE 현장 업로드 포털',
   robots: { index: false, follow: false },
@@ -12,7 +17,7 @@ export default function PartnerLayout({ children }: { children: ReactNode }) {
     <div
       style={{
         minHeight: '100dvh',
-        background: 'var(--lx-black, #0a0b10)',
+        background: '#0a0b10',
         color: '#fff',
       }}
     >

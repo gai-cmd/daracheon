@@ -111,9 +111,9 @@ const DIRECT_FALLBACK_MAX = 4 * 1024 * 1024;
 /* ─── Styles (조엘라이프 디자인 토큰) ───────────────────── */
 
 const card: React.CSSProperties = {
-  background: 'var(--lx-ink, #14161f)',
+  background: '#14161f',
   border: '1px solid rgba(212,168,67,0.22)',
-  borderRadius: 'var(--r-md, 16px)',
+  borderRadius: '16px',
   padding: '20px 18px',
 };
 
@@ -123,7 +123,7 @@ const inputStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
   color: '#fff',
   border: '1px solid rgba(212,168,67,0.25)',
-  borderRadius: 'var(--r-sm, 10px)',
+  borderRadius: '10px',
   fontSize: '1rem',
   outline: 'none',
 };
@@ -133,7 +133,7 @@ const monoKicker: React.CSSProperties = {
   fontSize: '0.66rem',
   letterSpacing: '0.24em',
   textTransform: 'uppercase',
-  color: 'var(--accent, #b88c2d)',
+  color: '#b88c2d',
 };
 
 const STATUS_COLORS: Record<string, { bg: string; fg: string }> = {
@@ -379,10 +379,10 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
               onClick={() => switchLang(l)}
               style={{
                 padding: '4px 12px',
-                borderRadius: 'var(--r-pill, 999px)',
-                border: `1px solid ${lang === l ? 'var(--accent, #b88c2d)' : 'rgba(255,255,255,0.2)'}`,
+                borderRadius: '999px',
+                border: `1px solid ${lang === l ? '#b88c2d' : 'rgba(255,255,255,0.2)'}`,
                 background: lang === l ? 'rgba(212,168,67,0.15)' : 'transparent',
-                color: lang === l ? 'var(--accent-soft, #d4a843)' : 'rgba(255,255,255,0.6)',
+                color: lang === l ? '#d4a843' : 'rgba(255,255,255,0.6)',
                 fontSize: '0.75rem',
                 cursor: 'pointer',
                 fontWeight: 600,
@@ -435,8 +435,8 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
               padding: '18px',
               background: 'rgba(212,168,67,0.08)',
               border: '1.5px dashed rgba(212,168,67,0.45)',
-              borderRadius: 'var(--r-md, 16px)',
-              color: 'var(--accent-soft, #d4a843)',
+              borderRadius: '16px',
+              color: '#d4a843',
               fontSize: '1rem',
               fontWeight: 600,
               cursor: 'pointer',
@@ -457,7 +457,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
                 <div
                   style={{
                     aspectRatio: '1',
-                    borderRadius: 'var(--r-sm, 10px)',
+                    borderRadius: '10px',
                     overflow: 'hidden',
                     background: '#1a1d29',
                     border: '1px solid rgba(212,168,67,0.2)',
@@ -517,7 +517,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
         <div
           style={{
             background: 'rgba(255,255,255,0.03)',
-            borderRadius: 'var(--r-sm, 10px)',
+            borderRadius: '10px',
             padding: '12px 14px',
             fontSize: '0.8rem',
             lineHeight: 1.8,
@@ -542,8 +542,8 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
                   marginLeft: 8,
                   background: 'transparent',
                   border: '1px solid rgba(212,168,67,0.4)',
-                  borderRadius: 'var(--r-pill, 999px)',
-                  color: 'var(--accent-soft, #d4a843)',
+                  borderRadius: '999px',
+                  color: '#d4a843',
                   fontSize: '0.72rem',
                   padding: '2px 10px',
                   cursor: 'pointer',
@@ -593,7 +593,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           <div
             style={{
               padding: '10px 14px',
-              borderRadius: 'var(--r-sm, 10px)',
+              borderRadius: '10px',
               background: message.kind === 'ok' ? 'rgba(74,103,65,0.25)' : 'rgba(240,114,106,0.12)',
               color: message.kind === 'ok' ? '#8fbf82' : '#f0726a',
               fontSize: '0.85rem',
@@ -611,10 +611,10 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           disabled={busy !== 'no'}
           style={{
             padding: '15px',
-            background: busy !== 'no' ? 'rgba(212,168,67,0.35)' : 'var(--accent, #b88c2d)',
+            background: busy !== 'no' ? 'rgba(212,168,67,0.35)' : '#b88c2d',
             color: '#0a0b10',
             border: 0,
-            borderRadius: 'var(--r-pill, 999px)',
+            borderRadius: '999px',
             fontSize: '1.02rem',
             fontWeight: 700,
             cursor: busy !== 'no' ? 'default' : 'pointer',
@@ -628,7 +628,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
               style={{
                 height: '100%',
                 width: `${overallProgress}%`,
-                background: 'var(--accent, #b88c2d)',
+                background: '#b88c2d',
                 transition: 'width 300ms ease',
               }}
             />
@@ -661,7 +661,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
                       style={{
                         flexShrink: 0,
                         padding: '4px 12px',
-                        borderRadius: 'var(--r-pill, 999px)',
+                        borderRadius: '999px',
                         background: c.bg,
                         color: c.fg,
                         fontSize: '0.72rem',
