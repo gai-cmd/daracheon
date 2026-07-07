@@ -537,7 +537,11 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
     } catch (err) {
       console.error('[partner] submit failed:', err);
       const stalled = err instanceof Error && err.message === 'stalled';
-      setMessage({ kind: 'err', text: stalled ? t.stalled : t.failed });
+      const detail = err instanceof Error ? err.message : String(err);
+      setMessage({
+        kind: 'err',
+        text: (stalled ? t.stalled : t.failed) + (stalled ? '' : `\n[${detail.slice(0, 180)}]`),
+      });
     } finally {
       setBusy('no');
       setOverallProgress(0);
@@ -1142,7 +1146,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
         )}
       </div>
       <div style={{ opacity: 0.28, fontSize: '0.62rem', textAlign: 'center', marginTop: 28, letterSpacing: '0.1em' }}>
-        ZOEL FIELD UPLOAD v1.4
+        ZOEL FIELD UPLOAD v1.5
       </div>
     </div>
   );
