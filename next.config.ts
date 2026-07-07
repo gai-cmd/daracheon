@@ -54,7 +54,11 @@ const nextConfig: NextConfig = {
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net",
       "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
-      "connect-src 'self' https://www.google-analytics.com https://*.public.blob.vercel-storage.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.navercorp.com",
+      // blob.vercel-storage.com (+와일드카드): /partner 현장 업로드가 브라우저에서
+      //   Vercel Blob 으로 직행 PUT/multipart 하는 업로드 API 호스트. public.* 은
+      //   읽기(다운로드) 호스트라 이것만으론 업로드가 CSP 에 차단된다
+      //   (2026-07-07 파트너 업로드 0% 정지 사고의 근본 원인).
+      "connect-src 'self' https://www.google-analytics.com https://blob.vercel-storage.com https://*.blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.navercorp.com",
       "frame-src 'self' https://www.youtube.com https://youtube.com https://drive.google.com https://map.naver.com https://*.map.naver.com",
       "object-src 'none'",
       "base-uri 'self'",
