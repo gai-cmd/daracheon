@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { checkEnv } from '@/lib/env-check';
 
 export const metadata: Metadata = {
   title: '진단·대책 현황',
@@ -178,6 +179,9 @@ function Chip({ className, children }: { className: string; children: React.Reac
 }
 
 export default function DiagnosisPage() {
+  // 라이브 환경변수 점검(값 노출 없이 설정 여부만). 서버 컴포넌트라 실제 운영 env 를 읽는다.
+  const env = checkEnv();
+
   const stats = [
     { n: '8', l: 'Critical / High', c: 'text-[#bd3a2c]' },
     { n: '10', l: 'Medium', c: 'text-[#a9851b]' },
@@ -218,23 +222,51 @@ export default function DiagnosisPage() {
 
       {/* Status banner */}
       <div className="mb-8 rounded-xl border border-gray-200 border-l-4 border-l-[#3c8659] bg-white p-5 shadow-sm">
-        <h3 className="mb-3 text-sm font-semibold text-gray-900">조치 현황 (로컬 코드, 미배포)</h3>
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">조치 현황 (프로덕션 배포 완료 · 2026-07-08)</h3>
         <ul className="grid gap-2 text-[14px] text-gray-600">
           {[
-            'P0 보안 5건 패치 적용 — 권한 상승·무인증 쓰기·PII prefix·하드코딩 비밀번호·SSRF',
-            'P1 성능 6건 적용 — 읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect',
+            'P0 보안 5건 — 권한 상승·무인증 쓰기·PII prefix·하드코딩 비밀번호·SSRF',
+            'P1 성능 6건 — 읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect',
             '백업 강화 — 서버 커버리지 전수 확장, poison 방지, 로컬(Mac) 백업 도구 신설',
             '안정성 — 에러 바운더리(렌더 에러 시 사이트 폴백) + 싱글턴 저장 무결성(DATA-2)',
-            '품질 기반 — 단위 테스트 34개(auth·totp·ssrf) + CI 게이트(typecheck·test)',
+            '품질 기반 — 단위 테스트 54개(auth·totp·ssrf·백업암호화·QR·env) + CI 게이트',
           ].map((t) => (
             <li key={t} className="relative pl-6 before:absolute before:left-0 before:font-bold before:text-[#3c8659] before:content-['✓']">
               {t}
             </li>
           ))}
           <li className="relative pl-6 text-[#b25e14] before:absolute before:left-0 before:font-bold before:content-['→']">
-            배포(main 푸시) 및 운영조치(prefix 로테이션·thesis env·로컬 백업 첫 실행) 대기
+            운영조치 대기 — 아래 환경변수 점검의 누락 항목(thesis env 등), prefix 로테이션, 로컬 백업 첫 실행, CI workflow 스코프
           </li>
         </ul>
+      </div>
+
+      {/* 환경변수 점검 (라이브·값 비노출) */}
+      <div className="mb-8 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="text-sm font-semibold text-gray-900">환경변수 점검 (현재 운영 환경 · 값 비노출)</h3>
+          <span className="font-mono text-[13px] tabular-nums text-gray-500">
+            {env.presentCount}/{env.totalCount} 설정됨
+          </span>
+        </div>
+        {env.missingCritical.length === 0 && env.missingFeature.length === 0 ? (
+          <p className="relative pl-6 text-[14px] text-[#2f7a4c] before:absolute before:left-0 before:font-bold before:content-['✓']">
+            핵심 · 기능 환경변수가 모두 설정되어 있습니다.
+          </p>
+        ) : (
+          <div className="grid gap-2">
+            {[...env.missingCritical, ...env.missingFeature].map((v) => (
+              <div key={v.name} className="flex flex-wrap items-center gap-2 border-b border-dashed border-gray-100 pb-2 last:border-0 last:pb-0">
+                <Chip className={v.severity === 'critical' ? 'bg-[#fbe9e7] text-[#bd3a2c]' : 'bg-[#fdf3e2] text-[#a9851b]'}>
+                  {v.severity === 'critical' ? '핵심 누락' : '기능 누락'}
+                </Chip>
+                <code className="font-mono text-[13px] font-semibold text-gray-800">{v.name}</code>
+                <span className="text-[13px] text-gray-500">{v.purpose}</span>
+                <span className="w-full pl-1 text-[12.5px] text-[#b25e14]">→ {v.ifMissing}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Sections */}
