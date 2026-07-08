@@ -130,7 +130,7 @@ const SECTIONS: Section[] = [
 ];
 
 const ARCH: { id: string; title: string; sev: string; phase: string }[] = [
-  { id: 'ARCH-1', title: '자동화 테스트 도입 — vitest, auth·totp·ssrf 34개 통과(동시성·백업 로직은 추가 예정)', sev: 'Critical', phase: '진행중' },
+  { id: 'ARCH-1', title: '자동화 테스트 도입 — vitest, 48개 통과(auth·totp·ssrf·백업암호화·QR서명). db 동시성은 추가 예정', sev: 'Critical', phase: '진행중' },
   { id: 'ARCH-2', title: 'CI 품질 게이트 추가 — push/PR 시 typecheck+test(.github/workflows/ci.yml). ESLint 도입은 잔여', sev: 'High', phase: '진행중' },
   { id: 'ARCH-3', title: '환경변수 50개 산개 · 검증 config 부재', sev: 'High', phase: 'P4' },
   { id: 'ARCH-4', title: '에러 바운더리 추가 완료 (렌더 에러 시 사이트 폴백). Sentry·Blob 저하 알림은 P4', sev: 'High', phase: '진행중' },
@@ -147,7 +147,8 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
-  { date: '2026-07-08', text: '품질 기반: vitest 도입 + 단위 테스트 34개(auth·totp·ssrf) 통과, CI 게이트(typecheck+test) 추가로 회귀를 머지 전에 차단.' },
+  { date: '2026-07-08', text: '보안·성능·백업·안정성·품질 종합 대책 프로덕션 배포 완료(main). 백업 암호화·QR 서명 회귀 테스트 추가로 단위 테스트 48개.' },
+  { date: '2026-07-08', text: '품질 기반: vitest 도입 + 단위 테스트(auth·totp·ssrf) 통과, CI 게이트(typecheck+test) 추가로 회귀를 머지 전에 차단.' },
   { date: '2026-07-08', text: '안정성 대책: 에러 바운더리(error.tsx·global-error.tsx) 추가로 렌더 에러 시 사이트 폴백, DATA-2 싱글턴 저장 무결성(readSingleForWrite) 6개 라우트 적용.' },
   { date: '2026-07-08', text: '백업 체계 강화(서버 커버리지 전수 + 로컬 Mac 백업 신설), 진단 현황판 관리자 메뉴 추가.' },
   { date: '2026-07-08', text: 'P1 성능 Quick Win 6건 적용 (읽기 병렬화·캐시 전환·이미지 최적화·폰트 preconnect).' },
@@ -180,7 +181,7 @@ export default function DiagnosisPage() {
   const stats = [
     { n: '8', l: 'Critical / High', c: 'text-[#bd3a2c]' },
     { n: '10', l: 'Medium', c: 'text-[#a9851b]' },
-    { n: '16', l: '패치 적용 (미배포)', c: 'text-[#2f7a4c]' },
+    { n: '16', l: '대책 적용 · 배포 완료', c: 'text-[#2f7a4c]' },
     { n: '76', l: 'API 라우트', c: 'text-gray-800' },
     { n: '19', l: 'Blob 컬렉션', c: 'text-gray-800' },
   ];
