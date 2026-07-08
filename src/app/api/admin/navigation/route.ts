@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
-import { readSingleUncached, writeSingle } from '@/lib/db';
+import { readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import {
   DEFAULT_FOOTER_COLUMNS,
@@ -35,7 +35,8 @@ const DEFAULT_NAVIGATION: NavigationData = {
 };
 
 export async function GET() {
-  const data = (await readSingleUncached<NavigationData>('navigation')) ?? DEFAULT_NAVIGATION;
+  // 쓰기 베이스: readSingleForWrite (Blob 장애 시 throw, stale 덮어쓰기 방지)
+  const data = (await readSingleForWrite<NavigationData>('navigation')) ?? DEFAULT_NAVIGATION;
   return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store, must-revalidate' } });
 }
 

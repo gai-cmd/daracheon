@@ -333,7 +333,6 @@ export default function AboutAgarwoodClient({ data }: Props) {
             fill
             sizes="100vw"
             priority
-            unoptimized
             aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />

@@ -48,7 +48,6 @@ export default function ProductsPageClient({ products, productCategories, hero }
             fill
             sizes="100vw"
             priority
-            unoptimized
             aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />

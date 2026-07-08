@@ -51,7 +51,7 @@ h1~h6 등에 전역 `!important` 색상을 강제한다.
 
 ## 데이터 저장 위치
 
-- 콘텐츠 데이터(JSON): `BLOB_DATA_PREFIX` 가 붙은 Vercel Blob (프로덕션 prefix: `fd290ae46c4cb398d2afcdc4fc7cfe95/`).
+- 콘텐츠 데이터(JSON): `BLOB_DATA_PREFIX` 가 붙은 Vercel Blob. **프로덕션 prefix 는 고객 PII Blob 을 보호하는 비밀 값**이므로 소스·문서·로그에 평문으로 남기지 않는다 — Vercel 환경변수(및 `.env.local`)로만 주입한다. (2026-07-07 진단에서 평문 노출이 확인되어 제거·로테이션 대상.)
 - 시드 데이터: `data/db/*.json` — 빌드 시 `prebuild` 가 blob → seed 동기화. **로컬 시드 수정만으로는 프로덕션 반영 안 됨** — blob 직접 갱신해야 한다.
 
 ## 배포

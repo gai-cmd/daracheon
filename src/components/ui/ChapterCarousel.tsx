@@ -126,7 +126,6 @@ export default function ChapterCarousel({
                     fill
                     sizes="(max-width: 640px) 88vw, (max-width: 1023px) 80vw, 72vw"
                     style={{ objectFit: 'cover' }}
-                    unoptimized
                     priority={i === 0}
                   />
                 </div>

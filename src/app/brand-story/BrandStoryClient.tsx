@@ -323,7 +323,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             fill
             sizes="100vw"
             priority
-            unoptimized
             aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
@@ -998,7 +997,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                           height={0}
                           sizes="(max-width: 480px) 90vw, (max-width: 768px) 42vw, (max-width: 1200px) 25vw, 220px"
                           style={{ width: '100%', height: 'auto', display: 'block' }}
-                          unoptimized
                         />
                       </div>
 

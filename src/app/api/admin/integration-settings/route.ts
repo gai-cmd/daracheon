@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingleUncached, writeSingle } from '@/lib/db';
+import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import {
   type IntegrationSettings,
@@ -49,7 +49,8 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = (await request.json()) as IntegrationSettings;
-    const existing = (await readSingleUncached<IntegrationSettings>('integration-settings')) ?? {};
+    // 쓰기 베이스: readSingleForWrite (Blob 장애 시 throw, stale 덮어쓰기 방지)
+    const existing = (await readSingleForWrite<IntegrationSettings>('integration-settings')) ?? {};
 
     // 빈 입력 → 기존 토큰 유지. 비-빈 입력 → 그대로 교체.
     const incomingToken = (body.telegramBotToken ?? '').trim();

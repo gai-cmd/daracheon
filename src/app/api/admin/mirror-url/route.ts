@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { uploadFile } from '@/lib/storage';
 import { logAdmin } from '@/lib/audit';
+import { assertPublicHttpUrl, safeFetch } from '@/lib/ssrf';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -32,34 +33,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, url, alreadyMirrored: true });
     }
 
-    // URL 유효성 검사
+    // URL 유효성 + SSRF 검사 (사설/루프백/링크로컬 대역 차단, 리다이렉트 재검증)
     let parsedUrl: URL;
     try {
-      parsedUrl = new URL(url);
-    } catch {
-      return NextResponse.json({ success: false, message: '유효하지 않은 URL입니다.' }, { status: 400 });
-    }
-    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-      return NextResponse.json({ success: false, message: 'HTTP/HTTPS URL만 허용됩니다.' }, { status: 400 });
+      parsedUrl = await assertPublicHttpUrl(url);
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, message: e instanceof Error ? e.message : '유효하지 않은 URL입니다.' },
+        { status: 400 }
+      );
     }
 
-    // 이미지 fetch (15초 타임아웃)
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15_000);
-
+    // 이미지 fetch (SSRF-safe: 리다이렉트 수동 처리, 각 홉 재검증, 15초 타임아웃)
     let imgRes: Response;
     try {
-      imgRes = await fetch(url, {
-        signal: controller.signal,
+      imgRes = await safeFetch(url, {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ZoelLifeBot/1.0)' },
       });
-    } catch {
+    } catch (e) {
+      // SSRF 차단은 400, 순수 네트워크 오류는 502 로 구분
+      const msg = e instanceof Error ? e.message : '';
+      const blocked = msg.includes('차단') || msg.includes('사설') || msg.includes('리다이렉트');
       return NextResponse.json(
-        { success: false, message: '원본 이미지를 가져올 수 없습니다. (네트워크 오류)' },
-        { status: 502 }
+        { success: false, message: blocked ? msg : '원본 이미지를 가져올 수 없습니다. (네트워크 오류)' },
+        { status: blocked ? 400 : 502 }
       );
-    } finally {
-      clearTimeout(timeout);
     }
 
     if (!imgRes.ok) {

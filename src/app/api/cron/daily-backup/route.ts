@@ -54,6 +54,24 @@ export async function GET(request: NextRequest) {
     // 오래된 blob 스냅샷 정리
     const prune = await pruneSnapshots();
 
+    // 일부 컬렉션 읽기 실패(degraded) → 스냅샷은 저장·미러링됐으나 불완전.
+    // 조용히 success:true 로 감추지 않고 500 으로 크게 실패시켜(진단 DATA-4)
+    // Vercel Cron 실패 알림이 뜨도록 한다. 부분 스냅샷 정보는 함께 반환.
+    if (snap.degraded.length > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `백업 부분 실패(degraded): ${snap.degraded.join(', ')} 컬렉션을 읽지 못했습니다. 부분 스냅샷은 저장·미러링됨. Blob 상태 확인 필요.`,
+          tier1: { id: snap.id, size: snap.size, url: snap.url, degraded: snap.degraded },
+          tier2_github: mirror.tier2Github,
+          tier3_email: mirror.tier3Email,
+          prune,
+          at: new Date().toISOString(),
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       tier1: { id: snap.id, size: snap.size, url: snap.url },

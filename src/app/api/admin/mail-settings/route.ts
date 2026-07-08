@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingleUncached, writeSingle } from '@/lib/db';
+import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { testImapConnection } from '@/lib/inbound';
@@ -50,7 +50,8 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = (await request.json()) as MailSettings;
-    const existing = (await readSingleUncached<MailSettings>('mail-settings')) ?? {};
+    // 쓰기 베이스: readSingleForWrite (Blob 장애 시 throw, stale 덮어쓰기 방지)
+    const existing = (await readSingleForWrite<MailSettings>('mail-settings')) ?? {};
 
     // 비밀 필드: 클라이언트가 마스킹된 값 그대로 보내면 기존값 보존,
     // 빈 문자열이면 명시적 삭제, 새 값이면 교체.

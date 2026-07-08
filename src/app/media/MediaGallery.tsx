@@ -268,7 +268,6 @@ export default function MediaGallery({
                             sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                             priority={vIdx === 0}
                             style={{ objectFit: 'cover' }}
-                            unoptimized
                           />
                         ) : isMp4Url && item.url ? (
                           // 썸네일 미지정 mp4 → 비디오 첫 프레임을 썸네일로 표시.
@@ -378,7 +377,6 @@ export default function MediaGallery({
                             sizes="(max-width: 700px) 100vw, 33vw"
                             priority={pIdx < 2}
                             style={{ objectFit: 'cover' }}
-                            unoptimized
                           />
                         )}
                       </div>

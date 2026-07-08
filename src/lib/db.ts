@@ -424,7 +424,9 @@ async function blobWriteRaw(filename: string, data: unknown) {
     contentType: 'application/json',
     cacheControlMaxAge: 0,
   });
-  console.log(`[db:write] ${filename}: OK (${Date.now() - t0}ms, url=${putRes.url})`);
+  // 전체 Blob URL 은 비밀 prefix 를 포함하므로 로그에 남기지 않는다(PII Blob 노출 방지).
+  void putRes;
+  console.log(`[db:write] ${filename}: OK (${Date.now() - t0}ms)`);
 }
 
 async function readRaw(filename: string): Promise<unknown | null> {
@@ -572,6 +574,42 @@ export async function readDataForWrite<T = any>(filename: string): Promise<T[]> 
     );
   }
   return await reconcile(filename, [] as T[]);
+}
+
+// 단일객체(싱글턴) 파일의 "쓰기 베이스" 전용 read — readDataForWrite 의 싱글턴 버전.
+// readSingleUncached 와 달리 blob 일시 장애를 삼키지 않고 throw 하며, 기존 데이터
+// 흔적(LKG/seed)이 있는데 blob 에서 NOT_FOUND 면 쓰기 베이스 제공을 거부한다.
+// 이것이 없으면 Blob 블립 중 admin 저장 시 stale seed/{} 위에 한 키만 병합해
+// 통째로 덮어써, 배포 이후 누적 편집분이 유실될 수 있다(진단 DATA-2).
+// 진짜 첫 저장(부트스트랩)만 null 을 돌려주어 호출부의 `?? {}`/`?? DEFAULT` 로 시작.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function readSingleForWrite<T = any>(filename: string): Promise<T | null> {
+  const isObj = (v: unknown): boolean => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!hasBlob) {
+    const data = fsReadRaw(filename);
+    return isObj(data) ? (data as T) : null;
+  }
+  const result = await blobReadRawUncached(filename); // 일시 장애는 throw 그대로 전파
+  if (result !== NOT_FOUND) {
+    if (isObj(result)) {
+      lastKnownGood.set(filename, result);
+      return result as T;
+    }
+    if (Array.isArray(result)) {
+      throw new Error(`[db] ${filename}: 배열 파일입니다 (readSingleForWrite 오용).`);
+    }
+    // result === null 등 → 아래 NOT_FOUND 와 동일하게 hadData 검사로 진행
+  }
+  const lkg = lastKnownGood.get(filename);
+  const seed = fsReadRaw(filename);
+  const hadData = isObj(lkg) || isObj(seed);
+  if (hadData) {
+    throw new Error(
+      `[db] ${filename}: blob 에서 값 없음(NOT_FOUND)이지만 기존 데이터 흔적(LKG/seed)이 있습니다. ` +
+        'list() 전파 지연 의심 — 유실 방지를 위해 쓰기 베이스 제공을 거부합니다. 잠시 후 재시도하세요.'
+    );
+  }
+  return null; // 진짜 첫 저장(부트스트랩)
 }
 
 export interface WriteMergedOptions {

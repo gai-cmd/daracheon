@@ -3,10 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 // 침향 논문 아카이브(/thesis) 비밀번호 검증 → 쿠키 발급.
 // 비밀번호 한 칸만 받음(아이디 없음). 기존 사이트와 독립된 추가 엔드포인트.
 const THESIS_COOKIE = 'thesis_auth';
-const THESIS_TOKEN = process.env.THESIS_TOKEN || 'zoel-thesis-2026-ok';
-const THESIS_PASSWORD = process.env.THESIS_PASSWORD || 'agarwooding';
 
 export async function POST(req: NextRequest) {
+  // 하드코딩 기본값 없음 — env 미설정 시 잠금 해제 자체를 비활성화(fail-closed).
+  const THESIS_TOKEN = process.env.THESIS_TOKEN;
+  const THESIS_PASSWORD = process.env.THESIS_PASSWORD;
+
   let password = '';
   try {
     const form = await req.formData();
@@ -15,8 +17,8 @@ export async function POST(req: NextRequest) {
     password = '';
   }
 
-  if (password !== THESIS_PASSWORD) {
-    // 틀리면 로그인 화면으로(에러 표시)
+  if (!THESIS_TOKEN || !THESIS_PASSWORD || password !== THESIS_PASSWORD) {
+    // env 미설정이거나 비밀번호가 틀리면 로그인 화면으로(에러 표시)
     const back = new URL('/thesis', req.url);
     back.searchParams.set('e', '1');
     return NextResponse.redirect(back, 303);

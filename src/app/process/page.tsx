@@ -261,7 +261,6 @@ export default async function ProcessPage() {
             fill
             sizes="100vw"
             priority
-            unoptimized
             aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
@@ -378,7 +377,6 @@ export default async function ProcessPage() {
                         fill
                         sizes="(max-width: 900px) 100vw, 720px"
                         style={{ objectFit: 'cover' }}
-                        unoptimized
                       />
                     </div>
                     {ch.imageCaption && (
@@ -543,7 +541,6 @@ export default async function ProcessPage() {
                       fill
                       sizes="(max-width: 900px) 50vw, 240px"
                       style={{ objectFit: 'cover' }}
-                      unoptimized
                     />
                   </div>
                 ))}
@@ -575,7 +572,6 @@ export default async function ProcessPage() {
                           fill
                           sizes="(max-width: 900px) 50vw, 280px"
                           style={{ objectFit: 'cover' }}
-                          unoptimized
                         />
                       </div>
                     ))}

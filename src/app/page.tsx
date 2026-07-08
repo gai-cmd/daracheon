@@ -1056,7 +1056,6 @@ export default async function HomePage() {
                         fill
                         sizes="(max-width: 768px) 50vw, 20vw"
                         style={{ objectFit: 'cover' }}
-                        unoptimized
                       />
                     </div>
                   )}

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { readDataSafe, readDataUncached, readSingleUncached } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
@@ -213,14 +213,15 @@ const DEFAULT_PRODUCTS: Product[] = [
 ];
 
 export default async function ProductsPage() {
-  // 어드민 토글(재고/공개 등)이 즉시 반영되도록 uncached 직접 읽기.
-  // 캐시 태그 propagation 지연으로 stale 노출되는 사고 방지.
-  const dbProducts = await readDataUncached<Product>('products');
-  const dbCategories = await readDataSafe<ProductCategory>('productCategories');
-  // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
-  const pagesData = await readSingleUncached<{
-    products?: { hero?: ProductsHero };
-  }>('pages');
+  // products·productCategories·pages(hero) 를 병렬로 읽는다(직렬 3-왕복 → 1 배치).
+  // *Safe = unstable_cache(태그 db:<file>) + LKG/seed 폴백. admin 저장(재고/공개 토글
+  // 포함)은 writeData 가 revalidateTag 를 동기 호출하므로 즉시 반영된다. 앱 외부 시드
+  // 스크립트로 blob 을 직접 갱신한 경우에만 최대 300s 지연 → /api/admin/revalidate-pages.
+  const [dbProducts, dbCategories, pagesData] = await Promise.all([
+    readDataSafe<Product>('products'),
+    readDataSafe<ProductCategory>('productCategories'),
+    readSingleSafe<{ products?: { hero?: ProductsHero } }>('pages'),
+  ]);
   const productsHero: ProductsHero = { ...DEFAULT_PRODUCTS_HERO, ...pagesData?.products?.hero };
 
   // 공개 목록은 published === false 인 제품 제외.

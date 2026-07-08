@@ -48,6 +48,23 @@ public/uploads/settings/*
 # 문서
 docs/admin-requirements.md
 
+# 대용량 비배포 자산 — 런타임에 서빙/번들되지 않으나 배포 업로드를 무겁게 함(빌드 지연).
+# (outputFileTracingIncludes 는 data/db/** 만 추적하므로 아래는 함수에 포함되지 않는다.)
+# ⚠️ 반드시 루트 앵커(/)로 한정한다 — public/ 안의 배포 대상 이미지(.jpg 등)를
+#    실수로 제외하지 않기 위함.
+/backups/
+/source-assets/
+/dist/
+/new design/
+/html/
+/zoel-app.js
+/tmpmedia-live.html
+/ZOELLIFE_会社紹介_JP.pptx
+/유전자검사증.jpg
+# 레거시 구버전 사이트 사본(Vite+Firebase) — tsconfig 제외, 배포 불필요.
+/data/zoel-life-source/
+/data/zoel-life-source.zip
+
 # 기타
 .DS_Store
 *.log

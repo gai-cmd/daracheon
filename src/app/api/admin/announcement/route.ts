@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { readSingleUncached, writeSingle } from '@/lib/db';
+import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 const AnnouncementSchema = z.object({
@@ -42,7 +42,8 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const current = await readSingleUncached('announcement') ?? DEFAULT_ANNOUNCEMENT;
+  // 쓰기 베이스: readSingleForWrite (Blob 장애 시 throw → 500, stale 덮어쓰기 방지)
+  const current = await readSingleForWrite('announcement') ?? DEFAULT_ANNOUNCEMENT;
   const updated: Announcement = {
     ...current,
     ...parsed.data,

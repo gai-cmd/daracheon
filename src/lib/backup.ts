@@ -1,5 +1,5 @@
 import { list, put, del } from '@vercel/blob';
-import { readDataUncached, readSingle, writeSingle, restoreData, isBlobEnabled } from './db';
+import { readDataForWrite, readSingle, writeSingle, restoreData, isBlobEnabled } from './db';
 import { pushSnapshotToGitHub, isGitHubBackupConfigured, fetchGitHubBackup, listGitHubBackups, type GitHubBackupEntry } from './backup-github';
 import { sendEmailBackup, isEmailBackupConfigured } from './backup-email';
 import { encryptString, decryptString, isEncryptionConfigured, looksEncrypted } from './backup-crypto';
@@ -29,9 +29,32 @@ const DB_FILES = [
   'productCategories',
   'admin-users',
   'audit-log',
+  // 2026-07-08 백업 커버리지 확장 (진단 DATA-3: 아래 컬렉션들이 어느 티어에도
+  // 백업되지 않아 blob 손상·오삭제 시 영구 손실 위험이었음).
+  'leads',              // 고객 리드(PII)
+  'partner-accounts',   // 파트너 포털 계정
+  'media-submissions',  // 파트너 현장 업로드 제출물
+  'blogPosts',          // 블로그 글 (실제 blob 파일명은 camelCase — 2026-07-08 실측 확인)
+  'blogCategories',     // 블로그 카테고리 (실제 파일명 camelCase)
+  'qr-codes',           // QR 코드 레지스트리
+  'product-guides',     // 제품 사용설명서
 ] as const;
 
-const SINGLETON_FILES = ['company', 'announcement', 'pages', 'navigation'] as const;
+// ⚠️ 미백업 잔여 항목(다음 단계): QR 하위 per-record 컬렉션
+//   (qr-events/*, qr-serials/*, qr-coupons/*)은 단일 파일이 아니라 prefix 아래
+//   키별 blob 이므로 prefix 워커 기반 별도 아카이버가 필요하다. flat 컬렉션 커버리지
+//   확보 후 위 prefix 아카이빙을 추가할 것.
+
+const SINGLETON_FILES = [
+  'company',
+  'announcement',
+  'pages',
+  'navigation',
+  // 2026-07-08 확장 (진단 DATA-3).
+  'mail-settings',
+  'integration-settings',
+  'telegram-bot-state', // 텔레그램 봇 상태(readSingle 로 읽는 싱글턴 — 2026-07-08 실측 확인)
+] as const;
 
 type DbKey = (typeof DB_FILES)[number];
 type SingletonKey = (typeof SINGLETON_FILES)[number];
@@ -67,38 +90,49 @@ function snapshotId(label: SnapshotLabel): string {
 export async function createSnapshot(
   label: SnapshotLabel,
   meta?: Record<string, unknown>
-): Promise<{ id: string; size: number; url: string; body: string } | null> {
+): Promise<{ id: string; size: number; url: string; body: string; degraded: string[] } | null> {
   if (!isBlobEnabled()) {
     console.warn('[backup] blob disabled — createSnapshot skipped');
     return null;
   }
 
   const data: Partial<Record<DbKey | SingletonKey, unknown>> = {};
+  // 읽기에 실패한(일시 장애 등) 컬렉션. 스냅샷에 담지 않고 degraded 로 기록한다 —
+  // 빈 배열/누락을 정상값처럼 저장하면 복원 시 실데이터를 덮어써 소실되는
+  // "poison 백업"이 된다(진단 DATA-4).
+  const degraded: string[] = [];
+
   for (const f of DB_FILES) {
     try {
-      // unstable_cache 우회 — pre-delete 등 삭제 직전 스냅샷이 최대 5분
-      // stale 한 캐시가 아니라 blob 의 최신 데이터를 담도록 uncached 로 읽는다.
-      data[f] = await readDataUncached(f);
+      // readDataForWrite 는 blob 일시 장애 시 throw 한다(readDataUncached 처럼
+      // LKG/seed/[] 로 삼키지 않음) → 장애를 확실히 감지해 degraded 처리한다.
+      // 최신 blob 을 직접 읽으므로 스냅샷은 캐시 지연 없는 최신 상태.
+      data[f] = await readDataForWrite(f);
     } catch (err) {
-      // 일시 장애도 스냅샷을 막지 말고 빈 배열로 대체. 로그만 남김.
-      console.error(`[backup] read failed for ${f}`, err);
-      data[f] = [];
+      console.error(`[backup] read failed for ${f} — degraded, 스냅샷에서 제외`, err);
+      degraded.push(f);
     }
   }
   for (const f of SINGLETON_FILES) {
     try {
+      // readSingle(캐시본)은 일시 장애 시 throw. 싱글턴은 변경이 드물어 캐시본으로 충분.
       data[f] = await readSingle(f);
     } catch (err) {
-      console.error(`[backup] read failed for ${f}`, err);
-      data[f] = null;
+      console.error(`[backup] read failed for ${f} — degraded, 스냅샷에서 제외`, err);
+      degraded.push(f);
     }
   }
+
+  const mergedMeta: Record<string, unknown> = {
+    ...(meta ?? {}),
+    ...(degraded.length ? { degraded } : {}),
+  };
 
   const payload: SnapshotPayload = {
     createdAt: new Date().toISOString(),
     label,
-    version: '1.1',
-    ...(meta ? { meta } : {}),
+    version: '1.2',
+    ...(Object.keys(mergedMeta).length ? { meta: mergedMeta } : {}),
     data,
   };
 
@@ -114,7 +148,11 @@ export async function createSnapshot(
     cacheControlMaxAge: 0,
   });
 
-  return { id, size: body.length, url: result.url, body };
+  if (degraded.length) {
+    console.error(`[backup] snapshot ${id} DEGRADED — 미포함 컬렉션: ${degraded.join(', ')}`);
+  }
+
+  return { id, size: body.length, url: result.url, body, degraded };
 }
 
 /**
@@ -308,6 +346,13 @@ export async function restoreFromPayload(
   if (!preRestore && isBlobEnabled()) {
     throw new Error(
       '복원 전 안전 스냅샷(pre-restore) 생성에 실패했습니다. 롤백 포인트 없이 복원할 수 없습니다. Blob 상태를 확인하세요.'
+    );
+  }
+  // 롤백 포인트가 일부 컬렉션을 읽지 못했다면(불완전) 복원을 중단한다 — 복원이
+  // 잘못됐을 때 되돌릴 안전망이 불완전한 상태로 실데이터를 덮어쓰지 않기 위함.
+  if (preRestore?.degraded?.length) {
+    throw new Error(
+      `복원 중단: 복원 전 안전 스냅샷이 일부 컬렉션(${preRestore.degraded.join(', ')})을 읽지 못해 롤백 포인트가 불완전합니다. Blob 상태 확인 후 재시도하세요.`
     );
   }
 

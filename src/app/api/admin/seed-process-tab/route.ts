@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { readSingleUncached, writeSingle } from '@/lib/db';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const PROCESS_TAB = {
   tag: 'PRODUCTION PROCESS',
@@ -65,8 +68,21 @@ const PROCESS_TAB = {
   paragraphs: [],
 };
 
-export async function GET() {
+// 프로덕션 pages.json 의 brandStory.processTab 를 하드코딩 값으로 덮어쓰는 일회성
+// 복구 시드. 콘텐츠 무결성을 바꾸는 파괴적 작업이므로 super_admin 전용 + POST 로 한정한다.
+// (과거 이 라우트는 미들웨어 공개 화이트리스트 + GET 이라 익명·CSRF 로 홈 콘텐츠를
+//  변조할 수 있었다 — 2026-07-07 진단에서 확인되어 차단.)
+export async function POST() {
   try {
+    const store = await cookies();
+    const session = await verifySessionToken(store.get(SESSION_COOKIE)?.value);
+    if (!session) {
+      return NextResponse.json({ ok: false, msg: '인증이 필요합니다.' }, { status: 401 });
+    }
+    if (session.role !== 'super_admin') {
+      return NextResponse.json({ ok: false, msg: '권한이 없습니다. (super_admin 전용)' }, { status: 403 });
+    }
+
     const pages = (await readSingleUncached('pages') ?? {}) as Record<string, unknown>;
     const brandStory = ((pages.brandStory ?? {}) as Record<string, unknown>);
     const updated = { ...pages, brandStory: { ...brandStory, processTab: PROCESS_TAB } };

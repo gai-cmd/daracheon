@@ -231,7 +231,6 @@ function Cover({ cover, reader }: { cover: EditionContent['cover']; reader: Prop
           alt=""
           fill
           priority
-          unoptimized
           aria-hidden
           sizes="100vw"
           style={{ objectFit: 'cover', opacity: 0.35 }}

@@ -229,8 +229,10 @@ export default async function BlogPostPage({
         {post.coverImage && (
           <div className={styles.cover}>
             <div className={styles.inner}>
+              {/* 커버는 글의 LCP 요소 — 우선 로드 힌트를 준다. (CLS 는 .cover img 의
+                  aspect-ratio 16/9 로 이미 예약됨) */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.coverImage} alt={post.title} />
+              <img src={post.coverImage} alt={post.title} fetchPriority="high" decoding="async" />
             </div>
           </div>
         )}

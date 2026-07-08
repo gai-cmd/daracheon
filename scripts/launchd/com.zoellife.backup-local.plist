@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  로컬 정기 백업용 launchd 에이전트 (macOS).
+  매일 03:00 에 scripts/backup-to-local.mjs 를 실행해 프로덕션 Blob 데이터를
+  ~/Backups/zoellife 아래로 읽기 전용 백업한다.
+
+  설치:
+    1) .env.local 에 BLOB_DATA_PREFIX (필수) · BACKUP_ENCRYPTION_KEY (권장) 를 넣는다.
+    2) cp scripts/launchd/com.zoellife.backup-local.plist ~/Library/LaunchAgents/
+    3) launchctl load ~/Library/LaunchAgents/com.zoellife.backup-local.plist
+    4) (테스트) launchctl start com.zoellife.backup-local
+  해제:
+    launchctl unload ~/Library/LaunchAgents/com.zoellife.backup-local.plist
+
+  경로(node·프로젝트)가 다르면 아래 값을 본인 환경에 맞게 수정할 것.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.zoellife.backup-local</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/homebrew/bin/node</string>
+    <string>/Users/gai/personal/works/daerachoen/scripts/backup-to-local.mjs</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/gai/personal/works/daerachoen</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>3</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/gai/Backups/zoellife-backup-local.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/gai/Backups/zoellife-backup-local.err.log</string>
+</dict>
+</plist>

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readSingleUncached, writeSingle } from '@/lib/db';
+import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
@@ -88,7 +88,10 @@ export async function PUT(request: Request) {
   // Stage 3: 기존 pages blob 로드
   let existing: PagesData;
   try {
-    const loaded = await readSingleUncached<PagesData>('pages');
+    // 쓰기 베이스는 readSingleForWrite — Blob 일시 장애 시 throw 해서 아래 catch 의
+    // 503(덮어쓰기 중단)이 실제로 동작한다(진단 DATA-2). readSingleUncached 였을 때는
+    // 장애를 삼켜 stale seed/{} 로 병합·전체덮어쓰기 되어 편집분 유실 위험이 있었다.
+    const loaded = await readSingleForWrite<PagesData>('pages');
     existing = loaded ?? {};
     console.log(`[api:pages] PUT stage=3:load-existing keys=${Object.keys(existing).join(',')}`);
   } catch (err) {

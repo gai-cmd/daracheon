@@ -38,12 +38,15 @@ if (fs.existsSync(envPath)) {
 }
 
 const TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
-const PREFIX = (process.env.BLOB_DATA_PREFIX || 'fd290ae46c4cb398d2afcdc4fc7cfe95').replace(
-  /[^a-zA-Z0-9_-]/g,
-  ''
-);
+// 프로덕션 prefix 는 비밀 값(고객 PII Blob 을 보호하는 유일한 방어선)이므로 소스에
+// 하드코딩하지 않는다. env 미설정 시 실패시킨다(fail-closed).
+const PREFIX = (process.env.BLOB_DATA_PREFIX || '').replace(/[^a-zA-Z0-9_-]/g, '');
 if (!TOKEN) {
   console.error('FATAL: BLOB_READ_WRITE_TOKEN 미설정 (.env.local 또는 Actions secret 확인)');
+  process.exit(1);
+}
+if (!PREFIX) {
+  console.error('FATAL: BLOB_DATA_PREFIX 미설정 — 프로덕션 prefix 는 env 로만 주입한다 (.env.local 또는 Actions secret 확인)');
   process.exit(1);
 }
 

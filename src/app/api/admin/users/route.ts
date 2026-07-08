@@ -1,13 +1,33 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { readData, readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { hashPassword, type AdminUser } from '@/lib/admin-users';
 import { snapshotBeforeDestructive } from '@/lib/backup';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+
+// 계정 생성·수정·삭제는 관리자 계층 자체를 바꾸는 특권 작업이므로 super_admin 만 허용.
+// 미들웨어는 "유효 세션 존재"만 검사하고 역할을 구분하지 않는다 — 라우트에서 직접
+// 역할을 재검증하지 않으면 editor 가 스스로를 super_admin 으로 승격할 수 있다.
+async function requireSuperAdmin(): Promise<NextResponse | null> {
+  const store = await cookies();
+  const session = await verifySessionToken(store.get(SESSION_COOKIE)?.value);
+  if (!session) {
+    return NextResponse.json({ success: false, message: '인증이 필요합니다.' }, { status: 401 });
+  }
+  if (session.role !== 'super_admin') {
+    return NextResponse.json(
+      { success: false, message: '권한이 없습니다. (super_admin 전용)' },
+      { status: 403 }
+    );
+  }
+  return null;
+}
 
 const ROLE_VALUES = ['super_admin', 'admin', 'editor'] as const;
 
@@ -45,6 +65,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const denied = await requireSuperAdmin();
+    if (denied) return denied;
+
     const body = await request.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
@@ -121,6 +144,9 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    const denied = await requireSuperAdmin();
+    if (denied) return denied;
+
     const body = await request.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
@@ -168,6 +194,9 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const denied = await requireSuperAdmin();
+    if (denied) return denied;
+
     const body = await request.json();
     const parsed = deleteSchema.safeParse(body);
     if (!parsed.success) {

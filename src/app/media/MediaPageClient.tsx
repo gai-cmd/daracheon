@@ -118,7 +118,6 @@ export default function MediaPageClient({
             fill
             sizes="100vw"
             priority
-            unoptimized
             aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
@@ -209,7 +208,6 @@ export default function MediaPageClient({
                                   fill
                                   sizes="(max-width: 768px) 50vw, 20vw"
                                   style={{ objectFit: 'cover' }}
-                                  unoptimized
                                 />
                               </div>
                             )}
@@ -286,7 +284,6 @@ export default function MediaPageClient({
                               fill
                               sizes="(max-width: 900px) 50vw, 33vw"
                               style={{ objectFit: 'cover' }}
-                              unoptimized
                             />
                           </div>
                         ))}
@@ -332,7 +329,6 @@ export default function MediaPageClient({
                                 fill
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 style={{ objectFit: 'cover' }}
-                                unoptimized
                               />
                             </div>
                             <p

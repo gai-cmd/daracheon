@@ -7,7 +7,7 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import QrBeacon from '@/components/analytics/QrBeacon';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { readDataSafe, readSingleSafe, readSingleUncached } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
 import {
   DEFAULT_MAIN_NAV,
   type NavigationData,
@@ -344,12 +344,30 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // seed hasn't been written yet (first deploy, or Blob store empty).
   // unstable_cache 우회 — 외부 스크립트로 blob 을 업데이트했을 때도 즉시 반영.
   // 네비게이션은 페이지마다 한 번 호출되며 blob 1 회 read 라 비용 부담 작음.
-  const nav = await readSingleUncached<NavigationData>('navigation');
-  // 햄버거 메뉴의 /products sub-탭으로 사용 — 카테고리는 admin 이 자유롭게 편집하므로
-  // 정적 하드코딩 대신 매 페이지마다 1회 blob read 로 최신 상태 반영.
-  const productCategoriesRaw = await readDataSafe<{ id: string; label: string }>(
-    'productCategories'
-  );
+  // nav·productCategories·company 를 한 번에 병렬로 읽는다(직렬 3-왕복 → 1 배치).
+  // *Safe = unstable_cache(태그 db:<file>) 경유 + LKG/seed 폴백. admin 저장 시
+  // revalidateTag 로 즉시 무효화되므로 편집 반영은 유지된다. (앱 외부 스크립트가
+  // blob 을 직접 수정한 경우에만 최대 300s 지연 — 그때는 /api/admin/revalidate-pages 호출.)
+  const [nav, productCategoriesRaw, settings] = await Promise.all([
+    readSingleSafe<NavigationData>('navigation'),
+    readDataSafe<{ id: string; label: string }>('productCategories'),
+    readSingleSafe<{
+      name?: string;
+      description?: string;
+      ceo?: string;
+      businessReg?: string;
+      mailOrderReg?: string;
+      importBizReg?: string;
+      privacyOfficer?: string;
+      address?: string;
+      phone?: string;
+      email?: string;
+      brandLogo?: string;
+      companyLogo?: string;
+      brandDesc?: string;
+      socialLinks?: Array<{ label: string; url: string }>;
+    }>('company'),
+  ]);
   const productCategories = productCategoriesRaw.map((c) => ({ id: c.id, label: c.label }));
   const rawMainNav = nav?.main ?? DEFAULT_MAIN_NAV;
   // 라벨 마이그레이션: '홈쇼핑 특별관' → 'On-Air 특별관' (URL 동일).
@@ -360,25 +378,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       : item
   );
 
-  // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)에서 관리.
-  // unstable_cache 우회 — 어드민 저장 후 즉시 반영 보장.
-  // (Navigation 과 동일한 패턴; blob 1 회 read 라 비용 부담 작음.)
-  const settings = await readSingleUncached<{
-    name?: string;
-    description?: string;
-    ceo?: string;
-    businessReg?: string;
-    mailOrderReg?: string;
-    importBizReg?: string;
-    privacyOfficer?: string;
-    address?: string;
-    phone?: string;
-    email?: string;
-    brandLogo?: string;
-    companyLogo?: string;
-    brandDesc?: string;
-    socialLinks?: Array<{ label: string; url: string }>;
-  }>('company');
+  // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)는 위 Promise.all 에서 함께 읽음.
   const brandLogo = settings?.brandLogo ?? '';
   const socialLinks = settings?.socialLinks ?? [];
   // 푸터 브랜드 설명 fallback: brandDesc(전용) → description(회사 소개) → 빈 문자열.
@@ -405,6 +405,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             모든 이미지는 Vercel Blob(우리 인프라)에서만 서빙하므로
             blob 도메인만 preconnect, GA·measurement 은 dns-prefetch 만. */}
         <link rel="preconnect" href="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com" crossOrigin="anonymous" />
+        {/* 폰트는 tokens.css 의 @import(fonts.googleapis.com → fonts.gstatic.com)로 로드된다.
+            preconnect 로 DNS·TLS 핸드셰이크를 앞당겨 렌더-블로킹 체인의 지연을 줄인다.
+            (근본 개선은 next/font/google 셀프호스트 — P2 로 별도 진행.) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         {/* hreflang 는 metadata.alternates.languages 가 자동 생성 — 중복 선언 제거. */}

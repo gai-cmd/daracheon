@@ -41,6 +41,7 @@ const navItems: NavItem[] = [
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },
   { label: 'DB 관리', href: '/admin/db', icon: '▦', superAdminOnly: true },
   { label: '백업 & 복원', href: '/admin/backup', icon: '⎔', superAdminOnly: true },
+  { label: '진단·대책 현황', href: '/admin/diagnosis', icon: '⚕', superAdminOnly: true },
   { label: '설정', href: '/admin/settings', icon: '⚙' },
   // ── 하단 별도 그룹: 디지털 에디션 (카탈로그 콘텐츠 + 신청 리드를 통합) ──
   { label: '디지털 에디션', href: '/admin/edition', icon: '◐' },

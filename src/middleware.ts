@@ -12,7 +12,6 @@ const PUBLIC_ADMIN_API_PREFIXES = [
   '/api/admin/auth/logout',
   '/api/admin/auth/password-reset',
   '/api/admin/revalidate-pages',
-  '/api/admin/seed-process-tab',
 ];
 
 function isPublicAdminPath(pathname: string): boolean {
@@ -38,9 +37,10 @@ export async function middleware(request: NextRequest) {
   // 기존 사이트 로직과 완전히 독립된 추가 블록 — /thesis 외 경로에는 영향 없음.
   if (pathname.startsWith('/thesis')) {
     const THESIS_COOKIE = 'thesis_auth';
-    const THESIS_TOKEN = process.env.THESIS_TOKEN || 'zoel-thesis-2026-ok';
+    // 하드코딩 기본값 없음 — env 미설정 시 어떤 쿠키도 통과시키지 않는다(fail-closed).
+    const THESIS_TOKEN = process.env.THESIS_TOKEN;
     const cookie = request.cookies.get(THESIS_COOKIE)?.value;
-    if (cookie === THESIS_TOKEN) {
+    if (THESIS_TOKEN && cookie === THESIS_TOKEN) {
       return NextResponse.next();
     }
     const hasError = request.nextUrl.searchParams.get('e') === '1';
