@@ -131,7 +131,7 @@ const SECTIONS: Section[] = [
 ];
 
 const ARCH: { id: string; title: string; sev: string; phase: string }[] = [
-  { id: 'ARCH-1', title: '자동화 테스트 도입 — vitest, 48개 통과(auth·totp·ssrf·백업암호화·QR서명). db 동시성은 추가 예정', sev: 'Critical', phase: '진행중' },
+  { id: 'ARCH-1', title: '자동화 테스트 62개 — auth·totp·ssrf·백업암호화·QR + db 동시성(outbox·tombstone·부활차단·유실복원). 과거 유실사고급 로직 커버', sev: 'Critical', phase: '진행중' },
   { id: 'ARCH-2', title: 'CI 품질 게이트 추가 — push/PR 시 typecheck+test(.github/workflows/ci.yml). ESLint 도입은 잔여', sev: 'High', phase: '진행중' },
   { id: 'ARCH-3', title: '환경변수 50개 산개 · 검증 config 부재', sev: 'High', phase: 'P4' },
   { id: 'ARCH-4', title: '에러 바운더리 추가 완료 (렌더 에러 시 사이트 폴백). Sentry·Blob 저하 알림은 P4', sev: 'High', phase: '진행중' },
@@ -148,7 +148,9 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
-  { date: '2026-07-08', text: '보안·성능·백업·안정성·품질 종합 대책 프로덕션 배포 완료(main). 백업 암호화·QR 서명 회귀 테스트 추가로 단위 테스트 48개.' },
+  { date: '2026-07-08', text: 'db 동시성 테스트 추가(ARCH-1) — 인메모리 Blob 목으로 outbox·tombstone·부활 차단·유실 복원·stale 베이스 거부를 검증. 과거 유실사고급 로직 커버, 단위 테스트 62개.' },
+  { date: '2026-07-08', text: '환경변수 점검 모듈 + /admin/diagnosis 연동(값 비노출). 오늘 /thesis 401(env 누락)처럼 설정 누락을 즉시 확인.' },
+  { date: '2026-07-08', text: '보안·성능·백업·안정성·품질 종합 대책 프로덕션 배포 완료(main). 백업 암호화·QR 서명 회귀 테스트 추가.' },
   { date: '2026-07-08', text: '품질 기반: vitest 도입 + 단위 테스트(auth·totp·ssrf) 통과, CI 게이트(typecheck+test) 추가로 회귀를 머지 전에 차단.' },
   { date: '2026-07-08', text: '안정성 대책: 에러 바운더리(error.tsx·global-error.tsx) 추가로 렌더 에러 시 사이트 폴백, DATA-2 싱글턴 저장 무결성(readSingleForWrite) 6개 라우트 적용.' },
   { date: '2026-07-08', text: '백업 체계 강화(서버 커버리지 전수 + 로컬 Mac 백업 신설), 진단 현황판 관리자 메뉴 추가.' },
@@ -229,7 +231,7 @@ export default function DiagnosisPage() {
             'P1 성능 6건 — 읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect',
             '백업 강화 — 서버 커버리지 전수 확장, poison 방지, 로컬(Mac) 백업 도구 신설',
             '안정성 — 에러 바운더리(렌더 에러 시 사이트 폴백) + 싱글턴 저장 무결성(DATA-2)',
-            '품질 기반 — 단위 테스트 54개(auth·totp·ssrf·백업암호화·QR·env) + CI 게이트',
+            '품질 기반 — 단위 테스트 62개(+db 동시성: outbox·tombstone·부활차단·유실복원) + CI 게이트',
           ].map((t) => (
             <li key={t} className="relative pl-6 before:absolute before:left-0 before:font-bold before:text-[#3c8659] before:content-['✓']">
               {t}
