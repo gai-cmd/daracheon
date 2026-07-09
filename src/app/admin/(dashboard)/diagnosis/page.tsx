@@ -148,6 +148,7 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-09', text: 'thesis env 설정·재배포로 /thesis 잠금 해제(라이브 검증). BLOB_DATA_PREFIX 로테이션 도구(scripts/rotate-blob-prefix.mjs) 신설 — 복사 전용·기본 dry-run·삭제 별도 가드.' },
   { date: '2026-07-08', text: 'db 동시성 테스트 추가(ARCH-1) — 인메모리 Blob 목으로 outbox·tombstone·부활 차단·유실 복원·stale 베이스 거부를 검증. 과거 유실사고급 로직 커버, 단위 테스트 62개.' },
   { date: '2026-07-08', text: '환경변수 점검 모듈 + /admin/diagnosis 연동(값 비노출). 오늘 /thesis 401(env 누락)처럼 설정 누락을 즉시 확인.' },
   { date: '2026-07-08', text: '보안·성능·백업·안정성·품질 종합 대책 프로덕션 배포 완료(main). 백업 암호화·QR 서명 회귀 테스트 추가.' },

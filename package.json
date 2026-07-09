@@ -15,6 +15,7 @@
     "init-db": "tsx scripts/init-db.ts",
     "deploy:blob": "node scripts/deploy-db-to-blob.mjs",
     "backup:local": "node scripts/backup-to-local.mjs",
+    "rotate:prefix": "node scripts/rotate-blob-prefix.mjs",
     "products:inspect": "tsx scripts/inspect-products-gallery.ts",
     "products:strip-vn": "tsx scripts/strip-vn-pack-from-products.ts",
     "proposal:pptx": "node scripts/build-proposal-pptx.mjs"
