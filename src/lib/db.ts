@@ -54,6 +54,12 @@ if (process.env.VERCEL && BLOB_DATA_PREFIX_RAW === 'db') {
 
 const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
+// 우리 Blob 스토어의 공개 호스트 (비밀 아님 — layout.tsx preconnect·CSP 에도 명시).
+// pathname 은 `${BLOB_PREFIX}${filename}.json` 으로 결정적이므로, 읽기는 list()
+// 없이 콘텐츠 URL 을 직접 구성할 수 있다 (P2 ③c fast-path). 스토어 교체 시 env 로 오버라이드.
+const BLOB_PUBLIC_BASE =
+  process.env.BLOB_PUBLIC_BASE ?? 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
+
 // Retry tuning for blob reads. Transient Vercel Blob / CDN failures
 // typically resolve in <1s; 3 attempts @ 250ms/500ms covers the common
 // case without adding meaningful latency to the happy path (first
@@ -390,6 +396,28 @@ async function blobReadRawUncached(filename: string): Promise<unknown | typeof N
   const t0 = Date.now();
   let lastErr: unknown = null;
   let noMatchCount = 0;
+
+  // ── fast path (P2 ③c): 결정적 URL 직접 fetch — list() 왕복 제거 ──
+  // 성공하면 왕복 1회로 끝. 실패(404 포함)면 여기서 아무것도 확정하지 않고
+  // 아래의 사고-단련 경로(list 재시도·NOT_FOUND 판정·백오프)로 폴백한다 —
+  // NOT_FOUND 확정·유실 방지 시맨틱의 소유권은 legacy 경로에 있다.
+  // (직접 fetch 의 404 는 '진짜 없음'과 'CDN 전파 지연'을 구분 못 하므로
+  //  fast path 단독으로 NOT_FOUND 를 확정해서는 안 된다.)
+  try {
+    const bust = `?_=${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const res = await fetch(`${BLOB_PUBLIC_BASE}/${BLOB_PREFIX}${filename}.json${bust}`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const body = await res.json();
+      console.log(`[db:read] ${filename}: OK fast-path (${Date.now() - t0}ms)`);
+      lastKnownGood.set(filename, body);
+      return body;
+    }
+    console.warn(`[db:read] ${filename}: fast-path HTTP ${res.status} — legacy 경로로 폴백`);
+  } catch (err) {
+    console.warn(`[db:read] ${filename}: fast-path 실패 — legacy 경로로 폴백`, err);
+  }
 
   for (let attempt = 0; attempt < BLOB_READ_MAX_ATTEMPTS; attempt++) {
     if (attempt > 0) await sleep(BLOB_READ_BACKOFF_MS[attempt] ?? 500);

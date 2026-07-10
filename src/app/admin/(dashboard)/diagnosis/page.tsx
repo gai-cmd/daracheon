@@ -154,12 +154,13 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
   { badge: '1 · 완료', done: true, title: 'P0 보안 · PII', desc: '권한 상승·무인증 쓰기·PII prefix·thesis·SSRF 패치 적용(미배포)' },
   { badge: '2 · 완료', done: true, title: 'P1 성능 Quick Win', desc: '읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect, 배포 경량화' },
   { badge: 'B · 완료', done: true, title: '백업 강화', desc: '서버 커버리지 전수 확장·poison 방지, 로컬 Mac 백업 + 정기 실행' },
-  { badge: '3 · 다음', done: false, title: 'P2 성능 심화', desc: '폰트 next/font 이관, 콘텐츠 라우트 ISR 전환, db.ts list() 제거' },
+  { badge: '3 · 대부분 완료', done: false, title: 'P2 성능 심화', desc: '폰트 next/font 셀프호스트 완료, db.ts 읽기 fast-path(list() 왕복 제거) 완료. ISR 전환은 보류 권고 — 데이터 계층이 이미 태그 무효화 캐시라 이득 대비 "저장 즉시 반영" 검증 리스크가 큼(제품 결정 필요)' },
   { badge: '4 · 완료', done: true, title: 'P3 데이터 신뢰성', desc: '복원 리허설 통과(51/51 round-trip), 서버측 QR 아카이버, 레코드 버저닝(_rev/_mt newest-wins). 잔여 소항목은 DATA-8(audit-log 보존정책)' },
   { badge: '5 · 진행중', done: false, title: 'P4 품질 기반', desc: 'vitest 테스트·CI 게이트·에러 바운더리 완료. 남음: 테스트 확대(동시성·백업), ESLint, env 검증 모듈, Sentry·Blob 저하 알림' },
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'P2 읽기 fast-path — blob 읽기가 매번 list()(URL 발견)+fetch 2왕복이던 것을, 결정적 pathname 으로 콘텐츠 URL 을 직접 구성해 1왕복으로 단축(프로덕션 실측 110~180ms). 실패·404 시 기존 사고-단련 경로(list 재시도·NOT_FOUND 판정·백오프)로 폴백 — 유실 방지 시맨틱은 legacy 경로가 그대로 소유, fast-path 는 단독으로 NOT_FOUND 를 확정하지 않는다.' },
   { date: '2026-07-10', text: 'P2 폰트 셀프호스트(PERF-3 근본 개선) — tokens.css 의 fonts.googleapis @import(렌더블로킹 외부 왕복 2회)를 next/font 로 이관. 빌드 시 폰트 3종(웨이트 14개)을 unicode-range 분할 254개 woff2 로 셀프호스트, 폰트명 문자열 참조 40여 파일을 CSS 변수(--font-sans/serif/mono)로 전환. 이메일·TinyMCE iframe·에러셸 등 CSS 변수가 닿지 않는 5개 파일은 시스템 폴백 유지. 로컬 프로덕션 빌드+브라우저 렌더 검증(세리프/고딕/모노 정상, 외부 폰트 참조 0).' },
   { date: '2026-07-10', text: 'DATA-5 종결 — 레코드 버저닝(_rev/_mt). 두 관리자가 같은 컬렉션을 동시 편집할 때 낡은 base 의 전체 배열 저장이 다른 쪽 최신 편집을 되돌리던 유실을 차단(newest-wins, 인스턴스 내 _mt 단조 증가 보장). 무변경 레코드는 스탬프 불변(churn 방지), 스탬프 없는 레거시 데이터는 종전 동작 유지(무회귀 이행). 클라이언트가 되돌린 낡은 메타로 정상 편집이 stale 오판되지 않도록 body 스프레드 라우트 3곳(products·reviews·media)에 stripRecordMeta 적용. 테스트 6개 추가(총 72개).' },
   { date: '2026-07-10', text: 'P3 진전 — ①복원 리허설 end-to-end 통과: 로컬 암호화 백업 51개를 복호화→격리 prefix 업로드→재다운로드→sha256 전량 대조(51/51). 실제 복원은 대상 prefix만 라이브로 바꾼 동일 코드 경로이므로 "백업이 복원 가능함"이 증명됨(scripts/restore-rehearsal.mjs, dry-run 기본·격리 prefix 가드). ②서버측 QR 아카이버: qr-events(당월+전월)·coupons·serials를 _qr-archive/ 월 롤업으로 일일 크론에서 아카이브(fetch 실패 시 기존본 보존하는 poison 방지, 테스트 4개). _snapshots/ 밖에 둔 이유: pruneSnapshots 보존정책에 걸려 삭제되는 유실 벡터 회피.' },
