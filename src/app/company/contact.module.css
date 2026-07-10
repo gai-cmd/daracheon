@@ -32,7 +32,7 @@
 }
 
 .kicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.32em;
   color: var(--accent);
@@ -41,7 +41,7 @@
 }
 
 .hero h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -52,7 +52,7 @@
 .hero h1 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .lede {
@@ -105,7 +105,7 @@
 }
 .ch:hover { background: rgba(212, 168, 67, 0.04); }
 .chNum {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   color: var(--accent);
@@ -128,7 +128,7 @@
   font-weight: 300;
 }
 .chVal {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.5rem;
   color: var(--accent);
   letter-spacing: -0.01em;
@@ -137,7 +137,7 @@
 }
 .chValSm { font-size: 1.2rem; }
 .chHint {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.2em;
   color: rgba(255, 255, 255, 0.45);
@@ -150,7 +150,7 @@
   gap: 8px;
   color: var(--accent);
   text-decoration: none;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -177,7 +177,7 @@
 }
 
 .colHead {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   color: var(--accent);
@@ -185,7 +185,7 @@
   margin-bottom: 18px;
 }
 .col h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -196,7 +196,7 @@
 .col h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .intro {
@@ -213,7 +213,7 @@
 }
 .fld label {
   display: block;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.24em;
   color: var(--accent-soft);
@@ -231,7 +231,7 @@
   padding: 12px 14px;
   color: #fff;
   font-size: 0.95rem;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   outline: none;
   transition: border-color 300ms;
 }
@@ -262,7 +262,7 @@
   padding: 10px 16px;
   border: 1px solid rgba(212, 168, 67, 0.2);
   color: rgba(255, 255, 255, 0.65);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -303,7 +303,7 @@
   background: var(--accent);
   color: var(--lx-black);
   border: 1px solid var(--accent);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -315,7 +315,7 @@
 .submitBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .hintTxt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.2em;
   color: rgba(255, 255, 255, 0.4);
@@ -348,7 +348,7 @@
 .side h3 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .desc {
@@ -369,7 +369,7 @@
   border: none;
   padding: 14px 18px;
   color: #fff;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   letter-spacing: 0.1em;
   font-size: 0.85rem;
   outline: none;
@@ -380,7 +380,7 @@
   color: var(--lx-black);
   border: none;
   padding: 0 22px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -392,7 +392,7 @@
 
 .samples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .samples button {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.64rem;
   padding: 6px 10px;
   border: 1px dashed rgba(212, 168, 67, 0.3);
@@ -411,7 +411,7 @@
   background: rgba(10, 11, 16, 0.4);
 }
 .ok {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.26em;
   color: #6bcf7f;
@@ -419,7 +419,7 @@
   margin-bottom: 14px;
 }
 .lotProd {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.1rem;
   color: #fff;
   margin-bottom: 14px;
@@ -431,7 +431,7 @@
   font-size: 0.78rem;
 }
 .lotResult dt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.2em;
   color: rgba(255, 255, 255, 0.5);
@@ -475,7 +475,7 @@
 }
 
 .identityGroupLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   color: rgba(212, 168, 67, 0.7);
@@ -492,7 +492,7 @@
   margin: 0;
 }
 .identityDl dt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
   color: rgba(212, 168, 67, 0.85);
@@ -510,7 +510,7 @@
 .identityDl dd b {
   display: block;
   margin-top: 2px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.18em;
   color: rgba(212, 168, 67, 0.7);
@@ -541,7 +541,7 @@
   background: var(--accent);
 }
 .phoneCardLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.3em;
   color: rgba(212, 168, 67, 0.75);
@@ -561,7 +561,7 @@
   }
 }
 .phoneCardTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.2rem;
   font-weight: 400;
   color: #fff;
@@ -586,7 +586,7 @@
   }
 }
 .phoneCardNumber {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.4rem, 2.4vw, 1.8rem);
   font-weight: 400;
   color: var(--accent);
@@ -599,7 +599,7 @@
   gap: 8px;
   color: var(--accent);
   text-decoration: none;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -637,7 +637,7 @@
   background: transparent;
   border: none;
   color: #fff;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1rem;
   cursor: pointer;
   transition: color 300ms;
@@ -670,7 +670,7 @@
   padding: 18px 26px;
   background: var(--accent);
   color: var(--lx-black);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.76rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;

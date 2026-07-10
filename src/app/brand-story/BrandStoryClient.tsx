@@ -205,7 +205,7 @@ function PromoVideoModal({ item, onClose }: { item: PromoVideoItem; onClose: () 
             {(item.source || item.date) && (
               <div
                 style={{
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontFamily: "var(--font-mono), ui-monospace, monospace",
                   fontSize: '0.7rem', letterSpacing: '0.22em',
                   textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4,
                 }}
@@ -726,7 +726,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                           {(item.source || item.date) && (
                             <div
                               style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.66rem',
                                 letterSpacing: '0.2em',
                                 textTransform: 'uppercase',
@@ -885,7 +885,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                   ISO인증: '#b8a0e8', 특허: '#ff9a6c', 수상: '#ffd166', 사업등록: '#aaa',
                 };
                 return (
-                  <span key={cat} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', border: `1px solid ${COLOR_MAP[cat]}44`, borderRadius: 999, fontSize: '0.68rem', color: COLOR_MAP[cat], fontFamily: "'JetBrains Mono', monospace", letterSpacing: '0.1em' }}>
+                  <span key={cat} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', border: `1px solid ${COLOR_MAP[cat]}44`, borderRadius: 999, fontSize: '0.68rem', color: COLOR_MAP[cat], fontFamily: "var(--font-mono), monospace", letterSpacing: '0.1em' }}>
                     <span style={{ width: 6, height: 6, borderRadius: '50%', background: COLOR_MAP[cat], flexShrink: 0 }} />
                     {cat}
                   </span>
@@ -1007,7 +1007,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         background: `rgba(0,0,0,0.7)`,
                         border: `1px solid ${accentColor}88`,
                         borderRadius: 999,
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "var(--font-mono), monospace",
                         fontSize: '0.52rem',
                         letterSpacing: '0.14em',
                         color: accentColor,
@@ -1033,7 +1033,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         margin: '0 auto 7px',
                       }} />
                       <p style={{
-                        fontFamily: "'Noto Serif KR', serif",
+                        fontFamily: "var(--font-serif), serif",
                         fontSize: '0.78rem',
                         color: '#f0e8d0',
                         fontWeight: 500,
@@ -1044,7 +1044,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                         {cert.name}
                       </p>
                       <p style={{
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "var(--font-mono), monospace",
                         fontSize: '0.55rem',
                         letterSpacing: '0.1em',
                         color: `${accentColor}bb`,
@@ -1066,7 +1066,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
                               <span style={{
                                 flexShrink: 0,
-                                fontFamily: "'JetBrains Mono', monospace",
+                                fontFamily: "var(--font-mono), monospace",
                                 fontSize: '0.46rem',
                                 letterSpacing: '0.16em',
                                 color: `${accentColor}99`,
@@ -1084,7 +1084,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
                               <span style={{
                                 flexShrink: 0,
-                                fontFamily: "'JetBrains Mono', monospace",
+                                fontFamily: "var(--font-mono), monospace",
                                 fontSize: '0.46rem',
                                 letterSpacing: '0.16em',
                                 color: `${accentColor}99`,
@@ -1102,7 +1102,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
                               <span style={{
                                 flexShrink: 0,
-                                fontFamily: "'JetBrains Mono', monospace",
+                                fontFamily: "var(--font-mono), monospace",
                                 fontSize: '0.46rem',
                                 letterSpacing: '0.16em',
                                 color: `${accentColor}99`,
@@ -1186,8 +1186,8 @@ export default function BrandStoryClient({ data, showroom }: Props) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, margin: 0 }}>
                 {processStats.map((s) => (
                   <div key={s.label} style={{ padding: '20px 16px', border: '1px solid rgba(212,168,67,0.25)', background: 'rgba(255,255,255,0.02)', textAlign: 'center' }}>
-                    <div style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.6rem', color: 'var(--accent)', fontWeight: 400, lineHeight: 1, marginBottom: 8 }}>{s.value}</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }}>{s.label}</div>
+                    <div style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.6rem', color: 'var(--accent)', fontWeight: 400, lineHeight: 1, marginBottom: 8 }}>{s.value}</div>
+                    <div style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }}>{s.label}</div>
                   </div>
                 ))}
               </div>

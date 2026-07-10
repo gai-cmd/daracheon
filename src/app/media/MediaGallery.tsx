@@ -102,7 +102,7 @@ function VideoModal({ item, onClose }: { item: MediaItem; onClose: () => void })
           <div style={{ minWidth: 0, flex: 1 }}>
             <div
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.7rem', letterSpacing: '0.22em',
                 textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4,
               }}
@@ -310,7 +310,7 @@ export default function MediaGallery({
                       <div style={{ padding: '14px 4px 0', color: 'rgba(255,255,255,0.78)' }}>
                         <div
                           style={{
-                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                            fontFamily: "var(--font-mono), ui-monospace, monospace",
                             fontSize: '0.66rem',
                             letterSpacing: '0.2em',
                             textTransform: 'uppercase',

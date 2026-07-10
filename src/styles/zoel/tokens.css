@@ -2,7 +2,8 @@
    Source: tokens.json + brand-guidelines.md
    모든 variation이 import하여 동일 시스템 위에서 동작 */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200;300;400;500;600;700;900&family=Noto+Serif+KR:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* 폰트는 next/font 셀프호스트 (src/app/layout.tsx) — 외부 @import 제거 (PERF-3 근본 개선).
+   family 참조는 CSS 변수: var(--font-sans) / var(--font-serif) / var(--font-mono) */
 
 :root {
   /* Gold scale */
@@ -79,7 +80,7 @@ html {
 }
 
 body {
-  font-family: 'Noto Sans KR', ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: -0.005em;
   color: var(--lx-ink);
@@ -137,20 +138,20 @@ p, li, blockquote, figcaption, h1, h2, h3, h4, h5, h6,
   color: var(--accent);
 }
 .title-kr {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-weight: 300;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 .title-en {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-weight: 200;
   letter-spacing: 0.04em;
   line-height: 1.15;
   font-style: italic;
 }
 .wordmark-cn {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 500;
   letter-spacing: 0.12em;
   color: var(--accent);

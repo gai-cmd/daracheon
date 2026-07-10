@@ -37,7 +37,7 @@ export default async function EditionPreviewPage() {
           zIndex: 9999,
           background: 'linear-gradient(90deg, #b88c2d, #d4a843)',
           color: '#0a0b10',
-          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+          fontFamily: "var(--font-mono), ui-monospace, monospace",
           fontSize: '0.7rem',
           letterSpacing: '0.18em',
           textTransform: 'uppercase',

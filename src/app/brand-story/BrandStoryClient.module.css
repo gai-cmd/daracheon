@@ -32,7 +32,7 @@
 }
 
 .kicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -54,7 +54,7 @@
 }
 
 .hero h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -65,7 +65,7 @@
 .hero h1 em {
   font-style: normal;
   color: var(--accent);
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 
@@ -110,7 +110,7 @@
   border: 1px solid rgba(212, 168, 67, 0.25);
   color: rgba(255, 255, 255, 0.7);
   padding: 9px 14px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -150,7 +150,7 @@
 }
 .chapterTag {
   margin-top: 16px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -171,7 +171,7 @@
 }
 
 .chapterNum {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2rem, 6.5vw, 3.2rem);
   font-weight: 300;
   color: var(--accent);
@@ -179,7 +179,7 @@
   letter-spacing: -0.02em;
 }
 .chapterTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -193,11 +193,11 @@
 .chapterTitle em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .chapterSubtitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 1.05rem;
   color: var(--accent-soft);
@@ -238,7 +238,7 @@
 }
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .cardKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -246,7 +246,7 @@
   margin-bottom: 12px;
 }
 .cardTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.05rem;
   color: #fff;
   font-weight: 400;
@@ -291,7 +291,7 @@
   height: 44px;
   border: 1px solid var(--accent);
   color: var(--accent);
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.1rem;
   margin-bottom: 14px;
 }
@@ -311,7 +311,7 @@
   border-bottom: 1px solid rgba(212, 168, 67, 0.12);
 }
 .timelineEra {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.6rem;
   color: var(--accent);
   font-weight: 400;
@@ -350,7 +350,7 @@
 }
 .timelineImgCaption {
   margin-top: 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -367,7 +367,7 @@
 
 /* ── THE 20-YEAR PROOF ── 마케팅 헤드라인 + A/B/C 섹션 + 클로징 박스 ── */
 .proofHeadline {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   line-height: 1.35;
@@ -389,7 +389,7 @@
   font-weight: 500;
 }
 .proofSubtitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 1.05rem;
   color: var(--accent-soft);
@@ -420,7 +420,7 @@
 }
 .proofHeroCaption {
   margin-top: 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -474,7 +474,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 2.6rem;
   color: rgba(212, 168, 67, 0.22);
   letter-spacing: 0.18em;
@@ -490,7 +490,7 @@
   place-items: center;
   background: var(--accent);
   color: var(--lx-black);
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 600;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
@@ -504,7 +504,7 @@
   gap: 8px;
 }
 .proofCardTitleEn {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -512,7 +512,7 @@
   opacity: 0.78;
 }
 .proofCardTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.1rem;
   color: #fff;
   font-weight: 500;
@@ -555,7 +555,7 @@
 .proofClosing::before { top: 12px; }
 .proofClosing::after  { bottom: 12px; }
 .proofClosingText {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.1rem, 2.2vw, 1.5rem);
   font-weight: 300;
   line-height: 1.7;
@@ -571,7 +571,7 @@
 
 /* Cert sections */
 .certTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.1rem;
   color: #fff;
   margin-bottom: 14px;
@@ -592,7 +592,7 @@
 .metalPill {
   padding: 5px 10px;
   border: 1px solid rgba(212, 168, 67, 0.35);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.7);
@@ -622,7 +622,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 500;
 }
 .stepTxt {
@@ -642,7 +642,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .totalLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -650,7 +650,7 @@
   margin-bottom: 10px;
 }
 .totalValue {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.6rem, 5vw, 4rem);
   color: var(--accent);
   font-weight: 400;
@@ -676,7 +676,7 @@
   position: absolute;
   top: 6px;
   right: 18px;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 3rem;
   color: rgba(212, 168, 67, 0.35);
   line-height: 1;
@@ -690,7 +690,7 @@
 .testStar { opacity: 0.25; }
 .testStarFill { opacity: 1; }
 .testBody {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.8;
@@ -710,7 +710,7 @@
   font-weight: 400;
 }
 .testRole {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.5);
@@ -720,7 +720,7 @@
   margin-left: auto;
   padding: 4px 8px;
   border: 1px solid rgba(212, 168, 67, 0.4);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   letter-spacing: 0.18em;
   color: var(--accent);
@@ -736,7 +736,7 @@
   margin: 30px 0;
 }
 .emptyTag {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -773,7 +773,7 @@
   border-top: 1px dashed rgba(212, 168, 67, 0.18);
 }
 .processPhotoGalleryLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -858,7 +858,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.6rem;
   color: rgba(212, 168, 67, 0.28);
   letter-spacing: 0.18em;
@@ -870,14 +870,14 @@
   gap: 4px;
 }
 .stepCardName {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.86rem;
   color: #fff;
   font-weight: 500;
   line-height: 1.4;
 }
 .stepCardDuration {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.56rem;
   letter-spacing: 0.1em;
   color: var(--accent);

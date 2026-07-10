@@ -165,7 +165,7 @@ export default function ProductsClient({ products, productCategories, activeCate
                           <div style={{ textAlign: 'center', padding: 24 }}>
                             <div
                               style={{
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '2.4rem',
                                 color: 'var(--accent)',
                                 opacity: 0.6,
@@ -177,7 +177,7 @@ export default function ProductsClient({ products, productCategories, activeCate
                             </div>
                             <div
                               style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.6rem',
                                 letterSpacing: '0.28em',
                                 color: 'rgba(255,255,255,0.4)',

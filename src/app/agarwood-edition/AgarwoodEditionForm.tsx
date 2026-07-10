@@ -71,14 +71,14 @@ export default function AgarwoodEditionForm() {
     border: '1px solid rgba(212,168,67,0.25)',
     color: '#fff',
     fontSize: '0.95rem',
-    fontFamily: "'Noto Sans KR', sans-serif",
+    fontFamily: "var(--font-sans), sans-serif",
     outline: 'none',
     transition: 'border-color 200ms',
   };
 
   const labelStyle: React.CSSProperties = {
     display: 'block',
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+    fontFamily: "var(--font-mono), ui-monospace, monospace",
     fontSize: '0.62rem',
     letterSpacing: '0.24em',
     textTransform: 'uppercase',
@@ -187,7 +187,7 @@ export default function AgarwoodEditionForm() {
           background: submitting ? 'rgba(184,140,45,0.5)' : 'var(--accent)',
           color: 'var(--lx-black)',
           border: 'none',
-          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+          fontFamily: "var(--font-mono), ui-monospace, monospace",
           fontSize: '0.78rem',
           letterSpacing: '0.24em',
           textTransform: 'uppercase',

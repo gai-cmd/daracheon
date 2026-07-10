@@ -78,7 +78,7 @@
   display: flex;
   gap: 18px;
   align-items: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -88,7 +88,7 @@
 .heroKicker .idx { color: rgba(255, 255, 255, 0.45); }
 
 .hero h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -99,7 +99,7 @@
 .hero h1 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -122,7 +122,7 @@
   background: var(--accent);
   color: var(--lx-black);
   border: 1px solid var(--accent);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -138,7 +138,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -156,7 +156,7 @@
   backdrop-filter: blur(14px);
 }
 .heroTrustTitle {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -173,7 +173,7 @@
 }
 .heroTrustRow:last-child { border-bottom: none; }
 .heroTrustNum {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.5rem;
   color: var(--accent);
   font-weight: 400;
@@ -185,7 +185,7 @@
   font-weight: 400;
 }
 .heroTrustMeta {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -211,7 +211,7 @@
 }
 .trustStat { text-align: center; }
 .trustStat .num {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.4rem, 5vw, 3.6rem);
   color: var(--accent);
   font-weight: 400;
@@ -220,7 +220,7 @@
   letter-spacing: -0.02em;
 }
 .trustStat .lbl {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.68rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -262,7 +262,7 @@
    .problemWarning / .problemQuote 와 정확히 동일한 시각 톤. */
 .tag {
   display: inline-block;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -272,7 +272,7 @@
   border: 1px solid rgba(212, 168, 67, 0.35);
 }
 .h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.01em;
@@ -283,7 +283,7 @@
 .h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .line {
@@ -323,7 +323,7 @@
 .refCard:hover { background: rgba(212, 168, 67, 0.06); }
 
 .refNum {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.3em;
   color: var(--accent);
@@ -352,7 +352,7 @@
 }
 .verifiedCard:hover { border-color: var(--accent); transform: translateY(-4px); }
 .verifiedStep {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -367,7 +367,7 @@
   margin-bottom: 8px;
 }
 .verifiedEn {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 0.85rem;
   color: var(--accent-soft);
@@ -413,7 +413,7 @@
 .certTile:hover { background: rgba(212, 168, 67, 0.06); }
 
 .certNo {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.32em;
   color: var(--accent);
@@ -421,7 +421,7 @@
   margin-bottom: 4px;
 }
 .certNum {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.4rem, 2vw, 1.7rem);
   font-weight: 300;
   line-height: 1;
@@ -444,7 +444,7 @@
   background: var(--accent);
 }
 .certTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.25rem;
   color: rgba(255, 255, 255, 0.96);
   line-height: 1.3;
@@ -474,7 +474,7 @@
 .problemHead { text-align: center; max-width: 820px; margin: 0 auto; }
 .problemWarning {
   display: inline-block;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -484,7 +484,7 @@
   border: 1px solid rgba(212, 168, 67, 0.35);
 }
 .problemQuote {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.01em;
@@ -496,7 +496,7 @@
   color: var(--accent);
   font-style: normal;
   font-weight: 400;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
 }
 .problemLead {
   font-size: 1rem;
@@ -521,7 +521,7 @@
   height: auto;
 }
 .pictoLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 9px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -560,7 +560,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -582,14 +582,14 @@
 }
 
 .problemCardTag {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--accent);
 }
 .problemCard h3 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.2rem;
   font-weight: 400;
   color: #fff;
@@ -615,7 +615,7 @@
 @media (min-width: 800px) { .speciesCompare { padding: 36px 40px; } }
 
 .speciesCompareTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.15rem, 2.4vw, 1.6rem);
   font-weight: 600;
   letter-spacing: -0.005em;
@@ -712,7 +712,7 @@
 
 .speciesBadge {
   align-self: flex-start;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -736,7 +736,7 @@
   gap: 4px;
 }
 .speciesKorean {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.12rem;
   font-weight: 500;
   color: #fff;
@@ -745,7 +745,7 @@
 @media (min-width: 800px) { .speciesKorean { font-size: 1.2rem; } }
 .speciesRowOfficial .speciesKorean { color: #f5e6c5; }
 .speciesLatin {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 0.88rem;
   color: rgba(255, 255, 255, 0.55);
@@ -764,7 +764,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.78);
@@ -796,7 +796,7 @@
 }
 
 .speciesSummary {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.55;
@@ -908,7 +908,7 @@
 @media (min-width: 800px) { .solutionCta { padding: 56px 48px; } }
 
 .solutionCtaTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.35rem, 2.6vw, 1.9rem);
   font-weight: 300;
   letter-spacing: -0.01em;
@@ -920,7 +920,7 @@
   color: var(--accent);
   font-style: normal;
   font-weight: 400;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
 }
 
 .solutionCtaPillars {
@@ -939,7 +939,7 @@
   background: rgba(10, 11, 16, 0.6);
 }
 .solutionCtaPillarLabel {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -988,7 +988,7 @@
 }
 .agCard:hover { border-color: var(--accent); }
 .agNum {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.28em;
   color: var(--accent);
@@ -1022,14 +1022,14 @@
   padding-top: 22px;
 }
 .benIdx {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.4rem;
   color: var(--accent);
   font-weight: 400;
   margin-bottom: 8px;
 }
 .benKo {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -1064,7 +1064,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .procIdx {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.6rem;
   color: var(--accent);
   font-weight: 400;
@@ -1078,7 +1078,7 @@
   margin-bottom: 8px;
 }
 .procDur {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -1126,7 +1126,7 @@
 }
 .metaTopTag {
   display: inline-block;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   padding: 6px 14px;
   font-size: 0.66rem;
   font-weight: 400;
@@ -1139,7 +1139,7 @@
   border-radius: 2px;
 }
 .metaTitleQuote {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   line-height: 1.4;
@@ -1151,7 +1151,7 @@
   font-style: normal;
   color: var(--accent, #d4a843);
   font-weight: 400;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
 }
 .metaBodyLead {
   font-size: 1rem;
@@ -1186,7 +1186,7 @@
 }
 .originAuthNumTag {
   display: inline-block;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -1198,7 +1198,7 @@
   border-radius: 2px;
 }
 .originAuthTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 200;
   letter-spacing: -0.02em;
   line-height: 1.3;
@@ -1287,7 +1287,7 @@
 @media (min-width: 1024px) { .originAuthEra { padding: 28px 16px 24px; } }
 .originAuthEra:hover { background: rgba(212, 168, 67, 0.06); }
 .originAuthEraName {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -1364,14 +1364,14 @@
   border: 1px solid rgba(212, 168, 67, 0.18);
 }
 .originAuthFarmKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent, #d4a843);
 }
 .originAuthFarmName {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.02rem;
   color: #fff;
   font-weight: 400;

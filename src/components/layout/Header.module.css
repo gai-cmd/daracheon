@@ -46,7 +46,7 @@
 }
 
 .navBrandKr {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.84rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
@@ -55,7 +55,7 @@
 }
 
 .navBrandEn {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   font-weight: 400;
   color: var(--accent);

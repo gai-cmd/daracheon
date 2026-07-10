@@ -225,7 +225,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const monoKicker: React.CSSProperties = {
-  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+  fontFamily: "var(--font-mono), ui-monospace, monospace",
   fontSize: '0.66rem',
   letterSpacing: '0.24em',
   textTransform: 'uppercase',
@@ -680,7 +680,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
       </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
-        <h1 style={{ fontSize: '1.35rem', fontWeight: 600, fontFamily: "'Noto Serif KR', serif", margin: 0 }}>
+        <h1 style={{ fontSize: '1.35rem', fontWeight: 600, fontFamily: "var(--font-serif), serif", margin: 0 }}>
           {t.title}
         </h1>
         <div style={{ display: 'flex', gap: 12, alignItems: 'baseline', flexShrink: 0 }}>

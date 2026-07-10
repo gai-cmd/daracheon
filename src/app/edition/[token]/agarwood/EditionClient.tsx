@@ -100,7 +100,7 @@ function ReaderStrip({ reader }: { reader: Props['reader'] }) {
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         borderBottom: '1px solid rgba(212,168,67,0.15)',
-        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+        fontFamily: "var(--font-mono), ui-monospace, monospace",
         fontSize: '0.62rem',
         letterSpacing: '0.24em',
         textTransform: 'uppercase',
@@ -189,7 +189,7 @@ function SideDots({
             />
             <span
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.58rem',
                 letterSpacing: '0.22em',
                 textTransform: 'uppercase',
@@ -249,7 +249,7 @@ function Cover({ cover, reader }: { cover: EditionContent['cover']; reader: Prop
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.7rem',
               letterSpacing: '0.36em',
               textTransform: 'uppercase',
@@ -263,7 +263,7 @@ function Cover({ cover, reader }: { cover: EditionContent['cover']; reader: Prop
         <RevealOnScroll delay={150}>
           <h1
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(2.4rem, 7vw, 5rem)',
               lineHeight: 1.2,
@@ -280,7 +280,7 @@ function Cover({ cover, reader }: { cover: EditionContent['cover']; reader: Prop
           <RevealOnScroll delay={250}>
             <div
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontWeight: 400,
                 fontSize: 'clamp(2rem, 6vw, 4rem)',
                 lineHeight: 1.2,
@@ -325,7 +325,7 @@ function Cover({ cover, reader }: { cover: EditionContent['cover']; reader: Prop
         <RevealOnScroll delay={500}>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.66rem',
               letterSpacing: '0.28em',
               textTransform: 'uppercase',
@@ -355,7 +355,7 @@ function ScrollHint() {
         alignItems: 'center',
         gap: 10,
         color: 'rgba(255,255,255,0.45)',
-        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+        fontFamily: "var(--font-mono), ui-monospace, monospace",
         fontSize: '0.6rem',
         letterSpacing: '0.3em',
         textTransform: 'uppercase',
@@ -396,7 +396,7 @@ function Foreword({ foreword }: { foreword: EditionContent['foreword'] }) {
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -410,7 +410,7 @@ function Foreword({ foreword }: { foreword: EditionContent['foreword'] }) {
         <RevealOnScroll delay={100}>
           <p
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontStyle: 'italic',
               fontSize: 'clamp(1.4rem, 3vw, 2rem)',
@@ -447,7 +447,7 @@ function Foreword({ foreword }: { foreword: EditionContent['foreword'] }) {
           >
             <div
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontSize: '1rem',
                 color: GOLD_SOFT,
                 marginBottom: 4,
@@ -457,7 +457,7 @@ function Foreword({ foreword }: { foreword: EditionContent['foreword'] }) {
             </div>
             <div
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.62rem',
                 letterSpacing: '0.24em',
                 textTransform: 'uppercase',
@@ -497,7 +497,7 @@ function ChapterDivider({
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 200,
               fontSize: 'clamp(4rem, 12vw, 9rem)',
               color: GOLD,
@@ -510,7 +510,7 @@ function ChapterDivider({
           <div
             style={{
               marginTop: 16,
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.66rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -539,7 +539,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
         <RevealOnScroll>
           <h2
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
               lineHeight: 1.3,
@@ -555,7 +555,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
           <RevealOnScroll delay={100}>
             <p
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontStyle: 'italic',
                 color: GOLD_SOFT,
                 fontSize: 'clamp(1rem, 1.8vw, 1.18rem)',
@@ -597,7 +597,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
             >
               <p
                 style={{
-                  fontFamily: "'Noto Serif KR', serif",
+                  fontFamily: "var(--font-serif), serif",
                   fontWeight: 400,
                   fontStyle: 'italic',
                   fontSize: 'clamp(1.4rem, 3.4vw, 2.2rem)',
@@ -612,7 +612,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
               {chapter.pull.source && (
                 <div
                   style={{
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontFamily: "var(--font-mono), ui-monospace, monospace",
                     fontSize: '0.66rem',
                     letterSpacing: '0.26em',
                     textTransform: 'uppercase',
@@ -642,7 +642,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
                 <div key={h.label} style={{ textAlign: 'center' }}>
                   <div
                     style={{
-                      fontFamily: "'Noto Serif KR', serif",
+                      fontFamily: "var(--font-serif), serif",
                       fontWeight: 300,
                       fontSize: 'clamp(1.5rem, 3vw, 2.4rem)',
                       color: GOLD,
@@ -654,7 +654,7 @@ function Chapter({ chapter, alt }: { chapter: EditionContent['chapters'][number]
                   </div>
                   <div
                     style={{
-                      fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                      fontFamily: "var(--font-mono), ui-monospace, monospace",
                       fontSize: '0.6rem',
                       letterSpacing: '0.24em',
                       textTransform: 'uppercase',
@@ -757,7 +757,7 @@ function GallerySection({ gallery }: { gallery: NonNullable<EditionContent['gall
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -771,7 +771,7 @@ function GallerySection({ gallery }: { gallery: NonNullable<EditionContent['gall
         <RevealOnScroll delay={100}>
           <h2
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
               margin: 0,
@@ -786,7 +786,7 @@ function GallerySection({ gallery }: { gallery: NonNullable<EditionContent['gall
           <RevealOnScroll delay={150}>
             <p
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontStyle: 'italic',
                 color: GOLD_SOFT,
                 fontSize: '1.08rem',
@@ -885,7 +885,7 @@ function LineupSection({ lineup }: { lineup: NonNullable<EditionContent['lineup'
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -899,7 +899,7 @@ function LineupSection({ lineup }: { lineup: NonNullable<EditionContent['lineup'
         <RevealOnScroll delay={100}>
           <h2
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
               margin: 0,
@@ -914,7 +914,7 @@ function LineupSection({ lineup }: { lineup: NonNullable<EditionContent['lineup'
           <RevealOnScroll delay={150}>
             <p
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontStyle: 'italic',
                 color: GOLD_SOFT,
                 fontSize: '1.08rem',
@@ -947,7 +947,7 @@ function LineupSection({ lineup }: { lineup: NonNullable<EditionContent['lineup'
               >
                 <div
                   style={{
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontFamily: "var(--font-mono), ui-monospace, monospace",
                     fontSize: '0.6rem',
                     letterSpacing: '0.28em',
                     textTransform: 'uppercase',
@@ -959,7 +959,7 @@ function LineupSection({ lineup }: { lineup: NonNullable<EditionContent['lineup'
                 </div>
                 <h3
                   style={{
-                    fontFamily: "'Noto Serif KR', serif",
+                    fontFamily: "var(--font-serif), serif",
                     fontWeight: 400,
                     fontSize: '1.2rem',
                     color: '#fff',
@@ -996,7 +996,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
     background: GOLD,
     color: INK,
     border: 'none',
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+    fontFamily: "var(--font-mono), ui-monospace, monospace",
     fontSize: '0.74rem',
     letterSpacing: '0.24em',
     textTransform: 'uppercase',
@@ -1025,7 +1025,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
         <RevealOnScroll>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -1039,7 +1039,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
         <RevealOnScroll delay={100}>
           <h2
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(2rem, 5vw, 3.4rem)',
               lineHeight: 1.3,
@@ -1095,7 +1095,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
               <div key={c.email}>
                 <div
                   style={{
-                    fontFamily: "'Noto Serif KR', serif",
+                    fontFamily: "var(--font-serif), serif",
                     fontSize: '1rem',
                     color: '#fff',
                     fontWeight: 400,
@@ -1106,7 +1106,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
                 </div>
                 <div
                   style={{
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontFamily: "var(--font-mono), ui-monospace, monospace",
                     fontSize: '0.6rem',
                     letterSpacing: '0.24em',
                     textTransform: 'uppercase',
@@ -1140,7 +1140,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
         <div
           style={{
             marginTop: 80,
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontFamily: "var(--font-mono), ui-monospace, monospace",
             fontSize: '0.58rem',
             letterSpacing: '0.32em',
             textTransform: 'uppercase',

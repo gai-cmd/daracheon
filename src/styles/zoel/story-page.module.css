@@ -52,7 +52,7 @@
 }
 
 .kicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -110,7 +110,7 @@
 }
 
 .hero h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.7rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -128,7 +128,7 @@
 .hero h1 em {
   font-style: normal;
   color: var(--accent);
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
   display: inline;
   white-space: normal;
@@ -174,7 +174,7 @@
 }
 
 .chapterNum {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2rem, 6.5vw, 3.2rem);
   font-weight: 300;
   color: var(--accent);
@@ -184,7 +184,7 @@
 
 .chapterTag {
   margin-top: 16px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -204,7 +204,7 @@
    Noto Serif KR · clamp(1.6rem, 5.2vw, 2.6rem) · weight 200.
    chapterBody 를 사용하는 모든 페이지(about-agarwood, media, company …)에 공통 적용. */
 .chapterBody h3 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -218,7 +218,7 @@
 .chapterBody h3 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 
@@ -227,7 +227,7 @@
    .chapterBody .chapterSubtitle (0,0,2,0) 컴파운드 셀렉터 병기. */
 .chapterBody .chapterSubtitle,
 .chapterSubtitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 1.05rem;
   color: var(--accent-soft);

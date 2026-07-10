@@ -77,7 +77,7 @@ export default function ReviewWrite({ slug, product, couponHint }: { slug: strin
           <>
             <p style={{ fontSize: 13, color: GOLD, marginBottom: 8 }}>🎁 후기 작성 감사 쿠폰이 발급되었습니다 ({done.coupon.discount})</p>
             <div style={{ border: '1.5px dashed rgba(212,168,67,0.6)', borderRadius: 12, padding: '14px 12px', marginBottom: 12, background: 'rgba(212,168,67,0.08)' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 24, fontWeight: 700, letterSpacing: '0.12em', color: GOLD }}>{done.coupon.code}</div>
+              <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 24, fontWeight: 700, letterSpacing: '0.12em', color: GOLD }}>{done.coupon.code}</div>
             </div>
             <button type="button" onClick={() => { navigator.clipboard?.writeText(done.coupon!.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {}); }}
               style={{ width: '100%', padding: '11px', borderRadius: 12, border: '1px solid rgba(212,168,67,0.5)', background: 'transparent', color: GOLD, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 10 }}>
@@ -96,7 +96,7 @@ export default function ReviewWrite({ slug, product, couponHint }: { slug: strin
   return wrap(
     <>
       <div style={{ textAlign: 'center', marginBottom: 18 }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase' }}>ZOEL LIFE · 대라천</div>
+        <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase' }}>ZOEL LIFE · 대라천</div>
         <h1 style={{ fontSize: 20, fontWeight: 700, margin: '12px 0 6px' }}>후기를 남겨주세요</h1>
         {couponHint && (
           <p style={{ fontSize: 13.5, lineHeight: 1.5, color: 'rgba(253,251,247,0.8)' }}>

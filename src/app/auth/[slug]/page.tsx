@@ -71,7 +71,7 @@ export default async function AuthPage({ params }: { params: Promise<{ slug: str
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: '#0a0b10' }}>
       <div style={{ width: '100%', maxWidth: 440, background: '#14161f', border: `1px solid ${v.color}55`, borderRadius: 18, padding: '32px 24px', color: '#fdfbf7', textAlign: 'center' }}>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase', marginBottom: 16 }}>ZOEL LIFE · 정품 인증</div>
+        <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase', marginBottom: 16 }}>ZOEL LIFE · 정품 인증</div>
         <div style={{ width: 72, height: 72, margin: '0 auto 14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38, background: `${v.color}1f`, color: v.color }}>{v.icon}</div>
         <h1 style={{ fontSize: 21, fontWeight: 700, margin: '0 0 6px', color: v.color }}>{v.title}</h1>
 
@@ -84,7 +84,7 @@ export default async function AuthPage({ params }: { params: Promise<{ slug: str
           {lines.map((l, i) => <p key={i} style={{ margin: i ? '6px 0 0' : 0 }}>{l}</p>)}
         </div>
 
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: 'rgba(253,251,247,0.4)', marginBottom: 16 }}>{result.code}</div>
+        <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 12, color: 'rgba(253,251,247,0.4)', marginBottom: 16 }}>{result.code}</div>
 
         {/* 정직 고지 */}
         <p style={{ fontSize: 11, lineHeight: 1.5, color: 'rgba(253,251,247,0.4)', marginBottom: 16 }}>

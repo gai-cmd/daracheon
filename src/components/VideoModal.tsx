@@ -96,7 +96,7 @@ export default function VideoModal({
             {item.source && (
               <div
                 style={{
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontFamily: "var(--font-mono), ui-monospace, monospace",
                   fontSize: '0.7rem', letterSpacing: '0.22em',
                   textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4,
                 }}

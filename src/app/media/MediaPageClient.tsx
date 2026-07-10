@@ -213,7 +213,7 @@ export default function MediaPageClient({
                             )}
                             <div
                               style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.6rem',
                                 letterSpacing: '0.22em',
                                 textTransform: 'uppercase',
@@ -224,7 +224,7 @@ export default function MediaPageClient({
                             </div>
                             <div
                               style={{
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.02rem',
                                 color: '#fff',
                                 fontWeight: 400,
@@ -379,7 +379,7 @@ export default function MediaPageClient({
                             <b
                               style={{
                                 display: 'block',
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.6rem',
                                 fontWeight: 400,
                                 color: 'var(--accent)',
@@ -390,7 +390,7 @@ export default function MediaPageClient({
                             </b>
                             <span
                               style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.6rem',
                                 letterSpacing: '0.22em',
                                 textTransform: 'uppercase',

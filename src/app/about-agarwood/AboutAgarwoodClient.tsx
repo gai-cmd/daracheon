@@ -118,7 +118,7 @@ function renderMarkedGold(text: string): ReactNode {
           style={{
             color: 'var(--accent)',
             fontStyle: 'normal',
-            fontFamily: "'Noto Serif KR', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 400,
           }}
         >
@@ -465,7 +465,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                         overflow: 'hidden',
                       }}
                     >
-                      <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: 'clamp(0.95rem, 3vw, 1.08rem)', color: '#fff', marginBottom: 8, fontWeight: 600, wordBreak: 'keep-all' }}>
+                      <p style={{ fontFamily: "var(--font-serif), serif", fontSize: 'clamp(0.95rem, 3vw, 1.08rem)', color: '#fff', marginBottom: 8, fontWeight: 600, wordBreak: 'keep-all' }}>
                         진짜 침향, 이제는 학명/품종을 반드시 확인하세요.
                       </p>
                       <p style={{ fontSize: 'clamp(0.82rem, 2.5vw, 0.92rem)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
@@ -533,7 +533,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                 border: '1px solid var(--accent)',
                                 display: 'grid',
                                 placeItems: 'center',
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.2rem',
                                 fontWeight: 400,
                                 color: 'var(--accent)',
@@ -541,7 +541,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             >
                               {item.step}
                             </div>
-                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
+                            <h4 style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.08rem', color: 'var(--accent-soft)', marginBottom: 10, fontWeight: 400 }}>
                               {item.title}
                             </h4>
                             <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, fontWeight: 300 }}>
@@ -603,7 +603,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           <div style={{ padding: 26 }}>
                             <div
                               style={{
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.62rem',
                                 letterSpacing: '0.26em',
                                 color: 'var(--accent)',
@@ -613,7 +613,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             >
                               {String(i + 1).padStart(2, '0')} — Reason
                             </div>
-                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
+                            <h4 style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.12rem', color: '#fff', marginBottom: 10, fontWeight: 400, lineHeight: 1.4 }}>
                               {card.title}
                             </h4>
                             <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.85, fontWeight: 300 }}>
@@ -670,7 +670,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           <div style={{ paddingTop: 18 }}>
                             <div
                               style={{
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.3rem',
                                 color: 'var(--accent)',
                                 fontWeight: 400,
@@ -679,7 +679,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             >
                               {String(i + 1).padStart(2, '0')}
                             </div>
-                            <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
+                            <h4 style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.02rem', color: '#fff', marginBottom: 8, fontWeight: 400 }}>
                               {b.title}
                             </h4>
                             <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.8, fontWeight: 300 }}>
@@ -733,7 +733,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             <div style={{ padding: '20px 24px' }}>
                             <div
                               style={{
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.1rem',
                                 color: 'var(--accent)',
                                 fontWeight: 400,
@@ -744,7 +744,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             </div>
                             <h4
                               style={{
-                                fontFamily: "'Noto Serif KR', serif",
+                                fontFamily: "var(--font-serif), serif",
                                 fontSize: '1.08rem',
                                 color: '#fff',
                                 marginBottom: 10,
@@ -814,7 +814,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                   border: '1px solid var(--accent)',
                                   display: 'grid',
                                   placeItems: 'center',
-                                  fontFamily: "'Noto Serif KR', serif",
+                                  fontFamily: "var(--font-serif), serif",
                                   fontSize: '0.85rem',
                                   color: 'var(--accent)',
                                 }}
@@ -822,10 +822,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                 {src.num}
                               </span>
                               <div>
-                                <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.08rem', color: '#fff', marginBottom: 4, fontWeight: 500 }}>
+                                <h4 style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.08rem', color: '#fff', marginBottom: 4, fontWeight: 500 }}>
                                   {src.name}
                                 </h4>
-                                <p style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.65rem', letterSpacing: '0.18em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                                <p style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.65rem', letterSpacing: '0.18em', color: 'var(--accent)', textTransform: 'uppercase' }}>
                                   {src.authority}
                                 </p>
                               </div>
@@ -871,7 +871,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           background: 'rgba(212,168,67,0.06)',
                         }}
                       >
-                        <h4 style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1.12rem', color: 'var(--accent)', marginBottom: 14, fontWeight: 500 }}>
+                        <h4 style={{ fontFamily: "var(--font-serif), serif", fontSize: '1.12rem', color: 'var(--accent)', marginBottom: 14, fontWeight: 500 }}>
                           {officialSources.conclusionTitle}
                         </h4>
                         <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.78)', lineHeight: 2, fontWeight: 300, whiteSpace: 'pre-line' }}>
@@ -943,7 +943,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     >
                       <h3
                         style={{
-                          fontFamily: "'Noto Serif KR', serif",
+                          fontFamily: "var(--font-serif), serif",
                           fontSize: 'clamp(1.2rem, 2.4vw, 1.7rem)',
                           fontWeight: 300,
                           letterSpacing: '-0.01em',
@@ -975,7 +975,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                             >
                               <div
                                 style={{
-                                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                  fontFamily: "var(--font-mono), ui-monospace, monospace",
                                   fontSize: '0.64rem',
                                   letterSpacing: '0.26em',
                                   textTransform: 'uppercase',
@@ -1004,7 +1004,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           {auth.solutionCta.buttons.map((b, i) => {
                             const baseStyle: React.CSSProperties = {
                               padding: '14px 26px',
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontFamily: "var(--font-mono), ui-monospace, monospace",
                               fontSize: '0.7rem',
                               letterSpacing: '0.22em',
                               textTransform: 'uppercase',
@@ -1064,7 +1064,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           background: 'rgba(212,168,67,0.03)',
                         }}
                       >
-                        <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--accent)', paddingTop: 3, textTransform: 'uppercase' }}>
+                        <span style={{ flexShrink: 0, fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.6rem', letterSpacing: '0.12em', color: 'var(--accent)', paddingTop: 3, textTransform: 'uppercase' }}>
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <div>
@@ -1144,7 +1144,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       borderLeft: '4px solid var(--accent)',
                     }}
                   >
-                    <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
+                    <p style={{ fontFamily: "var(--font-serif), serif", fontSize: '0.9rem', color: 'var(--accent)', marginBottom: 6, fontWeight: 500 }}>
                       {auth.check02QuoteSource}
                     </p>
                     <p style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.72)', lineHeight: 1.85, fontWeight: 300 }}>
@@ -1185,7 +1185,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                 borderLeft: '2px solid rgba(212,168,67,0.25)',
                               }}
                             >
-                              <span style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                              <span style={{ fontFamily: "var(--font-serif), serif", fontSize: '0.86rem', color: 'var(--accent)', fontWeight: 500, whiteSpace: 'nowrap' }}>
                                 {row.era}
                               </span>
                               <span style={{ fontSize: '0.84rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
@@ -1236,7 +1236,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           background: item.highlight ? 'rgba(255,100,80,0.05)' : 'rgba(255,255,255,0.02)',
                         }}
                       >
-                        <p style={{ fontFamily: "'Noto Serif KR', serif", fontSize: '1rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 8 }}>
+                        <p style={{ fontFamily: "var(--font-serif), serif", fontSize: '1rem', color: item.highlight ? '#ff9080' : '#fff', fontWeight: 500, marginBottom: 8 }}>
                           {item.doc}
                         </p>
                         <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, fontWeight: 300 }}>
@@ -1343,7 +1343,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               style={{
                                 padding: '4px 10px',
                                 border: '1px solid rgba(212,168,67,0.35)',
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.62rem',
                                 letterSpacing: '0.22em',
                                 color: 'var(--accent)',
@@ -1356,7 +1356,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </div>
                           <h4
                             style={{
-                              fontFamily: "'Noto Serif KR', serif",
+                              fontFamily: "var(--font-serif), serif",
                               fontSize: '1.05rem',
                               color: '#fff',
                               marginBottom: 6,
@@ -1368,7 +1368,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </h4>
                           <p
                             style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontFamily: "var(--font-mono), ui-monospace, monospace",
                               fontSize: '0.62rem',
                               letterSpacing: '0.2em',
                               color: 'var(--accent-soft)',
@@ -1395,7 +1395,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       color: 'rgba(255,255,255,0.5)',
                     }}
                   >
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                    <div style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
                       Coming Soon
                     </div>
                     경전 자료가 곧 업데이트됩니다.
@@ -1473,7 +1473,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               style={{
                                 padding: '4px 10px',
                                 border: '1px solid rgba(212,168,67,0.35)',
-                                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                fontFamily: "var(--font-mono), ui-monospace, monospace",
                                 fontSize: '0.62rem',
                                 letterSpacing: '0.22em',
                                 color: 'var(--accent)',
@@ -1486,7 +1486,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </div>
                           <h4
                             style={{
-                              fontFamily: "'Noto Serif KR', serif",
+                              fontFamily: "var(--font-serif), serif",
                               fontSize: '1.05rem',
                               color: '#fff',
                               marginBottom: 6,
@@ -1498,7 +1498,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                           </h4>
                           <p
                             style={{
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontFamily: "var(--font-mono), ui-monospace, monospace",
                               fontSize: '0.62rem',
                               letterSpacing: '0.2em',
                               color: 'var(--accent-soft)',
@@ -1525,7 +1525,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       color: 'rgba(255,255,255,0.5)',
                     }}
                   >
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                    <div style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
                       Coming Soon
                     </div>
                     문헌 자료가 곧 업데이트됩니다.
@@ -1610,7 +1610,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                   style={{
                                     padding: '4px 10px',
                                     border: '1px solid rgba(212,168,67,0.35)',
-                                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                    fontFamily: "var(--font-mono), ui-monospace, monospace",
                                     fontSize: '0.62rem',
                                     letterSpacing: '0.22em',
                                     color: 'var(--accent)',
@@ -1627,7 +1627,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               </div>
                               <h4
                                 style={{
-                                  fontFamily: "'Noto Serif KR', serif",
+                                  fontFamily: "var(--font-serif), serif",
                                   fontSize: '0.98rem',
                                   color: '#fff',
                                   marginBottom: 8,
@@ -1643,7 +1643,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                   {paper.authors}
                                 </p>
                               )}
-                              <p style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', fontSize: '0.8rem', color: 'var(--accent-soft)', flex: 1 }}>
+                              <p style={{ fontFamily: "var(--font-serif), serif", fontStyle: 'italic', fontSize: '0.8rem', color: 'var(--accent-soft)', flex: 1 }}>
                                 {paper.journal}
                               </p>
 
@@ -1672,7 +1672,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                         border: '1px solid rgba(212,168,67,0.4)',
                                         background: 'transparent',
                                         color: 'var(--accent)',
-                                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                        fontFamily: "var(--font-mono), ui-monospace, monospace",
                                         fontSize: '0.64rem',
                                         letterSpacing: '0.18em',
                                         textTransform: 'uppercase',
@@ -1700,7 +1700,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                                         border: '1px solid var(--accent)',
                                         background: 'var(--accent)',
                                         color: 'var(--lx-black)',
-                                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                                        fontFamily: "var(--font-mono), ui-monospace, monospace",
                                         fontSize: '0.64rem',
                                         letterSpacing: '0.18em',
                                         textTransform: 'uppercase',
@@ -1741,7 +1741,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       color: 'rgba(255,255,255,0.5)',
                     }}
                   >
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                    <div style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
                       Coming Soon
                     </div>
                     논문 자료가 곧 업데이트됩니다.
@@ -1822,7 +1822,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                               display: 'inline-block',
                               padding: '5px 12px',
                               border: '1px solid rgba(212,168,67,0.4)',
-                              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                              fontFamily: "var(--font-mono), ui-monospace, monospace",
                               fontSize: '0.65rem',
                               letterSpacing: '0.12em',
                               color: 'var(--accent)',
@@ -1918,7 +1918,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
             <div
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.62rem',
                 letterSpacing: '0.26em',
                 color: 'var(--accent)',
@@ -1931,7 +1931,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
             <h3
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontSize: 'clamp(1.05rem, 2.6vw, 1.25rem)',
                 color: '#fff',
                 marginBottom: 8,
@@ -1955,7 +1955,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 marginBottom: 22,
               }}
             >
-              <span style={{ fontFamily: "'Noto Serif KR', serif", fontStyle: 'italic', color: 'var(--accent-soft)' }}>
+              <span style={{ fontFamily: "var(--font-serif), serif", fontStyle: 'italic', color: 'var(--accent-soft)' }}>
                 {paperSummaryOpen.journal}
               </span>
               <span aria-hidden style={{ color: 'rgba(212,168,67,0.4)' }}>·</span>
@@ -1970,7 +1970,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
 
             <p
               style={{
-                fontFamily: "'Noto Serif KR', serif",
+                fontFamily: "var(--font-serif), serif",
                 fontSize: 'clamp(0.92rem, 2.3vw, 1rem)',
                 color: 'rgba(255,255,255,0.85)',
                 lineHeight: 2,
@@ -1994,7 +1994,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     border: '1px solid var(--accent)',
                     background: 'transparent',
                     color: 'var(--accent)',
-                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontFamily: "var(--font-mono), ui-monospace, monospace",
                     fontSize: '0.66rem',
                     letterSpacing: '0.2em',
                     textTransform: 'uppercase',

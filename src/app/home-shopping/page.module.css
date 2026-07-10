@@ -44,7 +44,7 @@
   }
 }
 .hero h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -54,7 +54,7 @@
 .hero h1 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .lede {
@@ -92,7 +92,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.68rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -114,7 +114,7 @@
 }
 
 .live h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 300;
   letter-spacing: -0.01em;
@@ -125,7 +125,7 @@
 .live h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .liveMeta {
@@ -165,7 +165,7 @@
   padding: 12px 22px;
   background: #ff3838;
   color: #fff;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -181,7 +181,7 @@
   background: transparent;
   border: 1px solid rgba(212, 168, 67, 0.35);
   color: var(--accent);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -203,7 +203,7 @@
   backdrop-filter: blur(12px);
 }
 .cdN {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 2.4rem;
   color: var(--accent);
   font-weight: 400;
@@ -212,7 +212,7 @@
 }
 .cdL {
   margin-top: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.24em;
   color: rgba(255, 255, 255, 0.55);
@@ -235,7 +235,7 @@
   margin-bottom: 40px;
 }
 .schedHead h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -244,7 +244,7 @@
 .schedHead h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .schedToggle {
@@ -256,7 +256,7 @@
   color: rgba(255, 255, 255, 0.6);
   border: none;
   padding: 10px 18px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.64rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -292,7 +292,7 @@
 .schedRow:hover { background: rgba(212, 168, 67, 0.04); }
 
 .schedDate {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.55);
@@ -300,7 +300,7 @@
 }
 .schedDateDay {
   display: block;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 2rem;
   color: var(--accent);
   font-weight: 400;
@@ -313,7 +313,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -325,7 +325,7 @@
   color: var(--accent);
   display: grid;
   place-items: center;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 0.78rem;
   letter-spacing: 0;
   flex-shrink: 0;
@@ -345,7 +345,7 @@
   text-wrap: pretty;
 }
 .schedProdOffer {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
   color: rgba(255, 255, 255, 0.55);
@@ -354,7 +354,7 @@
 .schedProdOffer b { color: var(--accent); font-weight: 500; }
 
 .schedHost {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.68rem;
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.55);
@@ -364,7 +364,7 @@
 .schedAction { display: flex; gap: 8px; align-items: center; }
 
 .schedStatus {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.64rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -394,7 +394,7 @@
   color: rgba(255, 255, 255, 0.6);
   border: none;
   padding: 11px 22px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.64rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -445,7 +445,7 @@
   margin-bottom: 18px;
 }
 .calMonthLabel {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.3rem;
   font-weight: 300;
   color: #fff;
@@ -461,7 +461,7 @@
   gap: 26px;
 }
 .calMonthName {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.02rem;
   font-weight: 300;
   color: rgba(255, 255, 255, 0.85);
@@ -494,7 +494,7 @@
 }
 .calWeekday {
   text-align: center;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   letter-spacing: 0.1em;
   color: rgba(255, 255, 255, 0.4);
@@ -520,7 +520,7 @@
   transition: background 220ms, border-color 220ms;
 }
 .calDayNum {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.74rem;
   font-variant-numeric: tabular-nums;
 }
@@ -567,7 +567,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -621,7 +621,7 @@
 .calRowDate { text-align: center; }
 .calRowDay {
   display: block;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.8rem;
   font-weight: 400;
   color: var(--accent);
@@ -631,7 +631,7 @@
 .calRowMon {
   display: block;
   margin-top: 5px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.58rem;
   letter-spacing: 0.14em;
   color: rgba(255, 255, 255, 0.5);
@@ -643,7 +643,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -657,7 +657,7 @@
   place-items: center;
   border: 1px solid var(--accent);
   color: var(--accent);
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 0.68rem;
   letter-spacing: 0;
   flex-shrink: 0;
@@ -674,7 +674,7 @@
   text-wrap: pretty;
 }
 .calRowOffer {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.64rem;
   letter-spacing: 0.12em;
   color: rgba(255, 255, 255, 0.55);
@@ -690,7 +690,7 @@
   gap: 8px;
 }
 .calBadge {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -706,7 +706,7 @@
 .calBadge_canceled { color: rgba(255, 180, 120, 0.85); border-color: rgba(255, 180, 120, 0.35); }
 
 .calReplay {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -729,7 +729,7 @@
   max-width: 880px;
 }
 .synopsisKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   color: var(--accent);
@@ -737,7 +737,7 @@
   margin-bottom: 18px;
 }
 .synopsisHead h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -747,7 +747,7 @@
 .synopsisHead h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 
@@ -793,7 +793,7 @@
   align-items: baseline;
 }
 .synopsisRow dt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.24em;
   color: var(--accent-soft);
@@ -826,7 +826,7 @@
   max-width: 100%;
 }
 .sponsoredKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   letter-spacing: 0.32em;
   color: #b489e8;
@@ -834,7 +834,7 @@
   margin-bottom: 16px;
 }
 .sponsored h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -894,7 +894,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.26em;
   color: #b489e8;
@@ -910,7 +910,7 @@
   background: #b489e8;
 }
 .spTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.4rem, 2.4vw, 1.9rem);
   font-weight: 300;
   color: #fff;
@@ -921,7 +921,7 @@
 .spTitle em {
   color: #b489e8;
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
   font-size: 0.85em;
 }
@@ -949,7 +949,7 @@
   line-height: 1.6;
 }
 .spCastRow dt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.22em;
   color: rgba(176, 132, 230, 0.85);
@@ -976,7 +976,7 @@
   color: rgba(176, 132, 230, 0.85);
   font-weight: 500;
   margin-right: 4px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -985,7 +985,7 @@
 .spStatus {
   margin-left: auto;
   padding: 4px 10px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1024,7 +1024,7 @@
   justify-content: center;
   gap: 8px;
   color: rgba(255, 255, 255, 0.4);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.74rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -1071,14 +1071,14 @@
   height: 26px;
 }
 .spVideoLinkChannel {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.05rem, 2vw, 1.35rem);
   font-weight: 400;
   color: #fff;
   letter-spacing: -0.005em;
 }
 .spVideoLinkCta {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -1105,14 +1105,14 @@
 }
 
 .previewKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   color: var(--accent);
   text-transform: uppercase;
 }
 .previewHeadline {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.4rem, 2.6vw, 2rem);
   font-weight: 300;
   letter-spacing: -0.01em;
@@ -1154,7 +1154,7 @@
 }
 .previewChapter:last-child { border-bottom: none; }
 .previewChapterTime {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   color: var(--accent);
@@ -1191,7 +1191,7 @@
   border: 1px solid rgba(212, 168, 67, 0.2);
 }
 .previewKeysHead {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.28em;
   color: var(--accent);
@@ -1242,7 +1242,7 @@
   max-width: 880px;
 }
 .recapKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   color: var(--accent);
@@ -1250,7 +1250,7 @@
   margin-bottom: 18px;
 }
 .recapHead h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -1289,7 +1289,7 @@
   color: #fff;
 }
 .recapCardDate {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.74rem;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.6);
@@ -1297,7 +1297,7 @@
 }
 .recapCardStatus {
   margin-left: auto;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1337,7 +1337,7 @@
   margin-bottom: 36px;
 }
 .nsKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   color: var(--accent);
@@ -1345,7 +1345,7 @@
   margin-bottom: 18px;
 }
 .nsHead h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -1355,7 +1355,7 @@
 .nsHead h2 em {
   color: var(--accent);
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 400;
 }
 .nsLede {
@@ -1404,7 +1404,7 @@
   top: 16px;
   right: 16px;
   padding: 10px 22px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.32em;
@@ -1425,7 +1425,7 @@
   display: inline-flex;
   align-self: flex-start;
   padding: 6px 14px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.32em;
   color: #fff;
@@ -1433,7 +1433,7 @@
   text-transform: uppercase;
 }
 .nsSoldOutTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.3rem, 3.6vw, 1.85rem);
   font-weight: 200;
   letter-spacing: -0.02em;
@@ -1446,7 +1446,7 @@
 .nsSoldOutTitle em {
   color: #ff6b6b;
   font-style: normal;
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-weight: 500;
 }
 .nsSoldOutBody {
@@ -1477,7 +1477,7 @@
   min-width: 0;
 }
 .nsSoldOutFacts dt {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.26em;
   color: rgba(255, 107, 107, 0.85);
@@ -1569,14 +1569,14 @@
   gap: 6px;
 }
 .nsCardKicker {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.26em;
   color: rgba(212, 168, 67, 0.85);
   text-transform: uppercase;
 }
 .nsCardTitle {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.05rem;
   font-weight: 400;
   color: #fff;

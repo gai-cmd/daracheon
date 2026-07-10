@@ -98,7 +98,7 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
           <div className={styles.heroMain}>
             <div
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.72rem',
                 letterSpacing: '0.28em',
                 textTransform: 'uppercase',
@@ -214,7 +214,7 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
                   <div style={{ padding: 14 }}>
                     <div
                       style={{
-                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                        fontFamily: "var(--font-mono), ui-monospace, monospace",
                         fontSize: '0.62rem',
                         letterSpacing: '0.22em',
                         color: 'var(--accent)',

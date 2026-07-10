@@ -296,7 +296,7 @@ export default async function CompanyPage() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
                         <span
                           style={{
-                            fontFamily: "'Noto Sans KR', sans-serif",
+                            fontFamily: "var(--font-sans), sans-serif",
                             fontSize: 'clamp(1.2rem, 2.5vw, 1.7rem)',
                             fontWeight: 500,
                             letterSpacing: '0.04em',
@@ -308,7 +308,7 @@ export default async function CompanyPage() {
                         </span>
                         <span
                           style={{
-                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                            fontFamily: "var(--font-mono), ui-monospace, monospace",
                             fontSize: 'clamp(0.7rem, 1.2vw, 0.9rem)',
                             fontWeight: 400,
                             letterSpacing: '0.32em',

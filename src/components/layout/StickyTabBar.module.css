@@ -43,7 +43,7 @@
 .tab {
   flex: 0 0 auto;
   padding: 10px 18px;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;

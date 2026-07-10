@@ -170,14 +170,14 @@ main > div > section:first-of-type::after {
      (ZOEL LIFE uses light/medium weight + tight tracking for elegance) */
   .section-title-kr {
     @apply text-3xl md:text-4xl lg:text-5xl leading-tight;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: var(--font-sans), sans-serif;
     font-weight: 300;
     letter-spacing: -0.02em;
   }
 
   .section-title-en {
     @apply text-3xl md:text-4xl lg:text-5xl leading-tight;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: var(--font-sans), sans-serif;
     font-weight: 200;
     letter-spacing: 0.02em;
   }

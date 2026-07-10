@@ -168,7 +168,7 @@ export default function AdminSidebar() {
           >
             <span
               style={{
-                fontFamily: "'Noto Sans KR', sans-serif",
+                fontFamily: "var(--font-sans), sans-serif",
                 fontSize: '0.84rem',
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -180,7 +180,7 @@ export default function AdminSidebar() {
             </span>
             <span
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.6rem',
                 fontWeight: 400,
                 color: '#d4a843',

@@ -160,6 +160,7 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'P2 폰트 셀프호스트(PERF-3 근본 개선) — tokens.css 의 fonts.googleapis @import(렌더블로킹 외부 왕복 2회)를 next/font 로 이관. 빌드 시 폰트 3종(웨이트 14개)을 unicode-range 분할 254개 woff2 로 셀프호스트, 폰트명 문자열 참조 40여 파일을 CSS 변수(--font-sans/serif/mono)로 전환. 이메일·TinyMCE iframe·에러셸 등 CSS 변수가 닿지 않는 5개 파일은 시스템 폴백 유지. 로컬 프로덕션 빌드+브라우저 렌더 검증(세리프/고딕/모노 정상, 외부 폰트 참조 0).' },
   { date: '2026-07-10', text: 'DATA-5 종결 — 레코드 버저닝(_rev/_mt). 두 관리자가 같은 컬렉션을 동시 편집할 때 낡은 base 의 전체 배열 저장이 다른 쪽 최신 편집을 되돌리던 유실을 차단(newest-wins, 인스턴스 내 _mt 단조 증가 보장). 무변경 레코드는 스탬프 불변(churn 방지), 스탬프 없는 레거시 데이터는 종전 동작 유지(무회귀 이행). 클라이언트가 되돌린 낡은 메타로 정상 편집이 stale 오판되지 않도록 body 스프레드 라우트 3곳(products·reviews·media)에 stripRecordMeta 적용. 테스트 6개 추가(총 72개).' },
   { date: '2026-07-10', text: 'P3 진전 — ①복원 리허설 end-to-end 통과: 로컬 암호화 백업 51개를 복호화→격리 prefix 업로드→재다운로드→sha256 전량 대조(51/51). 실제 복원은 대상 prefix만 라이브로 바꾼 동일 코드 경로이므로 "백업이 복원 가능함"이 증명됨(scripts/restore-rehearsal.mjs, dry-run 기본·격리 prefix 가드). ②서버측 QR 아카이버: qr-events(당월+전월)·coupons·serials를 _qr-archive/ 월 롤업으로 일일 크론에서 아카이브(fetch 실패 시 기존본 보존하는 poison 방지, 테스트 4개). _snapshots/ 밖에 둔 이유: pruneSnapshots 보존정책에 걸려 삭제되는 유실 벡터 회피.' },
   { date: '2026-07-10', text: 'DATA-1b 처리 — ADMIN_SESSION_SECRET 신규 생성·교체(전 세션 무효화). 교체 전 파급 검증: 이 시크릿이 파트너 세션·QR 시리얼 HMAC 주소·QR 추적 토큰의 폴백으로도 쓰임을 확인, qr-serials 레코드 0개(실물 QR 무영향)를 백업 매니페스트로 검증 후 실행. 비밀번호는 해시 강도 근거로 유지(사용자 결정). 백업 암호화 키·새 시크릿은 Apple 암호 앱 보관.' },

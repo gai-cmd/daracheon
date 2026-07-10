@@ -29,7 +29,7 @@ export default function SentPage() {
             display: 'grid',
             placeItems: 'center',
             color: 'var(--accent)',
-            fontFamily: "'Noto Serif KR', serif",
+            fontFamily: "var(--font-serif), serif",
             fontSize: '1.6rem',
             fontWeight: 300,
           }}
@@ -39,7 +39,7 @@ export default function SentPage() {
         </div>
         <div
           style={{
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontFamily: "var(--font-mono), ui-monospace, monospace",
             fontSize: '0.66rem',
             letterSpacing: '0.3em',
             textTransform: 'uppercase',
@@ -51,7 +51,7 @@ export default function SentPage() {
         </div>
         <h1
           style={{
-            fontFamily: "'Noto Serif KR', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 300,
             fontSize: 'clamp(1.6rem, 3.6vw, 2.2rem)',
             lineHeight: 1.4,
@@ -103,7 +103,7 @@ export default function SentPage() {
               border: '1px solid rgba(212,168,67,0.4)',
               color: 'var(--accent-soft)',
               textDecoration: 'none',
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.7rem',
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
@@ -118,7 +118,7 @@ export default function SentPage() {
               border: '1px solid rgba(255,255,255,0.18)',
               color: 'rgba(255,255,255,0.7)',
               textDecoration: 'none',
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.7rem',
               letterSpacing: '0.22em',
               textTransform: 'uppercase',

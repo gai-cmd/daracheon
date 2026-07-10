@@ -127,7 +127,7 @@ export default function PartnerLoginPage() {
         >
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.68rem',
               letterSpacing: '0.24em',
               textTransform: 'uppercase',
@@ -137,7 +137,7 @@ export default function PartnerLoginPage() {
           >
             {t.kicker}
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: '0 0 10px', fontFamily: "'Noto Serif KR', serif" }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: '0 0 10px', fontFamily: "var(--font-serif), serif" }}>
             {t.title}
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.88rem', lineHeight: 1.7, whiteSpace: 'pre-line', marginBottom: 26 }}>

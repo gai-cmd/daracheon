@@ -88,7 +88,7 @@ export default async function GuidePage() {
                   >
                     <h4
                       style={{
-                        fontFamily: "'Noto Serif KR', serif",
+                        fontFamily: "var(--font-serif), serif",
                         fontSize: '1.16rem',
                         color: 'var(--accent-soft)',
                         fontWeight: 500,

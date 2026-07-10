@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Noto_Sans_KR, Noto_Serif_KR, JetBrains_Mono } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ChromeGate from '@/components/layout/ChromeGate';
@@ -13,6 +14,31 @@ import {
   type NavigationData,
 } from '@/data/navigation';
 import '@/styles/globals.css';
+
+// ── 폰트 셀프호스트 (진단 PERF-3 근본 개선 · P2) ──────────────────────────
+// 종전: tokens.css 의 @import(fonts.googleapis.com) — CSS 체인 뒤에서야 폰트
+// CSS 를 발견하는 렌더-블로킹 외부 왕복 2회. next/font 는 빌드 시 폰트를
+// 내려받아 자산으로 셀프호스트하고 unicode-range 분할 CSS 를 인라인한다.
+// weight 목록은 종전 @import 와 동일하게 유지 (시각 회귀 방지).
+// subsets 는 preload 힌트 — 한글 글리프는 unicode-range 로 필요 시 로드된다.
+const notoSans = Noto_Sans_KR({
+  weight: ['200', '300', '400', '500', '600', '700', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+});
+const notoSerif = Noto_Serif_KR({
+  weight: ['300', '400', '500', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+});
+const jetbrainsMono = JetBrains_Mono({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
+});
 
 // 사이트 단일 정규 도메인 — 모든 메타/JSON-LD/sitemap 이 이 값을 기준.
 // 환경변수로 오버라이드 가능 (스테이징/프리뷰 대응).
@@ -399,17 +425,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="ko">
+    <html lang="ko" className={`${notoSans.variable} ${notoSerif.variable} ${jetbrainsMono.variable}`}>
       <head>
         {/* 이미지·분석 서버 사전 연결 — DNS·TLS 핸드셰이크 비용 제거.
             모든 이미지는 Vercel Blob(우리 인프라)에서만 서빙하므로
-            blob 도메인만 preconnect, GA·measurement 은 dns-prefetch 만. */}
+            blob 도메인만 preconnect, GA·measurement 은 dns-prefetch 만.
+            폰트는 next/font 셀프호스트 — 외부 폰트 호스트 preconnect 불필요. */}
         <link rel="preconnect" href="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com" crossOrigin="anonymous" />
-        {/* 폰트는 tokens.css 의 @import(fonts.googleapis.com → fonts.gstatic.com)로 로드된다.
-            preconnect 로 DNS·TLS 핸드셰이크를 앞당겨 렌더-블로킹 체인의 지연을 줄인다.
-            (근본 개선은 next/font/google 셀프호스트 — P2 로 별도 진행.) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         {/* hreflang 는 metadata.alternates.languages 가 자동 생성 — 중복 선언 제거. */}

@@ -1,6 +1,6 @@
 .legal {
   color: #d8d2c4;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 0.95rem;
   line-height: 1.85;
   letter-spacing: -0.005em;
@@ -9,7 +9,7 @@
 }
 
 .legal h1 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 3.6vw, 2.4rem);
   font-weight: 300;
   letter-spacing: -0.02em;
@@ -19,7 +19,7 @@
 }
 
 .legal h2 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.15rem, 2vw, 1.35rem);
   font-weight: 500;
   color: var(--accent, #d4a843);
@@ -37,7 +37,7 @@
 }
 
 .legal h3 {
-  font-family: 'Noto Serif KR', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.05rem;
   font-weight: 500;
   color: #ece5d4;

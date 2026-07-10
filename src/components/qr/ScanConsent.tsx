@@ -74,7 +74,7 @@ export default function ScanConsent({ benefitText, destUrl }: { benefitText?: st
           <h1 style={{ fontSize: 19, fontWeight: 700, margin: '0 0 4px' }}>할인 쿠폰이 발급되었습니다</h1>
           <p style={{ fontSize: 13.5, color: 'rgba(253,251,247,0.7)', marginBottom: 18 }}>{coupon.discount} · {until}까지 사용 가능</p>
           <div style={{ border: '1.5px dashed rgba(212,168,67,0.6)', borderRadius: 12, padding: '16px 12px', marginBottom: 14, background: 'rgba(212,168,67,0.08)' }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 26, fontWeight: 700, letterSpacing: '0.12em', color: GOLD }}>{coupon.code}</div>
+            <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 26, fontWeight: 700, letterSpacing: '0.12em', color: GOLD }}>{coupon.code}</div>
           </div>
           <button
             type="button"
@@ -100,7 +100,7 @@ export default function ScanConsent({ benefitText, destUrl }: { benefitText?: st
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: '#0a0b10' }}>
       <div style={{ width: '100%', maxWidth: 460, background: INK, border: '1px solid rgba(212,168,67,0.25)', borderRadius: 18, padding: '28px 24px', color: IVORY }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase' }}>ZOEL LIFE · 대라천</div>
+          <div style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, letterSpacing: '0.28em', color: GOLD, textTransform: 'uppercase' }}>ZOEL LIFE · 대라천</div>
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: '12px 0 6px' }}>
             잠깐! <span style={{ color: GOLD }}>{benefit}</span>
           </h1>

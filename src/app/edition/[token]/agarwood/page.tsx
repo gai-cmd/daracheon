@@ -68,7 +68,7 @@ function ExpiredOrInvalid({ title, body }: { title: string; body: string }) {
       <div style={{ maxWidth: 520, textAlign: 'center' }}>
         <div
           style={{
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontFamily: "var(--font-mono), ui-monospace, monospace",
             fontSize: '0.66rem',
             letterSpacing: '0.3em',
             textTransform: 'uppercase',
@@ -80,7 +80,7 @@ function ExpiredOrInvalid({ title, body }: { title: string; body: string }) {
         </div>
         <h1
           style={{
-            fontFamily: "'Noto Serif KR', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 300,
             fontSize: 'clamp(1.6rem, 3.2vw, 2rem)',
             lineHeight: 1.4,
@@ -109,7 +109,7 @@ function ExpiredOrInvalid({ title, body }: { title: string; body: string }) {
             background: 'var(--accent)',
             color: 'var(--lx-black)',
             textDecoration: 'none',
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontFamily: "var(--font-mono), ui-monospace, monospace",
             fontSize: '0.7rem',
             letterSpacing: '0.22em',
             textTransform: 'uppercase',

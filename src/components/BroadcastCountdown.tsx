@@ -310,7 +310,7 @@ const styles = `
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.66rem;
     letter-spacing: 0.28em;
     text-transform: uppercase;
@@ -343,7 +343,7 @@ const styles = `
   }
   .cd-shell--live .cd-box { border-color: rgba(255, 60, 60, 0.22); }
   .cd-num {
-    font-family: 'Noto Serif KR', serif;
+    font-family: var(--font-serif), serif;
     font-size: clamp(1.6rem, 3.2vw, 2.4rem);
     font-weight: 400;
     color: var(--accent);
@@ -356,7 +356,7 @@ const styles = `
   }
   .cd-label {
     margin-top: 8px;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.56rem;
     letter-spacing: 0.24em;
     color: rgba(255, 255, 255, 0.45);
@@ -366,7 +366,7 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Noto Serif KR', serif;
+    font-family: var(--font-serif), serif;
     font-size: 1.6rem;
     font-weight: 300;
     color: rgba(212, 168, 67, 0.45);
@@ -449,21 +449,21 @@ const styles = `
   }
   .cd-poster-play svg { width: 28px; height: 28px; }
   .cd-poster-channel {
-    font-family: 'Noto Serif KR', serif;
+    font-family: var(--font-serif), serif;
     font-size: clamp(1.05rem, 2vw, 1.4rem);
     font-weight: 400;
     color: #fff;
     letter-spacing: -0.005em;
   }
   .cd-poster-status {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.6rem;
     letter-spacing: 0.24em;
     text-transform: uppercase;
     color: rgba(212, 168, 67, 0.75);
   }
   .cd-poster-time {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.62rem;
     letter-spacing: 0.18em;
     color: rgba(255, 255, 255, 0.45);
@@ -480,7 +480,7 @@ const styles = `
     margin-bottom: 6px;
   }
   .cd-poster-show-title {
-    font-family: 'Noto Serif KR', serif;
+    font-family: var(--font-serif), serif;
     font-size: clamp(1.6rem, 3.6vw, 2.6rem);
     font-weight: 500;
     color: #fff;
@@ -492,14 +492,14 @@ const styles = `
     -webkit-text-fill-color: transparent;
   }
   .cd-poster-episode {
-    font-family: 'Noto Serif KR', serif;
+    font-family: var(--font-serif), serif;
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.6);
     letter-spacing: 0.02em;
     margin-top: -2px;
   }
   .cd-poster-cta {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.66rem;
     letter-spacing: 0.26em;
     text-transform: uppercase;

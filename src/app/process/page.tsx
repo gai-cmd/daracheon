@@ -286,7 +286,7 @@ export default async function ProcessPage() {
               </h1>
               <div
                 style={{
-                  fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                  fontFamily: "var(--font-mono), ui-monospace, monospace",
                   fontSize: '0.72rem',
                   letterSpacing: '0.28em',
                   textTransform: 'uppercase',
@@ -330,7 +330,7 @@ export default async function ProcessPage() {
                         <b
                           style={{
                             display: 'block',
-                            fontFamily: "'Noto Serif KR', serif",
+                            fontFamily: "var(--font-serif), serif",
                             fontSize: '1.6rem',
                             fontWeight: 400,
                             color: 'var(--accent)',
@@ -341,7 +341,7 @@ export default async function ProcessPage() {
                         </b>
                         <span
                           style={{
-                            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                            fontFamily: "var(--font-mono), ui-monospace, monospace",
                             fontSize: '0.6rem',
                             letterSpacing: '0.22em',
                             textTransform: 'uppercase',
@@ -383,7 +383,7 @@ export default async function ProcessPage() {
                       <figcaption
                         style={{
                           marginTop: 12,
-                          fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                          fontFamily: "var(--font-mono), ui-monospace, monospace",
                           fontSize: '0.62rem',
                           letterSpacing: '0.22em',
                           color: 'rgba(255,255,255,0.5)',
@@ -488,7 +488,7 @@ export default async function ProcessPage() {
                   >
                     <div
                       style={{
-                        fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                        fontFamily: "var(--font-mono), ui-monospace, monospace",
                         fontSize: '0.6rem',
                         letterSpacing: '0.22em',
                         textTransform: 'uppercase',

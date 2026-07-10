@@ -47,7 +47,7 @@ export default async function AgarwoodEditionLandingPage({
         <section>
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.66rem',
               letterSpacing: '0.32em',
               textTransform: 'uppercase',
@@ -59,7 +59,7 @@ export default async function AgarwoodEditionLandingPage({
           </div>
           <h1
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 300,
               fontSize: 'clamp(1.8rem, 4.4vw, 3rem)',
               lineHeight: 1.3,
@@ -118,7 +118,7 @@ export default async function AgarwoodEditionLandingPage({
           >
             <div
               style={{
-                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                fontFamily: "var(--font-mono), ui-monospace, monospace",
                 fontSize: '0.62rem',
                 letterSpacing: '0.26em',
                 color: 'var(--accent)',
@@ -167,7 +167,7 @@ export default async function AgarwoodEditionLandingPage({
 
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.22em',
               color: 'rgba(255,255,255,0.4)',
@@ -191,7 +191,7 @@ export default async function AgarwoodEditionLandingPage({
         >
           <div
             style={{
-              fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+              fontFamily: "var(--font-mono), ui-monospace, monospace",
               fontSize: '0.62rem',
               letterSpacing: '0.26em',
               textTransform: 'uppercase',
@@ -203,7 +203,7 @@ export default async function AgarwoodEditionLandingPage({
           </div>
           <h2
             style={{
-              fontFamily: "'Noto Serif KR', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 400,
               fontSize: '1.45rem',
               lineHeight: 1.4,

@@ -98,7 +98,7 @@ export default function ShowroomClient({ data }: Props) {
                   <div className={styles.visitValue}>
                     {visit?.address ?? '베트남 동나이성 직영 본관'}
                     <br />
-                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', fontFamily: "'JetBrains Mono', monospace" }}>
+                    <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', fontFamily: "var(--font-mono), monospace" }}>
                       {visit?.addressEn ?? 'Dong Nai, Vietnam'}
                     </span>
                   </div>
@@ -124,7 +124,7 @@ export default function ShowroomClient({ data }: Props) {
           <div className={styles.galleryHead}>
             <div className={styles.galleryTag}>Gallery · 전시장 둘러보기</div>
             <h2 className={styles.galleryTitle}>
-              총 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "'Noto Serif KR', serif", fontWeight: 400 }}>
+              총 <em style={{ color: 'var(--accent)', fontStyle: 'normal', fontFamily: "var(--font-serif), serif", fontWeight: 400 }}>
                 {gallery.length}
               </em> 컷의 현장 기록
             </h2>
