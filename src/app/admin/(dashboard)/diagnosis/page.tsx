@@ -146,7 +146,7 @@ const ARCH: { id: string; title: string; sev: string; phase: string }[] = [
   { id: 'ARCH-1', title: '자동화 테스트 62개 — auth·totp·ssrf·백업암호화·QR + db 동시성(outbox·tombstone·부활차단·유실복원). 과거 유실사고급 로직 커버', sev: 'Critical', phase: '진행중' },
   { id: 'ARCH-2', title: 'CI 품질 게이트 — typecheck+lint+test(ci.yml). ESLint 도입 완료(오류 0·경고 48 베이스라인). 워크플로 push 는 gh 토큰 workflow 스코프 인증 대기', sev: 'High', phase: '진행중' },
   { id: 'ARCH-3', title: '환경변수 50개 산개 · 검증 config 부재', sev: 'High', phase: 'P4' },
-  { id: 'ARCH-4', title: '에러 바운더리 추가 완료 (렌더 에러 시 사이트 폴백). Sentry·Blob 저하 알림은 P4', sev: 'High', phase: '진행중' },
+  { id: 'ARCH-4', title: '에러 바운더리 완료 + 백업 저하 텔레그램 알림 완료(일일 크론이 스냅샷 실패·degraded·예외 시 운영 채널로 push). Sentry 는 사용자 계정 개설 필요 — 잔여', sev: 'High', phase: '진행중' },
   { id: 'ARCH-6', title: '고아 라우트 /products-v2 삭제 완료(참조 0 확인). zoel-life-source 디렉터리는 이미 부재. 잔여: 루트의 미추적 zoel-app.js(2.2MB 레거시 번들 — 사용자 확인 후 삭제)', sev: 'Medium', phase: '진행중' },
 ];
 
@@ -160,6 +160,7 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: '백업 저하 알림(ARCH-4) — 일일 백업 크론이 스냅샷 생성 실패·degraded(컬렉션 읽기 실패·QR 아카이브 불완전)·예외 시 텔레그램으로 즉시 알림. 기존 integrations.ts 의 sendTelegramMessage 재사용(integration-settings 또는 TELEGRAM_BOT_TOKEN/CHAT_ID env). 알림 실패는 로깅만 — 백업 응답을 깨지 않음.' },
   { date: '2026-07-10', text: 'P4 품질 기반 — ①ESLint 도입(next/core-web-vitals + next/typescript, 오류 0·경고 48 베이스라인) + CI 게이트에 lint 단계 추가. module 변수 섀도잉 등 실질 오류 수정. ②고아 라우트 /products-v2 삭제(참조 0 확인). ③.gitattributes 도입(* text=auto eol=lf) — Windows 이관 잔재 CRLF 가 git status 를 덮던 노이즈 재발 방지. ④DATA-8 재점검: audit-log 는 이미 MAX_ENTRIES 2000 보존정책 보유 — 진단 기술 교정.' },
   { date: '2026-07-10', text: 'P2 읽기 fast-path — blob 읽기가 매번 list()(URL 발견)+fetch 2왕복이던 것을, 결정적 pathname 으로 콘텐츠 URL 을 직접 구성해 1왕복으로 단축(프로덕션 실측 110~180ms). 실패·404 시 기존 사고-단련 경로(list 재시도·NOT_FOUND 판정·백오프)로 폴백 — 유실 방지 시맨틱은 legacy 경로가 그대로 소유, fast-path 는 단독으로 NOT_FOUND 를 확정하지 않는다.' },
   { date: '2026-07-10', text: 'P2 폰트 셀프호스트(PERF-3 근본 개선) — tokens.css 의 fonts.googleapis @import(렌더블로킹 외부 왕복 2회)를 next/font 로 이관. 빌드 시 폰트 3종(웨이트 14개)을 unicode-range 분할 254개 woff2 로 셀프호스트, 폰트명 문자열 참조 40여 파일을 CSS 변수(--font-sans/serif/mono)로 전환. 이메일·TinyMCE iframe·에러셸 등 CSS 변수가 닿지 않는 5개 파일은 시스템 폴백 유지. 로컬 프로덕션 빌드+브라우저 렌더 검증(세리프/고딕/모노 정상, 외부 폰트 참조 0).' },

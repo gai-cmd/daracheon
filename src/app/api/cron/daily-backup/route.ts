@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSnapshot, pruneSnapshots, mirrorSnapshot } from '@/lib/backup';
 import { archiveQrRecords } from '@/lib/qr-archive';
+import { sendTelegramMessage } from '@/lib/integrations';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// 백업 저하/실패를 텔레그램으로 즉시 알린다 (진단 ARCH-4 'Blob 저하 알림').
+// Vercel Cron 실패 알림은 대시보드를 봐야 눈에 띄므로, 운영자가 실제로 보는
+// 채널로 push 한다. 알림 실패가 백업 응답 자체를 깨면 안 되므로 결과만 로깅.
+async function alertBackupProblem(summary: string): Promise<void> {
+  try {
+    const r = await sendTelegramMessage(`🚨 [zoellife 백업] ${summary}`);
+    if (!r.ok && !r.skipped) console.warn('[cron:daily-backup] 텔레그램 알림 실패:', r.error);
+  } catch (err) {
+    console.warn('[cron:daily-backup] 텔레그램 알림 예외:', err);
+  }
+}
 
 /**
  * Vercel Cron 호출 전용 엔드포인트. 매일 1회 실행되어:
@@ -34,6 +47,7 @@ export async function GET(request: NextRequest) {
 
     // Blob 비활성 또는 생성 실패 → 명확한 에러. success:true 로 감추지 않음
     if (!snap) {
+      await alertBackupProblem('Tier 1 스냅샷 생성 실패 — Blob 미설정 또는 스토리지 오류. 오늘 백업이 저장되지 않았습니다.');
       return NextResponse.json(
         {
           success: false,
@@ -81,6 +95,7 @@ export async function GET(request: NextRequest) {
           ? [`QR 아카이브 불완전(${qrArchiveError ?? qrArchive?.degraded.join(', ')})`]
           : []),
       ];
+      await alertBackupProblem(`부분 실패(degraded): ${parts.join(' / ')}. 부분 스냅샷은 저장됨 — Blob 상태 확인 필요.`);
       return NextResponse.json(
         {
           success: false,
@@ -107,6 +122,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('[cron:daily-backup] error', err);
+    await alertBackupProblem(
+      `백업 크론 예외: ${err instanceof Error ? err.message : '알 수 없는 오류'}`
+    );
     return NextResponse.json(
       { success: false, message: err instanceof Error ? err.message : '알 수 없는 오류' },
       { status: 500 }
