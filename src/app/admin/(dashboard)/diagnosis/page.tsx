@@ -133,10 +133,10 @@ const SECTIONS: Section[] = [
         fix: '레코드 버저닝(_rev/_mt) — writeDataMerged 가 양쪽에 존재하는 레코드를 개별 해소: 내용 동일이면 기존본 유지(스탬프 churn 방지), base 최신이면 편집 적용+rev 증가, 저장본이 더 새로우면 newest-wins 로 보존. 스탬프 없는 레거시는 종전 동작 유지(무회귀). 클라이언트 왕복 메타 오염은 stripRecordMeta 로 차단(products·reviews·media). 테스트 6개.',
       },
       {
-        id: 'DATA-8', sev: 'low', status: 'next',
+        id: 'DATA-8', sev: 'low', status: 'done',
         title: 'O(n) 전체 재기록 · 무한 증가 컬렉션',
-        desc: '배열 파일은 레코드 하나만 바꿔도 전체 재기록. audit-log 등은 무한 증가.',
-        fix: 'QR 롤업 아카이브는 완료(_qr-archive/). 남음: audit-log 보존정책·대형 컬렉션 아카이빙 (P3 후반).',
+        desc: '배열 파일은 레코드 하나만 바꿔도 전체 재기록. audit-log 등 무한 증가 우려.',
+        fix: '재점검 결과 audit-log 는 이미 보존정책 보유(MAX_ENTRIES 2000 트림 + removedIds 부활 방지 — 진단 당시 기술이 과대평가였음). QR per-record 는 월 롤업 아카이브(_qr-archive/) 완료. 남는 것은 O(n) 재기록 자체(레코드당 ~240KB 재쓰기)인데 현 볼륨에선 무해 — 대형화 시 재론.',
       },
     ],
   },
@@ -144,10 +144,10 @@ const SECTIONS: Section[] = [
 
 const ARCH: { id: string; title: string; sev: string; phase: string }[] = [
   { id: 'ARCH-1', title: '자동화 테스트 62개 — auth·totp·ssrf·백업암호화·QR + db 동시성(outbox·tombstone·부활차단·유실복원). 과거 유실사고급 로직 커버', sev: 'Critical', phase: '진행중' },
-  { id: 'ARCH-2', title: 'CI 품질 게이트 추가 — push/PR 시 typecheck+test(.github/workflows/ci.yml). ESLint 도입은 잔여', sev: 'High', phase: '진행중' },
+  { id: 'ARCH-2', title: 'CI 품질 게이트 — typecheck+lint+test(ci.yml). ESLint 도입 완료(오류 0·경고 48 베이스라인). 워크플로 push 는 gh 토큰 workflow 스코프 인증 대기', sev: 'High', phase: '진행중' },
   { id: 'ARCH-3', title: '환경변수 50개 산개 · 검증 config 부재', sev: 'High', phase: 'P4' },
   { id: 'ARCH-4', title: '에러 바운더리 추가 완료 (렌더 에러 시 사이트 폴백). Sentry·Blob 저하 알림은 P4', sev: 'High', phase: '진행중' },
-  { id: 'ARCH-6', title: '고아 라우트 /products-v2 · 레거시 zoel-life-source', sev: 'Medium', phase: 'P4' },
+  { id: 'ARCH-6', title: '고아 라우트 /products-v2 삭제 완료(참조 0 확인). zoel-life-source 디렉터리는 이미 부재. 잔여: 루트의 미추적 zoel-app.js(2.2MB 레거시 번들 — 사용자 확인 후 삭제)', sev: 'Medium', phase: '진행중' },
 ];
 
 const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] = [
@@ -160,6 +160,7 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'P4 품질 기반 — ①ESLint 도입(next/core-web-vitals + next/typescript, 오류 0·경고 48 베이스라인) + CI 게이트에 lint 단계 추가. module 변수 섀도잉 등 실질 오류 수정. ②고아 라우트 /products-v2 삭제(참조 0 확인). ③.gitattributes 도입(* text=auto eol=lf) — Windows 이관 잔재 CRLF 가 git status 를 덮던 노이즈 재발 방지. ④DATA-8 재점검: audit-log 는 이미 MAX_ENTRIES 2000 보존정책 보유 — 진단 기술 교정.' },
   { date: '2026-07-10', text: 'P2 읽기 fast-path — blob 읽기가 매번 list()(URL 발견)+fetch 2왕복이던 것을, 결정적 pathname 으로 콘텐츠 URL 을 직접 구성해 1왕복으로 단축(프로덕션 실측 110~180ms). 실패·404 시 기존 사고-단련 경로(list 재시도·NOT_FOUND 판정·백오프)로 폴백 — 유실 방지 시맨틱은 legacy 경로가 그대로 소유, fast-path 는 단독으로 NOT_FOUND 를 확정하지 않는다.' },
   { date: '2026-07-10', text: 'P2 폰트 셀프호스트(PERF-3 근본 개선) — tokens.css 의 fonts.googleapis @import(렌더블로킹 외부 왕복 2회)를 next/font 로 이관. 빌드 시 폰트 3종(웨이트 14개)을 unicode-range 분할 254개 woff2 로 셀프호스트, 폰트명 문자열 참조 40여 파일을 CSS 변수(--font-sans/serif/mono)로 전환. 이메일·TinyMCE iframe·에러셸 등 CSS 변수가 닿지 않는 5개 파일은 시스템 폴백 유지. 로컬 프로덕션 빌드+브라우저 렌더 검증(세리프/고딕/모노 정상, 외부 폰트 참조 0).' },
   { date: '2026-07-10', text: 'DATA-5 종결 — 레코드 버저닝(_rev/_mt). 두 관리자가 같은 컬렉션을 동시 편집할 때 낡은 base 의 전체 배열 저장이 다른 쪽 최신 편집을 되돌리던 유실을 차단(newest-wins, 인스턴스 내 _mt 단조 증가 보장). 무변경 레코드는 스탬프 불변(churn 방지), 스탬프 없는 레거시 데이터는 종전 동작 유지(무회귀 이행). 클라이언트가 되돌린 낡은 메타로 정상 편집이 stale 오판되지 않도록 body 스프레드 라우트 3곳(products·reviews·media)에 stripRecordMeta 적용. 테스트 6개 추가(총 72개).' },

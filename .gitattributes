@@ -1,0 +1,16 @@
+# 줄바꿈 정책 — Windows 이관 잔재 CRLF 재발 방지 (2026-07-10 노이즈 사고)
+# 텍스트 파일은 저장소에 LF 로 정규화, 체크아웃도 LF.
+* text=auto eol=lf
+
+# 바이너리는 무변환
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.pptx binary
+*.zip binary

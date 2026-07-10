@@ -9,7 +9,7 @@ const MAX_PAGE_SIZE = 200;
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const module = searchParams.get('module') ?? '';
+    const moduleFilter = searchParams.get('module') ?? '';
     const action = searchParams.get('action') ?? '';
     const actor = (searchParams.get('actor') ?? '').trim().toLowerCase();
     const from = searchParams.get('from');
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     const all: AuditEntry[] = await readAuditLog(Number.MAX_SAFE_INTEGER);
 
     const filtered = all.filter((e) => {
-      if (module && e.module !== module) return false;
+      if (moduleFilter && e.module !== moduleFilter) return false;
       if (action && e.action !== action) return false;
       if (actor && !e.actor.toLowerCase().includes(actor)) return false;
       if (q) {
