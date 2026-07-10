@@ -1,0 +1,35 @@
+name: CI
+
+# 품질 게이트 — main 푸시·PR 마다 타입 검사와 단위 테스트를 실행한다.
+# (진단 ARCH-2: 그동안 typecheck/lint/test 가 어디서도 강제되지 않았고, 유일한
+#  타입 게이트는 Vercel 프로덕션 빌드였음. 손수 구현한 auth·totp·ssrf·백업 로직의
+#  회귀를 머지 전에 잡기 위한 최소 게이트.)
+# 이 워크플로는 배포하지 않는다 — 검증만 한다.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Lint
+        # 오류만 차단 — 경고(any 등 48건 베이스라인)는 통과. 점진 감축 대상.
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
