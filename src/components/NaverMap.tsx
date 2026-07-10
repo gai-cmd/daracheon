@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -38,7 +38,7 @@ function SubwayRow({ color, line, station, exit, walk }: { color: string; line: 
   );
 }
 
-function MapFooter({ address }: { address: string }) {
+function MapFooter({ address: _address }: { address: string }) {
   return (
     <div style={{ background: 'rgba(10,11,16,0.8)', border: '1px solid rgba(212,168,67,0.15)', borderTop: 'none', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontFamily: 'monospace', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(212,168,67,0.65)', marginBottom: 2 }}>지하철 안내</div>
@@ -56,7 +56,10 @@ function NaverJsMap({ title, address }: Required<MapProps>) {
   const mapRef = useRef<HTMLDivElement>(null);
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID!;
 
-  function initMap() {
+  // useCallback 으로 참조 고정 — effect 의존성에 안전하게 넣는다.
+  // (의존성 없이 매 렌더 새 함수면 exhaustive-deps 경고, 그렇다고 effect 를
+  //  매 렌더 재실행하면 지도가 반복 재생성되므로 참조 고정이 정석.)
+  const initMap = useCallback(() => {
     if (!mapRef.current || !window.naver?.maps) return;
     const pos = new window.naver.maps.LatLng(LAT, LNG);
     const map = new window.naver.maps.Map(mapRef.current, { center: pos, zoom: 17, mapTypeControl: false, scaleControl: false, mapDataControl: false });
@@ -66,11 +69,12 @@ function NaverJsMap({ title, address }: Required<MapProps>) {
       borderColor: '#d4a843',
     });
     info.open(map, marker);
-  }
+  }, [title, address]);
 
   useEffect(() => {
+    // Script onLoad 보다 먼저 스크립트가 이미 로드돼 있는 경우(클라이언트 내비게이션 재방문) 대비.
     if (window.naver?.maps) initMap();
-  }, []);
+  }, [initMap]);
 
   return (
     <>

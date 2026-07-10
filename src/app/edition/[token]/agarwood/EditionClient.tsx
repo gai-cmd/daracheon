@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import type { EditionContent } from '@/content/edition/types';
@@ -17,15 +17,19 @@ const INK = '#050608';
 export default function EditionClient({ content, reader }: Props) {
   const { cover, foreword, chapters, gallery, lineup, closing } = content;
 
-  // 스크롤 진행 도트 네비게이션
-  const sectionIds = [
-    'cover',
-    'foreword',
-    ...chapters.map((c) => `ch-${c.num}`),
-    ...(gallery ? ['gallery'] : []),
-    ...(lineup ? ['lineup'] : []),
-    'closing',
-  ];
+  // 스크롤 진행 도트 네비게이션 — useMemo 로 참조를 고정해, 렌더마다
+  // IntersectionObserver 전체가 해체·재설치되던 낭비를 제거 (exhaustive-deps).
+  const sectionIds = useMemo(
+    () => [
+      'cover',
+      'foreword',
+      ...chapters.map((c) => `ch-${c.num}`),
+      ...(gallery ? ['gallery'] : []),
+      ...(lineup ? ['lineup'] : []),
+      'closing',
+    ],
+    [chapters, gallery, lineup]
+  );
   const [active, setActive] = useState<string>('cover');
 
   useEffect(() => {
