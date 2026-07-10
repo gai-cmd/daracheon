@@ -53,10 +53,16 @@ const SECTIONS: Section[] = [
         fix: '화이트리스트 제거 + GET→POST + super_admin 가드.',
       },
       {
-        id: 'DATA-1', sev: 'high', status: 'ops',
+        id: 'DATA-1', sev: 'high', status: 'done',
         title: '고객 PII·자격증명이 공개 Blob URL로 접근 가능',
-        desc: '문의·리드·비밀번호 해시·재설정 토큰이 공개 Blob 에 저장되고, 유일 방어인 비밀 prefix 가 소스·문서·로그에 평문 노출.',
-        fix: '코드: 하드코딩 prefix 제거·로그 URL 출력 중단(완료). 운영: BLOB_DATA_PREFIX 로테이션 필요.',
+        desc: '문의·리드·비밀번호 해시·재설정 토큰이 공개 Blob 에 저장되고, 유일 방어인 비밀 prefix 가 소스·문서·로그에 평문 노출. 공개 저장소 기준 2026-04-24 커밋부터 약 11주간 노출, 로테이션 뒤에도 옛 prefix 가 공개 URL 로 200 응답을 계속했다(2026-07-10 재진단에서 확인).',
+        fix: '코드: 하드코딩 prefix 제거(잔존 9개 스크립트+AGENTS.md 까지 전수 스크럽)·로그 URL 출력 중단. 운영: prefix 로테이션(7/10) → 옛 prefix 87 blob 삭제(공개 URL 404 검증) → GitHub Actions 시크릿 갱신. 공개 git 이력의 옛 prefix 값은 회수 불가하나 해당 경로에 데이터가 없어 무효.',
+      },
+      {
+        id: 'DATA-1b', sev: 'high', status: 'ops',
+        title: '노출 기간 중 유출됐을 수 있는 자격증명 로테이션',
+        desc: 'DATA-1 노출 창(2026-04-24 ~ 07-10) 동안 admin-users.json(관리자 3계정 pbkdf2-sha256 10만회·salt 해시)·partner-accounts.json 이 공개 URL 로 열려 있었다. Vercel Blob 은 접근 로그를 제공하지 않아 실제 열람 여부는 증명도 반증도 불가.',
+        fix: '운영 조치 필요: 관리자 3계정·파트너 계정 비밀번호 교체, ADMIN_SESSION_SECRET 교체(전체 세션 무효화). 해시 강도상 즉시 피해 가능성은 낮으나 약한 비밀번호는 오프라인 크래킹 가능.',
       },
       {
         id: 'SEC-M3', sev: 'med', status: 'done',
@@ -143,12 +149,14 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
   { badge: '2 · 완료', done: true, title: 'P1 성능 Quick Win', desc: '읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect, 배포 경량화' },
   { badge: 'B · 완료', done: true, title: '백업 강화', desc: '서버 커버리지 전수 확장·poison 방지, 로컬 Mac 백업 + 정기 실행' },
   { badge: '3 · 다음', done: false, title: 'P2 성능 심화', desc: '폰트 next/font 이관, 콘텐츠 라우트 ISR 전환, db.ts list() 제거' },
-  { badge: '4 · 다음', done: false, title: 'P3 데이터 신뢰성', desc: 'readSingleForWrite, QR prefix 아카이버, 복원 리허설, 레코드 버저닝' },
+  { badge: '4 · 다음', done: false, title: 'P3 데이터 신뢰성', desc: '복호화·무결성 리허설 통과(87/87). 남음: 서버측 QR prefix 아카이버, 라이브 복원 리허설(스테이징 대상), 레코드 버저닝' },
   { badge: '5 · 진행중', done: false, title: 'P4 품질 기반', desc: 'vitest 테스트·CI 게이트·에러 바운더리 완료. 남음: 테스트 확대(동시성·백업), ESLint, env 검증 모듈, Sentry·Blob 저하 알림' },
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
-  { date: '2026-07-10', text: 'BLOB_DATA_PREFIX 로테이션 실행 완료 — 노출됐던 옛 prefix에서 새 값으로 87 blob 복사·sha256 전량 일치 검증 후 Vercel env 교체·재배포. 사이트 정상·데이터 무손실 확인. 옛 prefix는 롤백 보험으로 유지(안정 후 삭제 예정).' },
+  { date: '2026-07-10', text: 'DATA-1 종결 — 옛 prefix 87 blob 삭제. 재진단에서 옛 prefix 가 삭제 전까지 공개 URL 로 inquiries·admin-users·partner-accounts 를 200 으로 계속 서빙했고, HEAD 의 9개 스크립트+AGENTS.md 에 prefix 값이 남아 있었음을 확인. 삭제 전 옛 prefix 전량(스냅샷 포함 87개)을 암호화 백업·복호화 검증하고, 신 prefix 와 대조해 "구에만 있는 파일 0개"(무손실)를 증명한 뒤 실행. 삭제 후 공개 URL 404·라이브 사이트 200 검증. 소스 전수 스크럽 + GitHub Actions BLOB_DATA_PREFIX 시크릿 갱신(옛 값이 남아 있어 시드 커밋 시 삭제된 경로 부활 위험이었음).' },
+  { date: '2026-07-10', text: '로컬 백업(Tier 4) 실가동 — 최초 실행 51/51 파일 AES-256-GCM 암호화 저장, launchd 매일 03:00 등록·즉시 1회 테스트(exit 0). 복호화 리허설로 sha256 전량 일치·JSON 파싱 전량 성공 확인(백업이 실제로 복원 가능함을 증명). 백업 디렉터리·파일 권한을 0700/0600 으로 코드에 고정(PII·비밀번호 해시 보호).' },
+  { date: '2026-07-10', text: 'BLOB_DATA_PREFIX 로테이션 실행 완료 — 노출됐던 옛 prefix에서 새 값으로 87 blob 복사·sha256 전량 일치 검증 후 Vercel env 교체·재배포. 사이트 정상·데이터 무손실 확인.' },
   { date: '2026-07-09', text: 'thesis env 설정·재배포로 /thesis 잠금 해제(라이브 검증). BLOB_DATA_PREFIX 로테이션 도구(scripts/rotate-blob-prefix.mjs) 신설 — 복사 전용·기본 dry-run·삭제 별도 가드.' },
   { date: '2026-07-08', text: 'db 동시성 테스트 추가(ARCH-1) — 인메모리 Blob 목으로 outbox·tombstone·부활 차단·유실 복원·stale 베이스 거부를 검증. 과거 유실사고급 로직 커버, 단위 테스트 62개.' },
   { date: '2026-07-08', text: '환경변수 점검 모듈 + /admin/diagnosis 연동(값 비노출). 오늘 /thesis 401(env 누락)처럼 설정 누락을 즉시 확인.' },

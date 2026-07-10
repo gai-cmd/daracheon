@@ -10,7 +10,7 @@ set -euo pipefail
 
 REPO="gai-cmd/daracheon"
 ENV_FILE=".env.local"
-PROD_PREFIX="fd290ae46c4cb398d2afcdc4fc7cfe95"
+PROD_PREFIX="${BLOB_DATA_PREFIX:?BLOB_DATA_PREFIX 환경변수 필요 (비밀값 — 하드코딩 금지)}"
 
 if [ ! -f "$ENV_FILE" ]; then echo "ERROR: $ENV_FILE 없음"; exit 1; fi
 

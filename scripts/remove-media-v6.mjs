@@ -13,7 +13,7 @@ if (fs.existsSync(envPath)) {
     if (m) process.env[m[1]] = m[2];
   }
 }
-const PREFIX = (process.env.BLOB_DATA_PREFIX ?? 'fd290ae46c4cb398d2afcdc4fc7cfe95').replace(/[^a-zA-Z0-9_-]/g, '');
+const PREFIX = (process.env.BLOB_DATA_PREFIX ?? 'MISSING_BLOB_DATA_PREFIX').replace(/[^a-zA-Z0-9_-]/g, '');
 
 const file = path.join(ROOT, 'data', 'db', 'media.json');
 const media = JSON.parse(fs.readFileSync(file, 'utf-8'));

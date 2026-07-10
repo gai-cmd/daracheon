@@ -8,7 +8,7 @@ loadEnv();
 import { put, list, del } from '@vercel/blob';
 
 const TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
-const PREFIX = 'fd290ae46c4cb398d2afcdc4fc7cfe95/';
+const PREFIX = 'MISSING_BLOB_DATA_PREFIX/';
 
 type Product = {
   slug: string;

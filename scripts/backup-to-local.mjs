@@ -115,7 +115,9 @@ async function main() {
   // ── 2) 이번 회차 폴더 생성 ──
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const outDir = path.join(BACKUP_ROOT, `zoellife-backup-${stamp}`);
-  fs.mkdirSync(outDir, { recursive: true });
+  // 0o700/0o600: 백업본에는 PII·비밀번호 해시가 들어간다(--plain 이면 평문). 소유자 전용.
+  fs.mkdirSync(outDir, { recursive: true, mode: 0o700 });
+  fs.chmodSync(BACKUP_ROOT, 0o700);
 
   // ── 3) 각 blob 다운로드 → (선택) 암호화 → 저장, 매니페스트 축적 ──
   const manifest = {
@@ -135,9 +137,9 @@ async function main() {
       const sha256 = createHash('sha256').update(text).digest('hex');
       const destRel = willEncrypt ? `${b.rel}.enc` : b.rel;
       const dest = path.join(outDir, destRel);
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.mkdirSync(path.dirname(dest), { recursive: true, mode: 0o700 });
       const bodyToWrite = willEncrypt ? encryptString(text) : text;
-      fs.writeFileSync(dest, bodyToWrite);
+      fs.writeFileSync(dest, bodyToWrite, { mode: 0o600 });
       manifest.files.push({ path: destRel, bytes: text.length, sha256, uploadedAt: b.uploadedAt });
       manifest.count++;
       manifest.totalBytes += text.length;
@@ -148,7 +150,7 @@ async function main() {
     }
   }
 
-  fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2), { mode: 0o600 });
 
   // ── 4) 검증: 저장된 파일 수·매니페스트 일치 확인 ──
   if (failed.length > 0) {
