@@ -127,10 +127,16 @@ const SECTIONS: Section[] = [
         fix: 'readSingleForWrite 신설 — Blob 장애 시 throw. pages·company·navigation·announcement·mail-settings·integration-settings 6개 저장 라우트에 적용(장애 중 저장은 503/500 로 중단, stale 덮어쓰기 방지).',
       },
       {
-        id: 'DATA-5·8', sev: 'low', status: 'next',
-        title: '동시 업데이트 last-writer-wins · O(n) 전체 재기록',
-        desc: '같은 레코드 동시 수정 시 유실 가능. 무한 증가·보존정책 없음.',
-        fix: '레코드 rev/newest-wins, 아카이빙·QR 롤업 (P3).',
+        id: 'DATA-5', sev: 'low', status: 'done',
+        title: '동시 업데이트 last-writer-wins 유실',
+        desc: '같은 레코드를 두 관리자가 동시 수정하거나, 낡은 base 로 전체 배열을 저장하면 다른 쪽의 최신 편집이 소리 없이 되돌아갔다.',
+        fix: '레코드 버저닝(_rev/_mt) — writeDataMerged 가 양쪽에 존재하는 레코드를 개별 해소: 내용 동일이면 기존본 유지(스탬프 churn 방지), base 최신이면 편집 적용+rev 증가, 저장본이 더 새로우면 newest-wins 로 보존. 스탬프 없는 레거시는 종전 동작 유지(무회귀). 클라이언트 왕복 메타 오염은 stripRecordMeta 로 차단(products·reviews·media). 테스트 6개.',
+      },
+      {
+        id: 'DATA-8', sev: 'low', status: 'next',
+        title: 'O(n) 전체 재기록 · 무한 증가 컬렉션',
+        desc: '배열 파일은 레코드 하나만 바꿔도 전체 재기록. audit-log 등은 무한 증가.',
+        fix: 'QR 롤업 아카이브는 완료(_qr-archive/). 남음: audit-log 보존정책·대형 컬렉션 아카이빙 (P3 후반).',
       },
     ],
   },
@@ -149,11 +155,12 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
   { badge: '2 · 완료', done: true, title: 'P1 성능 Quick Win', desc: '읽기 병렬화·캐시 전환, 이미지 최적화, 폰트 preconnect, 배포 경량화' },
   { badge: 'B · 완료', done: true, title: '백업 강화', desc: '서버 커버리지 전수 확장·poison 방지, 로컬 Mac 백업 + 정기 실행' },
   { badge: '3 · 다음', done: false, title: 'P2 성능 심화', desc: '폰트 next/font 이관, 콘텐츠 라우트 ISR 전환, db.ts list() 제거' },
-  { badge: '4 · 진행중', done: false, title: 'P3 데이터 신뢰성', desc: '복원 리허설 end-to-end 통과(51/51 round-trip), 서버측 QR 아카이버(_qr-archive/ 월 롤업) 구현. 남음: 레코드 버저닝(DATA-5·8)' },
+  { badge: '4 · 완료', done: true, title: 'P3 데이터 신뢰성', desc: '복원 리허설 통과(51/51 round-trip), 서버측 QR 아카이버, 레코드 버저닝(_rev/_mt newest-wins). 잔여 소항목은 DATA-8(audit-log 보존정책)' },
   { badge: '5 · 진행중', done: false, title: 'P4 품질 기반', desc: 'vitest 테스트·CI 게이트·에러 바운더리 완료. 남음: 테스트 확대(동시성·백업), ESLint, env 검증 모듈, Sentry·Blob 저하 알림' },
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'DATA-5 종결 — 레코드 버저닝(_rev/_mt). 두 관리자가 같은 컬렉션을 동시 편집할 때 낡은 base 의 전체 배열 저장이 다른 쪽 최신 편집을 되돌리던 유실을 차단(newest-wins, 인스턴스 내 _mt 단조 증가 보장). 무변경 레코드는 스탬프 불변(churn 방지), 스탬프 없는 레거시 데이터는 종전 동작 유지(무회귀 이행). 클라이언트가 되돌린 낡은 메타로 정상 편집이 stale 오판되지 않도록 body 스프레드 라우트 3곳(products·reviews·media)에 stripRecordMeta 적용. 테스트 6개 추가(총 72개).' },
   { date: '2026-07-10', text: 'P3 진전 — ①복원 리허설 end-to-end 통과: 로컬 암호화 백업 51개를 복호화→격리 prefix 업로드→재다운로드→sha256 전량 대조(51/51). 실제 복원은 대상 prefix만 라이브로 바꾼 동일 코드 경로이므로 "백업이 복원 가능함"이 증명됨(scripts/restore-rehearsal.mjs, dry-run 기본·격리 prefix 가드). ②서버측 QR 아카이버: qr-events(당월+전월)·coupons·serials를 _qr-archive/ 월 롤업으로 일일 크론에서 아카이브(fetch 실패 시 기존본 보존하는 poison 방지, 테스트 4개). _snapshots/ 밖에 둔 이유: pruneSnapshots 보존정책에 걸려 삭제되는 유실 벡터 회피.' },
   { date: '2026-07-10', text: 'DATA-1b 처리 — ADMIN_SESSION_SECRET 신규 생성·교체(전 세션 무효화). 교체 전 파급 검증: 이 시크릿이 파트너 세션·QR 시리얼 HMAC 주소·QR 추적 토큰의 폴백으로도 쓰임을 확인, qr-serials 레코드 0개(실물 QR 무영향)를 백업 매니페스트로 검증 후 실행. 비밀번호는 해시 강도 근거로 유지(사용자 결정). 백업 암호화 키·새 시크릿은 Apple 암호 앱 보관.' },
   { date: '2026-07-10', text: 'DATA-1 종결 — 옛 prefix 87 blob 삭제. 재진단에서 옛 prefix 가 삭제 전까지 공개 URL 로 inquiries·admin-users·partner-accounts 를 200 으로 계속 서빙했고, HEAD 의 9개 스크립트+AGENTS.md 에 prefix 값이 남아 있었음을 확인. 삭제 전 옛 prefix 전량(스냅샷 포함 87개)을 암호화 백업·복호화 검증하고, 신 prefix 와 대조해 "구에만 있는 파일 0개"(무손실)를 증명한 뒤 실행. 삭제 후 공개 URL 404·라이브 사이트 200 검증. 소스 전수 스크럽 + GitHub Actions BLOB_DATA_PREFIX 시크릿 갱신(옛 값이 남아 있어 시드 커밋 시 삭제된 경로 부활 위험이었음).' },

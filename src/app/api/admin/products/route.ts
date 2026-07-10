@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged, stripRecordMeta } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product, ProductVariant } from '@/data/products';
@@ -182,7 +182,9 @@ export async function PUT(request: Request) {
     // 표시 문자열이 stale 로 남지 않도록 백엔드에서 강제 동기화한다.
     const merged: Product = {
       ...products[index],
-      ...body,
+      // 클라이언트가 되돌린 _rev/_mt 가 서버(fresh) 메타를 덮으면 이 편집이
+      // stale 로 오판돼 버려진다 (db.ts 레코드 버저닝) — 반드시 걸러서 병합.
+      ...stripRecordMeta(body),
       ...(normalizedVariants !== undefined
         ? { variants: normalizedVariants }
         : { variants: products[index].variants }),

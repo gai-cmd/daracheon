@@ -178,6 +178,62 @@ function encKeyOf(filename: string, r: unknown): string | null {
   return k === null ? null : encKey(k);
 }
 
+// ── 레코드 버저닝 메타 (진단 DATA-5·8: 동시 편집 last-writer-wins 유실) ──────
+// 레코드 루트에 _rev(편집 횟수)·_mt(마지막 편집 ms)를 스탬프한다. writeDataMerged
+// 가 "양쪽에 다 있는 레코드"의 충돌을 newest-wins 로 해소하는 근거 신호.
+// 클라이언트로 왕복하는 필드이므로, raw body 를 레코드에 spread 하는 라우트는
+// stripRecordMeta(body) 로 낡은 메타 오염을 막아야 한다 (products·reviews·media).
+const REV_KEY = '_rev';
+const MT_KEY = '_mt';
+
+function metaMt(r: unknown): number {
+  const v = (r as Record<string, unknown>)[MT_KEY];
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+function metaRev(r: unknown): number {
+  const v = (r as Record<string, unknown>)[REV_KEY];
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+function stampRecord<T>(r: T, rev: number, mt: number): T {
+  return { ...(r as object), [REV_KEY]: rev, [MT_KEY]: mt } as T;
+}
+
+// _mt 는 인스턴스 내 단조 증가 보장 — 같은 밀리초의 연속 쓰기가 동률(_mt 동일)로
+// 비교 불능이 되는 것을 막는다. (인스턴스 간에는 벽시계 기준 — Date.now 와 동급.)
+let lastMtIssued = 0;
+function nextMt(): number {
+  const t = Date.now();
+  lastMtIssued = t > lastMtIssued ? t : lastMtIssued + 1;
+  return lastMtIssued;
+}
+
+/** 클라이언트가 되돌려 보낸 버저닝 메타(_rev/_mt) 제거 — `{...record, ...body}` 전에.
+ *  서버가 fresh 레코드에 body 를 병합하는 라우트에서 낡은 클라이언트 메타가
+ *  서버 메타를 덮어쓰면, 정상 편집이 stale 로 오판되므로 반드시 걸러낸다. */
+export function stripRecordMeta<T>(body: T): T {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const rest = { ...(body as Record<string, unknown>) };
+  delete rest[REV_KEY];
+  delete rest[MT_KEY];
+  return rest as T;
+}
+
+// 정렬 키 안정 직렬화 — 메타를 제외한 내용 동등성 비교용.
+function stableStringify(v: unknown): string {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v) ?? 'undefined';
+  if (Array.isArray(v)) return `[${v.map(stableStringify).join(',')}]`;
+  const keys = Object.keys(v as object).sort();
+  return `{${keys
+    .map((k) => `${JSON.stringify(k)}:${stableStringify((v as Record<string, unknown>)[k])}`)
+    .join(',')}}`;
+}
+function contentEquals(a: unknown, b: unknown): boolean {
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+    return stableStringify(a) === stableStringify(b);
+  }
+  return stableStringify(stripRecordMeta(a)) === stableStringify(stripRecordMeta(b));
+}
+
 interface BlobRef {
   enc: string;   // pathname segment = encKey(원본 키)
   url: string;
@@ -678,6 +734,44 @@ export async function writeDataMerged<T>(
     if (Array.isArray(freshRaw)) {
       const fresh = freshRaw as T[];
       freshEnc = new Set(fresh.map(enc).filter((e): e is string => e !== null));
+
+      // ── 레코드 버저닝 (DATA-5): 양쪽에 존재하는 레코드의 개별 충돌 해소 ──
+      //  · 내용 동일        → 저장본(f) 유지 — 스탬프 churn 방지
+      //  · base 최신(rMt≥fMt) → 편집 적용, rev 증가 + _mt 갱신
+      //  · 저장본이 더 새로움(fMt>rMt>0) → newest-wins: 저장본 보존.
+      //    stale base 전체 배열 쓰기가 다른 writer 의 최신 편집을 되돌리는 것을 차단.
+      //    rMt===0(스탬프 없는 레거시·메타 스트립 경로)은 종전 동작(writer 승) 유지.
+      const freshByEnc = new Map<string, T>();
+      for (const r of fresh) {
+        const e = enc(r);
+        if (e !== null && !freshByEnc.has(e)) freshByEnc.set(e, r);
+      }
+      const stampMt = nextMt();
+      const conflicts: (string | null)[] = [];
+      const resolvedNext = next.map((r) => {
+        if (r === null || typeof r !== 'object') return r;
+        const e = enc(r);
+        if (e === null) return r;
+        const f = freshByEnc.get(e);
+        if (f === undefined || f === null || typeof f !== 'object') {
+          return stampRecord(r, Math.max(1, metaRev(r)), stampMt); // 신규 — 초판 스탬프
+        }
+        if (contentEquals(r, f)) return f;
+        const rMt = metaMt(r);
+        const fMt = metaMt(f);
+        if (fMt > rMt && rMt > 0) {
+          conflicts.push(key(r));
+          return f;
+        }
+        return stampRecord(r, metaRev(f) + 1, stampMt);
+      });
+      if (conflicts.length > 0) {
+        console.warn(
+          `[db:rev] ${filename}: 동시 편집 충돌 ${conflicts.length}건 — 최신 저장본 보존(newest-wins)`,
+          conflicts,
+        );
+      }
+
       const nextEnc = new Set(next.map(enc).filter((e): e is string => e !== null));
       const resurrected = fresh.filter((r) => {
         const e = enc(r);
@@ -688,11 +782,23 @@ export async function writeDataMerged<T>(
           `[db:write-merged] ${filename}: 동시 쓰기 감지 — ${resurrected.length}건 보존`,
           resurrected.map(key),
         );
-        merged = [...next, ...resurrected];
       }
+      merged = resurrected.length > 0 ? [...resolvedNext, ...resurrected] : resolvedNext;
     }
   } catch (err) {
     console.warn(`[db:write-merged] ${filename}: merge 용 fresh read 실패 — merge 생략`, err);
+  }
+
+  // fresh 를 얻지 못한 경로(부트스트랩 첫 저장·NOT_FOUND·일시 장애) — per-record
+  // 해소는 불가하지만, 스탬프 없는 레코드에 초판 스탬프는 찍어 둔다. 기존 스탬프는
+  // 보존(rev 임의 증가 금지 — fresh 를 못 봤으므로 편집 여부를 판단할 수 없다).
+  if (freshEnc === null) {
+    const stampMt = nextMt();
+    merged = merged.map((r) => {
+      if (r === null || typeof r !== 'object') return r;
+      if (enc(r) === null || metaMt(r) > 0) return r;
+      return stampRecord(r, Math.max(1, metaRev(r)), stampMt);
+    });
   }
 
   const tombEnc = new Set(tombRefs.map((t) => t.enc));

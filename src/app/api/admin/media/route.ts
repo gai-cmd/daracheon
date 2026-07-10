@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged, stripRecordMeta } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 
@@ -98,7 +98,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    media[index] = { ...media[index], ...body };
+    media[index] = { ...media[index], ...stripRecordMeta(body) }; // 낡은 클라이언트 _rev/_mt 오염 차단 (db.ts 레코드 버저닝)
     await writeDataMerged('media', media);
 
     await logAdmin('media', 'update', {

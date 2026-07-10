@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
+import { readDataUncached, readDataForWrite, writeDataMerged, stripRecordMeta } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Review } from '@/data/reviews';
@@ -120,7 +120,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    reviews[index] = { ...reviews[index], ...body };
+    reviews[index] = { ...reviews[index], ...stripRecordMeta(body) }; // 낡은 클라이언트 _rev/_mt 오염 차단 (db.ts 레코드 버저닝)
     await writeDataMerged('reviews', reviews);
     revalidateReviews();
 
