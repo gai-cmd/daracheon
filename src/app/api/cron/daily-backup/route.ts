@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSnapshot, pruneSnapshots, mirrorSnapshot } from '@/lib/backup';
+import { archiveQrRecords } from '@/lib/qr-archive';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -54,17 +55,40 @@ export async function GET(request: NextRequest) {
     // 오래된 blob 스냅샷 정리
     const prune = await pruneSnapshots();
 
+    // QR per-record 아카이브 (Tier 1 보강 — createSnapshot 이 못 담는
+    // qr-events/coupons/serials 를 _qr-archive/ 월 롤업으로). 실패해도
+    // 스냅샷 자체는 유효하므로 throw 로 전체를 죽이지 않되, degraded 는
+    // 아래에서 500 으로 크게 알린다.
+    let qrArchive: Awaited<ReturnType<typeof archiveQrRecords>> = null;
+    let qrArchiveError: string | null = null;
+    try {
+      qrArchive = await archiveQrRecords();
+    } catch (err) {
+      console.error('[cron:daily-backup] qr-archive error', err);
+      qrArchiveError = err instanceof Error ? err.message : String(err);
+    }
+
     // 일부 컬렉션 읽기 실패(degraded) → 스냅샷은 저장·미러링됐으나 불완전.
     // 조용히 success:true 로 감추지 않고 500 으로 크게 실패시켜(진단 DATA-4)
     // Vercel Cron 실패 알림이 뜨도록 한다. 부분 스냅샷 정보는 함께 반환.
-    if (snap.degraded.length > 0) {
+    const qrDegraded = qrArchiveError !== null || (qrArchive !== null && !qrArchive.ok);
+    if (snap.degraded.length > 0 || qrDegraded) {
+      const parts = [
+        ...(snap.degraded.length > 0
+          ? [`${snap.degraded.join(', ')} 컬렉션을 읽지 못했습니다`]
+          : []),
+        ...(qrDegraded
+          ? [`QR 아카이브 불완전(${qrArchiveError ?? qrArchive?.degraded.join(', ')})`]
+          : []),
+      ];
       return NextResponse.json(
         {
           success: false,
-          message: `백업 부분 실패(degraded): ${snap.degraded.join(', ')} 컬렉션을 읽지 못했습니다. 부분 스냅샷은 저장·미러링됨. Blob 상태 확인 필요.`,
+          message: `백업 부분 실패(degraded): ${parts.join(' / ')}. 부분 스냅샷은 저장·미러링됨. Blob 상태 확인 필요.`,
           tier1: { id: snap.id, size: snap.size, url: snap.url, degraded: snap.degraded },
           tier2_github: mirror.tier2Github,
           tier3_email: mirror.tier3Email,
+          qrArchive: qrArchive ?? { error: qrArchiveError },
           prune,
           at: new Date().toISOString(),
         },
@@ -77,6 +101,7 @@ export async function GET(request: NextRequest) {
       tier1: { id: snap.id, size: snap.size, url: snap.url },
       tier2_github: mirror.tier2Github,
       tier3_email: mirror.tier3Email,
+      qrArchive,
       prune,
       at: new Date().toISOString(),
     });

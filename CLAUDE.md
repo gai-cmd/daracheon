@@ -51,8 +51,14 @@ h1~h6 등에 전역 `!important` 색상을 강제한다.
 
 ## 데이터 저장 위치
 
-- 콘텐츠 데이터(JSON): `BLOB_DATA_PREFIX` 가 붙은 Vercel Blob. **프로덕션 prefix 는 고객 PII Blob 을 보호하는 비밀 값**이므로 소스·문서·로그에 평문으로 남기지 않는다 — Vercel 환경변수(및 `.env.local`)로만 주입한다. (2026-07-07 진단에서 평문 노출이 확인되어 제거·로테이션 대상.)
+- 콘텐츠 데이터(JSON): `BLOB_DATA_PREFIX` 가 붙은 Vercel Blob. **프로덕션 prefix 는 고객 PII Blob 을 보호하는 비밀 값**이므로 소스·문서·로그에 평문으로 남기지 않는다 — Vercel 환경변수(및 `.env.local`)로만 주입한다. (2026-07-07 진단에서 평문 노출 확인 → 07-10 로테이션·옛 prefix 87 blob 삭제로 종결. 옛 값은 공개 git 이력에 남아 있으나 데이터가 없어 무효.)
 - 시드 데이터: `data/db/*.json` — 빌드 시 `prebuild` 가 blob → seed 동기화. **로컬 시드 수정만으로는 프로덕션 반영 안 됨** — blob 직접 갱신해야 한다.
+
+### 비밀값 하드코딩 금지 (2026-07-10 사고 교훈)
+
+- 일회성 스크립트(`scripts/_*.ts` 등)에도 **prefix·토큰·시크릿 리터럴을 절대 박지 않는다.** `process.env.X ?? '<실값>'` 폴백 패턴이 이번 노출의 근본 원인 — 스크립트 9개에 박힌 옛 prefix 가 공개 저장소에 11주간 노출됐다. 폴백이 필요하면 `MISSING_...` 센티널 또는 throw.
+- 이 저장소는 **PUBLIC** 이다. 커밋 전 `git grep <비밀값 후보>` 로 리터럴 잔존을 확인한다.
+- `ADMIN_SESSION_SECRET` 은 관리자 세션 외에 `PARTNER_SESSION_SECRET`·`SERIAL_SCAN_SECRET`·`QR_TRACK_SECRET` 의 **폴백**이다(전용 3개는 미설정 상태). 특히 QR 시리얼은 이 값의 HMAC 을 **저장 주소**로 쓰므로, qr-serials 레코드가 생긴 뒤에는 시크릿 교체 전 반드시 `SERIAL_SCAN_SECRET` 에 기존 값을 고정(pin)해야 실물 QR 이 깨지지 않는다. (2026-07-10 교체 시점엔 시리얼 0개라 무영향이었음.)
 
 ## 배포
 

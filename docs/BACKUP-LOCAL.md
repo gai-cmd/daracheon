@@ -77,8 +77,14 @@ launchctl start com.zoellife.backup-local     # 즉시 1회 테스트
 
 `~/Backups/zoellife-oldprefix/oldprefix-FULL-*` 는 2026-07-10 삭제한 옛(노출) prefix 의 전량(스냅샷 36개 포함 87개) 암호화 사본이다. 신 prefix 와 대조해 "구에만 있는 파일 0개"를 확인한 뒤 삭제했으므로 운영상 불필요하나, 롤백 보험으로 남겨 둔다.
 
+## 복원 리허설 (2026-07-10 통과)
+
+`scripts/restore-rehearsal.mjs` — 로컬 백업을 복호화해 격리 prefix `_rehearsal-<타임스탬프>/` 에 업로드하고 재다운로드해 sha256 전량 대조한다. **51/51 round-trip 통과** — 복호화→쓰기→읽기 전 경로가 실증됐으므로, 실제 복원은 대상 prefix 만 바꾼 동일 코드다. 라이브 prefix 는 읽지도 쓰지도 않으며, 기본 dry-run·`--apply` 명시·정리는 `--cleanup`(리허설 prefix 형식 가드) 3중 안전장치. 분기 1회 재실행 권장.
+
+## 서버측 QR 아카이버 (2026-07-10 추가)
+
+`src/lib/qr-archive.ts` — 일일 크론이 qr-events(당월+전월)·qr-coupons·qr-serials per-record blob 을 `_qr-archive/` 월 롤업 JSON 으로 아카이브한다. fetch 실패 시 해당 월을 덮어쓰지 않고 degraded 보고(poison 방지), 빈 대상은 빈 아카이브를 만들지 않는다. `_snapshots/` 밖에 두는 이유: pruneSnapshots 보존 정책의 삭제 대상이 되지 않기 위해. 로컬 Tier 4 는 `_snapshots/` 만 제외하므로 `_qr-archive/` 도 자동 백업된다.
+
 ## 아직 남은 강화 항목
 
-- 서버 Tier 1~3 의 QR per-record prefix(qr-events/·serials/·coupons/) 아카이빙 — 현재는 로컬 축에서만 보존. prefix 워커 추가 예정.
-- 라이브/프리뷰 대상 **복원 리허설**(현재는 복호화·무결성 리허설까지만 통과).
-- 자동 복원 리허설 파이프라인.
+- 자동 복원 리허설 파이프라인(현재는 수동 실행).
