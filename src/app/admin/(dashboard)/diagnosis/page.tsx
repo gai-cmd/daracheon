@@ -59,10 +59,10 @@ const SECTIONS: Section[] = [
         fix: '코드: 하드코딩 prefix 제거(잔존 9개 스크립트+AGENTS.md 까지 전수 스크럽)·로그 URL 출력 중단. 운영: prefix 로테이션(7/10) → 옛 prefix 87 blob 삭제(공개 URL 404 검증) → GitHub Actions 시크릿 갱신. 공개 git 이력의 옛 prefix 값은 회수 불가하나 해당 경로에 데이터가 없어 무효.',
       },
       {
-        id: 'DATA-1b', sev: 'high', status: 'ops',
-        title: '노출 기간 중 유출됐을 수 있는 자격증명 로테이션',
+        id: 'DATA-1b', sev: 'high', status: 'done',
+        title: '노출 기간 중 유출됐을 수 있는 자격증명 대응',
         desc: 'DATA-1 노출 창(2026-04-24 ~ 07-10) 동안 admin-users.json(관리자 3계정 pbkdf2-sha256 10만회·salt 해시)·partner-accounts.json 이 공개 URL 로 열려 있었다. Vercel Blob 은 접근 로그를 제공하지 않아 실제 열람 여부는 증명도 반증도 불가.',
-        fix: '운영 조치 필요: 관리자 3계정·파트너 계정 비밀번호 교체, ADMIN_SESSION_SECRET 교체(전체 세션 무효화). 해시 강도상 즉시 피해 가능성은 낮으나 약한 비밀번호는 오프라인 크래킹 가능.',
+        fix: 'ADMIN_SESSION_SECRET 교체(2026-07-10, 전체 관리자·파트너 세션 무효화). 교체 전 안전성 검증: qr-serials HMAC 주소 의존 레코드 0개·쿠폰은 코드 주소·이벤트는 날짜/ID 주소라 실물 QR 무영향, 깨지는 건 30분 스캔 토큰과 로그인 세션뿐. 비밀번호는 해시 강도(pbkdf2 10만회·salt)를 근거로 유지 결정(사용자 승인, 2026-07-10) — 단 약한 비밀번호는 오프라인 크래킹이 가능하므로 이후 비밀번호 변경 시 강한 값 권장.',
       },
       {
         id: 'SEC-M3', sev: 'med', status: 'done',
@@ -154,6 +154,7 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'DATA-1b 처리 — ADMIN_SESSION_SECRET 신규 생성·교체(전 세션 무효화). 교체 전 파급 검증: 이 시크릿이 파트너 세션·QR 시리얼 HMAC 주소·QR 추적 토큰의 폴백으로도 쓰임을 확인, qr-serials 레코드 0개(실물 QR 무영향)를 백업 매니페스트로 검증 후 실행. 비밀번호는 해시 강도 근거로 유지(사용자 결정). 백업 암호화 키·새 시크릿은 Apple 암호 앱 보관.' },
   { date: '2026-07-10', text: 'DATA-1 종결 — 옛 prefix 87 blob 삭제. 재진단에서 옛 prefix 가 삭제 전까지 공개 URL 로 inquiries·admin-users·partner-accounts 를 200 으로 계속 서빙했고, HEAD 의 9개 스크립트+AGENTS.md 에 prefix 값이 남아 있었음을 확인. 삭제 전 옛 prefix 전량(스냅샷 포함 87개)을 암호화 백업·복호화 검증하고, 신 prefix 와 대조해 "구에만 있는 파일 0개"(무손실)를 증명한 뒤 실행. 삭제 후 공개 URL 404·라이브 사이트 200 검증. 소스 전수 스크럽 + GitHub Actions BLOB_DATA_PREFIX 시크릿 갱신(옛 값이 남아 있어 시드 커밋 시 삭제된 경로 부활 위험이었음).' },
   { date: '2026-07-10', text: '로컬 백업(Tier 4) 실가동 — 최초 실행 51/51 파일 AES-256-GCM 암호화 저장, launchd 매일 03:00 등록·즉시 1회 테스트(exit 0). 복호화 리허설로 sha256 전량 일치·JSON 파싱 전량 성공 확인(백업이 실제로 복원 가능함을 증명). 백업 디렉터리·파일 권한을 0700/0600 으로 코드에 고정(PII·비밀번호 해시 보호).' },
   { date: '2026-07-10', text: 'BLOB_DATA_PREFIX 로테이션 실행 완료 — 노출됐던 옛 prefix에서 새 값으로 87 blob 복사·sha256 전량 일치 검증 후 Vercel env 교체·재배포. 사이트 정상·데이터 무손실 확인.' },
