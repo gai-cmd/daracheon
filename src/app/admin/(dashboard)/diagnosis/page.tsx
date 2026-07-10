@@ -143,11 +143,11 @@ const SECTIONS: Section[] = [
 ];
 
 const ARCH: { id: string; title: string; sev: string; phase: string }[] = [
-  { id: 'ARCH-1', title: '자동화 테스트 62개 — auth·totp·ssrf·백업암호화·QR + db 동시성(outbox·tombstone·부활차단·유실복원). 과거 유실사고급 로직 커버', sev: 'Critical', phase: '진행중' },
+  { id: 'ARCH-1', title: '자동화 테스트 72개 — auth·totp·ssrf·백업암호화·QR·db 동시성(outbox·tombstone·부활차단·유실복원)·레코드 버저닝·QR 아카이버. CI 게이트에서 매 push 실행', sev: 'Critical', phase: '완료' },
   { id: 'ARCH-2', title: 'CI 품질 게이트 가동 — push/PR 마다 typecheck+lint+테스트 72개(ci.yml). 첫 실행 success 확인(2026-07-10). ESLint 오류 0·경고 48 베이스라인은 점진 감축', sev: 'High', phase: '완료' },
-  { id: 'ARCH-3', title: '환경변수 50개 산개 · 검증 config 부재', sev: 'High', phase: 'P4' },
+  { id: 'ARCH-3', title: '환경변수 검증 — 레지스트리(env-check)·관리자 화면 점검에 더해 부팅 시 instrumentation 훅이 critical/기능성 누락을 로그로 크게 알림(값 미노출). "조용한 저하 → 명시적 경고" 전환 완료', sev: 'High', phase: '완료' },
   { id: 'ARCH-4', title: '에러 바운더리 완료 + 백업 저하 텔레그램 알림 완료(일일 크론이 스냅샷 실패·degraded·예외 시 운영 채널로 push). Sentry 는 사용자 계정 개설 필요 — 잔여', sev: 'High', phase: '진행중' },
-  { id: 'ARCH-6', title: '고아 라우트 /products-v2 삭제 완료(참조 0 확인). zoel-life-source 디렉터리는 이미 부재. 잔여: 루트의 미추적 zoel-app.js(2.2MB 레거시 번들 — 사용자 확인 후 삭제)', sev: 'Medium', phase: '진행중' },
+  { id: 'ARCH-6', title: '레거시 정리 완료 — /products-v2 고아 라우트 삭제(참조 0), zoel-life-source 부재 확인, zoel-app.js 2.2MB 레거시 번들 삭제(사용자 승인), 홈 디렉터리 잔재 package-lock.json 제거(Next 워크스페이스 오인 경고 해소)', sev: 'Medium', phase: '완료' },
 ];
 
 const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] = [
@@ -156,10 +156,11 @@ const ROADMAP: { badge: string; done: boolean; title: string; desc: string }[] =
   { badge: 'B · 완료', done: true, title: '백업 강화', desc: '서버 커버리지 전수 확장·poison 방지, 로컬 Mac 백업 + 정기 실행' },
   { badge: '3 · 대부분 완료', done: false, title: 'P2 성능 심화', desc: '폰트 next/font 셀프호스트 완료, db.ts 읽기 fast-path(list() 왕복 제거) 완료. ISR 전환은 보류 권고 — 데이터 계층이 이미 태그 무효화 캐시라 이득 대비 "저장 즉시 반영" 검증 리스크가 큼(제품 결정 필요)' },
   { badge: '4 · 완료', done: true, title: 'P3 데이터 신뢰성', desc: '복원 리허설 통과(51/51 round-trip), 서버측 QR 아카이버, 레코드 버저닝(_rev/_mt newest-wins). 잔여 소항목은 DATA-8(audit-log 보존정책)' },
-  { badge: '5 · 진행중', done: false, title: 'P4 품질 기반', desc: 'vitest 테스트·CI 게이트·에러 바운더리 완료. 남음: 테스트 확대(동시성·백업), ESLint, env 검증 모듈, Sentry·Blob 저하 알림' },
+  { badge: '5 · 완료', done: true, title: 'P4 품질 기반', desc: '테스트 72개+CI 게이트 가동, ESLint(오류 0), env 부팅 검증, Blob 저하 텔레그램 알림, 레거시 정리, CRLF 정책. 잔여는 Sentry(계정 필요)와 ESLint 경고 48 점진 감축뿐' },
 ];
 
 const CHANGELOG: { date: string; text: string }[] = [
+  { date: '2026-07-10', text: 'ARCH-3·6 종결 — ①부팅 env 검증: instrumentation 훅이 서버 기동 시 ENV_REGISTRY 전수를 점검해 critical/기능성 누락을 로그로 크게 알림(값 미노출·throw 안 함 — 각 기능의 fail-closed 가드는 유지). THESIS 401을 한참 뒤 발견한 사고 유형의 재발 방지. ②레거시 정리: zoel-app.js 2.2MB 삭제(사용자 승인), 홈 package-lock.json 제거로 Next 워크스페이스 오인 경고 해소. ESLint 경고 48 중 unused-vars 26건은 보류 코드(향후 재사용 가능 컴포넌트) 삭제 위험이 있어 베이스라인 유지 결정.' },
   { date: '2026-07-10', text: 'CI 품질 게이트 가동(ARCH-2 종결) — 7/8부터 로컬에만 있던 ci.yml 을 push (gh 토큰 workflow 스코프 확보 + macOS 키체인의 옛 토큰이 credential helper 목록에서 먼저 응답하던 문제를 helper 리셋으로 해결). 이제 모든 push/PR 에서 typecheck·lint·테스트 72개가 자동 실행되며, 첫 실행 success 확인.' },
   { date: '2026-07-10', text: '백업 저하 알림(ARCH-4) — 일일 백업 크론이 스냅샷 생성 실패·degraded(컬렉션 읽기 실패·QR 아카이브 불완전)·예외 시 텔레그램으로 즉시 알림. 기존 integrations.ts 의 sendTelegramMessage 재사용(integration-settings 또는 TELEGRAM_BOT_TOKEN/CHAT_ID env). 알림 실패는 로깅만 — 백업 응답을 깨지 않음.' },
   { date: '2026-07-10', text: 'P4 품질 기반 — ①ESLint 도입(next/core-web-vitals + next/typescript, 오류 0·경고 48 베이스라인) + CI 게이트에 lint 단계 추가. module 변수 섀도잉 등 실질 오류 수정. ②고아 라우트 /products-v2 삭제(참조 0 확인). ③.gitattributes 도입(* text=auto eol=lf) — Windows 이관 잔재 CRLF 가 git status 를 덮던 노이즈 재발 방지. ④DATA-8 재점검: audit-log 는 이미 MAX_ENTRIES 2000 보존정책 보유 — 진단 기술 교정.' },
