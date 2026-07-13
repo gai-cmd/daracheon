@@ -4,10 +4,15 @@ import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import { readDataSafe } from '@/lib/db';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
+import JsonLd from '@/components/ui/JsonLd';
+
+const SITE_URL = 'https://zoellife.com';
 
 export const metadata: Metadata = {
   title: '제품상세 · 복용 가이드',
   description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
+  // self-canonical — 없으면 루트 홈 canonical 을 상속해 홈 중복으로 색인된다.
+  alternates: { canonical: `${SITE_URL}/guide` },
 };
 
 export const dynamic = 'force-dynamic';
@@ -18,8 +23,18 @@ export default async function GuidePage() {
   const stored = await readDataSafe<ProductGuide>('product-guides');
   const productGuides = stored.length > 0 ? stored : defaultGuides;
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: '복용 가이드', item: `${SITE_URL}/guide` },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={breadcrumbJsonLd} />
       {/* HERO — about-agarwood 와 동일 구조 */}
       <section className={styles.hero}>
         <div className={styles.wrap}>

@@ -67,14 +67,18 @@ export default async function BlogListPage() {
     name: '대라천 블로그',
     url: `${SITE_URL}/blog`,
     description: '베트남 하띤 직영 침향 농장 기록 · 침향 효능 · 정통 침향 지식.',
-    publisher: { '@type': 'Organization', name: '대라천 ZOEL LIFE' },
+    // 상세 페이지와 동일하게 정규 Organization 노드를 @id 참조(엔티티 표기 일관).
+    publisher: { '@id': `${SITE_URL}/#organization` },
     blogPost: published.slice(0, 20).map((p) => ({
       '@type': 'BlogPosting',
       headline: p.title,
       url: `${SITE_URL}/blog/${p.slug}`,
       datePublished: p.publishedAt ?? p.createdAt,
       dateModified: p.updatedAt,
-      author: { '@type': 'Person', name: p.author },
+      author:
+        !p.author || /대라천|zoel/i.test(p.author)
+          ? { '@id': `${SITE_URL}/#organization` }
+          : { '@type': 'Person', name: p.author },
       image: p.coverImage,
     })),
   };

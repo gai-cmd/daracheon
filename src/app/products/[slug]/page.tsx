@@ -39,10 +39,26 @@ export async function generateMetadata(
   const products = await readDataSafe<Product>('products');
   const product = products.find((p) => p.slug === slug);
   if (!product) return { title: '제품 상세 | ZOEL LIFE' };
+  const url = `https://zoellife.com/products/${product.slug}`;
+  const description = product.shortDescription || product.description?.slice(0, 160);
   return {
-    title: `${product.name} | ZOEL LIFE 대라천 '참'침향`,
-    description: product.shortDescription || product.description?.slice(0, 160),
-    openGraph: product.image ? { images: [product.image] } : undefined,
+    // absolute — 루트 template 이 브랜드를 또 붙여 "…참'침향 | 조엘라이프 대라천 '참'침향"
+    // 으로 이중화되던 것을 차단(브랜드 1회).
+    title: { absolute: `${product.name} | 대라천 '참'침향` },
+    description,
+    // self-canonical — 없으면 상위 products/layout·루트 canonical 을 상속해
+    // 모든 제품 상세가 목록/홈으로 정규화되어 색인에서 탈락한다.
+    alternates: { canonical: url },
+    // 루트 openGraph 는 deep-merge 되지 않고 통째로 대체되므로 url/type/siteName/locale 을 명시.
+    openGraph: {
+      type: 'website',
+      url,
+      siteName: '대라천 ZOEL LIFE',
+      locale: 'ko_KR',
+      title: `${product.name} | 대라천 '참'침향`,
+      description,
+      images: product.image ? [product.image] : [],
+    },
   };
 }
 
@@ -95,6 +111,9 @@ export default async function ProductDetailPage(
     return d.toISOString().slice(0, 10);
   })();
 
+  // 가격 미정(0원·'가격 문의') 제품은 offers 를 생략한다. price:0 + InStock 을
+  // 방출하면 화면의 "가격 문의"와 불일치해 Google 리치결과 거부·수동조치 대상이 된다.
+  const hasPrice = typeof product.price === 'number' && product.price > 0;
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -110,18 +129,22 @@ export default async function ProductDetailPage(
     manufacturer: { '@id': 'https://zoellife.com/#organization' },
     category: product.category,
     isPartOf: { '@id': 'https://zoellife.com/#website' },
-    offers: {
-      '@type': 'Offer',
-      price: product.price,
-      priceCurrency: 'KRW',
-      priceValidUntil,
-      itemCondition: 'https://schema.org/NewCondition',
-      availability: product.inStock
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
-      url: `https://zoellife.com/products/${product.slug}`,
-      seller: { '@id': 'https://zoellife.com/#organization' },
-    },
+    ...(hasPrice
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'KRW',
+            priceValidUntil,
+            itemCondition: 'https://schema.org/NewCondition',
+            availability: product.inStock
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/OutOfStock',
+            url: `https://zoellife.com/products/${product.slug}`,
+            seller: { '@id': 'https://zoellife.com/#organization' },
+          },
+        }
+      : {}),
   };
   if (ratingCount > 0) {
     productJsonLd.aggregateRating = {

@@ -229,6 +229,13 @@ export default async function ProductsPage() {
   const products = allProducts.filter((p) => p.published !== false);
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
 
+  // 목록 Offer 의 priceValidUntil — 상세 페이지와 동일 규칙(기본 1년 후).
+  const listPriceValidUntil = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() + 1);
+    return d.toISOString().slice(0, 10);
+  })();
+
   // CollectionPage + ItemList — Google/네이버 제품 목록 리치결과, AI 가 "대라천 제품 목록" 질의에 직접 답변 가능.
   const collectionJsonLd = {
     '@context': 'https://schema.org',
@@ -254,13 +261,16 @@ export default async function ProductsPage() {
           ...(p.image ? { image: p.image } : {}),
           ...(p.shortDescription ? { description: p.shortDescription } : {}),
           brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
-          ...(typeof p.price === 'number'
+          ...(typeof p.price === 'number' && p.price > 0
             ? {
                 offers: {
                   '@type': 'Offer',
                   price: p.price,
                   priceCurrency: 'KRW',
-                  availability: 'https://schema.org/InStock',
+                  priceValidUntil: listPriceValidUntil,
+                  availability: p.inStock
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
                   url: `https://zoellife.com/products/${p.slug}`,
                 },
               }

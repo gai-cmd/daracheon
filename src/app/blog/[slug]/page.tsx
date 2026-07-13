@@ -122,6 +122,27 @@ export default async function BlogPostPage({
     )
     .slice(0, 3);
 
+  // 본문에 인라인으로 박힌 1차 출처(논문·사전) 링크를 BlogPosting.citation 으로 승격.
+  // 화이트리스트 호스트 + 실제 본문에 존재하는 URL 만 — 없는 인용은 만들지 않는다.
+  const CITATION_HOSTS = [
+    'doi.org',
+    'koreascience.kr',
+    'koreascience.or.kr',
+    'kci.go.kr',
+    'encykorea.aks.ac.kr',
+    'cites.org',
+  ];
+  const citationUrls = Array.from(
+    new Set(Array.from(cleanHtml.matchAll(/href=["']([^"']+)["']/g)).map((m) => m[1]))
+  ).filter((u) => CITATION_HOSTS.some((h) => u.includes(h)));
+
+  // 작성자가 브랜드명(대라천/ZOEL)이면 검증 가능한 Organization 엔티티로 귀속 —
+  // YMYL(건강) 주제에서 실명 없는 Person 방출보다 신뢰신호가 강하다. 개인명이면 Person.
+  const isBrandAuthor = !post.author || /대라천|zoel/i.test(post.author);
+  const authorEntity = isBrandAuthor
+    ? { '@id': `${SITE_URL}/#organization` }
+    : { '@type': 'Person', name: post.author };
+
   const postJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -133,11 +154,14 @@ export default async function BlogPostPage({
     dateModified: post.updatedAt,
     inLanguage: 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}/#website` },
-    author: { '@type': 'Person', name: post.author },
+    author: authorEntity,
     publisher: { '@id': `${SITE_URL}/#organization` },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
     keywords: (post.seoKeywords ?? post.tags).join(', '),
     articleSection: category?.name,
+    ...(citationUrls.length
+      ? { citation: citationUrls.map((url) => ({ '@type': 'CreativeWork', url })) }
+      : {}),
   };
 
   const breadcrumb = {
@@ -215,6 +239,18 @@ export default async function BlogPostPage({
               <time dateTime={post.publishedAt ?? post.createdAt}>
                 {formatKoreanDate(post.publishedAt ?? post.createdAt)}
               </time>
+              {/* 갱신일이 발행일과 다른 날이면 "수정" 표기 — 독자·크롤러가 최신성을 화면에서 확인. */}
+              {post.updatedAt &&
+                formatKoreanDate(post.updatedAt) !==
+                  formatKoreanDate(post.publishedAt ?? post.createdAt) && (
+                  <>
+                    <span className={styles.dot}>·</span>
+                    <span>
+                      수정{' '}
+                      <time dateTime={post.updatedAt}>{formatKoreanDate(post.updatedAt)}</time>
+                    </span>
+                  </>
+                )}
               {post.readingTime && (
                 <>
                   <span className={styles.dot}>·</span>

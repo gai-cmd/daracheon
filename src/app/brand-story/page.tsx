@@ -219,6 +219,10 @@ export default async function BrandStoryPage() {
     publisher: { '@id': 'https://zoellife.com/#organization' },
     mainEntityOfPage: 'https://zoellife.com/brand-story',
     about: { '@id': 'https://zoellife.com/#brand' },
+    // 형제 페이지 about-agarwood 와 동일 콘텐츠 시기 — 발행/갱신일 명시(최신성 신호).
+    datePublished: '2026-01-07',
+    dateModified: '2026-04-17',
+    image: 'https://zoellife.com/opengraph-image.jpg',
     keywords:
       '대라천, ZOEL LIFE, 조엘라이프, 침향 브랜드, 베트남 침향, 25년 침향, Aquilaria Agallocha Roxburgh',
   };

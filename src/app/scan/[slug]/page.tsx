@@ -5,6 +5,10 @@ import ScanConsent from '@/components/qr/ScanConsent';
 
 export const dynamic = 'force-dynamic';
 
+// 얇은 트랜잭션(동의) 화면 — 색인 대상이 아니다. 루트의 index:true·홈 canonical
+// 상속을 끊어 검색·AI 크롤러에서 제외.
+export const metadata = { robots: { index: false, follow: false } };
+
 // 동의 화면 — QR 스캔 시 collectInfo QR 에 한해 /q 가 이곳으로 보낸다.
 // 진입 차단이 아니라 '동의하고 혜택' / '동의 없이 계속' 둘 다 제공.
 export default async function ScanConsentPage({

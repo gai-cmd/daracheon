@@ -547,7 +547,9 @@ function renderMarked(text: string, emClass?: string): React.ReactNode {
 // 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
-  title: "조엘라이프 대라천 '참'침향 - 100% 베트남산 아갈로차 침향",
+  // absolute — 루트 template("%s | 조엘라이프 대라천 '참'침향")이 홈 title 에
+  // 브랜드를 한 번 더 붙여 2회 중복·53자 초과되던 것을 차단.
+  title: { absolute: "조엘라이프 대라천 '참'침향 - 100% 베트남산 아갈로차 침향" },
   // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
   // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:

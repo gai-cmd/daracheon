@@ -8,6 +8,10 @@ import {
   type BlogPost,
 } from '@/types/blog';
 
+// 신규 블로그·제품(blob 즉시 반영)이 다음 배포 없이도 sitemap 에 반영되도록
+// 최대 1시간 주기로 재생성. 발행 핸들러의 revalidatePath('/sitemap.xml') 와 병행.
+export const revalidate = 3600;
+
 // env 값에 줄바꿈/공백 섞이면 sitemap URL 이 깨져 검색엔진 색인 실패.
 // 모든 공백·제어문자 제거 + trailing slash 정리.
 function getBaseUrl(): string {
@@ -40,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/reviews`, lastModified, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/reviews`) },
     { url: `${baseUrl}/process`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/process`) },
     { url: `${baseUrl}/blog`, lastModified, changeFrequency: 'weekly', priority: 0.8, alternates: withAlternates(`${baseUrl}/blog`) },
+    { url: `${baseUrl}/guide`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/guide`) },
     { url: `${baseUrl}/privacy`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/privacy`) },
     { url: `${baseUrl}/terms`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/terms`) },
   ];
@@ -73,9 +78,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const published = posts.filter((p) => p.status === 'published' && p.slug);
     const postRoutes: MetadataRoute.Sitemap = published.map((p) => {
       const url = `${baseUrl}/blog/${p.slug}`;
+      // 잘못된/빈 updatedAt 이 Invalid Date → toISOString RangeError → catch 로 흘러
+      // 블로그 전량이 sitemap 에서 조용히 사라지는 것을 방어.
+      const d = new Date(p.updatedAt);
       return {
         url,
-        lastModified: new Date(p.updatedAt),
+        lastModified: Number.isNaN(d.getTime()) ? lastModified : d,
         changeFrequency: 'monthly' as const,
         priority: 0.7,
         alternates: withAlternates(url),
