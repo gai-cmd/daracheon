@@ -350,8 +350,9 @@ export default async function BlogPostPage({
               )}
 
               {/* data-reading-surface: dark-theme.css 의 전역 !important 규칙
-                  (table/th/td 아이보리 글자 강제 등)이 밝은 리딩 카드 내부로
-                  새어 들어오지 않도록 제외 마커를 단다. */}
+                  (table/th/td 아이보리 글자 강제 등)을 차단하는 제외 마커.
+                  본문 표면은 다크지만, 콘텐츠가 인라인 밝은 배경 박스를 지참하는
+                  경우가 있어 표 색상은 모듈 CSS 가 문맥별로 직접 관리한다. */}
               <div
                 className={styles.article}
                 data-reading-surface

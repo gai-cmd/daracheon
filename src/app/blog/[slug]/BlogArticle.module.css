@@ -367,21 +367,23 @@
 
 /* ── Article HTML (TipTap output) ─────────────────────────── */
 /*
- * 근본 대책: 본문 콘텐츠는 밝은(크림/베이지) 표면을 가정한 어두운 흙빛 팔레트로
- * 작성되므로, 아티클 본문 영역을 밝은 리딩 표면 + 어두운 잉크로 전환한다.
- * (히어로/헤더/추천글 등 사이트 크롬은 다크 유지 → 다크 크롬 위 밝은 리딩 카드)
- * 이렇게 하면 콜아웃 박스·강조(strong)·SVG·표·캡션이 모두 한 번에 읽힌다.
+ * 본문 표면 = 사이트 표준 다크 톤 (홈 히어로·story-page 챕터 본문과 동일).
+ * 타이포 기준: story-page.module.css 의 .chapterBody p —
+ * Noto Sans KR 300 · clamp(0.9rem, 2.5vw, 1.02rem) · line-height 1.95 ·
+ * rgba(255,255,255,0.72). 제목은 Noto Serif KR + 골드 액센트.
+ *
+ * 예외 처리 — 콘텐츠에 인라인으로 박힌 밝은 배경 박스(콜아웃·표 래퍼,
+ * style="background: #FBF3E6" 류)는 자체 배경을 지참하므로 그대로 두고,
+ * 그 내부 텍스트만 어두운 잉크로 스코프해서 읽히게 한다.
+ * (dark-theme.css 의 전역 table !important 규칙은 data-reading-surface
+ * 마커가 차단 — 밝은 박스 안 표에 아이보리 글자가 강제되는 사고 방지.)
  */
 .article {
-  background: #faf7f0;
-  color: #2b2318;
-  padding: clamp(28px, 5vw, 56px);
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   font-family: var(--font-sans), sans-serif;
-  font-size: 0.98rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.02rem);
   line-height: 1.95;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.72);
   letter-spacing: -0.005em;
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -389,23 +391,24 @@
 
 .article h1 {
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  font-size: clamp(1.6rem, 3.6vw, 2.2rem);
   font-weight: 300;
   letter-spacing: -0.02em;
-  color: #1c150c;
+  color: #fff;
   margin: 48px 0 20px;
   line-height: 1.3;
 }
 
 .article h2 {
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.15rem, 2vw, 1.4rem);
-  font-weight: 600;
-  color: #9a6a10;
+  font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  font-weight: 300;
+  color: #fff;
   margin: 56px 0 16px;
   letter-spacing: -0.01em;
-  padding-top: 24px;
-  border-top: 1px solid rgba(154, 106, 16, 0.22);
+  line-height: 1.35;
+  padding-top: 28px;
+  border-top: 1px solid rgba(212, 168, 67, 0.22);
 }
 .article > h2:first-child {
   border-top: none;
@@ -415,9 +418,9 @@
 
 .article h3 {
   font-family: var(--font-serif), serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #2b2318;
+  font-size: 1.12rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
   margin: 32px 0 12px;
 }
 
@@ -427,7 +430,7 @@
 
 .article hr {
   border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   margin: 36px 0;
 }
 
@@ -442,17 +445,17 @@
 }
 
 .article strong {
-  color: #1a140c;
-  font-weight: 700;
+  color: #fdfbf7;
+  font-weight: 600;
 }
 
 .article em {
-  color: #4a3f2e;
+  color: inherit; /* 부모(면책 문구 등 인라인 색 포함)를 따라간다 */
   font-style: italic;
 }
 
 .article a {
-  color: #a06b0e;
+  color: #d4a843;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -464,7 +467,7 @@
   margin: 28px 0;
   padding: 4px 0 4px 20px;
   border-left: 3px solid #c89a56;
-  color: #3f3626;
+  color: rgba(255, 255, 255, 0.82);
   font-style: italic;
   font-size: 1.02rem;
   line-height: 1.85;
@@ -480,7 +483,7 @@
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 }
 .article figcaption {
@@ -489,7 +492,7 @@
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.68rem;
   letter-spacing: 0.18em;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
 }
 
@@ -500,22 +503,22 @@
   width: 100%;
   height: auto;
   margin: 32px 0;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 }
 
 .article code {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #9a6a10;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d9b25f;
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.88em;
   padding: 1px 6px;
   border-radius: 3px;
 }
 .article pre {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 16px 18px;
   overflow-x: auto;
   margin: 24px 0;
@@ -524,7 +527,7 @@
   background: none;
   border: 0;
   padding: 0;
-  color: #2b2318;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .article table {
@@ -532,31 +535,68 @@
   border-collapse: collapse;
   margin: 24px 0;
   font-size: 0.9rem;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 .article th,
 .article td {
   padding: 12px 16px;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
 .article th:last-child,
 .article td:last-child {
   border-right: none;
 }
+.article td {
+  color: rgba(255, 255, 255, 0.75);
+}
 .article thead th {
-  background: rgba(154, 106, 16, 0.1);
-  color: #855a08;
+  background: rgba(212, 168, 67, 0.12);
+  color: #d4a843;
   font-weight: 600;
   letter-spacing: 0.02em;
-  border-bottom: 1px solid rgba(154, 106, 16, 0.3);
+  border-bottom: 1px solid rgba(212, 168, 67, 0.35);
+}
+
+/* ── 인라인 밝은 배경 박스 (콜아웃·표 래퍼) ──────────────────
+   콘텐츠가 style="background: …" 로 자체 밝은 표면을 지참하는 경우,
+   내부 텍스트·표를 어두운 잉크 팔레트로 스코프. 인라인 color 가 이미
+   박힌 요소(콜아웃 문단 등)는 인라인 값이 우선 적용된다. */
+.article div[style*='background'] {
+  color: #3f3626;
+}
+.article div[style*='background'] strong {
+  color: #1a140c;
+}
+.article div[style*='background'] a {
+  color: #a06b0e;
+}
+.article div[style*='background'] table {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+.article div[style*='background'] th,
+.article div[style*='background'] td {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  border-right-color: rgba(0, 0, 0, 0.06);
+  color: #3f3626;
+}
+.article div[style*='background'] thead th {
+  background: rgba(154, 106, 16, 0.1);
+  color: #855a08;
+  border-bottom-color: rgba(154, 106, 16, 0.3);
+}
+
+/* 본문 직계 문단에 박힌 인라인 색(면책 문구 #7d7570 류)은 밝은 표면
+   전제로 고른 값이라 다크 배경에서 대비 미달 — 뮤트 크림으로 강제. */
+.article > p[style*='color'] {
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* ── Inline SVG charts ────────────────────────────────────────
-   본문 차트는 밝은 흙빛 팔레트(짙은 글자)로 그려지므로, 다크 아티클
-   배경 위에서 글자가 묻히지 않도록 밝은 카드 표면을 강제한다. */
+   본문 차트는 밝은 흙빛 팔레트(짙은 글자)로 그려지므로, 다크 본문
+   위에서 글자가 묻히지 않도록 밝은 카드 표면을 유지한다. */
 .article svg {
   display: block;
   max-width: 100%;
