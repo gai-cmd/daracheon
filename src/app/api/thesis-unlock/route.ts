@@ -30,7 +30,9 @@ export async function POST(req: NextRequest) {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
-    path: '/thesis',
+    // path='/' 이어야 /thesis 게이트뿐 아니라 /api/thesis-review(검수 저장 API)에도
+    // 쿠키가 전송된다. '/thesis' 로 좁히면 API 가 항상 401 → Blob 동기화 불가.
+    path: '/',
     maxAge: 60 * 60 * 12, // 12시간
   });
   return res;
