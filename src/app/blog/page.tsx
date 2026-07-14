@@ -98,8 +98,8 @@ export default async function BlogListPage() {
       <JsonLd data={breadcrumb} />
 
       <main className="min-h-screen bg-luxury-black text-luxury-cream">
-        <section className="border-b border-luxury-bronze/20 px-4 py-16 md:py-24">
-          <div className="mx-auto max-w-6xl">
+        <section className="border-b border-luxury-bronze/20 px-7 py-16 lg:px-16 md:py-24">
+          <div className="mx-auto max-w-[1312px]">
             <p className="text-xs uppercase tracking-[0.3em] text-luxury-gold">JOURNAL</p>
             <h1 className="mt-3 text-3xl font-semibold md:text-5xl">대라천 블로그</h1>
             <p className="mt-3 max-w-2xl text-sm text-luxury-cream/70 md:text-base">
@@ -111,8 +111,8 @@ export default async function BlogListPage() {
 
         {/* Categories */}
         {sortedCategories.length > 0 && (
-          <nav className="border-b border-luxury-bronze/20 px-4 py-4">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2">
+          <nav className="border-b border-luxury-bronze/20 px-7 py-4 lg:px-16">
+            <div className="mx-auto flex max-w-[1312px] flex-wrap items-center gap-2">
               <Link
                 href="/blog"
                 className="rounded-full border border-luxury-gold/60 bg-luxury-gold/10 px-3 py-1 text-xs text-luxury-gold"
@@ -132,8 +132,8 @@ export default async function BlogListPage() {
           </nav>
         )}
 
-        <section className="px-4 py-12">
-          <div className="mx-auto max-w-6xl">
+        <section className="px-7 py-12 lg:px-16">
+          <div className="mx-auto max-w-[1312px]">
             {published.length === 0 ? (
               <div className="rounded-lg border border-luxury-bronze/30 bg-luxury-ink/40 p-12 text-center text-luxury-cream/60">
                 아직 발행된 글이 없습니다.

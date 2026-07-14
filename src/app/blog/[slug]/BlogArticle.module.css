@@ -12,14 +12,274 @@
   min-height: 100vh;
 }
 
-.inner {
-  max-width: 920px;
+/* 사이트 표준 셸 — Header.module.css(.navInner)·story-page(.wrap)와 동일한
+   1440px + 28/64px 패딩. 블로그만 920px 로 좁던 문제를 여기서 통일한다. */
+.shell {
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 28px;
 }
 @media (min-width: 1024px) {
-  .inner {
+  .shell {
     padding: 0 64px;
+  }
+}
+
+/* ── 3-column layout ──────────────────────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  padding: 40px 0 96px;
+}
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 190px minmax(0, 1fr) 272px;
+    gap: 32px;
+    padding-top: 48px;
+  }
+}
+@media (min-width: 1280px) {
+  .layout {
+    grid-template-columns: 216px minmax(0, 1fr) 300px;
+    gap: 44px;
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.leftRail,
+.rightRail {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .railSticky {
+    position: sticky;
+    top: calc(var(--nav-h, 72px) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.railBox {
+  border: 1px solid rgba(212, 168, 67, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 20px 18px;
+}
+.railBox + .railBox {
+  margin-top: 20px;
+}
+@media (min-width: 1024px) {
+  .railBox + .railBox {
+    margin-top: 0; /* railSticky 의 gap 이 담당 */
+  }
+}
+
+.railHeading {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #d4a843;
+  margin: 0 0 14px;
+}
+
+/* 카테고리 목록 */
+.catList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.catLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  color: rgba(253, 251, 247, 0.75);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  word-break: keep-all;
+}
+.catLink:hover {
+  background: rgba(212, 168, 67, 0.08);
+  color: #fdfbf7;
+}
+.catActive {
+  background: rgba(212, 168, 67, 0.12);
+  color: #d4a843;
+  font-weight: 600;
+}
+.catActive:hover {
+  color: #d4a843;
+}
+.catCount {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  color: rgba(253, 251, 247, 0.38);
+}
+.catActive .catCount {
+  color: rgba(212, 168, 67, 0.75);
+}
+
+/* 모바일·태블릿: 좌측 레일을 히어로 아래 가로 칩 바로 변환 */
+@media (max-width: 1023px) {
+  .leftRail .railBox {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  .leftRail .railHeading {
+    margin-bottom: 10px;
+  }
+  .catList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .catLink {
+    border: 1px solid rgba(212, 168, 67, 0.28);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+  }
+  .catActive {
+    border-color: rgba(212, 168, 67, 0.6);
+  }
+}
+
+/* 우측 레일 글 목록 (인기 글·관련 글) */
+.postList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.postList li + li {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.postItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 2px;
+  text-decoration: none;
+}
+.postItem:hover .postTitle {
+  color: #d4a843;
+}
+.rank {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: #d4a843;
+  line-height: 1.5;
+  flex: 0 0 auto;
+}
+.thumb {
+  flex: 0 0 64px;
+  width: 64px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.thumbFallback {
+  flex: 0 0 64px;
+  width: 64px;
+  aspect-ratio: 16 / 10;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #2a2d3a, rgba(212, 168, 67, 0.3));
+}
+.postText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.postTitle {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: rgba(253, 251, 247, 0.88);
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.15s;
+}
+.postDate {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: rgba(253, 251, 247, 0.4);
+}
+
+/* ── 이전/다음 글 내비게이션 ───────────────────────────────── */
+.pnNav {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 40px;
+}
+@media (min-width: 640px) {
+  .pnNav {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pnCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pnCard:hover {
+  border-color: rgba(212, 168, 67, 0.5);
+  background: rgba(212, 168, 67, 0.05);
+}
+.pnNext {
+  text-align: right;
+  align-items: flex-end;
+}
+.pnLabel {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #d4a843;
+}
+.pnTitle {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(253, 251, 247, 0.85);
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pnEmpty {
+  display: none;
+}
+@media (min-width: 640px) {
+  .pnEmpty {
+    display: block;
   }
 }
 
@@ -63,6 +323,8 @@
   line-height: 1.25;
   color: #fff;
   margin: 0 0 16px;
+  max-width: 1000px; /* 셸이 1440 으로 넓어져도 제목 줄길이는 읽기 좋게 제한 */
+  word-break: keep-all;
 }
 
 .excerpt {
@@ -72,6 +334,7 @@
   font-weight: 300;
   color: rgba(255, 255, 255, 0.72);
   margin: 0 0 24px;
+  max-width: 780px;
   word-break: keep-all;
   text-wrap: pretty;
 }
@@ -89,20 +352,17 @@
   opacity: 0.4;
 }
 
-/* ── Cover image ──────────────────────────────────────────── */
+/* ── Cover image (중앙 칼럼 내부) ─────────────────────────── */
 .cover {
-  border-bottom: 1px solid rgba(212, 168, 67, 0.12);
+  margin-bottom: 28px;
 }
 .cover img {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-}
-
-/* ── Body container ───────────────────────────────────────── */
-.body {
-  padding: 56px 0 96px;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 168, 67, 0.14);
 }
 
 /* ── Article HTML (TipTap output) ─────────────────────────── */

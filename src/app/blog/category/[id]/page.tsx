@@ -85,8 +85,8 @@ export default async function BlogCategoryPage({
     <>
       <JsonLd data={breadcrumb} />
       <main className="min-h-screen bg-luxury-black text-luxury-cream">
-        <section className="border-b border-luxury-bronze/20 px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-6xl">
+        <section className="border-b border-luxury-bronze/20 px-7 py-16 lg:px-16 md:py-20">
+          <div className="mx-auto max-w-[1312px]">
             <Link href="/blog" className="text-xs uppercase tracking-[0.3em] text-luxury-gold">
               ← 블로그
             </Link>
@@ -97,8 +97,8 @@ export default async function BlogCategoryPage({
           </div>
         </section>
 
-        <nav className="border-b border-luxury-bronze/20 px-4 py-4">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2">
+        <nav className="border-b border-luxury-bronze/20 px-7 py-4 lg:px-16">
+          <div className="mx-auto flex max-w-[1312px] flex-wrap items-center gap-2">
             <Link
               href="/blog"
               className="rounded-full border border-luxury-bronze/40 px-3 py-1 text-xs text-luxury-cream/70 transition hover:border-luxury-gold/60 hover:text-luxury-gold"
@@ -122,8 +122,8 @@ export default async function BlogCategoryPage({
           </div>
         </nav>
 
-        <section className="px-4 py-12">
-          <div className="mx-auto max-w-6xl">
+        <section className="px-7 py-12 lg:px-16">
+          <div className="mx-auto max-w-[1312px]">
             {filtered.length === 0 ? (
               <div className="rounded-lg border border-luxury-bronze/30 bg-luxury-ink/40 p-12 text-center text-luxury-cream/60">
                 이 카테고리에 아직 글이 없습니다.

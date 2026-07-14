@@ -29,6 +29,14 @@ function formatKoreanDate(iso: string): string {
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
 
+function formatShortDate(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(
+    d.getDate()
+  ).padStart(2, '0')}`;
+}
+
 async function loadPost(slug: string, allowDraft = false) {
   const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
   return (
@@ -112,15 +120,44 @@ export default async function BlogPostPage({
   // 정제는 어드민 쓰기 경로에 한 번만 위치시키고 공개 페이지는 신뢰한다.
   const cleanHtml = post.content;
 
-  const related = posts
-    .filter(
-      (p) =>
-        p.status === 'published' && p.id !== post.id && p.categoryId === post.categoryId
-    )
+  // ── 사이드바·연결 탐색 데이터 ─────────────────────────────
+  const published = posts
+    .filter((p) => p.status === 'published')
     .sort((a, b) =>
       (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
+    );
+
+  const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
+  const categoryCounts = new Map<string, number>();
+  for (const p of published) {
+    categoryCounts.set(p.categoryId, (categoryCounts.get(p.categoryId) ?? 0) + 1);
+  }
+
+  // 인기 글: viewCount 우선, 동률(초기값 0)이면 최신순 폴백.
+  const popular = published
+    .filter((p) => p.id !== post.id)
+    .sort(
+      (a, b) =>
+        (b.viewCount ?? 0) - (a.viewCount ?? 0) ||
+        (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
     )
-    .slice(0, 3);
+    .slice(0, 5);
+
+  // 우측 레일 관련 글: 같은 카테고리 최신순.
+  const relatedRail = published
+    .filter((p) => p.id !== post.id && p.categoryId === post.categoryId)
+    .slice(0, 5);
+
+  // 하단 관련 글 카드 그리드 (기존 유지).
+  const related = relatedRail.slice(0, 3);
+
+  // 이전/다음 글 — 발행일 내림차순 목록 기준 (다음 = 더 최신, 이전 = 더 과거).
+  const currentIdx = published.findIndex((p) => p.id === post.id);
+  const newerPost = currentIdx > 0 ? published[currentIdx - 1] : null;
+  const olderPost =
+    currentIdx >= 0 && currentIdx < published.length - 1
+      ? published[currentIdx + 1]
+      : null;
 
   // 본문에 인라인으로 박힌 1차 출처(논문·사전) 링크를 BlogPosting.citation 으로 승격.
   // 화이트리스트 호스트 + 실제 본문에 존재하는 URL 만 — 없는 인용은 만들지 않는다.
@@ -219,9 +256,9 @@ export default async function BlogPostPage({
       )}
 
       <article className={styles.page}>
-        {/* Hero — Legal/Brand-Story 페이지와 동일 톤·여백 */}
+        {/* Hero — 사이트 표준 셸(1440px)과 동일 폭·여백 */}
         <header className={styles.header}>
-          <div className={styles.inner}>
+          <div className={styles.shell}>
             <div className={styles.crumbs}>
               <Link href="/blog">BLOG</Link>
               {category && (
@@ -261,46 +298,168 @@ export default async function BlogPostPage({
           </div>
         </header>
 
-        {/* Cover */}
-        {post.coverImage && (
-          <div className={styles.cover}>
-            <div className={styles.inner}>
-              {/* 커버는 글의 LCP 요소 — 우선 로드 힌트를 준다. (CLS 는 .cover img 의
-                  aspect-ratio 16/9 로 이미 예약됨) */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.coverImage} alt={post.title} fetchPriority="high" decoding="async" />
-            </div>
-          </div>
-        )}
-
-        {/* Body */}
-        <section className={styles.body}>
-          <div className={styles.inner}>
-            {/* data-reading-surface: dark-theme.css 의 전역 !important 규칙
-                (table/th/td 아이보리 글자 강제 등)이 밝은 리딩 카드 내부로
-                새어 들어오지 않도록 제외 마커를 단다. */}
-            <div
-              className={styles.article}
-              data-reading-surface
-              dangerouslySetInnerHTML={{ __html: cleanHtml }}
-            />
-
-            {post.tags.length > 0 && (
-              <div className={styles.tags}>
-                {post.tags.map((t) => (
-                  <span key={t} className={styles.tag}>
-                    #{t}
-                  </span>
-                ))}
+        {/* 3단 레이아웃: 좌 분류 / 중앙 본문 / 우 인기·관련 */}
+        <div className={styles.shell}>
+          <div className={styles.layout}>
+            {/* Left rail — 카테고리 */}
+            <aside className={styles.leftRail} aria-label="블로그 카테고리">
+              <div className={styles.railSticky}>
+                <nav className={styles.railBox}>
+                  <h2 className={styles.railHeading}>분류</h2>
+                  <ul className={styles.catList}>
+                    <li>
+                      <Link href="/blog" className={styles.catLink}>
+                        <span>전체</span>
+                        <span className={styles.catCount}>{published.length}</span>
+                      </Link>
+                    </li>
+                    {sortedCategories.map((c) => (
+                      <li key={c.id}>
+                        <Link
+                          href={`/blog/category/${c.id}`}
+                          className={`${styles.catLink} ${
+                            c.id === post.categoryId ? styles.catActive : ''
+                          }`}
+                        >
+                          <span>{c.name}</span>
+                          <span className={styles.catCount}>
+                            {categoryCounts.get(c.id) ?? 0}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
               </div>
-            )}
-          </div>
-        </section>
+            </aside>
 
-        {/* Related */}
+            {/* Center — 커버 + 본문 + 태그 + 이전/다음 */}
+            <div className={styles.main}>
+              {post.coverImage && (
+                <div className={styles.cover}>
+                  {/* 커버는 글의 LCP 요소 — 우선 로드 힌트를 준다. (CLS 는 .cover img 의
+                      aspect-ratio 16/9 로 이미 예약됨) */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                </div>
+              )}
+
+              {/* data-reading-surface: dark-theme.css 의 전역 !important 규칙
+                  (table/th/td 아이보리 글자 강제 등)이 밝은 리딩 카드 내부로
+                  새어 들어오지 않도록 제외 마커를 단다. */}
+              <div
+                className={styles.article}
+                data-reading-surface
+                dangerouslySetInnerHTML={{ __html: cleanHtml }}
+              />
+
+              {post.tags.length > 0 && (
+                <div className={styles.tags}>
+                  {post.tags.map((t) => (
+                    <span key={t} className={styles.tag}>
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {(newerPost || olderPost) && (
+                <nav className={styles.pnNav} aria-label="이전 글 / 다음 글">
+                  {olderPost ? (
+                    <Link href={`/blog/${olderPost.slug}`} className={styles.pnCard}>
+                      <span className={styles.pnLabel}>← 이전 글</span>
+                      <span className={styles.pnTitle}>{olderPost.title}</span>
+                    </Link>
+                  ) : (
+                    <span className={styles.pnEmpty} />
+                  )}
+                  {newerPost ? (
+                    <Link
+                      href={`/blog/${newerPost.slug}`}
+                      className={`${styles.pnCard} ${styles.pnNext}`}
+                    >
+                      <span className={styles.pnLabel}>다음 글 →</span>
+                      <span className={styles.pnTitle}>{newerPost.title}</span>
+                    </Link>
+                  ) : (
+                    <span className={styles.pnEmpty} />
+                  )}
+                </nav>
+              )}
+            </div>
+
+            {/* Right rail — 인기 글 · 관련 글 */}
+            <aside className={styles.rightRail} aria-label="인기 글과 관련 글">
+              <div className={styles.railSticky}>
+                {popular.length > 0 && (
+                  <section className={styles.railBox}>
+                    <h2 className={styles.railHeading}>인기 글</h2>
+                    <ul className={styles.postList}>
+                      {popular.map((p, i) => (
+                        <li key={p.id}>
+                          <Link href={`/blog/${p.slug}`} className={styles.postItem}>
+                            <span className={styles.rank}>
+                              {String(i + 1).padStart(2, '0')}
+                            </span>
+                            <span className={styles.postText}>
+                              <span className={styles.postTitle}>{p.title}</span>
+                              <span className={styles.postDate}>
+                                {formatShortDate(p.publishedAt ?? p.createdAt)}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                {relatedRail.length > 0 && (
+                  <section className={styles.railBox}>
+                    <h2 className={styles.railHeading}>
+                      관련 글{category ? ` — ${category.name}` : ''}
+                    </h2>
+                    <ul className={styles.postList}>
+                      {relatedRail.map((p) => (
+                        <li key={p.id}>
+                          <Link href={`/blog/${p.slug}`} className={styles.postItem}>
+                            {p.coverImage ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={p.coverImage}
+                                alt=""
+                                className={styles.thumb}
+                                loading="lazy"
+                              />
+                            ) : (
+                              <span className={styles.thumbFallback} />
+                            )}
+                            <span className={styles.postText}>
+                              <span className={styles.postTitle}>{p.title}</span>
+                              <span className={styles.postDate}>
+                                {formatShortDate(p.publishedAt ?? p.createdAt)}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        {/* Related — 하단 카드 그리드 */}
         {related.length > 0 && (
           <section className={styles.related}>
-            <div className={styles.inner}>
+            <div className={styles.shell}>
               <h2 className={styles.relatedHeading}>관련 글</h2>
               <div className={styles.relatedGrid}>
                 {related.map((p) => (
