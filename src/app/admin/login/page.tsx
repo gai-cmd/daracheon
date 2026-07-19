@@ -5,17 +5,31 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
+const SSO_ERROR_MESSAGES: Record<string, string> = {
+  not_authorized: '등록되지 않은 계정입니다. 관리자에게 문의하세요.',
+  account_locked: '계정이 잠겨 있습니다. 잠시 후 다시 시도하세요.',
+  sso_not_configured: 'Google 로그인이 아직 설정되지 않았습니다.',
+  oauth_state: '보안 검증에 실패했습니다. 다시 시도해주세요.',
+  oauth_token: 'Google 인증에 실패했습니다. 다시 시도해주세요.',
+  oauth_userinfo: 'Google 계정 정보를 확인하지 못했습니다.',
+  oauth_email: '이메일이 확인되지 않은 Google 계정입니다.',
+  oauth_failed: 'Google 로그인 중 오류가 발생했습니다.',
+};
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/admin';
+  const ssoError = searchParams.get('error');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
   const [totpRequired, setTotpRequired] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    ssoError ? (SSO_ERROR_MESSAGES[ssoError] ?? '로그인 중 오류가 발생했습니다.') : null
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -128,6 +142,22 @@ function LoginForm() {
           >
             {loading ? '로그인 중...' : 'Sign In'}
           </button>
+
+          <div className="my-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-white/10" />
+            <span className="text-[0.6rem] uppercase tracking-[0.25em] text-white/30">또는</span>
+            <span className="h-px flex-1 bg-white/10" />
+          </div>
+
+          <a
+            href={`/api/admin/auth/google/start?next=${encodeURIComponent(next)}`}
+            className="flex w-full items-center justify-center gap-3 border border-white/15 bg-white/[0.03] px-6 py-3 text-[0.72rem] font-medium tracking-[0.15em] text-white/80 transition hover:border-gold-500/40 hover:bg-white/[0.06]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.4-1.6 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.9 1.5l2.6-2.5C16.9 3.3 14.7 2.3 12 2.3 6.9 2.3 2.8 6.4 2.8 11.5S6.9 20.7 12 20.7c5.3 0 8.8-3.7 8.8-8.9 0-.6-.1-1.1-.2-1.6H12z" />
+            </svg>
+            Google로 로그인
+          </a>
 
           <p className="mt-6 text-center text-[0.7rem]">
             <a href="/admin/password-reset" className="text-white/50 transition hover:text-gold-400">

@@ -11,6 +11,7 @@ const PUBLIC_ADMIN_API_PREFIXES = [
   '/api/admin/auth/login',
   '/api/admin/auth/logout',
   '/api/admin/auth/password-reset',
+  '/api/admin/auth/google/', // SSO start·callback (세션 없이 진입)
   '/api/admin/revalidate-pages',
 ];
 
