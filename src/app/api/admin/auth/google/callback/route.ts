@@ -137,12 +137,16 @@ export async function GET(request: Request) {
 
     await auditSsoLogin(email, user.role, 'login', `구글 SSO 로그인: ${email}`);
 
-    // 4) 세션 발급 (비밀번호 로그인과 동일한 토큰/쿠키)
+    // 4) 세션 발급 (토큰은 비밀번호 로그인과 동일)
     const token = await createSessionToken({ email, role: user.role });
     const response = NextResponse.redirect(new URL(next, request.url));
+    // ⚠️ SameSite=Lax (Strict 아님): 이 콜백은 google.com 리디렉션으로 진입하므로,
+    //    Strict 세션쿠키는 이어지는 /admin 최초 요청에 전송되지 않아 로그인 화면으로
+    //    되돌아온다. Lax 는 top-level GET 이동에 쿠키를 실어 SSO 진입을 성사시킨다.
+    //    (비밀번호 로그인은 fetch 후 클라이언트 이동이라 Strict 로도 동작.)
     response.cookies.set(SESSION_COOKIE, token, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       maxAge: SESSION_MAX_AGE_SECONDS,
