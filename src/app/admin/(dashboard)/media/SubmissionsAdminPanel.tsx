@@ -409,60 +409,112 @@ export default function SubmissionsAdminPanel() {
                 {pending.map((s) => (
                   <div key={s.id} className="rounded-xl border border-amber-200 bg-white p-5 shadow-sm">
                     <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASS[s.status]}`}>
                             {STATUS_LABEL[s.status]}
                           </span>
-                          <h3 className="truncate text-base font-semibold text-neutral-900">{s.title}</h3>
+                          {editSubId === s.id ? (
+                            <input
+                              type="text"
+                              value={editSubTitle}
+                              onChange={(e) => setEditSubTitle(e.target.value)}
+                              maxLength={120}
+                              className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+                            />
+                          ) : (
+                            <h3 className="truncate text-base font-semibold text-neutral-900">{s.title}</h3>
+                          )}
                         </div>
-                        {s.note && <p className="mt-2 whitespace-pre-line text-sm text-gray-600">{s.note}</p>}
+                        {editSubId === s.id ? (
+                          <textarea
+                            value={editSubNote}
+                            onChange={(e) => setEditSubNote(e.target.value)}
+                            rows={2}
+                            maxLength={2000}
+                            placeholder="메모 (선택)"
+                            className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                          />
+                        ) : (
+                          s.note && <p className="mt-2 whitespace-pre-line text-sm text-gray-600">{s.note}</p>
+                        )}
                         {metaChips(s)}
                       </div>
                     </div>
                     {fileGrid(s)}
                     <div className="mt-4 flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        disabled={busyId === s.id}
-                        onClick={() => review(s.id, 'approve')}
-                        className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
-                      >
-                        {busyId === s.id ? '처리 중…' : `승인 → /media 게시 (${s.files.length}건)`}
-                      </button>
-                      {rejectingId === s.id ? (
+                      {editSubId === s.id ? (
                         <>
-                          <input
-                            type="text"
-                            value={rejectReason}
-                            onChange={(e) => setRejectReason(e.target.value)}
-                            placeholder="반려 사유 (파트너에게 표시됨)"
-                            className="w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm"
-                          />
                           <button
                             type="button"
                             disabled={busyId === s.id}
-                            onClick={() => review(s.id, 'reject', rejectReason)}
-                            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                            onClick={() => editSubmission(s.id)}
+                            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
                           >
-                            반려 확정
+                            {busyId === s.id ? '저장 중…' : '저장'}
                           </button>
                           <button
                             type="button"
-                            onClick={() => { setRejectingId(null); setRejectReason(''); }}
+                            onClick={() => setEditSubId(null)}
                             className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
                           >
                             취소
                           </button>
                         </>
                       ) : (
-                        <button
-                          type="button"
-                          onClick={() => setRejectingId(s.id)}
-                          className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-                        >
-                          반려
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => review(s.id, 'approve')}
+                            className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '처리 중…' : `승인 → /media 게시 (${s.files.length}건)`}
+                          </button>
+                          {rejectingId === s.id ? (
+                            <>
+                              <input
+                                type="text"
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                placeholder="반려 사유 (파트너에게 표시됨)"
+                                className="w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                              />
+                              <button
+                                type="button"
+                                disabled={busyId === s.id}
+                                onClick={() => review(s.id, 'reject', rejectReason)}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                              >
+                                반려 확정
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => { setRejectingId(null); setRejectReason(''); }}
+                                className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                              >
+                                취소
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => setRejectingId(s.id)}
+                                className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                              >
+                                반려
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => startEditSub(s)}
+                                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                              >
+                                수정
+                              </button>
+                            </>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
