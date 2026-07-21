@@ -10,17 +10,6 @@ import {
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-interface MediaItem {
-  id: string;
-  type: 'video' | 'photo';
-  title: string;
-  source: string;
-  date: string;
-  image: string;
-  excerpt: string;
-  url: string;
-}
-
 export async function GET() {
   try {
     const submissions = await readDataUncached<MediaSubmission>(SUBMISSIONS_FILE);
@@ -40,27 +29,13 @@ export async function GET() {
 const reviewSchema = z.object({
   id: z.string().min(1),
   action: z.enum(['approve', 'reject', 'edit']),
-  /** 승인 시 제목/출처 덮어쓰기, 또는 edit 시 제목 수정 (미지정 시 제출값 유지) */
+  /** 승인 시 제목 덮어쓰기, 또는 edit 시 제목 수정 (미지정 시 제출값 유지) */
   title: z.string().max(120).optional(),
-  source: z.string().max(60).optional(),
   /** edit 시 메모 수정 (빈 문자열이면 메모 삭제) */
   note: z.string().max(2000).optional(),
   /** 거절 사유 */
   reason: z.string().max(500).optional(),
-  /** 촬영 메타(위치·날씨·시간)를 설명에 덧붙일지 (기본 true) */
-  includeMeta: z.boolean().optional(),
 });
-
-function metaLine(s: MediaSubmission): string {
-  const parts: string[] = [];
-  if (s.capturedAt) parts.push(`촬영 ${s.capturedAt.replace('T', ' ').slice(0, 16)}`);
-  if (s.location) parts.push(`GPS ${s.location.lat.toFixed(5)}, ${s.location.lng.toFixed(5)}`);
-  if (s.weather) {
-    const w = s.weather;
-    parts.push(`${w.text ?? '날씨'} ${Math.round(w.tempC)}°C${typeof w.humidity === 'number' ? ` · 습도 ${w.humidity}%` : ''}`);
-  }
-  return parts.join(' · ');
-}
 
 export async function PUT(request: Request) {
   try {
@@ -72,7 +47,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const { id, action, reason, includeMeta } = parsed.data;
+    const { id, action, reason } = parsed.data;
 
     const submissions = await readDataForWrite<MediaSubmission>(SUBMISSIONS_FILE);
     const idx = submissions.findIndex((s) => s.id === id);
@@ -80,11 +55,11 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, message: '제출을 찾을 수 없습니다.' }, { status: 404 });
     }
     const submission = submissions[idx];
-    // 게시된(approved) 항목은 이미 /media 로 복사됨 — 재승인·수정 불가.
+    // 게시된(approved) 항목은 이미 현장 소식에 노출 중 — 재승인·수정 불가.
     // pending/rejected 는 관리자가 재검토(승인·반려·수정)할 수 있다.
     if (submission.status === 'approved') {
       return NextResponse.json(
-        { success: false, message: '이미 게시된 항목입니다. 미디어 관리에서 처리하세요.' },
+        { success: false, message: '이미 게시된 항목입니다. 현장 소식에서 노출 중입니다.' },
         { status: 409 }
       );
     }
@@ -127,48 +102,23 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: true, submission });
     }
 
-    // ── 승인: media.json 에 항목 생성 → /media 프론트에 노출 ──
-    const title = parsed.data.title?.trim() || submission.title;
-    const source = parsed.data.source?.trim() || `베트남 현장 · ${submission.partnerName}`;
-    const date = (submission.capturedAt ?? submission.submittedAt).slice(0, 10);
-    const meta = includeMeta === false ? '' : metaLine(submission);
-    const excerpt = [submission.note ?? '', meta].filter(Boolean).join('\n');
-
-    const media = await readDataForWrite<MediaItem>('media');
-    const createdIds: string[] = [];
-    const stamp = Date.now();
-    submission.files.forEach((f, i) => {
-      const itemId = `m-${stamp}-${i}`;
-      const suffix = submission.files.length > 1 ? ` (${i + 1}/${submission.files.length})` : '';
-      media.push({
-        id: itemId,
-        type: f.type,
-        title: `${title}${suffix}`,
-        source,
-        date,
-        // 사진: image 가 갤러리 표시 원본. 영상: url 재생 + 첫 프레임 썸네일 폴백.
-        image: f.type === 'photo' ? f.url : '',
-        excerpt,
-        url: f.url,
-      });
-      createdIds.push(itemId);
-    });
-    await writeDataMerged('media', media);
-
+    // ── 승인 = 현장 소식 게시: 제출 1건이 곧 게시글이므로 낱장 미디어로
+    //    쪼개 media.json 으로 복사하지 않는다. 상태만 approved 로 전환하면
+    //    /media '현장 소식' 탭이 승인 제출을 직접 읽어 노출한다.
+    //    (승인 시 제목 덮어쓰기 옵션은 유지) ──
+    if (parsed.data.title?.trim()) submission.title = parsed.data.title.trim();
     submission.status = 'approved';
     submission.reviewedAt = now;
     submission.reviewedBy = actor;
-    submission.mediaIds = createdIds;
     submissions[idx] = submission;
     await writeDataMerged(SUBMISSIONS_FILE, submissions);
 
     await logAdmin('media', 'status_change', {
       targetId: id,
-      summary: `현장 제출 승인: ${title} (${submission.partnerName}) → 미디어 ${createdIds.length}건 게시`,
-      meta: { mediaIds: createdIds },
+      summary: `현장 제출 승인(현장 소식 게시): ${submission.title} (${submission.partnerName})`,
     });
 
-    return NextResponse.json({ success: true, submission, mediaIds: createdIds });
+    return NextResponse.json({ success: true, submission });
   } catch (error) {
     console.error('[Media Submissions] PUT Error:', error);
     return NextResponse.json({ success: false, message: '서버 오류' }, { status: 500 });

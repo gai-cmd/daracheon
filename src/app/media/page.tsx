@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
-import { readSingleUncached, readDataSafe } from '@/lib/db';
+import { readSingleUncached, readDataSafe, readDataUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
+import type { FieldPost } from './FieldJournal';
+import { SUBMISSIONS_FILE, type MediaSubmission } from '@/lib/media-submissions';
 import type { Farm } from '@/app/brand-story/page';
 
 const SITE_URL = 'https://zoellife.com';
@@ -353,11 +355,32 @@ interface RawProcessData {
 }
 
 export default async function MediaPage() {
-  const [pagesData, dbMedia] = await Promise.all([
+  const [pagesData, dbMedia, submissions] = await Promise.all([
     // unstable_cache 우회 — 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
     readSingleUncached<{ process?: RawProcessData; brandStory?: { farms?: Farm[] } }>('pages'),
     readDataSafe<MediaItem>('media'),
+    // 현장 소식: 승인된 제출을 캐시 우회로 읽어 승인 즉시 반영.
+    readDataUncached<MediaSubmission>(SUBMISSIONS_FILE),
   ]);
+
+  // 승인(approved) 제출 = 현장 소식 게시글. 최신(게시일/제출일) 순.
+  // 공개 안전 형태로만 매핑 — partnerAccountId 등 내부 필드 제외.
+  const fieldPosts: FieldPost[] = submissions
+    .filter((s) => s.status === 'approved')
+    .sort((a, b) =>
+      (b.reviewedAt ?? b.submittedAt ?? '').localeCompare(a.reviewedAt ?? a.submittedAt ?? '')
+    )
+    .map((s) => ({
+      id: s.id,
+      title: s.title,
+      ...(s.note ? { note: s.note } : {}),
+      files: s.files.map((f) => ({ url: f.url, type: f.type })),
+      date: (s.capturedAt ?? s.submittedAt ?? '').slice(0, 16),
+      ...(s.location ? { location: { lat: s.location.lat, lng: s.location.lng } } : {}),
+      ...(s.weather
+        ? { weather: { tempC: s.weather.tempC, text: s.weather.text, humidity: s.weather.humidity } }
+        : {}),
+    }));
 
   const process = pagesData?.process;
   const farms: Farm[] = pagesData?.brandStory?.farms ?? [];
@@ -430,7 +453,7 @@ export default async function MediaPage() {
       {mediaJsonLd.map((d, i) => (
         <JsonLd key={i} data={d} />
       ))}
-      <MediaPageClient farmStory={farmStory} gallery={gallery} farms={farms} />
+      <MediaPageClient farmStory={farmStory} gallery={gallery} farms={farms} fieldPosts={fieldPosts} />
     </>
   );
 }

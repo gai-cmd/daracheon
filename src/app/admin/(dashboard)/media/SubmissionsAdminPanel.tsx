@@ -134,7 +134,7 @@ export default function SubmissionsAdminPanel() {
         setToast(json.message ?? '처리에 실패했습니다.');
         return;
       }
-      setToast(action === 'approve' ? '승인 완료 — /media 에 게시되었습니다.' : '반려 처리되었습니다.');
+      setToast(action === 'approve' ? '승인 완료 — 현장 소식에 게시되었습니다.' : '반려 처리되었습니다.');
       setRejectingId(null);
       setRejectReason('');
       // 즉시 로컬 반영 — blob 전파 지연 중 재조회 시 처리 전 상태가 다시 보이는 오인 방지.
@@ -469,7 +469,7 @@ export default function SubmissionsAdminPanel() {
                             onClick={() => review(s.id, 'approve')}
                             className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
                           >
-                            {busyId === s.id ? '처리 중…' : `승인 → /media 게시 (${s.files.length}건)`}
+                            {busyId === s.id ? '처리 중…' : `승인 → 현장 소식 게시 (${s.files.length}건)`}
                           </button>
                           {rejectingId === s.id ? (
                             <>
@@ -606,7 +606,7 @@ export default function SubmissionsAdminPanel() {
                               onClick={() => review(s.id, 'approve')}
                               className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
                             >
-                              {busyId === s.id ? '처리 중…' : `다시 승인 → /media 게시 (${s.files.length}건)`}
+                              {busyId === s.id ? '처리 중…' : `다시 승인 → 현장 소식 게시 (${s.files.length}건)`}
                             </button>
                             <button
                               type="button"

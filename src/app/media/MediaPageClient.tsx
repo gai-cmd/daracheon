@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from '@/styles/zoel/story-page.module.css';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import MediaGallery, { type MediaItem } from './MediaGallery';
+import FieldJournal, { type FieldPost } from './FieldJournal';
 import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import type { Farm } from '@/app/brand-story/page';
@@ -85,26 +86,31 @@ export interface GalleryData {
   photos: MediaItem[];
 }
 
+type TabKey = 'story' | 'gallery' | 'field';
+
 const TABS = [
   { key: 'story' as const, label: '침향 농장 이야기' },
   { key: 'gallery' as const, label: '영상・사진 갤러리' },
+  { key: 'field' as const, label: '현장 소식' },
 ];
 
 export default function MediaPageClient({
   farmStory,
   gallery,
   farms = [],
+  fieldPosts = [],
 }: {
   farmStory: FarmStoryData;
   gallery: GalleryData;
   farms?: Farm[];
+  fieldPosts?: FieldPost[];
 }) {
-  const [activeTab, setActiveTab] = useState<'story' | 'gallery'>('story');
+  const [activeTab, setActiveTab] = useState<TabKey>('story');
   const { hero, sceneSection, chapters, certifications } = farmStory;
 
   useHashTab(
-    (k) => setActiveTab(k as 'story' | 'gallery'),
-    (k) => k === 'story' || k === 'gallery'
+    (k) => setActiveTab(k as TabKey),
+    (k) => k === 'story' || k === 'gallery' || k === 'field'
   );
 
   return (
@@ -430,7 +436,7 @@ export default function MediaPageClient({
 
           {/* 07 Certifications 섹션은 삭제됨. extraSection.images 는 갤러리 탭의 사진 갤러리로 이동. */}
         </>
-      ) : (
+      ) : activeTab === 'gallery' ? (
         <MediaGallery
           videos={gallery.videos}
           photos={(certifications.extraSection?.images ?? []).map((src, idx) => ({
@@ -442,6 +448,8 @@ export default function MediaPageClient({
             image: src,
           }))}
         />
+      ) : (
+        <FieldJournal posts={fieldPosts} />
       )}
     </>
   );
