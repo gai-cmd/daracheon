@@ -189,6 +189,29 @@ export default function SubmissionsAdminPanel() {
     }
   };
 
+  const deletePublished = async (id: string, title: string) => {
+    if (!window.confirm(`"${title}" 게시글을 삭제할까요? 사진·영상 파일도 함께 삭제되며 되돌릴 수 없습니다.`)) return;
+    setBusyId(id);
+    try {
+      const res = await fetch('/api/admin/media-submissions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setToast(json.message ?? '삭제에 실패했습니다.');
+        return;
+      }
+      setToast('게시글이 삭제되었습니다.');
+      setSubmissions((prev) => prev.filter((s) => s.id !== id));
+    } catch {
+      setToast('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   /* ─── 계정 관리 ─── */
 
   const createAccount = async () => {
@@ -290,7 +313,8 @@ export default function SubmissionsAdminPanel() {
   /* ─── Render ─── */
 
   const pending = submissions.filter((s) => s.status === 'pending');
-  const processed = submissions.filter((s) => s.status !== 'pending');
+  const published = submissions.filter((s) => s.status === 'approved');
+  const rejected = submissions.filter((s) => s.status === 'rejected');
 
   const metaChips = (s: Submission) => (
     <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-600">
@@ -523,7 +547,104 @@ export default function SubmissionsAdminPanel() {
             )}
           </section>
 
-          {/* ── 처리 완료 ── */}
+          {/* ── 현장 소식 게시판 (게시됨) ── */}
+          <section>
+            <div className="mb-3 flex flex-wrap items-center gap-3">
+              <h2 className="text-lg font-bold text-neutral-900">현장 소식 게시판</h2>
+              <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-semibold text-green-800">
+                {published.length}
+              </span>
+              <span className="text-xs text-gray-400">
+                공개 페이지 <span className="font-mono">/media</span> 의 ‘현장 소식’ 탭에 게시 중 · 수정/삭제 가능
+              </span>
+            </div>
+            {published.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-400">
+                게시된 현장 소식이 없습니다. 승인 대기 건을 승인하면 여기에 올라옵니다.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {published.map((s) => (
+                  <div key={s.id} className="rounded-xl border border-green-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASS.approved}`}>
+                        {STATUS_LABEL.approved}
+                      </span>
+                      {editSubId === s.id ? (
+                        <input
+                          type="text"
+                          value={editSubTitle}
+                          onChange={(e) => setEditSubTitle(e.target.value)}
+                          maxLength={120}
+                          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+                        />
+                      ) : (
+                        <h3 className="truncate text-base font-semibold text-neutral-900">{s.title}</h3>
+                      )}
+                      <span className="ml-auto shrink-0 text-xs text-gray-400">
+                        게시 {fmtDate(s.reviewedAt)}
+                      </span>
+                    </div>
+                    {editSubId === s.id ? (
+                      <textarea
+                        value={editSubNote}
+                        onChange={(e) => setEditSubNote(e.target.value)}
+                        rows={3}
+                        maxLength={2000}
+                        placeholder="본문 (선택)"
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                      />
+                    ) : (
+                      s.note && <p className="mt-2 whitespace-pre-line text-sm text-gray-600">{s.note}</p>
+                    )}
+                    {metaChips(s)}
+                    {fileGrid(s)}
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      {editSubId === s.id ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => editSubmission(s.id)}
+                            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '저장 중…' : '저장'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditSubId(null)}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                          >
+                            취소
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => startEditSub(s)}
+                            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                          >
+                            수정
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => deletePublished(s.id, s.title)}
+                            className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '삭제 중…' : '삭제'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ── 반려 내역 ── */}
           <section>
             <button
               type="button"
@@ -531,15 +652,15 @@ export default function SubmissionsAdminPanel() {
               className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900"
             >
               <span>{showProcessed ? '▾' : '▸'}</span>
-              처리 완료 내역 ({processed.length})
+              반려 내역 ({rejected.length})
             </button>
             {showProcessed && (
               <div className="space-y-3">
-                {processed.map((s) => (
+                {rejected.map((s) => (
                   <div key={s.id} className="rounded-xl border border-gray-200 bg-white p-4">
                     <div className="flex items-center gap-2">
-                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASS[s.status]}`}>
-                        {STATUS_LABEL[s.status]}
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASS.rejected}`}>
+                        {STATUS_LABEL.rejected}
                       </span>
                       {editSubId === s.id ? (
                         <input
@@ -577,48 +698,53 @@ export default function SubmissionsAdminPanel() {
                     {metaChips(s)}
                     {editSubId === s.id && fileGrid(s)}
 
-                    {/* 반려 건: 다시 승인 / 수정 (게시된 건은 읽기 전용) */}
-                    {s.status === 'rejected' && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        {editSubId === s.id ? (
-                          <>
-                            <button
-                              type="button"
-                              disabled={busyId === s.id}
-                              onClick={() => editSubmission(s.id)}
-                              className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
-                            >
-                              {busyId === s.id ? '저장 중…' : '저장'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setEditSubId(null)}
-                              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-                            >
-                              취소
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              type="button"
-                              disabled={busyId === s.id}
-                              onClick={() => review(s.id, 'approve')}
-                              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
-                            >
-                              {busyId === s.id ? '처리 중…' : `다시 승인 → 현장 소식 게시 (${s.files.length}건)`}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => startEditSub(s)}
-                              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                            >
-                              수정
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )}
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {editSubId === s.id ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => editSubmission(s.id)}
+                            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '저장 중…' : '저장'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditSubId(null)}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                          >
+                            취소
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => review(s.id, 'approve')}
+                            className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '처리 중…' : `다시 승인 → 현장 소식 게시 (${s.files.length}건)`}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => startEditSub(s)}
+                            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                          >
+                            수정
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === s.id}
+                            onClick={() => deletePublished(s.id, s.title)}
+                            className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                          >
+                            {busyId === s.id ? '삭제 중…' : '삭제'}
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
