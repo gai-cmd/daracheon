@@ -14,7 +14,7 @@ export interface FieldPost {
   files: { url: string; type: 'photo' | 'video' }[];
   /** 표시용 날짜 (촬영일 우선, 없으면 게시일) — "YYYY-MM-DD" */
   date: string;
-  location?: { lat: number; lng: number; source?: string };
+  // 정확 GPS 좌표는 공개 노출하지 않는다(농장 위치 보호) — 서버 매핑에서 제외.
   weather?: { tempC: number; text?: string; humidity?: number };
 }
 
@@ -29,16 +29,6 @@ function MetaChips({ post }: { post: FieldPost }) {
         <span style={{ padding: '4px 10px', borderRadius: 999, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)' }}>
           📅 {fmtDate(post.date)}
         </span>
-      )}
-      {post.location && (
-        <a
-          href={`https://maps.google.com/?q=${post.location.lat},${post.location.lng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ padding: '4px 10px', borderRadius: 999, background: 'rgba(90,130,220,0.14)', color: '#9ab6f0', textDecoration: 'none' }}
-        >
-          📍 {post.location.lat.toFixed(4)}, {post.location.lng.toFixed(4)}
-        </a>
       )}
       {post.weather && (
         <span style={{ padding: '4px 10px', borderRadius: 999, background: 'rgba(120,170,210,0.14)', color: '#9cc3e0' }}>

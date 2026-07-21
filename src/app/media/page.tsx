@@ -376,7 +376,7 @@ export default async function MediaPage() {
       ...(s.note ? { note: s.note } : {}),
       files: s.files.map((f) => ({ url: f.url, type: f.type })),
       date: (s.capturedAt ?? s.submittedAt ?? '').slice(0, 16),
-      ...(s.location ? { location: { lat: s.location.lat, lng: s.location.lng } } : {}),
+      // 정확 GPS 좌표는 공개 노출하지 않는다(농장 위치 보호). 관리자만 확인.
       ...(s.weather
         ? { weather: { tempC: s.weather.tempC, text: s.weather.text, humidity: s.weather.humidity } }
         : {}),
