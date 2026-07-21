@@ -76,7 +76,11 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
+          // geolocation=(self): 현장 업로드(/partner)에서 기기 GPS 취득 허용.
+          // ()(전면 차단)이면 우리 사이트 스크립트도 getCurrentPosition 이 즉시
+          // 실패해 "위치 권한 거부"로 표시된다. (self)는 우리 오리진만 허용하며
+          // 브라우저의 사용자 권한 프롬프트는 그대로 요구된다.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self), payment=()' },
           { key: 'Content-Security-Policy', value: csp },
           ...(isProd
             ? [
