@@ -39,10 +39,12 @@ export async function GET() {
 
 const reviewSchema = z.object({
   id: z.string().min(1),
-  action: z.enum(['approve', 'reject']),
-  /** 승인 시 제목/출처 덮어쓰기 (미지정 시 제출값 사용) */
+  action: z.enum(['approve', 'reject', 'edit']),
+  /** 승인 시 제목/출처 덮어쓰기, 또는 edit 시 제목 수정 (미지정 시 제출값 유지) */
   title: z.string().max(120).optional(),
   source: z.string().max(60).optional(),
+  /** edit 시 메모 수정 (빈 문자열이면 메모 삭제) */
+  note: z.string().max(2000).optional(),
   /** 거절 사유 */
   reason: z.string().max(500).optional(),
   /** 촬영 메타(위치·날씨·시간)를 설명에 덧붙일지 (기본 true) */
@@ -78,15 +80,36 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, message: '제출을 찾을 수 없습니다.' }, { status: 404 });
     }
     const submission = submissions[idx];
-    if (submission.status !== 'pending') {
+    // 게시된(approved) 항목은 이미 /media 로 복사됨 — 재승인·수정 불가.
+    // pending/rejected 는 관리자가 재검토(승인·반려·수정)할 수 있다.
+    if (submission.status === 'approved') {
       return NextResponse.json(
-        { success: false, message: '이미 처리된 제출입니다.' },
+        { success: false, message: '이미 게시된 항목입니다. 미디어 관리에서 처리하세요.' },
         { status: 409 }
       );
     }
 
     const { email: actor } = await resolveActor();
     const now = new Date().toISOString();
+
+    // ── 수정: 제목·메모만 (상태는 그대로 유지) ──
+    if (action === 'edit') {
+      const t = parsed.data.title?.trim();
+      if (t) submission.title = t;
+      if (typeof parsed.data.note === 'string') {
+        const trimmed = parsed.data.note.trim();
+        if (trimmed) submission.note = trimmed;
+        else delete submission.note;
+      }
+      submissions[idx] = submission;
+      await writeDataMerged(SUBMISSIONS_FILE, submissions);
+
+      await logAdmin('media', 'update', {
+        targetId: id,
+        summary: `현장 제출 수정: ${submission.title} (${submission.partnerName})`,
+      });
+      return NextResponse.json({ success: true, submission });
+    }
 
     if (action === 'reject') {
       submission.status = 'rejected';

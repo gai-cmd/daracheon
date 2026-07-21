@@ -127,12 +127,26 @@ export async function POST(request: Request) {
   }
 }
 
-/* ── 편집: 본인 제출 + 승인 대기(pending) 상태만 제목/메모 수정 가능 ── */
+/* ── 편집: 본인 제출 + 승인 전(pending/rejected) 상태만 수정 가능.
+      제목·메모뿐 아니라 사진/영상 교체(추가·삭제)도 허용한다. 반려(rejected)
+      건을 수정·저장하면 다시 '승인 대기(pending)'로 돌아가 관리자가 재검토한다.
+      교체로 빠진 blob 파일은 best-effort 로 정리한다. ── */
 
 const editSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1).max(120).optional(),
   note: z.string().max(2000).optional(),
+  /** 지정 시 파일 목록 전체 교체 (추가·삭제·재정렬). 미지정 시 기존 유지. */
+  files: z.array(fileSchema).min(1).max(20).optional(),
+  location: z
+    .object({
+      lat: z.number().min(-90).max(90),
+      lng: z.number().min(-180).max(180),
+      accuracy: z.number().nonnegative().optional(),
+      source: z.enum(['exif', 'device']).optional(),
+    })
+    .optional(),
+  capturedAt: z.string().max(40).optional(),
 });
 
 export async function PUT(request: Request) {
@@ -147,30 +161,83 @@ export async function PUT(request: Request) {
         { status: 400 }
       );
     }
+    const data = parsed.data;
+
+    // 파일 교체 시에도 외부 CDN 금지 원칙 강제.
+    if (data.files) {
+      const badFile = data.files.find((f) => !isAllowedContentUrl(f.url));
+      if (badFile) {
+        return NextResponse.json(
+          { success: false, message: '허용되지 않은 파일 URL 입니다.' },
+          { status: 400 }
+        );
+      }
+    }
 
     const all = await readDataForWrite<MediaSubmission>(SUBMISSIONS_FILE);
     const idx = all.findIndex(
-      (s) => s.id === parsed.data.id && s.partnerAccountId === session.accountId
+      (s) => s.id === data.id && s.partnerAccountId === session.accountId
     );
     if (idx < 0) {
       return NextResponse.json({ success: false, message: '제출을 찾을 수 없습니다.' }, { status: 404 });
     }
-    if (all[idx].status !== 'pending') {
+    const cur = all[idx];
+    if (cur.status === 'approved') {
       return NextResponse.json(
-        { success: false, message: '승인 대기 상태에서만 수정할 수 있습니다. / Chỉ sửa được khi đang chờ duyệt.' },
+        { success: false, message: '게시된 항목은 관리자에게 요청하세요. / Mục đã đăng cần liên hệ quản trị viên.' },
         { status: 409 }
       );
     }
 
-    if (parsed.data.title) all[idx].title = parsed.data.title.trim();
-    if (parsed.data.note !== undefined) {
-      const trimmed = parsed.data.note.trim();
-      if (trimmed) all[idx].note = trimmed;
-      else delete all[idx].note;
+    if (data.title) cur.title = data.title.trim();
+    if (data.note !== undefined) {
+      const trimmed = data.note.trim();
+      if (trimmed) cur.note = trimmed;
+      else delete cur.note;
     }
+
+    // 파일 교체 — 빠진(orphaned) blob 은 저장 후 정리한다.
+    let orphaned: string[] = [];
+    if (data.files) {
+      const keepUrls = new Set(data.files.map((f) => f.url));
+      orphaned = cur.files.filter((f) => !keepUrls.has(f.url)).map((f) => f.url);
+      cur.files = data.files;
+    }
+
+    // 위치가 새로 오면 촬영 시각 기준 날씨를 다시 조회한다 (제출 흐름과 동일).
+    if (data.location) {
+      cur.location = data.location;
+      if (data.capturedAt) cur.capturedAt = data.capturedAt;
+      const weather = await fetchWeatherAt(data.location.lat, data.location.lng, cur.capturedAt);
+      if (weather) cur.weather = weather;
+    } else if (data.capturedAt) {
+      cur.capturedAt = data.capturedAt;
+    }
+
+    // 반려 건을 수정·저장하면 다시 승인 대기로 — 관리자 재검토 대상이 된다.
+    if (cur.status === 'rejected') {
+      cur.status = 'pending';
+      delete cur.rejectReason;
+      delete cur.reviewedAt;
+      delete cur.reviewedBy;
+      cur.submittedAt = new Date().toISOString();
+    }
+
+    all[idx] = cur;
     await writeDataMerged(SUBMISSIONS_FILE, all);
 
-    return NextResponse.json({ success: true, submission: all[idx] });
+    // 교체로 빠진 파일 정리 — blob URL 만 대상, 실패 무시.
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      for (const url of orphaned) {
+        if (url.startsWith('https://')) {
+          del(url).catch((err) =>
+            console.warn('[Partner Submissions] 교체 파일 정리 실패:', url, err)
+          );
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, submission: cur });
   } catch (error) {
     console.error('[Partner Submissions] PUT Error:', error);
     return NextResponse.json({ success: false, message: '서버 오류' }, { status: 500 });

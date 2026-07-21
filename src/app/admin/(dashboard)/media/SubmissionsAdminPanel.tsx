@@ -73,6 +73,11 @@ export default function SubmissionsAdminPanel() {
   const [rejectReason, setRejectReason] = useState('');
   const [showProcessed, setShowProcessed] = useState(false);
 
+  // 반려 건 인라인 수정 (제목·메모)
+  const [editSubId, setEditSubId] = useState<string | null>(null);
+  const [editSubTitle, setEditSubTitle] = useState('');
+  const [editSubNote, setEditSubNote] = useState('');
+
   // 계정 생성 폼
   const [newLoginId, setNewLoginId] = useState('');
   const [newName, setNewName] = useState('');
@@ -140,6 +145,43 @@ export default function SubmissionsAdminPanel() {
             : s
         )
       );
+    } catch {
+      setToast('처리 중 오류가 발생했습니다.');
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const startEditSub = (s: Submission) => {
+    setEditSubId(s.id);
+    setEditSubTitle(s.title);
+    setEditSubNote(s.note ?? '');
+  };
+
+  const editSubmission = async (id: string) => {
+    if (!editSubTitle.trim()) {
+      setToast('제목을 입력하세요.');
+      return;
+    }
+    setBusyId(id);
+    try {
+      const res = await fetch('/api/admin/media-submissions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'edit', title: editSubTitle.trim(), note: editSubNote }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        setToast(json.message ?? '처리에 실패했습니다.');
+        return;
+      }
+      setToast('수정되었습니다.');
+      setSubmissions((prev) =>
+        prev.map((s) =>
+          s.id === id ? { ...s, title: editSubTitle.trim(), note: editSubNote.trim() || undefined } : s
+        )
+      );
+      setEditSubId(null);
     } catch {
       setToast('처리 중 오류가 발생했습니다.');
     } finally {
@@ -447,15 +489,84 @@ export default function SubmissionsAdminPanel() {
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASS[s.status]}`}>
                         {STATUS_LABEL[s.status]}
                       </span>
-                      <span className="truncate text-sm font-medium text-neutral-800">{s.title}</span>
+                      {editSubId === s.id ? (
+                        <input
+                          type="text"
+                          value={editSubTitle}
+                          onChange={(e) => setEditSubTitle(e.target.value)}
+                          maxLength={120}
+                          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+                        />
+                      ) : (
+                        <span className="truncate text-sm font-medium text-neutral-800">{s.title}</span>
+                      )}
                       <span className="ml-auto shrink-0 text-xs text-gray-400">
                         {fmtDate(s.reviewedAt)} · {s.reviewedBy}
                       </span>
                     </div>
-                    {s.rejectReason && (
-                      <div className="mt-1 text-xs text-red-500">사유: {s.rejectReason}</div>
+
+                    {editSubId === s.id ? (
+                      <textarea
+                        value={editSubNote}
+                        onChange={(e) => setEditSubNote(e.target.value)}
+                        rows={2}
+                        maxLength={2000}
+                        placeholder="메모 (선택)"
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                      />
+                    ) : (
+                      <>
+                        {s.note && <p className="mt-1 whitespace-pre-line text-sm text-gray-600">{s.note}</p>}
+                        {s.rejectReason && (
+                          <div className="mt-1 text-xs text-red-500">사유: {s.rejectReason}</div>
+                        )}
+                      </>
                     )}
                     {metaChips(s)}
+                    {editSubId === s.id && fileGrid(s)}
+
+                    {/* 반려 건: 다시 승인 / 수정 (게시된 건은 읽기 전용) */}
+                    {s.status === 'rejected' && (
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {editSubId === s.id ? (
+                          <>
+                            <button
+                              type="button"
+                              disabled={busyId === s.id}
+                              onClick={() => editSubmission(s.id)}
+                              className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 disabled:opacity-50"
+                            >
+                              {busyId === s.id ? '저장 중…' : '저장'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditSubId(null)}
+                              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                            >
+                              취소
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              disabled={busyId === s.id}
+                              onClick={() => review(s.id, 'approve')}
+                              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                            >
+                              {busyId === s.id ? '처리 중…' : `다시 승인 → /media 게시 (${s.files.length}건)`}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => startEditSub(s)}
+                              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                            >
+                              수정
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
