@@ -5,6 +5,7 @@ import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaP
 import type { MediaItem } from './MediaGallery';
 import type { FieldPost } from './FieldJournal';
 import { SUBMISSIONS_FILE, type MediaSubmission } from '@/lib/media-submissions';
+import { regionLabel } from '@/lib/vn-region';
 import type { Farm } from '@/app/brand-story/page';
 
 const SITE_URL = 'https://zoellife.com';
@@ -376,7 +377,8 @@ export default async function MediaPage() {
       ...(s.note ? { note: s.note } : {}),
       files: s.files.map((f) => ({ url: f.url, type: f.type })),
       date: (s.capturedAt ?? s.submittedAt ?? '').slice(0, 16),
-      // 정확 GPS 좌표는 공개 노출하지 않는다(농장 위치 보호). 관리자만 확인.
+      // 정확 GPS 좌표는 공개하지 않고, 대략 지역명만 노출(농장 위치 보호 + 현장 진정성).
+      ...(s.location ? { region: regionLabel(s.location.lat, s.location.lng) } : {}),
       ...(s.weather
         ? { weather: { tempC: s.weather.tempC, text: s.weather.text, humidity: s.weather.humidity } }
         : {}),

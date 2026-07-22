@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { upload } from '@vercel/blob/client';
 import { extractJpegExif, type ExifMeta } from '@/lib/exif-client';
+import { regionLabel } from '@/lib/vn-region';
 
 /* ─── i18n ─────────────────────────────────────────────── */
 
@@ -162,8 +163,7 @@ interface DeviceLoc {
 const DIRECT_FALLBACK_MAX = 4 * 1024 * 1024;
 /** 동시 업로드 파일 수 — 순차 업로드의 토큰왕복 누적 지연 제거 */
 const UPLOAD_CONCURRENCY = 3;
-/** 이 크기 이상 사진은 클라이언트에서 리사이즈 후 전송 (현장 모바일 업링크 절약) */
-const COMPRESS_THRESHOLD = 1.5 * 1024 * 1024;
+/** 리사이즈 상한 (긴 변 px) — 현장 모바일 업링크 절약 */
 const COMPRESS_MAX_DIM = 2560;
 
 function typeFromExt(name: string): string {
@@ -176,18 +176,55 @@ function typeFromExt(name: string): string {
   return map[ext] ?? '';
 }
 
+function two(n: number): string {
+  return String(n).padStart(2, '0');
+}
+
+/** 사진 워터마크 문구(2줄): 촬영시각 + 지역명·ZOEL FIELD. 정확 좌표는 넣지 않는다. */
+function watermarkLines(p: PickedFile): string[] {
+  const d = p.exif.capturedAt ? new Date(p.exif.capturedAt) : new Date(p.file.lastModified);
+  const timeStr = Number.isNaN(d.getTime())
+    ? ''
+    : `${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())} ${two(d.getHours())}:${two(d.getMinutes())}`;
+  const hasGps = typeof p.exif.lat === 'number' && typeof p.exif.lng === 'number';
+  const region = hasGps ? regionLabel(p.exif.lat!, p.exif.lng!) : '';
+  const line2 = region ? `${region} · ZOEL FIELD` : 'ZOEL FIELD';
+  return timeStr ? [timeStr, line2] : [line2];
+}
+
+/** 캔버스 우하단에 반투명 배지 + 워터마크 텍스트를 그린다. */
+function drawWatermark(ctx: CanvasRenderingContext2D, w: number, h: number, lines: string[]) {
+  if (lines.length === 0) return;
+  const fs = Math.max(13, Math.round(w / 44));
+  const pad = Math.round(fs * 0.6);
+  const lh = Math.round(fs * 1.35);
+  ctx.font = `600 ${fs}px ui-sans-serif, system-ui, -apple-system, sans-serif`;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'alphabetic';
+  let maxW = 0;
+  for (const l of lines) maxW = Math.max(maxW, ctx.measureText(l).width);
+  const right = w - pad;
+  const bottom = h - pad;
+  const blockH = lh * lines.length;
+  ctx.fillStyle = 'rgba(0,0,0,0.42)';
+  ctx.fillRect(right - maxW - pad, bottom - blockH - pad * 0.4, maxW + pad * 1.5, blockH + pad * 0.9);
+  lines.forEach((l, i) => {
+    ctx.fillStyle = i === 0 ? '#ffffff' : '#e8c766';
+    ctx.fillText(l, right, bottom - (lines.length - 1 - i) * lh);
+  });
+}
+
 /**
- * 사진 클라이언트 압축 — 최대 2560px JPEG 로 리사이즈.
- * 폰 원본(4~12MB)이 갤러리 노출에 과한 해상도라 전송량을 1/5~1/10 로 줄인다.
- * 촬영시각·GPS 는 압축 전에 EXIF 에서 이미 추출해 별도 전송하므로 손실 없음.
- * HEIC 미지원 브라우저 등 디코드 실패 시 null → 원본 그대로 업로드.
+ * 사진 처리 — 최대 2560px JPEG 로 리사이즈 + 우하단 워터마크(촬영시각·지역명) 삽입.
+ * 워터마크 증빙을 위해 크기와 무관하게 항상 재인코딩한다(현장 진정성).
+ * 촬영시각·GPS 는 워터마크 전에 EXIF 에서 이미 추출해 별도 전송하므로 손실 없음.
+ * HEIC 미지원 브라우저 등 디코드 실패 시 null → 원본 그대로 업로드(워터마크 없음).
  */
-async function compressPhoto(
-  file: File
+async function processPhoto(
+  p: PickedFile
 ): Promise<{ blob: Blob; contentType: string; name: string } | null> {
-  if (file.size < COMPRESS_THRESHOLD) return null;
   try {
-    const bmp = await createImageBitmap(file);
+    const bmp = await createImageBitmap(p.file);
     const scale = Math.min(1, COMPRESS_MAX_DIM / Math.max(bmp.width, bmp.height));
     const w = Math.max(1, Math.round(bmp.width * scale));
     const h = Math.max(1, Math.round(bmp.height * scale));
@@ -198,12 +235,13 @@ async function compressPhoto(
     if (!ctx) return null;
     ctx.drawImage(bmp, 0, 0, w, h);
     bmp.close();
-    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', 0.82));
-    if (!blob || blob.size >= file.size) return null;
+    drawWatermark(ctx, w, h, watermarkLines(p));
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', 0.85));
+    if (!blob) return null;
     return {
       blob,
       contentType: 'image/jpeg',
-      name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+      name: p.file.name.replace(/\.[^.]+$/, '') + '.jpg',
     };
   } catch {
     return null;
@@ -240,11 +278,11 @@ async function uploadPickedFiles(
     let contentType = p.file.type || typeFromExt(p.file.name);
     let name = p.file.name;
     if (p.type === 'photo') {
-      const compressed = await compressPhoto(p.file);
-      if (compressed) {
-        blob = compressed.blob;
-        contentType = compressed.contentType;
-        name = compressed.name;
+      const processed = await processPhoto(p);
+      if (processed) {
+        blob = processed.blob;
+        contentType = processed.contentType;
+        name = processed.name;
       }
     }
     if (!contentType) contentType = p.type === 'video' ? 'video/mp4' : 'image/jpeg';
