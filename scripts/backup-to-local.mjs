@@ -85,6 +85,31 @@ function encryptString(plaintext) {
 
 const willEncrypt = Boolean(ENC_KEY) && !PLAIN;
 
+// ── blob 다운로드: 타임아웃 + 지수 백오프 재시도 ────────────────────────────
+// 단발 fetch 는 순간적 네트워크 끊김("terminated"/"fetch failed") 하나에도
+// 전체 백업을 불완전(exit 2)으로 만든다. 읽기 전용 GET 이라 재시도는 안전하다.
+async function fetchTextWithRetry(url, { attempts = 4, timeoutMs = 30000 } = {}) {
+  let lastErr;
+  for (let i = 1; i <= attempts; i++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts) {
+        const backoff = Math.min(1000 * 2 ** (i - 1), 8000); // 1s, 2s, 4s, …(≤8s)
+        await new Promise((r) => setTimeout(r, backoff));
+      }
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw new Error(`${attempts}회 재시도 실패: ${lastErr?.message || lastErr}`);
+}
+
 async function main() {
   console.log(`[backup-local] prefix=${PREFIX.slice(0, 4)}…(${PREFIX.length}자) 대상 Blob 나열 중…`);
 
@@ -131,9 +156,7 @@ async function main() {
   const failed = [];
   for (const b of blobs) {
     try {
-      const res = await fetch(b.url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
+      const text = await fetchTextWithRetry(b.url);
       const sha256 = createHash('sha256').update(text).digest('hex');
       const destRel = willEncrypt ? `${b.rel}.enc` : b.rel;
       const dest = path.join(outDir, destRel);
