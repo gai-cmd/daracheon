@@ -12,6 +12,9 @@ export interface SubmissionFile {
   contentType: string;
   size: number;
   name?: string;
+  /** 사진 EXIF GPS (있을 때만) — 촬영 지점 포인트 기록(관리자 지도용) */
+  lat?: number;
+  lng?: number;
 }
 
 export interface SubmissionLocation {

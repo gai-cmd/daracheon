@@ -146,7 +146,7 @@ interface SubmissionView {
   status: 'pending' | 'approved' | 'rejected';
   title: string;
   note?: string;
-  files: { url: string; type: 'photo' | 'video'; contentType?: string; size?: number; name?: string }[];
+  files: { url: string; type: 'photo' | 'video'; contentType?: string; size?: number; name?: string; lat?: number; lng?: number }[];
   submittedAt: string;
   capturedAt?: string;
   rejectReason?: string;
@@ -258,6 +258,8 @@ interface UploadedFile {
   contentType: string;
   size: number;
   name: string;
+  lat?: number;
+  lng?: number;
 }
 
 /**
@@ -362,6 +364,10 @@ async function uploadPickedFiles(
     contentType: x.contentType,
     size: x.blob.size,
     name: x.name,
+    // 사진 EXIF GPS (있을 때만) — 촬영 지점 포인트로 함께 저장.
+    ...(typeof x.p.exif.lat === 'number' && typeof x.p.exif.lng === 'number'
+      ? { lat: x.p.exif.lat, lng: x.p.exif.lng }
+      : {}),
   }));
 }
 
@@ -698,6 +704,7 @@ export default function PartnerUploadClient({ partnerName }: { partnerName: stri
           contentType: f.contentType ?? (f.type === 'video' ? 'video/mp4' : 'image/jpeg'),
           size: f.size ?? 0,
           ...(f.name ? { name: f.name } : {}),
+          ...(typeof f.lat === 'number' && typeof f.lng === 'number' ? { lat: f.lat, lng: f.lng } : {}),
         })),
         ...uploaded,
       ];

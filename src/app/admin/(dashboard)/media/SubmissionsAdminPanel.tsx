@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import FieldMap, { type MapPoint } from './FieldMap';
 
 /* ─── Types (API 응답과 동일 구조) ─────────────────────── */
 
@@ -9,6 +10,8 @@ interface SubmissionFile {
   type: 'photo' | 'video';
   size: number;
   name?: string;
+  lat?: number;
+  lng?: number;
 }
 
 interface Submission {
@@ -316,6 +319,26 @@ export default function SubmissionsAdminPanel() {
   const published = submissions.filter((s) => s.status === 'approved');
   const rejected = submissions.filter((s) => s.status === 'rejected');
 
+  // 현장 위치 지도 포인트 — 게시/대기 건만. 사진별 EXIF GPS 우선, 없으면 제출 위치.
+  const mapPoints = useMemo<MapPoint[]>(() => {
+    const pts: MapPoint[] = [];
+    for (const s of submissions) {
+      if (s.status === 'rejected') continue;
+      const kind: MapPoint['kind'] = s.status === 'approved' ? 'published' : 'pending';
+      let added = 0;
+      for (const f of s.files) {
+        if (typeof f.lat === 'number' && typeof f.lng === 'number') {
+          pts.push({ id: `${s.id}-${added}`, title: s.title, lat: f.lat, lng: f.lng, kind });
+          added++;
+        }
+      }
+      if (added === 0 && s.location) {
+        pts.push({ id: s.id, title: s.title, lat: s.location.lat, lng: s.location.lng, kind });
+      }
+    }
+    return pts;
+  }, [submissions]);
+
   const metaChips = (s: Submission) => (
     <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-600">
       <span className="rounded bg-gray-100 px-2 py-0.5">업로더: {s.partnerName}</span>
@@ -416,6 +439,18 @@ export default function SubmissionsAdminPanel() {
         <div className="py-20 text-center text-gray-400">불러오는 중…</div>
       ) : (
         <div className="mx-auto max-w-5xl space-y-10">
+          {/* ── 현장 위치 지도 ── */}
+          <section>
+            <div className="mb-3 flex flex-wrap items-center gap-3">
+              <h2 className="text-lg font-bold text-neutral-900">현장 위치 지도</h2>
+              <span className="text-xs text-gray-400">
+                촬영 지점(사진 EXIF GPS / 기기 위치) · <span className="text-green-600">●</span> 게시됨{' '}
+                <span className="text-amber-600">●</span> 대기 · 관리자 전용
+              </span>
+            </div>
+            <FieldMap points={mapPoints} />
+          </section>
+
           {/* ── 승인 대기 ── */}
           <section>
             <div className="mb-3 flex items-center gap-3">

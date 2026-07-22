@@ -52,7 +52,8 @@ const nextConfig: NextConfig = {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://openapi.map.naver.com https://oapi.map.naver.com https://*.pstatic.net https://www.youtube.com https://s.ytimg.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net",
+      // *.tile.openstreetmap.org: 관리자 현장 지도(Leaflet) 래스터 타일.
+      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.tile.openstreetmap.org",
       "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
       // vercel.com + blob.vercel-storage.com: /partner 현장 업로드의 브라우저 직행
       //   업로드 경로. @vercel/blob v2 클라이언트 SDK 는 실제로

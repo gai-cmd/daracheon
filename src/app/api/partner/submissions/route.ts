@@ -53,6 +53,9 @@ const fileSchema = z.object({
   contentType: z.string().max(100),
   size: z.number().int().nonnegative(),
   name: z.string().max(200).optional(),
+  /** 사진 EXIF GPS (촬영 지점) — 있을 때만 */
+  lat: z.number().min(-90).max(90).optional(),
+  lng: z.number().min(-180).max(180).optional(),
 });
 
 const submitSchema = z.object({
