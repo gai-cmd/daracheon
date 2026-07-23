@@ -18,6 +18,7 @@ export interface IntegrationSettings {
   googleSheetsTab?: string;     // 선택. 비우면 첫 번째 탭 사용
   telegramBotToken?: string;
   telegramChatId?: string;      // "@channelname" 또는 숫자 chat_id
+  slackWebhookUrl?: string;     // Slack Incoming Webhook URL (https://hooks.slack.com/services/...)
   updatedAt?: string;
 }
 
@@ -40,6 +41,7 @@ async function resolveIntegrationSettings(): Promise<IntegrationSettings> {
     googleSheetsTab: stored.googleSheetsTab?.trim() || process.env.GOOGLE_SHEETS_TAB,
     telegramBotToken: stored.telegramBotToken?.trim() || process.env.TELEGRAM_BOT_TOKEN,
     telegramChatId: stored.telegramChatId?.trim() || process.env.TELEGRAM_CHAT_ID,
+    slackWebhookUrl: stored.slackWebhookUrl?.trim() || process.env.SLACK_WEBHOOK_URL,
   };
 }
 
@@ -460,6 +462,35 @@ export async function sendTelegramMessage(text: string): Promise<IntegrationResu
   }
 }
 
+/* ───────── Slack (Incoming Webhook) ───────── */
+
+/**
+ * 일반 Slack 메시지 전송. Webhook URL 은 통합 설정 / ENV(SLACK_WEBHOOK_URL) 에서 자동 해결.
+ * text 는 Slack mrkdwn (*굵게* _기울임_) 포맷. 미설정 시 skipped(무해).
+ */
+export async function sendSlackMessage(text: string): Promise<IntegrationResult> {
+  const cfg = await resolveIntegrationSettings();
+  if (!cfg.slackWebhookUrl) {
+    return { ok: false, skipped: true, error: 'slack not configured' };
+  }
+  try {
+    const res = await fetch(cfg.slackWebhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // Incoming Webhook 은 mrkdwn 기본 활성. 링크 자동 미리보기는 잡음이라 끈다.
+      body: JSON.stringify({ text, unfurl_links: false, unfurl_media: false }),
+    });
+    // Slack Incoming Webhook 은 성공 시 본문 "ok"(text/plain) 를 200 으로 반환.
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      return { ok: false, error: `HTTP ${res.status} ${body.slice(0, 200)}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 export async function notifyTelegram(inquiry: InquiryPayload): Promise<IntegrationResult> {
   const cfg = await resolveIntegrationSettings();
   if (!cfg.telegramBotToken || !cfg.telegramChatId) {
@@ -790,4 +821,10 @@ export async function testTelegram(): Promise<IntegrationResult> {
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
+}
+
+export async function testSlack(): Promise<IntegrationResult> {
+  return sendSlackMessage(
+    `✅ 대라천 Slack 연동 테스트 — ${new Date().toLocaleString('ko-KR')}`,
+  );
 }
