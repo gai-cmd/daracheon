@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendDailyReport } from '@/lib/daily-report';
+import { authorizeCron } from '@/lib/cron-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -8,18 +9,10 @@ export const dynamic = 'force-dynamic';
  * Vercel Cron 호출 전용. 매일 KST 09:00 (UTC 00:00) 실행되어
  * 어제(KST) GA4 데일리 리포트를 텔레그램으로 발송한다.
  *
- * 인증: Vercel Cron 자체 서명 헤더 또는 CRON_SECRET 일치.
+ * 인증: @/lib/cron-auth 의 authorizeCron — CRON_SECRET 설정 시 Bearer 시크릿만 통과.
  */
 export async function GET(request: NextRequest) {
-  const cronSecret = process.env.CRON_SECRET;
-  const isVercelCron = request.headers.get('x-vercel-cron') === '1';
-  const authHeader = request.headers.get('authorization');
-  const providedSecret = authHeader?.startsWith('Bearer ')
-    ? authHeader.slice('Bearer '.length)
-    : request.headers.get('x-cron-secret');
-  const secretOk = cronSecret ? providedSecret === cronSecret : false;
-
-  if (!isVercelCron && !secretOk) {
+  if (!authorizeCron(request).ok) {
     return NextResponse.json({ success: false, message: '인증 실패' }, { status: 401 });
   }
 

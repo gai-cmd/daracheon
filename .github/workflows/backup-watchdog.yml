@@ -1,0 +1,53 @@
+name: Backup Watchdog
+
+# 백업 외부 독립 감시자.
+#
+# 2026-07-26 사고: daily-backup 크론이 11일간 침묵했는데 아무도 몰랐다. 감시가
+# ① Vercel 내부 크론과 ② Claude 클라우드 예약 작업 두 갈래였는데, ①은 감시 대상과
+# 같은 스케줄러라 함께 죽으면 같이 침묵하고, ②는 실행 환경 프록시가 zoellife.com
+# 아웃바운드를 403 으로 막아(CONNECT tunnel failed) 매일 오탐만 보내고 있었다.
+#
+# GitHub Actions 러너는 외부 인터넷 접근이 자유롭고 Vercel 스케줄러와 완전히
+# 독립적이므로, Vercel 크론이 통째로 멈춰도 이 워크플로는 살아 있다.
+# 워치독 엔드포인트는 읽기 전용·멱등이라 Vercel 크론과 중복 호출돼도 안전하다.
+#
+# 실패 시 GitHub 이 저장소 소유자에게 워크플로 실패 알림 메일을 보낸다.
+
+on:
+  schedule:
+    # 21:30 UTC = KST 06:30 — Vercel 워치독(21:00 UTC)보다 30분 뒤에 교차 확인.
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify CRON_SECRET is configured
+        run: |
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "::error::저장소 시크릿 CRON_SECRET 이 없습니다. Vercel 환경변수와 동일한 값을 Settings → Secrets → Actions 에 추가하세요."
+            exit 1
+          fi
+
+      - name: Check backup freshness
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -o pipefail
+          # 응답 본문에는 비밀값(blob URL·prefix)이 없다 — 라우트가 의도적으로 제외한다.
+          BODY=$(curl -sS --max-time 60 \
+            -w '\n%{http_code}' \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "https://zoellife.com/api/cron/backup-watchdog")
+
+          STATUS=$(printf '%s' "$BODY" | tail -n 1)
+          PAYLOAD=$(printf '%s' "$BODY" | sed '$d')
+
+          echo "HTTP $STATUS"
+          echo "$PAYLOAD"
+
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::백업 신선도 점검 실패 (HTTP $STATUS). Vercel → Settings → Cron Jobs → View Logs 를 확인하세요."
+            exit 1
+          fi

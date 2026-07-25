@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSnapshot, pruneSnapshots, mirrorSnapshot } from '@/lib/backup';
 import { archiveQrRecords } from '@/lib/qr-archive';
-import { sendTelegramMessage } from '@/lib/integrations';
+import { authorizeCron } from '@/lib/cron-auth';
+import { sendOpsAlert } from '@/lib/ops-alert';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// 백업 저하/실패를 텔레그램으로 즉시 알린다 (진단 ARCH-4 'Blob 저하 알림').
+// 백업 저하/실패를 운영 채널로 즉시 알린다 (진단 ARCH-4 'Blob 저하 알림').
 // Vercel Cron 실패 알림은 대시보드를 봐야 눈에 띄므로, 운영자가 실제로 보는
-// 채널로 push 한다. 알림 실패가 백업 응답 자체를 깨면 안 되므로 결과만 로깅.
+// 채널로 push 한다. 2026-07-26 사고 이후 텔레그램 단일 채널 → 텔레그램+Slack
+// 이중 발송으로 변경(한 채널 미설정 시 경보가 무음 소멸하던 문제).
+// 알림 실패가 백업 응답 자체를 깨면 안 되므로 sendOpsAlert 는 throw 하지 않는다.
 async function alertBackupProblem(summary: string): Promise<void> {
-  try {
-    const r = await sendTelegramMessage(`🚨 [zoellife 백업] ${summary}`);
-    if (!r.ok && !r.skipped) console.warn('[cron:daily-backup] 텔레그램 알림 실패:', r.error);
-  } catch (err) {
-    console.warn('[cron:daily-backup] 텔레그램 알림 예외:', err);
-  }
+  await sendOpsAlert(`🚨 [zoellife 백업] ${summary}`);
 }
 
 /**
@@ -25,25 +23,18 @@ async function alertBackupProblem(summary: string): Promise<void> {
  *   Tier 3  일요일엔 관리자 이메일로 암호화 첨부 발송
  *   + 보존 정책에 따라 오래된 Blob 스냅샷 정리
  *
- * 인증: Vercel Cron 자체 서명 헤더 또는 CRON_SECRET.
+ * 인증: @/lib/cron-auth 의 authorizeCron — CRON_SECRET 설정 시 Bearer 시크릿만 통과.
  */
 export async function GET(request: NextRequest) {
-  const cronSecret = process.env.CRON_SECRET;
-  const isVercelCron = request.headers.get('x-vercel-cron') === '1';
-  const authHeader = request.headers.get('authorization');
-  const providedSecret = authHeader?.startsWith('Bearer ')
-    ? authHeader.slice('Bearer '.length)
-    : request.headers.get('x-cron-secret');
-
-  const secretOk = cronSecret ? providedSecret === cronSecret : false;
-
-  if (!isVercelCron && !secretOk) {
+  const auth = authorizeCron(request);
+  if (!auth.ok) {
     return NextResponse.json({ success: false, message: '인증 실패' }, { status: 401 });
   }
+  const trigger = auth.via === 'secret' ? 'cron-secret' : 'legacy-header';
 
   try {
     // Tier 1 — Blob snapshot
-    const snap = await createSnapshot('daily', { trigger: isVercelCron ? 'vercel-cron' : 'external' });
+    const snap = await createSnapshot('daily', { trigger });
 
     // Blob 비활성 또는 생성 실패 → 명확한 에러. success:true 로 감추지 않음
     if (!snap) {
@@ -63,7 +54,7 @@ export async function GET(request: NextRequest) {
     const isWeekly = new Date().getUTCDay() === 0;
     const mirror = await mirrorSnapshot('daily', snap.body, {
       sendEmail: isWeekly,
-      meta: { snapshotId: snap.id, trigger: isVercelCron ? 'vercel-cron' : 'external' },
+      meta: { snapshotId: snap.id, trigger },
     });
 
     // 오래된 blob 스냅샷 정리
@@ -100,7 +91,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           message: `백업 부분 실패(degraded): ${parts.join(' / ')}. 부분 스냅샷은 저장·미러링됨. Blob 상태 확인 필요.`,
-          tier1: { id: snap.id, size: snap.size, url: snap.url, degraded: snap.degraded },
+          tier1: { id: snap.id, size: snap.size, degraded: snap.degraded },
           tier2_github: mirror.tier2Github,
           tier3_email: mirror.tier3Email,
           qrArchive: qrArchive ?? { error: qrArchiveError },
@@ -111,9 +102,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // ⚠️ snap.url 은 응답에 절대 넣지 않는다. URL 경로에 비밀값 BLOB_DATA_PREFIX 가
+    // 들어 있고, 스냅샷 blob 은 access:'public' 이라 URL 을 아는 사람은 인증 없이
+    // 고객 PII 전체 DB 를 내려받을 수 있다. 2026-07-26 에 이 경로로 실제 유출이
+    // 가능함이 실증됐다(위조한 x-vercel-cron 헤더 → 200 → URL 획득 → 1.3MB 다운로드).
     return NextResponse.json({
       success: true,
-      tier1: { id: snap.id, size: snap.size, url: snap.url },
+      tier1: { id: snap.id, size: snap.size },
       tier2_github: mirror.tier2Github,
       tier3_email: mirror.tier3Email,
       qrArchive,
