@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { readDataSafe, readDataUncached } from '@/lib/db';
+import { formatPrice, parseDisplayPrice } from '@/lib/utils';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import { getGuide } from '@/data/productGuides';
@@ -111,9 +112,15 @@ export default async function ProductDetailPage(
     return d.toISOString().slice(0, 10);
   })();
 
-  // 가격 미정(0원·'가격 문의') 제품은 offers 를 생략한다. price:0 + InStock 을
-  // 방출하면 화면의 "가격 문의"와 불일치해 Google 리치결과 거부·수동조치 대상이 된다.
-  const hasPrice = typeof product.price === 'number' && product.price > 0;
+  // Offer 가격: price(숫자) 우선, 0 이면 화면에 이미 노출 중인 priceDisplay 에서 복원한다.
+  // price:0 + InStock 을 방출하면 화면과 불일치해 Google 리치결과 거부·수동조치 대상이 되므로
+  // availability 는 항상 product.inStock 을 따르고, 가격을 특정할 수 없으면 offers 를 생략한다.
+  // (offers/review/aggregateRating 이 모두 없으면 Search Console 제품 스니펫 심각 오류.)
+  const offerPrice =
+    typeof product.price === 'number' && product.price > 0
+      ? product.price
+      : parseDisplayPrice(product.priceDisplay);
+  const hasPrice = offerPrice !== null;
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -133,7 +140,7 @@ export default async function ProductDetailPage(
       ? {
           offers: {
             '@type': 'Offer',
-            price: product.price,
+            price: offerPrice,
             priceCurrency: 'KRW',
             priceValidUntil,
             itemCondition: 'https://schema.org/NewCondition',
@@ -227,7 +234,14 @@ export default async function ProductDetailPage(
                 baseDiscountRate={product.discountRate}
               />
             ) : (
-              <div className={styles.notice}>가격 및 재고는 문의 부탁드립니다.</div>
+              // 품절 제품도 가격이 확인되면 화면에 노출한다 — Offer(price + OutOfStock) 를
+              // 방출하는데 페이지에는 가격이 없으면 구조화 데이터와 화면이 불일치한다.
+              <div className={styles.notice}>
+                {hasPrice && (
+                  <div className={styles.noticePrice}>{formatPrice(offerPrice!)}</div>
+                )}
+                {hasPrice ? '현재 재고가 없습니다. 재고·주문은 문의 부탁드립니다.' : '가격 및 재고는 문의 부탁드립니다.'}
+              </div>
             )}
 
             <div className={styles.ctas}>

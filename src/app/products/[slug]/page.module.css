@@ -143,6 +143,14 @@
   line-height: 1.6;
 }
 
+/* 품절 안내 안의 표시 가격. dark-theme.css 의 전역 토큰 리맵을 피해 고정 hex 사용. */
+.noticePrice {
+  margin-bottom: 6px;
+  font-size: 1.6rem;
+  letter-spacing: 0.01em;
+  color: #d4a843;
+}
+
 .ctas {
   margin-top: 36px;
   display: flex;

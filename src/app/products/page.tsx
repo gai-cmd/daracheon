@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { parseDisplayPrice } from '@/lib/utils';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
@@ -250,33 +251,40 @@ export default async function ProductsPage() {
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: products.length,
-      itemListElement: products.slice(0, 20).map((p, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        url: `https://zoellife.com/products/${p.slug}`,
-        item: {
-          '@type': 'Product',
-          name: p.name,
+      itemListElement: products.slice(0, 20).map((p, i) => {
+        // 상세 페이지와 동일 규칙 — price(숫자) 0 이면 화면에 노출 중인 priceDisplay 에서 복원.
+        // offers/review/aggregateRating 이 모두 없는 Product 는 Search Console 제품 스니펫
+        // 심각 오류(리치결과 미표시)가 된다.
+        const offerPrice =
+          typeof p.price === 'number' && p.price > 0 ? p.price : parseDisplayPrice(p.priceDisplay);
+        return {
+          '@type': 'ListItem',
+          position: i + 1,
           url: `https://zoellife.com/products/${p.slug}`,
-          ...(p.image ? { image: p.image } : {}),
-          ...(p.shortDescription ? { description: p.shortDescription } : {}),
-          brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
-          ...(typeof p.price === 'number' && p.price > 0
-            ? {
-                offers: {
-                  '@type': 'Offer',
-                  price: p.price,
-                  priceCurrency: 'KRW',
-                  priceValidUntil: listPriceValidUntil,
-                  availability: p.inStock
-                    ? 'https://schema.org/InStock'
-                    : 'https://schema.org/OutOfStock',
-                  url: `https://zoellife.com/products/${p.slug}`,
-                },
-              }
-            : {}),
-        },
-      })),
+          item: {
+            '@type': 'Product',
+            name: p.name,
+            url: `https://zoellife.com/products/${p.slug}`,
+            ...(p.image ? { image: p.image } : {}),
+            ...(p.shortDescription ? { description: p.shortDescription } : {}),
+            brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
+            ...(offerPrice !== null
+              ? {
+                  offers: {
+                    '@type': 'Offer',
+                    price: offerPrice,
+                    priceCurrency: 'KRW',
+                    priceValidUntil: listPriceValidUntil,
+                    availability: p.inStock
+                      ? 'https://schema.org/InStock'
+                      : 'https://schema.org/OutOfStock',
+                    url: `https://zoellife.com/products/${p.slug}`,
+                  },
+                }
+              : {}),
+          },
+        };
+      }),
     },
   };
 
