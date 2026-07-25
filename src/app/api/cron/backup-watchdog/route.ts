@@ -76,9 +76,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // label 은 id 접두사로 직접 판별한다. listSnapshots 의 label 필드는
-  // id.split('-')[0] 이라 'pre-delete-...' 를 'pre' 로 자르므로 신뢰하지 않는다.
-  const daily = snapshots.filter((s) => s.id.startsWith('daily-'));
+  // listSnapshots 의 createdAt 은 id 에 박힌 생성 시각(uploadedAt 폴백)이다.
+  // uploadedAt 을 쓰면 blob 이전·재업로드 때마다 백업 나이가 리셋돼 신선도
+  // 판정이 무력화된다(2026-07-26 prefix 로테이션에서 105개 전부 리셋됨).
+  const daily = snapshots.filter((s) => s.label === 'daily');
 
   const latest = daily.reduce<(typeof daily)[number] | null>(
     (acc, s) => (acc === null || s.createdAt > acc.createdAt ? s : acc),

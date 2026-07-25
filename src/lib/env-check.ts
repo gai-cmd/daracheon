@@ -45,9 +45,13 @@ export const ENV_REGISTRY: EnvSpec[] = [
   },
   {
     name: 'PARTNER_SESSION_SECRET',
-    severity: 'critical',
-    purpose: '파트너 포털 세션 서명 키',
-    ifMissing: '개발용 약한 키로 폴백 — 파트너 세션 위조 위험',
+    // 2026-07-26 정정: 이전엔 critical + '개발용 약한 키로 폴백' 이었으나 오탐이다.
+    // partner-auth.ts 는 PARTNER_SESSION_SECRET || ADMIN_SESSION_SECRET 을 쓰고,
+    // 둘 다 없고 Vercel 환경이면 throw 한다 — 약한 키는 로컬에서만 도달한다.
+    // 매일 찍히는 거짓 CRITICAL 은 알람 피로를 만들어 진짜 신호를 가린다.
+    severity: 'feature',
+    purpose: '파트너 포털 세션 서명 키(미설정 시 ADMIN_SESSION_SECRET 재사용)',
+    ifMissing: 'ADMIN_SESSION_SECRET 으로 폴백 — 동작엔 문제 없으나 두 세션의 키가 묶여 함께 로테이션됨',
   },
   {
     name: 'BLOB_READ_WRITE_TOKEN',

@@ -83,6 +83,42 @@ function snapshotId(label: SnapshotLabel): string {
   return `${label}-${iso}`;
 }
 
+const SNAPSHOT_LABELS: readonly SnapshotLabel[] = ['pre-restore', 'pre-delete', 'manual', 'daily'];
+
+/**
+ * 스냅샷 id 에서 라벨을 분리한다.
+ *
+ * 2026-07-26 수정: 기존 구현은 `id.split('-')[0]` 이라 'pre-delete-2026-...' 를
+ * 'pre' 로 잘랐다. pruneSnapshots 의 정책 키 'pre-delete' 가 매칭되지 않아 보존
+ * 한도 20 이 적용되지 않고 기본값 30 으로 동작했다(실측: pre-delete 34개 잔존).
+ * 하이픈이 포함된 라벨을 먼저 시도하도록 긴 것부터 검사한다.
+ */
+export function parseSnapshotLabel(id: string): SnapshotLabel | 'unknown' {
+  for (const label of SNAPSHOT_LABELS) {
+    if (id.startsWith(`${label}-`)) return label;
+  }
+  return 'unknown';
+}
+
+/**
+ * 스냅샷 id 에 박힌 생성 시각을 복원한다. id 형식은 `<label>-<ISO(: . → -)>`.
+ * blob 의 uploadedAt 은 경로 이전·재업로드 시 리셋되므로(2026-07-26 prefix
+ * 로테이션에서 105개 전부 리셋됨) "실제로 언제 만든 백업인가"를 판단할 땐
+ * uploadedAt 이 아니라 이 값을 봐야 한다. 파싱 실패 시 null.
+ */
+export function parseSnapshotCreatedAt(id: string): string | null {
+  const label = parseSnapshotLabel(id);
+  if (label === 'unknown') return null;
+  const raw = id.slice(label.length + 1);
+  // 2026-07-25T16-44-14-564Z → 2026-07-25T16:44:14.564Z
+  const restored = raw.replace(
+    /^(\d{4}-\d{2}-\d{2}T\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/,
+    '$1:$2:$3.$4Z'
+  );
+  const ms = Date.parse(restored);
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : null;
+}
+
 /**
  * 전체 DB 스냅샷 생성. blob 미설정 환경에선 조용히 no-op 반환.
  * 운영에선 반드시 blob 필요.
@@ -225,13 +261,16 @@ export async function listSnapshots(): Promise<SnapshotSummary[]> {
   return blobs
     .map((b) => {
       const id = b.pathname.slice(SNAPSHOT_PREFIX.length).replace(/\.json$/, '');
-      const label = id.split('-')[0] ?? 'unknown';
+      const label = parseSnapshotLabel(id);
+      const uploadedAt = b.uploadedAt instanceof Date
+        ? b.uploadedAt.toISOString()
+        : String(b.uploadedAt ?? '');
       return {
         id,
         label,
-        createdAt: (b.uploadedAt instanceof Date
-          ? b.uploadedAt.toISOString()
-          : String(b.uploadedAt ?? '')),
+        // id 에 박힌 생성 시각을 우선한다 — uploadedAt 은 blob 이전/재업로드로
+        // 리셋되므로 "언제 만든 백업인가"의 근거가 되지 못한다.
+        createdAt: parseSnapshotCreatedAt(id) ?? uploadedAt,
         size: b.size,
         url: b.url,
         pathname: b.pathname,
