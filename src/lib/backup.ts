@@ -295,11 +295,16 @@ export async function fetchSnapshot(id: string): Promise<SnapshotPayload | null>
 
 /**
  * 보존 정책: label 별로 최근 N 개만 유지.
- * daily=14, manual=30, pre-delete=20 기본값.
+ * daily=30, manual=30, pre-delete=20 기본값.
+ *
+ * 2026-07-26: daily 를 14 → 30 으로 상향. 보존 기간은 곧 "사고를 늦게 발견해도
+ * 되는 허용 시간"인데, 이번 백업 정지 사고는 발생부터 발견까지 11일이 걸렸다.
+ * 14일 보존이면 여유가 3일뿐이다. 스냅샷 1회차가 약 1.3MB 라 30회차로 늘려도
+ * 스토어 부담은 40MB 수준으로 무시할 만하다.
  */
 export async function pruneSnapshots(
   policy: Partial<Record<SnapshotLabel | string, number>> = {
-    daily: 14,
+    daily: 30,
     manual: 30,
     'pre-delete': 20,
     'pre-restore': 10,

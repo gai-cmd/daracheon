@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSnapshot, pruneSnapshots, mirrorSnapshot } from '@/lib/backup';
+import { mirrorToSecondaryStore } from '@/lib/backup-secondary';
 import { archiveQrRecords } from '@/lib/qr-archive';
 import { authorizeCron } from '@/lib/cron-auth';
 import { sendOpsAlert } from '@/lib/ops-alert';
@@ -18,10 +19,11 @@ async function alertBackupProblem(summary: string): Promise<void> {
 
 /**
  * Vercel Cron 호출 전용 엔드포인트. 매일 1회 실행되어:
- *   Tier 1  전체 DB 스냅샷 생성 (Vercel Blob, label='daily')
- *   Tier 2  GitHub backups 브랜치에 암호화 커밋 미러링
- *   Tier 3  일요일엔 관리자 이메일로 암호화 첨부 발송
- *   + 보존 정책에 따라 오래된 Blob 스냅샷 정리
+ *   Tier 1    전체 DB 스냅샷 생성 (Vercel Blob, label='daily')
+ *   Tier 2-B  별도 private Blob 스토어로 이중화 (원본과 다른 바구니)
+ *   Tier 2    GitHub backups 브랜치에 암호화 커밋 미러링
+ *   Tier 3    일요일엔 관리자 이메일로 암호화 첨부 발송
+ *   + 보존 정책에 따라 오래된 Blob 스냅샷 정리 (daily 30회차)
  *
  * 인증: @/lib/cron-auth 의 authorizeCron — CRON_SECRET 설정 시 Bearer 시크릿만 통과.
  */
@@ -56,6 +58,13 @@ export async function GET(request: NextRequest) {
       sendEmail: isWeekly,
       meta: { snapshotId: snap.id, trigger },
     });
+
+    // Tier 2-B — 별도 private 스토어로 이중화. 원본과 스냅샷이 같은 스토어에
+    // 있으면 그 스토어 사고 한 번에 둘 다 사라지므로 바구니를 나눈다.
+    const secondary = await mirrorToSecondaryStore(snap.id, snap.body);
+    if (!secondary.ok && !secondary.skipped) {
+      await alertBackupProblem(`보조 스토어 이중화 실패: ${secondary.error}. Tier 1 스냅샷은 저장됨.`);
+    }
 
     // 오래된 blob 스냅샷 정리
     const prune = await pruneSnapshots();
@@ -92,6 +101,7 @@ export async function GET(request: NextRequest) {
           success: false,
           message: `백업 부분 실패(degraded): ${parts.join(' / ')}. 부분 스냅샷은 저장·미러링됨. Blob 상태 확인 필요.`,
           tier1: { id: snap.id, size: snap.size, degraded: snap.degraded },
+          tier2_secondary_store: secondary,
           tier2_github: mirror.tier2Github,
           tier3_email: mirror.tier3Email,
           qrArchive: qrArchive ?? { error: qrArchiveError },
@@ -109,6 +119,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       tier1: { id: snap.id, size: snap.size },
+      tier2_secondary_store: secondary,
       tier2_github: mirror.tier2Github,
       tier3_email: mirror.tier3Email,
       qrArchive,
