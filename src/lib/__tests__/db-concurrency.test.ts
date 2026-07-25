@@ -151,4 +151,16 @@ describe('db concurrency (blob mode)', () => {
     // 아무 것도 없음 + 시드 없음(fs 목) + LKG 없음(resetModules) → []
     expect(await db.readDataForWrite(FILE)).toEqual([]);
   });
+
+  // 2026-07-25 사고 회귀: 22초 간격의 두 삭제에서 뒤 요청의 stale 베이스가 앞서
+  // 삭제된 현장 소식을 되살렸고, media-submissions 가 tombstone 대상이 아니라
+  // 영구 부활했다(파일 blob 은 이미 삭제돼 깨진 이미지로 /media 에 노출).
+  it('media-submissions: 삭제한 현장 소식은 stale writer 가 되살릴 수 없다', async () => {
+    const MS = 'media-submissions';
+    await db.writeDataMerged(MS, [A, B]);
+    await db.writeDataMerged(MS, [B], { removedIds: ['a'] }); // 삭제 #1
+    // 삭제 #2 의 베이스가 stale([A,B])이라 A 를 next 에 담아도 되살아나면 안 된다.
+    await db.writeDataMerged(MS, [A], { removedIds: ['b'] });
+    expect(ids(await db.readDataUncached(MS))).toEqual([]);
+  });
 });
