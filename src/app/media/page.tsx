@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { readSingleUncached, readDataSafe, readDataUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
 import type { FieldPost } from './FieldJournal';
@@ -95,13 +96,18 @@ function buildMediaJsonLd(media: MediaItem[]) {
       '@type': 'ImageGallery',
       '@id': `${SITE_URL}/media#photos`,
       name: '침향 농장 사진',
-      image: photos.map((p) => ({
-        '@type': 'ImageObject',
-        contentUrl: p.image,
-        name: p.title,
-        creditText: p.source ?? '대라천 ZOEL LIFE',
-        datePublished: p.date,
-      })),
+      // contentUrl 없는 ImageObject 는 무효 — 이미지 없는 항목은 갤러리에서 제외.
+      image: photos
+        .filter((p): p is typeof p & { image: string } => Boolean(p.image))
+        .map((p) =>
+        imageObject({
+          url: p.image,
+          name: p.title,
+          caption: p.title,
+          datePublished: p.date,
+          creditText: p.source ?? undefined,
+        })
+      ),
     },
     {
       '@context': 'https://schema.org',

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
 import { readDataSafe } from '@/lib/db';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import {
@@ -186,7 +187,14 @@ export default async function BlogPostPage({
     '@id': `${SITE_URL}/blog/${post.slug}#article`,
     headline: post.title,
     description: post.excerpt,
-    image: post.coverImage ?? post.ogImage ?? `${SITE_URL}/opengraph-image.jpg`,
+    // 문자열 URL 대신 완전한 ImageObject — GSC 「이미지 메타데이터」가 요구하는
+    // creator/creditText/copyrightNotice/license/acquireLicensePage 를 함께 방출.
+    image: imageObject({
+      url: post.coverImage ?? post.ogImage ?? `${SITE_URL}/opengraph-image.jpg`,
+      name: post.title,
+      caption: post.excerpt || post.title,
+      datePublished: post.publishedAt ?? post.createdAt,
+    }),
     datePublished: post.publishedAt ?? post.createdAt,
     dateModified: post.updatedAt,
     inLanguage: 'ko-KR',

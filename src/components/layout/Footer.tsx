@@ -96,8 +96,11 @@ export default function Footer({ socialLinks = [], company }: Props) {
             <Link href="/blog">블로그</Link>
             <Link href="/privacy">개인정보처리방침</Link>
             <Link href="/terms">이용약관</Link>
+            <Link href="/image-license">이미지 이용 안내</Link>
             <Link href="/admin">관리자</Link>
-            <a href="/thesis">thesis</a>
+            {/* /thesis · /admin 은 잠금 영역 — robots.ts 에서 크롤 제외했지만
+                링크 자체도 rel=nofollow 로 크롤러 진입 신호를 끊는다. */}
+            <a href="/thesis" rel="nofollow">thesis</a>
           </div>
         </div>
       </div>

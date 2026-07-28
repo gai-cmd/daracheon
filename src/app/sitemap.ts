@@ -47,6 +47,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/guide`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/guide`) },
     { url: `${baseUrl}/privacy`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/privacy`) },
     { url: `${baseUrl}/terms`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/terms`) },
+    // 모든 ImageObject 의 license · acquireLicensePage 목적지 — 크롤러가 실제로
+    // 도달해야 이미지 라이선스 구조화 데이터가 유효하다.
+    { url: `${baseUrl}/image-license`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/image-license`) },
   ];
 
   let productDetailRoutes: MetadataRoute.Sitemap = [];

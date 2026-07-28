@@ -43,7 +43,10 @@ export default function robots(): MetadataRoute.Robots {
   const aiRules = AI_CRAWLERS.map((ua) => ({
     userAgent: ua,
     allow: '/',
-    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition'],
+    // /thesis 는 THESIS_PASSWORD 로 잠긴 논문 아카이브 — 인증 없이는 401 이다.
+    // 푸터에서 공개 링크로 노출되므로 크롤러가 계속 401 을 받아 "색인 생성되지
+    // 않음"으로 쌓인다. 크롤 대상에서 제외한다.
+    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
   }));
 
   return {
@@ -51,7 +54,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition'],
+        // /thesis 는 THESIS_PASSWORD 로 잠긴 논문 아카이브 — 인증 없이는 401 이다.
+    // 푸터에서 공개 링크로 노출되므로 크롤러가 계속 401 을 받아 "색인 생성되지
+    // 않음"으로 쌓인다. 크롤 대상에서 제외한다.
+    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
       },
       ...aiRules,
     ],

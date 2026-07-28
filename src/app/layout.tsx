@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ChromeGate from '@/components/layout/ChromeGate';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import QrBeacon from '@/components/analytics/QrBeacon';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
@@ -219,10 +220,11 @@ const siteJsonLd = {
       name: '대라천 ZOEL LIFE',
       alternateName: ['대라천', 'Daracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
       url: SITE_URL,
-      logo: {
-        '@type': 'ImageObject',
+      logo: imageObject({
         url: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
-      },
+        name: '대라천 ZOEL LIFE 로고',
+        caption: '대라천 ZOEL LIFE 브랜드 로고',
+      }),
       description:
         '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장에서 25년간 400만 그루를 직접 관리.',
       foundingDate: '2003',
@@ -282,14 +284,11 @@ const siteJsonLd = {
       primaryImageOfPage: { '@id': `${SITE_URL}/#primary-image` },
       breadcrumb: { '@id': `${SITE_URL}/#breadcrumb-home` },
     },
-    {
-      '@type': 'ImageObject',
-      '@id': `${SITE_URL}/#primary-image`,
+    imageObject({
+      id: `${SITE_URL}/#primary-image`,
       url: `${SITE_URL}${SITE_OG_IMAGE_PATH}`,
-      contentUrl: `${SITE_URL}${SITE_OG_IMAGE_PATH}`,
       caption: SITE_OG_IMAGE_ALT,
-      inLanguage: 'ko-KR',
-    },
+    }),
     {
       '@type': 'BreadcrumbList',
       '@id': `${SITE_URL}/#breadcrumb-home`,

@@ -9,6 +9,7 @@ import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import { getGuide } from '@/data/productGuides';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
@@ -131,7 +132,16 @@ export default async function ProductDetailPage(
     sku: product.id,
     productID: product.id,
     inLanguage: 'ko-KR',
-    image: product.gallery?.length ? product.gallery : (product.image ? [product.image] : undefined),
+    // 문자열 URL 배열 대신 완전한 ImageObject 배열 — GSC 「이미지 메타데이터」가
+    // 요구하는 creator/creditText/copyrightNotice/license/acquireLicensePage 포함.
+    image: (product.gallery?.length ? product.gallery : product.image ? [product.image] : []).map(
+      (url, i) =>
+        imageObject({
+          url,
+          name: product.name,
+          caption: i === 0 ? product.description || product.name : product.name,
+        })
+    ),
     brand: { '@id': 'https://zoellife.com/#brand' },
     manufacturer: { '@id': 'https://zoellife.com/#organization' },
     category: product.category,

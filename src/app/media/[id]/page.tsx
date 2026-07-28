@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { readDataSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { MediaItem } from '../MediaGallery';
 
@@ -64,13 +65,16 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
         }
       : {
           '@context': 'https://schema.org',
-          '@type': 'ImageObject',
-          contentUrl: item.image,
-          name: item.title,
-          description: item.excerpt ?? item.title,
-          datePublished: item.date,
-          creditText: item.source ?? '대라천 ZOEL LIFE',
-          creator: { '@id': `${SITE_URL}/#organization` },
+          ...imageObject({
+            // 이미지가 없는 레코드는 사이트 대표 OG 이미지로 폴백 —
+            // contentUrl 없는 ImageObject 는 구조화 데이터로 무효.
+            url: item.image ?? '/opengraph-image.jpg',
+            name: item.title,
+            caption: item.excerpt ?? item.title,
+            description: item.excerpt ?? item.title,
+            datePublished: item.date,
+            creditText: item.source ?? undefined,
+          }),
         };
 
   const breadcrumbJsonLd = {
