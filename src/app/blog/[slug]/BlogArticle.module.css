@@ -320,11 +320,21 @@
   font-size: clamp(1.8rem, 4.5vw, 3rem);
   font-weight: 300;
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  /* 모바일은 제목이 3~4줄로 접히므로 조금 여유를 준다 */
+  line-height: 1.28;
   color: #fff;
   margin: 0 0 16px;
-  max-width: 1000px; /* 셸이 1440 으로 넓어져도 제목 줄길이는 읽기 좋게 제한 */
+  /* 폭을 제한하지 않는다 — 셸(1440px) 을 끝까지 쓰고 접히는 줄 수를 줄인다 */
   word-break: keep-all;
+  /* balance·pretty 는 줄을 고르게 맞추려고 첫 줄을 덜 채운다 — 기본(greedy)으로 끝까지 채운다 */
+  text-wrap: auto;
+}
+
+@media (min-width: 768px) {
+  .title {
+    /* 넓은 화면에선 한 줄에 다 들어가므로 행간을 조여 덩어리감을 준다 */
+    line-height: 1.15;
+  }
 }
 
 .excerpt {
