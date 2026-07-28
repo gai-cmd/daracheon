@@ -344,9 +344,10 @@
   font-weight: 300;
   color: rgba(255, 255, 255, 0.72);
   margin: 0 0 24px;
-  max-width: 780px;
+  /* 제목과 마찬가지로 폭을 제한하지 않는다 — 셸을 끝까지 쓴다 */
   word-break: keep-all;
-  text-wrap: pretty;
+  /* pretty 는 고아 단어를 피하려 앞줄을 덜 채운다 — 기본(greedy)으로 끝까지 채운다 */
+  text-wrap: auto;
 }
 
 .meta {
