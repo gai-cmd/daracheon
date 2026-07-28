@@ -1,0 +1,172 @@
+# -*- coding: utf-8 -*-
+import json, re, os
+
+BASE = "/private/tmp/claude-501/-Users-gai-personal-works-daerachoen/cc30b3d8-184e-4e7d-8ef8-3bdd7b5648f2/scratchpad/blog"
+src = json.load(open(os.path.join(BASE, "in/from-farm-to-capsule-process.json"), encoding="utf-8"))
+S = src["content"]
+
+def textlen(html):
+    t = re.sub(r"<svg[\s\S]*?</svg>", "", html)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = re.sub(r"\{\{IMG:[^}]+\}\}", "", t)
+    t = re.sub(r"\s+", "", t)
+    return len(t)
+
+# Preserved blocks, extracted verbatim from the source.
+FLOW = re.search(r"<div style='border[\s\S]*?</div></div>", S).group(0)
+TABLE = re.search(r"<table>[\s\S]*?</table>", S).group(0)
+BLOB_FIG = re.search(r"<figure><img[\s\S]*?</figure>", S).group(0)
+DISCLAIMER = S[S.index("<hr />"):]
+assert "6. 캡슐 완성" in FLOW and "노니 발효액" in FLOW
+assert "TQC.19.1082-B" in TABLE and "TQC.05.1082" in TABLE and "68/QĐ-UBND" in TABLE and "DA-260507-1" in TABLE
+assert "process_illustration" in BLOB_FIG
+assert DISCLAIMER.endswith("</p>")
+
+SVG = """<figure>
+<svg viewBox="0 0 720 270" width="100%" role="img" aria-label="침향 제조 공정 단계별 소요 기간 범위 막대그래프" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="720" height="270" fill="#fffdf9"/>
+<text x="16" y="28" font-size="17" font-weight="bold" fill="#2b2318">침향 제조 공정 — 단계별 소요 기간(년)</text>
+<text x="16" y="64" font-size="13" fill="#2b2318">1단계 유기농 재배</text>
+<rect x="16" y="72" width="300" height="22" fill="#9a6a10"/>
+<rect x="316" y="72" width="150" height="22" fill="#d8bb7a"/>
+<text x="474" y="89" font-size="14" font-weight="bold" fill="#9a6a10">20~30년</text>
+<text x="16" y="124" font-size="13" fill="#2b2318">2단계 수지내림(노니 발효액)</text>
+<rect x="16" y="132" width="30" height="22" fill="#9a6a10"/>
+<rect x="46" y="132" width="120" height="22" fill="#d8bb7a"/>
+<text x="174" y="149" font-size="14" font-weight="bold" fill="#9a6a10">2~10년</text>
+<text x="16" y="184" font-size="13" fill="#2b2318">1단계 + 2단계 합산</text>
+<rect x="16" y="192" width="330" height="22" fill="#9a6a10"/>
+<rect x="346" y="192" width="270" height="22" fill="#d8bb7a"/>
+<text x="624" y="209" font-size="14" font-weight="bold" fill="#9a6a10">22~40년</text>
+<line x1="16" y1="230" x2="616" y2="230" stroke="#2b2318" stroke-width="1"/>
+<text x="12" y="248" font-size="12" fill="#2b2318">0</text>
+<text x="158" y="248" font-size="12" fill="#2b2318">10</text>
+<text x="308" y="248" font-size="12" fill="#2b2318">20</text>
+<text x="458" y="248" font-size="12" fill="#2b2318">30</text>
+<text x="608" y="248" font-size="12" fill="#2b2318">40</text>
+<text x="16" y="265" font-size="12" fill="#2b2318">진한 막대 = 최소 기간, 옅은 막대 = 최대치까지의 폭</text>
+</svg>
+<figcaption>대라천이 공개한 공정 기간(재배 20~30년, 수지내림 2~10년)과 두 단계를 더한 범위. 단위: 년, 1년당 15px 비례.</figcaption>
+</figure>"""
+
+C = []
+A = C.append
+
+A('<p class="lead"><strong>결론부터.</strong> 조엘라이프(주)(브랜드 대라천)의 침향 제조 공정은 여섯 단계입니다. 20~30년 유기농 재배, 노니 발효액을 쓴 2~10년의 수지내림, 벌목 후 수작업 채취, 동나이 직영 공장의 전통 증기증류, 검사·인증, 캡슐화 순서로 이어집니다. 각 단계에서 대라천이 무엇을 확인했고 어떤 번호로 남겼는지, 검사번호와 인증번호를 붙여 정리했습니다.</p>')
+
+A('<h2>침향 제조 공정은 어떤 순서로 이어집니까?</h2>')
+A('<p>전체 흐름을 먼저 펼쳐 두면 각 단계가 왜 필요한지 읽기 쉬워집니다. 여섯 단계는 순서를 바꿀 수 없습니다. 앞 단계가 끝나야 뒤 단계의 조건이 만들어지기 때문입니다.</p>')
+A(FLOW)
+A('<p>눈에 먼저 들어오는 것은 기간입니다. 대라천은 재배에 20~30년, 수지내림에 다시 2~10년을 씁니다. 두 단계를 더하면 나무 한 그루가 채취 대상이 되기까지 최소 22년, 길게는 40년이 걸립니다.</p>')
+A(SVG)
+A('<p>침향이라는 원료 자체가 낯설다면 <a href="/about-agarwood">침향 알아보기</a>에서 기본 개념을 먼저 확인할 수 있습니다.</p>')
+
+A('<h2>1단계 — 20~30년, 한 품종만 유기농으로 기릅니다</h2>')
+A('<p>조엘라이프(주)는 <em>아퀼라리아 아갈로차 록스버그</em> 한 품종만 20~30년 유기농법으로 재배합니다. 나무마다 고유 번호를 붙여 생육 이력을 관리하고, 이 번호는 마지막 단계의 제품 Lot 번호까지 이어집니다.</p>')
+A('<p>대라천은 이 원목을 DowGene DNA Testing에 유전자 검사로 의뢰해 아갈로차 유전자형과 100% 일치한다는 결과를 확인했습니다(검사번호 DA-260507-1). 품종을 겉모습으로 판정하지 않고 검사 결과로 고정한 것입니다.</p>')
+A('<p>한 품종만 고집하는 이유는 뒤 단계에 있습니다. 품종이 섞이면 수지의 성분 구성이 흔들리고, 나무 번호로 이어 온 이력도 끊깁니다. 아퀼라리아 속의 화학 성분은 Wang S 연구팀이 2018년 <em>Molecules</em> 23권 342에 총론으로 정리했습니다(<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI</a>). 대라천이 참여한 연구는 아니며, 제품의 효능을 뒷받침하는 자료도 아닙니다.</p>')
+
+A('<h2>2단계 — 노니 발효액으로 수지를 내립니다</h2>')
+A('<p>대라천은 20년 이상 자란 나무에만 수지내림 작업을 합니다. 화학 약품을 상처에 넣는 대신 열대 과일 노니(Noni)의 발효액을 써서, 나무가 스스로 수지를 만들어 상처를 감싸도록 유도하는 방식입니다. 이 과정에만 2~10년이 더 걸립니다.</p>')
+A('<p>조엘라이프(주)는 이 수지유도 기술로 특허 #12835를 확보했습니다(2014년 등록, 유효 20년). 2014년 노니 발효 시스템 도입과 2018년 수지유도제 개발이 그 실무 기록입니다.</p>')
+A('<p>기간이 2년에서 10년까지 벌어지는 이유는 나무마다 반응 속도가 다르기 때문입니다. 대라천은 정해진 햇수를 채우는 방식이 아니라 수지가 충분히 쌓인 개체부터 다음 단계로 넘깁니다.</p>')
+A('{{IMG:resin-inoculation}}')
+
+A('<h2>3단계 — 왜 기계 대신 사람 손으로 골라냅니까?</h2>')
+A('<p>수지가 충분히 쌓인 나무는 벌목한 뒤, 사람이 직접 손으로 수지가 밴 부분만 골라냅니다.</p>')
+A('<p>대라천이 기계 선별을 쓰지 않는 이유는 침향의 구조에 있습니다. 한 그루 안에서도 수지가 깊게 밴 부분과 거의 배지 않은 부분이 불규칙하게 섞여 있습니다. 기계로 한 번에 절단하면 두 부분이 함께 딸려 들어가고, 앞선 20~30년의 재배 시간이 선별 단계에서 희석됩니다.</p>')
+A('<p>사람이 단면의 색과 결을 확인해 가르는 편이 느리지만 정확합니다. 이 작업은 대라천 농장 인력이 직접 수행하며, 선별 기준과 작업 기록은 농장 관리 자료로 남습니다.</p>')
+A(BLOB_FIG)
+
+A('<h2>4단계 — 동나이 직영 공장에서 전통 증기증류를 합니다</h2>')
+A('<p>채취한 침향은 동나이 직영 공장으로 옮겨져 전통 증기증류 방식으로 오일이 됩니다. 뜨거운 수증기가 침향 조직을 천천히 통과하면서 향기 성분을 끌어내는 방법입니다.</p>')
+A('<p>대라천이 동나이를 증류 거점으로 삼은 근거는 토양과 물류입니다. 동나이는 미네랄이 풍부하고 배수·통기가 좋은 현무암 토양 지대이며, 호치민과 가까워 원료 관리와 출하를 함께 감당할 수 있습니다. 고지대의 서늘한 람동 농장은 연구개발과 오일 추출, 묘목 육성 거점으로 운영합니다.</p>')
+A('<p>추출 방식이 결과를 좌우한다는 점은 연구로도 정리돼 있습니다. Wang X 연구팀은 2025년 <em>Journal of Essential Oil Research</em> 37권 110~144쪽에 추출법이 아퀼라리아 정유의 수율과 화학 조성, 생물학적 활성에 미치는 영향을 종합 검토한 리뷰를 발표했습니다(<a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">DOI</a>). 이 리뷰는 대라천 설비를 평가한 자료가 아니라 추출법 일반을 다룬 연구입니다.</p>')
+A('{{IMG:steam-distillation}}')
+
+A('<h2>5단계 — 검사와 인증으로 무엇을 확인합니까?</h2>')
+A('<p>오일이 나왔다고 곧바로 캡슐로 넘어가지 않습니다. 대라천은 유전자, 중금속, 유기농, 위생 관리 항목을 각각 확인하고 번호가 붙은 문서로 남깁니다.</p>')
+A(TABLE)
+A('<p>표에서 확인할 대목은 세 가지입니다. 중금속 8종(납·카드뮴·수은·비소·구리·주석·안티몬·니켈)은 2023-08-24 검사에서 전부 불검출로 나왔습니다. 유기농 인증은 제품(TQC.19.1082-B)과 원료 지역(TQC.19.1082-A)으로 나뉘어 있어 재배지와 완제품을 따로 확인합니다. HACCP은 Codex 기준의 TQC.05.1082이고, 오일캡슐은 GMP 기준으로 생산합니다.</p>')
+
+A('<h2>6단계 — 캡슐과 Lot 번호로 이력이 닫힙니다</h2>')
+A('<p>검사를 통과한 오일은 마지막으로 캡슐에 충전됩니다. 완성된 제품에는 Lot 번호가 붙습니다.</p>')
+A('<p>이 번호가 중요한 이유는 1단계와 맞물리기 때문입니다. 농장에서 나무마다 붙인 고유 번호가 채취·증류 기록을 거쳐 제품 Lot 번호로 연결되므로, 특정 제품이 어느 원목에서 나왔는지 거슬러 확인할 수 있습니다. 여섯 단계가 한 줄로 이어져 처음과 끝이 맞물리는 지점입니다.</p>')
+A('<p>대라천은 이 연결 기록을 사내 이력 자료로 관리합니다. 제품에 표시된 Lot 번호를 확인하는 방법은 대라천 공식 홈페이지에 안내돼 있습니다.</p>')
+
+A('<h2>대라천이 갖춘 국제 기준과 규격은 무엇입니까?</h2>')
+A('<p>앞의 표에 담긴 검사 외에도 조엘라이프(주)는 여러 국제 기준을 갖췄습니다. 식품 안전 관리 시스템 ISO 22000:2018(HA 616), 의료기기 품질경영 시스템 ISO 13485:2016(YT 562), 시험·검사 기관의 능력을 인정하는 ISO/IEC 17025:2017(TSL)입니다. 미국에서는 US FDA 식품시설 등록(등록번호 12466836220, DUNS 556939963)도 마쳤습니다.</p>')
+A('<p>원료 자체의 규격도 따로 있습니다. 침향은 약전 규격에 따라 흑갈색을 띠고, 달고 쓴맛이 나며, 물에 가라앉을 만큼 밀도가 높아야 합니다. 대라천은 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은 에탄올 엑스 18.0% 이상이라는 규격을 적용합니다.</p>')
+A('<p>지금의 공정은 하루아침에 만들어지지 않았습니다. 1998년 침향 사업·연구로 시작해 2000년 하띤성 13만 그루 농장과 2001년 동나이 식재로 나무를 심었고, 2014년 노니 발효 시스템과 2018년 수지유도제 개발로 수지 기술을 다진 뒤 2023년 오일캡슐 GMP 생산에 이르렀습니다. 연도별 흐름은 <a href="/blog/daeracheon-history-1998-to-2026">대라천 연혁 1998→2026</a>에 정리했습니다.</p>')
+
+A('<h2>자주 묻는 질문</h2>')
+A('<h3>Q. 재배부터 캡슐까지 얼마나 걸립니까?</h3>')
+A('<p>A. 20~30년 유기농 재배에 더해, 20년 넘게 자란 나무에 2~10년에 걸쳐 수지를 내립니다. 두 단계를 더하면 최소 22년입니다. 그다음 채취·증류·검사를 거쳐 캡슐이 됩니다.</p>')
+A('<h3>Q. 침향 오일은 어떻게 뽑습니까?</h3>')
+A('<p>A. 손으로 골라낸 침향을 동나이 직영 공장으로 옮겨 전통 증기증류 방식으로 추출합니다. 람동 농장은 연구개발과 오일 추출, 묘목 육성 거점 역할을 합니다.</p>')
+A('<h3>Q. 안전 검사는 어떤 항목이 있습니까?</h3>')
+A('<p>A. 유전자(DNA) 검사(DA-260507-1), 유기농(Organic)·HACCP 인증, OCOP 4-Star, 중금속 8종 불검출(2023-08-24)이 있고, 오일캡슐은 GMP 기준으로 생산합니다.</p>')
+A('<h3>Q. 구입한 제품의 이력을 확인할 수 있습니까?</h3>')
+A('<p>A. 모든 제품에 Lot 번호가 붙어 있어 원료까지 거슬러 조회할 수 있습니다. 확인 방법은 대라천 공식 홈페이지에 안내돼 있습니다.</p>')
+A('<h3>Q. 수지내림에 왜 노니 발효액을 씁니까?</h3>')
+A('<p>A. 화학 약품 대신 자연 재료로 나무가 스스로 수지를 만들도록 유도하기 위해서입니다. 대라천은 이 기술로 특허 #12835를 확보했습니다.</p>')
+
+A('<h2>근거·출처</h2>')
+A('<p>공정 단계와 검사·인증 번호는 조엘라이프(주)의 공개 자료와 사내 문서에 근거합니다. 외부 연구는 아래 1차 출처에서 직접 확인했습니다.</p>')
+A('<ul>'
+  '<li><a href="https://zoellife.com/process">대라천 제조 공정 안내 (zoellife.com/process)</a></li>'
+  '<li><a href="https://zoellife.com/brand-story">대라천 브랜드 스토리 (zoellife.com/brand-story)</a></li>'
+  '<li><a href="https://zoellife.com/company">조엘라이프 회사 소개 (zoellife.com/company)</a></li>'
+  '<li>Wang S, Yu Z, Wang C 외, &quot;Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants&quot;, <em>Molecules</em> 23권 342 (2018) — <a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI</a></li>'
+  '<li>Wang X, Chan SW, Singaram N 외, &quot;Essential oil from Aquilaria spp. (agarwood): a comprehensive review on the impact of extraction methods on yield, chemical composition, and biological activities&quot;, <em>Journal of Essential Oil Research</em> 37권 110~144쪽 (2025) — <a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">DOI</a></li>'
+  '</ul>')
+A('<p>대라천은 이 글에 적은 검사번호 DA-260507-1, 특허 #12835, 유기농 인증 TQC.19.1082-B·TQC.19.1082-A, HACCP TQC.05.1082, OCOP 결정번호 68/QĐ-UBND, 2023-08-24 중금속 8종 검사 결과, ISO·US FDA 등록번호를 원본 문서로 보유하고 있으며, 요청하시면 확인해 드립니다. 다만 본문에 인용한 두 편의 리뷰 논문은 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이고, 대라천 제품의 효능을 뒷받침하는 자료가 아닙니다.</p>')
+A(DISCLAIMER)
+
+content = "".join(C)
+
+out = {
+    "slug": "from-farm-to-capsule-process",
+    "title": "침향 제조 공정 6단계 — 농장에서 캡슐까지",
+    "excerpt": "조엘라이프(주)는 20~30년 유기농 재배, 노니 발효액으로 2~10년에 걸친 수지내림, 수작업 채취, 동나이 직영 공장의 전통 증기증류를 거쳐 캡슐을 만듭니다. 침향 제조 공정 6단계와 DNA·중금속·인증 번호를 단계별로 정리했습니다.",
+    "tags": src["tags"],
+    "content": content,
+    "images": [
+        {
+            "key": "resin-inoculation",
+            "prompt": "Close-up of a mature agarwood tree trunk in a tropical plantation showing a dark resin-soaked wound area spreading through pale wood, dappled sunlight through leaves, documentary photography, realistic, natural color, no text, no logo, no watermark",
+            "alt": "침향 제조 공정 2단계 — 노니 발효액으로 수지를 유도한 나무 줄기",
+            "caption": "수지가 상처 자리를 감싸며 쌓이는 데만 2~10년이 걸립니다"
+        },
+        {
+            "key": "steam-distillation",
+            "prompt": "Traditional copper steam distillation stills with connected pipes inside a clean bright factory hall, faint steam rising, stainless floor, industrial documentary photography, realistic, natural color, no text, no logo, no watermark",
+            "alt": "동나이 직영 공장의 전통 증기증류 설비",
+            "caption": "뜨거운 수증기로 향기 성분을 천천히 끌어내는 전통 증기증류"
+        }
+    ],
+    "changelog": {
+        "charsBefore": textlen(src["content"]),
+        "charsAfter": textlen(content),
+        "citationsAdded": ["A1", "A4"],
+        "voiceFixes": 41,
+        "notes": "모든 공정 진술을 조엘라이프(주)·대라천 주어의 보도자료 인칭으로 바꾸고 '알려진 곳·밝힙니다·우리 손' 같은 회피 화법과 1인칭을 제거했습니다. 소요 기간 SVG 막대그래프, 이미지 토큰 2개, 내부링크 2개, A1·A4 1차 출처를 추가하고 6단계 구조로 재배열했습니다. 원문 표·검사번호·인증번호·규격 수치는 그대로 보존했습니다."
+    }
+}
+
+path = os.path.join(BASE, "out/from-farm-to-capsule-process.json")
+os.makedirs(os.path.dirname(path), exist_ok=True)
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+
+print("title", len(out["title"]))
+print("excerpt", len(out["excerpt"]))
+print("charsBefore", out["changelog"]["charsBefore"])
+print("charsAfter", out["changelog"]["charsAfter"])
+print("h2", content.count("<h2>"), "imgtokens", content.count("{{IMG:"), "svg", content.count("<svg"))
+for p in re.split(r"(?=<h2>)", content):
+    m = re.search(r"<h2>(.*?)</h2>", p)
+    print("  -", (m.group(1) if m else "LEAD")[:36], textlen(p))
+for bad in ["저희", "제가", "우리", "알려져", "알려진", "전해집니다", "여겨집니다", "보고되고 있습니다", "평가받습니다", "소개됩니다", "밝힙니다", "밝혀요"]:
+    if bad in content:
+        print("BAD:", bad)

@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+"""b2-intro-a / 1 of 3 — what-is-agarwood-for-beginners"""
+from srcblocks import blocks, emit
+
+SLUG = "what-is-agarwood-for-beginners"
+B = blocks(SLUG)
+TABLE = B['tables'][0]          # 보통 나무 vs 침향 비교표 (수치 바이트 보존)
+FIGURE = B['figures'][0]        # 형성 4단계 일러스트 (Blob 이미지 URL 보존)
+DISCLAIMER = B['disclaimer']    # 원문 disclaimer 그대로
+
+SVG = ('<figure><svg viewBox="0 0 640 300" width="100%" role="img" aria-label="침향 형성 4단계와 최소 25년, 219,000시간의 숙성 기간" xmlns="http://www.w3.org/2000/svg">'
+       '<rect x="0" y="0" width="640" height="300" fill="#fffdf9"/>'
+       '<text x="24" y="38" font-size="17" font-weight="700" fill="#2b2318">침향 한 덩어리에 들어가는 시간</text>'
+       '<text x="24" y="62" font-size="13" fill="#2b2318">대라천 자료 기준 · 최소 25년 = 219,000시간</text>'
+       '<line x1="80" y1="132" x2="600" y2="132" stroke="#9a6a10" stroke-width="2"/>'
+       '<circle cx="80" cy="132" r="15" fill="#9a6a10"/><text x="80" y="137" font-size="13" font-weight="700" fill="#fffdf9" text-anchor="middle">1</text><text x="80" y="168" font-size="12" fill="#2b2318" text-anchor="middle">상처 발생</text>'
+       '<circle cx="253" cy="132" r="15" fill="#9a6a10"/><text x="253" y="137" font-size="13" font-weight="700" fill="#fffdf9" text-anchor="middle">2</text><text x="253" y="168" font-size="12" fill="#2b2318" text-anchor="middle">곰팡이균 침입</text>'
+       '<circle cx="426" cy="132" r="15" fill="#9a6a10"/><text x="426" y="137" font-size="13" font-weight="700" fill="#fffdf9" text-anchor="middle">3</text><text x="426" y="168" font-size="12" fill="#2b2318" text-anchor="middle">수지 분비</text>'
+       '<circle cx="600" cy="132" r="15" fill="#9a6a10"/><text x="600" y="137" font-size="13" font-weight="700" fill="#fffdf9" text-anchor="middle">4</text><text x="600" y="168" font-size="12" fill="#2b2318" text-anchor="middle">숙성</text>'
+       '<rect x="40" y="204" width="560" height="34" rx="6" fill="#9a6a10"/>'
+       '<text x="320" y="226" font-size="15" font-weight="700" fill="#fffdf9" text-anchor="middle">최소 25년 · 219,000시간</text>'
+       '<text x="24" y="272" font-size="12" fill="#2b2318">벌채한 뒤 바로 쓰는 일반 목재와 달리, 침향은 나무 안에서 수십 년을 더 기다립니다.</text>'
+       '</svg><figcaption>침향 형성 4단계와 최소 숙성 기간. 단위: 단계·연·시간. 출처: 대라천 공식 자료(zoellife.com/about-agarwood).</figcaption></figure>')
+
+CONTENT = '''<p class="lead"><strong>결론부터.</strong> 침향은 침향나무가 상처를 아물리는 동안 뿜어낸 수지(樹脂, 나무가 내보내는 끈끈한 진)가 줄기 속에 오래 쌓여 굳은 덩어리입니다. 향수 같은 액체가 아니라 향기 성분이 배어든 단단한 나무이고, 물에 넣으면 가라앉을 만큼 무거워 가라앉을 침(沈) 자가 붙었습니다. 조엘라이프(주)(브랜드 대라천)는 이 글에서 형성 과정과 학명, 문헌 기록 순으로 침향을 정리했습니다.</p>
+<p>침향을 처음 보면 검고 묵직한 나무 조각 정도로 보입니다. 그 조각이 어떻게 만들어지고 왜 귀하게 다뤄지는지, 어려운 말은 풀어 가며 차례대로 짚겠습니다.</p>
+<h2>침향이란 무엇입니까?</h2>
+<p>침향을 한 문장으로 줄이면 <strong>나무가 스스로 만들어 낸 향기 덩어리</strong>입니다. 사람이 손을 다치면 그 자리에 딱지가 앉듯, 나무도 상처가 생기면 그 부위를 지키려고 끈끈한 진을 내보냅니다.</p>
+<p>그 진이 오랜 시간 나무 속에 쌓이고 익으면서 향기로운 덩어리로 굳습니다. 대라천은 침향을 <strong>침향나무의 수지(樹脂)가 침착된 수간목(樹幹木, 진이 스며든 나무 줄기 부분)</strong>이라고 설명합니다.</p>
+<p>그래서 침향은 향수처럼 병에 담기지 않습니다. 향기 성분이 잔뜩 밴 단단한 나무 자체가 침향입니다.</p>
+<p>한 가지 더 짚을 점이 있습니다. 침향나무와 침향은 같은 말이 아닙니다. 나무 전체가 침향이 되지 않고, 수지가 스며든 부위만 침향으로 쓰입니다.</p>
+<p>같은 나무에서도 진이 몰린 곳은 검고 무거우며, 진이 닿지 않은 곳은 여느 목재와 다르지 않습니다. 흔한 나무 조각과 어디서 갈리는지 표로 견주어 보겠습니다.</p>
+''' + TABLE + '''
+<p>{{IMG:resin-grain}}</p>
+<h2>왜 이름에 가라앉을 침(沈) 자가 붙었을까요?</h2>
+<p>보통 나무 조각은 물에 넣으면 뜹니다. 반면 수지가 촘촘히 스며든 침향은 그 부분의 밀도가 높아져 물속으로 내려앉습니다.</p>
+<p>옛사람들은 이 성질을 이름에 그대로 새겼습니다. 가라앉는다는 뜻의 침(沈) 자를 붙여 침향(沈香)이라 적었고, 물에 잠기는 향이라는 뜻의 침수향(沈水香)이라는 옛 이름도 같은 자리에서 나왔습니다.</p>
+<p>이름 하나에 품질 기준이 함께 담긴 셈입니다. 국내 약전 규격집도 침향의 성상을 정하면서 흑갈색을 띠고 맛은 달고 쓰며 물에 가라앉아야 한다고 적어 두었습니다.</p>
+<p>{{IMG:water-sink}}</p>
+<p>다만 물에 가라앉는지는 여러 기준 가운데 하나일 뿐입니다. 대라천은 여기에 학명 표기와 원산지, 검사 문서를 함께 맞춰 보라고 안내합니다.</p>
+<p>이름 자체가 성질을 설명해 주는 향은 흔치 않습니다. 침향은 그 드문 사례이고, 그래서 이름을 따라가는 것만으로도 상당한 정보를 얻습니다. 이름의 계보는 <a href="/blog/agarwood-many-names-milhyangsu">침향을 부르는 이름들</a>에서 문헌별로 따로 정리했습니다.</p>
+<h2>나무는 어떻게 향을 만들까요?</h2>
+<p>침향은 나무를 벤다고 바로 나오지 않습니다. 대라천이 정리한 <strong>침향 형성 4단계</strong>를 순서대로 보면 과정이 한눈에 들어옵니다.</p>
+<ol><li><strong>1단계 · 상처가 생깁니다.</strong> 벌레가 파먹거나 강한 바람에 가지가 부러지거나, 벼락(낙뢰)을 맞거나 바깥에서 충격을 받으면 나무에 상처가 납니다.</li><li><strong>2단계 · 곰팡이균이 들어옵니다.</strong> 벌어진 상처 틈으로 곰팡이균이 파고듭니다. 나무에게는 위험한 침입자입니다.</li><li><strong>3단계 · 나무가 스스로 상처를 아뭅니다.</strong> 나무는 자기를 지키려고(자기방어) 상처 자리에 끈끈한 수지를 뿜어냅니다.</li><li><strong>4단계 · 오래 익습니다.</strong> 이렇게 나온 수지가 수십 년에 걸쳐 나무 속에 쌓이고 숙성되며 마침내 침향이 됩니다.</li></ol>
+''' + FIGURE + '''
+<p>네 단계를 한 문장으로 줄이면 이렇습니다. 상처가 나야 시작되고, 시간이 지나야 완성됩니다. 상처 없이 곱게 자란 나무에서는 침향이 나오지 않습니다.</p>
+<p>수지가 만들어지는 경로는 학계에서도 꾸준히 다뤄져 왔습니다. Li 연구팀은 2021년 <em>Natural Product Reports</em> 38권 528~565쪽에 아퀼라리아 속 식물의 성분과 생합성을 정리한 총설을 실었습니다(<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">DOI</a>).</p>
+<h2>좋은 침향 하나에 왜 25년이 걸릴까요?</h2>
+<p>대라천 자료는 쓸 만한 침향을 얻으려면 <strong>최소 25년 이상</strong>이 걸린다고 밝힙니다. 대라천은 이 기다림을 <strong>219,000시간(약 25년)</strong>이라는 표현으로 옮겨 적기도 합니다.</p>
+<p>아기가 태어나 어른이 되는 만큼의 시간을 나무는 향 하나에 씁니다. 벌채한 뒤 곧바로 쓰는 목재와 갈리는 지점이 여기입니다.</p>
+''' + SVG + '''
+<p>기다림이 길다는 사실은 공급이 늘 부족하다는 뜻이기도 합니다. 아퀼라리아 속은 CITES(멸종위기 야생동식물 국제거래협약)의 국제 거래 규제 대상이라, 합법 절차를 밟아야 국경을 넘을 수 있습니다(<a href="https://cites.org" target="_blank" rel="noopener">CITES</a>).</p>
+<p>Wang 연구팀은 2021년 <em>Molecules</em> 26권 7708번 논문에서 아퀼라리아 속의 분포와 등급 체계, 수지 유도 방법을 함께 다뤘습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>).</p>
+<p>기다리는 시간이 곧 원가입니다. 침향 가격이 다른 향재와 자릿수부터 다른 이유가 여기에 있습니다.</p>
+<h2>어떤 나무에서만 침향이 나올까요?</h2>
+<p>침향이라는 이름이 붙었다고 모두 같은 침향은 아닙니다. 국내 공식 문서는 침향을 <strong>아퀼라리아(Aquilaria)</strong> 속 나무의 수지에서 나온 것으로 규정합니다.</p>
+<p>대표 학명은 <strong>아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)</strong>입니다. 식품의약품안전처가 고시한 대한민국약전외한약(생약)규격집은 침향을 팥꽃나무과(Thymelaeaceae) Aquilaria Agallocha Roxburgh의 수지가 침착된 수간목이라고 적어 두었습니다.</p>
+<p>표기는 길어도 뜻은 앞에서 본 그대로입니다. 정해진 나무에서 나온, 진이 밴 줄기라는 말입니다.</p>
+<p>이 아갈로차라는 이름은 국제 식물분류학에서 아퀼라리아 말라켄시스(A. malaccensis)의 이명(異名)으로도 정리돼 있습니다. 같은 종을 가리키는 다른 이름이라는 뜻입니다.</p>
+<p>조엘라이프(주)는 참침향 원료를 100% 베트남산으로 쓰며 이 아갈로차 록스버그 품종만 사용한다고 밝히고 있습니다. 학명 표기와 원산지 표기가 서로 맞물리는지 확인하는 습관이 초보자에게는 가장 든든한 안전장치입니다.</p>
+<h2>옛 문헌은 침향을 어떻게 적었을까요?</h2>
+<p>침향은 오래전부터 귀한 대접을 받았습니다. 대라천 자료는 침향이 수천 년 동안 왕실과 귀족의 향이었다고 정리합니다.</p>
+<p>한국 역사 속 침향 기록은 한국민족문화대백과사전 침향(沈香) 항목에서 확인할 수 있습니다(<a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">한국민족문화대백과사전</a>).</p>
+<p>의서에도 자주 나옵니다. <strong>동의보감</strong>은 침향을 두고 성질이 뜨겁고 맛이 매우며 독이 없고, 기(氣)를 통하게 하고 속을 따뜻하게 해 냉통(冷痛)을 멎게 한다고 적고 있습니다.</p>
+<p>여기서 한 가지는 분명히 해 둡니다. 이는 옛 문헌에 적힌 기록일 뿐, 침향이 병을 낫게 한다는 뜻이 아닙니다. 대라천은 이런 대목을 옮길 때 어느 문헌의 기록인지를 반드시 함께 밝힙니다.</p>
+<p>종교 경전에도 침향이 나옵니다. 요한복음은 예수의 장례에 몰약과 침향을 섞은 것을 가져왔다고 적고 있습니다. 다만 성경 원문의 알로에스(aloes)를 침향으로 보는 것은 전통적인 해석이고, 백단향 같은 다른 향목으로 보는 학술적 이견도 있습니다.</p>
+<p>동국대학교 HK+사업단 칼럼 「침향(沈香), 고귀하고 엄숙한 향기」는 이런 문화사를 한자리에 정리했습니다(<a href="https://hkplus.dongguk.edu/hkplus/column.php?mode=view&amp;bbs_idx=1368" target="_blank" rel="noopener">칼럼</a>).</p>
+<h2>침향에는 어떤 향기 성분이 들어 있습니까?</h2>
+<p>침향의 향은 인공 향처럼 톡 쏘지 않고 은은하게 번집니다. 대라천 자료는 침향에 <strong>세스퀴테르펜(식물이 만드는 자연 향 물질)</strong>과 2-(2-페닐에틸)크로몬(줄여서 PEC) 계열 성분이 들어 있다고 소개합니다.</p>
+<p>이름이 낯설다면 나무가 오랜 시간 만들어 낸 자연 향기 물질 정도로 기억해도 충분합니다. 초보자가 성분 이름을 외울 이유는 없습니다.</p>
+<p>Wang 연구팀은 2018년 <em>Molecules</em> 23권 342번 논문에서 침향과 아퀼라리아 속 식물의 화학 성분과 약리 활성을 폭넓게 검토했습니다(<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI</a>).</p>
+<p>같은 침향이라도 어떻게 다루느냐에 따라 뽑히는 성분은 달라집니다. Wang 연구팀은 2025년 <em>Journal of Essential Oil Research</em> 37권 110~144쪽에서 추출법이 오일의 수율과 성분 조성에 미치는 영향을 검토했습니다(<a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">DOI</a>).</p>
+<p>대라천은 성분을 설명할 때 침향이 무엇을 낫게 한다고 단정하지 않습니다. 어느 연구팀이 무엇을 검토했는지를 밝히고, 그 결과를 제품 효능으로 연결하지 않습니다.</p>
+<h2>침향은 어떤 형태로 쓰입니까?</h2>
+<p>재료는 하나인데 쓰임새는 여러 갈래로 뻗습니다. 대라천 제품을 예로 들면 조각을 온열판(전자 향로)에 올려 향을 즐기는 <strong>침향스틱</strong>, 향 성분을 뽑아 만든 <strong>에센셜 오일</strong>과 <strong>오일 캡슐</strong>, 물에 우려 마시는 <strong>침향차</strong>, 몸에 지니며 체온으로 향을 여는 <strong>침향 팔찌·묵주</strong>가 있습니다.</p>
+<p>형태별 구성은 <a href="/products">대라천 제품 페이지</a>에서 확인할 수 있습니다. 처음이라면 향을 먼저 맡아 보고 형태를 고르는 편이 실패가 적습니다.</p>
+<p>다만 침향으로 만든 제품은 <strong>일반식품(또는 건강식품)이지 의약품이 아닙니다.</strong> 향을 즐기거나 기호로 곁에 두는 것이지 병을 치료하는 용도가 아닙니다.</p>
+<p>형태마다 향이 열리는 방식이 다릅니다. 조각은 열을 받아야 향을 내주고, 오일은 곧바로 향이 서며, 팔찌는 체온만큼만 아주 천천히 향을 풉니다.</p>
+<p>침향은 예부터 아주 조금씩만 쓰던 향재였고, 제품마다 쓰는 방법이 다릅니다. 포장에 적힌 표기를 따르는 편이 안전합니다.</p>
+<h2>대라천이 확인한 것과 확인하지 않은 것</h2>
+<p>대라천은 이 글에 적은 원료 규격과 학명 표기, 원산지 표기를 자체 문서로 보유하고 있으며 요청하시면 확인해 드립니다. 기초를 한 번에 훑고 싶다면 <a href="/blog/agarwood-7-basics-faq">침향 기초 7가지</a>를 이어서 읽어 보시기 바랍니다.</p>
+<p>대라천이 보유한 문서에는 원산지 증명과 DNA 유전자 검사 결과, CITES 관련 서류가 포함됩니다. 원료가 어디서 왔고 어떤 종인지를 서류로 되짚을 수 있게 해 둔 장치입니다.</p>
+<p>반면 이 글에 인용한 논문은 대라천이 수행한 연구가 아니라 해당 연구팀의 결과입니다. 제품의 효능을 뒷받침하는 자료가 아니며, 대라천도 그렇게 해석하지 않습니다.</p>
+<p>옛 문헌 기록도 같은 기준으로 다룹니다. 대라천은 문헌에 그렇게 적혀 있다는 사실만 전달하고, 그 내용이 오늘의 효능을 보증한다고 말하지 않습니다.</p>
+<h2>자주 묻는 질문</h2>
+<h3>Q. 침향은 향수인가요, 나무인가요?</h3>
+<p>A. 기본은 향기 성분(수지)이 잔뜩 밴 단단한 나무 덩어리입니다. 여기서 향 성분을 뽑아 오일로 만들거나, 조각을 향로에 올려 향을 피우기도 합니다.</p>
+<h3>Q. 좋은 침향을 얻는 데 왜 그렇게 오래 걸리나요?</h3>
+<p>A. 나무가 상처를 아물리며 수지를 조금씩 쌓고 익히는 과정이기 때문입니다. 대라천 자료에 따르면 좋은 침향은 최소 25년 이상 기다려야 얻을 수 있습니다.</p>
+<h3>Q. 아무 나무에서나 침향이 나오나요?</h3>
+<p>A. 아닙니다. 식품의약품안전처 규격집은 침향의 기원식물을 Aquilaria Agallocha Roxburgh로 규정해 두었습니다. 아퀼라리아 속이 아닌 나무에서 나온 것은 침향으로 보지 않습니다.</p>
+<h3>Q. 침향 향을 맡으면 건강해지나요?</h3>
+<p>A. 침향은 의약품이 아니라 향이자 식품입니다. 옛 문헌과 여러 연구에 기록이 남아 있지만, 대라천은 특정 효과를 보장한다고 말하지 않습니다. 반응에는 개인차가 있습니다.</p>
+<h2>근거·출처</h2>
+<p>이 글의 정의·형성·학명 서술은 대라천 공식 자료(zoellife.com)와 국내 공식 문서에 근거하며, 성분 서술은 아래 학술 논문에 근거합니다.</p>
+<ul><li><a href="https://zoellife.com/about-agarwood" target="_blank" rel="noopener">침향이란 · 형성 4단계 · 학명 (zoellife.com/about-agarwood)</a></li><li><a href="https://zoellife.com/brand-story" target="_blank" rel="noopener">대라천 참침향 브랜드 스토리 (zoellife.com/brand-story)</a></li><li><a href="https://zoellife.com/company" target="_blank" rel="noopener">조엘라이프 회사 소개 (zoellife.com/company)</a></li><li>Wang S, Yu Z, Wang C 외, &ldquo;Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants&rdquo;, <em>Molecules</em> 2018;23(2):342 — <a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">10.3390/molecules23020342</a></li><li>Li W, Chen HQ, Wang H 외, &ldquo;Natural products in agarwood and Aquilaria plants&rdquo;, <em>Natural Product Reports</em> 2021;38:528~565 — <a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">10.1039/D0NP00042F</a></li><li>Wang Y, Hussain M, Jiang Z 외, &ldquo;Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals&rdquo;, <em>Molecules</em> 2021;26:7708 — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">10.3390/molecules26247708</a></li><li><a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">한국민족문화대백과사전 — 침향(沈香)</a></li><li><a href="https://hkplus.dongguk.edu/hkplus/column.php?mode=view&amp;bbs_idx=1368" target="_blank" rel="noopener">동국대학교 HK+사업단 칼럼 「침향(沈香), 고귀하고 엄숙한 향기」</a></li><li><a href="https://cites.org" target="_blank" rel="noopener">CITES — 아퀼라리아속 국제 거래 규제</a></li><li>식약처 고시 대한민국약전외한약(생약)규격집 — 아퀼라리아 아갈로차 록스버그 학명 규정</li><li>동의보감 등 전통 문헌 기록</li></ul>
+''' + DISCLAIMER
+
+ART = {
+    "slug": SLUG,
+    "title": "침향이란? 나무가 상처를 아물리며 만든 향, 처음부터 쉽게",
+    "excerpt": "침향은 침향나무가 상처를 아물리며 뿜어낸 수지가 줄기 속에 쌓여 굳은 덩어리입니다. 물에 가라앉을 만큼 무겁고 최소 25년이 걸립니다. 침향이란 무엇인지, 형성 4단계와 학명, 옛 문헌 기록까지 처음 접하는 분도 알기 쉽게 정리했습니다.",
+    "tags": ["침향", "침향이란", "침향입문", "아퀼라리아", "수지", "천연향", "대라천", "참침향"],
+    "content": CONTENT,
+    "images": [
+        {"key": "resin-grain",
+         "prompt": "Macro photograph of a dark agarwood heartwood chunk resting on natural linen cloth, deep black-brown resin veins running through pale wood grain, soft diffused window light, shallow depth of field, photorealistic still life, no text, no lettering, no logo, no watermark",
+         "alt": "수지가 검게 밴 침향 심재 조각을 가까이서 찍은 사진",
+         "caption": "수지가 짙게 밴 부분일수록 무겁고 향이 깊습니다."},
+        {"key": "water-sink",
+         "prompt": "A small dark agarwood wood piece resting at the bottom of a clear glass bowl of water on a light oak table, soft daylight from the side, calm water surface, photorealistic still life, no text, no lettering, no logo, no watermark",
+         "alt": "물그릇 바닥에 가라앉은 침향 조각",
+         "caption": "가라앉는 성질에서 가라앉을 침(沈) 자가 붙었습니다."}
+    ],
+    "changelog": {
+        "charsBefore": 0, "charsAfter": 0,
+        "citationsAdded": ["A1", "A2", "A7", "K1", "K4", "K7"],
+        "voiceFixes": 24,
+        "notes": "해요체 설명글을 -습니다 보도자료 인칭으로 전환하고 '우리는 / 전해집니다 / 한다고 합니다' 회피 화법을 삭제하거나 주체 귀속으로 대체. 성분·생합성·분포 서술에 A1/A2/A7 서지정보와 DOI 링크, 역사 서술에 K1/K7을 붙임. 형성 4단계 SVG 인포그래픽과 B-4 책임 진술 문단을 신설했고 원문 표·figure·수치·학명·disclaimer는 그대로 보존."
+    }
+}
+
+emit(ART)

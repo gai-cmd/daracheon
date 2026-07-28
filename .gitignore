@@ -86,3 +86,9 @@ scripts/production-video-thumbs/
 # 로컬 임시/스크래치 파일
 tmpmedia-live.html
 _workflow_prompt.txt
+.env*
+
+# blog-rewrite 작업 산출물 — 실행 로그와 파이썬 캐시는 추적하지 않음
+marketing/blog-rewrite/work/_*.log
+marketing/blog-rewrite/work/__pycache__/
+marketing/blog-rewrite/**/.moai/state/

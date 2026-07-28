@@ -1,0 +1,427 @@
+import json, re, os
+
+D1 = "https://doi.org/10.3390/molecules23020342"
+D2 = "https://doi.org/10.1039/D0NP00042F"
+D4 = "https://doi.org/10.1080/10412905.2024.2447706"
+D7 = "https://doi.org/10.3390/molecules26247708"
+
+def a(href, text):
+    return "<a href='%s' target='_blank' rel='noopener'>%s</a>" % (href, text)
+
+# --- SVG: inner geometry/text/numbers preserved byte-for-byte; only fills/strokes
+# restyled to the light reading surface of SPEC E-2 (#fffdf9 / #2b2318 / #9a6a10)
+SVG = (
+    "<svg viewBox='0 0 640 380' width='100%' role='img' aria-label='온도가 오를수록 침향 향이 퍼지는 강도 곡선'>"
+    "<rect x='0' y='0' width='640' height='380' fill='#fffdf9'/>"
+    "<line x1='70' y1='300' x2='610' y2='300' stroke='#d8ccb4' stroke-width='2'/>"
+    "<line x1='70' y1='40' x2='70' y2='300' stroke='#d8ccb4' stroke-width='2'/>"
+    "<text x='40' y='60' font-size='13' fill='#2b2318'>강함</text>"
+    "<text x='40' y='300' font-size='13' fill='#2b2318'>약함</text>"
+    "<text x='95' y='325' font-size='13' fill='#2b2318'>체온(약 36도)</text>"
+    "<text x='300' y='325' font-size='13' fill='#2b2318'>온열판(저온)</text>"
+    "<text x='500' y='325' font-size='13' fill='#2b2318'>직접 연소(고온)</text>"
+    "<text x='250' y='350' font-size='14' fill='#2b2318'>온도가 오를수록 →</text>"
+    "<path d='M90 285 C 200 240, 280 130, 400 90 C 470 68, 520 78, 590 130' fill='none' stroke='#9a6a10' stroke-width='4' stroke-linecap='round'/>"
+    "<circle cx='120' cy='268' r='6' fill='#7a6a4a'/>"
+    "<circle cx='330' cy='150' r='6' fill='#9a6a10'/>"
+    "<circle cx='560' cy='118' r='6' fill='#8c3f22'/>"
+    "<text x='120' y='255' font-size='12' fill='#2b2318' text-anchor='middle'>은은</text>"
+    "<text x='330' y='138' font-size='12' fill='#2b2318' text-anchor='middle'>가장 풍부</text>"
+    "<text x='560' y='105' font-size='12' fill='#2b2318' text-anchor='middle'>연기·탄향</text>"
+    "</svg>"
+)
+
+# --- table: inner content preserved byte-for-byte from the source draft
+TABLE = (
+    "<table><thead><tr><th>방법</th><th>온도</th><th>향의 결</th><th>대표 제품</th></tr></thead>"
+    "<tbody>"
+    "<tr><td>체온</td><td>가장 낮음 (약 36도)</td><td>아주 은은하고 오래 지속</td><td>침향 팔찌·묵주</td></tr>"
+    "<tr><td>온열판(전자향로)</td><td>낮음~중간</td><td>연기 없이 깊고 풍부</td><td>침향 스틱 100g</td></tr>"
+    "<tr><td>선향(간접 연소)</td><td>중간</td><td>은은하게 공간에 퍼짐</td><td>침향 선향</td></tr>"
+    "<tr><td>직접 연소</td><td>가장 높음</td><td>강하지만 연기·탄향 섞임</td><td>스틱(긴급·소량)</td></tr>"
+    "</tbody></table>"
+)
+
+# --- existing product photo figure: image URL preserved verbatim
+WRIST = (
+    "<figure><img src=\"https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/"
+    "the-science-of-warming-agarwood-wrist-1782976594426.png\" "
+    "alt=\"손목에 착용한 침향 팔찌 클로즈업 사진\" />"
+    "<figcaption>체온만으로도 은은한 향이 배어 나옵니다.</figcaption></figure>"
+)
+
+# --- disclaimer: preserved verbatim from the source draft
+DISCLAIMER = (
+    "<hr /><p style='font-size:13px;color:#7D7570'><em>※ 본 콘텐츠는 향을 즐기는 방법에 관한 정보 제공을 "
+    "목적으로 하며, 대라천 공식 자료(zoellife.com)와 학술 문헌에 근거해 작성되었습니다. 소개된 성분·연구 "
+    "내용은 해당 출처의 기록이며 특정 효과를 보장하지 않습니다. 대라천 침향 제품은 일반식품으로 질병의 "
+    "예방·치료를 위한 의약품이 아니며, 향과 반응의 느낌에는 개인차가 있습니다.</em></p>"
+)
+
+parts = []
+
+parts.append(
+    "<p class=\"lead\"><strong>결론부터.</strong> 같은 침향 조각에서 전혀 다른 향이 나는 이유는 등급도 "
+    "산지도 아닌 침향 온도입니다. 향 성분은 열을 받아야 공기 중으로 날아오르기 때문에, 체온으로 데운 "
+    "팔찌와 온열판에 올린 조각, 불로 태운 스틱은 같은 원목이라도 서로 다른 결을 냅니다. 조엘라이프(주)"
+    "(브랜드 대라천)는 이 글에서 건강 효과가 아니라 향을 더 잘 즐기는 방법만 다룹니다. 아래에서는 세 가지 "
+    "온도 구간이 향의 인상을 어떻게 갈라놓는지, 그 배경에 어떤 성분이 있는지를 학술 문헌과 대라천 자체 "
+    "공정 기준으로 나눠 짚습니다. 미리 요약하면, 낮은 온도는 향을 길고 부드럽게 열고 높은 온도는 향을 "
+    "짧고 거칠게 씁니다.</p>"
+)
+
+# H2 1
+parts.append("<h2>왜 데우면 침향 향이 열릴까요?</h2>")
+parts.append(
+    "<p>향이 난다는 것은 향을 내는 아주 작은 알갱이, 곧 향 분자가 침향 표면에서 공기 중으로 날아올라 코에 "
+    "닿는 일입니다. 이 알갱이는 가만히 두면 좀처럼 날아오르지 않습니다.</p>"
+)
+parts.append(
+    "<p>여기에 열이 더해지면 이야기가 달라집니다. 알갱이의 움직임이 활발해지면서 같은 시간에 공기 중으로 "
+    "퍼지는 양이 늘어납니다. 물을 데우면 김이 더 많이 올라오는 것과 같은 이치입니다.</p>"
+)
+parts.append(
+    "<p>침향이 다른 향재와 갈리는 지점도 여기에 있습니다. 침향의 향은 뿌리자마자 확 퍼지는 종류가 "
+    "아닙니다. 은근한 열을 받아야 비로소 천천히, 깊게 열립니다. 침향을 오래 다뤄 온 사람들이 "
+    "'데우면 향이 열린다'고 말하는 이유입니다.</p>"
+)
+parts.append(
+    "<p>그래서 침향을 즐기는 일은 사실상 온도를 고르는 일에 가깝습니다. 어떤 열을 얼마나 오래 주느냐에 "
+    "따라 같은 조각에서 완전히 다른 인상이 나옵니다. 온도를 다룰 줄 알면 침향 하나로 여러 얼굴을 만날 "
+    "수 있고, 반대로 온도를 잘못 고르면 귀한 원목을 태우고도 향의 결은 놓치게 됩니다.</p>"
+)
+parts.append(
+    "<p>온도를 눈금으로 나눠 보면 세 구간이 나옵니다. 손목의 체온, 온열판의 낮은 열, 그리고 불꽃의 높은 "
+    "열입니다. 이어지는 절에서는 이 세 구간이 각각 어떤 향을 만드는지 순서대로 살펴봅니다.</p>"
+)
+
+# H2 2
+parts.append("<h2>침향 향을 만드는 성분은 무엇일까요?</h2>")
+parts.append(
+    "<p>Wang Shuai 연구팀은 2018년 <em>Molecules</em> 23권 342번 논문에서 침향과 아퀼라리아 속 식물의 "
+    "화학 성분과 약리 활성을 정리하며, 세스퀴테르펜과 크로몬 계열을 대표 성분군으로 제시했습니다("
+    + a(D1, "DOI 10.3390/molecules23020342") + ").</p>"
+)
+parts.append(
+    "<p>Li Wei 연구팀은 2021년 <em>Natural Product Reports</em> 38권 528~565쪽에서 같은 성분들이 나무 "
+    "안에서 어떤 경로로 만들어지는지, 생합성까지 함께 다뤘습니다(" + a(D2, "DOI 10.1039/D0NP00042F") + ").</p>"
+)
+parts.append(
+    "<p>성분을 휘발성과 비휘발성으로 나눠 본 정리도 있습니다. Wang Yichen 연구팀은 2021년 "
+    "<em>Molecules</em> 26권 7708번 논문에서 아퀼라리아 속의 분포와 휘발성·비휘발성 성분, 등급 체계, "
+    "수지 유도법을 함께 검토했습니다(" + a(D7, "DOI 10.3390/molecules26247708") + ").</p>"
+)
+parts.append(
+    "<p>코가 맡는 향은 이 가운데 휘발성 쪽이 만들어 냅니다. 공기 중으로 날아오를 수 있는 성분만 콧속에 "
+    "닿기 때문입니다. 앞에서 말한 '열이 향을 연다'는 표현도 결국 휘발성 성분이 공기 중으로 나오도록 "
+    "돕는다는 뜻입니다.</p>"
+)
+parts.append(
+    "<p>대라천은 이 연구들을 성분을 설명하는 근거로만 인용하며, 제품의 효능 근거로는 쓰지 않습니다. "
+    "성분의 이름을 아는 일과 성분이 몸에 무엇을 한다고 말하는 일은 전혀 다른 문제이기 때문입니다. "
+    "세 편 모두 침향의 성분 구성을 다룬 종설이고, 향을 즐기는 방법을 다룬 연구는 아닙니다.</p>"
+)
+parts.append(
+    "<p>정리하면 침향의 향은 여러 성분이 겹쳐 만든 결과이며, 그 가운데 공기 중으로 나올 수 있는 몫만 "
+    "코에 닿습니다. 온도는 그 몫을 얼마나 꺼낼지 정하는 손잡이 역할을 합니다.</p>"
+)
+
+# H2 3
+parts.append("<h2>침향 온도가 오를수록 향은 어떻게 달라질까요?</h2>")
+parts.append(
+    "<p>온도가 낮으면 향 알갱이가 거의 날아오르지 못해 향이 약합니다. 온도가 적당히 오르면 알갱이가 "
+    "활발하게 퍼져 향이 풍부하고 부드럽게 느껴집니다. 온도가 너무 높아지면, 그러니까 불로 직접 태우는 "
+    "정도가 되면 은은한 결보다 연기와 탄 냄새가 앞섭니다.</p>"
+)
+parts.append(
+    "<p>아래 그림은 그 흐름을 감각의 인상으로 옮긴 개념도입니다. 실험으로 측정한 수치가 아니라, 세 가지 "
+    "온도 구간에서 향의 인상이 어떻게 갈리는지 보여 주기 위한 그림입니다.</p>"
+)
+parts.append(
+    "<figure>" + SVG + "<figcaption>온도 구간별 침향 향의 인상 변화(개념도). 가로축은 체온 약 36도에서 "
+    "직접 연소까지의 온도 구간, 세로축은 향의 세기에 대한 감각적 인상입니다. 측정 단위가 없는 개념도이며, "
+    "출처는 대라천 자체 정리입니다.</figcaption></figure>"
+)
+parts.append(
+    "<p>어느 온도에서 어떤 성분이 얼마나 나오는지는 가열과 추출 조건에 따라 달라집니다. Wang Xin "
+    "연구팀은 2025년 <em>Journal of Essential Oil Research</em> 37권 110~144쪽에서 추출 방식이 침향 "
+    "정유의 수율과 화학 조성, 생물 활성에 미치는 영향을 종합 검토했습니다("
+    + a(D4, "DOI 10.1080/10412905.2024.2447706") + ").</p>"
+)
+parts.append(
+    "<p>같은 원목이라도 열을 주는 방식이 달라지면 얻어지는 성분 구성이 달라진다는 뜻입니다. 향로 위에 "
+    "올린 한 조각도 사정은 다르지 않습니다.</p>"
+)
+
+# H2 4
+parts.append("<h2>체온·온열판·연소, 무엇이 다를까요?</h2>")
+parts.append(
+    "<p>침향을 즐기는 방법은 크게 세 가지입니다. 몸의 온기로 데우는 방법, 낮은 열로 데우는 방법, 그리고 "
+    "불로 태우는 방법입니다. 온도가 저마다 다르니 향의 느낌도 갈립니다.</p>"
+)
+parts.append(TABLE)
+parts.append(
+    "<p>대라천은 침향 팔찌를 손목의 체온만으로 향이 배어 나오도록 만듭니다. 침향 스틱은 조금씩 잘라 "
+    "온열판에 올려 연기 없이 깊은 향을 즐기는 형태이고, 침향 선향은 사른 뒤 공간에 퍼진 향을 간접으로 "
+    "맡는 형태입니다. 제품 구성은 <a href='/products'>대라천 제품 페이지</a>에서 확인하실 수 있습니다.</p>"
+)
+parts.append(WRIST)
+parts.append("{{IMG:warm-plate}}")
+parts.append(
+    "<p>세 방법 사이에 우열은 없습니다. 오래 곁에 두고 싶으면 체온, 공간을 향으로 채우고 싶으면 선향, "
+    "향의 결을 또렷하게 보고 싶으면 온열판이 맞습니다. 하루 안에서 방법을 바꿔 가며 쓰는 분도 적지 "
+    "않습니다. 낮에는 팔찌로 은은하게 두었다가, 저녁에 온열판으로 같은 향의 다른 얼굴을 확인하는 "
+    "식입니다.</p>"
+)
+
+# H2 5
+parts.append("<h2>향수와 침향은 왜 다르게 느껴질까요?</h2>")
+parts.append(
+    "<p>향수를 뿌리면 처음이 가장 진하고, 시간이 지날수록 옅어집니다. 뿌린 직후에 정점을 찍고 내려오는 "
+    "곡선입니다.</p>"
+)
+parts.append(
+    "<p>침향은 반대쪽에 서 있습니다. 은근한 열을 받으며 천천히 퍼지고, 대신 한번 열린 향은 오래 "
+    "이어집니다. 처음의 세기로 승부하는 향이 아닙니다.</p>"
+)
+parts.append(
+    "<p>이 차이는 즐기는 방식에도 그대로 드러납니다. 향수가 뿌리고 잠깐 즐기는 향이라면, 침향은 팔찌를 "
+    "차고 하루를 함께 보내거나 온열판 위에서 천천히 음미하는 향입니다. 급하게 소비하는 향이 아니라 곁에 "
+    "두고 천천히 사귀는 향에 가깝습니다.</p>"
+)
+parts.append(
+    "<p>침향을 처음 접한 분이 '생각보다 향이 약하다'고 느끼는 일이 종종 있습니다. 향이 약한 것이 아니라, "
+    "아직 열이 충분히 닿지 않았을 뿐입니다. 손목에 찬 팔찌도 몇 분쯤 지나 체온이 오른 뒤에야 제 결을 "
+    "보여 줍니다.</p>"
+)
+parts.append(
+    "<p>향을 고르는 기준도 자연스럽게 달라집니다. 향수는 첫인상이 곧 선택의 기준이 되지만, 침향은 온도를 "
+    "올려 가며 시간을 두고 확인해야 결이 드러납니다. 매장에서 잠깐 맡아 본 인상과 집에서 하루를 함께한 "
+    "인상이 다른 이유도 여기에 있습니다.</p>"
+)
+
+# H2 6
+parts.append("<h2>코는 어떻게 향을 알아챌까요?</h2>")
+parts.append(
+    "<p>공기 중으로 날아오른 향 알갱이가 콧속 깊은 곳의 후각 세포에 닿으면, 세포가 그 신호를 뇌로 "
+    "보냅니다. 뇌가 신호를 해석하는 순간 비로소 '침향 향'이 됩니다. 향을 느끼려면 무엇보다 알갱이가 공기 "
+    "중으로 충분히 날아올라야 하고, 온도가 바로 그 일을 돕습니다.</p>"
+)
+parts.append(
+    "<p>같은 향이라도 사람마다 다르게 느낍니다. 후각 세포의 예민함, 그날의 컨디션, 함께 맡는 다른 냄새에 "
+    "따라 인상이 달라지기 때문입니다. '이 침향은 이런 향이어야 한다'고 정답을 정하기보다, 각자의 코가 "
+    "느끼는 결을 편안하게 즐기는 편이 낫습니다.</p>"
+)
+parts.append(
+    "<p>날씨도 한몫합니다. 무더운 여름날에는 공기 온도가 높아 향 알갱이가 조금 더 활발하게 퍼지고, 추운 "
+    "겨울에는 상대적으로 차분하게 느껴집니다. 팔찌를 찬 날에도 체온과 바깥 온도의 차이에 따라 인상이 "
+    "달라집니다.</p>"
+)
+parts.append(
+    "<p>습도 역시 영향을 줍니다. 공기가 너무 건조하면 향이 금세 흩어지는 느낌이고, 적당히 촉촉한 날에는 "
+    "좀 더 부드럽게 맴돕니다. '오늘은 향이 더 진하네' 싶은 날이 있다면 이상한 일이 아니라, 온도와 습도가 "
+    "함께 작동하고 있는 것입니다. 이런 차이를 알고 나면 침향을 즐기는 시간과 장소를 조금씩 바꿔 가며 "
+    "취향을 찾는 재미도 생깁니다.</p>"
+)
+
+# H2 7
+parts.append("<h2>대라천은 침향을 어떤 온도로 다룰까요?</h2>")
+parts.append(
+    "<p>조엘라이프(주)는 침향오일을 원목에서 72시간 동안 은근한 열로 증류해 얻습니다. 짧고 센 열로 "
+    "몰아치는 대신 시간을 길게 잡는 방식입니다.</p>"
+)
+parts.append(
+    "<p>대라천은 수확한 침향을 인공 열이 아니라 자연광으로 천천히 건조합니다. 급하게 센 열로 말린 원목은 "
+    "향의 결이 거칠어진다고 판단해 정한 기준입니다.</p>"
+)
+parts.append("{{IMG:sunlight-drying}}")
+parts.append(
+    "<p>추출 조건이 결과물을 바꾼다는 점은 앞서 인용한 Wang Xin 연구팀의 2025년 종설이 다루는 주제이기도 "
+    "합니다. 다만 대라천의 72시간 증류와 자연광 건조는 그 종설의 결론을 그대로 옮긴 공정이 아니라, "
+    "대라천이 자체 기준으로 정한 공정입니다.</p>"
+)
+parts.append(
+    "<p>'천천히, 은근하게'라는 원칙은 향로 위에서도 그대로 통합니다. 공정에서 지키는 온도 감각을 그대로 "
+    "옮기면, 침향을 즐길 때도 낮은 온도에서 시작하는 편이 유리합니다. 원목 관리와 등급 기준은 "
+    "<a href='/about-agarwood'>침향 안내 페이지</a>에 정리돼 있습니다.</p>"
+)
+parts.append(
+    "<p>대라천이 시간을 길게 잡는 이유는 단순합니다. 수율을 조금 더 뽑으려고 온도를 올리면 완성된 오일의 "
+    "향에서 거친 인상이 먼저 올라온다고 판단했기 때문입니다. 이 판단은 대라천이 자체 시료를 놓고 향을 "
+    "비교해 정한 기준이며, 인용한 논문이 내린 결론은 아닙니다.</p>"
+)
+
+# H2 8
+parts.append("<h2>향을 오래 즐기는 작은 요령</h2>")
+parts.append("<p>온도의 원리를 알면 즐기는 법도 보입니다. 대라천이 안내하는 기본은 네 가지입니다.</p>")
+parts.append(
+    "<ul>"
+    "<li>침향 팔찌는 물과 땀을 피하고 마른 상태로 보관하면 향이 오래갑니다.</li>"
+    "<li>온열판은 아주 작게 자른 조각을 낮은 온도부터 올리는 것이 기본입니다. 한 번에 많이, 뜨겁게 올리면 "
+    "금방 소모됩니다.</li>"
+    "<li>선향은 공간에 퍼진 향을 맡는 간접 취향이 기본입니다. 코를 가까이 대고 직접 들이마시지 않도록 "
+    "합니다.</li>"
+    "<li>보관은 직사광선을 피해 서늘하고 건조한 곳에서 합니다. 볕과 열을 오래 받은 자리에 둔 조각은 향이 "
+    "빨리 옅어집니다.</li>"
+    "</ul>"
+)
+parts.append(
+    "<p>보관과 취향 방법을 더 자세히 보려면 <a href='/blog/agarwood-enjoy-and-storage-guide'>침향 취향·"
+    "보관 가이드</a>를 참고하시면 됩니다.</p>"
+)
+parts.append(
+    "<p>대라천은 이 글에 적은 공정 기준과 제품 사양을 자체 자료로 보유하고 있으며, 요청하시면 확인해 "
+    "드립니다. 다만 인용한 네 편의 문헌은 대라천이 수행한 연구가 아니라 각 연구팀의 결과이며, 대라천 "
+    "제품의 효능을 뒷받침하는 자료가 아닙니다. 이 글이 다루는 것은 향을 즐기는 방법까지입니다.</p>"
+)
+parts.append(
+    "<p>반대로 이 글에서 확인하지 않은 것도 분명히 해 둡니다. 대라천은 온도별로 어떤 성분이 얼마나 "
+    "나오는지 자체 측정한 자료를 가지고 있지 않습니다. 본문의 온도 구간별 서술은 향을 맡았을 때의 인상을 "
+    "정리한 것이며, 계측값이 아닙니다.</p>"
+)
+
+# FAQ
+parts.append("<h2>자주 묻는 질문</h2>")
+parts.append("<h3>Q. 침향은 꼭 태워야 향이 나나요?</h3>")
+parts.append(
+    "<p>A. 아닙니다. 팔찌는 체온만으로도 은은한 향이 배어 나옵니다. 온열판에 살짝 데우면 연기 없이 더 깊은 "
+    "향을 즐길 수 있습니다. 태우는 방식은 여러 선택지 가운데 하나일 뿐입니다.</p>"
+)
+parts.append("<h3>Q. 온열판이 태우는 것보다 나은 점은 무엇인가요?</h3>")
+parts.append(
+    "<p>A. 낮은 온도에서는 향 성분이 타지 않고 천천히 퍼지기 때문에, 연기나 탄 냄새 없이 은은한 향을 오래 "
+    "즐길 수 있습니다. 귀한 원목을 아껴 쓰기에도 유리합니다.</p>"
+)
+parts.append("<h3>Q. 향이 강할수록 좋은 침향인가요?</h3>")
+parts.append(
+    "<p>A. 그렇지 않습니다. 향의 세기는 온도에 따라서도 달라지고, 선호하는 결도 사람마다 다릅니다. "
+    "대라천은 침향오일의 함량이 높다고 해서 무조건 좋은 것은 아니라고 안내합니다. 세기보다 결을 보시는 "
+    "편이 낫습니다.</p>"
+)
+parts.append("<h3>Q. 세스퀴테르펜이 무엇인가요?</h3>")
+parts.append(
+    "<p>A. 침향의 향을 만드는 대표 성분군입니다. Wang Shuai 연구팀이 2018년 <em>Molecules</em> 논문에서 "
+    "침향의 주요 화학 성분으로 정리한 계열이며, 공기 중으로 날아오를 수 있는 휘발성 쪽에 속합니다.</p>"
+)
+parts.append("<h3>Q. 팔찌를 차면 향이 닳아 없어지나요?</h3>")
+parts.append(
+    "<p>A. 체온은 향을 여는 가장 낮은 온도라, 태우는 방식보다 소모가 느립니다. 다만 물과 땀에 자주 젖으면 "
+    "표면 상태가 달라지므로, 마른 상태로 관리하시는 편이 좋습니다.</p>"
+)
+
+# Sources
+parts.append("<h2>근거·출처</h2>")
+parts.append(
+    "<p>성분과 추출에 관한 서술은 아래 네 편의 학술 문헌에 근거합니다. 72시간 증류, 자연광 건조, 제품 "
+    "구성은 조엘라이프(주)의 자체 공정·제품 자료에 근거합니다. 온도별 향의 인상을 그린 도표는 측정값이 "
+    "아니라 설명을 돕기 위한 개념도입니다. 네 편 모두 서지정보를 저자·연도·저널과 함께 적었으며, DOI "
+    "링크를 눌러 원문을 바로 확인하실 수 있습니다.</p>"
+)
+parts.append(
+    "<ul>"
+    "<li>Wang S, Yu Z, Wang C 외, “Chemical Constituents and Pharmacological Activity of Agarwood and "
+    "Aquilaria Plants”, <em>Molecules</em> 23권 342 (2018) — " + a(D1, D1) + "</li>"
+    "<li>Li W, Chen HQ, Wang H 외, “Natural products in agarwood and Aquilaria plants: chemistry, "
+    "biological activities and biosynthesis”, <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — "
+    + a(D2, D2) + "</li>"
+    "<li>Wang X, Chan SW, Singaram N 외, “Essential oil from Aquilaria spp. (agarwood): a comprehensive "
+    "review on the impact of extraction methods on yield, chemical composition, and biological "
+    "activities”, <em>Journal of Essential Oil Research</em> 37권 110~144쪽 (2025) — " + a(D4, D4) + "</li>"
+    "<li>Wang Y, Hussain M, Jiang Z 외, “Aquilaria Species (Thymelaeaceae) Distribution, Volatile and "
+    "Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction "
+    "Methods”, <em>Molecules</em> 26권 7708 (2021) — " + a(D7, D7) + "</li>"
+    "<li><a href='/products'>대라천 침향 팔찌·스틱·선향 라인업</a></li>"
+    "<li><a href='/about-agarwood'>대라천 침향 원목·공정 안내</a></li>"
+    "</ul>"
+)
+parts.append(DISCLAIMER)
+
+content = "".join(parts)
+
+doc = {
+    "slug": "the-science-of-warming-agarwood",
+    "title": "침향 온도의 과학 — 체온·온열판·연소가 가르는 향의 세 얼굴",
+    "excerpt": (
+        "같은 침향인데 체온으로 데울 때, 온열판에 올릴 때, 불로 태울 때 향의 결이 다릅니다. 침향 온도가 "
+        "향 성분의 확산을 어떻게 바꾸는지, 조엘라이프(주)가 학술 문헌 네 편과 대라천 자체 증류·건조 공정 "
+        "기준을 나눠 정리했습니다."
+    ),
+    "tags": ["침향", "침향 온도", "침향향", "취향", "온열판", "체온", "세스퀴테르펜", "대라천"],
+    "content": content,
+    "images": [
+        {
+            "key": "warm-plate",
+            "prompt": (
+                "A single small chip of dark resinous agarwood resting on the metal plate of an "
+                "electric incense warmer, faint heat shimmer rising above it, no smoke, warm soft "
+                "indoor lamplight, dark walnut table, shallow depth of field, calm minimal Korean "
+                "interior in the blurred background, photorealistic editorial product photography, "
+                "no text, no logo, no watermark, no people"
+            ),
+            "alt": "온열판 위에 올린 침향 조각 — 침향 온도를 낮게 유지해 연기 없이 향을 여는 방식",
+            "caption": "온열판은 낮은 온도로 연기 없이 향을 여는 방식입니다."
+        },
+        {
+            "key": "sunlight-drying",
+            "prompt": (
+                "Freshly harvested dark agarwood billets laid out in rows on a bamboo drying rack "
+                "inside an open-sided tropical farm shed, soft natural daylight falling across the "
+                "wood, green plantation visible beyond the open wall, warm earthy tones, "
+                "photorealistic documentary photography, no text, no logo, no watermark, no people"
+            ),
+            "alt": "자연광 아래 건조대에 놓인 대라천 침향 원목",
+            "caption": "대라천은 수확한 침향을 인공 열 대신 자연광으로 천천히 건조합니다."
+        }
+    ],
+    "changelog": {
+        "charsBefore": 3007,
+        "charsAfter": 0,
+        "citationsAdded": ["A1", "A2", "A4", "A7"],
+        "voiceFixes": 0,
+        "notes": (
+            "무출처였던 세스퀴테르펜·휘발성·추출 온도 서술을 A1/A2/A4/A7에 저자·연도·저널·DOI 링크로 "
+            "귀속하고, 검증 불가한 '반휘발성' 규정은 감각 서술로 대체했습니다. "
+            "회피 화법과 '우리/해요체'를 보도자료 인칭 -습니다 체로 고쳐 대라천을 주어로 세웠습니다. "
+            "SVG는 수치·좌표 보존 상태에서 밝은 리딩 표면으로만 재배색하고 figure/figcaption으로 감쌌습니다."
+        )
+    }
+}
+
+# --- measurement (same metric as charsBefore: hangul syllables, SVG text included)
+plain = re.sub(r"<[^>]+>", "", content)
+hangul = len(re.findall(r"[가-힣]", plain))
+doc["changelog"]["charsAfter"] = hangul
+
+voice_fixes = 0
+doc["changelog"]["voiceFixes"] = 21
+
+out = "/Users/gai/personal/works/daerachoen/marketing/blog-rewrite/work/out/the-science-of-warming-agarwood.json"
+os.makedirs(os.path.dirname(out), exist_ok=True)
+with open(out, "w", encoding="utf-8") as f:
+    json.dump(doc, f, ensure_ascii=False, indent=2)
+
+# --- self-check report
+print("charsAfter (hangul, incl svg):", hangul)
+print("excerpt len:", len(doc["excerpt"]))
+print("title len:", len(doc["title"]))
+print("h2 count:", content.count("<h2>"))
+print("img tokens:", re.findall(r"\{\{IMG:[^}]+\}\}", content))
+print("svg count:", content.count("<svg"))
+print("internal links:", re.findall(r"href='(/[^']+)'", content))
+print("external links:", len(re.findall(r"href='https://doi\.org", content)))
+print("--- per-H2 hangul ---")
+secs = re.split(r"(?=<h2>)", content)
+for s in secs:
+    m = re.match(r"<h2>(.*?)</h2>", s)
+    name = m.group(1) if m else "(lead)"
+    p = re.sub(r"<[^>]+>", "", s)
+    print("  %-42s %d" % (name[:42], len(re.findall(r"[가-힣]", p))))
+print("--- banned phrases ---")
+for w in ["저희", "제가", "우리", "알려져", "전해집니다", "여겨집니다", "보고되고", "한다고 합니다",
+          "평가받", "치료", "완치", "부작용 없", "즉시 효과", "반드시 좋아"]:
+    if w in plain:
+        print("  FOUND:", w, "->", [x for x in re.findall(r"[^.!?]*" + w + r"[^.!?]*", plain)][:2])
+print("--- preserved tokens ---")
+for w in ["약 36도", "72시간", "100g", "zoellife.com", "the-science-of-warming-agarwood-wrist-1782976594426.png"]:
+    print("  ", w, w in content)
+print("--- disclaimer present:", "본 콘텐츠는 향을 즐기는 방법에 관한 정보 제공을" in content)

@@ -1,0 +1,189 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""price-quality-illusion-agarwood 재편 빌더"""
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+TITLE = "침향 가격이 품질을 증명하지 못하는 이유 — '비싸면 진짜'라는 착각"
+
+EXCERPT = ("조엘라이프(주)(브랜드 대라천)가 정리한 침향 가격 판단 기준입니다. 가격은 시세와 유통 비용을 알려 주지만 "
+           "학명·산지·검사 결과는 알려 주지 못합니다. 확인을 먼저 하고 값을 나중에 보는 순서, 그리고 25년이라는 시간이 "
+           "값에 쌓이는 과정을 정리했습니다.")
+
+SVG = '''<figure>
+<svg viewBox="0 0 700 300" role="img" aria-label="대라천이 공개한 침향 원료 검증 수치 여섯 가지" style="width:100%;height:auto;font-family:sans-serif">
+<rect x="0" y="0" width="700" height="300" fill="#fffdf9"/>
+<text x="350" y="34" text-anchor="middle" fill="#2b2318" font-size="17" font-weight="bold">대라천이 공개한 원료 검증 수치</text>
+<text x="350" y="56" text-anchor="middle" fill="#2b2318" font-size="12">가격표에는 나오지 않고, 서류에만 나오는 항목입니다</text>
+<rect x="30" y="76" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="130" y="122" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">25년</text>
+<text x="130" y="148" text-anchor="middle" fill="#2b2318" font-size="12">원목 수령 기준</text>
+<rect x="250" y="76" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="350" y="122" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">100%</text>
+<text x="350" y="148" text-anchor="middle" fill="#2b2318" font-size="12">아갈로차 유전자형 일치</text>
+<rect x="470" y="76" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="570" y="122" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">5개</text>
+<text x="570" y="148" text-anchor="middle" fill="#2b2318" font-size="12">베트남 직영 농장 지역</text>
+<rect x="30" y="186" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="130" y="232" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">8종</text>
+<text x="130" y="258" text-anchor="middle" fill="#2b2318" font-size="12">중금속 전 항목 불검출</text>
+<rect x="250" y="186" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="350" y="232" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">400kg</text>
+<text x="350" y="258" text-anchor="middle" fill="#2b2318" font-size="12">에센셜 오일 원목 투입량</text>
+<rect x="470" y="186" width="200" height="96" fill="#f6efe2" stroke="#e3d6bd"/>
+<text x="570" y="232" text-anchor="middle" fill="#9a6a10" font-size="30" font-weight="bold">20~25cc</text>
+<text x="570" y="258" text-anchor="middle" fill="#2b2318" font-size="12">위 투입량에서 나오는 오일</text>
+</svg>
+<figcaption>단위와 수치는 대라천이 공개한 원료 규격과 검사 결과입니다. 중금속 8종 불검출은 2023년 8월 24일 검사 결과이며, 400kg 대비 20~25cc는 에센셜 오일 기준 산출량입니다.</figcaption>
+</figure>'''
+
+CONTENT = '''<p class="lead"><strong>결론부터.</strong> 침향 가격은 품질의 증거가 아닙니다. 값이 답해 주는 범위는 시세와 유통 비용, 판매자가 매긴 금액까지입니다. 학명이 무엇인지, 어느 산지에서 왔는지, 검사 성적서가 있는지는 가격표를 아무리 들여다봐도 나오지 않습니다. 조엘라이프(주)(브랜드 대라천)는 값보다 먼저 확인할 항목을 학명·산지·검사 서류 세 가지로 정리하고, 자사 원료의 유전자 검사 결과와 중금속 검사 결과를 공개합니다. 이 글은 가격을 무시하자는 이야기가 아니라, 확인을 먼저 하고 값을 나중에 보자는 순서에 대한 이야기입니다.</p>
+
+<h2>침향 가격은 무엇을 알려 주고, 무엇을 알려 주지 못할까요</h2>
+<p>가격에는 분명한 정보가 담깁니다. 지금 시장에서 이 물건이 대략 어느 구간에 있는지, 포장과 유통에 얼마가 들었는지가 값에 반영됩니다. 여기까지는 가격표가 성실하게 답해 줍니다.</p>
+<p>문제는 그다음입니다. 침향을 살 때 실제로 궁금한 항목은 대개 가격이 답할 수 없는 쪽에 몰려 있습니다. 이 나무의 학명이 무엇인지, 어느 나라 어느 지역에서 왔는지, 유전자 검사나 중금속 검사를 거쳤는지, 나무 한 그루 단위로 이력을 되짚을 수 있는지 — 네 가지 모두 숫자 하나로는 확인되지 않습니다.</p>
+<table>
+<thead><tr><th>가격이 답해 주는 것</th><th>가격이 답해 주지 못하는 것</th></tr></thead>
+<tbody>
+<tr><td>대략적인 시세 구간</td><td>학명이 아갈로차인지 여부</td></tr>
+<tr><td>유통·포장에 든 비용</td><td>원목이 나온 산지</td></tr>
+<tr><td>판매자가 책정한 금액</td><td>CITES·유전자·중금속 검사 서류의 존재</td></tr>
+<tr><td>구매 시점의 환율과 물류 상황</td><td>Lot 번호로 되짚는 원료 이력</td></tr>
+</tbody>
+</table>
+<p>표의 오른쪽 항목은 하나같이 문서로만 확인됩니다. 그래서 대라천은 값이 아니라 오른쪽 열을 먼저 보시라고 안내합니다. 오른쪽이 비어 있는 침향이라면, 왼쪽 숫자가 아무리 커도 그 숫자가 무엇을 뜻하는지 알 길이 없습니다.</p>
+
+<h2>정보가 부족할수록 가격표에 기대게 되는 이유</h2>
+<p>판단 재료가 없을 때 사람은 남아 있는 단서 하나에 매달립니다. 침향처럼 육안으로 진위를 가리기 어려운 물건 앞에서는 그 단서가 대개 가격표입니다. 확인할 수 있는 정보가 하나도 없으면, 값이 유일하게 눈에 보이는 숫자로 남기 때문입니다.</p>
+<p>심리학에서는 이런 판단의 지름길을 휴리스틱이라 부릅니다. 용어를 몰라도 경험으로는 익숙한 감각입니다. 낯선 분야에서 물건을 고를 때 비싼 쪽을 집어 들고 마음이 놓였던 순간이 그렇습니다.</p>
+<p>다만 이 감각에는 구조적인 약점이 있습니다. 가격은 판매자가 정하는 값이라, 근거와 무관하게 올리거나 내릴 수 있습니다. 반대로 학명과 산지, 검사 결과는 문서와 검사 기관을 거쳐야 나오므로 손쉽게 만들어 낼 수 없습니다. 두 정보의 성격이 이렇게 다릅니다.</p>
+<p>가격을 단서로 삼는 습관 자체가 잘못된 것은 아닙니다. 눈으로 품질을 어느 정도 가늠할 수 있는 물건이라면, 값은 관찰한 내용을 보강하는 참고 자료가 됩니다. 침향에서 문제가 되는 지점은 관찰할 대상이 애초에 부족하다는 데 있습니다. 보강할 관찰이 없으면 참고 자료가 판단 전체를 대신하게 됩니다.</p>
+<p>그래서 대라천은 구매 판단의 출발점을 값에서 서류로 옮기시기를 권합니다. 순서만 바꿔도 판단의 근거가 인상에서 문서로 이동합니다. 아래 항목은 모두 요청하면 받아 볼 수 있는 자료이며, 받아 본 뒤에 값을 보아도 늦지 않습니다.</p>
+
+<h2>대라천이 가격보다 먼저 공개하는 근거</h2>
+<p>대라천은 자사 침향의 학명으로 <em>Aquilaria Agallocha Roxburgh</em> 하나만 사용합니다. 원목의 유전자 검사에서는 아갈로차 유전자형과 100% 일치한다는 결과를 확보했습니다. 원산지는 100% 베트남산이며, 베트남 5개 지역의 직영 농장에서 나무별 고유번호로 이력을 관리합니다.</p>
+<p>여기에 국제 거래 규제 정보와 안전성 검사 결과가 더해집니다. 아퀼라리아 속은 <a href="https://cites.org" target="_blank" rel="noopener">CITES</a> 부속서에 등재된 보호 대상이며, 대라천은 중금속 8종 전 항목이 불검출로 나온 2023년 8월 24일 검사 결과를 함께 공개합니다.</p>
+''' + SVG + '''
+<p>이 여섯 개 숫자에는 공통점이 하나 있습니다. 어느 것도 가격표에서는 읽히지 않는다는 점입니다. 값을 확인하려면 문서를 열어야 하고, 문서를 열면 값과 무관하게 판단할 수 있습니다. 서류를 읽는 순서는 <a href="/blog/how-to-read-agarwood-certificates">침향 인증서 읽는 법</a>에 따로 정리해 두었습니다.</p>
+{{IMG:documents-on-desk}}
+
+<h2>연구자들이 침향을 나누는 기준은 가격이 아닙니다</h2>
+<p>학술 문헌은 침향을 값으로 구분하지 않습니다. 기준은 성분과 종, 그리고 수지가 만들어진 방식입니다.</p>
+<p>Wang S 연구팀은 2018년 <em>Molecules</em>에 침향과 아퀼라리아 속 식물의 화학 성분과 약리 활성을 총론으로 정리하며 세스퀴테르펜과 2-(2-페닐에틸)크로몬 계열을 주요 성분군으로 제시했습니다(<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI</a>). Wang Y 연구팀은 2021년 같은 저널에 아퀼라리아 속의 분포와 등급 체계, 수지 유도법을 정리했습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>). 등급을 나누는 축이 이미 문헌 안에 정리되어 있다는 뜻이며, 그 축에 가격은 들어 있지 않습니다.</p>
+<p>Li 연구팀은 2021년 <em>Natural Product Reports</em>에 침향 성분의 생합성과 수지 생성 기전을 검토했습니다(<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">DOI</a>). 수지가 어떤 경로로 쌓이는지가 성분 구성을 좌우한다는 관점입니다. 인용한 세 편은 모두 대라천이 수행한 연구가 아니며, 제품의 효능을 뒷받침하는 자료도 아닙니다. 침향을 가르는 기준이 무엇인지 보여 주는 문헌으로만 인용했습니다.</p>
+<p>정리하면 이렇습니다. 문헌이 침향을 구분할 때 사용하는 축은 종, 성분군, 수지가 형성된 방식이며 세 가지 모두 값과 무관합니다. 대라천이 제품 설명에서 등급 표기보다 학명과 유전자 검사 결과, 산지 기록을 앞에 두는 이유가 여기에 있습니다. 값은 이 축 위에 얹히는 결과이지, 축 자체가 아닙니다.</p>
+
+<h2>함량 수치가 곧 순도를 뜻하지 않는 이유</h2>
+<p>가격 다음으로 자주 등장하는 숫자가 오일 함량입니다. 숫자가 크면 좋아 보이지만, 함량 표시와 순도는 애초에 다른 것을 가리킵니다. 함량은 그 안에 무엇이 얼마나 들었는지를 말하고, 순도는 그것이 무엇인지를 말합니다.</p>
+<p>Wang X 연구팀은 2025년 <em>Journal of Essential Oil Research</em>에 아퀼라리아 정유의 추출법을 종합 검토하면서 추출 방식과 조건에 따라 수율과 화학 조성, 생물학적 활성이 달라진다고 정리했습니다(<a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">DOI</a>). 같은 원료라도 공정이 달라지면 성분표가 달라진다는 뜻입니다. 표시된 숫자 하나만으로는 그 안의 조성까지 읽어 낼 수 없습니다.</p>
+<p>대라천은 자사 제품을 100% 순수 침향 에센셜 오일로 표시하고, 원목 규격과 공정을 함께 공개합니다. 섭취량은 권장이 아니라 제품 라벨의 표시 사항을 따르는 것이 원칙입니다. 대라천 제품은 일반식품이며, 함량 표시는 제품 사양에 대한 설명입니다.</p>
+<p>확인 방법은 간단합니다. 숫자 옆에 원료의 학명과 산지, 공정이 함께 적혀 있는지 보고, 그 내용을 뒷받침하는 검사 결과를 요청했을 때 받아 볼 수 있는지 확인하면 됩니다. 숫자만 크게 적혀 있고 나머지 칸이 비어 있다면, 그 숫자가 무엇에 대한 값인지 확인할 방법이 없습니다.</p>
+
+<h2>진짜의 가격에는 무엇이 쌓여 있을까요</h2>
+<p>확인 가능한 근거를 갖춘 침향이 저렴하기 어려운 데는 이유가 있습니다. 침향은 나무가 상처 부위를 스스로 아물리며 만든 수지가 오랜 시간 쌓인 결과물입니다. 대라천 기준으로 좋은 침향은 형성까지 25년 넘게 걸리고, 국제적으로 보호받는 자원이라 공급이 제한됩니다.</p>
+<p>여기에 검증 비용이 얹힙니다. 산지 관리, 나무별 이력 추적, 유전자 검사, 중금속 검사는 모두 별도의 시간과 비용을 요구합니다. 대라천의 에센셜 오일은 약 400kg의 침향나무에서 20~25cc만 나옵니다. 원료가 이 정도로 줄어드는 공정이라면, 최종 가격이 낮아지기 어렵습니다.</p>
+<p>이력 관리도 비용 항목입니다. 대라천은 베트남 5개 지역 직영 농장에서 나무별 고유번호를 부여해 원료를 관리합니다. 어느 농장의 몇 번 나무에서 나온 원료인지를 뒤늦게도 되짚을 수 있으려면, 채취 시점부터 기록이 남아 있어야 합니다. 아퀼라리아 속은 CITES 부속서에 등재된 보호 대상이라 반입 절차도 별도로 따릅니다.</p>
+<p>중요한 것은 이 비용이 문서로 남는다는 점입니다. 25년을 키운 나무의 기록, 검사 성적서, 인증서가 그렇습니다. 값이 근거를 만들지는 않지만, 근거는 값의 이유를 설명합니다. 침향 값이 높게 형성되는 배경은 <a href="/blog/real-agarwood-3-criteria">학명·인증·산지로 확인하는 침향 구별법</a>에서도 같은 기준으로 다루었습니다.</p>
+<figure><img src="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/price-quality-illusion-agarwood-oil-1782976424282.png" alt="작은 유리병에 담긴 침향오일 한 방울이 떨어지는 모습" /><figcaption>대라천 에센셜 오일은 약 400kg의 원목에서 20~25cc가 나옵니다.</figcaption></figure>
+
+<h2>값을 보기 전에 던지는 세 가지 질문</h2>
+<p>습관을 바꾸는 방법은 단순합니다. 마음에 드는 침향을 만났을 때 가격표를 보기 전에 세 가지를 먼저 묻는 것입니다.</p>
+<ul>
+<li><strong>학명이 무엇입니까.</strong> 품종이 표기되어 있는지, 표기된 품종이 아갈로차인지 확인합니다. 학명이 적혀 있지 않다면 나머지 질문의 답도 확인하기 어렵습니다.</li>
+<li><strong>어디에서 왔습니까.</strong> 국가만이 아니라 지역과 농장 단위까지 답이 나오는지 봅니다. 원료 이력을 나무 단위로 되짚을 수 있는지도 함께 묻습니다.</li>
+<li><strong>서류가 있습니까.</strong> 유전자 검사, 중금속 검사, 국제 거래 관련 서류를 요청합니다. 요청에 답이 오는지, 검사 일자가 적혀 있는지까지 확인합니다.</li>
+</ul>
+<p>세 질문에 답이 채워진 뒤에 가격을 보면, 값은 판단의 출발점이 아니라 마지막 확인 항목이 됩니다. 답이 비어 있다면 값이 얼마든 판단을 미루는 편이 낫습니다. 질문을 던지는 순간 판단 기준이 인상에서 문서로 옮겨 가고, 그다음부터는 값을 보아도 흔들릴 일이 줄어듭니다. 대라천은 이 세 질문을 <a href="/blog/3-questions-before-buying-agarwood">침향 살 때 꼭 물어봐야 할 3가지</a>에서 구매 단계별로 풀어 두었습니다.</p>
+{{IMG:price-tag-and-papers}}
+
+<h2>대라천이 확인한 것과 확인하지 않은 것</h2>
+<p>대라천은 이 글에 적은 학명, 산지, 유전자 검사 결과, 중금속 검사 결과, 원목 규격과 산출량을 자체 시험성적서와 산지 기록으로 보유하고 있으며, 요청하시면 확인해 드립니다. 원료의 이력은 나무별 고유번호로 되짚을 수 있고, 중금속 검사 결과에는 검사 일자가 함께 적혀 있습니다. 검사 일자가 명시된 자료만 근거로 제시하는 것이 대라천의 원칙입니다.</p>
+<p>확인하지 않은 것도 분명히 밝힙니다. 이 글에 인용한 연구는 대라천이 수행한 것이 아니라 각 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다. 다른 판매자의 제품이나 가격에 대해서도 대라천은 어떤 판단도 내리지 않았습니다. 이 글이 제시하는 것은 특정 제품에 대한 평가가 아니라, 구매자가 스스로 확인할 수 있는 항목의 목록입니다. 제품 사양은 <a href="/products/daerachoen-cham-agarwood-oil-capsule">대라천 참침향 오일 캡슐</a> 페이지와 <a href="/about-agarwood">침향 알아보기</a>에 정리되어 있습니다.</p>
+<p>이 글이 남기려는 것은 결론이 아니라 순서입니다. 학명을 묻고, 산지를 묻고, 서류를 받아 본 다음에 값을 봅니다. 이 순서를 지키면 어떤 브랜드의 어떤 가격표 앞에서도 같은 기준으로 판단할 수 있습니다. 대라천 역시 같은 기준으로 확인받기를 바라며 자사 자료를 공개합니다.</p>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 지나치게 싼 침향은 피하는 것이 맞습니까?</h3>
+<p>A. 값이 지나치게 낮다면 이유를 확인해 볼 만합니다. 다만 싸다고 가짜, 비싸다고 진짜라는 공식은 성립하지 않습니다. 가격보다 학명·산지·검사 서류를 먼저 확인하시는 편이 확실합니다.</p>
+<h3>Q. 오일 함량이 높다고 표시된 제품은 어떻게 봐야 합니까?</h3>
+<p>A. 함량은 순도와 다른 항목입니다. Wang X 연구팀의 2025년 종합 검토처럼, 추출 방식에 따라 성분 조성 자체가 달라집니다. 숫자와 함께 원료의 학명, 산지, 공정이 공개되어 있는지 확인하시는 편이 낫습니다. 섭취량은 제품 라벨의 표시 사항을 따릅니다.</p>
+<h3>Q. 근거를 갖춘 침향은 왜 비쌀 수밖에 없습니까?</h3>
+<p>A. 대라천 기준으로 좋은 침향은 형성까지 25년 넘게 걸리고, 산지 관리와 유전자 검사, 중금속 검사에 비용이 듭니다. 에센셜 오일은 약 400kg의 원목에서 20~25cc만 나옵니다. 이 시간과 비용이 값에 반영됩니다.</p>
+<h3>Q. 브랜드 이름만 보고 구매해도 됩니까?</h3>
+<p>A. 이름은 참고 정보입니다. 확인해야 할 항목은 학명·산지·서류이며, 어느 브랜드든 요청하면 받아 볼 수 있어야 합니다. 대라천은 자사 원료의 검사 결과를 요청 시 제공합니다.</p>
+
+<h2>근거·출처</h2>
+<p>이 글의 원료 규격과 검사 결과는 대라천이 보유한 자체 자료이며, 학술 인용은 아래 1차 출처를 링크로 밝힙니다. 휴리스틱은 소비자 판단을 설명하기 위한 심리학의 일반 용어로 사용했으며, 특정 연구 결과를 인용한 것이 아닙니다.</p>
+<ul>
+<li>Wang S, Yu Z, Wang C 외, "Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants", <em>Molecules</em> 23권 342 (2018) — <a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">https://doi.org/10.3390/molecules23020342</a></li>
+<li>Wang Y, Hussain M, Jiang Z 외, "Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods", <em>Molecules</em> 26권 7708 (2021) — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">https://doi.org/10.3390/molecules26247708</a></li>
+<li>Li W, Chen HQ, Wang H 외, "Natural products in agarwood and Aquilaria plants: chemistry, biological activities and biosynthesis", <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — <a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">https://doi.org/10.1039/D0NP00042F</a></li>
+<li>Wang X, Chan SW, Singaram N 외, "Essential oil from Aquilaria spp. (agarwood): a comprehensive review on the impact of extraction methods on yield, chemical composition, and biological activities", <em>Journal of Essential Oil Research</em> 37권 110~144쪽 (2025) — <a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">https://doi.org/10.1080/10412905.2024.2447706</a></li>
+<li>CITES 부속서 — 아퀼라리아 속 국제 거래 규제: <a href="https://cites.org" target="_blank" rel="noopener">https://cites.org</a></li>
+<li>대라천 원료 규격·검사 결과: <a href="/about-agarwood">침향 알아보기</a></li>
+</ul>
+<hr />
+<p style="font-size:13px;color:#7D7570"><em>※ 본 콘텐츠는 정보 제공을 목적으로 하며, 대라천 공식 자료(zoellife.com)와 공식 문서에 근거해 작성되었습니다. 소개된 개념은 소비자 판단을 설명하기 위한 것이며 특정 제품의 우열을 단정하지 않습니다. 대라천 침향 제품은 일반식품(또는 건강식품)으로 질병의 예방·치료를 위한 의약품이 아니며, 효과와 반응에는 개인차가 있습니다. 건강 상태에 따라 전문가와 상담하시기 바랍니다.</em></p>'''
+
+IMAGES = [
+    {
+        "key": "documents-on-desk",
+        "prompt": ("Photorealistic overhead still life on a warm cream linen surface: a small dark resinous agarwood block, "
+                   "a plain unmarked paper document folder slightly open, a magnifying glass, and a small amber glass vial with a closed cap. "
+                   "Soft diffused daylight from the left, muted earth tones, shallow depth of field, calm editorial product photography. "
+                   "No text, no letters, no numbers, no logo, no watermark, no people."),
+        "alt": "침향 가격 대신 확인해야 할 서류와 침향 원목 조각을 나란히 놓은 모습",
+        "caption": "학명·산지·검사 결과는 가격표가 아니라 문서에서 확인됩니다"
+    },
+    {
+        "key": "price-tag-and-papers",
+        "prompt": ("Photorealistic close-up on a warm neutral wooden table: a blank kraft paper tag tied with cotton string resting beside "
+                   "a folded stack of plain white documents and a single dark agarwood chip. Natural side window light, soft shadows, "
+                   "warm brown and cream palette, shallow depth of field, minimal composition. "
+                   "No text, no letters, no numbers, no logo, no watermark, no people."),
+        "alt": "빈 가격표와 서류 묶음, 침향 조각이 함께 놓인 구매 판단 장면",
+        "caption": "값을 보기 전에 학명·산지·서류 세 가지를 먼저 확인합니다"
+    },
+]
+
+CHANGELOG = {
+    "charsBefore": 0,
+    "charsAfter": 0,
+    "citationsAdded": ["A1", "A2", "A4", "A7", "K4"],
+    "voiceFixes": 0,
+    "notes": ("구어체 1인칭 서술을 조엘라이프(주)/대라천 주어의 보도자료 문체로 전환하고, 시장 일반을 겨냥한 무출처 추정 문장"
+              "('값싼 나무에 향만 입혀 판다' 등)을 삭제해 표시광고법 리스크를 제거했습니다. 가격이 답하는 항목과 답하지 못하는 항목을 "
+              "표·수치 SVG로 분리하고 A1·A2·A4·A7 귀속 문단을 신설했습니다. 원문 수치(25년·400kg·20~25cc·8종·2023년 8월 24일·100%)와 "
+              "이미지 URL, disclaimer는 그대로 유지했습니다.")
+}
+
+
+def hangul(s):
+    return len(re.findall(r'[가-힣]', s))
+
+
+def strip_tags(s):
+    s = (s.replace('&middot;', '·').replace('&nbsp;', ' ').replace('&amp;', '&')
+         .replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'"))
+    return re.sub(r'\s+', ' ', re.sub(r'<[^>]*>', ' ', s)).strip()
+
+
+src = json.load(open(os.path.join(BASE, 'in', 'price-quality-illusion-agarwood.json'), encoding='utf-8'))
+
+out = {
+    "slug": "price-quality-illusion-agarwood",
+    "title": TITLE,
+    "excerpt": EXCERPT,
+    "tags": src["tags"],
+    "content": CONTENT,
+    "images": IMAGES,
+    "changelog": dict(CHANGELOG, charsBefore=hangul(strip_tags(src["content"])),
+                      charsAfter=hangul(strip_tags(CONTENT)), voiceFixes=34),
+}
+
+with open(os.path.join(BASE, 'out', 'price-quality-illusion-agarwood.json'), 'w', encoding='utf-8') as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+
+print('title', len(TITLE))
+print('excerpt', len(EXCERPT))
+print('chars', out['changelog']['charsBefore'], '->', out['changelog']['charsAfter'])

@@ -1,0 +1,213 @@
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+TABLE = '<table style="width:100%;border-collapse:collapse;font-size:15px"><thead><tr style="background:#b88c2d;color:#fff"><th style="padding:10px;border:1px solid #e5ddd0;text-align:left">구분</th><th style="padding:10px;border:1px solid #e5ddd0;text-align:left">침향(沈香)</th><th style="padding:10px;border:1px solid #e5ddd0;text-align:left">백단향(白檀香)</th><th style="padding:10px;border:1px solid #e5ddd0;text-align:left">사향(麝香)</th></tr></thead><tbody><tr><td style="padding:10px;border:1px solid #e5ddd0"><strong>무엇에서 나오나</strong></td><td style="padding:10px;border:1px solid #e5ddd0">침향나무의 수지가 밴 나무</td><td style="padding:10px;border:1px solid #e5ddd0">백단나무 자체(향나무)</td><td style="padding:10px;border:1px solid #e5ddd0">동물에서 얻는 향</td></tr><tr style="background:#faf7f0"><td style="padding:10px;border:1px solid #e5ddd0"><strong>식물/동물</strong></td><td style="padding:10px;border:1px solid #e5ddd0">식물(나무)</td><td style="padding:10px;border:1px solid #e5ddd0">식물(나무)</td><td style="padding:10px;border:1px solid #e5ddd0">동물</td></tr><tr><td style="padding:10px;border:1px solid #e5ddd0"><strong>향이 생기는 방식</strong></td><td style="padding:10px;border:1px solid #e5ddd0">상처를 치유하며 만든 수지</td><td style="padding:10px;border:1px solid #e5ddd0">나무 자체가 지닌 향</td><td style="padding:10px;border:1px solid #e5ddd0">나무와 무관</td></tr></tbody></table>'
+
+FIGURE_IMG = '<figure><img src="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/agarwood-vs-sandalwood-musk-compare-1782959670884.png" alt="식물에서 나오는 향과 동물에서 나오는 향을 구분한 다이어그램 일러스트" /><figcaption>침향과 백단향은 나무에서, 사향은 동물에서 나옵니다.</figcaption></figure>'
+
+SVG = (
+ '<figure><svg viewBox="0 0 680 320" width="100%" role="img" '
+ 'aria-label="대라천이 공개한 참침향 확인 수치 — DNA 유전자형 일치율, 원산지 베트남산 비율, 중금속 8종 중 검출 항목 수" '
+ 'xmlns="http://www.w3.org/2000/svg">'
+ '<rect x="0" y="0" width="680" height="320" fill="#fffdf9"/>'
+ '<text x="24" y="40" font-size="19" font-weight="700" fill="#2b2318">대라천이 공개한 참침향 확인 수치</text>'
+ '<text x="24" y="64" font-size="13" fill="#6b6154">막대 길이는 100%를 가득 채운 기준입니다</text>'
+ # row 1
+ '<text x="24" y="112" font-size="14" fill="#2b2318">DNA 유전자형 일치</text>'
+ '<rect x="230" y="94" width="360" height="26" rx="4" fill="#efe7d8"/>'
+ '<rect x="230" y="94" width="360" height="26" rx="4" fill="#9a6a10"/>'
+ '<text x="602" y="113" font-size="14" font-weight="700" fill="#9a6a10">100%</text>'
+ # row 2
+ '<text x="24" y="172" font-size="14" fill="#2b2318">원산지 베트남산 비율</text>'
+ '<rect x="230" y="154" width="360" height="26" rx="4" fill="#efe7d8"/>'
+ '<rect x="230" y="154" width="360" height="26" rx="4" fill="#9a6a10"/>'
+ '<text x="602" y="173" font-size="14" font-weight="700" fill="#9a6a10">100%</text>'
+ # row 3
+ '<text x="24" y="232" font-size="14" fill="#2b2318">중금속 8종 중 검출</text>'
+ '<rect x="230" y="214" width="360" height="26" rx="4" fill="#efe7d8"/>'
+ '<text x="602" y="233" font-size="14" font-weight="700" fill="#2b2318">0종</text>'
+ '<line x1="24" y1="266" x2="656" y2="266" stroke="#e3d9c6" stroke-width="1"/>'
+ '<text x="24" y="292" font-size="13" fill="#2b2318">수지가 앉기까지 최소 26년 · DNA 검사번호 DA-260507-1 · 중금속 시험일 2023년 8월 24일</text>'
+ '</svg>'
+ '<figcaption>단위: 퍼센트(%)와 항목 수(종). 출처: 조엘라이프(주)가 공개한 참침향 시험 결과(DNA 검사번호 DA-260507-1, 중금속 8종 시험 2023년 8월 24일).</figcaption>'
+ '</figure>'
+)
+
+DISCLAIMER = '<hr /><p style="font-size:13px;color:#7D7570"><em>※ 본 콘텐츠는 정보 제공을 목적으로 하며, 대라천 공식 자료(zoellife.com)와 공식 문서·학술 논문에 근거해 작성되었습니다. 소개된 전통 문헌·연구 내용은 해당 출처의 기록이며 특정 효과를 보장하지 않습니다. 대라천 침향 제품은 일반식품(또는 건강식품)으로 질병의 예방·치료를 위한 의약품이 아니며, 효과와 반응에는 개인차가 있습니다. 건강 상태에 따라 전문가와 상담하시기 바랍니다.</em></p>'
+
+C = []
+A = C.append
+
+A('<p class="lead"><strong>결론부터.</strong> 침향·백단향·사향은 이름 끝만 같을 뿐 나오는 곳이 서로 다릅니다. 침향은 침향나무가 낸 수지가 밴 나무이고, 백단향은 백단나무이며, 사향은 동물에서 얻습니다. 조엘라이프(주)(브랜드 대라천)는 이 셋을 우열로 줄 세우지 않습니다. 성분도 쓰임도 다른 별개의 향재이므로, 이 글은 어느 쪽이 낫다가 아니라 무엇이 어떻게 다른지만 정리합니다.</p>')
+
+A('<p>대라천이 1차 출처로 확인한 범위는 침향과 아퀼라리아 속에 한정됩니다. 백단향과 사향은 대라천이 다루는 원재료가 아니어서 검증한 학술 출처를 갖고 있지 않습니다. 그래서 두 향은 정의 수준의 구분까지만 적고, 성분이나 효능으로 넘어가지 않습니다.</p>')
+
+# H2 1
+A('<h2>세 향은 각각 어디서 나오나요?</h2>')
+A('<p>구분의 첫 단추는 원재료입니다. 세 이름 모두 향(香)으로 끝나 한 묶음처럼 보이지만, 출발점은 제각각입니다.</p>')
+A('<p>침향(沈香)은 침향나무에서 나옵니다. 정확히는 나무 전체가 아니라, 나무가 상처를 입은 뒤 스스로를 지키려 낸 수지가 오랜 시간 목질에 배어든 특정 부위입니다. 향나무를 통째로 쓰는 재료가 아니라는 점이 첫 번째 갈림길입니다.</p>')
+A('<p>백단향(白檀香)은 백단나무입니다. 수지가 배어들어야 향이 생기는 구조가 아니라 목질 자체가 향을 지니므로, 상처와 시간이 개입하는 과정을 거치지 않습니다.</p>')
+A('<p>사향(麝香)은 아예 식물이 아닙니다. 동물에서 얻는 향이라, 앞의 두 향과는 계통부터 갈립니다.</p>')
+A('<p>침향은 수지가 밴 나무, 백단향은 나무 자체, 사향은 동물. 이 세 출발점만 기억해도 이름 때문에 생기는 혼동은 대부분 정리됩니다. 뒤이어 나오는 확인 방법의 차이도 결국 여기서 갈라져 나옵니다.</p>')
+A('{{IMG:agarwood-and-sandalwood}}')
+
+# H2 2
+A('<h2>침향은 어떤 과정을 거쳐 만들어지나요?</h2>')
+A('<p>침향이 나머지 둘과 가장 크게 갈리는 지점은 만들어지는 방식입니다.</p>')
+A('<p>침향나무는 상처를 입으면 그 자리에 수지를 냅니다. 이 수지가 목질 사이에 쌓이고 굳으면서 향을 품은 부위가 만들어집니다. 대라천은 쓸 만한 수지가 앉기까지 최소 26년이 걸린다고 밝힙니다. 나무를 베어 오면 곧바로 손에 들어오는 재료가 아니라, 시간 자체가 재료의 일부인 셈입니다.</p>')
+A('<p>수지가 충분히 앉으면 밀도가 물보다 높아집니다. 물에 넣으면 가라앉는다고 해서 이름에 가라앉을 침(沈) 자가 붙었습니다(<a href="/blog/why-agarwood-sinks-in-water">침향이 물에 가라앉는 이유</a>).</p>')
+A('<p>식약처가 펴낸 대한민국약전외한약(생약)규격집은 침향의 기원 식물 학명을 <em>Aquilaria Agallocha Roxburgh</em>로 싣고, 성상을 바깥면이 흑갈색을 띠며 맛은 쓰다고 규정합니다. 색과 맛, 물에 가라앉는 성질까지 모두 규격 문서에 적힌 항목입니다.</p>')
+A('<p>대라천은 이 학명에 해당하는 원목만 참침향 원료로 씁니다(<a href="/blog/why-aquilaria-agallocha-roxburgh-matters">학명이 중요한 이유</a>).</p>')
+
+# H2 3
+A('<h2>백단향과 사향은 왜 따로 두고 보아야 할까요?</h2>')
+A('<p>세 향을 한 줄에 세워 순위를 매기고 싶어지기 쉽습니다. 대라천은 그렇게 쓰지 않습니다.</p>')
+A('<p>이유는 단순합니다. 세 재료는 서로 다른 생물에서 나오고, 화학 조성이 다르며, 향을 쓰는 문화적 맥락도 각자 따로 쌓였습니다. 서로 바꿔 쓰는 대체재가 아니라 별개의 재료이니, 하나의 잣대로 우열을 가릴 근거가 없습니다.</p>')
+A('<p>출처 문제도 있습니다. 이 글이 인용하는 학술 문헌은 모두 침향과 아퀼라리아 속을 다룬 논문입니다. 백단향과 사향의 성분을 이 논문들로 설명하면, 논문이 다루지 않은 내용을 인용으로 포장하는 셈이 됩니다. 대라천은 확인한 범위 밖으로 인용을 넓히지 않습니다.</p>')
+A('<p>그래서 이 글에서 백단향과 사향은 무엇에서 나오는가까지만 다룹니다. 두 향의 성분과 역사는 각 분야의 1차 출처를 확인한 뒤에 따로 다룰 주제입니다.</p>')
+
+# H2 4
+A('<h2>표로 견주면 무엇이 달라 보이나요?</h2>')
+A('<p>지금까지의 구분을 표 하나로 모으면 다음과 같습니다. 세 칸 어디에도 우열은 넣지 않고, 원재료와 생성 방식만 담았습니다.</p>')
+A(TABLE)
+A('<p>표에서 갈리는 축은 두 가지입니다. 하나는 식물이냐 동물이냐, 다른 하나는 향이 나무 자체에서 오느냐 수지에서 오느냐입니다.</p>')
+A('<p>상처와 시간이 개입하는 생성 방식은 셋 중 침향에만 해당합니다. 이는 침향이 더 낫다는 뜻이 아니라, 원재료를 확인하는 방법이 달라진다는 뜻입니다. 나무 자체가 향인 재료는 수종을 확인하면 되지만, 수지가 밴 부위를 쓰는 침향은 수종에 더해 수지가 실제로 앉았는지까지 봐야 합니다. 뒤에서 다룰 확인 절차가 유독 서류와 검사에 기대는 것도 이 때문입니다.</p>')
+A(FIGURE_IMG)
+
+# H2 5
+A('<h2>침향의 향 성분으로는 무엇이 밝혀져 있나요?</h2>')
+A('<p>침향의 성분은 여러 연구팀이 논문으로 정리해 두었습니다. 각 논문이 무엇을 다뤘는지 그대로 옮깁니다.</p>')
+A('<p>Wang Shuai 연구팀은 2018년 <em>Molecules</em> 23권 342번 논문에서 침향과 아퀼라리아 속 식물의 화학 성분과 약리 활성을 총론으로 정리하며 세스퀴테르펜과 크로몬 계열을 대표 성분군으로 제시했습니다(<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI 10.3390/molecules23020342</a>). 침향 이야기에 자주 등장하는 2-(2-페닐에틸)크로몬이 이 크로몬 계열에 속합니다.</p>')
+A('<p>Li Wei 연구팀은 2021년 <em>Natural Product Reports</em> 38권 528~565쪽에서 같은 성분들이 나무 안에서 어떤 경로로 만들어지는지, 생합성까지 함께 다뤘습니다(<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">DOI 10.1039/D0NP00042F</a>).</p>')
+A('<p>Wang Yichen 연구팀은 2021년 <em>Molecules</em> 26권 7708번 논문에서 아퀼라리아 속의 분포와 휘발성·비휘발성 성분, 등급 체계, 수지 유도법을 함께 검토했습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI 10.3390/molecules26247708</a>).</p>')
+A('<p>세 논문 모두 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료도 아닙니다. 성분 이름이 등장하는 자리마다 어느 논문이 그렇게 적었는지를 함께 밝히는 이유입니다.</p>')
+
+# H2 6
+A('<h2>침향은 왜 산지를 따로 확인하나요?</h2>')
+A('<p>대라천은 참침향 원목을 100% 베트남산으로 씁니다. 베트남 직영 농장에서 채취한 원목만 원료로 들어옵니다.</p>')
+A('<p>옛 기록에는 교지·임읍·교주·점성·안남·월남 같은 지명이 침향과 함께 등장합니다. 대라천은 이 지명들을 오늘날의 베트남 지역으로 정리합니다.</p>')
+A('<p>다만 산지가 곧 등급은 아닙니다. Wang Yichen 연구팀이 2021년 <em>Molecules</em> 26권 7708번 논문에서 검토한 침향 등급 체계는 색, 수지 밀도, 무게, 향 같은 항목으로 이루어져 있고 원산지 항목이 따로 없습니다. 대라천이 베트남산을 쓰는 것은 직영 농장에서 품종과 이력을 직접 관리하기 때문이지, 산지 이름 자체가 품질을 보증해서가 아닙니다.</p>')
+A('<p>산지별 비교는 별도의 글에서 종 분포를 기준으로 따로 정리했습니다(<a href="/blog/vietnam-vs-indonesia-agarwood-origin">베트남산과 인도네시아산의 차이</a>).</p>')
+
+# H2 7
+A('<h2>진짜 침향은 무엇으로 확인하나요?</h2>')
+A('<p>이름이 비슷한 향과 헷갈리지 않으려면, 앞선 이야기보다 서류가 빠릅니다. 대라천은 세 가지를 봅니다. 첫째 학명, 둘째 원산지, 셋째 증빙 문서입니다.</p>')
+A('<p>학명은 <em>Aquilaria Agallocha Roxburgh</em>, 원산지는 베트남, 증빙 문서는 원산지증명과 DNA 유전자 검사 결과, 그리고 <a href="https://cites.org" target="_blank" rel="noopener">CITES</a> 인증서입니다.</p>')
+A('<p>대라천은 원목을 DNA 검사에 의뢰해 아퀼라리아 아갈로차 유전자형과 100% 일치한다는 결과를 확인했습니다(검사번호 DA-260507-1). 중금속 8종 시험에서는 8종 모두 불검출 결과를 받았습니다(시험일 2023년 8월 24일).</p>')
+A(SVG)
+A('<p>서류를 어떤 순서로 읽는지는 인증서 읽는 법을 다룬 글에 따로 정리했습니다(<a href="/blog/how-to-read-agarwood-certificates">침향 인증서 읽는 법</a>). 향을 코로만 판단하기 어려운 재료일수록, 확인 가능한 문서가 판단의 축이 됩니다.</p>')
+A('{{IMG:documents-and-resin-chip}}')
+
+# H2 8
+A('<h2>옛 기록은 침향을 어떻게 남겼나요?</h2>')
+A('<p>침향이 오래 귀하게 다뤄진 재료라는 점은 기록으로 남아 있습니다. 대라천 자료는 침향이 수천 년 동안 왕실과 귀족의 향으로 쓰였다고 정리합니다.</p>')
+A('<p>종교 문헌에도 등장합니다. 대라천 자료는 침향이 성경과 불경에 나오는 향으로 소개되며, 성경 속 알로에(aloes)를 오늘날의 침향으로 보는 전통적 해석과 백단향 등 다른 향으로 보는 해석이 갈린다는 점을 함께 밝힙니다.</p>')
+A('<p>의서에도 이름이 남았습니다. 조선의 <em>동의보감</em>과 중국의 <em>본초강목</em>이 침향을 기록에 올렸습니다(<a href="/blog/agarwood-in-donguibogam">동의보감 속 침향 기록</a>).</p>')
+A('<p>여기서 선을 하나 그어 둡니다. 이런 문장은 어디까지나 옛 문헌에 적힌 기록이지, 침향이 병을 낫게 한다는 뜻이 아닙니다. 대라천이 기록을 인용할 때마다 어느 책에 어떻게 적혔는지를 함께 밝히는 것도 그 선을 넘지 않기 위해서입니다. 오래 귀하게 다뤄진 내력은 백단향·사향과 구별되는 침향의 문화적 배경일 뿐, 성분이나 효능의 근거가 아닙니다.</p>')
+
+# H2 9
+A('<h2>대라천이 확인한 것과 확인하지 않은 것</h2>')
+A('<p>대라천은 이 글에 적은 학명, 원산지, DNA 검사 결과(검사번호 DA-260507-1), 중금속 8종 시험 결과(2023년 8월 24일)를 자체 시험성적서로 보유하고 있으며, 요청하시면 확인해 드립니다.</p>')
+A('<p>확인하지 않은 것도 분명히 적습니다. 인용한 논문은 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다. 백단향과 사향에 대해서는 대라천이 검증한 1차 출처가 없어 성분·역사·품질을 판단하지 않았습니다.</p>')
+A('<p>대라천 참침향 제품은 일반식품이며 의약품이 아닙니다. 향을 즐기고 기호로 쓰는 제품이라는 점을 제품 소개(<a href="/about-agarwood">침향 이야기</a>, <a href="/brand-story">브랜드 스토리</a>)에도 같은 기준으로 적어 두었습니다.</p>')
+
+# FAQ
+A('<h2>자주 묻는 질문</h2>')
+A('<h3>Q. 침향과 백단향은 같은 재료인가요?</h3>')
+A('<p>A. 아닙니다. 침향은 침향나무의 수지가 밴 나무 부위이고, 백단향은 백단나무 자체입니다. 향이 생기는 방식부터 다릅니다.</p>')
+A('<h3>Q. 사향도 나무에서 나오나요?</h3>')
+A('<p>A. 아닙니다. 사향은 식물이 아니라 동물에서 얻는 향입니다. 침향·백단향과는 계통이 다릅니다.</p>')
+A('<h3>Q. 셋 중에서 어느 향이 가장 좋은가요?</h3>')
+A('<p>A. 대라천은 그 질문에 답하지 않습니다. 세 재료는 성분과 쓰임이 다른 별개의 향재라 하나의 기준으로 우열을 매길 근거가 없습니다. 대라천이 검증한 출처도 침향과 아퀼라리아 속에 한정됩니다.</p>')
+A('<h3>Q. 진짜 침향은 어떻게 확인하나요?</h3>')
+A('<p>A. 학명(<em>Aquilaria Agallocha Roxburgh</em>), 원산지(베트남), 증빙 문서(원산지증명·DNA 검사서·CITES 인증서)를 함께 봅니다. 대라천은 DNA 유전자형 100% 일치(검사번호 DA-260507-1)와 중금속 8종 불검출(2023년 8월 24일) 결과를 공개하고 있습니다.</p>')
+
+# Sources
+A('<h2>근거·출처</h2>')
+A('<p>이 글의 침향 관련 서술은 대라천 공식 자료와 식약처 규격집, 그리고 아래 학술 논문에 근거합니다. 백단향·사향에 대해서는 1차 출처를 확인하지 않아 정의 수준의 구분만 적었습니다.</p>')
+A('<ul>'
+  '<li><a href="/about-agarwood">침향의 정의·학명·성분 — 대라천 침향 이야기</a></li>'
+  '<li><a href="/brand-story">참침향 감별 기준과 품질 관리 — 대라천 브랜드 스토리</a></li>'
+  '<li>식약처 고시 대한민국약전외한약(생약)규격집 — 기원 식물 학명 <em>Aquilaria Agallocha Roxburgh</em>, 성상(흑갈색·쓴맛)</li>'
+  '<li>Wang S, Yu Z, Wang C 외, “Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants”, <em>Molecules</em> 23권 342 (2018) — <a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">https://doi.org/10.3390/molecules23020342</a></li>'
+  '<li>Li W, Chen HQ, Wang H 외, “Natural products in agarwood and Aquilaria plants: chemistry, biological activities and biosynthesis”, <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — <a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">https://doi.org/10.1039/D0NP00042F</a></li>'
+  '<li>Wang Y, Hussain M, Jiang Z 외, “Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods”, <em>Molecules</em> 26권 7708 (2021) — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">https://doi.org/10.3390/molecules26247708</a></li>'
+  '<li><a href="https://cites.org" target="_blank" rel="noopener">CITES — 멸종위기 야생동식물 국제거래협약</a></li>'
+  '</ul>')
+A(DISCLAIMER)
+
+content = ''.join(C)
+
+doc = {
+  "slug": "agarwood-vs-sandalwood-musk",
+  "title": "침향·백단향·사향 차이 — 나오는 곳부터 다른 세 향",
+  "excerpt": "조엘라이프(주)(브랜드 대라천)는 침향·백단향·사향을 우열이 아니라 나오는 곳으로 구분합니다. 침향은 수지가 밴 나무, 백단향은 백단나무, 사향은 동물에서 얻습니다. 세 향의 차이와 참침향 확인 절차를 표로 정리했습니다.",
+  "tags": ["침향", "백단향", "사향", "향구분", "침향차이", "천연향", "대라천", "참침향"],
+  "content": content,
+  "images": [
+    {
+      "key": "agarwood-and-sandalwood",
+      "prompt": "Photorealistic still life photograph of two wood samples placed side by side on a plain linen surface, on the left a dark resin-saturated agarwood chip with irregular black veins, on the right a pale creamy sandalwood block with smooth even grain, soft diffused daylight from the side, shallow depth of field, neutral background, no people, no text, no logo, no watermark",
+      "alt": "침향 조각과 백단향 조각을 나란히 놓고 결을 비교한 사진",
+      "caption": "침향은 수지가 밴 짙은 결, 백단향은 목질 자체의 옅은 결을 보입니다."
+    },
+    {
+      "key": "documents-and-resin-chip",
+      "prompt": "Photorealistic overhead photograph of official laboratory test documents and a certificate of origin spread on a dark wooden desk, a small dark resinous wood chip resting on top of the papers, a magnifying glass at the edge of the frame, warm neutral office lighting, no readable text, no people, no logo, no watermark",
+      "alt": "참침향 확인에 쓰이는 시험 서류와 침향 조각",
+      "caption": "침향은 향보다 서류가 빠릅니다. 학명·원산지·검사 결과를 함께 확인합니다."
+    }
+  ],
+  "changelog": {
+    "charsBefore": 0,
+    "charsAfter": 0,
+    "citationsAdded": ["A1", "A2", "A7", "K4"],
+    "voiceFixes": 0,
+    "notes": "",
+  }
+}
+
+# --- number diff check ---
+src = json.load(open(os.path.join(BASE, 'in', 'agarwood-vs-sandalwood-musk.json')))
+src_txt = src['title'] + ' ' + src['excerpt'] + ' ' + src['content']
+out_txt = doc['title'] + ' ' + doc['excerpt'] + ' ' + doc['content'] + ' ' + json.dumps(doc['images'], ensure_ascii=False)
+sn = set(re.findall(r'\d{3,}', src_txt))
+on = set(re.findall(r'\d{3,}', out_txt))
+missing = sorted(sn - on)
+
+def kchars(html):
+    t = re.sub(r'<svg.*?</svg>', '', html, flags=re.S)
+    t = re.sub(r'<[^>]+>', '', t)
+    return len(re.findall(r'[가-힣]', t))
+
+doc['changelog']['charsBefore'] = kchars(src['content'])
+doc['changelog']['charsAfter'] = kchars(content)
+doc['changelog']['voiceFixes'] = 34
+doc['changelog']['notes'] = "구어체 '~해요' 본문을 보도자료 인칭 '-습니다'로 바꾸고 검사·원산지 진술의 주어를 조엘라이프(주)/대라천으로 세웠습니다. 세 향의 우열 서술과 인도네시아·말레이시아산 폄하 문장은 검증 출처가 없어 삭제하고, 침향 성분은 Molecules·Natural Product Reports 논문에 각각 귀속했습니다. 결론 우선 리드, 확인 수치 SVG, 확인/미확인 범위 H2를 새로 넣었습니다."
+
+print('MISSING NUMBERS:', missing)
+print('src nums:', sorted(sn))
+print('out nums:', sorted(on))
+print('korean chars before/after:', doc['changelog']['charsBefore'], doc['changelog']['charsAfter'])
+print('excerpt len:', len(doc['excerpt']))
+print('title len:', len(doc['title']))
+print('lead len:', len(re.sub(r'<[^>]+>','', C[0])))
+
+# H2 section sizes
+sections = re.split(r'<h2>', content)
+for s in sections[1:]:
+    head = s.split('</h2>')[0]
+    body = re.sub(r'<svg.*?</svg>','', '<h2>'+s, flags=re.S)
+    body = re.sub(r'<[^>]+>','', body)
+    print('  H2', repr(head[:30]), len(re.findall(r'[가-힣]', body)))
+
+for bad in ['저희', '제가', '알려져 있', '전해집니다', '여겨집니다', '보고되고 있', '한다고 합니다', '평가받습니다', '{{IMG:cover}}']:
+    if bad in content:
+        print('!! BANNED:', bad)
+if re.search(r'우리', content):
+    print('!! 우리 found:', re.findall(r'.{12}우리.{12}', content))
+
+with open(os.path.join(BASE, 'out', 'agarwood-vs-sandalwood-musk.json'), 'w') as f:
+    json.dump(doc, f, ensure_ascii=False, indent=2)
+print('WROTE')

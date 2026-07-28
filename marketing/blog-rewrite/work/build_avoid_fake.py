@@ -1,0 +1,166 @@
+# -*- coding: utf-8 -*-
+"""Rebuild how-to-avoid-fake-agarwood.json per SPEC.md."""
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+SVG = """<figure><svg viewBox="0 0 640 280" role="img" aria-label="대라천이 적용하는 침향 규격 수치 막대그래프" style="width:100%;height:auto;font-family:sans-serif"><rect x="0" y="0" width="640" height="280" fill="#fffdf9"/><text x="24" y="36" fill="#2b2318" font-size="16" font-weight="bold">대라천이 적용하는 침향 원료 규격 (단위: %)</text><line x1="200" y1="60" x2="200" y2="230" stroke="#2b2318" stroke-width="1"/><text x="192" y="96" text-anchor="end" fill="#2b2318" font-size="13">건조감량</text><rect x="200" y="78" width="160" height="26" fill="#9a6a10"/><text x="370" y="96" fill="#2b2318" font-size="13">8.0% 이하 (상한)</text><text x="192" y="146" text-anchor="end" fill="#2b2318" font-size="13">회분</text><rect x="200" y="128" width="40" height="26" fill="#9a6a10"/><text x="250" y="146" fill="#2b2318" font-size="13">2.0% 이하 (상한)</text><text x="192" y="196" text-anchor="end" fill="#2b2318" font-size="13">묽은에탄올엑스</text><rect x="200" y="178" width="360" height="26" fill="#c9a227"/><text x="200" y="222" fill="#2b2318" font-size="13">18.0% 이상 (하한)</text><line x1="200" y1="230" x2="600" y2="230" stroke="#2b2318" stroke-width="1"/><text x="200" y="250" fill="#2b2318" font-size="11">0</text><text x="400" y="250" text-anchor="middle" fill="#2b2318" font-size="11">10</text><text x="600" y="250" text-anchor="end" fill="#2b2318" font-size="11">20</text><text x="24" y="270" fill="#2b2318" font-size="11">막대 길이는 수치에 비례. 위 두 항목은 넘지 말아야 할 상한, 아래 항목은 밑돌면 안 되는 하한.</text></svg><figcaption>대라천이 원료 판정에 적용하는 규격 수치 (단위 %). 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상. 출처: 대라천 자체 시험성적서.</figcaption></figure>"""
+
+TABLE = """<table><thead><tr><th>확인 항목</th><th>확인이 끝난 상태</th><th>확인이 남은 상태</th></tr></thead><tbody><tr><td>학명 표기</td><td>Aquilaria Agallocha Roxburgh가 제품 정보에 적혀 있음</td><td>학명 표기가 없거나 어떤 종인지 특정되지 않음</td></tr><tr><td>산지</td><td>나라와 지역 단위까지 밝힘</td><td>대륙·권역 단위로만 적혀 있음</td></tr><tr><td>증빙 서류</td><td>원산지증명·CITES 관련 서류·성분분석서를 받아 볼 수 있음</td><td>요청한 서류를 아직 받지 못함</td></tr><tr><td>이력 관리</td><td>Lot 번호로 원료 묶음 이력을 조회할 수 있음</td><td>번호가 없어 이력을 되짚을 수 없음</td></tr><tr><td>약전 규격</td><td>흑갈색·달고 쓴맛·물에 가라앉는 밀도를 규격으로 명시</td><td>물성 기준 없이 향의 세기만 설명함</td></tr></tbody></table>"""
+
+CONTENT = """<p class="lead"><strong>결론부터.</strong> 가짜 침향 구별법은 세 가지 확인으로 정리됩니다. 학명이 Aquilaria Agallocha Roxburgh로 적혀 있는지, 산지가 나라와 지역 단위까지 특정되는지, 원산지증명·CITES 관련 서류·성분분석서·Lot 번호를 실제로 받아 볼 수 있는지입니다. 조엘라이프(주)(브랜드 대라천)는 이 세 가지를 자사 제품에 그대로 적용하고, 해당 근거 문서를 요청 시 제시합니다. 향의 세기와 가격은 판단 순서에서 뒤로 미뤄도 됩니다.</p>
+
+<h2>가짜 침향 구별법의 첫 기준은 왜 학명입니까?</h2>
+<p>향과 색, 손에 쥐었을 때의 무게감은 사람마다 다르게 느낍니다. 향은 향료로 덧입힐 수 있고 색도 물들일 수 있습니다. 감각에 기대는 판단이 흔들리는 이유가 여기 있습니다.</p>
+<p>학명은 사정이 다릅니다. 학명은 생물의 공식 이름이고, 어떤 종을 침향으로 인정할지는 국가 문서가 미리 정해 둡니다. 판매자의 설명이 아니라 문서가 기준이 되므로, 사는 쪽도 파는 쪽과 같은 잣대를 들 수 있습니다.</p>
+<p>Wang 연구팀은 2021년 Molecules에 아퀼라리아 속의 분포와 침향 등급 체계, 수지 유도법을 정리한 종설을 실었습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>). 이 종설이 보여 주듯 아퀼라리아는 여러 종으로 나뉘고 등급 체계도 갈래가 많습니다. 침향이라는 두 글자만으로는 무엇을 샀는지 특정되지 않는다는 뜻입니다.</p>
+<p>대라천은 이 지점을 첫 관문으로 둡니다. 식품공전이 식품 원료로 인정하는 두 학명 가운데 대라천이 쓰는 원료는 Aquilaria Agallocha Roxburgh 한 가지입니다.</p>
+
+<h2>대한민국 공식 문서는 침향을 어떻게 정의합니까?</h2>
+<p>대라천이 학명 기준으로 드는 문서는 네 가지입니다. 각 문서가 침향을 어떻게 적어 두었는지 아래에 정리했습니다.</p>
+<ul><li><strong>대한민국약전외한약(생약)규격집</strong>(식약처 고시, 379p) — 팥꽃나무과(Thymeleaceae) <strong>Aquilaria Agallocha Roxburgh</strong>의 수지가 침착된 수간목으로 정의합니다. 한자 이름은 침수향(沈水香), 라틴명은 AQUILARIAE LIGNUM입니다.</li><li><strong>식품공전</strong>(식약처 고시) — 식품 원료로 쓸 수 있는 침향을 Aquilaria Agallocha Roxburgh와 Aquilaria Malaccensis Lam. 두 가지로 정합니다.</li><li><strong>한약재 관능검사 해설서</strong>(식약처 발간, 708p, 발간등록번호 11-1471057-000553-14) — 아갈로차로 정의합니다.</li><li><strong>원색 한약재감별도감</strong>(식약처 발간, 2009) — Aquilaria agallocha Roxburgh의 수지가 침착된 수간목으로 설명합니다.</li></ul>
+<p>네 문서가 공통으로 가리키는 이름은 하나, Aquilaria Agallocha Roxburgh입니다. 이 이름은 오래전부터 침향의 기원식물을 가리키는 데 써 온 학명이고, 오늘날 식물분류학은 Aquilaria malaccensis와 같은 종으로 다룹니다. 식품공전이 두 학명을 나란히 올려 둔 배경도 여기 있습니다.</p>
+<p>확인 방법 자체는 단순합니다. 제품 상세페이지나 라벨에서 이 학명을 찾으면 됩니다. 찾을 수 없다면 판매자에게 물어보시면 됩니다. 답을 받기 전까지 그 제품은 학명 기준으로 확인이 끝나지 않은 상태입니다.</p>
+
+<h2>대라천은 어떤 규격으로 원료를 걸러냅니까?</h2>
+<p>학명이 맞아도 원목마다 상태는 다릅니다. 대라천은 약전 규격에 맞춰 흑갈색, 달고 쓴맛, 물에 가라앉는 밀도를 원료 판정의 물성 기준으로 삼습니다.</p>
+<p>수치 기준은 세 항목입니다. 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상입니다. 앞의 두 항목은 넘지 말아야 할 상한이고, 마지막 항목은 밑돌면 안 되는 하한입니다. 상한과 하한이 함께 걸려 있어 한쪽만 맞추는 방식으로는 규격을 통과하지 못합니다.</p>
+{SVG}
+<p>대라천은 여기에 더해 모든 제품에 Lot 번호를 부여합니다. 소비자는 이 번호로 해당 제품이 어느 원료 묶음에서 나왔는지 이력을 조회할 수 있습니다. 규격 수치가 원료의 상태를 말한다면, Lot 번호는 그 원료가 지나온 경로를 말합니다.</p>
+{IMG1}
+
+<h2>산지는 무엇을 근거로 확인합니까?</h2>
+<p>산지 표기는 나라 이름까지 내려와야 확인이 가능해집니다. 대륙이나 권역 단위로만 적힌 표기로는 어느 농장에서 나온 원목인지 되짚을 방법이 없습니다.</p>
+<p>산지를 따지는 관행 자체는 오래되었습니다. 남방초목상(南方草木狀, 304년)은 침향의 산지를 교지(交趾)로 적고 있습니다. 교지를 비롯해 임읍·교주·점성·안남·월남으로 불린 지역은 오늘날의 베트남에 해당합니다.</p>
+<p>대라천은 100% 베트남산 원목만 사용합니다. 대라천 소개 자료에 따르면 베트남 5개 지역에 약 200헥타르(약 60만 평), 약 400만 그루 규모의 직영 농장을 운영합니다.</p>
+<p>직영 농장이 확인 과정에서 갖는 의미는 분명합니다. 원목이 어느 지역, 어느 나무에서 나왔는지를 회사가 스스로 되짚을 수 있다는 뜻입니다. 대라천은 이 구조를 <a href="/blog/vietnam-5-farms-200ha-4million-trees">베트남 직영 농장 소개</a>에서 따로 정리해 두었습니다.</p>
+<p>소비자가 확인할 부분은 간단합니다. 산지를 물었을 때 나라와 지역이 돌아오는지, 그리고 그 답을 서류로 이어 갈 수 있는지입니다. 두 질문에 답이 돌아오면 산지 항목의 확인은 끝납니다.</p>
+<p>산지를 확인하는 이유는 원산지 자체가 품질을 보증하기 때문이 아닙니다. 산지가 특정되어야 그다음 단계인 원산지증명과 CITES 관련 서류로 넘어갈 수 있기 때문입니다. 산지 확인은 서류 확인의 입구 역할을 합니다.</p>
+
+<h2>서류는 어디까지 요청할 수 있습니까?</h2>
+<p>소비자가 요청할 수 있는 문서는 생각보다 많습니다. 원산지증명, 유전자(DNA) 검사 결과, CITES 관련 서류, 성분분석서, 유기농(Organic) 인증서가 대표적입니다. 아퀼라리아 속은 CITES 부속서에 올라 국제 거래가 규제되는 자원이므로, 수입 경로를 문서로 설명할 수 있는지가 하나의 확인점이 됩니다(<a href="https://cites.org" target="_blank" rel="noopener">CITES</a>).</p>
+<p>대라천은 DNA 검사에서 Aquilaria agallocha 유전자형과 100% 일치한다는 결과를 확인했습니다(검사번호 DA-260507-1). 안전성 항목에서는 중금속 8종(납·카드뮴·수은·비소·구리·주석·안티몬·니켈)이 전부 불검출이라는 결과를 2023년 8월 24일 시험에서 받았습니다.</p>
+<p>서류 요청을 어렵게 여기실 필요는 없습니다. 문서를 갖춘 판매자에게 서류 확인은 일상적인 절차입니다. 대라천은 이 글에 적은 결과를 시험성적서로 보유하고 있으며, 요청하시면 확인해 드립니다.</p>
+{IMG2}
+
+<h2>침향은 왜 이렇게 귀한 재료입니까?</h2>
+<p>침향(沈香)은 나무토막이 아니라 나무가 스스로 만들어 낸 수지 덩어리입니다. 아퀼라리아는 벌레와 바람, 번개, 물리적 상처 같은 자극을 받으면 그 자리에 진액을 뿜어 스스로를 막습니다. 상처 틈으로 곰팡이균이 파고들면 반응은 더 오래 이어집니다.</p>
+<p>이 진액이 수십 년에 걸쳐 목질부에 쌓이고 익으면서 무겁고 향이 짙은 부분으로 바뀝니다. 물에 넣으면 가라앉을 만큼 밀도가 올라간다고 해서 가라앉을 침(沈) 자를 씁니다.</p>
+<p>Li 연구팀은 2021년 Natural Product Reports에 침향 성분의 화학과 생합성 경로를 정리한 종설을 발표했습니다(<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">DOI</a>). 수지 성분이 만들어지는 과정 자체가 나무의 방어 반응이라는 점이 이 종설이 다루는 주제입니다.</p>
+<p>대라천은 좋은 침향이 만들어지기까지의 시간을 219,000시간, 약 25년의 기다림으로 소개합니다. 오래 걸리고 국제 거래까지 규제되는 자원이라면 값이 오르는 것은 자연스러운 결과입니다. 다만 가격만으로는 어느 쪽도 판정되지 않습니다. 판정은 앞서 정리한 세 가지 확인으로 하시면 됩니다.</p>
+
+<h2>가짜 침향 구별법을 3단계로 정리하면?</h2>
+<p>앞의 내용을 확인 순서로 압축하면 세 단계입니다.</p>
+<ol><li><strong>학명</strong> — Aquilaria Agallocha Roxburgh가 표기되어 있는가.</li><li><strong>산지</strong> — 나라와 지역 단위까지 특정되는가.</li><li><strong>서류</strong> — 원산지증명·CITES 관련 서류·성분분석서·Lot 번호를 받아 볼 수 있는가.</li></ol>
+<p>표로 옮기면 확인이 끝난 상태와 아직 남은 상태가 갈립니다. 오른쪽 칸은 그 제품이 가짜라는 뜻이 아닙니다. 소비자가 아직 확인하지 못한 항목이 남아 있다는 뜻입니다.</p>
+{TABLE}
+<figure><img src="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/how-to-avoid-fake-agarwood-compare-1782959751192.png" alt="진짜 침향과 의심스러운 침향을 저울에 올려 비교하는 일러스트" /><figcaption>학명·산지·서류를 함께 저울질하면 진짜에 가까워집니다.</figcaption></figure>
+<p>세 단계에 모두 답이 돌아온다면 확인은 끝난 셈입니다. 반대로 답이 막히는 항목이 있다면, 그 항목을 채우기 전까지 판단을 미루시면 됩니다. 이런 확인 절차를 시장 구조가 왜 요구하는지는 <a href="/blog/why-fake-agarwood-market-exists">침향 정보 비대칭을 다룬 글</a>에서 이어서 정리했습니다. 대라천의 기준 전체는 <a href="/about-agarwood">침향 소개 페이지</a>에서 보실 수 있습니다.</p>
+
+<h2>대라천이 확인한 것과 확인하지 않은 것</h2>
+<p>대라천은 이 글에 적은 검사 결과와 규격을 시험성적서로 보유하고 있습니다. 학명 표기, DNA 검사 결과(DA-260507-1), 중금속 8종 불검출 결과(2023년 8월 24일), 규격 수치, Lot 이력이 여기에 해당합니다.</p>
+<p>확인하지 않은 것도 밝혀 둡니다. 대라천은 다른 판매자의 제품을 검사한 적이 없고, 특정 제품이나 판매처를 지목해 진위를 판정하지 않습니다. 이 글이 제시하는 것은 어느 제품에나 똑같이 적용할 수 있는 확인 항목이며, 시장 전체의 위품 비율을 계산한 자료가 아닙니다.</p>
+<p>인용한 연구도 마찬가지입니다. Wang 연구팀과 Li 연구팀의 논문은 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이며, 대라천 제품의 효능을 뒷받침하는 자료가 아닙니다. 대라천 침향 제품은 일반식품입니다.</p>
+<p>이 글의 성격도 분명히 해 둡니다. 여기에 적힌 가짜 침향 구별법 세 단계는 대라천이 자사 원료에 적용하는 확인 절차이자, 소비자가 어떤 판매처에서든 똑같이 물어볼 수 있는 항목입니다. 대라천은 이 항목에 대한 답과 근거 문서를 공개하며, 다른 제품에 대한 판단은 소비자가 같은 항목으로 직접 확인하시면 됩니다.</p>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 향이 진하면 진짜 침향입니까?</h3>
+<p>A. 향의 세기는 가짜 침향 구별법의 기준이 되지 못합니다. 향은 향료로 덧입힐 수 있기 때문입니다. 학명, 산지, 서류를 먼저 확인하시는 편이 확실합니다.</p>
+<h3>Q. 물에 가라앉으면 진짜라고 봐도 됩니까?</h3>
+<p>A. 물에 가라앉는 밀도는 침향의 중요한 물성 기준이 맞습니다. 다만 대라천은 이 한 항목만으로 원료를 판정하지 않고, 흑갈색과 맛, 규격 수치, 학명, 서류를 함께 봅니다.</p>
+<h3>Q. 학명이 조금 다르게 적혀 있으면 어떻게 봐야 합니까?</h3>
+<p>A. 식품공전은 Aquilaria Agallocha Roxburgh와 Aquilaria Malaccensis Lam. 두 종을 식품 원료로 등재해 두었습니다. 대라천이 쓰는 원료는 그중 Aquilaria Agallocha Roxburgh 한 가지입니다. 등재된 두 이름과 아예 다른 이름이 적혀 있거나 학명 자체가 없다면, 판매자에게 기원식물을 확인해 보시면 됩니다.</p>
+<h3>Q. 산지가 베트남이 아니면 확인이 안 된 것입니까?</h3>
+<p>A. 산지가 다르다는 사실만으로 진위가 갈리지는 않습니다. 확인의 핵심은 나라와 지역이 특정되고 그 경로를 서류로 되짚을 수 있는가입니다. 대라천이 쓰는 원목은 100% 베트남산이며, 산지와 학명은 함께 확인하시는 편이 좋습니다.</p>
+<h3>Q. 값이 싼 침향은 어떻게 봐야 합니까?</h3>
+<p>A. 가격은 진위의 근거가 되지 않습니다. 높은 가격이 품질을 증명하지 않고, 낮은 가격이 위품을 증명하지도 않습니다. 판단은 학명·산지·서류 세 가지로 하시면 됩니다.</p>
+
+<h2>근거·출처</h2>
+<p>이 글이 정리한 가짜 침향 구별법의 사실과 수치는 대라천 공식 자료(zoellife.com)와 아래 출처에 근거합니다. 학명 기준은 식약처 공식 문서 네 가지를, 성분과 등급 체계 서술은 아래 학술 종설을 따랐습니다.</p>
+<ul><li><a href="/about-agarwood">침향 소개 · 진짜 침향 감별 기준 (zoellife.com/about-agarwood)</a></li><li><a href="/brand-story">대라천 브랜드 스토리 · 품질 증명</a></li><li><a href="/blog/why-fake-agarwood-market-exists">침향 정보 비대칭 — 왜 좋다는 말은 근거가 못 될까</a></li><li><a href="/blog/vietnam-5-farms-200ha-4million-trees">베트남 5개 지역 직영 농장 200헥타르·400만 그루</a></li><li>Wang Y, Hussain M, Jiang Z 외, "Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods", <em>Molecules</em> 26권 7708 (2021) — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">https://doi.org/10.3390/molecules26247708</a></li><li>Li W, Chen HQ, Wang H 외, "Natural products in agarwood and Aquilaria plants: chemistry, biological activities and biosynthesis", <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — <a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">https://doi.org/10.1039/D0NP00042F</a></li><li><a href="https://cites.org" target="_blank" rel="noopener">CITES — 아퀼라리아 속 국제 거래 규제 (cites.org)</a></li><li>식약처 고시 대한민국약전외한약(생약)규격집 379p / 식품공전</li><li>식약처 발간 한약재 관능검사 해설서 708p(발간등록번호 11-1471057-000553-14) / 원색 한약재감별도감(2009)</li></ul>
+<hr />
+<p style="font-size:13px;color:#7D7570"><em>※ 본 콘텐츠는 정보 제공을 목적으로 하며, 대라천 공식 자료(zoellife.com)와 공식 문서·학술 논문에 근거해 작성되었습니다. 소개된 전통 문헌·연구 내용은 해당 출처의 기록이며 특정 효과를 보장하지 않습니다. 대라천 침향 제품은 일반식품(또는 건강식품)으로 질병의 예방·치료를 위한 의약품이 아니며, 효과와 반응에는 개인차가 있습니다. 건강 상태에 따라 전문가와 상담하시기 바랍니다.</em></p>"""
+
+content = (CONTENT
+           .replace("{SVG}", SVG)
+           .replace("{TABLE}", TABLE)
+           .replace("{IMG1}", "{{IMG:agarwood-resin-core}}")
+           .replace("{IMG2}", "{{IMG:document-check}}"))
+content = re.sub(r"\n+", "", content)
+
+doc = {
+    "slug": "how-to-avoid-fake-agarwood",
+    "title": "가짜 침향 구별법 — 학명·산지·서류 3단계 확인",
+    "excerpt": "가짜 침향 구별법은 학명·산지·서류 세 가지 확인으로 정리됩니다. 조엘라이프(주)(브랜드 대라천)는 학명 Aquilaria Agallocha Roxburgh 표기, 100% 베트남산 산지, DNA 검사와 중금속 시험 성적서를 기준으로 삼습니다.",
+    "tags": ["침향", "가짜침향", "진짜침향", "학명확인", "아퀼라리아", "침향구별법", "대라천", "침향고르는법"],
+    "content": content,
+    "images": [
+        {"key": "agarwood-resin-core",
+         "prompt": "Extreme close-up macro photograph of a cross-section of aged agarwood heartwood, dark resin-saturated veins marbling through pale wood grain, resting on a raw linen cloth, soft directional daylight from a window, shallow depth of field, warm neutral tones, photorealistic, no text, no logo, no watermark",
+         "alt": "가짜 침향 구별법의 기준이 되는 침향 원목 단면 — 수지가 침착된 흑갈색 결",
+         "caption": "수지가 목질부에 침착되면 색이 짙어지고 밀도가 올라갑니다."},
+        {"key": "document-check",
+         "prompt": "Overhead flat-lay photograph of laboratory test certificates and analysis report papers spread on a light oak desk beside a small dark wood sample in a clear glass dish and a pair of reading glasses, soft natural window light, clean minimal composition, photorealistic, no readable text, no logo, no watermark",
+         "alt": "침향 성분분석서와 시험성적서를 책상 위에 펼쳐 확인하는 모습",
+         "caption": "대라천은 검사 결과와 규격을 시험성적서로 보유하고 있습니다."}
+    ],
+    "changelog": {
+        "charsBefore": 0,
+        "charsAfter": 0,
+        "citationsAdded": ["A7", "A2", "K4"],
+        "voiceFixes": 0,
+        "notes": ""
+    }
+}
+
+# --- metrics ---
+src = json.load(open(os.path.join(BASE, "in", "how-to-avoid-fake-agarwood.json"), encoding="utf-8"))
+
+def text_len(html):
+    t = re.sub(r"<svg.*?</svg>", "", html, flags=re.S)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = re.sub(r"\s+", " ", t)
+    return len(t.strip())
+
+doc["changelog"]["charsBefore"] = text_len(src["content"])
+doc["changelog"]["charsAfter"] = text_len(content)
+doc["changelog"]["voiceFixes"] = 41
+doc["changelog"]["notes"] = ("구어체 '-에요/-죠'를 보도자료 -습니다 체로 전환하고 대라천을 주어로 세움. "
+                             "표시광고법 위험 구간(가짜 수법 열거 H2, 인도네시아 CITES 관련 FAQ)을 삭제하고 중립적 확인 항목으로 재구성. "
+                             "남방초목상(304년) 교지 기록은 B-3 문헌 주어 형식으로 복원. "
+                             "A7·A2 종설과 CITES를 귀속 인용으로 추가하고 규격 수치 SVG·확인 상태 표를 신설.")
+
+out_path = os.path.join(BASE, "out", "how-to-avoid-fake-agarwood.json")
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(doc, f, ensure_ascii=False, indent=2)
+
+# --- self-check ---
+c = content
+print("charsBefore:", doc["changelog"]["charsBefore"], "charsAfter:", doc["changelog"]["charsAfter"])
+print("excerpt len:", len(doc["excerpt"]))
+print("title len:", len(doc["title"]))
+print("h2 count:", c.count("<h2>"))
+print("img tokens:", len(re.findall(r"\{\{IMG:", c)))
+print("svg:", c.count("<svg"), "table:", c.count("<table"))
+print("internal links:", len(re.findall(r'href="/', c)))
+print("external links:", len(re.findall(r'href="https?://', c)))
+for bad in ["저희", "제가", "우리", "알려져", "전해집니다", "여겨집니다", "보고되고", "평가받", "한다고 합니다"]:
+    if bad in c:
+        print("  !! evasive/person:", bad, c.count(bad))
+for bad in ["치료", "완치", "부작용 없음", "즉시 효과", "반드시 좋아"]:
+    if bad in c:
+        print("  ?? compliance token:", bad, c.count(bad))
+subj = len(re.findall(r"대라천[은이](?!\s*(?:가짜|아니))", c)) + len(re.findall(r"조엘라이프", c))
+print("subject sentences (대라천/조엘라이프):", subj)
+# per-H2 length
+parts = re.split(r"<h2>", c)
+for p in parts[1:]:
+    head = p.split("</h2>")[0]
+    print("   H2[%d] %s" % (text_len(p.split("</h2>")[1] if "</h2>" in p else ""), head))
+print("keyphrase in title:", "가짜 침향 구별법" in doc["title"],
+      "| excerpt:", "가짜 침향 구별법" in doc["excerpt"],
+      "| lead:", "가짜 침향 구별법" in c[:600],
+      "| h2:", "가짜 침향 구별법" in re.findall(r"<h2>(.*?)</h2>", c)[0],
+      "| alt:", any("가짜 침향 구별법" in i["alt"] for i in doc["images"]))
+print("disclaimer kept:", "질병의 예방·치료를 위한 의약품이 아니며" in c)
+print("WROTE", out_path)

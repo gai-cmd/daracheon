@@ -1,0 +1,110 @@
+# -*- coding: utf-8 -*-
+"""b2-intro-a / 3 of 3 — agarwood-many-names-milhyangsu
+Every name is attributed to the document that records it, with the document as the
+grammatical subject (SPEC B-3 문헌명을 주어로)."""
+from srcblocks import blocks, emit
+
+SLUG = "agarwood-many-names-milhyangsu"
+B = blocks(SLUG)
+TABLE = B['tables'][0]        # 이름별 정리표 (원문 그대로)
+FIGURE = B['figures'][0]      # 물에 가라앉은 침향 사진 (Blob URL 보존)
+NAMECARD = B['svgs'][0]       # 이름 카드 SVG (div 포함, 바이트 보존)
+DISCLAIMER = B['disclaimer']
+
+CONTENT = '''<p class="lead"><strong>결론부터.</strong> 침향을 부르는 이름은 하나가 아닙니다. 옛 한문 기록은 밀향수(蜜香樹)라 적었고, 약전은 침수향(沈水香)으로 등록했으며, 서양은 아가우드(Agarwood)라 부르고, 식물분류학은 Aquilaria Agallocha Roxburgh라는 학명을 씁니다. 조엘라이프(주)(브랜드 대라천)는 이 글에서 이름마다 그 이름을 적어 둔 문헌을 함께 밝혀 정리했습니다.</p>
+<p>이름이 많으면 헷갈릴 것 같지만 실은 그 반대입니다. 이름을 하나씩 따라가다 보면 침향이 무엇인지가 저절로 손에 잡힙니다.</p>
+<h2>&lsquo;밀향수&rsquo;라는 이름은 어느 문헌에 적혀 있습니까?</h2>
+<p>교주이물지(交州異物志)는 교주(交州) 땅에 <strong>밀향수(蜜香樹)</strong>라는 나무가 있고, 그 줄기 속과 마디에 단단하고 색이 검으며 물에 가라앉는 것을 침향이라 한다고 적었습니다.</p>
+<p>이름을 글자대로 풀면 뜻이 그대로 드러납니다. 밀(蜜)은 꿀, 향(香)은 향기, 수(樹)는 나무입니다. 밀향수는 꿀처럼 향기로운 나무라는 말입니다.</p>
+<p>304년에 편찬된 남방초목상(南方草木狀)도 같은 이름을 남겼습니다. 침향의 다른 이름이 밀향수이고 산지는 교지(交趾)라고 밝혀 두었습니다.</p>
+<p>여기서 교주와 교지는 모두 지금의 베트남 지역을 가리키는 옛 지명입니다. 두 문헌을 나란히 놓으면 침향이 아주 오래전부터 베트남 땅의 향기로운 나무로 기록돼 왔음이 드러납니다.</p>
+<p>이름 하나가 나무의 산지와 성질을 함께 담고 있는 셈입니다.</p>
+<h2>&lsquo;침수향&rsquo;과 &lsquo;침향&rsquo;은 왜 가라앉는다는 뜻일까요?</h2>
+<p>침향(沈香)의 침(沈)은 가라앉는다는 뜻이고, 향(香)은 향기입니다. 더 정확한 이름인 <strong>침수향(沈水香)</strong>은 물에 가라앉는 향이라는 말입니다.</p>
+<p>보통 나무는 물에 뜹니다. 그런데 침향은 수지(향기 나는 진액)가 오랜 세월 켜켜이 스며들어 그 부분만 무거워지고, 결국 물속으로 <strong>가라앉습니다</strong>.</p>
+<p>옛사람들은 이 성질을 그대로 이름에 새겼습니다. 대한민국약전외한약(생약)규격집도 침향의 성상을 정하면서 흑갈색을 띠고 맛은 달고 쓰며 물에 가라앉아야 한다고 적어 두었습니다.</p>
+<p>이름 하나에 품질 기준까지 담긴 셈입니다. 한국 문헌 속 침향 기록은 한국민족문화대백과사전 침향(沈香) 항목에서 확인할 수 있습니다(<a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">한국민족문화대백과사전</a>).</p>
+''' + FIGURE + '''
+<h2>&lsquo;아가우드&rsquo;와 학명은 누가 붙인 이름입니까?</h2>
+<p>서양에서는 침향을 <strong>아가우드(Agarwood)</strong>라고 부릅니다. 국제 향·약재 시장에서 통용되는 이름입니다.</p>
+<p>약과 학문의 세계는 더 엄격한 이름을 씁니다. 대한민국약전외한약(생약)규격집은 이 약재를 <strong>침수향(沈水香)</strong>으로 등록하고, 라틴명을 <strong>AQUILARIAE LIGNUM</strong>으로 적었습니다.</p>
+<p>나무 자체의 학명(기원식물)은 <strong>Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)</strong>로 올라 있고, 팥꽃나무과(Thymeleaceae)에 속합니다.</p>
+<p>이름이 여러 겹인 이유는 저마다 맡은 역할이 다르기 때문입니다. 일상에서 부르는 이름(침향·아가우드), 옛 문헌의 이름(밀향수·침수향), 세계 어디서나 통하는 학문의 이름(학명)이 각자의 자리를 지킵니다.</p>
+<p>그중 학명은 진짜와 가짜를 가르는 열쇠입니다. 약전이 침향의 기원식물로 규정해 둔 이름이 바로 Aquilaria Agallocha Roxburgh이기 때문입니다.</p>
+<p>{{IMG:agarwood-slices}}</p>
+<h2>이름의 계보를 한눈에 정리하면 이렇습니다</h2>
+<p>지금까지 나온 이름을 뜻과 출처에 따라 한자리에 모아 보겠습니다.</p>
+<figure>''' + NAMECARD + '''<figcaption>침향을 부르는 네 갈래 이름과 각각의 뜻. 출처: 교주이물지, 대한민국약전외한약(생약)규격집, 대라천 공식 자료(zoellife.com/about-agarwood).</figcaption></figure>
+<p>표로 옮기면 이름마다 어느 자리에서 온 말인지가 더 또렷해집니다.</p>
+''' + TABLE + '''
+<p>이렇게 늘어놓고 보면 제각각이던 이름들이 실은 나무 하나를 여러 각도에서 부른 말임이 드러납니다. 어느 하나가 틀린 이름이 아니라, 쓰이는 자리가 다를 뿐입니다.</p>
+<h2>산지 이름 속에도 침향이 숨어 있습니까?</h2>
+<p>침향의 이름 이야기는 나무 이름에서 그치지 않습니다. 옛 문헌이 산지로 적어 둔 지명 속에도 침향의 내력이 남아 있습니다.</p>
+<p>중국 역사서와 무역 기록에는 침향의 주요 산지로 <strong>임읍(林邑)·교지(交趾)·교주(交州)·점성(占城)·안남(安南)·월남(越南)</strong> 같은 지명이 되풀이해 등장합니다.</p>
+<p>이 지명들은 이름만 다를 뿐 모두 <strong>오늘날의 베트남 지역</strong>을 가리킵니다. 시대와 나라가 바뀌며 부르는 이름은 달라졌어도, 좋은 침향이 나는 땅에 대한 인식은 오래도록 한자리에 머물렀습니다.</p>
+<p>조선의 문헌 기록에도 안남·월남, 곧 베트남이 침향의 주요 산지이자 교역 상대로 자주 등장합니다.</p>
+<p>이름의 계보를 따라가면 나무 이름과 산지 이름이 함께 진짜 침향이 어디서 어떻게 왔는지를 일러 줍니다.</p>
+<h2>성경에도 침향이라는 이름이 나옵니까?</h2>
+<p>침향의 이름은 동양 의서를 넘어 종교 경전에도 나옵니다.</p>
+<p>시편은 왕의 옷에서 몰약과 침향과 육계의 향기가 난다고 노래했고, 요한복음은 예수의 장례에 몰약과 침향을 섞은 것을 가져왔다고 적었습니다.</p>
+<p>다만 성경 원문의 알로에스(aloes)를 침향으로 보는 것은 오래된 전통적 해석이고, 백단향 같은 다른 향목으로 보는 학술적 이견도 있습니다. 대라천은 이 대목에서 한쪽 해석만 골라 단정하지 않습니다.</p>
+<p>대라천 자료는 불교 경전에서도 향 공양을 귀하게 여겼고 그 고급 향재로 침향이 꼽혔다고 정리합니다.</p>
+<p>서로 멀리 떨어진 문화권이 각자의 언어로 이 향을 귀하게 불러 왔다는 사실은 남습니다. 이름이 많다는 것은 그만큼 여러 사람에게 여러 방식으로 쓰였다는 흔적입니다.</p>
+<h2>같은 &lsquo;아퀼라리아&rsquo;인데 왜 종소명까지 따져야 하나요?</h2>
+<p>이름 이야기에서 가장 실용적인 대목이 여기입니다. 침향나무의 큰 집안 이름은 아퀼라리아(Aquilaria)지만, 그 안에도 여러 종이 있습니다.</p>
+<p>대한민국약전외한약(생약)규격집은 그중 <strong>Aquilaria Agallocha Roxburgh(아갈로차)</strong>를 침향의 기원식물로 규정하고 있습니다.</p>
+<p>국제 식물분류학은 이 아갈로차라는 이름을 아퀼라리아 말라센시스(Aquilaria Malaccensis Lam.)의 이명(異名), 곧 같은 종을 가리키는 다른 이름으로 정리했고, 정식 학명(정명)은 말라센시스 쪽으로 두었습니다.</p>
+<p>식품공전은 침향의 기원으로 아갈로차와 말라센시스 두 종을 함께 올려 두었습니다.</p>
+<p>Wang 연구팀은 2021년 <em>Molecules</em> 26권 7708번 논문에서 아퀼라리아 속의 분포와 등급 체계를 정리했습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>). 대라천이 수행한 연구가 아니라 해당 연구팀의 결과입니다.</p>
+<p>그래서 아퀼라리아까지만 적혀 있으면 아직 반쪽짜리 이름입니다. 뒤에 붙는 종소명(아갈로차 또는 말라센시스)까지 확인해야 어떤 침향인지 또렷해집니다.</p>
+<p>이 학명은 식약처 고시 대한민국약전외한약(생약)규격집을 비롯해 식품공전, 한약재 관능검사 해설서, 원색 한약재감별도감, 한국한의학연구원 한약자원연구센터 등 여러 공식 문서에서 침향의 기원식물로 확인됩니다.</p>
+<h2>이름을 알면 무엇이 좋아집니까?</h2>
+<p>이름의 사연을 알면 침향을 고를 때 훨씬 든든해집니다. 어떤 제품에 침향 두 글자만 달랑 적혀 있다면, 앞서 본 여러 이름 가운데 어느 쪽인지 알 길이 없습니다.</p>
+<p>반대로 학명 Aquilaria Agallocha Roxburgh까지 적혀 있다면 약전 기준에 맞는 침향인지 가늠하는 데 도움이 됩니다.</p>
+<p>대라천이 이 학명을 제품 박스와 라벨은 물론 수출 서류에까지 똑같이 적어 두는 것도 그래서입니다. 이름이 여러 서류에서 한결같이 맞아떨어질수록 대조할 수 있는 지점이 늘어납니다.</p>
+<p>이름은 그저 호칭이 아니라 그 나무가 걸어온 내력이자 대조의 기준입니다. 침향이 무엇인지부터 다시 보고 싶다면 <a href="/blog/what-is-agarwood-for-beginners">침향이란 무엇인가</a>를, 고르는 기준을 한 번에 훑고 싶다면 <a href="/blog/agarwood-7-basics-faq">침향 기초 7가지</a>를 이어서 읽어 보시기 바랍니다.</p>
+<p>{{IMG:vietnam-forest}}</p>
+<h2>대라천이 확인한 것과 확인하지 않은 것</h2>
+<p>대라천은 이 글에 적은 학명 표기와 원산지 표기를 제품 박스·라벨·수출 서류에 동일하게 기재하고 있으며, 요청하시면 확인해 드립니다. 제품별 표기는 <a href="/products">제품 페이지</a>에서도 확인할 수 있습니다.</p>
+<p>옛 문헌의 기록은 해당 문헌에 그렇게 적혀 있다는 사실만 전달합니다. 대라천은 그 내용이 오늘의 효능을 보증한다고 말하지 않습니다.</p>
+<p>해석이 갈리는 자리에는 이견이 있다는 사실까지 함께 적었습니다. 성경 속 향의 식별이 그런 사례이고, 확인되지 않은 대목은 채우지 않고 비워 두었습니다.</p>
+<p>대라천 침향 제품은 일반식품(또는 건강식품)입니다. 이 글의 어느 문장도 질병의 예방이나 치료를 뜻하지 않습니다.</p>
+<h2>자주 묻는 질문</h2>
+<h3>Q. 밀향수와 침향은 다른 나무인가요?</h3>
+<p>A. 같은 것을 가리키는 다른 이름입니다. 옛 문헌은 침향이 나는 나무를 밀향수라 불렀고, 그 나무 속에 수지가 스며 물에 가라앉는 부분을 침향이라 했습니다.</p>
+<h3>Q. 왜 하필 물에 가라앉는 향이라고 부르나요?</h3>
+<p>A. 나무에 향기 나는 수지가 오래 스며들면 그 부분이 무거워져 물에 가라앉기 때문입니다. 약전도 물에 가라앉는 것을 침향의 성상으로 정해 두었습니다.</p>
+<h3>Q. 아가우드와 침향은 같은 건가요?</h3>
+<p>A. 같습니다. 아가우드(Agarwood)는 서양에서 침향을 부르는 이름입니다. 다만 종류가 여럿이라 고를 때는 학명(Aquilaria Agallocha Roxburgh)까지 확인하는 편이 좋습니다.</p>
+<h3>Q. 학명은 왜 이렇게 어렵고 긴가요?</h3>
+<p>A. 학명은 세계 어디서나 똑같이 통하도록 만든 공식 이름이라 라틴어 형식을 따릅니다. 어렵긴 해도 그 덕분에 나라와 언어가 달라도 같은 나무임을 확인할 수 있습니다.</p>
+<h2>근거·출처</h2>
+<p>이 글의 문헌·학명 정보는 대라천 공식 자료(zoellife.com)와 식약처 공식 문서, 그리고 본문에 밝힌 옛 문헌 기록에 근거합니다.</p>
+<ul><li><a href="https://zoellife.com/about-agarwood" target="_blank" rel="noopener">침향 이야기 · 산지와 문헌 기록 (zoellife.com/about-agarwood)</a></li><li><a href="https://zoellife.com/brand-story" target="_blank" rel="noopener">대라천 브랜드 스토리 (zoellife.com/brand-story)</a></li><li><a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">한국민족문화대백과사전 — 침향(沈香)</a></li><li>Wang Y, Hussain M, Jiang Z 외, &ldquo;Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals&rdquo;, <em>Molecules</em> 2021;26:7708 — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">10.3390/molecules26247708</a></li><li>교주이물지(交州異物志) · 남방초목상(南方草木狀, 304년) — 밀향수 기록</li><li>식약처 고시 대한민국약전외한약(생약)규격집 — 침수향(沈水香), AQUILARIAE LIGNUM, Aquilaria Agallocha Roxburgh</li></ul>
+''' + DISCLAIMER
+
+ART = {
+    "slug": SLUG,
+    "title": "침향 이름 총정리 — 밀향수·침수향·아가우드·학명까지",
+    "excerpt": "침향 이름은 하나가 아닙니다. 옛 한문 기록의 밀향수와 침수향, 서양의 아가우드, 약전이 규정한 학명까지 문헌별로 이름을 붙인 주체를 밝혀 정리했습니다. 이름의 계보를 따라가면 진짜 침향을 가르는 기준이 함께 보입니다.",
+    "tags": ["침향", "밀향수", "침수향", "아가우드", "침향이름", "침향학명", "침향유래", "대라천"],
+    "content": CONTENT,
+    "images": [
+        {"key": "agarwood-slices",
+         "prompt": "Top-down photograph of thin agarwood wood slices arranged in a row on a pale stone surface, dark resin veins marbling the pale grain, soft even daylight, photorealistic still life, no text, no lettering, no logo, no watermark",
+         "alt": "수지 무늬가 드러난 침향 조각을 위에서 찍은 사진",
+         "caption": "같은 나무라도 수지가 스며든 자리만 검게 도드라집니다."},
+        {"key": "vietnam-forest",
+         "prompt": "Misty tropical forest in northern Vietnam at dawn, tall slender Aquilaria trees with broad green leaves, layered hills fading into haze, soft diffused light, photorealistic landscape, no people, no text, no lettering, no logo, no watermark",
+         "alt": "침향나무가 자라는 베트남 산지의 아침 숲",
+         "caption": "옛 문헌이 교지·교주라 적은 땅이 오늘날의 베트남 지역입니다."}
+    ],
+    "changelog": {
+        "charsBefore": 0, "charsAfter": 0,
+        "citationsAdded": ["A7", "K1"],
+        "voiceFixes": 17,
+        "notes": "이름마다 그 이름을 적어 둔 문헌을 문장의 주어로 세워 재구성(교주이물지·남방초목상·약전·시편·요한복음). '알려진 게 / 전해집니다 / 꼽혔습니다' 회피 화법을 문헌 귀속 또는 대라천 주어 문장으로 교체하고, 아퀼라리아 속 종 구분에 A7 서지정보와 DOI, 한국 문헌 서술에 K1을 붙임. 원문 SVG 이름카드·표·figure는 바이트 그대로 두고 figure/figcaption으로 감쌌으며 304년·학명 표기(Aquilaria Malaccensis Lam. 포함)·disclaimer는 원문 그대로 보존."
+    }
+}
+
+emit(ART)

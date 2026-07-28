@@ -1,0 +1,240 @@
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+SLUG = 'agarwood-in-research-papers'
+src = json.load(open(os.path.join(BASE, 'in/%s.json' % SLUG), encoding='utf-8'))
+
+DISC = re.findall(r'<p style[^>]*><em>※.*?</em></p>', src['content'], re.S)[-1]
+TAIL = '<hr />' + DISC
+
+A1 = '<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">https://doi.org/10.3390/molecules23020342</a>'
+A2 = '<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">https://doi.org/10.1039/D0NP00042F</a>'
+A4 = '<a href="https://doi.org/10.1080/10412905.2024.2447706" target="_blank" rel="noopener">https://doi.org/10.1080/10412905.2024.2447706</a>'
+A5 = '<a href="https://doi.org/10.1021/acs.jnatprod.8b00635" target="_blank" rel="noopener">https://doi.org/10.1021/acs.jnatprod.8b00635</a>'
+A6 = '<a href="https://doi.org/10.1007/s11101-025-10117-6" target="_blank" rel="noopener">https://doi.org/10.1007/s11101-025-10117-6</a>'
+A7 = '<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">https://doi.org/10.3390/molecules26247708</a>'
+K1 = '<a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">침향(沈香) 항목</a>'
+K3 = ('<a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?'
+      'sereArticleSearchBean.artiId=ART002902473" target="_blank" rel="noopener">침향 추출물의 면역조절 및 생리활성 분석</a>')
+KS = '<a href="https://koreascience.kr/article/JAKO201122238508185.pdf" target="_blank" rel="noopener">GC-MS를 이용한 침향류의 성분 비교 연구</a>'
+
+TABLE = (
+ '<table><thead><tr><th>저널</th><th>다룬 주제</th><th>연구의 성격</th></tr></thead><tbody>'
+ '<tr><td><em>Molecules</em> 23권 342 (2018)</td><td>침향의 화학 성분과 약리 활성 정리</td><td>총설</td></tr>'
+ '<tr><td><em>Molecules</em> 26권 7708 (2021)</td><td>분포·성분·등급 체계·수지 유도법</td><td>총설</td></tr>'
+ '<tr><td><em>Natural Product Reports</em> 38권 (2021)</td><td>천연물 화학과 생합성</td><td>총설</td></tr>'
+ '<tr><td><em>Phytochemistry Reviews</em> 25권 (2025)</td><td>신경보호 관련 근거 검토</td><td>리뷰</td></tr>'
+ '<tr><td><em>Journal of Essential Oil Research</em> 37권 (2025)</td><td>추출법이 수율·조성에 미치는 영향</td><td>총설</td></tr>'
+ '<tr><td><em>Journal of Natural Products</em> 82권 (2019)</td><td>페닐에틸크로몬과 아디포넥틴 분비</td><td>세포 실험</td></tr>'
+ '<tr><td>대한한의학방제학회지 (2022)</td><td>침향 추출물의 면역조절·생리활성</td><td>실험 보고</td></tr>'
+ '<tr><td>대한본초학회지 26권 (2011)</td><td>산지별 GC-MS 성분 비교</td><td>성분 분석</td></tr>'
+ '</tbody></table>'
+)
+
+SVG = (
+ '<figure><svg viewBox="0 0 640 250" width="100%" role="img" '
+ 'aria-label="침향 연구가 어느 단계까지 쌓였는지 나타낸 근거 단계 도표">'
+ '<rect x="0" y="0" width="640" height="250" fill="#fffdf9"/>'
+ '<text x="20" y="32" font-size="17" font-weight="700" fill="#2b2318">근거가 쌓인 단계</text>'
+ '<text x="20" y="54" font-size="12" fill="#2b2318">아래로 갈수록 보고가 많고, 위로 갈수록 자료가 부족합니다.</text>'
+ '<rect x="150" y="72" width="120" height="30" fill="#2b2318"/>'
+ '<text x="20" y="93" font-size="13" fill="#2b2318">대규모 임상</text>'
+ '<text x="282" y="93" font-size="13" fill="#2b2318">확인된 자료 없음</text>'
+ '<rect x="150" y="112" width="200" height="30" fill="#c49a3f"/>'
+ '<text x="20" y="133" font-size="13" fill="#2b2318">사람 소규모</text>'
+ '<text x="362" y="133" font-size="13" fill="#2b2318">이 글의 인용 범위에 없음</text>'
+ '<rect x="150" y="152" width="330" height="30" fill="#9a6a10"/>'
+ '<text x="20" y="173" font-size="13" fill="#2b2318">동물 실험</text>'
+ '<text x="492" y="173" font-size="13" fill="#2b2318">일부 보고</text>'
+ '<rect x="150" y="192" width="470" height="30" fill="#9a6a10"/>'
+ '<text x="20" y="213" font-size="13" fill="#2b2318">세포·성분 분석</text>'
+ '<text x="20" y="240" font-size="12" fill="#2b2318">막대 길이는 보고가 쌓인 정도를 나타낸 배치이며, 논문 수를 센 값이 아닙니다.</text>'
+ '</svg><figcaption>침향 연구의 근거 단계 — 인용한 논문 대부분은 아래 두 칸에 놓입니다</figcaption></figure>'
+)
+
+C = []
+A = C.append
+
+A('<p class="lead"><strong>결론부터.</strong> 침향을 다룬 논문은 여럿 있고, 항산화와 항염, 진정, 면역조절 같은 활성이 '
+  '보고돼 왔습니다. 다만 인용할 수 있는 연구 대부분은 세포와 동물, 성분 분석 단계에 있습니다. '
+  '조엘라이프(주)(브랜드 대라천)는 각 연구가 무엇을 대상으로 삼았는지를 함께 적으며, 효능을 주장하지 않습니다.</p>')
+
+A('<h2>논문이 있다는 것은 무엇을 뜻할까요?</h2>')
+A('<p>논문이 있다는 사실은 연구자들이 이 재료를 살펴봤다는 뜻입니다. 관심의 크기를 보여 주는 신호입니다. 살펴볼 만한 대상으로 여겨졌다는 뜻입니다.</p>')
+A('<p>다만 관심의 크기와 확인된 정도는 다른 값입니다. 많이 연구됐다는 사실이 곧 밝혀졌다는 뜻은 아닙니다. 두 값은 따로 움직입니다.</p>')
+A('<p>연구는 근거를 쌓아 가는 과정입니다. 한 단계에서 확인된 것이 다음 단계에서도 같은지를 이어서 확인합니다. 건너뛸 수 있는 단계는 없습니다.</p>')
+A('<p>그래서 논문을 읽을 때는 결과보다 먼저 대상을 봐야 합니다. 세포인지, 동물인지, 사람인지에 따라 '
+  '같은 문장이 전혀 다른 뜻이 됩니다.</p>')
+A('<p>이 글은 대라천이 인용해 온 논문들을 그 기준으로 정리한 것입니다. 어떤 저널에 무엇이 실렸고, '
+  '그 연구가 어떤 성격인지를 나란히 적습니다. 성격을 적어야 결과의 무게를 가늠할 수 있습니다.</p>')
+A('<p>기록됐다와 증명됐다는 서로 다른 말입니다. 이 구분이 이 글 전체를 관통하는 기준입니다. 문장을 옮길 때마다 이 기준을 적용했습니다.</p>')
+A('<p>대라천 침향 제품은 일반식품이며 질병의 예방이나 치료를 위한 의약품이 아닙니다.</p>')
+
+A('<h2>어떤 논문들이 침향을 다뤘을까요?</h2>')
+A('<p>서지정보를 확인할 수 있는 논문을 저널과 주제, 성격으로 정리하면 아래와 같습니다.</p>')
+A(TABLE)
+A('<p>표의 세 번째 칸을 눈여겨봐 주시기 바랍니다. 여덟 편 가운데 다섯 편이 총설이나 리뷰입니다. '
+  '기존 연구를 모아 정리한 문헌이라는 뜻입니다.</p>')
+A('<p>총설은 새로운 실험 결과가 아닙니다. 어떤 연구가 있었는지를 보여 주는 지도에 가깝습니다. '
+  '지도가 넓다는 사실이 목적지에 도착했다는 뜻은 아닙니다.</p>')
+A('<p>나머지 세 편은 실험이나 분석입니다. 세포를 대상으로 한 연구와 성분을 재는 연구가 여기에 듭니다.</p>')
+A('<p>표에 사람을 대상으로 한 임상시험은 없습니다. 대라천이 인용할 수 있는 범위 안에서 그런 연구를 '
+  '확인하지 못했기 때문입니다.</p>')
+A('<p>각 논문의 완전한 서지정보는 이 글 맨 아래 근거·출처에 DOI와 함께 정리해 두었습니다.</p>')
+
+A('<h2>근거는 어느 단계까지 쌓였을까요?</h2>')
+A('<p>연구의 단계를 아래에서 위로 놓으면 성분 분석, 세포 실험, 동물 실험, 사람 소규모 연구, 대규모 임상 순입니다. 위로 갈수록 확인하기 어렵고 비용도 커집니다.</p>')
+A(SVG)
+A('<p>아래 두 칸에는 보고가 쌓여 있습니다. 성분을 재고 세포에서 반응을 살핀 연구가 여기에 모입니다. 비교적 조건을 통제하기 쉬운 단계입니다.</p>')
+A('<p>동물 실험도 일부 있습니다. Okugawa 연구팀의 1996년 보고처럼 쥐를 대상으로 한 연구가 여기에 듭니다.</p>')
+A('<p>위의 두 칸이 비어 있습니다. 사람을 대상으로 한 연구는 대라천이 인용하는 범위에 들어 있지 않고, '
+  '대규모 임상은 확인된 자료가 없습니다. 비어 있다는 사실도 하나의 정보입니다.</p>')
+A('<p>이 구조를 그대로 보여 주는 것이 정확한 소개입니다. 아래 칸의 결과를 위 칸의 결론처럼 옮겨 적으면 '
+  '연구가 하지 않은 주장이 만들어집니다.</p>')
+A('<p>논문 저자들도 대개 결론에서 임상시험과 독성 연구가 더 필요하다고 밝힙니다. 이 문장을 함께 옮기는 것이 '
+  '연구를 정확히 전하는 방법입니다. 한계를 지우면 같은 문장이 다른 뜻이 됩니다.</p>')
+
+A('<h2>성분을 숫자로 본 연구는 무엇일까요?</h2>')
+A('<p>신광호 외의 ' + KS + '가 있습니다. 대한본초학회지 26권 7~12쪽(2011)에 실렸고, 베트남과 인도네시아, '
+  '미얀마 시료를 GC-MS로 견줬습니다.</p>')
+A('<p>네 시료 모두에서 β-selinene이 검출됐고, 대라천 자료가 인용해 온 값은 베트남 시료에서 6.861%와 7.497%입니다.</p>')
+A('<p>이 연구는 β-selinene을 평가 기준 성분으로 제안하기도 했습니다. 다만 한 연구의 관찰이라는 조건을 '
+  '함께 읽어야 합니다.</p>')
+A('<p>대라천은 이 논문의 본문 전문을 열람하지 못했습니다. 저자와 저널, 권과 쪽수, 연도가 일치하는지를 '
+  '공개 데이터베이스에서 확인했습니다.</p>')
+A('<p>한국민족문화대백과사전은 ' + K1 + '에서 침향의 정유 성분으로 벤질아세톤과 P-메토실 벤질아세톤 등을 소개하고, '
+  '동물실험에서 진정 작용이 관찰됐다는 옛 기록을 함께 싣고 있습니다.</p>')
+A('<p>이 기록 역시 옛 문헌과 동물실험 수준의 서술입니다. 제품이 주는 결과와는 연결되지 않습니다.</p>')
+A('{{IMG:research-papers}}')
+
+A('<h2>개별 연구는 무엇을 살폈을까요?</h2>')
+A('<p>Ahn 연구팀은 2019년 <em>Journal of Natural Products</em> 82권 259~264쪽에 아퀼라리아 말라켄시스 침향에서 얻은 '
+  '페닐에틸크로몬이 아디포넥틴 분비를 촉진하는 현상을 보고했습니다(' + A5 + '). 세포를 대상으로 한 실험입니다.</p>')
+A('<p>Das 연구팀은 2025년 <em>Phytochemistry Reviews</em> 25권 1~22쪽에 침향의 신경보호 관련 근거를 정리한 리뷰를 '
+  '실었습니다(' + A6 + '). 여러 연구를 모은 문헌이며 사람에게서 효과를 확정한 자료가 아닙니다.</p>')
+A('<p>황유림 외의 ' + K3 + '는 대한한의학방제학회지 2022년 논문으로, 침향 추출물의 면역조절과 생리활성 관련 지표를 다뤘습니다.</p>')
+A('<p>세 편 모두 사람을 대상으로 한 연구가 아닙니다. 세포와 기존 문헌을 대상으로 삼았다는 조건이 결과의 범위를 정합니다.</p>')
+
+A('<h2>총설은 무엇을 정리했을까요?</h2>')
+A('<p>총설은 흩어져 있는 연구를 한자리에 모아 정리한 문헌입니다. 새로 측정한 값이 아니라 이미 발표된 결과의 지도입니다.</p>')
+A('<p>Li 연구팀은 2021년 <em>Natural Product Reports</em> 38권 528~565쪽에 천연물 화학과 생합성을 정리한 총설을 '
+  '실었습니다(' + A2 + '). 성분이 어떻게 만들어지는지를 다룬 문헌입니다.</p>')
+A('<p>Wang 연구팀은 2018년 <em>Molecules</em> 23권 342에 성분과 약리 활성을 정리했고(' + A1 + '), '
+  '2021년 <em>Molecules</em> 26권 7708에는 분포와 등급 체계, 수지 유도법을 정리했습니다(' + A7 + ').</p>')
+A('<p>Wang 연구팀은 2025년 <em>Journal of Essential Oil Research</em> 37권 110~144쪽에 추출법이 수율과 조성에 '
+  '미치는 영향을 정리한 총설도 실었습니다(' + A4 + ').</p>')
+A('<p>여섯 문헌 모두 대라천이 수행한 연구가 아니라 각 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다.</p>')
+
+A('<h2>대라천이 이 글에서 뺀 것</h2>')
+A('<p>이전 자료에는 두 건의 인용이 더 있었습니다. 수면장애 연구현황을 다룬 학회지 자료와, 문화재 보존 분야에서 '
+  '오향의 항진균·살충 활성을 다뤘다는 연구입니다.</p>')
+A('<p>두 건 모두 저자와 연도, 저널을 특정하지 못했습니다. 규격서가 정한 기준에 따르면 서지정보를 확인할 수 없는 '
+  '인용은 본문에 둘 수 없습니다.</p>')
+A('<p>그래서 이번 글에서는 두 건을 싣지 않았습니다. 결과가 틀렸다고 판단해서가 아니라 '
+  '확인할 수 없는 상태이기 때문입니다. 대조할 원문이 없으면 인용이라 부를 수 없습니다.</p>')
+A('<p>같은 이유로 정향의 유제놀 함량과 흰개미 실험 수치도 제외했습니다. 어느 논문의 값인지 특정할 수 없었습니다. 수치가 구체적일수록 출처가 더 분명해야 합니다.</p>')
+A('<p>원 논문의 서지정보가 확인되면 해당 내용을 되살릴 수 있습니다. 그때는 저자와 연도, 저널, DOI를 '
+  '다른 인용과 같은 형식으로 적습니다. 기준을 인용마다 달리 적용하지 않습니다.</p>')
+A('<p>연구를 정직하게 전하겠다는 이 글의 주제와도 어긋나지 않는 결정입니다. 확인되지 않은 인용을 실으면서 '
+  '신중하게 읽으라고 적을 수는 없습니다. 기준은 자기 글에도 똑같이 적용됩니다.</p>')
+
+A('<h2>논문을 읽을 때 무엇을 조심할까요?</h2>')
+A('<p>첫째, 대상을 확인합니다. 세포인지 동물인지 사람인지에 따라 같은 결과의 의미가 달라집니다. 대상이 빠진 결과는 읽을 수 없습니다.</p>')
+A('<p>둘째, 문헌의 성격을 봅니다. 총설과 리뷰는 기존 연구를 모은 문헌이지 새로운 실험 결과가 아닙니다. 표의 세 번째 칸이 그 구분입니다.</p>')
+A('<p>셋째, 표현을 그대로 읽습니다. 활성이 보고됐다는 문장을 효과가 증명됐다로 바꿔 읽지 않습니다. 낱말 하나가 범위를 통째로 바꿉니다.</p>')
+A('<p>넷째, 저자들이 적어 둔 한계를 함께 읽습니다. 다수의 논문이 임상시험과 독성 연구가 더 필요하다고 '
+  '스스로 밝히고 있습니다.</p>')
+A('<p>다섯째, 인용의 출처를 확인합니다. 저자와 연도, 저널이 적혀 있지 않은 인용은 대조할 대상이 없습니다. 확인할 수 없는 인용은 근거가 아닙니다.</p>')
+A('<p>이 다섯 가지는 침향에만 해당하는 기준이 아닙니다. 어떤 재료의 연구를 읽을 때도 같게 적용됩니다. 분야가 달라도 확인하는 방식은 같습니다.</p>')
+A('<p>전통 문헌과 현대 논문은 표현을 달리해야 합니다. 앞의 것은 기록되어 있다로, 뒤의 것은 보고했다로 적습니다. 표현의 차이가 근거의 차이를 드러냅니다.</p>')
+
+A('<h2>대라천이 확인한 것과 확인하지 않은 것</h2>')
+A('<p>대라천은 이 글에 인용한 국제 논문 여섯 편을 DOI로 확인했고, 국내 논문 두 편은 공개 데이터베이스에서 '
+  '서지정보를 대조했습니다.</p>')
+A('<p>확인하지 못한 것도 분명히 적어 둡니다. 인용한 논문들의 본문 전문을 대라천이 검토하지는 않았습니다. '
+  '각 논문이 다루는 범위는 제목과 서지정보에 근거해 서술했습니다.</p>')
+A('<p>수면장애 연구현황과 문화재 보존 분야 향재 연구는 서지정보를 특정하지 못해 본문에서 제외했습니다.</p>')
+A('<p>대라천은 자사 제품을 대상으로 한 임상시험을 수행한 적이 없습니다. 이 글에 인용한 어떤 연구도 '
+  '대라천 제품을 대상으로 삼지 않았습니다.</p>')
+A('<p>대라천은 아퀼라리아 아갈로차 록스버그(Aquilaria agallocha Roxb., 현재 분류에서는 A. malaccensis와 같은 종으로 '
+  '보는 학명) 품종만 사용하고, 나무마다 개별 고유번호로 이력을 관리한다고 밝힙니다.</p>')
+A('<p>에센셜 오일은 25년산 원목을 72시간 증류해 얻는 100% 순수 오일로 소개되며, 약 400kg에서 20~25cc가 나옵니다. '
+  '이 값들은 공정 자료의 수치이며 연구 결과가 아닙니다.</p>')
+A('<p>인용한 연구는 대라천이 수행한 것이 아니라 각 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다.</p>')
+A('{{IMG:evidence-ladder}}')
+
+A('<h2>자주 묻는 질문</h2>')
+A('<h3>Q. 논문이 많으면 효과가 증명된 것인가요?</h3>')
+A('<p>A. 아닙니다. 논문의 수는 관심의 크기를 보여 줍니다. 다수의 논문이 임상시험과 독성 연구가 더 필요하다고 '
+  '스스로 밝히고 있습니다.</p>')
+A('<h3>Q. 사람 임상시험 결과는 없나요?</h3>')
+A('<p>A. 대라천이 인용하는 범위 안에서는 세포와 동물, 성분 분석이 중심입니다. 대규모 임상은 확인된 자료가 없습니다.</p>')
+A('<h3>Q. 총설과 실험 논문은 무엇이 다른가요?</h3>')
+A('<p>A. 총설은 기존 연구를 모아 정리한 문헌이고, 실험 논문은 새로 측정한 결과를 담습니다. '
+  '표의 세 번째 칸이 그 구분입니다.</p>')
+A('<h3>Q. 왜 일부 인용을 뺐나요?</h3>')
+A('<p>A. 저자와 연도, 저널을 특정할 수 없어 대조가 불가능했기 때문입니다. 서지정보가 확인되면 되살릴 수 있습니다.</p>')
+
+A('<h2>근거·출처</h2>')
+A('<p>이 글의 연구 서술은 대라천 공식 자료(zoellife.com)와 아래 논문에 근거합니다. '
+  '각 연구가 무엇을 대상으로 삼았는지를 본문에 함께 밝혔으며, 특정 효과를 주장하지 않습니다.</p>')
+A('<ul>'
+  '<li>Wang S, Yu Z, Wang C 외, "Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants", '
+  '<em>Molecules</em> 23권 342 (2018) — ' + A1 + '</li>'
+  '<li>Wang Y, Hussain M, Jiang Z 외, "Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile '
+  'Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods", <em>Molecules</em> 26권 7708 (2021) — '
+  + A7 + '</li>'
+  '<li>Li W, Chen HQ, Wang H 외, "Natural products in agarwood and Aquilaria plants: chemistry, biological activities and '
+  'biosynthesis", <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — ' + A2 + '</li>'
+  '<li>Das A, Begum K, Ahmed R 외, "Agarwood as a neuroprotective agent: a comprehensive review of existing evidence and '
+  'potential avenues for future research", <em>Phytochemistry Reviews</em> 25권 1~22쪽 (2025) — ' + A6 + '</li>'
+  '<li>Wang X, Chan SW, Singaram N 외, "Essential oil from Aquilaria spp. (agarwood): a comprehensive review on the impact of '
+  'extraction methods on yield, chemical composition, and biological activities", <em>Journal of Essential Oil Research</em> '
+  '37권 110~144쪽 (2025) — ' + A4 + '</li>'
+  '<li>Ahn S, Ma CT, Choi JM 외, "Adiponectin-Secretion-Promoting Phenylethylchromones from the Agarwood of '
+  'Aquilaria malaccensis", <em>Journal of Natural Products</em> 82권 259~264쪽 (2019) — ' + A5 + '</li>'
+  '<li>황유림 외, ' + K3 + ', 대한한의학방제학회지 2022 (KCI ART002902473)</li>'
+  '<li>신광호 외, ' + KS + ', 대한본초학회지 26권 7~12쪽 (2011)</li>'
+  '<li><a href="https://encykorea.aks.ac.kr/Article/E0058589" target="_blank" rel="noopener">한국민족문화대백과사전 — 침향(沈香)</a></li>'
+  '<li><a href="/about-agarwood">침향 성분·연구·문헌 자료 — about-agarwood</a></li>'
+  '<li><a href="/blog/agarwood-active-compounds-explained">세스퀴테르펜과 크로몬 — agarwood-active-compounds-explained</a></li>'
+  '<li><a href="/blog/agarwood-in-gyeongokgo-tradition-meets-science">관찰과 증명 사이 — agarwood-in-gyeongokgo-tradition-meets-science</a></li>'
+  '</ul>')
+
+content = ''.join(C) + TAIL
+
+def strip(h):
+    t = re.sub(r'<svg.*?</svg>', '', h, flags=re.S)
+    return re.sub(r'\s+', '', re.sub(r'<[^>]+>', '', t))
+
+out = {
+    'slug': SLUG,
+    'title': '논문으로 보는 침향, 근거가 어느 단계까지 쌓였나',
+    'excerpt': '침향을 다룬 논문은 여럿이지만 대부분 세포와 동물, 성분 분석 단계에 있습니다. 대라천이 인용해 온 여덟 편을 '
+               '저널과 연구 성격으로 나눠 정리하고, 서지정보를 특정하지 못한 인용을 왜 뺐는지도 그 이유와 함께 밝혔습니다.',
+    'tags': src['tags'],
+    'content': content,
+    'images': [
+        {'key': 'research-papers',
+         'prompt': 'Photorealistic still life of a neat stack of academic journal printouts with blank unreadable pages beside a pair of reading glasses on a dark wooden desk, warm side light, shallow depth of field, muted ivory and walnut palette, editorial photography, no text, no logo, no watermark, no people',
+         'alt': '침향을 다룬 학술 논문들을 모아 놓은 모습',
+         'caption': '논문의 수는 관심의 크기를 보여 줍니다.'},
+        {'key': 'evidence-ladder',
+         'prompt': 'Photorealistic still life of a simple wooden step stool standing alone against a plain neutral wall in soft directional light, deep shadows, muted grey and warm wood palette, minimal editorial photography, no text, no logo, no watermark, no people',
+         'alt': '근거가 단계별로 쌓이는 구조를 떠올리게 하는 계단',
+         'caption': '아래 단계의 결과를 위 단계의 결론처럼 옮겨 적을 수 없습니다.'},
+    ],
+    'changelog': {
+        'charsBefore': len(strip(src['content'])),
+        'charsAfter': len(strip(content)),
+        'citationsAdded': ['A1', 'A2', 'A4', 'A5', 'A6', 'A7', 'K1', 'K3'],
+        'voiceFixes': len(re.findall(r'(대라천은|대라천이|조엘라이프\(주\)는)', strip(content))),
+        'notes': '저널명만 적혀 있던 인용을 여덟 편 모두 완전한 서지정보(저자·연도·권·쪽·DOI)로 교체하고, 각 문헌의 성격'
+                 '(총설·리뷰·세포 실험·성분 분석)을 표의 독립 칸으로 분리. 서지정보를 특정할 수 없는 두 인용(수면장애 연구현황, '
+                 '문화재 보존 분야 향재 연구)과 유제놀·흰개미 수치를 규격서 §0에 따라 제외하고 그 사실을 독립 H2로 신설.',
+    },
+}
+
+path = os.path.join(BASE, 'out/%s.json' % SLUG)
+json.dump(out, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+print('wrote', path, out['changelog']['charsBefore'], '->', out['changelog']['charsAfter'])

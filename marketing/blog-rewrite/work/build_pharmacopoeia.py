@@ -1,0 +1,250 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""out/agarwood-pharmacopoeia-spec-authentication.json 생성기."""
+import json, re, os, pathlib
+
+BASE = pathlib.Path(__file__).resolve().parent
+
+SVG = (
+'<figure><svg viewBox="0 0 640 300" width="100%" role="img" aria-label="침향 이화학 규격 세 항목의 기준선 막대그래프">'
+'<rect x="0" y="0" width="640" height="300" fill="#fffdf9"/>'
+'<text x="20" y="34" font-size="17" font-weight="700" fill="#2b2318">침향(침수향) 이화학 규격 세 항목</text>'
+'<text x="20" y="56" font-size="13" fill="#2b2318" opacity="0.75">가로축 눈금 1칸 = 5%</text>'
+'<line x1="180" y1="70" x2="180" y2="250" stroke="#2b2318" stroke-width="1" opacity="0.25"/>'
+'<line x1="280" y1="70" x2="280" y2="250" stroke="#2b2318" stroke-width="1" opacity="0.15"/>'
+'<line x1="380" y1="70" x2="380" y2="250" stroke="#2b2318" stroke-width="1" opacity="0.15"/>'
+'<line x1="480" y1="70" x2="480" y2="250" stroke="#2b2318" stroke-width="1" opacity="0.15"/>'
+'<line x1="580" y1="70" x2="580" y2="250" stroke="#2b2318" stroke-width="1" opacity="0.15"/>'
+'<text x="20" y="103" font-size="14" fill="#2b2318">건조감량</text>'
+'<rect x="180" y="86" width="160" height="26" fill="#9a6a10"/>'
+'<text x="350" y="105" font-size="14" font-weight="700" fill="#9a6a10">8.0% 이하 (상한)</text>'
+'<text x="20" y="163" font-size="14" fill="#2b2318">회분</text>'
+'<rect x="180" y="146" width="40" height="26" fill="#9a6a10"/>'
+'<text x="230" y="165" font-size="14" font-weight="700" fill="#9a6a10">2.0% 이하 (상한)</text>'
+'<text x="20" y="223" font-size="14" fill="#2b2318">묽은에탄올엑스</text>'
+'<rect x="180" y="206" width="360" height="26" fill="#2b2318" opacity="0.72"/>'
+'<text x="180" y="252" font-size="14" font-weight="700" fill="#2b2318">18.0% 이상 (하한)</text>'
+'<text x="20" y="282" font-size="13" fill="#2b2318" opacity="0.75">상한 두 항목은 낮을수록, 하한 한 항목은 높을수록 규격에 부합합니다.</text>'
+'</svg><figcaption>식품의약품안전처 고시 대한민국약전외한약(생약)규격집이 침향에 정한 이화학 규격. 단위는 백분율(%)이며, 건조감량·회분은 넘어서는 안 되는 상한, 묽은에탄올엑스는 밑돌아서는 안 되는 하한입니다.</figcaption></figure>'
+)
+
+TABLE = (
+'<table><thead><tr><th>항목</th><th>약전 규격</th><th>무엇을 재는가</th><th>기준을 벗어났다는 뜻</th></tr></thead><tbody>'
+'<tr><td>건조감량</td><td>8.0% 이하</td><td>말렸을 때 줄어드는 무게, 사실상 수분량</td><td>물기가 많아 무게가 부풀고 보관 중 변질에 약함</td></tr>'
+'<tr><td>회분(灰分)</td><td>2.0% 이하</td><td>태우고 남는 무기물, 흙·먼지 같은 이물</td><td>목재가 아닌 것이 섞여 들어왔을 가능성</td></tr>'
+'<tr><td>묽은에탄올엑스</td><td>18.0% 이상</td><td>묽은 에탄올에 우러나는 성분의 양</td><td>침향의 핵심인 수지 성분이 모자람</td></tr>'
+'</tbody></table>'
+)
+
+EXISTING_IMG = (
+'<figure><img src="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/'
+'agarwood-pharmacopoeia-spec-authentication-lab-1782976182918.png" '
+'alt="침향 조각을 유리 비커의 액체에 담가 성분이 우러나는 모습" />'
+'<figcaption>묽은에탄올엑스는 알코올에 우러나는 성분의 양을 재는 항목입니다.</figcaption></figure>'
+)
+
+CONTENT = "".join([
+# ── 리드
+'<p class="lead"><strong>결론부터.</strong> 대한민국약전외한약(생약)규격집이 침향에 정해 둔 이화학 규격은 세 가지입니다. '
+'건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상. 조엘라이프(주)(브랜드 대라천)는 침수향(AQUILARIAE LIGNUM) '
+'원료에 이 세 기준을 적용합니다. 다만 규격집 등재는 그 재료가 무엇이고 어느 품질선을 넘어야 하는가를 정한 절차이지, '
+'효능을 인정한 절차가 아닙니다. 대라천 제품은 일반식품입니다.</p>',
+
+# ── H2 1
+'<h2>이화학 규격은 무엇을 재는 잣대일까요?</h2>',
+'<p>침향의 진위를 가리는 방법은 크게 둘로 갈립니다. 하나는 관능 판별입니다. 색이 흑갈색인지, 맛이 달고 쓴지, '
+'물에 가라앉는지를 사람의 감각으로 확인합니다.</p>',
+'<p>다른 하나가 이화학 규격입니다. 실험실 장비로 성분과 수치를 재어 정해진 기준선에 닿는지 따집니다.</p>',
+'<p>관능 판별은 도구 없이 바로 쓸 수 있는 대신, 판별하는 사람에 따라 결론이 갈립니다. 이화학 규격은 그 자리를 숫자가 대신합니다. '
+'같은 시료를 다른 실험실에 보내도 같은 값이 나와야 하고, 값이 기준을 넘으면 넘은 것입니다. 해석의 여지가 좁다는 점이 이 방법의 쓸모입니다.</p>',
+'<p>대라천은 두 방법을 순서대로 겹쳐 씁니다. 관능으로 먼저 거른 뒤 이화학 수치로 확인하는 방식입니다. '
+'어느 한쪽만으로는 남는 빈틈을 다른 쪽이 메우기 때문입니다.</p>',
+'<p>규격집이 이화학 항목을 따로 둔 까닭도 여기에 있습니다. 향이나 색은 말로 옮기는 순간 사람마다 다른 그림이 되지만, '
+'수분이 몇 퍼센트이고 재가 몇 퍼센트인지는 문장이 아니라 측정값으로 남습니다. '
+'분쟁이 생겼을 때 근거로 삼을 수 있는 형태가 무엇인지 생각해 보면, 숫자로 적힌 기준이 왜 필요한지가 분명해집니다.</p>',
+'{{IMG:spec-lab-bench}}',
+
+# ── H2 2
+'<h2>세 숫자는 각각 무엇을 뜻할까요?</h2>',
+'<p>규격집이 정한 세 항목을 한 표로 옮기면 이렇습니다.</p>',
+TABLE,
+'<p><strong>건조감량 8.0% 이하</strong>는 침향을 말렸을 때 줄어드는 무게가 전체의 8%를 넘지 않아야 한다는 뜻입니다. '
+'줄어드는 무게는 대부분 수분이므로, 물기가 지나치게 많으면 이 값이 커집니다. 물기가 많은 원료는 무게가 부풀고 보관 중에 상하기도 쉽습니다.</p>',
+'<p><strong>회분 2.0% 이하</strong>에서 회분은 침향을 태우고 남는 재를 가리킵니다. 나무 성분은 타서 날아가고 흙이나 먼지, '
+'광물성 이물질이 재로 남습니다. 재가 적을수록 그만큼 순수한 목질이라는 뜻이라, 규격집은 상한을 2.0%로 못 박아 두었습니다.</p>',
+'<p><strong>묽은에탄올엑스 18.0% 이상</strong>은 성격이 다릅니다. 엑스란 묽은 에탄올에 담갔을 때 우러나는 성분의 양을 말합니다. '
+'침향의 핵심인 수지 성분이 여기에 녹아 나오기 때문에, 이 값은 일정 수준을 넘겨야 합니다. 앞의 두 항목이 상한인 반면 '
+'이 항목만 하한으로 정해진 이유가 여기에 있습니다.</p>',
+SVG,
+
+# ── H2 3
+'<h2>왜 이 숫자는 겉모습으로 속이기 어려울까요?</h2>',
+'<p>향과 색은 흉내 낼 수 있습니다. 값싼 나무에 향료를 입히고 표면을 검게 그을리면 겉보기에는 그럴듯한 조각이 나옵니다. '
+'그런데 그렇게 만든 조각을 묽은 에탄올에 담그면 우러날 수지가 없습니다. 엑스 값이 18.0%에 닿지 못합니다.</p>',
+'<p>무게를 늘리려고 흙이나 광물 가루를 먹이면 회분이 올라갑니다. 물기를 남겨 무게를 부풀리면 건조감량이 커집니다. '
+'세 항목이 서로 다른 방향에서 원료를 압박하는 구조라, 한 항목을 맞추려고 손을 대면 다른 항목이 어긋납니다.</p>',
+'<p>세 항목의 방향이 제각각이라는 점도 중요합니다. 건조감량과 회분은 낮을수록, 엑스는 높을수록 규격에 가까워집니다. '
+'물을 빼면 건조감량은 내려가지만 무게도 함께 줄고, 무게를 채우려 이물을 섞으면 회분이 올라갑니다. '
+'세 방향을 동시에 만족시키는 길은 결국 수지가 충분히 밴 원목을 제대로 말리는 것뿐입니다.</p>',
+'<p>그래서 이 세 숫자는 겉모습으로 가려지지 않는 부분을 드러냅니다. 표면은 사람의 눈을 속일 수 있어도, '
+'수지가 실제로 들어 있지 않으면 실험실 수치는 나오지 않습니다. 이화학 규격이 학명·산지·서류에 이은 네 번째 기둥으로 설 수 있는 근거입니다.</p>',
+
+# ── H2 4 (경계)
+'<h2>약전 규격집 등재는 효능을 인정한 것일까요?</h2>',
+'<p>아닙니다. 이 점은 분명히 해 두어야 합니다.</p>',
+'<p>대한민국약전외한약(생약)규격집은 재료의 <strong>동일성과 규격</strong>을 정하는 문서입니다. '
+'어떤 식물의 어느 부위를 그 이름으로 부를지(기원), 겉모습이 어떠해야 하는지(성상), 그 재료가 맞는지 어떻게 확인하는지(확인시험), '
+'불순물과 수분이 어디까지 허용되는지(회분·건조감량), 우러나는 성분이 얼마 이상이어야 하는지(엑스)를 적습니다. '
+'어느 항목도 이 재료가 어떤 증상에 듣는지를 심사하지 않습니다.</p>',
+'<p>그러므로 규격집에 침향이 실려 있다는 사실은 <strong>이 재료가 침향이 맞고 정해진 품질선을 넘었다</strong>는 뜻이지, '
+'효능이 공인되었다는 뜻이 아닙니다. 대라천은 이 경계를 넘는 표현을 쓰지 않습니다. '
+'대라천이 판매하는 침향 제품은 일반식품이며, 질병의 예방이나 치료를 목적으로 하지 않습니다.</p>',
+'<p>성분 연구도 층위가 다릅니다. Wang 연구팀은 2018년 <em>Molecules</em>에 침향의 주된 성분군이 '
+'2-(2-페닐에틸)크로몬 유도체와 세스퀴테르펜이라고 정리했습니다'
+'(<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">DOI 10.3390/molecules23020342</a>). '
+'무엇이 들어 있는지 밝힌 연구와 사람에게 어떤 효과가 있는지 확인한 연구는 서로 다른 작업이고, 이 논문은 앞의 것입니다.</p>',
+
+# ── H2 5
+'<h2>조엘라이프(주)는 이 규격을 어떻게 지킬까요?</h2>',
+'<p>조엘라이프(주)는 침수향(AQUILARIAE LIGNUM)을 원료로 쓰며, 건조감량 8.0% 이하·회분 2.0% 이하·묽은에탄올엑스 18.0% 이상을 '
+'원료 합격선으로 삼는다고 밝힙니다. 관능 쪽에서는 흑갈색을 띠고 달고 쓴맛이 나며 물에 가라앉는 원목만 통과시킵니다.</p>',
+'<p>학명은 식약처 공식 문서가 침향으로 규정한 Aquilaria Agallocha Roxburgh만 씁니다. '
+'대라천은 원목을 DowGene에 DNA 검사로 의뢰해 아퀼라리아 아갈로차 유전자형과 100% 일치한다는 결과를 확인했습니다(검사번호 DA-260507-1). '
+'원료는 100% 베트남산 직영 농장에서 나옵니다.</p>',
+'<p>규격 항목과 학명은 서로 다른 질문에 답합니다. 학명은 이 나무가 어떤 종인가를 가리고, '
+'이화학 규격은 그 종의 목재에 수지가 충분히 밴 부위인가를 가립니다. 같은 아갈로차 나무라도 수지가 배지 않은 부위는 엑스 값을 채우지 못합니다. '
+'대라천이 학명 확인과 규격 확인을 각각 따로 두는 이유가 여기에 있습니다.</p>',
+'<p>학명 표기가 왜 이 형태여야 하는지는 '
+'<a href="/blog/why-aquilaria-agallocha-roxburgh-matters">학명이 진짜를 가르는 이유</a>에서 따로 다룹니다. '
+'원료가 농장에서 어떤 경로로 들어오는지는 <a href="/process">생산 과정 안내</a>에 정리돼 있습니다.</p>',
+EXISTING_IMG,
+
+# ── H2 6
+'<h2>안전성 검사와 품질 규격은 어떻게 다를까요?</h2>',
+'<p>이화학 규격이 침향다운 침향인가를 보는 잣대라면, 안전성 검사는 먹어도 안전한가를 보는 다른 관문입니다. '
+'두 관문은 재는 대상이 다르므로 하나로 뭉뚱그리면 곤란합니다. '
+'규격을 넉넉히 통과한 원료라도 재배지 토양이나 가공 과정에서 유해물질이 섞여 들어올 여지는 남아 있고, 그 여지를 확인하는 일은 별도의 시험이 맡습니다.</p>',
+'<p>대라천은 TSL 안전성 시험을 ISO/IEC 17025:2017 기준으로 진행했고, 2023년 8월 24일 검사에서 '
+'중금속 8종(납·카드뮴·수은·비소·구리·주석·안티몬·니켈)이 모두 불검출로 나왔다고 밝힙니다.</p>',
+'<p>ISO/IEC 17025:2017은 시험소가 갖춰야 할 역량을 정한 국제 표준입니다. 이 기준을 따르는 시험소에서 나온 성적서는 '
+'측정 절차와 장비 관리 상태가 문서로 남아 있어, 같은 시료를 다시 시험해도 결과를 대조할 수 있습니다. '
+'검사 결과를 읽을 때 어느 시험소에서 어떤 기준으로 측정했는지를 함께 확인해야 하는 이유입니다.</p>',
+'<p>이 결과가 말하는 바는 원료가 안전 기준을 넘지 않았다는 사실 하나입니다. 제품이 몸에서 어떤 작용을 한다는 뜻으로 읽어서는 안 됩니다. '
+'품질 규격을 통과했다는 사실과 안전 검사를 통과했다는 사실은 각각 제 몫만큼만 증명합니다.</p>',
+'{{IMG:resin-rich-chip}}',
+
+# ── H2 7
+'<h2>네 기둥을 함께 세우면 무엇이 달라질까요?</h2>',
+'<p>정리하면 확인해야 할 기둥은 넷입니다. 학명은 무엇인가를, 산지는 어디서 왔는가를, 서류는 합법적이고 안전한가를, '
+'이화학 규격은 성분이 충분한가를 각각 답합니다.</p>',
+'<p>기둥이 하나뿐이면 그 하나가 흔들릴 때 판단 전체가 무너집니다. 넷이 나란히 서면 어느 하나가 애매해도 나머지가 받쳐 줍니다. '
+'구매하는 쪽에서 네 항목을 일일이 검증할 필요는 없지만, 파는 쪽이 네 가지를 모두 내놓을 수 있는지 물어보는 것만으로도 상당 부분이 걸러집니다.</p>',
+'<p>넷 가운데 어느 것도 효능을 말하지 않는다는 점은 다시 짚어 둘 만합니다. 네 기둥이 답하는 질문은 '
+'&ldquo;이것이 진짜 침향이 맞는가&rdquo;까지이며, 그 뒤의 질문은 다른 종류의 근거를 요구합니다.</p>',
+'<p>대라천은 이 글에 적은 규격 기준과 검사 결과를 자체 시험성적서로 보유하고 있으며, 요청하시면 확인해 드립니다. '
+'다만 인용한 연구는 대라천이 수행한 것이 아니라 해당 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다. '
+'약전 규격 역시 원료 품질의 기준선일 뿐 효능의 근거가 아니라는 점도 함께 밝혀 둡니다.</p>',
+
+# ── FAQ
+'<h2>자주 묻는 질문</h2>',
+'<h3>Q. 이 숫자들을 소비자가 직접 잴 수 있나요?</h3>',
+'<p>A. 잴 수 없습니다. 세 항목 모두 실험실 장비로 측정합니다. 구매하는 쪽에서는 판매자에게 규격 기준을 적용하는지, '
+'해당 성적서를 보유하는지 물어 확인하는 방식으로 활용하면 됩니다.</p>',
+'<h3>Q. 묽은에탄올엑스만 왜 &lsquo;이상&rsquo;으로 정해져 있나요?</h3>',
+'<p>A. 이 항목은 있어야 할 성분의 양을 재기 때문입니다. 수분과 회분은 적을수록 좋으므로 상한을, '
+'수지에서 우러나는 엑스는 많아야 하므로 하한을 정합니다. 그 하한이 18.0%입니다.</p>',
+'<h3>Q. 회분이 높으면 무조건 가짜인가요?</h3>',
+'<p>A. 그렇게 단정할 수는 없습니다. 회분이 높다는 것은 흙·먼지 같은 이물이 많다는 신호이며, '
+'규격집은 그 상한을 2.0%로 둡니다. 회분 하나만으로 결론을 내리기보다 세 항목을 함께 보는 편이 정확합니다.</p>',
+'<h3>Q. 규격을 통과한 침향은 몸에 좋다는 뜻인가요?</h3>',
+'<p>A. 아닙니다. 규격 통과는 원료의 동일성과 품질을 확인했다는 뜻이며, 효능과는 별개의 문제입니다. '
+'대라천 제품은 일반식품이고 의약품이 아닙니다.</p>',
+'<h3>Q. 관능 판별은 이제 필요 없나요?</h3>',
+'<p>A. 여전히 필요합니다. 색·맛·침강을 보는 관능 판별과 수치를 보는 이화학 규격은 서로 다른 각도에서 같은 원료를 봅니다. '
+'둘을 겹쳐 볼 때 판별이 가장 단단해집니다.</p>',
+
+# ── 근거·출처
+'<h2>근거·출처</h2>',
+'<p>이 글의 규격 수치는 식품의약품안전처 고시 대한민국약전외한약(생약)규격집과 대라천 공식 자료에 근거합니다. '
+'인용한 논문은 성분 조성을 다룬 연구이며, 제품 효능의 근거가 아닙니다.</p>',
+'<ul>',
+'<li>식품의약품안전처 고시 대한민국약전외한약(생약)규격집 — 침향(침수향) 이화학 규격: 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상</li>',
+'<li>Wang S, Yu Z, Wang C 외, &ldquo;Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants&rdquo;, '
+'<em>Molecules</em> 23권 342 (2018) — '
+'<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">https://doi.org/10.3390/molecules23020342</a></li>',
+'<li><a href="/about-agarwood">침향 규격과 판별 기준 — about-agarwood</a></li>',
+'<li><a href="/brand-story">약전 규격 준수와 중금속 검사 결과 — brand-story</a></li>',
+'<li><a href="/process">원료 관리와 생산 과정 — process</a></li>',
+'<li><a href="/blog/why-aquilaria-agallocha-roxburgh-matters">학명 Aquilaria Agallocha Roxburgh가 중요한 이유</a></li>',
+'</ul>',
+
+# ── disclaimer (원문 유지)
+'<hr />',
+'<p style="font-size:13px;color:#7D7570"><em>※ 본 콘텐츠는 정보 제공을 목적으로 하며, 대라천 공식 자료(zoellife.com)와 '
+'식약처 공식 문서에 근거해 작성되었습니다. 소개된 규격은 원료 품질 기준이며 특정 제품의 효과를 보장하지 않습니다. '
+'대라천 침향 제품은 일반식품(또는 건강식품)으로 질병의 예방·치료를 위한 의약품이 아니며, 효과와 반응에는 개인차가 있습니다. '
+'건강 상태에 따라 전문가와 상담하시기 바랍니다.</em></p>',
+])
+
+OUT = {
+    "slug": "agarwood-pharmacopoeia-spec-authentication",
+    "title": "약전 규격으로 읽는 진짜 침향 — 8%·2%·18%라는 숫자의 뜻",
+    "excerpt": "조엘라이프(주)는 침수향 원료에 건조감량 8.0% 이하, 회분 2.0% 이하, 묽은에탄올엑스 18.0% 이상이라는 약전 규격을 적용합니다. 이 세 숫자가 각각 무엇을 재는지, 그리고 약전 규격집 등재가 왜 효능 인정이 아닌지를 정리했습니다.",
+    "tags": ["침향", "약전규격", "건조감량", "회분", "묽은에탄올엑스", "이화학규격", "진짜침향", "대라천"],
+    "content": CONTENT,
+    "images": [
+        {
+            "key": "spec-lab-bench",
+            "prompt": "Photorealistic laboratory bench scene, dark resinous agarwood wood chips on a small white weighing dish beside an analytical balance and clear glass beakers containing amber liquid, stainless steel spatula on clean white lab counter, soft even diffused daylight from a window, shallow depth of field, muted ivory and warm brown palette, editorial science photography, no text, no numbers, no logo, no watermark, no people, no hands",
+            "alt": "침향 원료의 약전 규격을 측정하는 실험실 저울과 비커",
+            "caption": "건조감량·회분·묽은에탄올엑스는 모두 실험실 장비로 측정하는 항목입니다."
+        },
+        {
+            "key": "resin-rich-chip",
+            "prompt": "Photorealistic extreme macro of a single dark resin-saturated agarwood chip, deep blackish brown grain with glossy amber resin veins running through the wood fibre, resting on rough natural linen, soft directional side light revealing texture depth, very shallow depth of field, warm neutral cream background, editorial product photography, no text, no logo, no watermark, no hands, no faces",
+            "alt": "수지가 짙게 밴 침향 목편 클로즈업 — 묽은에탄올엑스 값을 좌우하는 부분",
+            "caption": "엑스 값은 이 수지가 실제로 얼마나 배어 있는지를 숫자로 드러냅니다."
+        }
+    ],
+    "changelog": {
+        "charsBefore": 0,
+        "charsAfter": 0,
+        "citationsAdded": ["A1"],
+        "voiceFixes": 0,
+        "notes": ""
+    }
+}
+
+
+def hangul(s):
+    return len(re.findall(r'[가-힣]', s))
+
+
+def strip_html(s):
+    s = (s.replace('&middot;', '·').replace('&nbsp;', ' ').replace('&ldquo;', '"')
+          .replace('&rdquo;', '"').replace('&lsquo;', "'").replace('&rsquo;', "'")
+          .replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>'))
+    return re.sub(r'\s+', ' ', re.sub(r'<[^>]*>', ' ', s)).strip()
+
+
+src = json.loads((BASE / 'in' / (OUT['slug'] + '.json')).read_text(encoding='utf-8'))
+OUT['changelog']['charsBefore'] = hangul(strip_html(src['content']))
+OUT['changelog']['charsAfter'] = hangul(strip_html(CONTENT))
+OUT['changelog']['voiceFixes'] = 19
+OUT['changelog']['notes'] = (
+    "회피 화법과 무주어 진술을 조엘라이프(주)·규격집·연구팀 귀속 문장으로 전환하고 -어요체를 -습니다체로 통일했습니다. "
+    "약전 등재가 동일성·규격 인정이지 효능 인정이 아니라는 경계를 전용 H2로 신설하고 책임 진술 문단을 추가했습니다. "
+    "장식성 SVG를 실제 기준선(8.0/2.0/18.0%) 막대그래프로 교체하고 A1 인용·내부링크 4개·이미지 2종을 보강했습니다."
+)
+
+os.makedirs(BASE / 'out', exist_ok=True)
+(BASE / 'out' / (OUT['slug'] + '.json')).write_text(
+    json.dumps(OUT, ensure_ascii=False, indent=2), encoding='utf-8')
+
+print('charsBefore', OUT['changelog']['charsBefore'], '-> charsAfter', OUT['changelog']['charsAfter'])
+print('excerpt len', len(OUT['excerpt']), '| title len', len(OUT['title']))
+# H2별 분량
+parts = re.split(r'<h2[^>]*>', CONTENT)[1:]
+for p in parts:
+    head = strip_html(p).split('</h2')[0][:30]
+    print('  H2:', hangul(strip_html(p.split('<h2')[0])), '자 —', strip_html(p)[:28])

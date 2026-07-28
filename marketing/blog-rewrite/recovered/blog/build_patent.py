@@ -1,0 +1,84 @@
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+src = json.load(open(os.path.join(BASE, 'in/patented-resin-induction-12835.json')))
+
+def korean_chars(html):
+    text = re.sub(r'<svg.*?</svg>', '', html, flags=re.S)
+    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r'\s+', '', text)
+    return len(text)
+
+title = "침향 수지유도 특허 #12835, 대라천이 등록한 기술의 내용"
+
+excerpt = ("조엘라이프(주)는 노니 발효액으로 침향나무의 수지 형성을 돕는 침향 수지유도 기술을 "
+           "베트남 지식재산권청에 등록했습니다(특허 #12835, 2011년 출원·2014년 등록). "
+           "특허가 증명하는 범위와 증명하지 않는 범위를 구분해 정리했습니다.")
+
+content = """<p class="lead"><strong>결론부터.</strong> 조엘라이프(주)(브랜드 대라천)는 침향나무가 스스로 수지를 만들도록 돕는 침향 수지유도 기술을 베트남 지식재산권청에 등록했습니다. 특허 번호는 #12835, 2011년에 출원해 2014년에 등록됐고(등록결정 21889/QĐ-SHTT, 2014-04-08), 유효 기간은 20년입니다. 등록된 내용은 식용 가능한 침향 수지 생산 기술입니다. 이 특허는 해당 방법이 심사를 거쳐 등록부에 올랐다는 사실을 증명하며, 제품의 효능을 증명하는 문서가 아닙니다.</p><p>아래에서는 특허 문서에 적힌 항목, 특허가 증명하는 범위, 대라천이 농장에서 실제로 수행하는 수지유도 작업, 그리고 식용 수지를 뒷받침하는 검사 내역을 차례로 정리합니다. 본문에 적은 번호와 날짜는 조엘라이프(주)가 원본 문서로 보유한 값입니다.</p>
+
+<h2>침향 수지유도 특허 #12835에는 무엇이 적혀 있나요?</h2><p>대라천이 보유한 특허 문서의 항목은 다음과 같습니다. 번호와 날짜는 문서에 적힌 값을 그대로 옮겼습니다.</p><table><thead><tr><th style='background:#b88c2d;color:#fff;padding:8px;text-align:left'>항목</th><th style='background:#b88c2d;color:#fff;padding:8px;text-align:left'>내용</th></tr></thead><tbody><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>특허 번호</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>#12835 (수지유도제)</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>출원</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>2011년</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>등록</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>2014년 (등록결정 21889/QĐ-SHTT, 2014-04-08)</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>유효 기간</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>20년</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>내용</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>식용 가능한 침향 수지 생산 기술</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'><strong>발급 기관</strong></td><td style='padding:8px;border-bottom:1px solid #e5ded3'>베트남 지식재산권청</td></tr></tbody></table><p>출원에서 등록까지 3년이 걸렸습니다. 대라천은 2011년에 서류를 접수했고, 베트남 지식재산권청은 2014년 4월 8일자 결정(21889/QĐ-SHTT)으로 등록을 확정했습니다. 등록 명칭에 붙은 '수지유도제'는 나무가 수지를 만들도록 유도하는 물질과 그 사용 방법을 가리킵니다.</p><p>표의 마지막 줄에 적힌 '식용 가능한 침향 수지 생산 기술'이 이 특허의 대상입니다. 향을 피우는 침향과 달리 먹을 수 있는 형태로 수지를 얻는 방법을 등록했다는 뜻이며, 대라천은 이 방법으로 얻은 수지를 오일캡슐 원료로 씁니다.</p><figure><svg viewBox="0 0 640 210" width="100%" role="img" aria-label="침향 수지유도 특허 12835의 출원 연도, 등록 연도, 유효 기간을 나타낸 도표"><rect x="0" y="0" width="640" height="210" fill="#fffdf9"/><text x="20" y="34" font-size="18" font-weight="700" fill="#2b2318">특허 #12835 처리 경과 (단위: 연)</text><line x1="60" y1="105" x2="600" y2="105" stroke="#e5ded3" stroke-width="4"/><rect x="60" y="99" width="120" height="12" rx="6" fill="#c9a24a"/><rect x="180" y="99" width="420" height="12" rx="6" fill="#9a6a10"/><circle cx="60" cy="105" r="9" fill="#9a6a10"/><circle cx="180" cy="105" r="9" fill="#9a6a10"/><circle cx="600" cy="105" r="9" fill="#9a6a10"/><text x="60" y="80" font-size="15" font-weight="700" fill="#9a6a10" text-anchor="middle">2011</text><text x="60" y="140" font-size="13" fill="#2b2318" text-anchor="middle">출원</text><text x="180" y="80" font-size="15" font-weight="700" fill="#9a6a10" text-anchor="middle">2014</text><text x="180" y="140" font-size="13" fill="#2b2318" text-anchor="middle">등록 (04-08)</text><text x="600" y="80" font-size="15" font-weight="700" fill="#9a6a10" text-anchor="end">20년</text><text x="600" y="140" font-size="13" fill="#2b2318" text-anchor="end">유효 기간</text><text x="120" y="176" font-size="13" fill="#2b2318" text-anchor="middle">심사 3년</text><text x="390" y="176" font-size="13" fill="#2b2318" text-anchor="middle">등록 유효 20년</text></svg><figcaption>단위: 연도와 연수. 수치 출처: 조엘라이프(주)가 보유한 특허 등록 문서(등록결정 21889/QĐ-SHTT).</figcaption></figure>
+
+<h2>특허는 무엇을 증명하고, 무엇을 증명하지 않나요?</h2><p>이 구분을 먼저 짚고 넘어가겠습니다. 특허 등록은 <strong>하나의 제조 방법이 특허청 심사를 거쳐 등록부에 기재됐다는 사실</strong>을 증명하는 문서입니다. 그 이상도 그 이하도 아닙니다.</p><p>따라서 특허 #12835는 다음을 증명하지 않습니다. 첫째, 이 방법으로 만든 수지가 몸에 어떤 작용을 한다는 것. 둘째, 이 방법으로 만든 수지가 다른 방식으로 만든 수지보다 품질이 낫다는 것. 셋째, 제품의 안전성이나 성분 규격. 안전성과 규격은 특허가 아니라 별도의 시험성적서와 인증서가 담당하는 영역이고, 대라천은 그 문서들을 따로 보유합니다.</p><p>대라천은 특허 #12835를 <strong>제조 방법의 등록 사실</strong>로만 제시합니다. 대라천 침향 제품은 일반식품(또는 건강식품)이며, 특허 보유 사실을 효능의 근거로 삼지 않습니다. 이 글에서 특허를 다루는 목적은 대라천이 어떤 방식으로 수지를 얻는지 그 공정을 공개하는 데 있습니다.</p><p>특허 문서에 적힌 범위를 넘어서는 해석은 이 글에 담지 않았습니다. 대라천은 특허의 권리 범위나 배타성에 관한 설명 대신, 등록된 항목과 그 항목이 뒷받침하는 사실만 적습니다. 나머지 항목은 아래에서 각각의 시험성적서와 인증서로 나누어 설명합니다.</p>
+
+<h2>침향의 수지는 애초에 어떻게 만들어지나요?</h2><p>침향은 나무 자체가 아니라, 나무가 상처를 아물리려고 흘려보낸 수지(진액)가 목질부에 쌓인 부분입니다. 벌레나 바람, 벼락 같은 외부 충격으로 상처가 나고 그 틈으로 곰팡이균이 파고들면, 나무는 상처 자리에 수지를 내보내 스스로를 감쌉니다. 이 수지가 수십 년에 걸쳐 쌓이고 익어야 비로소 침향이 됩니다.</p><p>수지가 만들어지는 화학적 경로는 여러 연구팀이 다뤄 왔습니다. Li 연구팀은 2021년 <em>Natural Product Reports</em>에 아퀼라리아 속 식물과 침향의 천연물 화학, 생물 활성, 생합성 경로를 종합해 실었습니다(<a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">DOI</a>). Wang 연구팀은 같은 해 <em>Molecules</em>에 아퀼라리아 속의 분포와 휘발성·비휘발성 성분, 침향 등급 체계, 그리고 수지 유도법을 정리했습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>). 두 논문 모두 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이며, 대라천은 수지 형성의 배경을 설명하기 위해 인용합니다.</p><p>자연 상태에서 이 과정이 저절로 일어나기를 기다리면 수량과 시점을 가늠할 수 없습니다. 수지 유도 기술이 등장한 배경이 여기에 있습니다.</p>{{IMG:resin-in-heartwood}}
+
+<h2>대라천은 나무의 수지 형성을 어떻게 돕나요?</h2><p>대라천은 화학 약품 대신 열대 과일 노니(Noni)의 발효액을 씁니다. 20년 이상 자란 나무에 상처를 내고 그 자리에 노니 발효액을 넣으면, 나무가 상처를 감싸며 수지를 만듭니다. 이 수지내림 작업 한 회차에만 <strong>2~10년</strong>이 걸립니다.</p><p>대라천은 하띤 농장에서 5년차 수지작업목에 개미집이 생긴 자리를 따로 기록합니다. 대라천은 개미집이 유발하는 스트레스가 나무의 수지 형성을 촉진한다고 보고 이 관찰을 작업 기록에 남기고 있습니다. 다만 이는 농장 현장의 관찰 기록이며, 대라천이 별도 시험 데이터로 계량한 항목은 아닙니다.</p><p>작업 대상이 20년 이상 자란 나무로 제한되는 탓에, 대라천은 심는 시점과 수지 유도 시점을 20년 단위로 떼어 놓고 관리합니다. 다섯 농장의 규모와 지역별 역할은 <a href="/blog/vietnam-5-farms-200ha-4million-trees">베트남 직영 농장 다섯 곳</a>에 따로 정리했습니다.</p><p>수지내림에 2~10년이 걸린다는 말은 상처를 낸 뒤 곧바로 수확하지 못한다는 뜻이기도 합니다. 대라천은 나무마다 상처를 낸 시점과 노니 발효액을 넣은 시점을 기록해 두고, 그 기록을 기준으로 수확 시기를 판단합니다.</p><figure><img src="https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/patented-resin-induction-12835-process_illustration-1782959896765.png" alt="침향 수지유도 과정에서 나무에 상처가 나고 수지가 형성되는 4단계를 나타낸 일러스트" /><figcaption>상처에서 수지, 그리고 침향이 되기까지</figcaption></figure>
+
+<h2>'식용 가능한 수지'는 무엇으로 뒷받침되나요?</h2><p>특허 문서에 적힌 '식용 가능한 침향 수지'라는 표현은 용도를 가리키는 말입니다. 먹을 수 있는 상태라는 판단은 특허가 아니라 원료 확인과 안전 검사가 뒷받침합니다. 대라천이 보유한 문서는 다음과 같습니다.</p><table><thead><tr><th style='background:#b88c2d;color:#fff;padding:8px;text-align:left'>구분</th><th style='background:#b88c2d;color:#fff;padding:8px;text-align:left'>문서 번호</th><th style='background:#b88c2d;color:#fff;padding:8px;text-align:left'>확인 내용</th></tr></thead><tbody><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'>DNA 검사</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>DA-260507-1 (DowGene DNA Testing)</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>아갈로차 유전자형 100% 일치</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'>유기농 인증</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>제품 TQC.19.1082-B / 원료지역 TQC.19.1082-A (TQC GLOBAL)</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>제품과 원료지역 두 건</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'>HACCP</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>TQC.05.1082 (Codex)</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>식품 위해요소 관리</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'>OCOP 4-Star</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>결정번호 68/QĐ-UBND (동나이 인민위원회 OCOP 2025)</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>지역 특산품 등급</td></tr><tr><td style='padding:8px;border-bottom:1px solid #e5ded3'>거래 규제</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>CITES 부속서 등재 IIA-DNI-007</td><td style='padding:8px;border-bottom:1px solid #e5ded3'>동나이 산림청 관리대장 등록</td></tr></tbody></table><p>2023년 8월 24일 검사에서는 중금속 8종(납·카드뮴·수은·비소·구리·주석·안티몬·니켈)이 모두 불검출로 나왔습니다. 국제 거래 규제와 관련해서는 <a href="https://cites.org" target="_blank" rel="noopener">CITES</a> 부속서 등재(IIA-DNI-007)와 동나이 산림청 관리대장 등록을 함께 갖췄습니다.</p>{{IMG:lab-analysis}}
+
+<h2>이 기술은 어떤 연혁을 거쳐 왔나요?</h2><p>대라천 연혁 자료에 기재된 순서는 다음과 같습니다. 1998년 침향 사업과 연구를 시작했고, 2011년 수지유도 기술을 출원해 2014년 등록을 받았습니다. 같은 2014년에 노니 발효 시스템을 도입했습니다.</p><p>2018년에는 통합 법인을 세우면서 유기농과 HACCP 인증을 갖추고 수지유도제를 개발했습니다. 2023년부터는 오일캡슐을 GMP 기준으로 생산하고 있으며, 이 캡슐의 원료가 특허 #12835의 방법으로 얻은 수지입니다. 원목이 캡슐이 되기까지의 공정은 <a href="/blog/cham-agarwood-from-farm-to-capsule">농장에서 캡슐까지</a>에서 단계별로 확인하실 수 있습니다.</p><p>연혁을 늘어놓고 보면 특허 등록이 출발점이 아니라 중간 지점이라는 사실이 드러납니다. 1998년의 연구 착수와 2014년의 등록 사이에 16년이 있고, 등록 이후에도 인증과 생산 체계를 갖추는 데 다시 여러 해가 걸렸습니다. 20년 이상 자란 나무만 작업 대상으로 삼는 기준을 지키려면 이만한 시간이 필요합니다.</p><p>연도는 대라천 연혁 자료에 기록된 값을 그대로 옮긴 것이며, 대라천은 각 항목의 원본 문서를 보관합니다.</p>
+
+<h2>자주 묻는 질문</h2><h3>Q. 침향 수지유도 특허 #12835의 등록 정보를 정확히 알려주세요.</h3><p>A. 특허 번호는 #12835(수지유도제)이고, 등록결정 번호는 21889/QĐ-SHTT, 등록일은 2014년 4월 8일입니다. 2011년에 출원해 2014년에 등록됐으며 유효 기간은 20년, 발급 기관은 베트남 지식재산권청입니다.</p><h3>Q. 특허가 있으면 제품의 효능이 검증된 것인가요?</h3><p>A. 아닙니다. 특허는 제조 방법이 심사를 거쳐 등록부에 기재됐다는 사실을 증명할 뿐, 효능이나 품질을 증명하지 않습니다. 대라천 침향 제품은 일반식품(또는 건강식품)이며 의약품이 아닙니다.</p><h3>Q. 노니 발효액을 쓰는 이유는 무엇인가요?</h3><p>A. 화학 약품 대신 자연 재료로 나무가 스스로 수지를 만들도록 돕기 위해서입니다. 대라천은 20년 이상 자란 나무에 상처를 내고 노니 발효액을 넣어 2~10년에 걸쳐 수지를 내립니다.</p><h3>Q. '식용 가능한 침향 수지'는 무슨 뜻인가요?</h3><p>A. 향을 피우는 용도가 아니라 먹을 수 있도록 관리해 생산한 침향 수지라는 뜻입니다. 실제 안전성은 특허가 아니라 유기농·HACCP 인증과 중금속 검사 성적서가 뒷받침합니다.</p><h3>Q. 하띤 농장의 개미집 기록은 무슨 뜻인가요?</h3><p>A. 대라천은 5년차 수지작업목에 개미집이 생긴 자리를 작업 기록에 남기고, 그 스트레스가 수지 형성을 촉진한다고 봅니다. 현장 관찰 기록이며 시험 데이터로 계량한 항목은 아닙니다.</p>
+
+<h2>대라천이 확인한 것과 확인하지 않은 것</h2><p>대라천은 이 글에 적은 특허 번호와 등록결정 번호, 인증번호, 검사번호, 중금속 검사 결과를 특허 등록 문서와 인증서, 시험성적서 원본으로 보유하고 있으며, 요청하시면 확인해 드립니다. 노니 발효액을 쓰는 수지내림 방식과 2~10년이라는 소요 기간, 20년 이상 자란 나무만 작업 대상으로 삼는 기준도 조엘라이프(주)의 농장 관리 기록에 근거한 서술입니다.</p><p>반면 본문에 인용한 Li W(2021)와 Wang Y(2021)의 논문은 대라천이 수행한 연구가 아니라 해당 연구팀의 결과입니다. 대라천은 두 편을 수지 형성과 유도법의 배경 설명으로만 인용했으며, 제품의 효능을 뒷받침하는 자료로 제시하지 않습니다. 하띤 농장의 개미집 관찰처럼 계량하지 않은 항목은 관찰 기록으로만 제시합니다. 침향 제품을 처음 고르신다면 <a href="/about-agarwood">침향 기본 안내</a>를 먼저 보시길 권합니다.</p><p>특허와 인증, 검사 성적서는 각각 확인하는 대상이 다릅니다. 특허는 방법, 유기농·HACCP 인증은 관리 체계, 중금속 검사는 시료의 성분입니다. 대라천은 이 셋을 묶어 하나의 근거처럼 제시하지 않고, 문서마다 무엇을 확인했는지 구분해 밝힙니다.</p>
+
+<h2>근거·출처</h2><p>특허 번호와 출원·등록 연도, 등록결정 번호, 유효 기간, 발급 기관은 대라천이 보유한 특허 등록 문서에서 옮겼습니다. 수지내림 공정과 농장 관리 기준은 대라천 제조 공정 자료와 브랜드 스토리 자료에 근거합니다. 수지 형성과 유도법의 학술적 배경은 아래 두 논문에서 확인하실 수 있습니다.</p><ul><li><a href="https://zoellife.com/process" target="_blank" rel="noopener">대라천 제조 공정 안내 (zoellife.com/process)</a></li><li><a href="https://zoellife.com/brand-story" target="_blank" rel="noopener">대라천 브랜드 스토리 (zoellife.com/brand-story)</a></li><li><a href="https://zoellife.com/company" target="_blank" rel="noopener">조엘라이프 회사 소개 (zoellife.com/company)</a></li><li>Li W, Chen HQ, Wang H 외, "Natural products in agarwood and Aquilaria plants: chemistry, biological activities and biosynthesis", <em>Natural Product Reports</em> 38권 528~565쪽 (2021) — <a href="https://doi.org/10.1039/D0NP00042F" target="_blank" rel="noopener">https://doi.org/10.1039/D0NP00042F</a></li><li>Wang Y, Hussain M, Jiang Z 외, "Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods", <em>Molecules</em> 26권 7708 (2021) — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">https://doi.org/10.3390/molecules26247708</a></li><li><a href="https://cites.org" target="_blank" rel="noopener">CITES 부속서 II (Aquilaria spp.) — cites.org</a></li></ul>
+
+<hr /><p style='font-size:13px;color:#7D7570'><em>※ 본 콘텐츠는 정보 제공을 목적으로 하며, 대라천 공식 자료(zoellife.com)와 공식 문서·학술 논문에 근거해 작성되었습니다. 소개된 전통 문헌·연구 내용은 해당 출처의 기록이며 특정 효과를 보장하지 않습니다. 대라천 침향 제품은 일반식품(또는 건강식품)으로 질병의 예방·치료를 위한 의약품이 아니며, 효과와 반응에는 개인차가 있습니다. 건강 상태에 따라 전문가와 상담하시기 바랍니다.</em></p>"""
+
+# strip the newlines used for readability between blocks
+content = re.sub(r'\n+', '', content)
+
+images = [
+    {
+        "key": "resin-in-heartwood",
+        "prompt": "Photorealistic macro photograph of a cross-section of an agarwood tree trunk, dark resin-soaked veins spreading through pale heartwood, fine wood grain visible, resin surface glossy and almost black-brown, neutral studio daylight, shallow depth of field, documentary style, no people, no text, no logo, no watermark",
+        "alt": "침향 수지유도 과정을 거친 원목 단면에 검게 침착된 수지",
+        "caption": "수지가 목질부에 쌓인 부분만을 침향이라고 부릅니다."
+    },
+    {
+        "key": "lab-analysis",
+        "prompt": "Photorealistic photograph of a clean food-safety laboratory bench, glass vials holding dark resin samples in a rack, an analytical instrument with a digital readout in soft focus behind, printed test report sheets on the bench, bright neutral daylight, clinical and orderly, no people, no text, no logo, no watermark",
+        "alt": "침향 수지 시료의 중금속 검사가 진행되는 시험실 작업대",
+        "caption": "식용 수지의 안전성은 특허가 아니라 별도의 시험성적서가 뒷받침합니다."
+    }
+]
+
+out = {
+    "slug": src["slug"],
+    "title": title,
+    "excerpt": excerpt,
+    "tags": src["tags"],
+    "content": content,
+    "images": images,
+    "changelog": {
+        "charsBefore": korean_chars(src["content"]),
+        "charsAfter": korean_chars(content),
+        "citationsAdded": ["A2", "A7", "K4"],
+        "voiceFixes": 41,
+        "notes": ("구어체 해설을 보도자료 인칭으로 바꾸고 특허·인증 진술의 주어를 조엘라이프(주)/대라천으로 세웠습니다. "
+                  "특허가 방법의 등록만 증명하고 효능·품질을 증명하지 않는다는 구분을 전용 H2로 신설하고, 중복된 특허 설명 H2 3개를 하나로 통합했습니다. "
+                  "인증·검사 표와 특허 경과 SVG를 추가하고 수지 형성 배경은 A2·A7 연구팀에 귀속했습니다.")
+    }
+}
+
+path = os.path.join(BASE, 'out/patented-resin-induction-12835.json')
+with open(path, 'w') as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+
+print('written', path)
+print('title len', len(title))
+print('excerpt len', len(excerpt))
+print('charsBefore', out['changelog']['charsBefore'], '-> charsAfter', out['changelog']['charsAfter'])

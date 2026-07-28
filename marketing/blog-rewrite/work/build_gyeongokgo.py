@@ -1,0 +1,200 @@
+import json, re, os
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+SLUG = 'agarwood-in-gyeongokgo-tradition-meets-science'
+src = json.load(open(os.path.join(BASE, 'in/%s.json' % SLUG), encoding='utf-8'))
+
+DISC = re.findall(r'<p style[^>]*><em>※.*?</em></p>', src['content'], re.S)[-1]
+TAIL = '<hr />' + DISC
+
+A1 = '<a href="https://doi.org/10.3390/molecules23020342" target="_blank" rel="noopener">https://doi.org/10.3390/molecules23020342</a>'
+A6 = '<a href="https://doi.org/10.1007/s11101-025-10117-6" target="_blank" rel="noopener">https://doi.org/10.1007/s11101-025-10117-6</a>'
+K3 = ('<a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?'
+      'sereArticleSearchBean.artiId=ART002902473" target="_blank" rel="noopener">침향 추출물의 면역조절 및 생리활성 분석</a>')
+
+TABLE = (
+ '<table><thead><tr><th>구분</th><th>연구가 말할 수 있는 것</th><th>연구가 말할 수 없는 것</th></tr></thead><tbody>'
+ '<tr><td>대상</td><td>세포나 동물에서 관찰된 변화</td><td>사람에게서 같은 변화가 일어난다</td></tr>'
+ '<tr><td>지표</td><td>정한 지표가 어느 방향으로 움직였는가</td><td>그 방향이 건강상의 이익이다</td></tr>'
+ '<tr><td>횟수</td><td>이번 조건에서 그렇게 나왔다</td><td>언제나 그렇게 나온다</td></tr>'
+ '<tr><td>결론</td><td>다음 연구가 필요한 지점</td><td>질병의 예방이나 치료</td></tr>'
+ '</tbody></table>'
+)
+
+SVG = (
+ '<figure><svg viewBox="0 0 640 220" width="100%" role="img" '
+ 'aria-label="전통 처방을 현대 실험으로 확인하는 네 단계 절차 도표">'
+ '<rect x="0" y="0" width="640" height="220" fill="#fffdf9"/>'
+ '<text x="20" y="32" font-size="17" font-weight="700" fill="#2b2318">전통 처방을 실험으로 확인하는 순서</text>'
+ '<rect x="20" y="62" width="140" height="88" fill="none" stroke="#9a6a10" stroke-width="1"/>'
+ '<text x="34" y="90" font-size="13" font-weight="700" fill="#9a6a10">1 준비</text>'
+ '<text x="34" y="116" font-size="12" fill="#2b2318">전통 처방을 갖춤</text>'
+ '<rect x="180" y="62" width="140" height="88" fill="none" stroke="#9a6a10" stroke-width="1"/>'
+ '<text x="194" y="90" font-size="13" font-weight="700" fill="#9a6a10">2 설계</text>'
+ '<text x="194" y="116" font-size="12" fill="#2b2318">무엇을 잴지 정함</text>'
+ '<rect x="340" y="62" width="140" height="88" fill="none" stroke="#9a6a10" stroke-width="1"/>'
+ '<text x="354" y="90" font-size="13" font-weight="700" fill="#9a6a10">3 측정</text>'
+ '<text x="354" y="116" font-size="12" fill="#2b2318">실험실에서 잼</text>'
+ '<rect x="500" y="62" width="120" height="88" fill="none" stroke="#2b2318" stroke-width="1"/>'
+ '<text x="514" y="90" font-size="13" font-weight="700" fill="#2b2318">4 해석</text>'
+ '<text x="514" y="116" font-size="12" fill="#2b2318">범위를 밝힘</text>'
+ '<text x="20" y="184" font-size="12" fill="#2b2318">네 번째 단계가 빠지면 관찰이 곧바로 효과 주장으로 읽힙니다.</text>'
+ '<text x="20" y="206" font-size="12" fill="#2b2318">이 글은 그 단계를 본문에 함께 적어 두는 방식을 씁니다.</text>'
+ '</svg><figcaption>전통 처방을 실험으로 확인하는 절차 — 마지막 단계가 결과의 범위를 정합니다</figcaption></figure>'
+)
+
+C = []
+A = C.append
+
+A('<p class="lead"><strong>결론부터.</strong> 전통 처방에 침향을 더한 가미방을 실험으로 살핀 연구가 소개돼 왔지만, '
+  '조엘라이프(주)(브랜드 대라천)는 그 연구의 저자와 저널을 특정하지 못했습니다. 그래서 이 글은 해당 결과를 싣지 않고, '
+  '서지정보를 확인할 수 있는 국내 연구 한 편과 함께 이런 연구를 어떻게 읽어야 하는지를 정리합니다.</p>')
+
+A('<h2>가미방은 무엇을 뜻할까요?</h2>')
+A('<p>가미방(加味方)은 기존 처방에 재료를 더한 처방을 가리킵니다. 가미(加味)가 재료를 더한다는 뜻입니다. 기본 구성을 그대로 두고 항목을 얹는 방식입니다.</p>')
+A('<p>경옥고(瓊玉膏)는 오래도록 이름이 알려진 전통 처방입니다. 여기에 침향을 더한 구성을 경옥고 가미방이라 부릅니다. 더한 재료의 이름이 처방 이름에 함께 남습니다.</p>')
+A('<p>옛 처방은 오랜 경험을 통해 다듬어졌습니다. 무엇을 넣고 무엇을 뺐을 때 결과가 나았는지가 기록으로 남았습니다. 다만 그 판단의 기준까지 문헌이 밝혀 두지는 않았습니다.</p>')
+A('<p>현대의 실험은 여기에 다른 질문을 얹습니다. 실험실에서 정한 지표로 재어 보면 어떤 값이 나오는가입니다.</p>')
+A('<p>두 질문은 성격이 다릅니다. 앞의 것은 경험의 누적이고, 뒤의 것은 조건을 통제한 측정입니다.</p>')
+A('<p>이 글이 다루는 것은 뒤의 질문을 어떻게 읽어야 하는가입니다. 전통 처방의 가치를 판정하는 글이 아닙니다. 경험의 무게를 재는 일은 이 글의 범위 밖입니다.</p>')
+A('<p>대라천 침향 제품은 일반식품이며, 처방이나 의약품이 아닙니다. 처방의 구성을 소개하는 글도 아닙니다.</p>')
+
+A('<h2>이런 연구는 어떤 순서로 진행될까요?</h2>')
+A('<p>전통 처방을 실험으로 확인하는 흐름은 대체로 네 단계를 따릅니다. 어느 단계가 빠졌는지를 보면 결과의 신뢰도를 가늠할 수 있습니다.</p>')
+A(SVG)
+A('<p>첫 단계는 처방을 갖추는 일입니다. 어떤 재료를 어떤 비율로 썼는지가 정해져야 결과를 견줄 수 있습니다. 재현할 수 없는 조건은 비교의 대상이 되지 못합니다.</p>')
+A('<p>둘째 단계는 무엇을 잴지 정하는 일입니다. 항산화나 면역 관련 지표처럼 측정 가능한 항목을 고릅니다. 무엇을 골랐는지가 결과의 성격을 미리 정합니다.</p>')
+A('<p>셋째 단계가 측정입니다. 세포나 동물을 대상으로 삼는 경우가 많고, 사람을 대상으로 하는 연구는 별도의 절차를 거칩니다.</p>')
+A('<p>넷째 단계는 해석입니다. 이 단계에서 결과가 적용되는 범위를 밝혀야 합니다. 이 단계가 빠지면 관찰이 '
+  '곧바로 효과 주장으로 읽힙니다.</p>')
+A('<p>대라천은 네 번째 단계를 본문에 함께 적는 방식을 씁니다. 결과만 옮기고 범위를 생략하면 '
+  '연구가 하지 않은 주장이 만들어지기 때문입니다. 범위를 적는 일은 겸손이 아니라 정확성의 문제입니다.</p>')
+
+A('<h2>항산화와 면역은 무엇을 재는 말일까요?</h2>')
+A('<p>항산화는 산화라는 과정에 맞서는 성질을 가리킵니다. 쇠가 녹스는 것과 비슷한 변화가 몸에서도 일어나며, '
+  '그 진행을 늦추는 방향의 성질을 이렇게 부릅니다.</p>')
+A('<p>면역은 외부의 위협으로부터 몸을 지키는 방어 체계입니다. 관련 지표는 그 체계가 어떻게 반응하는지를 '
+  '수치로 나타낸 값입니다.</p>')
+A('<p>두 낱말이 연구에 등장하면 대개 실험실에서 정한 특정 지표를 잰다는 뜻입니다. 몸 전체의 상태를 '
+  '한 번에 재는 것이 아닙니다.</p>')
+A('<p>그래서 지표가 어느 방향으로 움직였다는 결과와, 사람이 건강해졌다는 결론 사이에는 넓은 간격이 있습니다.</p>')
+A('<p>이 간격을 메우려면 사람을 대상으로 한 임상시험과 안전성 연구가 필요합니다. 지표 하나가 그 자리를 대신하지 못합니다.</p>')
+A('<p>Wang 연구팀은 2018년 <em>Molecules</em> 23권 342에 침향과 아퀼라리아 속 식물의 화학 성분과 약리 활성을 정리한 '
+  '총설을 실었습니다(' + A1 + '). 어떤 활성이 보고돼 왔는지를 모아 놓은 문헌입니다.</p>')
+A('<p>대라천은 이 총설을 연구 현황의 서술로만 인용하며, 제품의 효능과 연결하지 않습니다.</p>')
+
+A('<h2>대라천이 이 글에서 뺀 것</h2>')
+A('<p>이전 자료에는 경옥고 가미방에 침향을 넣었을 때 항산화와 면역 관련 활성이 향상되는 방향으로 관찰됐다는 '
+  '서술이 있었습니다. 이 글의 원래 주제이기도 했습니다.</p>')
+A('<p>대라천은 이 연구의 저자와 연도, 저널을 특정하지 못했습니다. 규격서가 정한 기준에 따르면 서지정보를 '
+  '확인할 수 없는 인용은 본문에 둘 수 없습니다.</p>')
+A('<p>그래서 이번 글에서는 해당 결과를 싣지 않았습니다. 결과가 틀렸다고 판단해서가 아니라, '
+  '확인할 수 없는 상태이기 때문입니다. 확인되지 않은 것을 확인된 것처럼 적지 않는다는 기준을 따랐습니다.</p>')
+A('<p>같은 이유로 비특이성 면역을 다룬 문헌 고찰에 관한 서술도 제외했습니다. 어느 문헌인지 특정할 수 없었습니다. 제목만으로는 대조할 대상이 좁혀지지 않았습니다.</p>')
+A('<p>원 논문의 서지정보가 확인되면 해당 내용을 되살릴 수 있습니다. 그때는 저자와 연도, 저널을 본문에 함께 적습니다. 다른 인용과 같은 형식을 따릅니다.</p>')
+A('<p>이 글이 다루는 주제와도 어긋나지 않는 결정입니다. 확인되지 않은 인용을 실으면서 신중하게 읽으라고 '
+  '적는 것은 앞뒤가 맞지 않습니다.</p>')
+A('{{IMG:lab-notebook}}')
+
+A('<h2>확인할 수 있는 국내 연구는 무엇일까요?</h2>')
+A('<p>서지정보를 확인할 수 있는 국내 연구로 ' + K3 + '가 있습니다. 대한한의학방제학회지에 실린 논문입니다.</p>')
+A('<p>이 연구는 침향 추출물을 대상으로 면역조절과 생리활성 관련 지표를 살폈습니다. 제목이 다루는 범위가 '
+  '그대로 연구의 범위입니다.</p>')
+A('<p>대라천은 이 논문을 국내 연구가 어떤 지점을 다뤄 왔는지 보여 주는 자료로 인용합니다. '
+  '제품의 효능을 뒷받침하는 근거로 쓰지 않습니다.</p>')
+A('<p>연구의 대상은 추출물입니다. 대라천의 특정 제품을 대상으로 한 연구가 아니며, 같은 결과가 제품에서 '
+  '나타난다는 뜻도 아닙니다.</p>')
+A('<p>Das 연구팀은 2025년 <em>Phytochemistry Reviews</em> 25권 1~22쪽에 침향의 신경보호 관련 근거를 정리한 '
+  '리뷰를 실었습니다(' + A6 + '). 리뷰 논문이므로 새로운 실험 결과가 아니라 기존 연구를 모은 문헌입니다.</p>')
+A('<p>이런 리뷰를 읽을 때도 같은 원칙이 적용됩니다. 모인 연구의 수가 많다는 사실이 결론의 확실함을 '
+  '뜻하지는 않습니다.</p>')
+A(TABLE)
+
+A('<h2>왜 한 연구라는 말을 강조할까요?</h2>')
+A('<p>실험 하나의 결과는 그 조건에서 나온 값입니다. 다른 연구팀이 같은 조건으로 반복해도 같은 값이 나오는지가 '
+  '확인돼야 결론으로 굳습니다. 한 번의 값은 아직 후보에 머뭅니다.</p>')
+A('<p>대상이 바뀌어도 같은지, 사람에게서도 같은지 역시 따로 확인해야 합니다. 각각이 별도의 연구입니다. 하나가 확인됐다고 나머지가 함께 확인되지는 않습니다.</p>')
+A('<p>그래서 한 연구에서 관찰됐다는 표현은 겸손한 말이면서 동시에 정확한 말입니다. 아직 그 범위까지만 '
+  '확인됐다는 뜻이기 때문입니다. 범위를 넓히려면 연구를 더 해야 합니다.</p>')
+A('<p>이 표현이 사라지는 지점에서 왜곡이 생깁니다. 관찰됐다가 효과가 있다로 바뀌는 순간, 연구가 하지 않은 주장이 '
+  '연구의 권위를 빌려 만들어집니다.</p>')
+A('<p>대라천은 이 경계를 문장 단위로 지킵니다. 어떤 대상에서 무엇을 쟀는지를 결과와 같은 문장에 붙여 두는 방식입니다.</p>')
+A('<p>침향에 관한 정보를 읽으실 때도 이 표현을 함께 보시기를 권합니다. 조심스러운 문장이 오히려 '
+  '확인 가능한 정보인 경우가 많습니다. 단정적인 문장일수록 근거를 되짚어 볼 이유가 커집니다.</p>')
+
+A('<h2>대라천이 확인한 것과 확인하지 않은 것</h2>')
+A('<p>대라천은 이 글에 인용한 두 편의 국제 논문을 DOI로 확인했고, 국내 논문은 학술 데이터베이스에서 '
+  '서지정보를 확인했습니다. 저자와 연도, 저널이 일치하는지를 대조한 결과입니다.</p>')
+A('<p>확인하지 못한 것도 분명히 적어 둡니다. 경옥고 가미방 연구와 비특이성 면역 문헌 고찰은 '
+  '서지정보를 특정하지 못해 본문에서 제외했습니다.</p>')
+A('<p>인용한 논문들의 본문 전문을 대라천이 검토하지는 않았습니다. 각 논문이 다루는 범위는 제목과 '
+  '서지정보에 근거해 서술했습니다. 본문 내부의 세부 결과를 옮기지 않은 이유이기도 합니다.</p>')
+A('<p>대라천은 자사 제품을 대상으로 한 임상시험을 수행한 적이 없습니다. 이 글에 인용한 어떤 연구도 '
+  '대라천 제품을 대상으로 삼지 않았습니다. 성분 계열이 같다는 사실이 제품의 결과를 뜻하지는 않습니다.</p>')
+A('<p>인용한 연구는 대라천이 수행한 것이 아니라 각 연구팀의 결과이며, 제품의 효능을 뒷받침하는 자료가 아닙니다.</p>')
+A('<p>대라천 침향 제품은 일반식품이며 질병의 예방이나 치료를 위한 의약품이 아닙니다.</p>')
+A('{{IMG:tradition-and-lab}}')
+
+A('<h2>자주 묻는 질문</h2>')
+A('<h3>Q. 경옥고 가미방 연구 결과는 왜 없나요?</h3>')
+A('<p>A. 저자와 연도, 저널을 특정할 수 없어 이번 글에서는 싣지 않았습니다. 서지정보가 확인되면 '
+  '본문에 함께 적어 되살릴 수 있습니다.</p>')
+A('<h3>Q. 왜 자꾸 관찰됐다고만 말하나요?</h3>')
+A('<p>A. 실험 하나의 결과는 그 조건에서 나온 값이기 때문입니다. 반복과 대상 확대를 거쳐야 결론이 됩니다. 한 번의 결과는 다음 연구의 출발점입니다.</p>')
+A('<h3>Q. 실험실 결과와 실제 섭취는 왜 다른가요?</h3>')
+A('<p>A. 세포나 동물에서 관찰된 변화가 사람에게서 같게 나타난다는 보장이 없습니다. 그래서 임상시험이라는 '
+  '별도의 확인 절차가 필요합니다.</p>')
+A('<h3>Q. 그래도 이런 연구가 의미 있는 이유는 무엇인가요?</h3>')
+A('<p>A. 다음 연구가 무엇을 확인해야 하는지를 좁혀 주기 때문입니다. 가능성을 정리하는 단계로서의 가치입니다.</p>')
+
+A('<h2>근거·출처</h2>')
+A('<p>이 글의 서술은 대라천 공식 자료(zoellife.com)와 아래 출처에 근거합니다. '
+  '각 연구가 다루는 범위를 본문에 함께 밝혔으며, 특정 효과를 주장하지 않습니다.</p>')
+A('<ul>'
+  '<li>' + K3 + ', 대한한의학방제학회지 (KCI)</li>'
+  '<li>Wang S, Yu Z, Wang C 외, "Chemical Constituents and Pharmacological Activity of Agarwood and Aquilaria Plants", '
+  '<em>Molecules</em> 23권 342 (2018) — ' + A1 + '</li>'
+  '<li>Das A, Begum K, Ahmed R 외, "Agarwood as a neuroprotective agent: a comprehensive review of existing evidence and '
+  'potential avenues for future research", <em>Phytochemistry Reviews</em> 25권 1~22쪽 (2025) — ' + A6 + '</li>'
+  '<li><a href="/about-agarwood">침향 이야기·연구 소개 — about-agarwood</a></li>'
+  '<li><a href="/blog/agarwood-active-compounds-explained">세스퀴테르펜과 크로몬 — agarwood-active-compounds-explained</a></li>'
+  '<li><a href="/blog/agarwood-in-donguibogam">동의보감 침향 기록 — agarwood-in-donguibogam</a></li>'
+  '</ul>')
+
+content = ''.join(C) + TAIL
+
+def strip(h):
+    t = re.sub(r'<svg.*?</svg>', '', h, flags=re.S)
+    return re.sub(r'\s+', '', re.sub(r'<[^>]+>', '', t))
+
+out = {
+    'slug': SLUG,
+    'title': '전통 처방과 침향 연구, 관찰과 증명 사이의 거리',
+    'excerpt': '전통 처방에 침향을 더한 연구는 무엇까지 말할 수 있을까요. 대라천이 서지정보를 확인하지 못한 인용을 걷어내고, '
+               '확인 가능한 국내 연구 한 편과 함께, 실험 결과를 어디까지 읽을 수 있는지 그 기준을 다시 정리했습니다.',
+    'tags': src['tags'],
+    'content': content,
+    'images': [
+        {'key': 'lab-notebook',
+         'prompt': 'Photorealistic still life of an open blank lab notebook with a pen resting on it beside a small clear sample vial on a clean grey bench, no legible writing anywhere, soft even lighting, shallow depth of field, muted grey and white palette, editorial science photography, no text, no logo, no watermark, no people',
+         'alt': '연구 결과의 범위를 기록하는 실험 노트',
+         'caption': '해석 단계가 결과가 적용되는 범위를 정합니다.'},
+        {'key': 'tradition-and-lab',
+         'prompt': 'Photorealistic still life pairing an antique hand-stitched East Asian book with blank aged pages and a modern clear glass laboratory beaker side by side on a dark wooden surface, soft directional light, muted sepia and cool grey palette, editorial photography, no text, no logo, no watermark, no people',
+         'alt': '전통 문헌과 실험 기구를 나란히 놓은 모습',
+         'caption': '경험의 누적과 조건을 통제한 측정은 서로 다른 방법입니다.'},
+    ],
+    'changelog': {
+        'charsBefore': len(strip(src['content'])),
+        'charsAfter': len(strip(content)),
+        'citationsAdded': ['A1', 'A6', 'K3'],
+        'voiceFixes': len(re.findall(r'(대라천은|대라천이|조엘라이프\(주\)는)', strip(content))),
+        'notes': '서지정보를 특정할 수 없는 두 인용(경옥고 가미방 연구, 비특이성 면역 문헌 고찰)을 규격서 §0에 따라 본문에서 제외하고, '
+                 '제외한 사실과 이유를 독립 H2로 신설. 확인 가능한 K3(대한한의학방제학회지)와 A1·A6로 근거를 교체하고 '
+                 '연구가 말할 수 있는 것과 없는 것을 표로 분리.',
+    },
+}
+
+path = os.path.join(BASE, 'out/%s.json' % SLUG)
+json.dump(out, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+print('wrote', path, out['changelog']['charsBefore'], '->', out['changelog']['charsAfter'])

@@ -1,0 +1,238 @@
+=== 3000-years-of-agarwood-history
+  source 3+digit numbers : ['100', '304']
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3390', '342']
+=== agarwood-7-basics-faq
+  source 3+digit numbers : ['000', '100', '200', '2018', '2026', '219', '260507', '342', '400']
+  MISSING from output    : none
+  new in output          : ['2021', '23020342', '3390', '7708']
+=== agarwood-active-compounds-explained
+  source 3+digit numbers : ['000', '00042', '0058589', '00635', '1021', '1039', '1055', '1996', '2006', '2011', '2018', '2019', '2021', '219', '23020342', '259', '264', '3390', '342', '497', '528', '565', '861', '957784']
+  MISSING from output    : none
+  new in output          : ['608']
+=== agarwood-and-suseung-hwagang
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['100', '2018', '23020342', '260507', '3390', '342']
+=== agarwood-as-superior-herb-shennong
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3000', '3390', '7708']
+=== agarwood-bracelet-beads-care
+  source 3+digit numbers : ['100', '8594']
+  MISSING from output    : none
+  new in output          : ['2018', '2021', '23020342', '26247708', '3390', '342', '7708']
+=== agarwood-cultural-history
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '1433', '144', '2018', '2021', '2023', '2024', '2025', '23020342', '2447706', '26247708', '3390', '342', '388', '416', '528', '565', '599', '600', '706', '7708', '803', '834', '957']
+=== agarwood-daily-rhythm-morning-to-night
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2024', '2025', '2447706']
+=== agarwood-enjoy-and-storage-guide
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '144', '2018', '2021', '2024', '2025', '23020342', '2447706', '260507', '26247708', '3390', '342', '528', '565', '7708']
+=== agarwood-gift-guide
+  source 3+digit numbers : ['000', '100', '180', '210', '249', '480', '500', '650', '890']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2021', '528', '565']
+=== agarwood-in-bible-and-buddhist-scriptures
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3000', '3390', '342']
+=== agarwood-in-daily-life-through-history
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3390', '342']
+=== agarwood-in-donguibogam
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3390', '342']
+=== agarwood-in-five-incenses-ohyang
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2018', '2021', '23020342', '3390', '342', '528', '565']
+=== agarwood-in-gyeongokgo-tradition-meets-science
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['025', '1007', '10117', '11101', '2018', '2025', '23020342', '3390', '342']
+=== agarwood-in-research-papers
+  source 3+digit numbers : ['00042', '002902473', '0058589', '00635', '025', '100', '1007', '10117', '1021', '1039', '10412905', '1080', '110', '11101', '144', '2011', '201122238508185', '2018', '2019', '2021', '2022', '2024', '2025', '23020342', '2447706', '259', '26247708', '264', '3390', '342', '400', '497', '528', '565', '7708', '861']
+  MISSING from output    : none
+  new in output          : ['1996']
+=== agarwood-many-names-milhyangsu
+  source 3+digit numbers : ['304']
+  MISSING from output    : none
+  new in output          : ['100', '2021', '26247708', '3390', '7708']
+=== agarwood-nature-and-taste-seongmi
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['100', '2018', '23020342', '260507', '3390', '342']
+=== agarwood-oil-daily-dose-2-3mg
+  source 3+digit numbers : ['000', '100', '400']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2018', '2024', '2025', '23020342', '2447706', '3390', '342']
+=== agarwood-pharmacopoeia-spec-authentication
+  source 3+digit numbers : ['100', '17025', '2017', '2023']
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '260507', '3390', '342']
+=== agarwood-trade-tang-song-yuan-ming
+  source 3+digit numbers : ['100', '304']
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3000', '3390', '7708']
+=== agarwood-vs-sandalwood-musk
+  source 3+digit numbers : ['100', '2023', '260507']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2018', '2021', '23020342', '26247708', '3390', '342', '528', '565', '7708']
+=== cham-agarwood-from-farm-to-capsule
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['00042', '005', '100', '1039', '10412905', '1080', '110', '12835', '144', '200', '2018', '2021', '2023', '2024', '2025', '23020342', '2447706', '260507', '26247708', '3390', '342', '400', '528', '565', '7708']
+=== choose-your-first-agarwood-product
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3390', '7708']
+=== daeracheon-history-1998-to-2026
+  source 3+digit numbers : ['007', '100', '12835', '1998', '2000', '2001', '2014', '2018', '2019', '2020', '2021', '2023', '2024', '2025', '2026', '260507']
+  MISSING from output    : none
+  new in output          : ['7708']
+=== emotion-vs-reason-luxury-buying
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3390', '7708']
+=== experience-agarwood-through-sihyang
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2018', '2024', '2025', '23020342', '2447706', '3390', '342']
+=== extraction-method-shapes-aroma-72h-distillation
+  source 3+digit numbers : ['100', '400']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '144', '2021', '2024', '2025', '2447706', '528', '565']
+=== first-agarwood-purchase-anxiety
+  source 3+digit numbers : ['100', '507']
+  MISSING from output    : none
+  new in output          : ['007', '2021', '2023', '260507', '26247708', '3390', '7708']
+=== from-farm-to-capsule-process
+  source 3+digit numbers : ['100', '1082', '12466836220', '12835', '13485', '17025', '1998', '2000', '2001', '2014', '2016', '2017', '2018', '2023', '2025', '22000', '260507', '556939963', '562', '616']
+  MISSING from output    : none
+  new in output          : ['110', '144', '2026', '342']
+=== heavy-metal-free-safety-testing
+  source 3+digit numbers : ['100', '12835', '13485', '17025', '2011', '2014', '2016', '2017', '2018', '2023', '2025', '22000']
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3390', '7708']
+=== home-cafe-agarwood-tea-ritual
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2024', '2025', '2447706']
+=== how-to-avoid-fake-agarwood
+  source 3+digit numbers : ['000', '000553', '100', '1471057', '200', '2009', '2023', '219', '260507', '304', '379', '400', '708']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2021', '26247708', '3390', '528', '565', '7708']
+=== how-to-describe-agarwood-scent
+  source 3+digit numbers : ['1996']
+  MISSING from output    : none
+  new in output          : ['00042', '007', '0177', '1007', '1039', '10412905', '1055', '1080', '110', '11418', '144', '2006', '2007', '2018', '2021', '2024', '2025', '23020342', '2447706', '3390', '342', '528', '565', '957784']
+=== how-to-enjoy-agarwood-oil-tea-stick-incense
+  source 3+digit numbers : ['100', '400', '8594']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2018', '2024', '2025', '23020342', '2447706', '3390', '342']
+=== how-to-read-agarwood-certificates
+  source 3+digit numbers : ['007', '100', '1082', '12466836220', '12835', '13485', '17025', '2009', '2011', '2014', '2016', '2017', '2018', '2023', '21889', '22000', '260507', '379', '562', '616', '708']
+  MISSING from output    : none
+  new in output          : ['2021', '23020342', '26247708', '3390', '342', '7708']
+=== how-to-store-agarwood
+  source 3+digit numbers : ['128167', '128293', '9728']
+  MISSING from output    : none
+  new in output          : ['100', '10412905', '1080', '110', '144', '2018', '2024', '2025', '23020342', '2447706', '3390', '342']
+=== individual-tree-id-traceability
+  source 3+digit numbers : ['007', '100', '1082', '1998', '2000', '2001', '2018', '2023', '2025', '260507']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2021', '528', '565']
+=== intro-to-incense-culture-chwihyang
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['100', '2018', '23020342', '3390', '342']
+=== meaning-of-agarwood-108-prayer-beads
+  source 3+digit numbers : ['100', '108']
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3390', '342']
+=== origin-changes-agarwood-compounds-gcms
+  source 3+digit numbers : ['000', '100', '130', '158', '200', '2011', '219', '304', '400', '497', '861']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2021', '2024', '2025', '2447706', '26247708', '3390', '7708']
+=== patented-resin-induction-12835
+  source 3+digit numbers : ['007', '100', '1082', '12835', '1998', '2011', '2014', '2018', '2023', '2025', '21889', '260507']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2021', '26247708', '3390', '528', '565', '7708']
+=== phu-quoc-agarwood-forest-healing-trip
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2021', '26247708', '3390', '528', '565', '7708']
+=== price-quality-illusion-agarwood
+  source 3+digit numbers : ['100', '2023', '400']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '144', '2018', '2021', '2024', '2025', '23020342', '2447706', '26247708', '3390', '342', '528', '565', '7708']
+=== proof-in-water-cup-and-papers
+  source 3+digit numbers : ['100', '2010', '2023', '260507']
+  MISSING from output    : none
+  new in output          : ['2018', '2021', '23020342', '26247708', '3390', '342', '7708']
+=== qr-lot-traceability-trust
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['2021', '26247708', '3390', '7708']
+=== scarcity-numbers-agarwood-400kg
+  source 3+digit numbers : ['000', '005', '200', '219', '400']
+  MISSING from output    : none
+  new in output          : ['100', '10412905', '1080', '110', '144', '1879431', '1970', '2021', '2024', '2025', '2307', '2447706', '26247708', '3390', '488', '7708']
+=== smell-test-real-vs-blended-agarwood-oil
+  source 3+digit numbers : ['100', '2023', '400']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2021', '2024', '2025', '2447706', '26247708', '3390', '7708']
+=== status-good-agarwood-psychology
+  source 3+digit numbers : ['100', '200', '400']
+  MISSING from output    : none
+  new in output          : ['2018', '23020342', '3390', '342']
+=== terroir-shapes-agarwood-5-vietnam-farms
+  source 3+digit numbers : ['100', '158', '200', '2011', '400']
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '201122238508185', '2021', '2024', '2025', '2447706', '26247708', '3390', '7708']
+=== the-science-of-warming-agarwood
+  source 3+digit numbers : ['100']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '144', '2018', '2021', '2024', '2025', '23020342', '2447706', '26247708', '3390', '342', '528', '565', '7708']
+=== vietnam-5-farms-200ha-4million-trees
+  source 3+digit numbers : ['007', '100', '1082', '130', '158', '1998', '200', '2000', '2001', '2023', '2025', '2026', '260507', '400']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '2018', '2021', '23020342', '26247708', '3390', '342', '528', '565', '7708']
+=== vietnam-vs-indonesia-agarwood-origin
+  source 3+digit numbers : ['100', '130', '158', '2011', '304', '379', '497', '708', '861']
+  MISSING from output    : none
+  new in output          : ['110', '144', '154', '200', '2010', '2018', '2021', '2023', '2025', '300', '342', '400', '7708']
+=== what-is-agarwood-for-beginners
+  source 3+digit numbers : ['000', '100', '2018', '219', '342']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '110', '144', '2021', '2025', '23020342', '26247708', '3390', '528', '565', '7708']
+=== why-agarwood-added-last-hu-xia
+  source 3+digit numbers : []
+  MISSING from output    : none
+  new in output          : ['10412905', '1080', '110', '144', '2018', '2024', '2025', '23020342', '2447706', '3390', '342']
+=== why-agarwood-sinks-in-water
+  source 3+digit numbers : ['007', '100', '2023', '260507']
+  MISSING from output    : none
+  new in output          : ['2018', '2021', '23020342', '26247708', '3390', '342', '7708']
+=== why-aquilaria-agallocha-roxburgh-matters
+  source 3+digit numbers : ['000553', '100', '1471057', '2009', '2011', '2018', '2021', '260507', '342', '379', '528', '708']
+  MISSING from output    : none
+  new in output          : ['00042', '025', '1007', '10117', '1039', '11101', '2025', '23020342', '26247708', '3390', '565', '7708']
+=== why-fake-agarwood-market-exists
+  source 3+digit numbers : ['100', '200', '2023', '400']
+  MISSING from output    : none
+  new in output          : ['000', '10412905', '1080', '110', '144', '1879431', '1970', '2018', '2024', '2025', '219', '23020342', '2307', '2447706', '3390', '342', '488']
+=== why-is-agarwood-so-expensive
+  source 3+digit numbers : ['000', '007', '100', '200', '2023', '219', '260507', '400']
+  MISSING from output    : none
+  new in output          : ['00042', '1039', '10412905', '1080', '110', '144', '2021', '2024', '2025', '2447706', '26247708', '3390', '528', '565', '7708']
+
+numberDiffClean: True

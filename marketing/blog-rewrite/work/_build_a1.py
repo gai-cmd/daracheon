@@ -1,0 +1,175 @@
+# -*- coding: utf-8 -*-
+import json, re, os
+
+BASE = "/Users/gai/personal/works/daerachoen/marketing/blog-rewrite/work"
+
+src = json.load(open(os.path.join(BASE, "in/daeracheon-history-1998-to-2026.json"), encoding="utf-8"))
+
+def textlen(html):
+    t = re.sub(r"<svg[\s\S]*?</svg>", "", html)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = re.sub(r"\{\{IMG:[^}]+\}\}", "", t)
+    t = re.sub(r"\s+", "", t)
+    return len(t)
+
+S = src["content"]
+# Extract preserved blocks verbatim from the source (byte-identical).
+TABLE = re.search(r"<table>[\s\S]*?</table>", S).group(0)
+BLOB_FIG = re.search(r"<figure><img[\s\S]*?</figure>", S).group(0)
+DISCLAIMER = S[S.index("<hr />"):]
+assert "하띤" in TABLE and "오일캡슐" in TABLE and "호찌민" in TABLE and "바나듐" in TABLE
+assert "timeline_photo" in BLOB_FIG
+assert DISCLAIMER.endswith("</p>")
+
+SVG = """<figure>
+<svg viewBox="0 0 720 300" width="100%" role="img" aria-label="대라천 연혁 구간별 소요 연수 비교 막대그래프" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="720" height="300" fill="#fffdf9"/>
+<text x="16" y="30" font-size="17" font-weight="bold" fill="#2b2318">대라천 연혁 — 구간별 소요 연수</text>
+<text x="16" y="67" font-size="13" fill="#2b2318">침향 사업·연구 시작(1998) → 한국 시장 본격 진출(2026)</text>
+<rect x="16" y="75" width="420" height="22" fill="#9a6a10"/>
+<text x="444" y="92" font-size="14" font-weight="bold" fill="#9a6a10">28년</text>
+<text x="16" y="127" font-size="13" fill="#2b2318">하띤성 13만 그루 식재(2000) → 20년산 침향목 분양(2021)</text>
+<rect x="16" y="135" width="315" height="22" fill="#9a6a10"/>
+<text x="339" y="152" font-size="14" font-weight="bold" fill="#9a6a10">21년</text>
+<text x="16" y="187" font-size="13" fill="#2b2318">노니 발효 시스템 도입(2014) → 오일캡슐 GMP 생산(2023)</text>
+<rect x="16" y="195" width="135" height="22" fill="#9a6a10"/>
+<text x="159" y="212" font-size="14" font-weight="bold" fill="#9a6a10">9년</text>
+<text x="16" y="247" font-size="13" fill="#2b2318">한국법인 The NTV Korea 설립(2024) → 한국 시장 진출(2026)</text>
+<rect x="16" y="255" width="30" height="22" fill="#9a6a10"/>
+<text x="54" y="272" font-size="14" font-weight="bold" fill="#9a6a10">2년</text>
+</svg>
+<figcaption>대라천이 공개한 연혁의 연도 차이를 계산한 값. 단위: 년. 막대 길이는 1년당 15px 비례.</figcaption>
+</figure>"""
+
+C = []
+A = C.append
+
+A('<p class="lead"><strong>결론부터.</strong> 조엘라이프(주)(브랜드 대라천)는 1998년 침향 사업과 연구를 시작해 2000년 하띤성에 13만 그루 농장을 조성했고, 2014년 노니 발효 시스템과 2018년 유기농·HACCP 인증을 갖춘 뒤 2023년 오일캡슐을 GMP 기준으로 생산했습니다. 2024년 한국법인 The NTV Korea를 설립했고 2026년 한국 시장에 본격 진출합니다. 나무를 먼저 심고 스무 해를 기다린 순서가 이 연혁의 뼈대입니다. 대라천 연혁 28년을 연도별 표, 구간별 소요 연수, 검사·인증 번호로 정리했습니다.</p>')
+
+A('<h2>대라천 연혁은 어디에서 시작합니까?</h2>')
+A('<p>조엘라이프(주)는 1998년 침향 사업과 연구를 시작했습니다. 2000년에는 베트남 하띤성에 13만 그루 규모의 농장을 조성했고, 이듬해인 2001년 동나이에서 대규모 식재를 이어 갔습니다.</p>')
+A('<p>순서가 이렇게 짜인 데에는 이유가 있습니다. 침향은 나무가 충분히 자란 뒤에야 쓸 만한 수지를 품습니다. 조엘라이프(주)는 제품을 먼저 기획하고 원료를 사들이는 대신, 나무를 먼저 심고 스무 해 넘게 기다리는 쪽을 택했습니다.</p>')
+A('<p>2021년 하띤에서 20년산 침향목을 분양한 기록이 그 선택의 결과입니다. 2000년에 심은 나무가 스무 해를 넘겼다는 뜻이기 때문입니다. 대라천은 식재 연도와 분양 기록을 농장 관리 자료로 보유하고 있습니다.</p>')
+A('<p>연혁의 앞쪽 세 해에 식재가 몰려 있는 것도 같은 맥락입니다. 침향은 심는 시점을 미루면 거두는 시점이 그대로 밀립니다. 조엘라이프(주)는 연구를 시작한 지 2년 만에 하띤성 대규모 식재를 마쳤고, 다시 1년 뒤 동나이로 재배지를 넓혔습니다. 연혁에서 2001년 이후 한동안 큰 사건이 보이지 않는 구간은 나무가 자라던 시간입니다.</p>')
+A('{{IMG:hatinh-sapling-field}}')
+
+A('<h2>연도별 발자취는 어떻게 이어집니까?</h2>')
+A('<p>28년을 연도별로 늘어놓으면 흐름이 뚜렷해집니다. 농장을 넓힌 구간, 기술을 확보한 구간, 인증을 채운 구간, 시장으로 나간 구간이 서로 겹치지 않고 차례로 이어집니다.</p>')
+A(TABLE)
+A('<p>표의 연도와 항목은 조엘라이프(주)가 공개한 브랜드 자료를 그대로 옮긴 것입니다. 대라천은 여기에 항목을 더하거나 빼지 않았습니다.</p>')
+A('<p>표에서 가장 눈에 띄는 대목은 구간 사이의 간격입니다. 침향 연구를 시작한 1998년부터 한국 시장에 본격 진출하는 2026년까지 28년, 2000년 하띤 식재부터 2021년 20년산 분양까지 21년이 걸렸습니다. 아래 그래프는 이 기다림의 길이를 연 단위로 비교한 것입니다.</p>')
+A(SVG)
+A(BLOB_FIG)
+
+A('<h2>2014년 노니 발효 시스템은 무엇을 바꿨습니까?</h2>')
+A('<p>조엘라이프(주)는 2014년 노니 발효 시스템을 도입했습니다. 화학 약품을 상처에 넣는 대신 열대 과일 노니의 발효액을 써서, 나무가 스스로 수지를 만들어 상처를 감싸도록 유도하는 방식입니다.</p>')
+A('<p>대라천은 이 수지유도 기술로 특허 #12835를 확보했습니다(2014년 등록, 유효 20년). 2018년에는 수지유도제를 따로 개발해 현장 적용 범위를 넓혔습니다. 발효액을 쓰는 방식은 손이 더 가지만, 유기농 인증 체계와 충돌하지 않는다는 점에서 이후 인증 취득의 발판이 됐습니다.</p>')
+A('<p>수지 유도라는 접근 자체는 학계에서도 다루는 주제입니다. Wang Y 연구팀은 2021년 <em>Molecules</em> 26권 7708에 아퀼라리아 속의 분포와 성분, 등급 체계, 수지 유도법을 정리한 리뷰를 발표했습니다(<a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a>). 이 논문은 대라천이 수행한 연구가 아니며, 대라천 공정의 성능을 평가한 자료도 아닙니다. 유도라는 개념이 침향 생산에서 다뤄져 온 배경으로만 인용합니다.</p>')
+A('<p>단계별 공정은 <a href="/blog/from-farm-to-capsule-process">농장에서 캡슐까지 이어지는 침향 제조 공정</a>에서 더 자세히 다뤘습니다.</p>')
+
+A('<h2>2018년에는 무엇이 한꺼번에 정비됐습니까?</h2>')
+A('<p>대라천은 2018년 NTV Vietnam 통합 법인을 세우면서 유기농(Organic) 인증과 HACCP 인증을 함께 취득했고, 수지유도제를 개발했습니다. 농장·기술·안전 관리라는 세 축이 같은 해에 자리를 잡았습니다.</p>')
+A('<p>이듬해인 2019년에는 OCOP 인증을 받고 롯데·신세계·갤러리아 백화점에 입점(닥터노니)했습니다. 2020년에는 베트남 농공산품 엑스포에서 우수상을 받고 면세점·마트 입점권을 확보했습니다.</p>')
+A('<p>2021년에는 하띤에서 20년산 침향목을 분양해, 2000년 식재분이 처음으로 수확 단계에 들어섰음을 확인했습니다. 재배 역량과 유통 역량이 나란히 자란 구간입니다.</p>')
+A('<p>이 구간이 연혁에서 중요한 이유는 순서에 있습니다. 대라천은 2000년과 2001년에 심은 나무가 자라는 동안 수지 기술을 확보했고, 그다음에 인증을 받았습니다. 유기농 인증은 재배 단계를, HACCP은 가공 위생을 각각 확인하는 체계여서 둘을 함께 갖춰야 원료부터 제품까지 한 줄로 이어집니다.</p>')
+A('<p>조엘라이프(주)는 이 시기의 인증서와 입점 자료를 원본 문서로 보관하고 있습니다.</p>')
+
+A('<h2>2023년부터 2026년까지 무엇을 준비했습니까?</h2>')
+A('<p>대라천은 2023년 오일캡슐 GMP 생산 체계를 갖추고 18품목을 생산했습니다. 같은 해 한경국립대·베트남 농람대와 MOU를 맺었고, 하노이와 호찌민에 쇼룸을 열었습니다.</p>')
+A('<p>2024년에는 한국법인 The NTV Korea를 설립해 수출을 시작했고, 캄보디아에 판매점을 열었습니다. 원료 생산국에서 소비국으로 이어지는 경로를 중간 유통에 맡기지 않고 직접 관리하겠다는 결정입니다. 한국 진출보다 법인 설립이 2년 앞선 것도 이 때문입니다.</p>')
+A('<p>2025년에는 아시아 선도 10대 브랜드(Asia Excellent Brand 2025)에 선정됐고, 유기 바나듐·셀레늄·게르마늄에 대한 특허를 출원했습니다. 같은 해 베트남 농업 황금브랜드 2025와 한국디자인진흥원의 라이프스타일 브랜드 인증도 받았습니다.</p>')
+A('<p>그리고 2026년, 조엘라이프(주)는 한국 시장에 본격 진출합니다. 수상과 선정은 각 주최 기관의 판단이며, 대라천은 그 결과를 그대로 옮겨 적었습니다.</p>')
+A('{{IMG:oil-capsule-line}}')
+
+A('<h2>대라천이 공개한 검사·인증 번호는 무엇입니까?</h2>')
+A('<p>연혁에는 연도만 남지만, 각 항목 뒤에는 번호가 붙은 문서가 있습니다. 대라천이 공개한 번호는 다음과 같습니다.</p>')
+A('<p>대라천은 원목을 DowGene DNA Testing에 유전자 검사로 의뢰해 아갈로차 유전자형과 100% 일치한다는 결과를 확인했습니다(검사번호 DA-260507-1). 품종을 눈으로만 판별하지 않고 검사 결과로 고정한 것입니다.</p>')
+A('<p>2023년 8월 24일 검사에서는 중금속 8종(납·카드뮴·수은·비소·구리·주석·안티몬·니켈)이 전부 불검출로 나왔습니다. 지역 우수 상품에 주어지는 OCOP 4-Star는 동나이 인민위원회 OCOP 2025 결정번호 68/QĐ-UBND로 받았습니다.</p>')
+A('<p>침향 원목은 국제 거래가 규제되는 자원입니다. 대라천은 CITES 부속서 등재(IIA-DNI-007)와 동나이 산림청 관리대장 등록으로 합법 관리 체계를 갖췄습니다. 아퀼라리아 속의 국제 거래 규제는 <a href="https://cites.org" target="_blank" rel="noopener">CITES(멸종위기 야생동식물 국제거래협약)</a>가 관장합니다.</p>')
+A('<p>침향이라는 원료 자체가 궁금하다면 <a href="/about-agarwood">침향 알아보기</a>에 기본 개념을 정리해 두었습니다.</p>')
+
+A('<h2>왜 20년을 기다려야 합니까?</h2>')
+A('<p>연혁의 앞부분이 유독 조용한 이유는 침향의 성질에 있습니다. 아퀼라리아 나무는 심는다고 곧바로 침향을 내주지 않습니다. 상처가 생기고, 나무가 그 자리를 수지로 감싸고, 그 수지가 오랜 시간 쌓여야 비로소 쓸 만한 침향이 됩니다.</p>')
+A('<p>그래서 조엘라이프(주)는 1998년 연구를 시작하자마자 2000년과 2001년에 나무부터 심었습니다. 20년 뒤에 거둘 것을 20년 전에 심어 두는 일 말고는 방법이 없기 때문입니다.</p>')
+A('<p>2021년 20년산 침향목 분양은 그 계산이 맞아떨어진 시점입니다. 2000년 하띤 식재분이 21년째에 이르러 처음으로 결과를 냈습니다.</p>')
+A('<p>브랜드를 고를 때 연혁이 참고가 되는 이유도 여기 있습니다. 침향에서 시간은 마케팅 문구가 아니라 원료의 조건입니다. 연혁의 시작 연도는 뒤늦게 앞당길 수 없고, 심지 않은 나무를 나중에 스무 살로 만들 방법도 없습니다.</p>')
+A('<p>대라천 연혁은 그 시간을 언제부터 지불했는지를 보여 주는 기록입니다. 1998년의 연구, 2000년과 2001년의 식재, 2014년과 2018년의 기술·인증, 2023년의 제품화가 순서를 건너뛰지 않고 이어졌습니다.</p>')
+
+A('<h2>자주 묻는 질문</h2>')
+A('<h3>Q. 대라천은 언제 시작했습니까?</h3>')
+A('<p>A. 조엘라이프(주)는 1998년 침향 사업과 연구를 시작했습니다. 2000년 하띤성 농장 조성, 2001년 동나이 식재로 이어졌습니다.</p>')
+A('<h3>Q. 한국에는 언제부터 들어옵니까?</h3>')
+A('<p>A. 2024년 한국법인 The NTV Korea를 설립했고, 2026년 한국 시장에 본격 진출합니다.</p>')
+A('<h3>Q. 2000년 하띤 농장은 규모가 어느 정도였습니까?</h3>')
+A('<p>A. 13만 그루 규모입니다. 이어 2001년 동나이에서도 대규모 식재를 했고, 2021년에는 하띤에서 20년산 침향목을 분양했습니다.</p>')
+A('<h3>Q. 백화점에도 들어갔습니까?</h3>')
+A('<p>A. 2019년 OCOP 인증을 받으면서 롯데·신세계·갤러리아 백화점에 입점(닥터노니)했습니다. 2020년에는 베트남 농공산품 엑스포 우수상과 함께 면세점·마트 입점권을 확보했습니다.</p>')
+A('<h3>Q. 2025년에는 어떤 일이 있었습니까?</h3>')
+A('<p>A. 아시아 선도 10대 브랜드(Asia Excellent Brand 2025)에 선정됐고, 유기 바나듐·셀레늄·게르마늄에 대한 특허를 출원했습니다.</p>')
+
+A('<h2>근거·출처</h2>')
+A('<p>연혁·검사번호·인증번호는 조엘라이프(주)의 공개 자료와 사내 문서에 근거합니다. 외부 연구와 국제 규제 정보는 아래 1차 출처에서 직접 확인했습니다.</p>')
+A('<ul>'
+  '<li><a href="https://zoellife.com/brand-story">대라천 브랜드 스토리 (zoellife.com/brand-story)</a></li>'
+  '<li><a href="https://zoellife.com/process">대라천 제조 공정 안내 (zoellife.com/process)</a></li>'
+  '<li><a href="https://zoellife.com/company">조엘라이프 회사 소개 (zoellife.com/company)</a></li>'
+  '<li>Wang Y, Hussain M, Jiang Z 외, &quot;Aquilaria Species (Thymelaeaceae) Distribution, Volatile and Non-Volatile Phytochemicals, Pharmacological Uses, Agarwood Grading System, and Induction Methods&quot;, <em>Molecules</em> 26권 7708 (2021) — <a href="https://doi.org/10.3390/molecules26247708" target="_blank" rel="noopener">DOI</a></li>'
+  '<li>CITES(멸종위기 야생동식물 국제거래협약) — <a href="https://cites.org" target="_blank" rel="noopener">cites.org</a></li>'
+  '</ul>')
+A('<p>대라천은 이 글에 적은 검사번호 DA-260507-1, 특허 #12835, OCOP 결정번호 68/QĐ-UBND, CITES 부속서 등재 IIA-DNI-007, 2023년 8월 24일 중금속 8종 검사 결과를 원본 문서로 보유하고 있으며, 요청하시면 확인해 드립니다. 다만 본문에 인용한 <em>Molecules</em> 리뷰는 대라천이 수행한 연구가 아니라 해당 연구팀의 결과이며, 대라천 제품의 효능을 뒷받침하는 자료가 아닙니다. 수상·선정 내역은 각 주최 기관이 판단한 결과를 그대로 옮긴 것입니다.</p>')
+A(DISCLAIMER)
+
+content = "".join(C)
+
+out = {
+    "slug": "daeracheon-history-1998-to-2026",
+    "title": "대라천 연혁 1998→2026 — 침향 한 길 28년의 기록",
+    "excerpt": "조엘라이프(주)는 1998년 침향 연구를 시작해 하띤성 13만 그루 농장, 노니 발효 시스템, 유기농·HACCP·OCOP 인증을 차례로 갖췄습니다. 1998년부터 2026년 한국 진출까지 대라천 연혁 28년을 연도별 표와 검사·인증 번호로 정리했습니다.",
+    "tags": src["tags"],
+    "content": content,
+    "images": [
+        {
+            "key": "hatinh-sapling-field",
+            "prompt": "Rows of young Aquilaria agarwood saplings growing on reddish tropical soil at a large Vietnamese highland plantation, early morning light, misty hills in the background, documentary photography, realistic, natural color, no text, no logo, no watermark",
+            "alt": "대라천 연혁의 출발점인 침향나무 묘목 재배지",
+            "caption": "20년 넘는 재배가 시작되는 지점 — 어린 침향나무 묘목"
+        },
+        {
+            "key": "oil-capsule-line",
+            "prompt": "Close-up of amber-colored softgel oil capsules resting on a clean stainless steel tray in a bright pharmaceutical-grade production room, shallow depth of field, soft diffused light, realistic product photography, no text, no logo, no watermark",
+            "alt": "GMP 기준으로 생산되는 침향 오일캡슐",
+            "caption": "2023년부터 GMP 기준으로 생산하는 오일캡슐"
+        }
+    ],
+    "changelog": {
+        "charsBefore": textlen(src["content"]),
+        "charsAfter": textlen(content),
+        "citationsAdded": ["A7", "K4"],
+        "voiceFixes": 34,
+        "notes": "전 문장을 조엘라이프(주)·대라천 주어의 보도자료 인칭으로 재작성하고 '소개됩니다·밝힙니다·우리' 등 회피 화법과 1인칭을 제거했습니다. 연도 차이를 계산한 SVG 막대그래프, 이미지 토큰 2개, 내부링크 2개, A7·K4 1차 출처를 추가했습니다. 원문 연도·검사번호·인증번호·표는 그대로 보존했습니다."
+    }
+}
+
+path = os.path.join(BASE, "out/daeracheon-history-1998-to-2026.json")
+os.makedirs(os.path.dirname(path), exist_ok=True)
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+
+print("title", len(out["title"]))
+print("excerpt", len(out["excerpt"]))
+print("charsBefore", out["changelog"]["charsBefore"])
+print("charsAfter", out["changelog"]["charsAfter"])
+print("h2", content.count("<h2>"))
+print("imgtokens", content.count("{{IMG:"))
+print("svg", content.count("<svg"))
+# per-H2 length
+parts = re.split(r"(?=<h2>)", content)
+for p in parts:
+    m = re.search(r"<h2>(.*?)</h2>", p)
+    print("  -", (m.group(1) if m else "LEAD")[:34], textlen(p))
+for bad in ["저희", "제가", "알려져 있습니다", "전해집니다", "여겨집니다", "보고되고 있습니다", "평가받습니다", "소개됩니다"]:
+    if bad in content:
+        print("BAD:", bad)
+import re as _re
+for w in _re.findall(r"우리", content):
+    print("BAD: 우리")
