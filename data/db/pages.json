@@ -1554,8 +1554,8 @@
         "label": "200헥타르, 400만 그루"
       },
       {
-        "value": "유전자 검사, CITES 등",
-        "label": "12건 이상의 인증 & 특허"
+        "value": "CITES, HACCP, FDA 등",
+        "label": "9건의 공식 인증"
       },
       {
         "value": "25년 이상",
@@ -1575,7 +1575,7 @@
       },
       {
         "num": "03",
-        "label": "원산지 · CITES · 유전자 · 정식 수출입 · 유기농",
+        "label": "원산지 · CITES · 정식 수출입",
         "meta": "증빙 문서"
       }
     ],
@@ -1609,21 +1609,6 @@
         "mark": "C",
         "name": "CITES",
         "sub": "멸종 위기 보호 수종"
-      },
-      {
-        "mark": "A",
-        "name": "유전자 검사",
-        "sub": "아갈로차 유전자 확인"
-      },
-      {
-        "mark": "O",
-        "name": "ORGANIC",
-        "sub": "유기농 · 식용"
-      },
-      {
-        "mark": "R",
-        "name": "특허",
-        "sub": "수지 유도제"
       },
       {
         "mark": "H",
@@ -1686,8 +1671,8 @@
       ]
     },
     "benefits": {
-      "tag": "Benefits · 연구 기반 효능",
-      "title": "침향의 가치, 여섯 가지 대표적 효능",
+      "tag": "Benefits · 대표적인 가치",
+      "title": "침향의 여섯 가지 대표적인 가치",
       "items": [
         {
           "kicker": "Qi Circulation",
@@ -1779,7 +1764,7 @@
         {
           "tag": "03 · 인증",
           "title": "증빙 문서가 공개되어 있는가?",
-          "body": "원산지 증명, CITES 인증, 유전자 검사, 정식 수출입 확인, 유기능 특허 등 진짜 침향일수록 주요 증빙문서와 이력을 숨기지 않습니다.",
+          "body": "원산지 증명, CITES 인증, 정식 수출입 확인 등 진짜 침향일수록 주요 증빙문서와 이력을 숨기지 않습니다.",
           "image": {
             "src": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/problem-card-02-certifications-1778773445328.png",
             "alt": "공식 증빙 문서 겹쳐 놓은 정물 + 왁스 도장 (텍스트 없음)"
@@ -1824,7 +1809,7 @@
         },
         {
           "label": "인증",
-          "text": "CITES · OCOP · HACCP · GMP · FDA 외 - 12건 이상 인증· 특허"
+          "text": "CITES · OCOP · HACCP · GMP · FDA 외 - 9건의 공식 인증"
         },
         {
           "label": "산지",
@@ -1883,9 +1868,9 @@
         "hidden": true
       },
       "certs": {
-        "topTag": "03 Certifications - 12건 이상의 공식 인증",
+        "topTag": "03 Certifications - 9건의 공식 인증",
         "titleQuote": "국가·전문 기관이 인정한\n*대라천 침향의 신뢰*",
-        "bodyLead": "CITES 인증, 유전자 검사, HACCP, ORGANIC, FDA, ISO 등 국제기준에 부합하는 인증은 물론,\n정부기관과 전문기관의 품종·원산지 확인 및 특허 기술까지 확보 침향의 정통성과 신뢰를 높였습니다. ",
+        "bodyLead": "CITES 인증, HACCP, GMP, FDA, ISO 등 국제기준에 부합하는 인증은 물론,\n정부기관과 전문기관의 품종·원산지 확인까지 갖춰 침향의 정통성과 신뢰를 높였습니다.",
         "cta": {
           "label": "다양한 인증 확인하기 ⇒",
           "href": "https://zoellife.com/brand-story#tab-1",

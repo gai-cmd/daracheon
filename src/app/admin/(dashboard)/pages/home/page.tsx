@@ -198,7 +198,7 @@ const DEFAULT_HERO: HomeHero = {
 const DEFAULT_STATS: HomeStat[] = [
   { value: '25년+', label: '연구 및 재배' },
   { value: '200ha', label: '400만 그루' },
-  { value: '12건+', label: '특허 및 인증' },
+  { value: '9건', label: '공식 인증' },
   { value: '5개 지역', label: '직영 농장' },
 ];
 
@@ -242,8 +242,8 @@ const DEFAULT_AGARWOOD: HomeAgarwood = {
 };
 
 const DEFAULT_BENEFITS: HomeBenefits = {
-  tag: 'Benefits · 연구 기반 효능',
-  title: '침향의 가치, 여섯 가지 효능',
+  tag: 'Benefits · 대표적인 가치',
+  title: '침향의 여섯 가지 대표적인 가치',
   items: [
     { kicker: 'Qi Circulation', title: '기 뚫고 원기 회복 · 자양강장', description: '몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강, 피로 해소와 활력 증진을 돕습니다.' },
     { kicker: 'Menstruation & Stamina', title: '냉감 · 정력 감퇴 · 복통에 탁월', description: '하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월하고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다.' },
@@ -303,9 +303,7 @@ const DEFAULT_CERTS: CertChip[] = [
   { mark: 'C', name: 'CITES', sub: '국제 보호 수종' },
   { mark: 'H', name: 'HACCP', sub: '식품 안전' },
   { mark: 'G', name: 'GMP', sub: '우수 제조' },
-  { mark: 'O', name: 'ORGANIC', sub: '유기농' },
   { mark: 'V', name: '원산지', sub: '베트남 증명' },
-  { mark: 'D', name: 'DNA', sub: '유전자 검증' },
   { mark: 'F', name: '식약처', sub: '고시 학명' },
   { mark: 'S', name: 'SGS', sub: '국제 검사' },
 ];
