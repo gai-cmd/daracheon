@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { readDataUncached } from '@/lib/db';
 import {
   resolveSlackConfig,
@@ -97,55 +97,72 @@ export async function POST(req: NextRequest) {
   // 스레드 답글만 대상. 채널 최상위 대화는 무시.
   if (!ev.thread_ts || ev.thread_ts === ev.ts) return ack();
 
-  try {
-    // 스레드 부모가 우리 문의 카드인지 확인.
-    const rootText = await fetchThreadRootText(ev.channel, ev.thread_ts);
-    if (!rootText) return ack();
-    const inquiryId = extractInquiryId(rootText);
-    if (!inquiryId) return ack();
+  const replyText = ev.text.trim();
+  // 봇 명령·슬래시는 답변이 아니다.
+  if (replyText.startsWith('/')) return ack();
 
-    const replyText = ev.text.trim();
-    // 봇 명령·슬래시는 답변이 아니다.
-    if (replyText.startsWith('/')) return ack();
+  // ── Slack 은 3초 안에 200 을 요구한다. 스레드 조회·blob 읽기·카드 게시를
+  //    응답 전에 하면 콜드스타트와 겹쳐 3초를 초과 → Slack 이 실패로 간주해
+  //    재전송하고, 반복되면 이벤트 전송을 끊는다. 무거운 작업은 전부
+  //    after() 로 미루고 즉시 ack 한다. ──
+  const channel = ev.channel;
+  const threadTs = ev.thread_ts;
+  const commentTs = ev.ts;
 
-    const inquiries = await readDataUncached<InquiryRecord>('inquiries');
-    const inq = inquiries.find((q) => q.id === inquiryId);
-    if (!inq) {
-      await postSlack({
-        channel: ev.channel,
-        threadTs: ev.thread_ts,
-        text: `⚠️ 문의(${inquiryId})를 찾을 수 없습니다. 관리자 화면에서 확인해 주세요.`,
-      }).catch(() => {});
-      return ack();
-    }
+  after(async () => {
+    try {
+      // 스레드 부모가 우리 문의 카드인지 확인.
+      const rootText = await fetchThreadRootText(channel, threadTs);
+      if (!rootText) return;
+      const inquiryId = extractInquiryId(rootText);
+      if (!inquiryId) return;
 
-    const subject = buildReplyEmail({
-      id: inq.id,
-      name: inq.name,
-      category: inq.category,
-      subject: inq.subject,
-      message: inq.message,
-      reply: replyText,
-    }).subject;
+      const inquiries = await readDataUncached<InquiryRecord>('inquiries');
+      const inq = inquiries.find((q) => q.id === inquiryId);
+      if (!inq) {
+        await postSlack({
+          channel,
+          threadTs,
+          text: `⚠️ 문의(${inquiryId})를 찾을 수 없습니다. 관리자 화면에서 확인해 주세요.`,
+        }).catch(() => {});
+        return;
+      }
 
-    // 확인 카드만 올린다 — 이 시점에는 메일이 나가지 않는다.
-    await postSlack({
-      channel: ev.channel,
-      threadTs: ev.thread_ts,
-      text: `발송 확인 — ${inq.name} 님에게 답변 메일을 보낼까요?`,
-      blocks: buildReplyConfirmBlocks({
-        inquiryId,
-        to: inq.email,
-        customerName: inq.name,
-        subject,
+      const subject = buildReplyEmail({
+        id: inq.id,
+        name: inq.name,
+        category: inq.category,
+        subject: inq.subject,
+        message: inq.message,
         reply: replyText,
-        threadTs: ev.thread_ts,
-        commentTs: ev.ts,
-      }),
-    });
-  } catch (err) {
-    console.error('[slack/events] handler error:', err);
-  }
+      }).subject;
+
+      // 확인 카드만 올린다 — 이 시점에는 메일이 나가지 않는다.
+      await postSlack({
+        channel,
+        threadTs,
+        text: `발송 확인 — ${inq.name} 님에게 답변 메일을 보낼까요?`,
+        blocks: buildReplyConfirmBlocks({
+          inquiryId,
+          to: inq.email,
+          customerName: inq.name,
+          subject,
+          reply: replyText,
+          threadTs,
+          commentTs,
+        }),
+      });
+    } catch (err) {
+      // Vercel 로그 없이도 원인을 볼 수 있게 실패를 스레드에 자가 보고한다.
+      console.error('[slack/events] handler error:', err);
+      const reason = err instanceof Error ? err.message : String(err);
+      await postSlack({
+        channel,
+        threadTs,
+        text: `⚠️ 답글 처리 중 오류가 발생했습니다: ${reason.slice(0, 300)}`,
+      }).catch(() => {});
+    }
+  });
 
   return ack();
 }

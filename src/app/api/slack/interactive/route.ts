@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import {
   resolveSlackConfig,
   verifySlackSignature,
@@ -87,23 +87,44 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  try {
-    if (payload.type === 'block_actions') return await handleBlockActions(payload);
-    if (payload.type === 'view_submission') return await handleViewSubmission(payload);
-  } catch (err) {
-    console.error('[slack/interactive] handler error:', err);
+  // ── Slack 은 인터랙션에도 3초 안에 200 을 요구한다. 이메일 발송·blob
+  //    쓰기를 응답 전에 하면 초과 → 사용자에게 "⚠️ 문제 발생" 이 뜨고
+  //    재시도 클릭으로 이중 처리 위험이 생긴다. 모달 열기(trigger_id 3초
+  //    만료)와 무거운 처리 모두 after() 로 미루고 즉시 ack 한다.
+  //    (view_submission 도 동일 — 모달은 빈 200 으로 즉시 닫고 결과는
+  //    카드 갱신/에페메랄로 알린다.) ──
+  if (payload.type === 'block_actions' || payload.type === 'view_submission') {
+    const p = payload;
+    after(async () => {
+      try {
+        if (p.type === 'block_actions') await handleBlockActions(p);
+        else await handleViewSubmission(p);
+      } catch (err) {
+        console.error('[slack/interactive] handler error:', err);
+        // 실패를 본인에게 자가 보고 — Vercel 로그 없이도 원인 확인 가능.
+        const channel = p.channel?.id;
+        if (channel && p.user?.id) {
+          const reason = err instanceof Error ? err.message : String(err);
+          await postEphemeral({
+            channel,
+            user: p.user.id,
+            text: `⚠️ 처리 중 오류가 발생했습니다: ${reason.slice(0, 300)}`,
+          }).catch(() => {});
+        }
+      }
+    });
   }
   return NextResponse.json({ ok: true });
 }
 
 /* ───────── 버튼 클릭 ───────── */
 
-async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> {
+async function handleBlockActions(p: InteractivePayload): Promise<void> {
   const action = p.actions?.[0];
   const actionId = action?.action_id;
   const channel = p.channel?.id;
   const actor = actorOf(p.user);
-  if (!actionId || !channel) return NextResponse.json({ ok: true });
+  if (!actionId || !channel) return;
 
   /* 현장 업로드 승인 */
   if (actionId === ACTION.submissionApprove) {
@@ -117,13 +138,13 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
       }).catch(() => {});
     }
     // 성공 시 reviewSubmission 이 원본 카드를 '승인됨' 으로 갱신한다.
-    return NextResponse.json({ ok: true });
+    return;
   }
 
   /* 현장 업로드 반려 → 사유 입력 모달 */
   if (actionId === ACTION.submissionReject) {
     const id = action?.value ?? '';
-    if (!p.trigger_id) return NextResponse.json({ ok: true });
+    if (!p.trigger_id) return;
 
     // trigger_id 는 3초 후 만료된다. 모달을 여는 경로에서는 Blob 조회 같은
     // 느린 I/O 를 하지 않는다 — 대상 정보는 바로 뒤에 보이는 카드로 충분하다.
@@ -161,13 +182,13 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
         },
       ],
     });
-    return NextResponse.json({ ok: true });
+    return;
   }
 
   /* 문의 답변 발송 확인 */
   if (actionId === ACTION.inquirySend) {
     const [inquiryId, threadTs, commentTs] = (action?.value ?? '').split('|');
-    if (!inquiryId || !threadTs || !commentTs) return NextResponse.json({ ok: true });
+    if (!inquiryId || !threadTs || !commentTs) return;
 
     // 답변 원문을 이 시점에 다시 읽는다 — 버튼 value 2000자 제한을 우회하고,
     // 운영자가 확인 카드 뒤에 댓글을 수정했다면 최신 내용이 반영된다.
@@ -187,7 +208,7 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
           },
         ],
       }).catch(() => {});
-      return NextResponse.json({ ok: true });
+      return;
     }
 
     const result = await replyToInquiryById(inquiryId, src.text.trim(), actor, 'slack');
@@ -207,7 +228,7 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
           },
         ],
       }).catch(() => {});
-      return NextResponse.json({ ok: true });
+      return;
     }
 
     await updateSlack({
@@ -222,7 +243,7 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
         emailOk: Boolean(result.emailOk),
       }),
     }).catch(() => {});
-    return NextResponse.json({ ok: true });
+    return;
   }
 
   /* 문의 답변 발송 취소 */
@@ -234,17 +255,16 @@ async function handleBlockActions(p: InteractivePayload): Promise<NextResponse> 
       text: '발송이 취소되었습니다.',
       blocks: buildReplyCancelledBlocks(inquiryId ?? '', actor),
     }).catch(() => {});
-    return NextResponse.json({ ok: true });
+    return;
   }
 
-  // 'open_admin' 등 URL 버튼은 Slack 이 자체 처리 — ack 만.
-  return NextResponse.json({ ok: true });
+  // 'open_admin' 등 URL 버튼은 Slack 이 자체 처리 — 할 일 없음.
 }
 
 /* ───────── 모달 제출 (반려 사유) ───────── */
 
-async function handleViewSubmission(p: InteractivePayload): Promise<NextResponse> {
-  if (p.view?.callback_id !== REJECT_MODAL_CALLBACK) return NextResponse.json({ ok: true });
+async function handleViewSubmission(p: InteractivePayload): Promise<void> {
+  if (p.view?.callback_id !== REJECT_MODAL_CALLBACK) return;
 
   let meta: { id?: string; channel?: string; ts?: string } = {};
   try {
@@ -252,7 +272,7 @@ async function handleViewSubmission(p: InteractivePayload): Promise<NextResponse
   } catch {
     /* 빈 메타로 진행 → 아래 가드에서 걸림 */
   }
-  if (!meta.id) return NextResponse.json({ ok: true });
+  if (!meta.id) return;
 
   const reason =
     p.view.state?.values?.[REJECT_REASON_BLOCK]?.[REJECT_REASON_ACTION]?.value ?? '';
@@ -264,17 +284,14 @@ async function handleViewSubmission(p: InteractivePayload): Promise<NextResponse
     reason,
   });
 
-  if (!result.ok) {
-    // 모달 응답으로 오류를 그 자리에서 보여준다.
-    return NextResponse.json({
-      response_action: 'errors',
-      errors: {
-        [REJECT_REASON_BLOCK]: result.message ?? '반려하지 못했습니다.',
-      },
-    });
+  // 모달은 즉시 ack 로 이미 닫혔다 — 실패는 본인에게만 보이는 메시지로 회신.
+  // (3초 ack 제약 때문에 모달 인라인 오류 대신 이 방식을 쓴다)
+  if (!result.ok && meta.channel && p.user?.id) {
+    await postEphemeral({
+      channel: meta.channel,
+      user: p.user.id,
+      text: `⚠️ 반려하지 못했습니다: ${result.message ?? '알 수 없는 오류'}`,
+    }).catch(() => {});
   }
-
   // 성공 시 reviewSubmission 이 원본 카드를 '반려됨' 으로 갱신한다.
-  // 모달은 빈 200 응답으로 닫힌다.
-  return new NextResponse(null, { status: 200 });
 }
