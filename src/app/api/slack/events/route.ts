@@ -87,38 +87,19 @@ export async function POST(req: NextRequest) {
   }
 
   // Slack 재전송(3초 내 미응답 등)은 무시 — 확인 카드가 중복 생성되는 것을 막는다.
-  const retryNum = req.headers.get('x-slack-retry-num');
+  if (req.headers.get('x-slack-retry-num')) return ack();
 
   const ev = body.event;
-
-  // ── 임시 디버그 (원인 확인 후 제거): 사용자 스레드 답글이 어느 필터에서
-  //    떨어지는지 스레드에 자가 보고. 봇 메시지에는 절대 반응하지 않으므로
-  //    루프 위험 없음. ──
-  const debugTo =
-    ev?.thread_ts && ev.channel && !ev.bot_id && !ev.app_id
-      ? { channel: ev.channel, threadTs: ev.thread_ts }
-      : null;
-  const debugDrop = (reason: string) => {
-    if (debugTo) {
-      after(() =>
-        postSlack({ ...debugTo, text: `🔧 debug drop: ${reason}` }).catch(() => {}),
-      );
-    }
-    return ack();
-  };
-
-  if (retryNum) return debugDrop(`retry#${retryNum} 무시`);
   if (!ev || ev.type !== 'message') return ack();
   // 봇 메시지·편집/삭제 등 subtype 은 답변으로 보지 않는다 (무한 루프 차단).
-  if (ev.bot_id || ev.app_id) return ack();
-  if (ev.subtype) return debugDrop(`subtype=${ev.subtype}`);
-  if (!ev.text?.trim() || !ev.channel || !ev.ts) return debugDrop('text/channel/ts 누락');
+  if (ev.bot_id || ev.app_id || ev.subtype) return ack();
+  if (!ev.text?.trim() || !ev.channel || !ev.ts) return ack();
   // 스레드 답글만 대상. 채널 최상위 대화는 무시.
   if (!ev.thread_ts || ev.thread_ts === ev.ts) return ack();
 
   const replyText = ev.text.trim();
   // 봇 명령·슬래시는 답변이 아니다.
-  if (replyText.startsWith('/')) return debugDrop('슬래시 명령');
+  if (replyText.startsWith('/')) return ack();
 
   // ── Slack 은 3초 안에 200 을 요구한다. 스레드 조회·blob 읽기·카드 게시를
   //    응답 전에 하면 콜드스타트와 겹쳐 3초를 초과 → Slack 이 실패로 간주해
@@ -130,21 +111,11 @@ export async function POST(req: NextRequest) {
 
   after(async () => {
     try {
-      // 임시 디버그: 수신·처리 시작 신호.
-      await postSlack({ channel, threadTs, text: '🔧 debug: 이벤트 수신, 처리 시작' }).catch(
-        () => {},
-      );
       // 스레드 부모가 우리 문의 카드인지 확인.
       const rootText = await fetchThreadRootText(channel, threadTs);
-      if (!rootText) {
-        await postSlack({ channel, threadTs, text: '🔧 debug: 스레드 원문 조회 실패' }).catch(() => {});
-        return;
-      }
+      if (!rootText) return;
       const inquiryId = extractInquiryId(rootText);
-      if (!inquiryId) {
-        await postSlack({ channel, threadTs, text: '🔧 debug: 카드에서 문의 ID 미발견' }).catch(() => {});
-        return;
-      }
+      if (!inquiryId) return;
 
       const inquiries = await readDataUncached<InquiryRecord>('inquiries');
       const inq = inquiries.find((q) => q.id === inquiryId);
