@@ -80,6 +80,26 @@ async function slackApi(
 }
 
 /**
+ * 읽기 계열 Web API (conversations.replies / conversations.list 등).
+ * 이 메서드들은 JSON body 를 받지 않는다 — application/json 으로 보내면
+ * 인자가 무시되어 channel_not_found 류 오류가 난다. GET + 쿼리스트링으로 호출.
+ */
+async function slackApiGet(
+  method: string,
+  params: Record<string, string | number | boolean>,
+  token: string,
+): Promise<SlackApiResponse> {
+  const qs = new URLSearchParams(
+    Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)])),
+  ).toString();
+  const res = await fetch(`https://slack.com/api/${method}?${qs}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(10_000),
+  });
+  return (await res.json().catch(() => ({}))) as SlackApiResponse;
+}
+
+/**
  * 채널 이름("08_zoellife-vietnam", "#08_...")을 ID(C0xxxx)로 해석.
  * 이미 ID 형태면 그대로 반환. 결과는 프로세스 수명 동안 캐시 —
  * 채널 ID 는 변하지 않으므로 재조회할 이유가 없다.
@@ -97,13 +117,13 @@ async function resolveChannelId(nameOrId: string, token: string): Promise<string
 
   let cursor: string | undefined;
   for (let page = 0; page < 10; page += 1) {
-    const body: Record<string, unknown> = {
+    const params: Record<string, string | number | boolean> = {
       limit: 200,
       exclude_archived: true,
       types: 'public_channel,private_channel',
     };
-    if (cursor) body.cursor = cursor;
-    const resp = await slackApi('conversations.list', body, token);
+    if (cursor) params.cursor = cursor;
+    const resp = await slackApiGet('conversations.list', params, token);
     if (!resp.ok) return null;
     const hit = resp.channels?.find((c) => c.name === raw);
     if (hit?.id) {
@@ -277,7 +297,7 @@ export async function fetchThreadMessage(
   const cfg = await resolveSlackConfig();
   if (!cfg.botToken) return { ok: false, error: 'slack bot not configured' };
   try {
-    const resp = await slackApi(
+    const resp = await slackApiGet(
       'conversations.replies',
       { channel, ts: threadTs, limit: 200 },
       cfg.botToken,
@@ -299,12 +319,15 @@ export async function fetchThreadRootText(
   const cfg = await resolveSlackConfig();
   if (!cfg.botToken) return null;
   try {
-    const resp = await slackApi(
+    const resp = await slackApiGet(
       'conversations.replies',
       { channel, ts: threadTs, limit: 1 },
       cfg.botToken,
     );
-    if (!resp.ok) return null;
+    if (!resp.ok) {
+      console.error('[slack] conversations.replies error:', resp.error);
+      return null;
+    }
     const root = resp.messages?.[0];
     if (!root) return null;
     // 카드 본문은 blocks 안에 있으므로 text 와 blocks 를 함께 훑는다.
