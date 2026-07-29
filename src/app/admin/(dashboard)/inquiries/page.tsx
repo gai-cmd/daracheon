@@ -32,6 +32,9 @@ interface Inquiry {
   dueDate?: string;    // 답변기한 (YYYY-MM-DD)
   resolvedAt?: string; // 완료일 (ISO)
   inbound?: InboundReply[]; // 고객이 메일로 보낸 답신 (IMAP 폴링 누적)
+  openedAt?: string;   // 답변 메일 최초 열람 시각 (추적 픽셀)
+  lastOpenAt?: string; // 최근 열람 시각
+  openCount?: number;  // 열람 횟수
 }
 
 interface InboundReply {
@@ -798,9 +801,21 @@ export default function InquiriesPage() {
                             <label className="text-xs font-medium text-neutral-500 mb-1 block">답변 이력</label>
                             <div className="bg-gold-50 rounded-lg border border-gold-200 p-4 space-y-1">
                               <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">{inq.reply}</p>
-                              <div className="flex gap-3 text-xs text-neutral-400 pt-1">
+                              <div className="flex flex-wrap gap-3 text-xs text-neutral-400 pt-1">
                                 {inq.replyAt && <span>답변일시: {formatDateTime(inq.replyAt)}</span>}
                                 {inq.replyBy && <span>답변자: {inq.replyBy}</span>}
+                                {/* 메일 열람 추적 — '확인 안 됨'은 '안 읽음'이 아니다.
+                                    수신자가 이미지 자동 로드를 끄면 읽어도 기록되지 않는다. */}
+                                {inq.openedAt ? (
+                                  <span className="text-emerald-600 font-medium">
+                                    👀 열람 확인: {formatDateTime(inq.openedAt)}
+                                    {(inq.openCount ?? 1) > 1 && ` (${inq.openCount}회)`}
+                                  </span>
+                                ) : (
+                                  <span title="수신자가 이미지 자동 로드를 꺼두면 읽어도 표시되지 않습니다.">
+                                    👀 열람 확인 안 됨
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>

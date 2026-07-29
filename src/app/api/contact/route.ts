@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { readDataForWrite, appendData, readSingleSafe } from '@/lib/db';
+import { readDataForWrite, appendData, readSingleSafe, writeDataMerged } from '@/lib/db';
 import { sendEmail } from '@/lib/mail';
 import { appendToGoogleSheet, notifyTelegram, sendTelegramMessage, type InquiryPayload } from '@/lib/integrations';
+import { notifySlackInquiry } from '@/lib/slack-notify';
+import type { InquiryRecord } from '@/lib/inquiry-reply';
 
 interface MailSettingsLite { adminEmail?: string }
 
@@ -233,13 +235,36 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
       ok: false as const,
       error: err instanceof Error ? err.message : String(err),
     }));
+    // Slack 카드 — 텔레그램은 그대로 유지하고 병행 통지한다. 이 카드의
+    // 스레드 답글이 곧 고객 답변 메일이 되므로 ts/channel 을 문의에 되기록한다.
+    const slackPromise = notifySlackInquiry(inquiryPayload).catch((err) => ({
+      ok: false as const,
+      error: err instanceof Error ? err.message : String(err),
+    }));
 
-    const [customerResult, adminResult, sheetsResult, telegramResult] = await Promise.all([
-      customerMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
-      adminMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
-      sheetsPromise,
-      telegramPromise,
-    ]);
+    const [customerResult, adminResult, sheetsResult, telegramResult, slackResult] =
+      await Promise.all([
+        customerMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
+        adminMailPromise.catch((err) => ({ ok: false as const, error: err instanceof Error ? err.message : String(err) })),
+        sheetsPromise,
+        telegramPromise,
+        slackPromise,
+      ]);
+
+    // Slack 메시지 좌표 되기록 — 스레드 답글 → 메일 발송, 열람 알림의 앵커.
+    if (slackResult.ok && 'ts' in slackResult && slackResult.ts && slackResult.channel) {
+      try {
+        const fresh = await readDataForWrite<InquiryRecord>('inquiries');
+        const i = fresh.findIndex((q) => q.id === newInquiry.id);
+        if (i >= 0) {
+          fresh[i].slackChannel = slackResult.channel;
+          fresh[i].slackTs = slackResult.ts;
+          await writeDataMerged('inquiries', fresh);
+        }
+      } catch (err) {
+        console.error('[Contact Form] Slack 좌표 기록 실패:', err);
+      }
+    }
 
     if (!customerResult.ok) console.error('[Contact Form] 고객 메일 발송 오류:', customerResult.error);
     if (!adminResult.ok) console.error('[Contact Form] 관리자 메일 발송 오류:', adminResult.error);
@@ -248,6 +273,9 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
     }
     if (!telegramResult.ok && !('skipped' in telegramResult && telegramResult.skipped)) {
       console.error('[Contact Form] 텔레그램 알림 오류:', telegramResult.error);
+    }
+    if (!slackResult.ok && !('skipped' in slackResult && slackResult.skipped)) {
+      console.error('[Contact Form] 슬랙 알림 오류:', slackResult.error);
     }
 
     return NextResponse.json(
@@ -268,6 +296,9 @@ ${validated.subject ? `  <li><strong>제목:</strong> ${validated.subject}</li>\
           telegram: telegramResult.ok,
           telegramSkipped: 'skipped' in telegramResult ? telegramResult.skipped : false,
           telegramError: telegramResult.ok ? undefined : telegramResult.error,
+          slack: slackResult.ok,
+          slackSkipped: 'skipped' in slackResult ? slackResult.skipped : false,
+          slackError: slackResult.ok ? undefined : slackResult.error,
         },
       },
       { status: 200 }

@@ -12,6 +12,7 @@ import {
   isAllowedContentUrl,
   type MediaSubmission,
 } from '@/lib/media-submissions';
+import { notifySlackSubmission } from '@/lib/slack-notify';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,33 @@ const AUTH_FAIL = NextResponse.json(
   { success: false, message: '인증이 필요합니다.' },
   { status: 401 }
 );
+
+/**
+ * 승인 대기 카드를 Slack(#08_zoellife-vietnam)에 게시하고, 그 메시지 좌표를
+ * 제출 레코드에 되기록한다. 좌표가 있어야 승인·반려 후 같은 카드를 결과
+ * 표시로 갱신해 이중 처리를 막을 수 있다.
+ *
+ * 통지는 부가 기능이므로 어떤 실패도 제출 자체를 되돌리지 않는다.
+ */
+async function announceSubmission(submission: MediaSubmission): Promise<void> {
+  try {
+    const posted = await notifySlackSubmission(submission);
+    if (!posted.ok || !posted.ts || !posted.channel) {
+      if (!posted.skipped) {
+        console.error('[Partner Submissions] Slack 통지 실패:', posted.error);
+      }
+      return;
+    }
+    const fresh = await readDataForWrite<MediaSubmission>(SUBMISSIONS_FILE);
+    const i = fresh.findIndex((s) => s.id === submission.id);
+    if (i < 0) return;
+    fresh[i].slackChannel = posted.channel;
+    fresh[i].slackTs = posted.ts;
+    await writeDataMerged(SUBMISSIONS_FILE, fresh);
+  } catch (err) {
+    console.error('[Partner Submissions] Slack 통지 오류:', err);
+  }
+}
 
 export async function GET() {
   const session = await getValidSession();
@@ -122,6 +150,10 @@ export async function POST(request: Request) {
     const all = await readDataForWrite<MediaSubmission>(SUBMISSIONS_FILE);
     all.push(submission);
     await writeDataMerged(SUBMISSIONS_FILE, all);
+
+    // Slack 승인 카드 게시 — 실패해도 제출은 이미 저장됐으므로 응답을 막지 않는다.
+    // ts/channel 을 되기록해야 승인·반려 후 그 카드를 결과로 갱신할 수 있다.
+    await announceSubmission(submission);
 
     return NextResponse.json({ success: true, submission }, { status: 201 });
   } catch (error) {
@@ -218,6 +250,7 @@ export async function PUT(request: Request) {
     }
 
     // 반려 건을 수정·저장하면 다시 승인 대기로 — 관리자 재검토 대상이 된다.
+    const resubmitted = cur.status === 'rejected';
     if (cur.status === 'rejected') {
       cur.status = 'pending';
       delete cur.rejectReason;
@@ -239,6 +272,10 @@ export async function PUT(request: Request) {
         }
       }
     }
+
+    // 반려 → 재제출은 새 심사 건이므로 승인 카드를 새로 올린다.
+    // (이전 카드는 '반려됨' 상태로 남아 이력이 유지된다)
+    if (resubmitted) await announceSubmission(cur);
 
     return NextResponse.json({ success: true, submission: cur });
   } catch (error) {

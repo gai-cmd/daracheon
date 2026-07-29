@@ -7,6 +7,7 @@ import {
   SUBMISSIONS_FILE,
   type MediaSubmission,
 } from '@/lib/media-submissions';
+import { reviewSubmission } from '@/lib/submission-review';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -57,7 +58,6 @@ export async function PUT(request: Request) {
     }
     const submission = submissions[idx];
     const { email: actor } = await resolveActor();
-    const now = new Date().toISOString();
 
     // ── 수정: 제목·메모만 (상태 그대로 유지). 게시된(approved) 글도 현장 소식
     //    게시판에서 관리자가 수정할 수 있다. ──
@@ -79,51 +79,22 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: true, submission });
     }
 
-    if (action === 'reject') {
-      if (submission.status === 'approved') {
-        return NextResponse.json(
-          { success: false, message: '게시된 항목은 반려할 수 없습니다. 게시판에서 삭제하세요.' },
-          { status: 409 }
-        );
-      }
-      submission.status = 'rejected';
-      submission.reviewedAt = now;
-      submission.reviewedBy = actor;
-      if (reason?.trim()) submission.rejectReason = reason.trim();
-      submissions[idx] = submission;
-      await writeDataMerged(SUBMISSIONS_FILE, submissions);
-
-      await logAdmin('media', 'status_change', {
-        targetId: id,
-        summary: `현장 제출 거절: ${submission.title} (${submission.partnerName})`,
-        meta: reason ? { reason } : undefined,
-      });
-      return NextResponse.json({ success: true, submission });
-    }
-
-    // ── 승인 = 현장 소식 게시: 제출 1건이 곧 게시글이므로 낱장 미디어로
-    //    쪼개 media.json 으로 복사하지 않는다. 상태만 approved 로 전환하면
-    //    /media '현장 소식' 탭이 승인 제출을 직접 읽어 노출한다.
-    //    (승인 시 제목 덮어쓰기 옵션은 유지) ──
-    if (submission.status === 'approved') {
+    // ── 승인/반려는 Slack 버튼 경로와 완전히 동일한 로직을 쓴다
+    //    (저장 + 감사로그 + Slack 카드 갱신). 어느 쪽에서 처리하든 관리자
+    //    화면과 Slack 카드가 같은 결과를 보이도록 단일 진입점으로 위임. ──
+    const outcome = await reviewSubmission(id, action, {
+      actor,
+      via: 'admin',
+      reason,
+      title: parsed.data.title,
+    });
+    if (!outcome.ok) {
       return NextResponse.json(
-        { success: false, message: '이미 게시된 항목입니다.' },
-        { status: 409 }
+        { success: false, message: outcome.message ?? '처리하지 못했습니다.' },
+        { status: outcome.status }
       );
     }
-    if (parsed.data.title?.trim()) submission.title = parsed.data.title.trim();
-    submission.status = 'approved';
-    submission.reviewedAt = now;
-    submission.reviewedBy = actor;
-    submissions[idx] = submission;
-    await writeDataMerged(SUBMISSIONS_FILE, submissions);
-
-    await logAdmin('media', 'status_change', {
-      targetId: id,
-      summary: `현장 제출 승인(현장 소식 게시): ${submission.title} (${submission.partnerName})`,
-    });
-
-    return NextResponse.json({ success: true, submission });
+    return NextResponse.json({ success: true, submission: outcome.submission });
   } catch (error) {
     console.error('[Media Submissions] PUT Error:', error);
     return NextResponse.json({ success: false, message: '서버 오류' }, { status: 500 });

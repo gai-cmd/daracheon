@@ -2,6 +2,7 @@ import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { sendEmail } from '@/lib/mail';
 import { notifyTelegramReply, updateGoogleSheetReply } from '@/lib/integrations';
+import { trackingPixelHtml } from '@/lib/mail-tracking';
 
 /**
  * 문의 답변 파이프라인 — 어드민 시스템(PATCH)과 텔레그램 리플라이가 공유.
@@ -29,6 +30,13 @@ export interface InquiryRecord {
   assignee?: string;
   dueDate?: string;
   resolvedAt?: string;
+  /** 문의 접수 카드가 올라간 Slack 채널·메시지 — 스레드 답변/열람 통지의 앵커 */
+  slackChannel?: string;
+  slackTs?: string;
+  /** 답변 메일 열람 추적 (best-effort — mail-tracking.ts 정확도 한계 주석 참조) */
+  openedAt?: string;
+  lastOpenAt?: string;
+  openCount?: number;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -96,6 +104,7 @@ export function buildReplyEmail(inq: {
       </div>
     </div>
   </div>
+  ${trackingPixelHtml(inq.id)}
 </body>
 </html>`;
 
@@ -123,6 +132,7 @@ export async function replyToInquiryById(
   inquiryId: string,
   replyText: string,
   repliedBy?: string,
+  via: 'telegram' | 'slack' = 'telegram',
 ): Promise<ReplyResult> {
   const reply = replyText.trim();
   if (!reply) return { ok: false, error: '답변 내용이 비어 있습니다.' };
@@ -151,6 +161,11 @@ export async function replyToInquiryById(
     // resolved(완료) 였으면 상태 유지, 그 외에는 replied(답변완료) 로.
     status: prev.status === 'resolved' ? prev.status : 'replied',
   };
+  // 새 답변 메일 = 새 추적 대상. 이전 답변의 열람 기록을 물려받으면
+  // "이번 답변을 읽었다"로 잘못 보이므로 초기화한다.
+  delete updated.openedAt;
+  delete updated.lastOpenAt;
+  delete updated.openCount;
   if (repliedBy && repliedBy.trim()) updated.replyBy = repliedBy.trim();
   inquiries[idx] = updated;
   // merged write — base read 이후 들어온 신규 문의를 보존.
@@ -210,10 +225,11 @@ export async function replyToInquiryById(
     if (!r.ok && !r.skipped) console.error('[inquiry-reply] telegram error:', r.error);
   }).catch((err: unknown) => console.error('[inquiry-reply] telegram threw:', err));
 
+  const viaLabel = via === 'slack' ? '슬랙' : '텔레그램';
   await logAdmin('inquiries', 'reply', {
     targetId: updated.id,
-    summary: `문의 답변(텔레그램) (${updated.id})`,
-    meta: { repliedBy: updated.replyBy ?? null, via: 'telegram' },
+    summary: `문의 답변(${viaLabel}) (${updated.id})`,
+    meta: { repliedBy: updated.replyBy ?? null, via },
   });
 
   return { ok: true, inquiry: updated, emailOk: emailRes.ok };

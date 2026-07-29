@@ -56,6 +56,9 @@ export interface MediaSubmission {
   rejectReason?: string;
   /** 승인 시 media.json 에 생성된 항목 id 들 */
   mediaIds?: string[];
+  /** 승인 카드가 올라간 Slack 채널·메시지 — 처리 후 카드 갱신의 앵커 */
+  slackChannel?: string;
+  slackTs?: string;
 }
 
 export const SUBMISSIONS_FILE = 'media-submissions';

@@ -19,6 +19,12 @@ export interface IntegrationSettings {
   telegramBotToken?: string;
   telegramChatId?: string;      // "@channelname" 또는 숫자 chat_id
   slackWebhookUrl?: string;     // Slack Incoming Webhook URL (https://hooks.slack.com/services/...)
+  // ── Slack Bot (양방향: 승인 버튼·스레드 답변). 위 webhook 과 별개 채널이며
+  //    현재는 ENV 전용(SLACK_BOT_TOKEN / SLACK_SIGNING_SECRET / SLACK_CHANNEL_ID).
+  //    blob 에 저장되면 ENV 보다 우선한다 — src/lib/slack.ts resolveSlackConfig 참조.
+  slackBotToken?: string;
+  slackSigningSecret?: string;
+  slackChannelId?: string;
   updatedAt?: string;
 }
 

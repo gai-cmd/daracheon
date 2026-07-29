@@ -23,6 +23,13 @@ interface Inquiry {
   assignee?: string;   // 담당자
   dueDate?: string;    // 답변기한 (YYYY-MM-DD)
   resolvedAt?: string; // 완료일 (ISO). status='resolved' 일 때 자동 세팅.
+  /** 문의 접수 카드가 올라간 Slack 좌표 — 스레드 답변/열람 통지 앵커 */
+  slackChannel?: string;
+  slackTs?: string;
+  /** 답변 메일 열람 추적 (best-effort — src/lib/mail-tracking.ts 한계 주석 참조) */
+  openedAt?: string;
+  lastOpenAt?: string;
+  openCount?: number;
 }
 
 const validStatuses = ['new', 'replied', 'resolved', 'pending', 'in-progress', 'closed'] as const;
@@ -216,6 +223,11 @@ export async function PATCH(request: Request) {
         // 기존 reply와 다를 때만 새 답변으로 간주
         if (trimmed !== previousReply) {
           isNewReply = true;
+          // 새 답변 메일 = 새 추적 대상. 이전 답변의 열람 기록을 물려받으면
+          // "이번 답변을 읽었다"로 잘못 보이므로 초기화한다.
+          delete updated.openedAt;
+          delete updated.lastOpenAt;
+          delete updated.openCount;
         }
         updated.reply = trimmed;
         updated.replyAt = new Date().toISOString();
