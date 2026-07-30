@@ -90,6 +90,35 @@ button{width:100%;padding:11px;background:#4493f8;color:#fff;border:0;border-rad
     return NextResponse.next();
   }
 
+  // ── 전사 AI툴 관리 CRM (/ai-tools) — 관리자 세션 공유 게이팅 ──
+  // 로그인한 사내 관리자면 열람·편집 가능(viewer/editor 를 세션으로 근사).
+  // MCP(/api/ai-tools/mcp)·크론(/api/ai-tools/cron)은 자체 Bearer/CRON_SECRET
+  // 인증을 쓰므로 세션 게이트에서 제외한다.
+  const isAiToolsPage = pathname.startsWith('/ai-tools');
+  const isAiToolsApi = pathname.startsWith('/api/ai-tools');
+  if (isAiToolsPage || isAiToolsApi) {
+    if (pathname.startsWith('/api/ai-tools/mcp') || pathname.startsWith('/api/ai-tools/cron')) {
+      return NextResponse.next();
+    }
+    const aiToken = request.cookies.get(SESSION_COOKIE)?.value;
+    const aiSession = await verifySessionToken(aiToken);
+    if (!aiSession) {
+      if (isAiToolsApi) {
+        return NextResponse.json(
+          { success: false, message: '인증이 필요합니다.' },
+          { status: 401 }
+        );
+      }
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('next', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    const aiResponse = NextResponse.next();
+    aiResponse.headers.set('x-admin-email', aiSession.email);
+    aiResponse.headers.set('x-admin-role', aiSession.role);
+    return aiResponse;
+  }
+
   const isAdminPage = pathname.startsWith('/admin');
   const isAdminApi = pathname.startsWith('/api/admin');
 
