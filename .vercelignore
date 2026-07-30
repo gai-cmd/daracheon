@@ -27,6 +27,10 @@ node_modules/
 !data/db/pages.json
 !data/db/company.json
 !data/db/navigation.json
+!data/db/ai-teams.json
+!data/db/ai-tools.json
+!data/db/ai-tool-payments.json
+!data/db/ai-tool-reviews.json
 
 # 민감 파일 — 반드시 제외
 data/db/admin-users.json

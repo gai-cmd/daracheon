@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 개발 유료 서비스 일람</title>
+</head>
+<body>
+<style>
+  :root {
+    --bg: #f4f5f8;
+    --surface: #ffffff;
+    --surface-2: #eceef2;
+    --border: #e0e3ea;
+    --border-strong: #cfd4de;
+    --ink: #14171d;
+    --muted: #616a78;
+    --faint: #8b93a1;
+    --accent: #b45309;        /* amber — 돈(가격·활성) */
+    --accent-ink: #92400e;
+    --accent-soft: #fdf3e3;
+    --free: #0f766e;          /* teal — 무료 티어 */
+    --free-soft: #e6f4f1;
+    --shadow: 0 1px 2px rgba(20,23,29,.04), 0 4px 16px rgba(20,23,29,.05);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Pretendard", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0f15;
+      --surface: #141922;
+      --surface-2: #1b212c;
+      --border: #28303c;
+      --border-strong: #384252;
+      --ink: #e9edf3;
+      --muted: #99a4b3;
+      --faint: #6b7686;
+      --accent: #f59e0b;
+      --accent-ink: #fbbf24;
+      --accent-soft: #2a2010;
+      --free: #2dd4bf;
+      --free-soft: #10241f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f5f8; --surface: #ffffff; --surface-2: #eceef2; --border: #e0e3ea;
+    --border-strong: #cfd4de; --ink: #14171d; --muted: #616a78; --faint: #8b93a1;
+    --accent: #b45309; --accent-ink: #92400e; --accent-soft: #fdf3e3;
+    --free: #0f766e; --free-soft: #e6f4f1;
+    --shadow: 0 1px 2px rgba(20,23,29,.04), 0 4px 16px rgba(20,23,29,.05);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0f15; --surface: #141922; --surface-2: #1b212c; --border: #28303c;
+    --border-strong: #384252; --ink: #e9edf3; --muted: #99a4b3; --faint: #6b7686;
+    --accent: #f59e0b; --accent-ink: #fbbf24; --accent-soft: #2a2010;
+    --free: #2dd4bf; --free-soft: #10241f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .head-in {
+    display: flex; align-items: center; gap: 20px;
+    padding: 16px 24px; max-width: 1180px; margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; flex-direction: column; gap: 2px; margin-right: auto; }
+  .brand .kick {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent-ink); font-weight: 600;
+  }
+  .brand h1 {
+    margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+  .search {
+    position: relative; flex: 1; min-width: 220px; max-width: 380px;
+  }
+  .search input {
+    width: 100%; font-family: var(--sans); font-size: 14px;
+    padding: 10px 12px 10px 34px; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: 9px; outline: none;
+  }
+  .search input::placeholder { color: var(--faint); }
+  .search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--faint); }
+
+  /* ── Stat strip ── */
+  .stats {
+    display: flex; flex-wrap: wrap; gap: 10px 28px;
+    padding: 18px 0 4px;
+  }
+  .stat { display: flex; align-items: baseline; gap: 8px; }
+  .stat b {
+    font-family: var(--mono); font-size: 22px; font-weight: 700;
+    letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+  }
+  .stat .l { font-size: 12.5px; color: var(--muted); }
+  .stat.free b { color: var(--free); }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 16px 0 0;
+  }
+  .controls.row2 { padding-top: 8px; }
+  .ctl-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); margin-right: 2px;
+  }
+  .chip {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    padding: 6px 13px; border-radius: 999px; cursor: pointer;
+    background: var(--surface); color: var(--muted);
+    border: 1px solid var(--border-strong); white-space: nowrap;
+    transition: background .12s, color .12s, border-color .12s;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--faint); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip[aria-pressed="true"] {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .chip.free-toggle[aria-pressed="true"] { background: var(--free); border-color: var(--free); }
+  .spacer { flex: 1; }
+  .toggle-theme {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    background: transparent; border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; cursor: pointer;
+  }
+  .toggle-theme:hover { color: var(--ink); border-color: var(--faint); }
+
+  /* ── Sections ── */
+  main { padding: 8px 0 40px; }
+  .cat-section { margin-top: 30px; }
+  .cat-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .cat-dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .cat-head h2 {
+    margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -.01em;
+  }
+  .cat-head .n {
+    font-family: var(--mono); font-size: 12px; color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .cat-head .rule { flex: 1; height: 1px; background: var(--border); }
+
+  .grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 13px; padding: 16px 16px 14px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 9px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--cat, var(--border-strong)); opacity: .9;
+  }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .card h3 { margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .card .vendor { font-size: 12px; color: var(--faint); margin-top: 2px; }
+  .tag-free {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: .02em;
+    color: var(--free); background: var(--free-soft);
+    padding: 3px 7px; border-radius: 6px; white-space: nowrap; flex: none;
+  }
+  .cat-chip {
+    font-family: var(--mono); font-size: 10px; color: var(--faint);
+    border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px;
+    white-space: nowrap; flex: none; align-self: flex-start;
+  }
+  .use { font-size: 13px; color: var(--muted); line-height: 1.45; flex: 1; }
+  .price {
+    display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap;
+    padding-top: 8px; border-top: 1px dashed var(--border);
+  }
+  .price .amt {
+    font-family: var(--mono); font-size: 16px; font-weight: 700;
+    color: var(--accent-ink); letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+  }
+  .price .jpy {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .price .note { font-family: var(--mono); font-size: 11.5px; color: var(--faint); }
+  .card a.link {
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+    text-decoration: none; margin-top: 2px; align-self: flex-start;
+  }
+  .card a.link:hover { color: var(--accent-ink); text-decoration: underline; }
+  .card a.link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  .empty {
+    text-align: center; color: var(--muted); padding: 60px 20px;
+    font-size: 14px; display: none;
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border); margin-top: 20px;
+    padding: 22px 0 40px; color: var(--faint); font-size: 12px; line-height: 1.6;
+  }
+  footer b { color: var(--muted); }
+  footer .mono { font-family: var(--mono); }
+
+  @media (max-width: 560px) {
+    .brand h1 { font-size: 17px; }
+    .stats { gap: 8px 20px; }
+    .stat b { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="head-in">
+    <div class="brand">
+      <span class="kick">Paid Services Directory</span>
+      <h1>AI 개발 유료 서비스 일람</h1>
+    </div>
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+      <input id="q" type="search" placeholder="서비스·벤더·용도 검색" autocomplete="off" aria-label="검색">
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stats" id="stats"></div>
+  <div class="controls" id="chips"></div>
+  <div class="controls row2" id="sortRow"></div>
+  <main>
+    <div id="sections"></div>
+    <div class="empty" id="empty">조건에 맞는 서비스가 없습니다.</div>
+  </main>
+  <footer>
+    <b>가격 안내</b> — 표기 금액은 각 서비스 <b>공식 공개가 기준의 대략적 참고값</b>이며, 별도 표기가 없으면 <span class="mono">USD·월·1인 기준</span>입니다.
+    <span class="mono">API</span> 항목은 대부분 <b>토큰/사용량 기반 종량제</b>라 대표 단가만 표기했습니다.
+    <span class="mono">≈ ¥</span> 환산은 고정 환율 <span class="mono">$1 = ¥155</span> 기준 참고값입니다(종량제는 환산 생략).
+    플랜·가격·무료 티어는 수시로 바뀌니 <b>계약 전 반드시 공식 페이지를 확인</b>하세요.
+    · 기준 시점 <span class="mono">2026-07</span> · 전사 AI툴 관리 CRM 참고용 카탈로그.
+  </footer>
+</div>
+
+<script>
+  const FX_USD_JPY = 155; // 고정 환율 (CRM currency.ts 기본값과 동일)
+
+  const CATS = [
+    { id: "llm",     label: "LLM · 모델 API",       hue: "#6d28d9" },
+    { id: "coding",  label: "AI 코딩 어시스턴트",    hue: "#2563eb" },
+    { id: "chat",    label: "AI 챗 구독",            hue: "#0891b2" },
+    { id: "deploy",  label: "배포 · 호스팅",         hue: "#0d9488" },
+    { id: "db",      label: "DB · 백엔드",           hue: "#16a34a" },
+    { id: "vector",  label: "벡터DB · RAG",          hue: "#ca8a04" },
+    { id: "ops",     label: "AI Gateway · 관측(LLMOps)", hue: "#dc2626" },
+    { id: "media",   label: "이미지 · 음성 · 미디어 생성", hue: "#db2777" },
+  ];
+
+  // usd: 월 정액 참고가(시작 플랜, USD). null = 사용량 기반 종량제 → JPY 환산·가격 정렬에서 뒤로.
+  const S = [
+    // ── LLM · 모델 API ──
+    { n:"Claude API", v:"Anthropic", c:"llm", usd:null, u:"Claude Opus·Sonnet·Haiku 모델 API. 에이전트·코딩·장문 처리에 강점.", p:"Sonnet ~$3 / $15", note:"1M토큰 입력/출력", free:false, url:"https://www.anthropic.com/pricing" },
+    { n:"OpenAI API", v:"OpenAI", c:"llm", usd:null, u:"GPT-5·o 시리즈 등 범용 LLM API. 생태계·도구 지원 폭넓음.", p:"사용량", note:"토큰 종량제", free:false, url:"https://openai.com/api/pricing/" },
+    { n:"Gemini API", v:"Google", c:"llm", usd:null, u:"Gemini Pro·Flash 모델 API. 대용량 컨텍스트·멀티모달.", p:"사용량", note:"무료 티어 후 종량제", free:true, url:"https://ai.google.dev/pricing" },
+    { n:"Grok API", v:"xAI", c:"llm", usd:null, u:"Grok 모델 API. 실시간성·긴 컨텍스트 지향.", p:"사용량", note:"토큰 종량제", free:false, url:"https://x.ai/api" },
+    { n:"Mistral API", v:"Mistral AI", c:"llm", usd:null, u:"오픈웨이트·상용 모델 API. 유럽 기반, 비용 효율.", p:"사용량", note:"토큰 종량제", free:true, url:"https://mistral.ai/pricing" },
+    { n:"Cohere API", v:"Cohere", c:"llm", usd:null, u:"Command·Embed·Rerank. 엔터프라이즈 RAG·검색 특화.", p:"사용량", note:"무료 트라이얼 키", free:true, url:"https://cohere.com/pricing" },
+    { n:"Groq", v:"Groq", c:"llm", usd:null, u:"오픈모델 초고속 추론(LPU). 저지연 API.", p:"사용량", note:"토큰 종량제", free:true, url:"https://groq.com/pricing/" },
+    { n:"Together AI", v:"Together", c:"llm", usd:null, u:"오픈소스 모델 호스팅·파인튜닝 추론 플랫폼.", p:"사용량", note:"토큰 종량제", free:true, url:"https://www.together.ai/pricing" },
+
+    // ── AI 코딩 어시스턴트 ──
+    { n:"Claude Code", v:"Anthropic", c:"coding", usd:20, u:"터미널 기반 에이전트형 코딩. Pro·Max 구독 또는 API로 사용.", p:"$20~$200", note:"Pro/Max 구독 포함", free:false, url:"https://www.anthropic.com/pricing" },
+    { n:"GitHub Copilot", v:"GitHub", c:"coding", usd:10, u:"IDE 자동완성·챗·에이전트. 가장 널리 쓰이는 코딩 어시스턴트.", p:"$10", note:"Business $19/인", free:true, url:"https://github.com/features/copilot/plans" },
+    { n:"Cursor", v:"Anysphere", c:"coding", usd:20, u:"AI 네이티브 코드 에디터. 멀티파일 편집·에이전트.", p:"$20", note:"Business $40/인", free:true, url:"https://cursor.com/pricing" },
+    { n:"Windsurf", v:"Codeium", c:"coding", usd:15, u:"에이전트형 AI IDE(Cascade). 자동완성·플로우.", p:"$15", note:"팀 플랜 별도", free:true, url:"https://windsurf.com/pricing" },
+    { n:"Tabnine", v:"Tabnine", c:"coding", usd:9, u:"프라이버시 중심 코드 어시스턴트. 온프렘 지원.", p:"$9", note:"Enterprise $39/인", free:true, url:"https://www.tabnine.com/pricing" },
+    { n:"Amazon Q Developer", v:"AWS", c:"coding", usd:19, u:"AWS 통합 코딩·에이전트. 코드 변환·보안 스캔.", p:"$19", note:"Pro/인", free:true, url:"https://aws.amazon.com/q/developer/" },
+    { n:"Replit", v:"Replit", c:"coding", usd:20, u:"브라우저 IDE + Agent. 프로토타이핑·배포 일괄.", p:"$20", note:"Core", free:true, url:"https://replit.com/pricing" },
+    { n:"Cody", v:"Sourcegraph", c:"coding", usd:9, u:"대규모 코드베이스 문맥 기반 코딩 어시스턴트.", p:"$9", note:"Enterprise 별도", free:true, url:"https://sourcegraph.com/pricing" },
+
+    // ── AI 챗 구독 ──
+    { n:"ChatGPT", v:"OpenAI", c:"chat", usd:20, u:"범용 AI 챗. 개발 보조·리서치. Plus/Pro/Team.", p:"$20", note:"Pro $200 · Team $25~/인", free:true, url:"https://openai.com/chatgpt/pricing/" },
+    { n:"Claude", v:"Anthropic", c:"chat", usd:20, u:"장문·코딩·분석 강점 AI 챗. Pro/Max.", p:"$20", note:"Max $100~$200", free:true, url:"https://www.anthropic.com/pricing" },
+    { n:"Gemini", v:"Google", c:"chat", usd:20, u:"Google AI 챗(Google One AI Pro). 워크스페이스 연동.", p:"~$20", note:"AI Pro", free:true, url:"https://one.google.com/about/google-ai-plans/" },
+    { n:"Perplexity Pro", v:"Perplexity", c:"chat", usd:20, u:"출처 기반 AI 검색·리서치. 개발 자료 조사에 유용.", p:"$20", note:"", free:true, url:"https://www.perplexity.ai/pro" },
+    { n:"Poe", v:"Quora", c:"chat", usd:20, u:"여러 모델을 한 구독으로. 봇·프롬프트 실험.", p:"$20", note:"", free:true, url:"https://poe.com/subscribe" },
+
+    // ── 배포 · 호스팅 ──
+    { n:"Vercel", v:"Vercel", c:"deploy", usd:20, u:"프론트·풀스택 배포(Next.js). 프리뷰·Edge·Cron·Blob.", p:"$20", note:"Pro/인 + 사용량", free:true, url:"https://vercel.com/pricing" },
+    { n:"Netlify", v:"Netlify", c:"deploy", usd:19, u:"정적·서버리스 배포. 폼·함수·엣지.", p:"$19", note:"Pro/인", free:true, url:"https://www.netlify.com/pricing/" },
+    { n:"Railway", v:"Railway", c:"deploy", usd:5, u:"컨테이너·DB 간편 배포. 사용량 과금.", p:"$5~$20", note:"Hobby/Pro + 사용량", free:false, url:"https://railway.com/pricing" },
+    { n:"Render", v:"Render", c:"deploy", usd:null, u:"웹서비스·크론·DB 호스팅. 오토스케일.", p:"사용량", note:"팀 $19/인", free:true, url:"https://render.com/pricing" },
+    { n:"Fly.io", v:"Fly.io", c:"deploy", usd:null, u:"엣지 로케이션 컨테이너 배포. 사용량 기반.", p:"사용량", note:"리소스 종량제", free:false, url:"https://fly.io/docs/about/pricing/" },
+    { n:"Cloudflare Workers", v:"Cloudflare", c:"deploy", usd:5, u:"엣지 서버리스·AI Workers. 글로벌 저지연.", p:"$5", note:"Paid + 사용량", free:true, url:"https://developers.cloudflare.com/workers/platform/pricing/" },
+
+    // ── DB · 백엔드 ──
+    { n:"Supabase", v:"Supabase", c:"db", usd:25, u:"Postgres + Auth + Storage + Edge Functions. 오픈소스 BaaS.", p:"$25", note:"Pro + 사용량", free:true, url:"https://supabase.com/pricing" },
+    { n:"Neon", v:"Neon", c:"db", usd:19, u:"서버리스 Postgres. 브랜칭·오토스케일.", p:"$19", note:"Launch + 사용량", free:true, url:"https://neon.com/pricing" },
+    { n:"PlanetScale", v:"PlanetScale", c:"db", usd:39, u:"서버리스 MySQL/Postgres. 스키마 브랜칭.", p:"$39~", note:"Scaler", free:false, url:"https://planetscale.com/pricing" },
+    { n:"Firebase", v:"Google", c:"db", usd:null, u:"실시간 DB·Auth·Functions·Hosting(Blaze).", p:"사용량", note:"Blaze 종량제", free:true, url:"https://firebase.google.com/pricing" },
+    { n:"MongoDB Atlas", v:"MongoDB", c:"db", usd:null, u:"관리형 도큐먼트 DB + 벡터 검색.", p:"사용량", note:"Dedicated 시간당", free:true, url:"https://www.mongodb.com/pricing" },
+    { n:"Upstash", v:"Upstash", c:"db", usd:null, u:"서버리스 Redis·Kafka·벡터. 요청당 과금.", p:"사용량", note:"요청당 종량제", free:true, url:"https://upstash.com/pricing" },
+
+    // ── 벡터DB · RAG ──
+    { n:"Pinecone", v:"Pinecone", c:"vector", usd:null, u:"관리형 벡터 DB. RAG·시맨틱 검색 표준격.", p:"사용량", note:"Starter 무료 → Standard", free:true, url:"https://www.pinecone.io/pricing/" },
+    { n:"Weaviate Cloud", v:"Weaviate", c:"vector", usd:null, u:"오픈소스 벡터 DB 클라우드. 하이브리드 검색.", p:"사용량", note:"Serverless 종량제", free:true, url:"https://weaviate.io/pricing" },
+    { n:"Qdrant Cloud", v:"Qdrant", c:"vector", usd:null, u:"고성능 벡터 검색 엔진 클라우드.", p:"사용량", note:"1GB 무료 클러스터", free:true, url:"https://qdrant.tech/pricing/" },
+    { n:"Zilliz Cloud", v:"Zilliz", c:"vector", usd:null, u:"Milvus 기반 관리형 벡터 DB. 대규모 검색.", p:"사용량", note:"무료 티어 후 종량제", free:true, url:"https://zilliz.com/pricing" },
+
+    // ── AI Gateway · 관측(LLMOps) ──
+    { n:"OpenRouter", v:"OpenRouter", c:"ops", usd:null, u:"수백 개 모델을 단일 API로. 폴백·라우팅.", p:"사용량", note:"토큰 + 소액 마진", free:true, url:"https://openrouter.ai/" },
+    { n:"Helicone", v:"Helicone", c:"ops", usd:20, u:"LLM 프록시 로깅·비용·캐싱·관측.", p:"$20", note:"Pro/인", free:true, url:"https://www.helicone.ai/pricing" },
+    { n:"LangSmith", v:"LangChain", c:"ops", usd:39, u:"LLM 앱 추적·평가·데이터셋. LangChain 생태계.", p:"$39", note:"Plus/인", free:true, url:"https://www.langchain.com/pricing" },
+    { n:"Langfuse", v:"Langfuse", c:"ops", usd:59, u:"오픈소스 LLM 관측·평가·프롬프트 관리.", p:"$59", note:"Core 무료 · 셀프호스팅", free:true, url:"https://langfuse.com/pricing" },
+    { n:"Portkey", v:"Portkey", c:"ops", usd:null, u:"AI Gateway + 가드레일·관측. 프로덕션 라우팅.", p:"사용량", note:"팀 플랜 별도", free:true, url:"https://portkey.ai/pricing" },
+
+    // ── 이미지 · 음성 · 미디어 생성 ──
+    { n:"Midjourney", v:"Midjourney", c:"media", usd:10, u:"고품질 이미지 생성. 웹·Discord.", p:"$10", note:"Standard $30 · Pro $60", free:false, url:"https://www.midjourney.com/account" },
+    { n:"OpenAI Images", v:"OpenAI", c:"media", usd:null, u:"이미지 생성/편집 API(gpt-image). 앱 통합용.", p:"사용량", note:"이미지당 종량제", free:false, url:"https://openai.com/api/pricing/" },
+    { n:"Stability AI", v:"Stability", c:"media", usd:null, u:"Stable Diffusion 계열 이미지 생성 API.", p:"사용량", note:"크레딧 종량제", free:true, url:"https://platform.stability.ai/pricing" },
+    { n:"ElevenLabs", v:"ElevenLabs", c:"media", usd:5, u:"고품질 TTS·음성 복제·더빙 API.", p:"$5", note:"Starter · Creator $22", free:true, url:"https://elevenlabs.io/pricing" },
+    { n:"Runway", v:"Runway", c:"media", usd:15, u:"AI 영상 생성·편집(Gen 시리즈).", p:"$15", note:"Standard · Pro $35", free:true, url:"https://runwayml.com/pricing" },
+    { n:"HeyGen", v:"HeyGen", c:"media", usd:29, u:"AI 아바타·영상 생성. 마케팅·튜토리얼.", p:"$29", note:"Creator", free:true, url:"https://www.heygen.com/pricing" },
+  ];
+
+  const catById = Object.fromEntries(CATS.map(c => [c.id, c]));
+  const state = { q: "", cat: "all", freeOnly: false, sort: "cat" }; // cat | desc | asc
+
+  const jpy = (usd) => usd === null ? null : Math.round(usd * FX_USD_JPY);
+  const fmtJpy = (n) => "¥" + n.toLocaleString("ja-JP");
+
+  // ── Stats ──
+  function renderStats() {
+    const total = S.length, cats = CATS.length, freeN = S.filter(s => s.free).length;
+    const fixedN = S.filter(s => s.usd !== null).length;
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><b>${total}</b><span class="l">서비스</span></div>
+      <div class="stat"><b>${cats}</b><span class="l">카테고리</span></div>
+      <div class="stat free"><b>${freeN}</b><span class="l">무료 티어 제공</span></div>
+      <div class="stat"><b>${fixedN}</b><span class="l">월정액 표기 (나머지 종량제)</span></div>
+      <div class="stat"><b>2026·07</b><span class="l">가격 기준 · $1=¥${FX_USD_JPY}</span></div>`;
+  }
+
+  // ── Category chips ──
+  function renderChips() {
+    const box = document.getElementById("chips");
+    const mk = (id, label, pressed, cls="") =>
+      `<button class="chip ${cls}" data-cat="${id}" aria-pressed="${pressed}">${label}</button>`;
+    let html = mk("all", "전체", state.cat === "all");
+    for (const c of CATS) {
+      const n = S.filter(s => s.c === c.id).length;
+      html += mk(c.id, `${c.label} <span style="opacity:.6;font-family:var(--mono)">${n}</span>`, state.cat === c.id);
+    }
+    html += `<span class="spacer"></span>`;
+    html += `<button class="chip free-toggle" id="freeBtn" aria-pressed="${state.freeOnly}">무료 티어만</button>`;
+    html += `<button class="toggle-theme" id="themeBtn" title="테마 전환">◐ 테마</button>`;
+    box.innerHTML = html;
+
+    box.querySelectorAll(".chip[data-cat]").forEach(el =>
+      el.addEventListener("click", () => { state.cat = el.dataset.cat; renderChips(); renderList(); }));
+    document.getElementById("freeBtn").addEventListener("click", () => {
+      state.freeOnly = !state.freeOnly; renderChips(); renderList();
+    });
+    document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+  }
+
+  // ── Sort chips ──
+  const SORTS = [
+    { id: "cat",  label: "카테고리 기본" },
+    { id: "desc", label: "월정액 높은순 ↓" },
+    { id: "asc",  label: "월정액 낮은순 ↑" },
+  ];
+  function renderSortRow() {
+    const box = document.getElementById("sortRow");
+    box.innerHTML = `<span class="ctl-label">정렬</span>` + SORTS.map(s =>
+      `<button class="chip" data-sort="${s.id}" aria-pressed="${state.sort === s.id}">${s.label}</button>`
+    ).join("");
+    box.querySelectorAll(".chip[data-sort]").forEach(el =>
+      el.addEventListener("click", () => { state.sort = el.dataset.sort; renderSortRow(); renderList(); }));
+  }
+
+  // ── List ──
+  function match(s) {
+    if (state.cat !== "all" && s.c !== state.cat) return false;
+    if (state.freeOnly && !s.free) return false;
+    if (state.q) {
+      const q = state.q.toLowerCase();
+      if (!(`${s.n} ${s.v} ${s.u}`.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  }
+
+  function card(s, showCat) {
+    const cat = catById[s.c];
+    const j = jpy(s.usd);
+    return `<article class="card" style="--cat:${cat.hue}">
+      <div class="card-top">
+        <div>
+          <h3>${s.n}</h3>
+          <div class="vendor">${s.v}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          ${s.free ? `<span class="tag-free">무료 티어</span>` : ``}
+          ${showCat ? `<span class="cat-chip" style="color:${cat.hue};border-color:${cat.hue}55">${cat.label}</span>` : ``}
+        </div>
+      </div>
+      <p class="use">${s.u}</p>
+      <div class="price">
+        <span class="amt">${s.p}</span>
+        ${j !== null ? `<span class="jpy">≈ ${fmtJpy(j)}/월</span>` : ``}
+        ${s.note ? `<span class="note">${s.note}</span>` : ``}
+      </div>
+      <a class="link" href="${s.url}" target="_blank" rel="noopener noreferrer">공식 가격 ↗</a>
+    </article>`;
+  }
+
+  function renderList() {
+    const root = document.getElementById("sections");
+    const shown = S.filter(match);
+    let html = "";
+
+    if (state.sort === "cat") {
+      for (const c of CATS) {
+        const items = shown.filter(s => s.c === c.id);
+        if (!items.length) continue;
+        html += `<section class="cat-section">
+          <div class="cat-head">
+            <span class="cat-dot" style="background:${c.hue}"></span>
+            <h2>${c.label}</h2><span class="n">${items.length}</span>
+            <span class="rule"></span>
+          </div>
+          <div class="grid">${items.map(s => card(s, false)).join("")}</div>
+        </section>`;
+      }
+    } else {
+      // 가격 정렬 — 플랫 그리드. 종량제(usd=null)는 항상 뒤로.
+      const dir = state.sort === "desc" ? -1 : 1;
+      const sorted = [...shown].sort((a, b) => {
+        if (a.usd === null && b.usd === null) return a.n.localeCompare(b.n);
+        if (a.usd === null) return 1;
+        if (b.usd === null) return -1;
+        return (a.usd - b.usd) * dir;
+      });
+      const fixed = sorted.filter(s => s.usd !== null);
+      const usage = sorted.filter(s => s.usd === null);
+      if (fixed.length) {
+        html += `<section class="cat-section">
+          <div class="cat-head"><h2>월정액 (${state.sort === "desc" ? "높은순" : "낮은순"})</h2>
+          <span class="n">${fixed.length}</span><span class="rule"></span></div>
+          <div class="grid">${fixed.map(s => card(s, true)).join("")}</div>
+        </section>`;
+      }
+      if (usage.length) {
+        html += `<section class="cat-section">
+          <div class="cat-head"><h2>종량제 (사용량 기반 — 정렬 제외)</h2>
+          <span class="n">${usage.length}</span><span class="rule"></span></div>
+          <div class="grid">${usage.map(s => card(s, true)).join("")}</div>
+        </section>`;
+      }
+    }
+
+    root.innerHTML = html;
+    document.getElementById("empty").style.display = shown.length ? "none" : "block";
+  }
+
+  // ── Theme toggle ──
+  function toggleTheme() {
+    const root = document.documentElement;
+    const cur = root.getAttribute("data-theme")
+      || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+  }
+
+  // ── Init ──
+  document.getElementById("q").addEventListener("input", e => { state.q = e.target.value; renderList(); });
+  renderStats(); renderChips(); renderSortRow(); renderList();
+</script>
+
+</body>
+</html>

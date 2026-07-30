@@ -36,6 +36,9 @@ const nextConfig: NextConfig = {
     return [
       { source: '/thesis', destination: '/thesis/index.html' },
       { source: '/thesis/', destination: '/thesis/index.html' },
+      // AI 개발 유료 서비스 카탈로그 (사내 참고용 정적 페이지, noindex)
+      { source: '/ai-services', destination: '/ai-services/index.html' },
+      { source: '/ai-services/', destination: '/ai-services/index.html' },
     ];
   },
   async headers() {
