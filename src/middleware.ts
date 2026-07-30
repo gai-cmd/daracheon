@@ -90,11 +90,13 @@ button{width:100%;padding:11px;background:#4493f8;color:#fff;border:0;border-rad
     return NextResponse.next();
   }
 
-  // ── 전사 AI툴 관리 CRM (/ai-tools) — 관리자 세션 공유 게이팅 ──
-  // 로그인한 사내 관리자면 열람·편집 가능(viewer/editor 를 세션으로 근사).
+  // ── 전사 AI툴 관리 CRM (/ai-tools) + 유료 서비스 카탈로그 (/ai-services) ──
+  // 관리자 세션 공유 게이팅 — 로그인한 사내 관리자만 접근(사내전용).
+  // /ai-services 는 public/ 정적 파일이지만 미들웨어가 정적 서빙보다 먼저
+  // 실행되므로 여기서 세션을 강제할 수 있다.
   // MCP(/api/ai-tools/mcp)·크론(/api/ai-tools/cron)은 자체 Bearer/CRON_SECRET
   // 인증을 쓰므로 세션 게이트에서 제외한다.
-  const isAiToolsPage = pathname.startsWith('/ai-tools');
+  const isAiToolsPage = pathname.startsWith('/ai-tools') || pathname.startsWith('/ai-services');
   const isAiToolsApi = pathname.startsWith('/api/ai-tools');
   if (isAiToolsPage || isAiToolsApi) {
     if (pathname.startsWith('/api/ai-tools/mcp') || pathname.startsWith('/api/ai-tools/cron')) {

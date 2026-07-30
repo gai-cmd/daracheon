@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
     return [
       { source: '/thesis', destination: '/thesis/index.html' },
       { source: '/thesis/', destination: '/thesis/index.html' },
-      // AI 개발 유료 서비스 카탈로그 (사내 참고용 정적 페이지, noindex)
+      // AI 개발 유료 서비스 카탈로그 (사내전용 — 미들웨어 관리자 세션 게이트, noindex)
       { source: '/ai-services', destination: '/ai-services/index.html' },
       { source: '/ai-services/', destination: '/ai-services/index.html' },
     ];
