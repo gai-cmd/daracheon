@@ -39,6 +39,7 @@ export interface AiTool {
   teamId?: string; // teams.id
   accountEmail?: string;
   plan?: string; // 'Max 20x' · 'Pro' · 'Plus'
+  url?: string; // 서비스·콘솔 URL (Account info 시트 URL 컬럼. 비밀값 금지 — 링크만)
   currency: Currency; // 계약 통화. 기본 USD
   monthlyCost?: number | null; // 계약 통화 기준. null = 미확정
   billingDay?: number | null; // 결제일 1~31

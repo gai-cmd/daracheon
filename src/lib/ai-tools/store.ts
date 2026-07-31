@@ -90,6 +90,7 @@ export async function createTool(input: ToolCreateInput): Promise<AiTool> {
     teamId: input.teamId || undefined,
     accountEmail: input.accountEmail?.trim() || undefined,
     plan: input.plan?.trim() || undefined,
+    url: input.url?.trim() || undefined,
     currency: (input.currency as Currency) || 'USD',
     monthlyCost: hasCost ? Number(input.monthlyCost) : null,
     billingDay: normalizeBillingDay(input.billingDay),

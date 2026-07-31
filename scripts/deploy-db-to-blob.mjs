@@ -63,9 +63,24 @@ const ALLOW = new Set([
   'productCategories',
   'blogCategories',
   'blogPosts',
+  // AI툴 CRM 마스터 — 시드가 정본(Account info 시트 대조본). 런타임 편집도
+  // 가능하지만 blob 객체가 없으면 readDataForWrite 가 throw 하므로 최초 1회
+  // 시드 주입이 필요하다 (src/lib/db.ts readDataForWrite NOT_FOUND 분기).
+  'ai-tools',
+  'ai-teams',
 ]);
 // 런타임에 쌓이는 데이터 — 시드로 덮으면 프로덕션 실데이터 손실
-const RUNTIME = new Set(['admin-users', 'audit-log', 'inquiries', 'rate-limit', 'reviews', 'qr-codes']);
+const RUNTIME = new Set([
+  'admin-users',
+  'audit-log',
+  'inquiries',
+  'rate-limit',
+  'reviews',
+  'qr-codes',
+  // AI툴 CRM 실적 — 결제·판단 이력은 운영 중 누적된다. 시드(빈 배열)로 덮으면 유실.
+  'ai-tool-payments',
+  'ai-tool-reviews',
+]);
 
 const force = process.env.FORCE === '1';
 const names = (process.argv.slice(2).length ? process.argv.slice(2) : ['pages']).map((f) =>
