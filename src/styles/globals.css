@@ -137,16 +137,28 @@ main > div > section:first-of-type::after {
     color: var(--luxury-black);
   }
 
-  /* Scrollbar */
+  /* Scrollbar — dark-theme.css 가 body 를 #0a0b10 로 강제하므로
+     트랙도 어두운 고정 hex 를 쓴다 (--luxury-ivory 는 크림색이라 흰 막대가 됨). */
+  html {
+    scrollbar-width: auto;
+    scrollbar-color: #d4a843 #14161d;
+  }
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 14px;
+    height: 14px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--luxury-ivory);
+    background: #14161d;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--luxury-gold);
-    border-radius: 3px;
+    background: #d4a843;
+    border-radius: 7px;
+    border: 2px solid #14161d;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #e2b857;
+    background-clip: padding-box;
   }
 }
 
