@@ -413,11 +413,15 @@
  * (dark-theme.css 전역 !important 누수는 data-reading-surface 마커가 차단하고,
  *  h1~h6 는 전역 `color: inherit !important` 라 여기서 !important 로 되찾는다.)
  */
+/* 본문 활자는 사이트 표준 본문과 동일한 값 — story-page.module.css `.chapterBody p`
+   / BrandStoryClient.module.css `.chapterBody p` 와 크기·행간·굵기·색을 맞춘다.
+   (블로그만 크게 잡으면 다른 화면과 톤이 어긋난다.) */
 .article {
   background: transparent;
-  color: rgba(253, 251, 247, 0.78);
+  color: rgba(255, 255, 255, 0.72);
   font-family: var(--font-sans), sans-serif;
-  font-size: clamp(0.98rem, 2.5vw, 1.08rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.02rem);
+  font-weight: 300;
   line-height: 1.95;
   letter-spacing: -0.005em;
   word-break: keep-all;
@@ -426,7 +430,7 @@
 
 .article h1 {
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+  font-size: clamp(1.6rem, 3.6vw, 2.2rem);
   font-weight: 300;
   letter-spacing: -0.02em;
   color: #fff !important;
@@ -436,10 +440,10 @@
 
 .article h2 {
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
   font-weight: 600;
   color: var(--accent-soft, #d4a843) !important;
-  margin: 60px 0 18px;
+  margin: 56px 0 16px;
   letter-spacing: -0.01em;
   line-height: 1.35;
 }
@@ -449,10 +453,10 @@
 
 .article h3 {
   font-family: var(--font-serif), serif;
-  font-size: 1.14rem;
+  font-size: 1.08rem;
   font-weight: 600;
   color: #fff !important;
-  margin: 36px 0 12px;
+  margin: 34px 0 12px;
 }
 
 .article p {
@@ -463,9 +467,9 @@
    `lead` 는 본문 HTML 이 지참하는 전역 클래스 — CSS Module 해싱을 피하려면
    :global 로 감싸야 한다 (감싸지 않으면 선택자가 영영 매치되지 않는다). */
 .article p:global(.lead) {
-  font-size: 1.1em;
+  font-size: 1.08em;
   line-height: 1.85;
-  color: rgba(253, 251, 247, 0.92);
+  color: rgba(255, 255, 255, 0.88);
   padding-left: 18px;
   border-left: 2px solid var(--accent, #b88c2d);
   margin-bottom: 32px;
@@ -522,9 +526,9 @@
   margin: 32px 0;
   padding: 4px 0 4px 22px;
   border-left: 2px solid var(--accent, #b88c2d);
-  color: rgba(253, 251, 247, 0.88);
+  color: rgba(255, 255, 255, 0.85);
   font-style: italic;
-  font-size: 1.04rem;
+  font-size: 1.02rem;
   line-height: 1.85;
 }
 .article blockquote p {
@@ -594,7 +598,7 @@
   width: 100%;
   border-collapse: collapse;
   margin: 28px 0;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   border: 1px solid rgba(212, 168, 67, 0.18);
 }
 .article th,
@@ -611,7 +615,7 @@
   border-right: none;
 }
 .article td {
-  color: rgba(253, 251, 247, 0.78);
+  color: rgba(255, 255, 255, 0.72);
 }
 .article thead th {
   background: rgba(184, 140, 45, 0.16);
