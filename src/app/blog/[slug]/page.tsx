@@ -306,39 +306,37 @@ export default async function BlogPostPage({
           </div>
         </header>
 
-        {/* 3단 레이아웃: 좌 분류 / 중앙 본문 / 우 인기·관련 */}
+        {/* 2단 레이아웃: 좌 분류(상)·인기/관련(하) / 우 본문 — 본문 폭 최대화 */}
         <div className={styles.shell}>
           <div className={styles.layout}>
-            {/* Left rail — 카테고리 */}
+            {/* Left rail 상단 — 카테고리 */}
             <aside className={styles.leftRail} aria-label="블로그 카테고리">
-              <div className={styles.railSticky}>
-                <nav className={styles.railBox}>
-                  <h2 className={styles.railHeading}>분류</h2>
-                  <ul className={styles.catList}>
-                    <li>
-                      <Link href="/blog" className={styles.catLink}>
-                        <span>전체</span>
-                        <span className={styles.catCount}>{published.length}</span>
+              <nav className={styles.railBox}>
+                <h2 className={styles.railHeading}>분류</h2>
+                <ul className={styles.catList}>
+                  <li>
+                    <Link href="/blog" className={styles.catLink}>
+                      <span>전체</span>
+                      <span className={styles.catCount}>{published.length}</span>
+                    </Link>
+                  </li>
+                  {sortedCategories.map((c) => (
+                    <li key={c.id}>
+                      <Link
+                        href={`/blog/category/${c.id}`}
+                        className={`${styles.catLink} ${
+                          c.id === post.categoryId ? styles.catActive : ''
+                        }`}
+                      >
+                        <span>{c.name}</span>
+                        <span className={styles.catCount}>
+                          {categoryCounts.get(c.id) ?? 0}
+                        </span>
                       </Link>
                     </li>
-                    {sortedCategories.map((c) => (
-                      <li key={c.id}>
-                        <Link
-                          href={`/blog/category/${c.id}`}
-                          className={`${styles.catLink} ${
-                            c.id === post.categoryId ? styles.catActive : ''
-                          }`}
-                        >
-                          <span>{c.name}</span>
-                          <span className={styles.catCount}>
-                            {categoryCounts.get(c.id) ?? 0}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              </div>
+                  ))}
+                </ul>
+              </nav>
             </aside>
 
             {/* Center — 커버 + 본문 + 태그 + 이전/다음 */}
@@ -402,8 +400,8 @@ export default async function BlogPostPage({
               )}
             </div>
 
-            {/* Right rail — 인기 글 · 관련 글 */}
-            <aside className={styles.rightRail} aria-label="인기 글과 관련 글">
+            {/* Left rail 하단 — 인기 글 · 관련 글 (모바일에서는 본문 아래로 흐른다) */}
+            <aside className={styles.sideRail} aria-label="인기 글과 관련 글">
               <div className={styles.railSticky}>
                 {popular.length > 0 && (
                   <section className={styles.railBox}>
