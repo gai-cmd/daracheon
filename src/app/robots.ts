@@ -8,35 +8,39 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
   .replace(/^['"]+|['"]+$/g, '')
   .replace(/\/+$/, '');
 
-// AI 크롤러 정책: 전 공개 페이지 인용 허용 (GEO 대응).
-// 브랜드 인지·세일즈 목적이므로 ChatGPT/Perplexity/Claude/Gemini·
-// Google AI Overview 등이 회사·제품·후기·공정을 모두 인용할 수 있게
-// 한다. 관리자/API 는 당연 차단.
+// AI 크롤러 정책 (2026-08-11 개정, awesome-geo 기준): "노출 O, 학습 X".
+// 검색·답변 노출용 봇(AI 검색 인용, 브랜드 인지·세일즈에 기여)은 허용하고,
+// 순수 모델 학습용 크롤러만 차단한다. 관리자/API 는 당연 차단.
 const AI_CRAWLERS = [
-  'GPTBot', // OpenAI ChatGPT
-  'OAI-SearchBot', // OpenAI SearchGPT
-  'ChatGPT-User', // ChatGPT 브라우징
-  'Google-Extended', // Google Gemini / AI Overviews 학습
+  'OAI-SearchBot', // OpenAI ChatGPT search 노출
+  'ChatGPT-User', // ChatGPT 브라우징 (사용자 요청 시 fetch)
   'Googlebot-News',
   'Applebot-Extended', // Apple Intelligence
-  'anthropic-ai', // Anthropic Claude (웹 크롤)
-  'ClaudeBot',
+  'ClaudeBot', // Anthropic — Claude 검색 인용 노출
   'Claude-Web',
   'PerplexityBot',
   'Perplexity-User',
-  'CCBot', // Common Crawl (다수 LLM 학습용)
   'Amazonbot',
   'Bytespider', // TikTok / Doubao
   'Meta-ExternalAgent',
   'Meta-ExternalFetcher',
   'FacebookBot',
   'cohere-ai',
-  'Bingbot', // Bing / Copilot
+  'Bingbot', // Bing / Copilot — 스키마 활용을 공식 언급하는 유일한 엔진
   'DuckDuckBot',
   'YetiBot', // Naver
   'NaverBot',
   'Yeti',
   'Daumoa', // Daum / Kakao
+];
+
+// 학습 전용 크롤러 — 검색 노출과 무관하게 모델 학습에만 쓰이므로 차단.
+// (OAI-SearchBot 등 노출용 봇이 허용돼 있는 한 AI 검색 인용은 유지된다.)
+const TRAINING_CRAWLERS = [
+  'GPTBot', // OpenAI 모델 학습
+  'Google-Extended', // Google Gemini 학습 (검색 색인은 Googlebot 별도)
+  'anthropic-ai', // Anthropic 구 학습 크롤러
+  'CCBot', // Common Crawl — 다수 LLM 학습 코퍼스
 ];
 
 export default function robots(): MetadataRoute.Robots {
@@ -60,6 +64,7 @@ export default function robots(): MetadataRoute.Robots {
     disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
       },
       ...aiRules,
+      ...TRAINING_CRAWLERS.map((ua) => ({ userAgent: ua, disallow: '/' })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
