@@ -73,6 +73,12 @@ export async function GET(request: NextRequest) {
     // Tier 2(GitHub)·Tier 3(메일) 실패도 즉시 경보. skip(미설정·주기 아님)은 정상
     // 상태라 제외하고, 시도했는데 실패한 경우만 알린다 — 기존엔 보조 스토어만
     // 경보가 있어 GitHub 커밋 실패가 success:true 응답 뒤에 조용히 묻혔다.
+    // 미러 결과를 항상 로그로 — 응답 JSON 은 크론 호출자만 보므로, 실패/skip 사유가
+    // Vercel 로그에서 조회 가능해야 원인 추적이 된다 (2026-08-11 Tier2 404 디버깅).
+    console.warn(
+      '[cron:daily-backup] mirror result',
+      JSON.stringify({ tier2Github: mirror.tier2Github, tier3Email: mirror.tier3Email, secondary })
+    );
     if (!mirror.tier2Github.ok && !mirror.tier2Github.skipped) {
       await alertBackupProblem(`Tier2 GitHub 미러 실패: ${mirror.tier2Github.error}. Tier 1 스냅샷은 저장됨.`);
     }

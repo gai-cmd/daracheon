@@ -48,6 +48,12 @@ export async function sendOpsAlert(text: string): Promise<OpsAlertResult> {
     settle('slack-ops-channel', () => postSlack({ channel: OPS_CHANNEL, text })),
   ]);
 
+  // 채널별 결과를 항상 로그로 — 일부 채널만 실패하면 delivered>0 이라 조용히 묻힌다.
+  console.warn(
+    '[ops-alert] delivery',
+    JSON.stringify({ telegram, slack, slackOpsChannel, channel: OPS_CHANNEL })
+  );
+
   const delivered = (telegram.ok ? 1 : 0) + (slack.ok ? 1 : 0) + (slackOpsChannel.ok ? 1 : 0);
 
   if (delivered === 0) {
