@@ -6,8 +6,10 @@ import { postSlack } from './slack';
  * webhook(sendSlackMessage)과 별개로 봇 토큰 경로로 발송한다 — webhook 은
  * 생성 시점에 채널이 고정돼 있어 대상 변경이 코드/설정으로 안 되기 때문.
  * SLACK_OPS_CHANNEL env 로 오버라이드 가능. 봇이 채널에 초대돼 있어야 한다.
+ * 기본값은 채널 ID(#05_dev = C096UCF20A3) — 이름을 쓰면 conversations.list 조회가
+ * 필요해 channels:read 스코프 없는 토큰에서 "채널을 찾을 수 없습니다"로 실패한다.
  */
-const OPS_CHANNEL = process.env.SLACK_OPS_CHANNEL?.trim() || '05_dev';
+const OPS_CHANNEL = process.env.SLACK_OPS_CHANNEL?.trim() || 'C096UCF20A3';
 
 /**
  * 운영 경보 이중 발송.
