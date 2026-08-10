@@ -35,21 +35,29 @@ function gh(path: string, token: string, init: RequestInit = {}) {
 
 /** 브랜치가 없으면 main 의 현재 커밋에서 분기해 생성. */
 async function ensureBranch(token: string, repo: string, branch: string): Promise<void> {
-  const check = await gh(`/repos/${repo}/git/ref/heads/${branch}`, token);
+  // 2026-08-11: 브랜치 존재 확인을 Git Database API(/git/ref/...)에서 Repos API 로 교체.
+  // fine-grained PAT 는 git-db 계열 호출에 404 를 돌려줘 "cannot fetch main ref: 404"
+  // 로 미러 전체가 죽었다. /branches/{branch} 와 contents API 는 fine-grained 지원.
+  const check = await gh(`/repos/${repo}/branches/${encodeURIComponent(branch)}`, token);
   if (check.ok) return;
   if (check.status !== 404) {
     throw new Error(`ensureBranch check failed: ${check.status} ${await check.text()}`);
   }
-  // main 의 최신 SHA 가져오기
-  const mainRef = await gh(`/repos/${repo}/git/ref/heads/main`, token);
-  if (!mainRef.ok) throw new Error(`cannot fetch main ref: ${mainRef.status}`);
-  const mainData = (await mainRef.json()) as { object: { sha: string } };
-  // backups 브랜치 생성
+  // 브랜치 없음 → main SHA 로 생성 시도. 생성만은 git-db API 가 유일한 경로라
+  // fine-grained 토큰에서 실패할 수 있다 — 그 경우 수동 1회 생성을 안내한다.
+  const mainRef = await gh(`/repos/${repo}/branches/main`, token);
+  if (!mainRef.ok) throw new Error(`cannot fetch main branch: ${mainRef.status}`);
+  const mainData = (await mainRef.json()) as { commit: { sha: string } };
   const create = await gh(`/repos/${repo}/git/refs`, token, {
     method: 'POST',
-    body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: mainData.object.sha }),
+    body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: mainData.commit.sha }),
   });
-  if (!create.ok) throw new Error(`createBranch failed: ${create.status} ${await create.text()}`);
+  if (!create.ok) {
+    throw new Error(
+      `createBranch failed: ${create.status} — fine-grained 토큰은 브랜치 생성이 막힐 수 있습니다. ` +
+        `저장소에서 '${branch}' 브랜치를 수동으로 한 번 만들어 주세요.`
+    );
+  }
 }
 
 export interface GitHubBackupResult {
