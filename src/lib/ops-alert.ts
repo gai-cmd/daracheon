@@ -1,4 +1,13 @@
 import { sendTelegramMessage, sendSlackMessage } from './integrations';
+import { postSlack } from './slack';
+
+/**
+ * 운영 경보 전용 Slack 채널 (2026-08-11 사용자 지정: Miraclro #05_dev).
+ * webhook(sendSlackMessage)과 별개로 봇 토큰 경로로 발송한다 — webhook 은
+ * 생성 시점에 채널이 고정돼 있어 대상 변경이 코드/설정으로 안 되기 때문.
+ * SLACK_OPS_CHANNEL env 로 오버라이드 가능. 봇이 채널에 초대돼 있어야 한다.
+ */
+const OPS_CHANNEL = process.env.SLACK_OPS_CHANNEL?.trim() || '05_dev';
 
 /**
  * 운영 경보 이중 발송.
@@ -15,6 +24,7 @@ export interface OpsAlertResult {
   delivered: number;
   telegram: { ok: boolean; skipped?: boolean; error?: string };
   slack: { ok: boolean; skipped?: boolean; error?: string };
+  slackOpsChannel: { ok: boolean; skipped?: boolean; error?: string };
 }
 
 export async function sendOpsAlert(text: string): Promise<OpsAlertResult> {
@@ -30,21 +40,23 @@ export async function sendOpsAlert(text: string): Promise<OpsAlertResult> {
     }
   };
 
-  const [telegram, slack] = await Promise.all([
+  const [telegram, slack, slackOpsChannel] = await Promise.all([
     settle('telegram', () => sendTelegramMessage(text)),
     settle('slack', () => sendSlackMessage(text)),
+    settle('slack-ops-channel', () => postSlack({ channel: OPS_CHANNEL, text })),
   ]);
 
-  const delivered = (telegram.ok ? 1 : 0) + (slack.ok ? 1 : 0);
+  const delivered = (telegram.ok ? 1 : 0) + (slack.ok ? 1 : 0) + (slackOpsChannel.ok ? 1 : 0);
 
   if (delivered === 0) {
     // 경보가 한 채널도 도달하지 못한 상황 — 이게 가장 위험하다.
     console.error(
       `[ops-alert] 경보가 어떤 채널로도 전달되지 않았습니다. text="${text}" ` +
         `telegram=${telegram.error ?? (telegram.skipped ? 'skipped' : 'failed')} ` +
-        `slack=${slack.error ?? (slack.skipped ? 'skipped' : 'failed')}`
+        `slack=${slack.error ?? (slack.skipped ? 'skipped' : 'failed')} ` +
+        `slackOps(${OPS_CHANNEL})=${slackOpsChannel.error ?? (slackOpsChannel.skipped ? 'skipped' : 'failed')}`
     );
   }
 
-  return { delivered, telegram, slack };
+  return { delivered, telegram, slack, slackOpsChannel };
 }
