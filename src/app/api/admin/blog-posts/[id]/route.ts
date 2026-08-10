@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
+import { readPosts, readPostsForWrite, writePosts } from '@/lib/blog/store';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
-import { BLOG_POSTS_FILE, type BlogPost, type BlogPostStatus } from '@/types/blog';
+import { type BlogPost, type BlogPostStatus } from '@/types/blog';
 import { slugify, uniqueSlug } from '@/lib/blog/slug';
 import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
 
@@ -33,7 +33,7 @@ function normalizeTags(raw: unknown): string[] {
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await ctx.params;
-    const posts = await readDataUncached<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readPosts();
     const post = posts.find((p) => p.id === id || p.slug === id);
     if (!post) {
       return NextResponse.json(
@@ -55,7 +55,7 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
   try {
     const { id } = await ctx.params;
     const body = await request.json();
-    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readPostsForWrite();
     const idx = posts.findIndex((p) => p.id === id);
     if (idx === -1) {
       return NextResponse.json(
@@ -117,7 +117,7 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
         typeof body?.reviewed === 'boolean' ? body.reviewed : prev.reviewed,
     };
     posts[idx] = next;
-    await writeDataMerged(BLOG_POSTS_FILE, posts);
+    await writePosts(posts, { upsertIds: [next.id] });
     revalidateBlog(next.slug, prev.slug, next.categoryId);
     await logAdmin('blog', 'update', {
       targetId: next.id,
@@ -137,7 +137,7 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await ctx.params;
-    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readPostsForWrite();
     const idx = posts.findIndex((p) => p.id === id);
     if (idx === -1) {
       return NextResponse.json(
@@ -147,8 +147,8 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
     }
     const snapId = await snapshotBeforeDestructive(undefined, `blog-posts delete ${id}`);
     const removed = posts.splice(idx, 1)[0];
-    // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않도록.
-    await writeDataMerged(BLOG_POSTS_FILE, posts, { removedIds: [id] });
+    // 삭제 id 는 removedIds 로 명시 — merge/DELETE 대상 지정.
+    await writePosts(posts, { removedIds: [id] });
     revalidateBlog(removed.slug, undefined, removed.categoryId);
     await logAdmin('blog', 'delete', {
       targetId: id,

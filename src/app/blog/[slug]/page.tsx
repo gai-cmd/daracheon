@@ -4,14 +4,9 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
-import { readDataSafe } from '@/lib/db';
+import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
-import {
-  BLOG_CATEGORIES_FILE,
-  BLOG_POSTS_FILE,
-  type BlogCategory,
-  type BlogPost,
-} from '@/types/blog';
+import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from '../BlogCard';
 import styles from './BlogArticle.module.css';
 
@@ -39,7 +34,7 @@ function formatShortDate(iso: string): string {
 }
 
 async function loadPost(slug: string, allowDraft = false) {
-  const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
+  const posts = await readPostsSafe();
   return (
     posts.find((p) => p.slug === slug && (allowDraft || p.status === 'published')) ?? null
   );
@@ -108,8 +103,8 @@ export default async function BlogPostPage({
   const allowDraft = Boolean(preview) && (await isAdmin());
   const [post, posts, categories] = await Promise.all([
     loadPost(slug, allowDraft),
-    readDataSafe<BlogPost>(BLOG_POSTS_FILE),
-    readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
+    readPostsSafe(),
+    readCategoriesSafe(),
   ]);
   if (!post) notFound();
   const isDraftPreview = post.status !== 'published';

@@ -138,8 +138,22 @@ export async function createSnapshot(
   // "poison 백업"이 된다(진단 DATA-4).
   const degraded: string[] = [];
 
+  // 블로그는 2026-08-10 부터 Neon 이 단일 진실 원천 — Neon 활성 시 스토어에서
+  // 읽어 스냅샷에 싣는다(Blob 의 낡은 사본을 백업하면 복원 시 데이터 소실).
+  // DATABASE_URL 미설정(폴백)이면 기존 Blob 경로 그대로.
+  const { isNeonEnabled, readPosts, readCategories } = await import('./blog/store');
+  const blogViaNeon = isNeonEnabled();
+
   for (const f of DB_FILES) {
     try {
+      if (blogViaNeon && f === 'blogPosts') {
+        data[f] = await readPosts();
+        continue;
+      }
+      if (blogViaNeon && f === 'blogCategories') {
+        data[f] = await readCategories();
+        continue;
+      }
       // readDataForWrite 는 blob 일시 장애 시 throw 한다(readDataUncached 처럼
       // LKG/seed/[] 로 삼키지 않음) → 장애를 확실히 감지해 degraded 처리한다.
       // 최신 blob 을 직접 읽으므로 스냅샷은 캐시 지연 없는 최신 상태.
@@ -415,6 +429,33 @@ export async function restoreFromPayload(
     }
     const value = payload.data[key];
     if (Array.isArray(value)) {
+      // 블로그는 Neon 활성 시 Neon 으로 복원한다 — Blob 에 복원하면 실서비스가
+      // 읽지 않는 사본만 갱신되고 Neon 은 그대로라 "복원했는데 안 바뀜"이 된다.
+      // FK(posts.category_id → categories.id) 때문에 두 키를 함께, 카테고리 먼저
+      // 처리한다. DB_FILES 순서상 blogPosts 가 먼저 오므로 그 시점에 둘 다 복원하고
+      // blogCategories 차례에서는 건너뛴다.
+      if (key === 'blogPosts' || key === 'blogCategories') {
+        const store = await import('./blog/store');
+        if (store.isNeonEnabled()) {
+          if (restored.includes('blogPosts') || restored.includes('blogCategories')) continue;
+          await store.ensureBlogSchema();
+          const cats = payload.data['blogCategories'];
+          const posts = payload.data['blogPosts'];
+          if (Array.isArray(cats)) {
+            await store.writeCategories(cats as never);
+            restored.push('blogCategories');
+          } else {
+            missingInBackup.push('blogCategories');
+          }
+          if (Array.isArray(posts)) {
+            await store.writePosts(posts as never);
+            restored.push('blogPosts');
+          } else {
+            missingInBackup.push('blogPosts');
+          }
+          continue;
+        }
+      }
       // 의도적 전체 교체(full-replace) — 복원은 스냅샷 시점 상태로 되돌리는 것이
       // 목적이므로 writeDataMerged 로 바꾸면 안 된다 (merge 가 복원을 오염시킴).
       // restoreData 는 먼저 tombstone 을 비워, 과거 삭제로 남은 흔적이 복원된

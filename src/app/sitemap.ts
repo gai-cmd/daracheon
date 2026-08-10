@@ -1,12 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { readDataSafe } from '@/lib/db';
+import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import type { Product } from '@/data/products';
-import {
-  BLOG_CATEGORIES_FILE,
-  BLOG_POSTS_FILE,
-  type BlogCategory,
-  type BlogPost,
-} from '@/types/blog';
 
 // 신규 블로그·제품(blob 즉시 반영)이 다음 배포 없이도 sitemap 에 반영되도록
 // 최대 1시간 주기로 재생성. 발행 핸들러의 revalidatePath('/sitemap.xml') 와 병행.
@@ -75,8 +70,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const [posts, categories] = await Promise.all([
-      readDataSafe<BlogPost>(BLOG_POSTS_FILE),
-      readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
+      readPostsSafe(),
+      readCategoriesSafe(),
     ]);
     const published = posts.filter((p) => p.status === 'published' && p.slug);
     const postRoutes: MetadataRoute.Sitemap = published.map((p) => {

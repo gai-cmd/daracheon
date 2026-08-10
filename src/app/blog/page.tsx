@@ -1,13 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import JsonLd from '@/components/ui/JsonLd';
-import { readDataSafe } from '@/lib/db';
-import {
-  BLOG_CATEGORIES_FILE,
-  BLOG_POSTS_FILE,
-  type BlogCategory,
-  type BlogPost,
-} from '@/types/blog';
+import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from './BlogCard';
 
 const SITE_URL = 'https://zoellife.com';
@@ -47,8 +42,8 @@ export const metadata: Metadata = {
 
 export default async function BlogListPage() {
   const [posts, categories] = await Promise.all([
-    readDataSafe<BlogPost>(BLOG_POSTS_FILE),
-    readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
+    readPostsSafe(),
+    readCategoriesSafe(),
   ]);
 
   const published = posts

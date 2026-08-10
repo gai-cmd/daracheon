@@ -7,6 +7,10 @@ import { sendOpsAlert } from '@/lib/ops-alert';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// 4개 티어(스냅샷 생성 → 보조 스토어 → GitHub 커밋 → 메일 첨부)를 직렬로 수행하는
+// 무거운 크론. maxDuration 미지정 시 기본 한도에서 중간 티어가 타임아웃으로 잘려도
+// 실패 신호가 남지 않는다 — 2026-07-26 "침묵 실패" 유형. watchdog(60s)보다 길게 잡는다.
+export const maxDuration = 300;
 
 // 백업 저하/실패를 운영 채널로 즉시 알린다 (진단 ARCH-4 'Blob 저하 알림').
 // Vercel Cron 실패 알림은 대시보드를 봐야 눈에 띄므로, 운영자가 실제로 보는
@@ -64,6 +68,16 @@ export async function GET(request: NextRequest) {
     const secondary = await mirrorToSecondaryStore(snap.id, snap.body);
     if (!secondary.ok && !secondary.skipped) {
       await alertBackupProblem(`보조 스토어 이중화 실패: ${secondary.error}. Tier 1 스냅샷은 저장됨.`);
+    }
+
+    // Tier 2(GitHub)·Tier 3(메일) 실패도 즉시 경보. skip(미설정·주기 아님)은 정상
+    // 상태라 제외하고, 시도했는데 실패한 경우만 알린다 — 기존엔 보조 스토어만
+    // 경보가 있어 GitHub 커밋 실패가 success:true 응답 뒤에 조용히 묻혔다.
+    if (!mirror.tier2Github.ok && !mirror.tier2Github.skipped) {
+      await alertBackupProblem(`Tier2 GitHub 미러 실패: ${mirror.tier2Github.error}. Tier 1 스냅샷은 저장됨.`);
+    }
+    if (!mirror.tier3Email.ok && !mirror.tier3Email.skipped) {
+      await alertBackupProblem(`Tier3 메일 백업 실패: ${mirror.tier3Email.error}. Tier 1 스냅샷은 저장됨.`);
     }
 
     // 오래된 blob 스냅샷 정리

@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { readDataUncached, readDataForWrite, writeDataMerged } from '@/lib/db';
+import {
+  readPosts,
+  readPostsForWrite,
+  readCategoriesForWrite,
+  writePosts,
+  writeCategories,
+} from '@/lib/blog/store';
 import { logAdmin } from '@/lib/audit';
 import {
-  BLOG_CATEGORIES_FILE,
-  BLOG_POSTS_FILE,
   BLOG_UNCATEGORIZED_ID,
-  type BlogCategory,
   type BlogPost,
   type BlogPostStatus,
 } from '@/types/blog';
@@ -42,7 +45,7 @@ export async function GET(request: Request) {
     const categoryId = url.searchParams.get('categoryId');
     const q = url.searchParams.get('q')?.toLowerCase();
 
-    let posts = await readDataUncached<BlogPost>(BLOG_POSTS_FILE);
+    let posts = await readPosts();
     if (status === 'draft' || status === 'published') {
       posts = posts.filter((p) => p.status === status);
     }
@@ -85,8 +88,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const categories = await readDataForWrite<BlogCategory>(BLOG_CATEGORIES_FILE);
-    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
+    const categories = await readCategoriesForWrite();
+    const posts = await readPostsForWrite();
     const categoryIdRaw = typeof body?.categoryId === 'string' ? body.categoryId : '';
     const categoryId =
       categoryIdRaw && categories.some((c) => c.id === categoryIdRaw)
@@ -105,7 +108,7 @@ export async function POST(request: Request) {
         createdAt: seedNow,
         updatedAt: seedNow,
       });
-      await writeDataMerged(BLOG_CATEGORIES_FILE, categories);
+      await writeCategories(categories, { upsertIds: [BLOG_UNCATEGORIZED_ID] });
     }
 
     const slugBase =
@@ -149,7 +152,7 @@ export async function POST(request: Request) {
     };
 
     posts.push(post);
-    await writeDataMerged(BLOG_POSTS_FILE, posts);
+    await writePosts(posts, { upsertIds: [post.id] });
     revalidateBlog(post.slug, post.categoryId);
     await logAdmin('blog', 'create', {
       targetId: post.id,
@@ -178,7 +181,7 @@ export async function PATCH(request: Request) {
     }
     const status = normalizeStatus(body?.status);
     const idSet = new Set<string>(body.ids as string[]);
-    const posts = await readDataForWrite<BlogPost>(BLOG_POSTS_FILE);
+    const posts = await readPostsForWrite();
     const now = new Date().toISOString();
     let updated = 0;
     for (const p of posts) {
@@ -190,7 +193,7 @@ export async function PATCH(request: Request) {
       }
     }
     if (updated > 0) {
-      await writeDataMerged(BLOG_POSTS_FILE, posts);
+      await writePosts(posts, { upsertIds: [...idSet] });
       revalidateBlog();
       await logAdmin('blog', 'bulk_update', {
         summary: `블로그 일괄 ${status === 'published' ? '발행' : '비공개'}: ${updated}건`,

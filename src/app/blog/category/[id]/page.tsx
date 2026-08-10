@@ -2,13 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
-import { readDataSafe } from '@/lib/db';
-import {
-  BLOG_CATEGORIES_FILE,
-  BLOG_POSTS_FILE,
-  type BlogCategory,
-  type BlogPost,
-} from '@/types/blog';
+import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from '../../BlogCard';
 
 const SITE_URL = 'https://zoellife.com';
@@ -21,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const categories = await readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE);
+  const categories = await readCategoriesSafe();
   const category = categories.find((c) => c.id === id);
   if (!category) {
     return { title: '카테고리를 찾을 수 없습니다 — 대라천 블로그' };
@@ -51,8 +46,8 @@ export default async function BlogCategoryPage({
 }) {
   const { id } = await params;
   const [posts, categories] = await Promise.all([
-    readDataSafe<BlogPost>(BLOG_POSTS_FILE),
-    readDataSafe<BlogCategory>(BLOG_CATEGORIES_FILE),
+    readPostsSafe(),
+    readCategoriesSafe(),
   ]);
   const category = categories.find((c) => c.id === id);
   if (!category) notFound();

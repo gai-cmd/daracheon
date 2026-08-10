@@ -138,6 +138,12 @@ export const ENV_REGISTRY: EnvSpec[] = [
     ifMissing: '스냅샷이 라이브와 같은 스토어에만 존재 — 스토어 단위 사고 시 원본·백업 동시 소실',
   },
   {
+    name: 'DATABASE_URL',
+    severity: 'feature',
+    purpose: 'Neon Postgres 연결 문자열 — 블로그(blogPosts/blogCategories) 저장소. Neon 프로젝트 "zoellife"((Gai) org, 싱가포르)',
+    ifMissing: '블로그가 Blob JSON 폴백으로 동작(읽기 전용에 가까움) — 신규 글 저장 불가',
+  },
+  {
     name: 'BACKUP_EMAIL_RECIPIENT',
     severity: 'feature',
     purpose: 'Tier3 주간 백업 첨부 수신자(미설정 시 ADMIN_EMAIL 폴백)',
