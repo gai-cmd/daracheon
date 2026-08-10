@@ -42,7 +42,13 @@ const DB_DIR = path.join(process.cwd(), 'data', 'db');
 // 공개 URL 로 유출됨. 운영에서는 반드시 추측 불가한 긴 랜덤 값으로 설정:
 //   node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
 const BLOB_DATA_PREFIX_RAW = process.env.BLOB_DATA_PREFIX ?? 'db';
-const BLOB_PREFIX = `${BLOB_DATA_PREFIX_RAW.replace(/[^a-zA-Z0-9_-]/g, '')}/`;
+// @MX:ANCHOR: [AUTO] Blob 경로 prefix의 단일 소스. 진단/동기화/헬스체크 모듈은
+// 반드시 이 값을 import 해야 한다 — 자체적으로 'db/' 를 재선언하지 말 것.
+// @MX:REASON: 2026-07-10 prefix 로테이션 당시 seed-sync / admin db status / probe /
+// health-blob 4개 모듈이 옛 기본값 'db/' 를 하드코딩한 채 남아, 진단 화면이 실데이터가
+// 아닌 빈 경로를 조회해 "불일치 10/10" 오탐을 냈고, seed 재동기화가 3개월 묵은
+// 잔재로 시드를 덮어쓸 수 있는 상태였다. 정의를 한 곳으로 모아 재발을 막는다.
+export const BLOB_PREFIX = `${BLOB_DATA_PREFIX_RAW.replace(/[^a-zA-Z0-9_-]/g, '')}/`;
 
 if (process.env.VERCEL && BLOB_DATA_PREFIX_RAW === 'db') {
   console.warn(

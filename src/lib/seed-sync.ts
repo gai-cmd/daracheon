@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { list } from '@vercel/blob';
+import { BLOB_PREFIX } from './db';
 
 /**
  * Blob → fs seed snapshot utility.
@@ -29,7 +30,8 @@ export const SYNC_WHITELIST = [
 
 export type SyncFilename = (typeof SYNC_WHITELIST)[number];
 
-const BLOB_PREFIX = 'db/';
+// prefix 는 db.ts 가 단일 소스 (BLOB_DATA_PREFIX 반영). 여기서 재선언하면
+// 로테이션 시 조용히 어긋나 3개월 묵은 잔재로 시드를 덮어쓸 수 있다.
 const DB_DIR = path.join(process.cwd(), 'data', 'db');
 
 export interface FileResult {

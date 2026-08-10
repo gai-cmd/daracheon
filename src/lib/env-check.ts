@@ -121,6 +121,28 @@ export const ENV_REGISTRY: EnvSpec[] = [
     purpose: 'Tier2 GitHub 백업 푸시 토큰',
     ifMissing: 'GitHub 오프사이트 백업 미실행',
   },
+  // 아래 3개는 각 백업 티어의 "짝" 변수다. 토큰만 있고 이게 없으면 해당 티어가
+  // 조용히 skip 된다(backup-github getConfig 는 token+repo 둘 다 요구, secondary 는
+  // store id, email 은 수신자). 2026-07-26 백업 11일 침묵 사고의 핵심이 "미설정 시
+  // 무음 skip" 이었으므로, 진단 화면에서 티어별 준비 상태가 보이도록 등록한다.
+  {
+    name: 'GITHUB_BACKUP_REPO',
+    severity: 'feature',
+    purpose: 'Tier2 GitHub 백업 대상 저장소(owner/repo)',
+    ifMissing: 'GITHUB_BACKUP_TOKEN 이 있어도 Tier2 백업 무음 skip',
+  },
+  {
+    name: 'BACKUP_BLOB_STORE_ID',
+    severity: 'feature',
+    purpose: 'Tier2-B 별도 private Blob 스토어 id(원본과 다른 바구니)',
+    ifMissing: '스냅샷이 라이브와 같은 스토어에만 존재 — 스토어 단위 사고 시 원본·백업 동시 소실',
+  },
+  {
+    name: 'BACKUP_EMAIL_RECIPIENT',
+    severity: 'feature',
+    purpose: 'Tier3 주간 백업 첨부 수신자(미설정 시 ADMIN_EMAIL 폴백)',
+    ifMissing: 'ADMIN_EMAIL 도 없으면 Tier3 주간 메일 백업 무음 skip',
+  },
   {
     name: 'SERIAL_SCAN_SECRET',
     severity: 'feature',

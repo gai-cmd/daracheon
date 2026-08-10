@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingle, writeSingle, BLOB_PREFIX } from '@/lib/db';
 import { list, put, del } from '@vercel/blob';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
   // 박혀 있으면 overwrite 만으로는 CDN 이 갱신되지 않음. 한 번 del →
   // put(maxAge:0) 으로 CDN entry 자체를 재생성.
   try {
-    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 1 });
-    const existing = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${testKey}.json`, limit: 1 });
+    const existing = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${testKey}.json`);
     if (existing) await del(existing.url);
     steps.push({ step: 'A0: del existing probe', ok: true, detail: existing ? 'deleted' : 'none' });
   } catch (err) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   let putUrl: string | null = null;
   try {
     const raw = await put(
-      `db/${testKey}.json`,
+      `${BLOB_PREFIX}${testKey}.json`,
       JSON.stringify(testValue),
       {
         access: 'public',
@@ -87,8 +87,8 @@ export async function GET(request: NextRequest) {
 
   // === B. list consistency ===
   try {
-    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 5 });
-    const found = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${testKey}.json`, limit: 5 });
+    const found = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${testKey}.json`);
     steps.push({
       step: 'B: list() finds just-written probe',
       ok: !!found,
@@ -125,9 +125,10 @@ export async function GET(request: NextRequest) {
   // === D. total blob count ===
   let blobCount = 0;
   try {
-    const { blobs } = await list({ prefix: 'db/', limit: 100 });
+    const { blobs } = await list({ prefix: BLOB_PREFIX, limit: 100 });
     blobCount = blobs.length;
-    steps.push({ step: 'D: blob list total', ok: true, detail: `${blobCount} blobs under db/ prefix` });
+    // prefix 자체는 비밀값이라 응답에 노출하지 않는다 (public 스토어 경로 힌트 방지).
+    steps.push({ step: 'D: blob list total', ok: true, detail: `${blobCount} blobs under data prefix` });
   } catch (err) {
     steps.push({ step: 'D: blob list total', ok: false, error: err instanceof Error ? err.message : String(err) });
   }

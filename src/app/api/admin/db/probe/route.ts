@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { readSingle, writeSingle } from '@/lib/db';
+import { readSingle, writeSingle, BLOB_PREFIX } from '@/lib/db';
 import { list, put, del } from '@vercel/blob';
 
 export const dynamic = 'force-dynamic';
@@ -26,8 +26,8 @@ export async function GET() {
 
   // 1. Clear any prior probe blob
   try {
-    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 1 });
-    const existing = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${testKey}.json`, limit: 1 });
+    const existing = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${testKey}.json`);
     if (existing) await del(existing.url);
     steps.push({ step: 'clear prior probe', ok: true, detail: existing ? 'deleted' : 'none' });
   } catch (err) {
@@ -37,7 +37,7 @@ export async function GET() {
   // 2. Put
   let putUrl: string | null = null;
   try {
-    const raw = await put(`db/${testKey}.json`, JSON.stringify(testValue), {
+    const raw = await put(`${BLOB_PREFIX}${testKey}.json`, JSON.stringify(testValue), {
       access: 'public',
       addRandomSuffix: false,
       allowOverwrite: true,
@@ -98,8 +98,8 @@ export async function GET() {
 
   // 5. Cleanup probe blob (best-effort)
   try {
-    const { blobs } = await list({ prefix: `db/${testKey}.json`, limit: 1 });
-    const toDel = blobs.find((b) => b.pathname === `db/${testKey}.json`);
+    const { blobs } = await list({ prefix: `${BLOB_PREFIX}${testKey}.json`, limit: 1 });
+    const toDel = blobs.find((b) => b.pathname === `${BLOB_PREFIX}${testKey}.json`);
     if (toDel) await del(toDel.url);
   } catch { /* ignore */ }
 

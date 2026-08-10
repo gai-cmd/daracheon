@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { list } from '@vercel/blob';
 import { SYNC_WHITELIST } from '@/lib/seed-sync';
+import { BLOB_PREFIX } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,8 @@ interface FileStatus {
   match: boolean; // true iff both exist and sizes match (rough signal)
 }
 
-const BLOB_PREFIX = 'db/';
+// prefix 는 db.ts 가 단일 소스. 여기서 재선언하면 실데이터가 아닌 빈 경로를
+// 조회해 "전부 불일치" 오탐을 낸다 (2026-07-10 prefix 로테이션 당시 발생).
 const DB_DIR = path.join(process.cwd(), 'data', 'db');
 
 async function inspectOne(name: string): Promise<FileStatus> {
