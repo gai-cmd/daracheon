@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from '../BlogCard';
@@ -130,7 +131,10 @@ export default async function BlogPostPage({
   // SSR 에서 재정제 안 함. isomorphic-dompurify 는 Vercel Node 런타임 첫 로드 시
   // jsdom 초기화 중 throw 하는 사례가 있어 모듈 import 자체가 라우트를 죽임 —
   // 정제는 어드민 쓰기 경로에 한 번만 위치시키고 공개 페이지는 신뢰한다.
-  const cleanHtml = post.content;
+  // 본문 HTML 은 밝은 표면 전제의 인라인 색(밝은 배경·어두운 글자)을 지참한다.
+  // 렌더 직전 명도 규칙으로 일괄 정규화 — 특정 hex 나열이 아니라 임의의 색을
+  // 다크 표면 기준으로 판별하므로 새 콘텐츠에서도 재발하지 않는다.
+  const cleanHtml = normalizeArticleHtmlForDarkTheme(post.content);
 
   // ── 사이드바·연결 탐색 데이터 ─────────────────────────────
   const published = posts
