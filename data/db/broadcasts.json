@@ -1,0 +1,343 @@
+[
+  {
+    "id": "bc-mo8bogli-1ak8o",
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-05-20T11:35:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "description": "NS홈쇼핑 론칭 특별가격으로 중간 유통 구조를 과감하게 생략했습니다.",
+    "createdAt": "2026-04-21T07:48:52.614Z",
+    "updatedAt": "2026-06-16T01:58:21.687Z",
+    "livestreamUrl": "https://youtu.be/a9zgxc3cmgE?si=Z5l_P21_hjNbxol4",
+    "vodUrl": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/videos/ns-homeshopping-launch-1779027235300.mp4",
+    "broadcastType": "home-shopping",
+    "specialPrice": 0,
+    "regularPrice": 0,
+    "discountRate": 0,
+    "soldOut": true
+  },
+  {
+    "id": "bc-mosrsn77-2w1bu",
+    "channel": "TV조선",
+    "scheduledAt": "2026-05-20T11:00:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "createdAt": "2026-04-21T07:48:52.614Z",
+    "updatedAt": "2026-05-27T14:21:20.064Z",
+    "livestreamUrl": "https://youtu.be/a9zgxc3cmgE?si=Z5l_P21_hjNbxol4",
+    "showInfo": {
+      "title": "퍼펙트 라이프",
+      "episode": "287회",
+      "logo": "",
+      "hosts": [
+        "현영",
+        "오지호"
+      ],
+      "panels": [
+        "이성미",
+        "신승환"
+      ],
+      "guests": [
+        "배동성♥전진주 부부"
+      ],
+      "experts": [
+        "유병욱",
+        "선재광",
+        "안태환",
+        "심선아"
+      ],
+      "recordingAt": "2026년 5월 7일(목) 오후 12시",
+      "vcrAt": "2026년 4월 28일(화)",
+      "synopsis": "[퍼펙트 라이프] 287회에서는, 침향의 다양한 효능과 진짜 침향을 구별하는 기준인 학명(Agallocha, 아갈로차)을 비롯해 침향의 주요 산지, 그리고 오일의 올바른 사용법과 권장 섭취량까지 확인해보는 시간을 갖습니다."
+    },
+    "broadcastType": "sponsored",
+    "published": false,
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "updatedAt": "2026-05-27T14:21:20.064Z"
+    },
+    "inlineUntil": "2026-08-20T03:00:00.000Z"
+  },
+  {
+    "id": "bc-mpo1emu6-37ev3",
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-03T12:40:00.000Z",
+    "durationMinutes": 65,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "description": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향오일 방송",
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "【앵콜방송 6월 1탄】대라천 ‘참’침향오일 방송",
+      "updatedAt": "2026-06-02T01:10:32.036Z"
+    },
+    "createdAt": "2026-05-27T12:25:19.134Z",
+    "updatedAt": "2026-06-16T01:58:21.687Z",
+    "published": true,
+    "broadcastType": "home-shopping",
+    "soldOut": true
+  },
+  {
+    "id": "bc-mpo25jem-gcmbi",
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-10T16:00:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "description": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향오일 방송",
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "【앵콜방송 6월 2탄】대라천 ‘참’침향오일 방송",
+      "updatedAt": "2026-06-08T15:32:20.428Z"
+    },
+    "createdAt": "2026-05-27T12:46:14.396Z",
+    "updatedAt": "2026-06-16T12:54:07.962Z",
+    "published": true,
+    "broadcastType": "home-shopping",
+    "soldOut": false
+  },
+  {
+    "id": "bc-mpo25jf0-zf246",
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-28T11:30:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "description": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향오일 방송",
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "【LIVE 방송 6월 4탄】대라천 ‘참’침향 오일 방송",
+      "updatedAt": "2026-06-23T03:05:58.133Z"
+    },
+    "createdAt": "2026-05-27T12:46:14.396Z",
+    "updatedAt": "2026-06-23T03:05:58.133Z",
+    "published": true,
+    "broadcastType": "home-shopping"
+  },
+  {
+    "id": "bc-mpqoacqe-m4pv4",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-13T07:20:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "createdAt": "2026-05-29T08:41:22.934Z",
+    "updatedAt": "2026-06-16T12:54:07.962Z",
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "updatedAt": "2026-06-15T03:09:48.642Z",
+      "headline": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향오일 방송"
+    },
+    "description": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향오일 방송",
+    "host": "이서영 외",
+    "soldOut": false
+  },
+  {
+    "id": "bc-mqeisyvg-hx1ad",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-19T12:40:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향 오일캡슐 방송",
+      "summary": "아퀼라리아 아갈로차 록스버그 품종의 100% 베트남산 침향입니다.",
+      "updatedAt": "2026-06-15T03:10:14.354Z"
+    },
+    "createdAt": "2026-06-15T01:14:21.964Z",
+    "updatedAt": "2026-06-15T03:10:14.354Z",
+    "host": "유보나, 장성민"
+  },
+  {
+    "id": "bc-mqej18tq-czn7x",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-20T10:35:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향 오일캡슐 방송",
+      "summary": "아퀼라리아 아갈로차 록스버그 품종의 100% 베트남산 침향입니다.",
+      "updatedAt": "2026-06-15T01:26:10.831Z"
+    },
+    "createdAt": "2026-06-15T01:20:48.110Z",
+    "updatedAt": "2026-06-15T01:26:10.831Z"
+  },
+  {
+    "id": "bc-mqej38z3-3e5dx",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-27T10:35:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "preview": {
+      "headline": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향 오일캡슐 방송",
+      "summary": "아퀼라리아 아갈로차 록스버그 품종의 100% 베트남산 침향입니다.",
+      "updatedAt": "2026-06-21T02:30:18.081Z",
+      "enabled": true,
+      "isPublic": true
+    },
+    "createdAt": "2026-06-15T01:22:21.615Z",
+    "updatedAt": "2026-06-21T02:30:18.081Z"
+  },
+  {
+    "id": "bc-mqn5g05e-y4kdu",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-06-22T00:25:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [
+      "cham-oil-capsule"
+    ],
+    "status": "scheduled",
+    "specialPrice": 300000,
+    "regularPrice": 1290000,
+    "discountRate": 77,
+    "preview": {
+      "enabled": true,
+      "isPublic": true,
+      "headline": "[6월 Live 방송] 조엘라이프 대라천 ‘참’침향 오일 캡슐 방송",
+      "updatedAt": "2026-06-21T02:10:17.666Z"
+    },
+    "createdAt": "2026-06-21T02:10:17.666Z",
+    "updatedAt": "2026-06-21T02:10:17.666Z"
+  },
+  {
+    "id": "bc-nsjul-070707",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-06T22:30:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-02T04:16:46.185Z"
+  },
+  {
+    "id": "bc-nsjul-070821",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-08T12:40:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-02T04:16:46.185Z"
+  },
+  {
+    "id": "bc-nsjul-071121",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-11T12:45:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-02T04:16:46.185Z"
+  },
+  {
+    "id": "bc-nsjul-071220",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-12T11:35:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-02T04:16:46.185Z"
+  },
+  {
+    "id": "bc-nsjul-071819",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-18T10:35:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-02T04:16:46.185Z"
+  },
+  {
+    "id": "bc-nsjul-073023",
+    "broadcastType": "home-shopping",
+    "published": true,
+    "channel": "NS홈쇼핑",
+    "scheduledAt": "2026-07-30T01:00:00.000Z",
+    "durationMinutes": 60,
+    "productIds": [],
+    "status": "scheduled",
+    "description": "대라천 '참'침향 — NS홈쇼핑 방송",
+    "createdAt": "2026-07-02T04:16:46.185Z",
+    "updatedAt": "2026-07-24T05:56:00.112Z",
+    "timeTbd": true,
+    "_rev": 1,
+    "_mt": 1784872560119
+  }
+]

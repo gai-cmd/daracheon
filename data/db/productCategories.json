@@ -1,0 +1,42 @@
+[
+  {
+    "id": "all",
+    "label": "전체",
+    "labelEn": "All"
+  },
+  {
+    "id": "오일",
+    "label": "침향오일",
+    "labelEn": "Essential Oil"
+  },
+  {
+    "id": "환",
+    "label": "침향환",
+    "labelEn": "Pill"
+  },
+  {
+    "id": "수",
+    "label": "침향수",
+    "labelEn": "Water"
+  },
+  {
+    "id": "차",
+    "label": "침향차",
+    "labelEn": "Tea"
+  },
+  {
+    "id": "스틱",
+    "label": "침향 스틱",
+    "labelEn": "Stick"
+  },
+  {
+    "id": "향",
+    "label": "침향 선향",
+    "labelEn": "Incense"
+  },
+  {
+    "id": "팔찌",
+    "label": "침향 팔찌",
+    "labelEn": "Prayer Beads"
+  }
+]

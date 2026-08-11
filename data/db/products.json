@@ -1,0 +1,370 @@
+[
+  {
+    "id": "cham-oil-capsule",
+    "slug": "daerachoen-cham-agarwood-oil-capsule",
+    "name": "대라천 참침향 오일 캡슐",
+    "nameEn": "Daeracheon Cham Agarwood Oil Capsule",
+    "category": "오일",
+    "categoryEn": "Essential Oil",
+    "badge": "Signature",
+    "price": 300000,
+    "priceDisplay": "300,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/05-1FBgKsB6OO4pEwZ62rbGcKvLyDbNwkZZv.jpg",
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/01-1i2ZoP2rT3PhgGMtyTXA8A8D6bh7AJPTk.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/02-1cBnDFtUC-yYPNGUFa4CmrIMB6u2TfNcw.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/03-1dn_joVbY_1dvAh6gzVf08-QpOBMXu5vU.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/04-18SAzoUWWFAr5aSwPUAcwmyTPzfCbjghX.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/05-1FBgKsB6OO4pEwZ62rbGcKvLyDbNwkZZv.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/06-1UMwKOLv4biHX5OohVSB9XT6fqUFKWimB.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/07-1JrnzAtfRJq4kD2u_WNAoMtdc69i_OgbA.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/08-11T2D7qsqdr25KdUvscf6s1Iyz6HCFZlc.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/09-19pmdigXIuRR65pJJSYG1TpptNRwfr57G.jpg",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/10-1r3Sl4Di65_WLEd1LEKKOi0wm9fP-Kjr_.jpg"
+    ],
+    "description": "귀한 자연 성분을 정성껏 담은 프리미엄 건강 제품입니다. 오랜 시간 축적된 자연의 에너지를 그대로 담아, 일상 속 활력과 균형 있는 라이프스타일을 추구하는 분들을 위해 설계되었습니다. 100% 유기농 침향오일 원액에 적송오일과 오메가3, 비타민E를 첨가해 체내 흡수 및 건강에 유익하도록 제작했습니다. 100% 아갈로차 품종 오일 원액의 하루 섭취 권장량은 2~3mL이며 이 캡슐 제품에는 정확하게 3mL가 포함돼 있습니다.",
+    "shortDescription": "25년산 정품 '참'침향 연질캡슐 - 30캡슐",
+    "features": [
+      "Aquilaria Agallocha Roxburgh 침향나무",
+      "침향나무 수지 오일 0.59% 함유",
+      "성분: 침향오일, 적송오일, 오메가3, 비타민E",
+      "보관: 직사광선을 피하고 서늘한 곳에 보관하시고, 개봉후에는 냉장고에 보관하시면서 빠른 시간 안에 복용하는 게 좋습니다.",
+      "복용법: 1일 1회 1회 1캡슐을 충분한 물과 함께 복용하세요.",
+      "주의: 제품의 모든 성분에 과민증이 있거나 임산부 및 수유부에게는 사용하지 마십시오.",
+      "유통기한: 3년",
+      "포장: 유리(뚜껑 폴리프로필렌), 1병 30캡슐",
+      "참고: ISO, Organic, HACCP, OCOP 인증 제품"
+    ],
+    "specs": {},
+    "inStock": true,
+    "variants": [
+      {
+        "id": "v-cap-30",
+        "label": "30캡슐 (1통)",
+        "price": 300000,
+        "inStock": true,
+        "priceDisplay": "300,000원",
+        "sku": "CHAM-OIL-30"
+      },
+      {
+        "id": "v-cap-90",
+        "label": "60캡슐 (2통)",
+        "price": 580000,
+        "inStock": true,
+        "priceDisplay": "580,000원",
+        "sku": "CHAM-OIL-90"
+      }
+    ],
+    "published": true,
+    "_rev": 1,
+    "_mt": 1785053134794
+  },
+  {
+    "id": "cham-oil-raw",
+    "slug": "agarwood-essential-oil-1ml",
+    "name": "대라천 '참'침향 에센셜 오일",
+    "nameEn": "Agarwood Essential Oil (1ml)",
+    "category": "오일",
+    "categoryEn": "Essential Oil",
+    "badge": "Premium",
+    "price": 250000,
+    "priceDisplay": "650,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p1-oil-raw-T1-product-1778016066797.png",
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p1-oil-raw-T1-product-1778016066797.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p1-oil-raw-T2-package-1778016066797.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p1-oil-raw-T3-model-1778016066797.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p1-oil-raw-T4-creative-1778016066797.png"
+    ],
+    "description": "수십 년의 시간 속에서 자연이 완성한 깊은 향, 진정한 침향의 가치를 담은 프리미엄 에센셜 오일입니다. 25년산 Aquilaria Agallocha Roxburgh 원목을 72시간 고온 증류하여 얻은 100% 순수 침향 에센셜 오일로, 자연의 농축된 에너지를 그대로 담았습니다. 약 400kg의 참향나무에서 단 20~25cc만 추출되는 극소량의 귀한 오일로, 한 방울만으로도 깊고 은은한 향과 품격을 경험하실 수 있습니다. 수시로 취향하거나 소량씩 복용, 차·마사지 오일로도 사용 가능한 최고의 농축 제품입니다.",
+    "shortDescription": "25년산 침향 100% 에센셜 오일, 72시간 고온증류 추출.",
+    "features": [
+      "25년산 침향 에센셜 오일 100%",
+      "72시간 고온증류 추출",
+      "취향·복용·마사지 다용도 사용",
+      "보관: 직사광선을 피하고 상온에 보관하세요. 기온이 낮으면 응고현상이 있을 수 있습니다.",
+      "사용법: 수시로 취향하거나 소량씩 복용하셔도 됩니다. 차로 만들거나 마사지 오일로 사용하셔도 좋습니다.",
+      "유통기한: 5년 (오래될수록 좋음)",
+      "부피: 1mL",
+      "참고: Organic, HACCP, OCOP 인증 제품"
+    ],
+    "specs": {},
+    "inStock": false,
+    "published": true
+  },
+  {
+    "id": "cham-pill-chimhyang",
+    "slug": "agarwood-chimhyangdan",
+    "name": "침향단 (沈香丹)",
+    "nameEn": "Agarwood Traditional Pill",
+    "category": "환",
+    "categoryEn": "Pill",
+    "badge": "Traditional",
+    "price": 0,
+    "priceDisplay": "180,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p2-pill-chimhyang-T1-product-1778027637350.png",
+    "description": "자연에서 온 귀한 원료들을 균형 있게 배합하여, 일상 속 활력과 균형 있는 컨디션 관리를 위한 프리미엄 건강식품입니다. 침향을 중심으로 전통적으로 사랑받아온 원료들을 엄선하여, 깊은 풍미와 함께 편안하게 섭취할 수 있도록 설계되었습니다.\n\n노니엑기스·북방감초·인삼·칵깐(녹용)·콜라겐·표고에 25년산 침향분말 10%를 더한 전통 방식의 환제(丸劑). 1일 1회 식후 1단을 천천히 씹어 복용하는 일반식품으로, 깊은 향과 풍미를 동시에 즐길 수 있습니다.",
+    "shortDescription": "25년산 침향분말 10% 배합 전통 환 — 1일 1단 식후 복용.",
+    "features": [
+      "성분: 25년산 침향분말 10%, 노니엑기스, 북방감초, 인삼, 칵깐, 콜라겐, 표고 복합",
+      "보관: 직사광선을 피하고 서늘하고 건조한 곳에 보관하세요.",
+      "복용법: 1일 1회, 1회 1단을 식후에 천천히 씹어 복용하세요.",
+      "주의: 12세 미만의 어린이나 임신부 및 수유부, 그리고 제품의 모든 성분에 과민증이 있는 사람에게는 사용하지 마십시오.",
+      "유통기한: 3년",
+      "중량: 1단 5g, 1박스 15단, 중량 75g",
+      "참고: 일반식품, Organic, HACCP, OCOP 인증 제품"
+    ],
+    "specs": {},
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p2-pill-chimhyang-T1-product-1778027637350.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p2-pill-chimhyang-T2-package-1778027637350.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p2-pill-chimhyang-T3-model-1778027637350.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p2-pill-chimhyang-T4-creative-1778027637350.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-pill-gibo",
+    "slug": "agarwood-gibodan",
+    "name": "기보단 (氣寶丹)",
+    "nameEn": "Gibodan Supreme",
+    "category": "환",
+    "categoryEn": "Pill",
+    "badge": "Luxury",
+    "price": 480000,
+    "priceDisplay": "480,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p3-gibo-T1-product-1778028382326.png",
+    "description": "귀한 약재인 25년산 침향을 중심으로 동충하초, 제비집 등 여러 보양 성분을 배합해 만든 최고의 복합환 제품으로, 이름 그대로 “기(氣)를 보하는 보배로운 환(丹)”이라는 의미를 담고 있습니다. 섭취 시 가슴 답답함, 긴장감, 소화 불편 등 기 순환 정체로 인한 증상을 완화하는 데 도움을 주고, 몸이 차고 쉽게 피로해지는 체질에 적합합니다. 혈행과 에너지 흐름을 부드럽게 만들어 전반적인 컨디션 회복을 돕고 꾸준히 섭취 시 체력 유지, 집중력 향상, 활력 증진에 긍정적 영향을 기대할 수 있습니다.",
+    "shortDescription": "25년산 침향·동충하초·제비집 복합 프리미엄 환.",
+    "features": [
+      "성분: 25년산 침향, 동충하초, 제비집 등",
+      "보관: 직사광선을 피하고 서늘하고 건조한 곳에 보관하세요.",
+      "사용법: 1일 1회, 1회 1포를 식후에 충분한 물과 함께 복용하세요.",
+      "유통기한: 3년",
+      "포장: 1박스 3병 60포",
+      "참조: 일반식품, Organic, HACCP, OCOP 인증 제품"
+    ],
+    "specs": {},
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p3-gibo-T1-product-1778028382326.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p3-gibo-T2-package-1778028382326.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p3-gibo-T3-model-1778028382326.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p3-gibo-T4-creative-1778028382326.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-water",
+    "slug": "agarwood-water-500ml",
+    "name": "침향수 (沈香水)",
+    "nameEn": "Agarwood Distilled Water",
+    "category": "수",
+    "categoryEn": "Water",
+    "badge": "Daily",
+    "price": 120000,
+    "priceDisplay": "120,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p4-water-T2-package-1778031032885.png",
+    "description": "25년 이상 숙성된 침향을 증류 방식으로 추출한 100% 침향 증류 추출물입니다. 귀한 약재인 침향을 추출 공정을 통해 얻은 액상 형태로, 향과 기능성을 동시에 지닌 것이 특징입니다. 불필요한 첨가물 없이 침향 본연의 깊은 향과 유효 성분을 그대로 담았습니다. 분무·가습기로 확산시켜 취향하거나, 하루 20ml를 직접 음용할 수 있는 일상형 제품입니다.",
+    "shortDescription": "25년산 침향 증류 추출물 100% — 분무·음용 다용도.",
+    "features": [
+      "성분: 25년산 침향 증류 추출물 (100%)",
+      "보관: 직사광선을 피하고 서늘하고 건조한 곳에 보관하시고 개봉 후에는 냉장 보관하세요.",
+      "사용법: 분무 또는 가습기를 이용해 침향을 확산시켜 흡수하거나 직접 음용하셔도 좋습니다.",
+      "1일 섭취 권장량: 약 20mL",
+      "유통기한: 2년",
+      "부피: 1병 500mL",
+      "참고: 일반식품, Organic, HACCP, OCOP 인증 제품"
+    ],
+    "specs": {},
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p4-water-T2-package-1778031032885.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p4-water-T3-model-1778031032885.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p4-water-T4-creative-1778031032885.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-tea-paramignya",
+    "slug": "agarwood-paramignya-tea",
+    "name": "침향 파라미냐차 (沈香茶)",
+    "nameEn": "Agarwood Paramignya Herbal Tea",
+    "category": "차",
+    "categoryEn": "Tea",
+    "badge": "Wellness",
+    "price": 95000,
+    "priceDisplay": "95,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p5-tea-paramignya-T1-product-1778032778675.png",
+    "description": "25년산 침향과 베트남 전통 항암차 '파라미냐(Paramignya)'를 블렌딩한 허브티. 뜨거운 물 90ml에 1포를 넣고 먼저 취향한 후 천천히 우려 3탕까지 즐길 수 있습니다.",
+    "shortDescription": "25년산 침향 + 베트남 전통 파라미냐 블렌드 — 3탕 가능.",
+    "features": [
+      "25년산 침향 + 파라미냐 블렌드",
+      "뜨거운 물 90ml, 1포 3탕까지",
+      "30포 / 1박스 (총 75g)",
+      "Organic / HACCP / OCOP 인증 일반식품",
+      "Bồ Tát Hương 베트남 전통 약초"
+    ],
+    "specs": {
+      "성분": "침향 25년산, 파라미냐 (베트남 전통 항암차)",
+      "중량": "1포 2.5g × 30포 (1박스 75g)",
+      "유통기한": "4년",
+      "음용법": "뜨거운 물 90ml, 1포로 3탕까지",
+      "보관방법": "직사광선 피해 서늘하고 건조한 곳에 보관",
+      "인증": "Organic, HACCP, OCOP"
+    },
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p5-tea-paramignya-T1-product-1778032778675.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p5-tea-paramignya-T2-package-1778032778675.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p5-tea-paramignya-T3-model-1778032778675.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p5-tea-paramignya-T4-creative-1778032778675.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-stick",
+    "slug": "agarwood-stick-100g",
+    "name": "침향스틱 (沈香片)",
+    "nameEn": "Agarwood Stick 100g",
+    "category": "스틱",
+    "categoryEn": "Stick",
+    "badge": "Premium",
+    "price": 1500000,
+    "priceDisplay": "1,500,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p6-stick-T1-product-1778033687887.png",
+    "description": "25년산 대라천 침향 원목을 자연 그대로 절단한 100g 스틱. 조금씩 잘라 온열판(전자향로)에 올려 취향하거나, 차를 내려 음용할 수 있는 최상위 등급 원재료입니다.",
+    "shortDescription": "25년산 침향 100g 원목 스틱 — 취향·차·긴급용.",
+    "features": [
+      "침향 100% (25년산)",
+      "전자향로 / 온열판 취향",
+      "차로 우려 음용 가능",
+      "오래될수록 풍미가 깊어짐",
+      "Organic / HACCP / OCOP 인증"
+    ],
+    "specs": {
+      "성분": "침향 100% (25년산)",
+      "포장": "침향 원목 100g",
+      "유통기한": "4년 (오래될수록 좋음)",
+      "사용법": "소량 잘라 온열판에 올려 취향 / 차 / 긴급 상황 시 연소",
+      "보관방법": "직사광선 피해 서늘하고 건조한 곳에 보관",
+      "인증": "Organic, HACCP, OCOP"
+    },
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p6-stick-T1-product-1778033687887.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p6-stick-T2-package-1778033687887.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p6-stick-T3-model-1778303226024.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p6-stick-T4-creative-1778033687887.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-beads",
+    "slug": "agarwood-prayer-beads",
+    "name": "침향 팔찌, 묵주·합장주 (沈香 默珠·合掌珠)",
+    "nameEn": "Agarwood Prayer / Meditation Beads",
+    "category": "팔찌",
+    "categoryEn": "Prayer Beads",
+    "badge": "Sacred",
+    "price": 890000,
+    "priceDisplay": "890,000원~",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p7-beads-T1-product-1778033978663.png",
+    "description": "침향 100%로 깎아 만든 팔찌, 수행용 묵주·합장주입니다. 착용 중 체온에 은은하게 배어나오는 침향 향기가 마음을 차분하게 만들어 명상과 기도를 돕습니다. 침향을 활용한 팔찌·장신구는 단순한 액세서리를 넘어, 향·의미·수행의 상징성을 함께 지닌 것이 특징입니다.",
+    "shortDescription": "침향 100% 수행용 묵주·합장주 - 체온으로 은은한 향",
+    "features": [
+      "성분: 침향 100% 원목 가공",
+      "용도: 팔찌, 명상·기도·수행 전용",
+      "보관: 습기가 없는 상온에 보관하세요. 장기 미사용 시 밀봉 보관하세요.",
+      "주의: 물이나 과도한 땀에 노출시키지 마세요. 물이 묻거나 링이 더러워지면 아래와 같이 처리하세요.",
+      "  - 1단계: 제품을 말리고 비닐봉지에 넣어 여러 번 문질러 주세요.",
+      "   - 2단계: 팔찌가 광택 때까지 문지른 후, 비닐봉지에 넣어 며칠 후 향이 돌아오게 하세요.",
+      "  - 건강이 좋으면 침향은 물이나 땀에 노출되어도 자연스럽게 아름다울 것입니다.",
+      "  - 건강이 좋지 않으면 침향의 섬유질이 거칠어지고 침향의 고리가 검게 변할 수 있습니다."
+    ],
+    "specs": {},
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p7-beads-T1-product-1778033978663.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p7-beads-T2-package-1778033978663.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p7-beads-T3-model-1778033978663.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p7-beads-T4-creative-1778033978663.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-tea-water-set",
+    "slug": "agarwood-tea-water-set",
+    "name": "침향차·수 세트 (沈香茶·水)",
+    "nameEn": "Agarwood Tea & Water Set",
+    "category": "차",
+    "categoryEn": "Tea",
+    "badge": "Gift",
+    "price": 210000,
+    "priceDisplay": "210,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p8-set-T1-product-1778034388994.png",
+    "description": "25년산 침향차와 100% 침향수를 한 세트로 구성한 스페셜 기프트. 침향차 1포에 침향수 10ml를 붓고 충분히 적신 후 뜨거운 물 70ml로 우려내면 첫 탕의 향이 가장 풍부합니다.",
+    "shortDescription": "25년산 침향차 10포 + 침향수 100ml 스페셜 세트.",
+    "features": [
+      "25년산 침향차 1.5g × 10포 + 침향수 100ml 1병",
+      "침향수 10ml로 적신 뒤 뜨거운 물 70ml 우림",
+      "첫 탕 취향 필수 — 3탕까지 가능",
+      "기프트 박스 포장",
+      "Organic / HACCP / OCOP 인증"
+    ],
+    "specs": {
+      "성분": "침향차 (25년산 침향 100%), 침향수 100%",
+      "중량": "침향차 1.5g × 10포, 침향수 100ml 1병",
+      "유통기한": "2년",
+      "음용법": "침향차 1포를 침향수 10ml로 적신 후 뜨거운 물 70ml로 우림 (3탕까지)",
+      "보관방법": "직사광선 피해 서늘하고 건조한 곳에 보관",
+      "인증": "Organic, HACCP, OCOP"
+    },
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p8-set-T1-product-1778034388994.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p8-set-T2-package-1778034388994.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p8-set-T3-model-1778034388994.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p8-set-T4-creative-1778034388994.png"
+    ],
+    "published": true
+  },
+  {
+    "id": "cham-incense-line",
+    "slug": "agarwood-line-incense",
+    "name": "침향선향 (沈香線香)",
+    "nameEn": "Agarwood Line Incense",
+    "category": "향",
+    "categoryEn": "Incense",
+    "badge": "Meditation",
+    "price": 85000,
+    "priceDisplay": "85,000원",
+    "image": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p9-incense-T1-product-1778038146763.png",
+    "description": "25년산 침향분말로 만든 전통 선향 — 길이 15cm, 약 17개 구성. 사르고 그 향을 확산시켜 간접 취향하며 명상·수행·공양 공간을 정화합니다. 연소 도구 1개 포함.",
+    "shortDescription": "25년산 침향분말 선향 15cm × 17개 + 연소 도구.",
+    "features": [
+      "25년산 침향분말 100%",
+      "길이 15cm × 약 17개",
+      "연소 도구 1개 포함",
+      "간접 취향 전용 (직접 취향 금지)",
+      "Organic / HACCP / OCOP 인증"
+    ],
+    "specs": {
+      "성분": "침향분말 (25년산)",
+      "포장": "선향 15cm × 17개 + 연소 도구 1개",
+      "유통기한": "4년 (오래될수록 좋음)",
+      "사용법": "향을 사른 후 간접 취향 (직접 취향·어린이 사용 금지)",
+      "보관방법": "직사광선 피해 서늘하고 건조한 곳에 보관",
+      "인증": "Organic, HACCP, OCOP"
+    },
+    "inStock": false,
+    "gallery": [
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p9-incense-T1-product-1778038146763.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p9-incense-T2-package-1778038146763.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p9-incense-T3-model-1778038146763.png",
+      "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/p9-incense-T4-creative-1778038146763.png"
+    ],
+    "published": true
+  }
+]
