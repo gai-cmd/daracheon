@@ -151,32 +151,43 @@ h1, h2, h3, h4, h5, h6 {
   color: #fdfbf7 !important;
 }
 
-/* Form fields */
-input[type="text"], input[type="email"], input[type="tel"], input[type="search"],
-input[type="password"], input[type="number"], input[type="date"],
-textarea, select {
+/* Form fields
+   ⚠ [data-admin-root] 내부 제외 — 관리자/파트너처럼 자체 완결 라이트 UI 는
+   이 전역 !important 를 받으면 "흰 카드 위 크림 글자"가 되어 라벨이 실종된다
+   (2026-08-11 /admin/blog/new 라벨 불가시 버그의 근본 원인). globals.css 의
+   역-덮어쓰기 팔씨름 대신, 강제 규칙의 원천에서 제외한다 —
+   data-reading-surface 와 동일한 패턴. */
+input[type="text"]:not([data-admin-root] *), input[type="email"]:not([data-admin-root] *),
+input[type="tel"]:not([data-admin-root] *), input[type="search"]:not([data-admin-root] *),
+input[type="password"]:not([data-admin-root] *), input[type="number"]:not([data-admin-root] *),
+input[type="date"]:not([data-admin-root] *),
+textarea:not([data-admin-root] *), select:not([data-admin-root] *) {
   background: #14161f !important;
   color: #fdfbf7 !important;
   border-color: rgba(212,168,67,0.25) !important;
 }
-input::placeholder, textarea::placeholder {
+input:not([data-admin-root] *)::placeholder,
+textarea:not([data-admin-root] *)::placeholder {
   color: rgba(253,251,247,0.4) !important;
 }
-label, .form-label { color: rgba(253,251,247,0.75) !important; }
+label:not([data-admin-root] *),
+.form-label:not([data-admin-root] *) {
+  color: rgba(253,251,247,0.75) !important;
+}
 
 /* Tables (archive style)
    ⚠ [data-reading-surface] 내부는 제외 — 블로그 본문처럼 "다크 크롬 위
    밝은 리딩 카드"로 렌더되는 영역은 밝은 배경 + 어두운 잉크를 쓰므로,
    여기서 아이보리 글자를 강제하면 글씨가 배경에 묻혀 사라진다.
    (60개 블로그 글 표 텍스트 불가시 버그의 근본 원인) */
-table:not([data-reading-surface] *) { background: transparent !important; color: #fdfbf7 !important; }
-th:not([data-reading-surface] *),
-td:not([data-reading-surface] *) {
+table:not([data-reading-surface] *):not([data-admin-root] *) { background: transparent !important; color: #fdfbf7 !important; }
+th:not([data-reading-surface] *):not([data-admin-root] *),
+td:not([data-reading-surface] *):not([data-admin-root] *) {
   border-color: rgba(212,168,67,0.14) !important;
   color: #fdfbf7 !important;
 }
-th:not([data-reading-surface] *) { background: #14161f !important; color: var(--accent-soft) !important; }
-tr:nth-child(even) td:not([data-reading-surface] *) { background: rgba(255,255,255,0.02) !important; }
+th:not([data-reading-surface] *):not([data-admin-root] *) { background: #14161f !important; color: var(--accent-soft) !important; }
+tr:nth-child(even) td:not([data-reading-surface] *):not([data-admin-root] *) { background: rgba(255,255,255,0.02) !important; }
 
 /* Buttons — keep gold primary, flip outline-dark to outline-light */
 .btn-outline-dark {
