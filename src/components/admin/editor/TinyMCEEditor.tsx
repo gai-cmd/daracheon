@@ -69,9 +69,30 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         // language: 'ko_KR',
         plugins: 'link image table lists code media',
         toolbar:
-          'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image media table | code',
+          'undo redo | blocks fontsize | bold italic forecolor | alignleft aligncenter alignright | bullist numlist | link image media table | code',
         block_formats:
           '본문=p; 제목 1=h1; 제목 2=h2; 제목 3=h3; 인용=blockquote; 코드=pre',
+        // 폰트 크기 — px 고정 목록 (본문 기본 16px 기준)
+        font_size_formats: '12px 14px 16px 18px 20px 24px 28px 32px',
+        // 폰트 색 — 다크 리딩 표면에서 읽히는 밝은 톤 위주의 브랜드 팔레트.
+        // 공개 렌더는 명도 정규화(lib/blog/theme-normalize.ts)가 어두운 글자색
+        // (luminance < 0.35)을 제거하므로, 여기서 어두운 색을 골라도 발행
+        // 화면에는 반영되지 않는다 — 팔레트를 밝은 톤으로 큐레이션한 이유.
+        color_map: [
+          'D4A843', '골드',
+          'E8C97A', '연골드',
+          'FDFBF7', '크림',
+          'C9C4B8', '밝은 회색',
+          'E06A5A', '레드',
+          'F0A98E', '살구',
+          '8FBF8F', '그린',
+          '8FB8E0', '블루',
+        ],
+        // 이미지 캡션 — 이미지 대화상자의 "캡션 표시" 체크 시
+        // <figure class="image"><img/><figcaption/></figure> 로 감싼다.
+        // 새니타이저(figure/figcaption 허용)와 공개 렌더 CSS(.article figcaption)
+        // 모두 이미 지원.
+        image_caption: true,
         content_style: [
           'body { font-family: "Noto Sans KR", sans-serif; font-size: 16px; line-height: 1.85; color: #333; }',
           'h1, h2, h3 { font-family: "Noto Serif KR", serif; }',
