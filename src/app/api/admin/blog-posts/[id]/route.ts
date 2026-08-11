@@ -10,6 +10,8 @@ import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/b
 export const dynamic = 'force-dynamic';
 
 function revalidateBlog(slug?: string, prevSlug?: string, categoryId?: string) {
+  // 발행·수정·삭제 즉시 sitemap 재생성 (Google sitemap ping 폐기 대응).
+  revalidatePath('/sitemap.xml');
   revalidatePath('/blog', 'layout');
   if (slug) revalidatePath(`/blog/${slug}`, 'layout');
   if (prevSlug && prevSlug !== slug) revalidatePath(`/blog/${prevSlug}`, 'layout');

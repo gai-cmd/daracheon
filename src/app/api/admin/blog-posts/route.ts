@@ -19,6 +19,9 @@ import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/b
 export const dynamic = 'force-dynamic';
 
 function revalidateBlog(slug?: string, categoryId?: string) {
+  // 발행·수정 즉시 sitemap 재생성 — Google 은 sitemap ping 을 폐기(2023)했고
+  // lastmod 가 갱신된 sitemap 재크롤이 공식 반영 경로다.
+  revalidatePath('/sitemap.xml');
   revalidatePath('/blog', 'layout');
   if (slug) revalidatePath(`/blog/${slug}`, 'layout');
   if (categoryId) revalidatePath(`/blog/category/${categoryId}`, 'layout');

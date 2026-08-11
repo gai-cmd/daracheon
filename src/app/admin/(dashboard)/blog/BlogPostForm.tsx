@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { BlogCategory, BlogPost } from '@/types/blog';
+import { analyzeSeo, SEO_GRADE_COLOR, SEO_GRADE_LABEL } from '@/lib/blog/seo-check';
 import styles from './BlogPostForm.module.css';
 
 // TinyMCE 는 client-only — SSR 비활성.
@@ -456,6 +457,35 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
     }
   }
 
+  // 실시간 SEO/AEO 품질 점검 — 입력이 바뀔 때마다 재계산 (순수 함수, 네트워크 없음).
+  const seoReport = useMemo(
+    () =>
+      analyzeSeo({
+        title: state.title,
+        slug: state.slug,
+        excerpt: state.excerpt,
+        content: state.content,
+        tags: state.tags.split(',').map((t) => t.trim()).filter(Boolean),
+        seoTitle: state.seoTitle,
+        seoDescription: state.seoDescription,
+        seoKeywords: state.seoKeywords.split(',').map((t) => t.trim()).filter(Boolean),
+        coverImage: state.coverImage,
+        ogImage: state.ogImage,
+      }),
+    [
+      state.title,
+      state.slug,
+      state.excerpt,
+      state.content,
+      state.tags,
+      state.seoTitle,
+      state.seoDescription,
+      state.seoKeywords,
+      state.coverImage,
+      state.ogImage,
+    ]
+  );
+
   const previewDescription =
     state.seoDescription.trim() ||
     state.excerpt.trim() ||
@@ -800,6 +830,58 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
               </div>
             )}
           </div>
+        </div>
+
+        {/* SEO/AEO 품질 점검 — Yoast 스타일 신호등 + 항목별 수정 제안 */}
+        <div
+          style={{
+            marginTop: 20,
+            border: '1px solid #e8e3d8',
+            borderRadius: 6,
+            background: '#fdfcf9',
+            padding: '14px 16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <span
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                background: SEO_GRADE_COLOR[seoReport.grade],
+                display: 'inline-block',
+              }}
+            />
+            <strong style={{ fontSize: '0.95rem', color: '#3d382f' }}>
+              SEO 품질 점수 {seoReport.score}점 · {SEO_GRADE_LABEL[seoReport.grade]}
+            </strong>
+            <span style={{ fontSize: '0.75rem', color: '#7a7368' }}>
+              기준: Yoast · Google 검색 기본 가이드 · AI 검색(AEO)
+            </span>
+          </div>
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: 0, padding: 0, listStyle: 'none' }}>
+            {seoReport.checks.map((c) => (
+              <li key={c.id} style={{ display: 'flex', gap: 8, fontSize: '0.83rem', lineHeight: 1.5 }}>
+                <span
+                  style={{
+                    marginTop: 5,
+                    width: 8,
+                    height: 8,
+                    minWidth: 8,
+                    borderRadius: '50%',
+                    background:
+                      c.status === 'pass' ? '#2e9e5b' : c.status === 'warn' ? '#e08a1e' : '#c0392b',
+                  }}
+                />
+                <span style={{ color: '#3d382f' }}>
+                  <strong style={{ fontWeight: 600 }}>{c.label}</strong>
+                  {c.status !== 'pass' && c.advice ? (
+                    <span style={{ color: '#6b6558' }}> — {c.advice}</span>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* 보조 SEO 메타 — 요약을 override 할 때만 사용 */}

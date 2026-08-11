@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { BlogCategory, BlogPost } from '@/types/blog';
+import { analyzeSeo, SEO_GRADE_COLOR, SEO_GRADE_LABEL } from '@/lib/blog/seo-check';
 
 interface PostsResponse {
   posts: BlogPost[];
@@ -60,6 +61,13 @@ export default function AdminBlogPage() {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, categoryFilter]);
+
+  // 목록 응답에 content 가 포함되므로 클라이언트에서 즉시 SEO 점수를 계산한다.
+  const seoMap = useMemo(() => {
+    const m = new Map<string, ReturnType<typeof analyzeSeo>>();
+    for (const p of posts) m.set(p.id, analyzeSeo(p));
+    return m;
+  }, [posts]);
 
   const categoryMap = useMemo(() => {
     const m = new Map<string, string>();
@@ -226,6 +234,7 @@ export default function AdminBlogPage() {
               <th className="w-20 px-3 py-2">썸네일</th>
               <th className="px-3 py-2">제목</th>
               <th className="px-3 py-2">카테고리</th>
+              <th className="px-3 py-2">SEO</th>
               <th className="px-3 py-2">상태</th>
               <th className="px-3 py-2">발행일</th>
               <th className="px-3 py-2">수정일</th>
@@ -235,13 +244,13 @@ export default function AdminBlogPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="px-3 py-10 text-center text-warm-600">
+                <td colSpan={9} className="px-3 py-10 text-center text-warm-600">
                   로딩 중…
                 </td>
               </tr>
             ) : posts.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-3 py-10 text-center text-warm-600">
+                <td colSpan={9} className="px-3 py-10 text-center text-warm-600">
                   글이 없습니다. 첫 글을 작성해보세요.
                 </td>
               </tr>
@@ -282,6 +291,31 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-3 py-2 text-warm-700">
                     {categoryMap.get(p.categoryId) ?? p.categoryId}
+                  </td>
+                  <td className="px-3 py-2">
+                    {(() => {
+                      const r = seoMap.get(p.id);
+                      if (!r) return null;
+                      const issues = r.checks.filter((c) => c.status !== 'pass');
+                      return (
+                        <Link
+                          href={`/admin/blog/${p.id}`}
+                          className="inline-flex items-center gap-1.5 text-xs"
+                          title={
+                            issues.length
+                              ? issues.slice(0, 5).map((c) => `• ${c.advice || c.label}`).join('\n')
+                              : '모든 SEO 점검 통과'
+                          }
+                        >
+                          <span
+                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            style={{ background: SEO_GRADE_COLOR[r.grade] }}
+                          />
+                          <span className="tabular-nums text-warm-800">{r.score}</span>
+                          <span className="text-warm-500">{SEO_GRADE_LABEL[r.grade]}</span>
+                        </Link>
+                      );
+                    })()}
                   </td>
                   <td className="px-3 py-2">
                     <span
