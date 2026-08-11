@@ -250,6 +250,19 @@ export function extractPlainText(html: string, maxLength = 240): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    // TinyMCE 가 남기는 나머지 이름/숫자 엔티티 (&hellip; &middot; &#8230; …) —
+    // 그대로 두면 요약·AI 프롬프트에 원시 엔티티가 노출된다.
+    .replace(/&hellip;/g, '…')
+    .replace(/&middot;/g, '·')
+    .replace(/&(?:ldquo|rdquo);/g, '"')
+    .replace(/&(?:lsquo|rsquo);/g, "'")
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&#(\d+);/g, (_, n) => {
+      const code = Number(n);
+      return code > 0 && code < 0x110000 ? String.fromCodePoint(code) : '';
+    })
+    .replace(/&[a-z]+;/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 

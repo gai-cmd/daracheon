@@ -260,6 +260,8 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
           mode: 'summarize',
           title: state.title,
           content: state.content,
+          keyphrase:
+            state.seoKeywords.split(',')[0]?.trim() || state.tags.split(',')[0]?.trim() || undefined,
         }),
       });
       const data = (await res.json()) as { success?: boolean; summary?: string; message?: string };
@@ -292,6 +294,8 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
           mode: 'slug',
           title: state.title,
           content: state.content,
+          keyphrase:
+            state.seoKeywords.split(',')[0]?.trim() || state.tags.split(',')[0]?.trim() || undefined,
         }),
       });
       const data = (await res.json()) as { success?: boolean; slug?: string; message?: string };

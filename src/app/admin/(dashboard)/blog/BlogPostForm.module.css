@@ -667,3 +667,77 @@
   color: var(--warm-900, #2a2724);
   cursor: pointer;
 }
+
+/* ── Admin dark mode (html.admin-dark) ─────────────────────
+   globals.css 의 admin-dark 는 Tailwind 유틸 클래스만 반전한다.
+   이 모듈은 warm 토큰의 라이트 fallback 리터럴을 쓰므로, 다크 전환 시
+   "어두운 글자 + 어두운 배경" 이 되어 라벨·도움말이 사라진다 (2026-08-11).
+   섹션 표면과 텍스트를 모듈 안에서 자체 반전한다.
+   예외: .seoPreviewBox 는 구글 검색 결과(흰 배경) 모사이므로 반전하지 않는다. */
+:global(html.admin-dark) .section {
+  background: #1a1a17;
+  border-color: #35352e;
+}
+:global(html.admin-dark) .sectionTitle,
+:global(html.admin-dark) .headerTitle,
+:global(html.admin-dark) .dropzoneTitle {
+  color: #f0ece2;
+}
+:global(html.admin-dark) .label,
+:global(html.admin-dark) .radioItem,
+:global(html.admin-dark) .reviewCheckbox {
+  color: #e5e0d5;
+}
+:global(html.admin-dark) .help,
+:global(html.admin-dark) .dropzoneSubtitle,
+:global(html.admin-dark) .langTab {
+  color: #a39b8b;
+}
+:global(html.admin-dark) .headerBar {
+  background: #0f0f0d;
+  border-bottom-color: #35352e;
+}
+:global(html.admin-dark) .langTabs {
+  border-bottom-color: #35352e;
+}
+:global(html.admin-dark) .langTab:hover:not(:disabled),
+:global(html.admin-dark) .langTab.langTabActive {
+  color: #f0ece2;
+}
+:global(html.admin-dark) .langTab:disabled {
+  color: #5f594e;
+}
+:global(html.admin-dark) .langTabBadge {
+  background: #2d2d28;
+  color: #a39b8b;
+}
+:global(html.admin-dark) .btnGhost,
+:global(html.admin-dark) .autoBtn {
+  border-color: #404038;
+  color: #e5e0d5;
+}
+:global(html.admin-dark) .btnGhost:hover,
+:global(html.admin-dark) .autoBtn:hover:not(:disabled) {
+  background: #2d2d28;
+  color: #f0ece2;
+}
+:global(html.admin-dark) .btnPrimary {
+  background: #e8e2d2;
+  color: #1f1f1f;
+  border-color: #e8e2d2;
+}
+:global(html.admin-dark) .reviewCheckbox {
+  border-color: #404038;
+  background: rgba(212, 168, 67, 0.08);
+}
+:global(html.admin-dark) .dropzone {
+  background: #1f1f1c;
+  border-color: #404038;
+}
+:global(html.admin-dark) .restored,
+:global(html.admin-dark) .restoredBtn {
+  color: #f0ece2;
+}
+:global(html.admin-dark) .restoredBtn {
+  background: #262622;
+}
