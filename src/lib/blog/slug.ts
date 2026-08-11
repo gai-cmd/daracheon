@@ -1,10 +1,12 @@
 /**
  * Slug generation for blog posts.
  *
- * Strategy: keep Hangul as-is, lowercase Latin, swap whitespace/punctuation
- * for hyphens. Korean is the primary language of this site, so we don't
- * romanize — `/blog/침향-원목` is a perfectly good URL on modern browsers
- * and Naver indexes percent-encoded Korean slugs without penalty.
+ * Strategy: ASCII-only slugs — lowercase Latin, digits, hyphens. Korean and
+ * other non-ASCII characters are stripped (percent-encoded Hangul URLs broke
+ * sharing/preview flows, so slugs are now English-only by policy). If the
+ * source text yields nothing (e.g. a pure-Korean title with no manual slug),
+ * `uniqueSlug` falls back to `post`, `post-2`, … — admins should supply an
+ * English slug in the form for SEO-meaningful URLs.
  *
  * Caller must pass `existingSlugs` so we can disambiguate by appending
  * `-2`, `-3`, … when the natural slug collides.
@@ -12,11 +14,10 @@
 
 export function slugify(input: string): string {
   return input
-    .normalize('NFKC')
+    .normalize('NFKD')
     .toLowerCase()
     .replace(/[\s_]+/g, '-')
-    // Keep word chars, Hangul (U+AC00-U+D7A3), Hangul jamo, hyphens.
-    .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ-]+/g, '')
+    .replace(/[^a-z0-9-]+/g, '')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .slice(0, 80);

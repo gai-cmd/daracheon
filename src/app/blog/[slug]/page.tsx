@@ -33,6 +33,20 @@ function formatShortDate(iso: string): string {
   ).padStart(2, '0')}`;
 }
 
+/**
+ * Next.js delivers the dynamic segment percent-encoded (Korean slugs arrive
+ * as `%EB%A9%B4…`), while stored slugs are native Hangul — decode before
+ * matching or every non-ASCII slug 404s. Legacy posts keep Korean slugs;
+ * new slugs are ASCII-only (see lib/blog/slug.ts).
+ */
+function decodeSlug(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 async function loadPost(slug: string, allowDraft = false) {
   const posts = await readPostsSafe();
   return (
@@ -53,7 +67,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const { preview } = await searchParams;
   const allowDraft = Boolean(preview) && (await isAdmin());
   const post = await loadPost(slug, allowDraft);
@@ -98,7 +113,8 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ preview?: string }>;
 }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeSlug(rawSlug);
   const { preview } = await searchParams;
   const allowDraft = Boolean(preview) && (await isAdmin());
   const [post, posts, categories] = await Promise.all([

@@ -530,10 +530,14 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
               className={styles.input}
               type="text"
               value={state.slug}
-              onChange={(e) => update('slug', e.target.value)}
+              onChange={(e) =>
+                update('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
+              }
               placeholder="example-post-slug"
             />
-            <p className={styles.help}>URL 에 사용될 고유 식별자입니다. 영문·숫자·하이픈만 사용.</p>
+            <p className={styles.help}>
+              URL 에 사용될 고유 식별자입니다. 영문 소문자·숫자·하이픈만 입력됩니다.
+            </p>
           </div>
           <div className={styles.formItem}>
             <label className={styles.label} htmlFor="bf-cat">
