@@ -555,6 +555,17 @@
   text-transform: uppercase;
 }
 
+/* YouTube 등 영상 임베드 — 반응형 16:9 */
+.article iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 1px solid rgba(212, 168, 67, 0.14);
+  border-radius: 12px;
+  margin: 40px 0;
+}
+
 /* figure 가 아닌 단독 img 도 동일 처리 */
 .article > img,
 .article p > img {

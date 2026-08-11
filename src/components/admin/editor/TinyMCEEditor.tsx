@@ -69,7 +69,7 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         // language: 'ko_KR',
         plugins: 'link image table lists code media',
         toolbar:
-          'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image table | code',
+          'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image media table | code',
         block_formats:
           '본문=p; 제목 1=h1; 제목 2=h2; 제목 3=h3; 인용=blockquote; 코드=pre',
         content_style: [
@@ -82,6 +82,7 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
           'a { color: #b8862c; text-decoration: underline; }',
           'blockquote { border-left: 3px solid #d4a843; padding-left: 16px; margin: 1em 0; color: #555; font-style: italic; }',
           'img { max-width: 100%; height: auto; border: 1px solid rgba(212,168,67,0.2); }',
+          'iframe { max-width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; display: block; margin: 1.5em 0; }',
           'figure { margin: 1.5em 0; }',
           'figcaption { font-family: "JetBrains Mono", monospace; font-size: 0.75em; letter-spacing: 0.15em; text-transform: uppercase; color: #888; text-align: center; margin-top: 8px; }',
           'table { border-collapse: collapse; width: 100%; }',
@@ -118,6 +119,24 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
             cb(url, { alt: file.name });
           });
           input.click();
+        },
+        // 영상 — YouTube 임베드 전용 (URL 붙여넣기 → iframe 변환; 파일 업로드 아님).
+        // 공개 렌더 새니타이저(lib/blog/sanitize.ts)가 youtube/youtube-nocookie/
+        // drive.google.com iframe 만 허용하므로 다른 호스트는 발행 시 제거된다.
+        media_alt_source: false,
+        media_poster: false,
+        media_dimensions: false,
+        media_url_resolver: (data: { url: string }) => {
+          const m = data.url.match(
+            /(?:youtube\.com\/(?:watch\?.*v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/
+          );
+          if (m) {
+            return Promise.resolve({
+              html: `<iframe src="https://www.youtube.com/embed/${m[1]}" width="560" height="315" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`,
+            });
+          }
+          // 그 외 URL 은 기본 처리(대부분 발행 시 새니타이저에서 제거됨)
+          return Promise.resolve({ html: '' });
         },
         // 링크 — 새 창 열기 옵션
         link_default_target: '_blank',
