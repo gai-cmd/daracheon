@@ -102,6 +102,7 @@ export async function createTool(input: ToolCreateInput): Promise<AiTool> {
     owner: input.owner?.trim() || undefined,
     evidenceUrl: input.evidenceUrl?.trim() || undefined,
     note: input.note?.trim() || undefined,
+    costSource: input.costSource?.trim() || undefined,
     createdAt: ts,
     updatedAt: ts,
   };

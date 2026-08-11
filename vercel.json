@@ -17,6 +17,7 @@
     { "path": "/api/cron/backup-watchdog", "schedule": "0 21 * * *" },
     { "path": "/api/cron/ga4-daily-report", "schedule": "0 0 * * *" },
     { "path": "/api/cron/inbox-poll", "schedule": "*/5 * * * *" },
-    { "path": "/api/ai-tools/cron/notify", "schedule": "10 0 * * *" }
+    { "path": "/api/ai-tools/cron/notify", "schedule": "10 0 * * *" },
+    { "path": "/api/ai-tools/cron/sync-costs", "schedule": "30 0 3 * *" }
   ]
 }

@@ -51,6 +51,8 @@ export interface AiTool {
   owner?: string; // 담당자
   evidenceUrl?: string; // 영수증·슬랙 링크 (비밀값 금지 — 링크만)
   note?: string;
+  /** 비용 자동수집 어댑터 키 (src/lib/ai-tools/cost-sources.ts). 비면 수동/메일 경로. */
+  costSource?: string;
   createdAt: string;
   updatedAt: string;
 }

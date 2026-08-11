@@ -214,6 +214,11 @@ const TOOLS: McpTool[] = [
           type: 'string',
           description: 'YYYY-MM-DD 해지일. status=cancelled 인데 미지정이면 오늘로 자동 기록.',
         },
+        cost_source: {
+          type: 'string',
+          enum: ['', 'anthropic-api', 'openai-api'],
+          description: '비용 자동수집 어댑터. 빈 값이면 수동·청구메일 경로.',
+        },
         evidence_url: { type: 'string', description: '영수증·청구서 링크 (비밀값 금지)' },
       },
     },
@@ -229,6 +234,7 @@ const TOOLS: McpTool[] = [
       if ('url' in args) patch.url = args.url;
       if ('started_on' in args) patch.startedOn = args.started_on;
       if ('cancelled_on' in args) patch.cancelledOn = args.cancelled_on;
+      if ('cost_source' in args) patch.costSource = args.cost_source;
       if ('evidence_url' in args) patch.evidenceUrl = args.evidence_url;
       if ('plan' in args) patch.plan = args.plan;
       if ('currency' in args) patch.currency = args.currency;

@@ -382,6 +382,13 @@
           <input name="cancelledOn" type="date">
         </label>
         <label>결제수단<input name="paymentMethod" placeholder="법인카드 -4301"></label>
+        <label>비용 자동수집
+          <select name="costSource">
+            <option value="">사용 안 함 (수동·메일)</option>
+            <option value="anthropic-api">Anthropic API 사용료</option>
+            <option value="openai-api">OpenAI API 사용료</option>
+          </select>
+        </label>
         <label class="wide">서비스 URL<input name="url" type="text" inputmode="url" placeholder="https://"></label>
         <label class="wide">영수증·청구서 링크<input name="evidenceUrl" type="text" inputmode="url" placeholder="https://"></label>
         <label class="wide">메모<textarea name="note"></textarea></label>
@@ -662,7 +669,7 @@
   let editingId = null;
 
   const FIELDS = ["name","vendor","category","plan","status","currency","monthlyCost","billingDay",
-    "dataState","accountEmail","owner","startedOn","cancelledOn","paymentMethod","url","evidenceUrl","note"];
+    "dataState","accountEmail","owner","startedOn","cancelledOn","paymentMethod","costSource","url","evidenceUrl","note"];
 
   // 스킴 없는 주소("drive.google.com/…")를 그대로 두면 카드의 링크가 상대경로로
   // 깨진다. 저장 시점에 https:// 를 보정한다(빈 값은 그대로 빈 값).
