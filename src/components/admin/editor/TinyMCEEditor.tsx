@@ -67,9 +67,60 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         // 필요하면 https://www.tiny.cloud/get-tiny/language-packages/ 에서
         // 다운로드해 public/tinymce/langs/ko_KR.js 로 배치 후 아래 주석 해제.
         // language: 'ko_KR',
-        plugins: 'link image table lists code media',
+        plugins: 'link image table lists code media quickbars',
         toolbar:
-          'undo redo | blocks fontsize | bold italic forecolor | alignleft aligncenter alignright | bullist numlist | link image media table | code',
+          'undo redo | blocks fontsize | bold italic forecolor | alignleft aligncenter alignright | bullist numlist | link image imgcaption media table | code',
+        // 플로팅 퀵바 — 이미지 클릭 시 캡션 토글이 바로 보이게 한다.
+        // (텍스트 선택/삽입 퀵바는 메인 툴바와 중복이라 끈다.)
+        quickbars_insert_toolbar: false,
+        quickbars_selection_toolbar: false,
+        quickbars_image_toolbar: 'imgcaption | alignleft aligncenter alignright',
+        // 이미지 선택 시 캡션(figure/figcaption)을 넣고 빼는 토글 버튼.
+        // image_caption 대화상자 체크박스와 동일한 마크업(<figure class="image">)을
+        // 만들므로 새니타이저·공개 렌더 CSS 와 그대로 호환된다.
+        setup: (editor) => {
+          const findImg = (): HTMLImageElement | null => {
+            const node = editor.selection.getNode();
+            if (node.nodeName === 'IMG') return node as HTMLImageElement;
+            return node.querySelector?.('img') ?? null;
+          };
+          const hasCaption = (): boolean =>
+            !!findImg()?.closest('figure')?.querySelector('figcaption');
+          editor.ui.registry.addToggleButton('imgcaption', {
+            icon: 'comment',
+            tooltip: '이미지 캡션 넣기/빼기',
+            onSetup: (api) => {
+              const update = () => {
+                api.setEnabled(!!findImg());
+                api.setActive(hasCaption());
+              };
+              editor.on('NodeChange', update);
+              update();
+              return () => editor.off('NodeChange', update);
+            },
+            onAction: () => {
+              const img = findImg();
+              if (!img) return;
+              const fig = img.closest('figure');
+              if (fig && fig.querySelector('figcaption')) {
+                // 캡션 제거 — figure 를 벗겨 원래의 단독 이미지로 되돌린다.
+                fig.parentNode?.insertBefore(img, fig);
+                fig.remove();
+                editor.selection.select(img);
+              } else {
+                const figure = editor.dom.create('figure', { class: 'image' });
+                const caption = editor.dom.create('figcaption', {}, '캡션을 입력하세요');
+                img.parentNode?.insertBefore(figure, img);
+                figure.appendChild(img);
+                figure.appendChild(caption);
+                // 커서를 캡션으로 옮겨 바로 타이핑할 수 있게 한다.
+                editor.selection.select(caption, true);
+              }
+              editor.undoManager.add();
+              editor.fire('change');
+            },
+          });
+        },
         block_formats:
           '본문=p; 제목 1=h1; 제목 2=h2; 제목 3=h3; 인용=blockquote; 코드=pre',
         // 폰트 크기 — px 고정 목록 (본문 기본 16px 기준)
