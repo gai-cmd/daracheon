@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTool, updateTool, listPayments, listReviews } from '@/lib/ai-tools/store';
+import { getTool, updateTool, deleteTool, listPayments, listReviews } from '@/lib/ai-tools/store';
 import { currentActor } from '@/lib/ai-tools/actor';
 import { notifyChange } from '@/lib/ai-tools/slack';
 import { TOOL_STATUS_LABEL } from '@/lib/ai-tools/types';
@@ -16,6 +16,31 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ tool, payments, reviews });
   } catch (err) {
     console.error('[ai-tools] GET tool', err);
+    return NextResponse.json({ error: '서버 오류' }, { status: 500 });
+  }
+}
+
+/**
+ * 툴 삭제 — 오등록·중복 레코드 정리용.
+ *
+ * 해지는 status='cancelled' PATCH 로 이력을 남기는 것이 원칙이고, DELETE 는
+ * 레코드 자체가 잘못 만들어진 경우에만 쓴다(결제·판단 이력은 함께 지우지 않고
+ * 고아로 남긴다 — 감사 목적).
+ */
+export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await ctx.params;
+    const before = await getTool(id);
+    if (!before) return NextResponse.json({ error: '툴을 찾을 수 없습니다.' }, { status: 404 });
+
+    const ok = await deleteTool(id);
+    if (!ok) return NextResponse.json({ error: '툴을 찾을 수 없습니다.' }, { status: 404 });
+
+    const actor = await currentActor();
+    notifyChange({ action: '삭제', toolName: before.name, by: actor }).catch(() => {});
+    return NextResponse.json({ ok: true, id });
+  } catch (err) {
+    console.error('[ai-tools] DELETE tool', err);
     return NextResponse.json({ error: '서버 오류' }, { status: 500 });
   }
 }

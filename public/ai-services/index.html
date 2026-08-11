@@ -256,6 +256,59 @@
     padding: 40px 4px; text-align: center; color: var(--faint); font-size: 13px; line-height: 1.7;
   }
   .error b { color: var(--accent-ink); }
+
+  /* ── 편집 UI (카드 액션 · 모달) ───────────────────────────────────── */
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .card-actions button {
+    font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+    padding: 4px 10px; border-radius: 7px; border: 1px solid var(--border-strong);
+    background: var(--surface-2); color: var(--muted); transition: color .12s, border-color .12s;
+  }
+  .card-actions button:hover { color: var(--ink); border-color: var(--faint); }
+  .card-actions button.danger:hover { color: #dc2626; border-color: #dc2626; }
+
+  .btn-add {
+    font: inherit; font-size: 12.5px; font-weight: 650; cursor: pointer;
+    padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent);
+    background: var(--accent-soft); color: var(--accent-ink);
+  }
+  .btn-add:hover { filter: brightness(1.05); }
+
+  .modal { position: fixed; inset: 0; z-index: 50; display: none; }
+  .modal.open { display: block; }
+  .modal-bg { position: absolute; inset: 0; background: rgba(10,12,16,.55); }
+  .sheet {
+    position: relative; margin: 4vh auto; width: min(720px, 92vw); max-height: 92vh; overflow-y: auto;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow); padding: 20px 22px 22px;
+  }
+  .sheet h2 { margin: 0 0 14px; font-size: 16px; color: var(--ink); }
+  .sheet .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+  .sheet label { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--muted); }
+  .sheet label.wide { grid-column: 1 / -1; }
+  .sheet input, .sheet select, .sheet textarea {
+    font: inherit; font-size: 13px; color: var(--ink); background: var(--surface-2);
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 7px 10px; width: 100%;
+  }
+  .sheet textarea { min-height: 64px; resize: vertical; }
+  .sheet .hint { font-size: 11px; color: var(--faint); margin: 10px 0 0; line-height: 1.6; }
+  .sheet .foot { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .sheet .foot button {
+    font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+    padding: 8px 16px; border-radius: 9px; border: 1px solid var(--border-strong);
+    background: var(--surface-2); color: var(--muted);
+  }
+  .sheet .foot button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sheet .foot button[disabled] { opacity: .5; cursor: progress; }
+  .sheet .err { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 1em; }
+  .sheet fieldset {
+    grid-column: 1 / -1; border: 1px dashed var(--border-strong); border-radius: 10px;
+    padding: 12px 14px; margin: 6px 0 0;
+  }
+  .sheet legend { font-size: 11.5px; color: var(--faint); padding: 0 6px; }
+  .paylist { font-size: 11.5px; color: var(--muted); font-family: var(--mono); line-height: 1.8; margin: 0 0 8px; }
+  .paylist a { color: var(--accent-ink); }
+  @media (max-width: 560px) { .sheet .grid2 { grid-template-columns: 1fr; } }
 </style>
 
 <header>
@@ -280,6 +333,73 @@
     <div id="sections"></div>
     <div class="empty" id="empty">조건에 맞는 서비스가 없습니다.</div>
   </main>
+
+  <!-- 편집·등록 모달. 카드의 "편집" 또는 상단 "+ 서비스 추가" 로 연다. -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal-bg" data-close></div>
+    <div class="sheet">
+      <h2 id="mTitle">서비스 편집</h2>
+      <form id="mForm" class="grid2" autocomplete="off">
+        <label class="wide">서비스명 *<input name="name" required></label>
+        <label>벤더<input name="vendor"></label>
+        <label>카테고리<input name="category" list="catList"></label>
+        <datalist id="catList"></datalist>
+        <label>플랜<input name="plan"></label>
+        <label>상태
+          <select name="status">
+            <option value="active">사용중</option>
+            <option value="trial">트라이얼</option>
+            <option value="cancelled">해지</option>
+            <option value="review">검토중 (목록에서 숨김)</option>
+          </select>
+        </label>
+        <label>통화
+          <select name="currency">
+            <option value="USD">USD $</option>
+            <option value="JPY">JPY ¥</option>
+            <option value="KRW">KRW ₩</option>
+            <option value="BDT">BDT ৳</option>
+          </select>
+        </label>
+        <label>월 비용 <span style="color:var(--faint)">(비우면 미확정)</span>
+          <input name="monthlyCost" type="number" step="0.01" min="0" inputmode="decimal">
+        </label>
+        <label>결제일<input name="billingDay" type="number" min="1" max="31"></label>
+        <label>금액 신뢰도
+          <select name="dataState">
+            <option value="confirmed">확정</option>
+            <option value="estimated">추정</option>
+            <option value="todo">미확정 (확인 필요)</option>
+          </select>
+        </label>
+        <label>계정 이메일<input name="accountEmail" type="email"></label>
+        <label>담당<input name="owner"></label>
+        <label>개시일<input name="startedOn" type="date"></label>
+        <label>결제수단<input name="paymentMethod" placeholder="법인카드 -4301"></label>
+        <label class="wide">서비스 URL<input name="url" type="url" placeholder="https://"></label>
+        <label class="wide">영수증·청구서 링크<input name="evidenceUrl" type="url" placeholder="https://"></label>
+        <label class="wide">메모<textarea name="note"></textarea></label>
+
+        <fieldset id="payBox">
+          <legend>결제·영수증 기록</legend>
+          <div class="paylist" id="payList"></div>
+          <div class="grid2" style="gap:8px 12px">
+            <label>결제일<input name="p_paidOn" type="date"></label>
+            <label>금액<input name="p_amount" type="number" step="0.01" min="0"></label>
+            <label class="wide">영수증 URL<input name="p_receiptUrl" type="url" placeholder="https://"></label>
+          </div>
+          <p class="hint">세 칸을 채우고 저장하면 결제 이력이 함께 기록됩니다. 통화는 위 통화 설정을 따릅니다.</p>
+        </fieldset>
+
+        <p class="hint wide">비밀번호·API 키 등 자격증명은 입력하지 마세요. 링크만 보관합니다.</p>
+        <div class="err" id="mErr"></div>
+        <div class="foot wide">
+          <button type="button" class="danger-txt" data-close>취소</button>
+          <button type="submit" class="primary" id="mSave">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <footer>
     <b>데이터 출처</b> — 이 목록은 <b>전사 AI툴 관리 CRM</b>(<span class="mono">/ai-tools</span>)의 실보유 계정을
     <span class="mono">GET /api/ai-tools/tools</span> 로 실시간 조회해 표시합니다. 별도 카탈로그를 손으로 관리하지 않으므로
@@ -386,7 +506,10 @@
     html += `<span class="spacer"></span>`;
     html += `<button class="chip free-toggle" id="activeBtn" aria-pressed="${state.activeOnly}">사용중만</button>`;
     html += `<button class="toggle-theme" id="themeBtn" title="테마 전환">◐ 테마</button>`;
+    html += `<button class="btn-add" id="addBtn">+ 서비스 추가</button>`;
     box.innerHTML = html;
+
+    document.getElementById("addBtn").addEventListener("click", () => openModal(null));
 
     box.querySelectorAll(".chip[data-cat]").forEach((el) =>
       el.addEventListener("click", () => { state.cat = el.dataset.cat; renderChips(); renderList(); }));
@@ -456,6 +579,11 @@
       </div>
       ${meta.length ? `<dl class="meta">${meta.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ``}
       ${t.url ? `<a class="link" href="${esc(t.url)}" target="_blank" rel="noopener noreferrer">서비스 열기 ↗</a>` : ``}
+      ${t.evidenceUrl ? `<a class="link" href="${esc(t.evidenceUrl)}" target="_blank" rel="noopener noreferrer">영수증 ↗</a>` : ``}
+      <div class="card-actions">
+        <button type="button" data-edit="${esc(t.id)}">편집</button>
+        <button type="button" class="danger" data-del="${esc(t.id)}">삭제</button>
+      </div>
     </article>`;
   }
 
@@ -508,6 +636,148 @@
 
     root.innerHTML = html;
     document.getElementById("empty").style.display = shown.length ? "none" : "block";
+
+    root.querySelectorAll("[data-edit]").forEach((el) =>
+      el.addEventListener("click", () => openModal(el.dataset.edit)));
+    root.querySelectorAll("[data-del]").forEach((el) =>
+      el.addEventListener("click", () => removeTool(el.dataset.del)));
+  }
+
+  /* ── 편집·등록 ────────────────────────────────────────────────────
+   * 카드 = CRM 레코드(ai_tools) 1건이므로, 이 화면의 편집은 그대로
+   * PATCH /api/ai-tools/tools/{id} 로 마스터를 고친다(별도 사본 없음).
+   * 신규는 POST /api/ai-tools/tools, 삭제는 DELETE.
+   * 결제·영수증은 POST /api/ai-tools/tools/{id}/payments 로 이력에 쌓는다
+   * — MCP(log_payment)·자동수집이 넣는 곳과 같은 저장소다.
+   */
+  const $modal = () => document.getElementById("modal");
+  const $form = () => document.getElementById("mForm");
+  let editingId = null;
+
+  const FIELDS = ["name","vendor","category","plan","status","currency","monthlyCost","billingDay",
+    "dataState","accountEmail","owner","startedOn","paymentMethod","url","evidenceUrl","note"];
+
+  async function openModal(id) {
+    editingId = id ?? null;
+    const t = id ? TOOLS.find((x) => x.id === id) : null;
+    const f = $form();
+    f.reset();
+    document.getElementById("mErr").textContent = "";
+    document.getElementById("mTitle").textContent = t ? `${t.name} — 편집` : "서비스 추가";
+    document.getElementById("catList").innerHTML =
+      CATS.map((c) => `<option value="${esc(c.label)}">`).join("");
+
+    for (const k of FIELDS) {
+      const el = f.elements[k];
+      if (!el) continue;
+      const v = t ? t[k] : "";
+      el.value = (v === null || v === undefined) ? "" : v;
+    }
+    if (!t) { f.elements.status.value = "active"; f.elements.currency.value = "USD"; f.elements.dataState.value = "confirmed"; }
+
+    // 결제 이력은 편집 모드에서만 (신규는 id 가 아직 없다).
+    document.getElementById("payBox").style.display = t ? "" : "none";
+    document.getElementById("payList").textContent = t ? "불러오는 중…" : "";
+    $modal().classList.add("open");
+    f.elements.name.focus();
+
+    if (t) {
+      try {
+        const res = await fetch(`/api/ai-tools/tools/${encodeURIComponent(t.id)}`,
+          { credentials: "same-origin", cache: "no-store" });
+        const json = await res.json();
+        const rows = Array.isArray(json.payments) ? json.payments : [];
+        document.getElementById("payList").innerHTML = rows.length
+          ? rows.slice(-6).map((p) => `${esc(p.paidOn)} · ${fmtAmt(p.amount, p.currency)}`
+              + (p.receiptUrl ? ` · <a href="${esc(p.receiptUrl)}" target="_blank" rel="noopener noreferrer">영수증</a>` : "")).join("<br>")
+          : "기록된 결제 없음";
+      } catch { document.getElementById("payList").textContent = "결제 이력을 불러오지 못했습니다."; }
+    }
+  }
+
+  function closeModal() { $modal().classList.remove("open"); editingId = null; }
+
+  function collect() {
+    const f = $form();
+    const val = (k) => { const el = f.elements[k]; return el ? el.value.trim() : ""; };
+    const body = {};
+    for (const k of FIELDS) {
+      const v = val(k);
+      if (k === "monthlyCost" || k === "billingDay") body[k] = v === "" ? null : Number(v);
+      else if (k === "startedOn") body[k] = v === "" ? null : v;
+      else body[k] = v;
+    }
+    // 금액을 비우면 미확정으로 되돌린다 (CRM createTool 규칙과 동일).
+    if (body.monthlyCost === null && body.dataState === "confirmed") body.dataState = "todo";
+    return body;
+  }
+
+  async function submitForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById("mSave");
+    const err = document.getElementById("mErr");
+    err.textContent = "";
+    btn.disabled = true;
+    try {
+      const body = collect();
+      if (!body.name) throw new Error("서비스명은 필수입니다.");
+
+      const res = editingId
+        ? await fetch(`/api/ai-tools/tools/${encodeURIComponent(editingId)}`, {
+            method: "PATCH", credentials: "same-origin",
+            headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
+        : await fetch("/api/ai-tools/tools", {
+            method: "POST", credentials: "same-origin",
+            headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+
+      // 결제·영수증이 채워져 있으면 이어서 이력 기록.
+      const f = $form();
+      const paidOn = f.elements.p_paidOn.value, amount = f.elements.p_amount.value;
+      const toolId = editingId || (json.tool && json.tool.id);
+      if (toolId && paidOn && amount !== "") {
+        const pr = await fetch(`/api/ai-tools/tools/${encodeURIComponent(toolId)}/payments`, {
+          method: "POST", credentials: "same-origin",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            paidOn, amount: Number(amount),
+            currency: f.elements.currency.value,
+            receiptUrl: f.elements.p_receiptUrl.value.trim() || undefined,
+          }),
+        });
+        if (!pr.ok) {
+          const pj = await pr.json().catch(() => ({}));
+          throw new Error(`서비스는 저장됐지만 결제 기록 실패: ${pj.error || pr.status}`);
+        }
+      }
+
+      closeModal();
+      await refresh();
+    } catch (e2) {
+      err.textContent = e2 && e2.message ? e2.message : "저장에 실패했습니다.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function removeTool(id) {
+    const t = TOOLS.find((x) => x.id === id);
+    if (!t) return;
+    if (!confirm(`"${t.name}" 을(를) 목록에서 완전히 삭제합니다.\n\n해지 기록을 남기려면 대신 편집에서 상태를 '해지' 로 바꾸세요.\n\n삭제할까요?`)) return;
+    const res = await fetch(`/api/ai-tools/tools/${encodeURIComponent(id)}`,
+      { method: "DELETE", credentials: "same-origin" });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      alert(`삭제 실패: ${j.error || res.status}`);
+      return;
+    }
+    await refresh();
+  }
+
+  async function refresh() {
+    await load();
+    renderStats(); renderChips(); renderList();
   }
 
   // ── Theme toggle ──
@@ -534,6 +804,11 @@
     }
     loading.remove();
     document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; renderList(); });
+    $form().addEventListener("submit", submitForm);
+    $modal().querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", closeModal));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && $modal().classList.contains("open")) closeModal();
+    });
     renderStats(); renderChips(); renderSortRow(); renderList();
   })();
 </script>

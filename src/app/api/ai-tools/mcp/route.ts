@@ -5,7 +5,9 @@ import {
   getTool,
   createTool,
   updateTool,
+  deleteTool,
   addPayment,
+  listPayments,
 } from '@/lib/ai-tools/store';
 import { buildSummary } from '@/lib/ai-tools/summary';
 import { formatJpy, formatAmount } from '@/lib/ai-tools/currency';
@@ -148,10 +150,16 @@ const TOOLS: McpTool[] = [
         status: { type: 'string', enum: ['active', 'trial', 'review', 'cancelled'] },
         owner: { type: 'string' },
         note: { type: 'string' },
+        url: { type: 'string', description: '서비스·콘솔 URL (비밀값 금지 — 링크만)' },
+        started_on: { type: 'string', description: 'YYYY-MM-DD' },
+        evidence_url: { type: 'string', description: '영수증·청구서·슬랙 링크 (비밀값 금지)' },
       },
     },
     handler: async (args, actor) => {
       const tool = await createTool({
+        url: args.url as string,
+        startedOn: args.started_on as string,
+        evidenceUrl: args.evidence_url as string,
         name: args.name as string,
         vendor: args.vendor as string,
         category: args.category as string,
@@ -192,11 +200,29 @@ const TOOLS: McpTool[] = [
         data_state: { type: 'string', enum: ['confirmed', 'estimated', 'todo'] },
         owner: { type: 'string' },
         note: { type: 'string' },
+        name: { type: 'string' },
+        vendor: { type: 'string' },
+        category: { type: 'string' },
+        team_id: { type: 'string' },
+        account_email: { type: 'string' },
+        payment_method: { type: 'string' },
+        url: { type: 'string' },
+        started_on: { type: 'string', description: 'YYYY-MM-DD' },
+        evidence_url: { type: 'string', description: '영수증·청구서 링크 (비밀값 금지)' },
       },
     },
     handler: async (args, actor) => {
       const id = args.id as string;
       const patch: Record<string, unknown> = {};
+      if ('name' in args) patch.name = args.name;
+      if ('vendor' in args) patch.vendor = args.vendor;
+      if ('category' in args) patch.category = args.category;
+      if ('team_id' in args) patch.teamId = args.team_id;
+      if ('account_email' in args) patch.accountEmail = args.account_email;
+      if ('payment_method' in args) patch.paymentMethod = args.payment_method;
+      if ('url' in args) patch.url = args.url;
+      if ('started_on' in args) patch.startedOn = args.started_on;
+      if ('evidence_url' in args) patch.evidenceUrl = args.evidence_url;
       if ('plan' in args) patch.plan = args.plan;
       if ('currency' in args) patch.currency = args.currency;
       if ('monthly_cost' in args) patch.monthlyCost = args.monthly_cost;
@@ -247,6 +273,85 @@ const TOOLS: McpTool[] = [
         detail: `${payment.paidOn} ${formatAmount(payment.amount, payment.currency)}`,
       }).catch(() => {});
       return { id: payment.id, tool_id: toolId, amount_jpy: payment.amountJpy };
+    },
+  },
+  {
+    // 영수증·금액을 외부(메일·카드명세·벤더 API)에서 끌어와 채워 넣으려면,
+    // 먼저 "이 툴의 현재 값이 무엇이고 어디까지 확정인지" 를 읽을 수 있어야 한다.
+    name: 'get_tool',
+    description:
+      'AI툴 1건의 전체 필드(계정·URL·영수증 링크·확정 상태)와 결제 이력을 조회한다. id 필수.',
+    access: 'read',
+    inputSchema: {
+      type: 'object',
+      required: ['id'],
+      properties: { id: { type: 'string' } },
+    },
+    handler: async (args) => {
+      const id = args.id as string;
+      const tool = await getTool(id);
+      if (!tool) throw new Error(`툴을 찾을 수 없습니다: ${id}`);
+      const payments = await listPayments(id);
+      return {
+        tool,
+        payments: payments.map((p) => ({
+          id: p.id,
+          paid_on: p.paidOn,
+          amount: p.amount,
+          currency: p.currency,
+          amount_jpy: p.amountJpy,
+          receipt_url: p.receiptUrl,
+        })),
+      };
+    },
+  },
+  {
+    name: 'list_payments',
+    description:
+      '결제 실적(영수증 링크 포함)을 조회한다. tool_id 미지정 시 전체. from·to 로 기간 필터(YYYY-MM-DD).',
+    access: 'read',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        tool_id: { type: 'string' },
+        from: { type: 'string', description: 'YYYY-MM-DD (이상)' },
+        to: { type: 'string', description: 'YYYY-MM-DD (이하)' },
+      },
+    },
+    handler: async (args) => {
+      const rows = await listPayments((args.tool_id as string) || undefined);
+      const from = (args.from as string) || undefined;
+      const to = (args.to as string) || undefined;
+      return rows
+        .filter((p) => (!from || p.paidOn >= from) && (!to || p.paidOn <= to))
+        .map((p) => ({
+          id: p.id,
+          tool_id: p.toolId,
+          paid_on: p.paidOn,
+          amount: p.amount,
+          currency: p.currency,
+          amount_jpy: p.amountJpy,
+          receipt_url: p.receiptUrl,
+        }));
+    },
+  },
+  {
+    name: 'delete_tool',
+    description:
+      '오등록·중복 레코드를 삭제한다. id 필수. 해지는 삭제가 아니라 update_tool(status=cancelled) 로 남긴다.',
+    access: 'write',
+    inputSchema: {
+      type: 'object',
+      required: ['id'],
+      properties: { id: { type: 'string' } },
+    },
+    handler: async (args, actor) => {
+      const id = args.id as string;
+      const tool = await getTool(id);
+      if (!tool) throw new Error(`툴을 찾을 수 없습니다: ${id}`);
+      await deleteTool(id);
+      notifyChange({ action: '삭제 (MCP)', toolName: tool.name, by: actor }).catch(() => {});
+      return { ok: true, id, name: tool.name };
     },
   },
 ];

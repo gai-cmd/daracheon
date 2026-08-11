@@ -131,6 +131,21 @@ export async function updateTool(id: string, patch: ToolUpdateInput): Promise<Ai
   return next;
 }
 
+/**
+ * 툴 삭제.
+ *
+ * writeDataMerged 는 저장본에만 있고 next 에 없는 레코드를 "동시 쓰기" 로 보고
+ * 되살리므로, 삭제 의도는 반드시 removedIds 로 알려야 한다(그냥 filter 만 하면
+ * 다음 병합에서 부활한다).
+ */
+export async function deleteTool(id: string): Promise<boolean> {
+  const base = await readDataForWrite<AiTool>(F_TOOLS);
+  const next = base.filter((t) => t.id !== id);
+  if (next.length === base.length) return false;
+  await writeDataMerged(F_TOOLS, next, { removedIds: [id] });
+  return true;
+}
+
 function sanitizeToolPatch(patch: ToolUpdateInput): ToolUpdateInput {
   const out: ToolUpdateInput = { ...patch };
   if ('billingDay' in out) out.billingDay = normalizeBillingDay(out.billingDay);
