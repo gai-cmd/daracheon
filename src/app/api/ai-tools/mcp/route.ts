@@ -152,6 +152,7 @@ const TOOLS: McpTool[] = [
         note: { type: 'string' },
         url: { type: 'string', description: '서비스·콘솔 URL (비밀값 금지 — 링크만)' },
         started_on: { type: 'string', description: 'YYYY-MM-DD' },
+        cancelled_on: { type: 'string', description: 'YYYY-MM-DD 해지일 (해지분 소급 등록용)' },
         evidence_url: { type: 'string', description: '영수증·청구서·슬랙 링크 (비밀값 금지)' },
       },
     },
@@ -159,6 +160,7 @@ const TOOLS: McpTool[] = [
       const tool = await createTool({
         url: args.url as string,
         startedOn: args.started_on as string,
+        cancelledOn: args.cancelled_on as string,
         evidenceUrl: args.evidence_url as string,
         name: args.name as string,
         vendor: args.vendor as string,
@@ -208,6 +210,10 @@ const TOOLS: McpTool[] = [
         payment_method: { type: 'string' },
         url: { type: 'string' },
         started_on: { type: 'string', description: 'YYYY-MM-DD' },
+        cancelled_on: {
+          type: 'string',
+          description: 'YYYY-MM-DD 해지일. status=cancelled 인데 미지정이면 오늘로 자동 기록.',
+        },
         evidence_url: { type: 'string', description: '영수증·청구서 링크 (비밀값 금지)' },
       },
     },
@@ -222,6 +228,7 @@ const TOOLS: McpTool[] = [
       if ('payment_method' in args) patch.paymentMethod = args.payment_method;
       if ('url' in args) patch.url = args.url;
       if ('started_on' in args) patch.startedOn = args.started_on;
+      if ('cancelled_on' in args) patch.cancelledOn = args.cancelled_on;
       if ('evidence_url' in args) patch.evidenceUrl = args.evidence_url;
       if ('plan' in args) patch.plan = args.plan;
       if ('currency' in args) patch.currency = args.currency;

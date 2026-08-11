@@ -98,6 +98,7 @@ export async function createTool(input: ToolCreateInput): Promise<AiTool> {
     status: input.status || 'active',
     dataState: input.dataState || (hasCost ? 'confirmed' : 'todo'),
     startedOn: input.startedOn || null,
+    cancelledOn: input.cancelledOn || null,
     owner: input.owner?.trim() || undefined,
     evidenceUrl: input.evidenceUrl?.trim() || undefined,
     note: input.note?.trim() || undefined,
@@ -119,9 +120,15 @@ export async function updateTool(id: string, patch: ToolUpdateInput): Promise<Ai
   if (idx === -1) return null;
 
   const prev = base[idx];
+  const clean = sanitizeToolPatch(patch);
+  // 해지로 넘어가는데 해지일을 안 줬으면 오늘로 자동 기록 — "언제 해지했는지"가
+  // 비는 것을 막는다(직접 넣은 값이 있으면 그대로 존중).
+  if (clean.status === 'cancelled' && prev.status !== 'cancelled' && !clean.cancelledOn && !prev.cancelledOn) {
+    clean.cancelledOn = nowIso().slice(0, 10);
+  }
   const next: AiTool = {
     ...prev,
-    ...sanitizeToolPatch(patch),
+    ...clean,
     id: prev.id,
     createdAt: prev.createdAt,
     updatedAt: nowIso(),
@@ -149,6 +156,8 @@ export async function deleteTool(id: string): Promise<boolean> {
 function sanitizeToolPatch(patch: ToolUpdateInput): ToolUpdateInput {
   const out: ToolUpdateInput = { ...patch };
   if ('billingDay' in out) out.billingDay = normalizeBillingDay(out.billingDay);
+  if ('cancelledOn' in out) out.cancelledOn = out.cancelledOn || null;
+  if ('startedOn' in out) out.startedOn = out.startedOn || null;
   if ('monthlyCost' in out) {
     const c: unknown = out.monthlyCost;
     out.monthlyCost = c === null || c === undefined || c === '' ? null : Number(c);

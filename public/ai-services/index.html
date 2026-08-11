@@ -339,7 +339,10 @@
     <div class="modal-bg" data-close></div>
     <div class="sheet">
       <h2 id="mTitle">서비스 편집</h2>
-      <form id="mForm" class="grid2" autocomplete="off">
+      <!-- novalidate: 기존 레코드에는 스킴 없는 URL·비정형 값이 섞여 있어 브라우저
+           기본 검증이 제출을 통째로 막아버린다(원인 불명의 "저장 안 됨"). 검증은
+           아래 submitForm 에서 직접 하고, 실패 사유는 항상 화면에 띄운다. -->
+      <form id="mForm" class="grid2" autocomplete="off" novalidate>
         <label class="wide">서비스명 *<input name="name" required></label>
         <label>벤더<input name="vendor"></label>
         <label>카테고리<input name="category" list="catList"></label>
@@ -372,12 +375,15 @@
             <option value="todo">미확정 (확인 필요)</option>
           </select>
         </label>
-        <label>계정 이메일<input name="accountEmail" type="email"></label>
+        <label>계정 이메일<input name="accountEmail" type="text" inputmode="email"></label>
         <label>담당<input name="owner"></label>
         <label>개시일<input name="startedOn" type="date"></label>
+        <label>해지일 <span style="color:var(--faint)">(상태=해지)</span>
+          <input name="cancelledOn" type="date">
+        </label>
         <label>결제수단<input name="paymentMethod" placeholder="법인카드 -4301"></label>
-        <label class="wide">서비스 URL<input name="url" type="url" placeholder="https://"></label>
-        <label class="wide">영수증·청구서 링크<input name="evidenceUrl" type="url" placeholder="https://"></label>
+        <label class="wide">서비스 URL<input name="url" type="text" inputmode="url" placeholder="https://"></label>
+        <label class="wide">영수증·청구서 링크<input name="evidenceUrl" type="text" inputmode="url" placeholder="https://"></label>
         <label class="wide">메모<textarea name="note"></textarea></label>
 
         <fieldset id="payBox">
@@ -386,7 +392,7 @@
           <div class="grid2" style="gap:8px 12px">
             <label>결제일<input name="p_paidOn" type="date"></label>
             <label>금액<input name="p_amount" type="number" step="0.01" min="0"></label>
-            <label class="wide">영수증 URL<input name="p_receiptUrl" type="url" placeholder="https://"></label>
+            <label class="wide">영수증 URL<input name="p_receiptUrl" type="text" inputmode="url" placeholder="https://"></label>
           </div>
           <p class="hint">세 칸을 채우고 저장하면 결제 이력이 함께 기록됩니다. 통화는 위 통화 설정을 따릅니다.</p>
         </fieldset>
@@ -558,6 +564,7 @@
       t.accountEmail  ? ["계정", t.accountEmail] : null,
       t.owner         ? ["담당", t.owner] : null,
       t.startedOn     ? ["개시", t.startedOn] : null,
+      t.cancelledOn   ? ["해지", t.cancelledOn] : null,
     ].filter(Boolean);
 
     return `<article class="card${t.status === "cancelled" ? " is-cancelled" : ""}" style="--cat:${cat.hue}">
@@ -655,7 +662,15 @@
   let editingId = null;
 
   const FIELDS = ["name","vendor","category","plan","status","currency","monthlyCost","billingDay",
-    "dataState","accountEmail","owner","startedOn","paymentMethod","url","evidenceUrl","note"];
+    "dataState","accountEmail","owner","startedOn","cancelledOn","paymentMethod","url","evidenceUrl","note"];
+
+  // 스킴 없는 주소("drive.google.com/…")를 그대로 두면 카드의 링크가 상대경로로
+  // 깨진다. 저장 시점에 https:// 를 보정한다(빈 값은 그대로 빈 값).
+  const normUrl = (v) => {
+    const s = String(v ?? "").trim();
+    if (!s) return "";
+    return /^[a-z][a-z0-9+.-]*:\/\//i.test(s) ? s : "https://" + s.replace(/^\/+/, "");
+  };
 
   async function openModal(id) {
     editingId = id ?? null;
@@ -704,7 +719,8 @@
     for (const k of FIELDS) {
       const v = val(k);
       if (k === "monthlyCost" || k === "billingDay") body[k] = v === "" ? null : Number(v);
-      else if (k === "startedOn") body[k] = v === "" ? null : v;
+      else if (k === "startedOn" || k === "cancelledOn") body[k] = v === "" ? null : v;
+      else if (k === "url" || k === "evidenceUrl") body[k] = normUrl(v);
       else body[k] = v;
     }
     // 금액을 비우면 미확정으로 되돌린다 (CRM createTool 규칙과 동일).
@@ -721,6 +737,9 @@
     try {
       const body = collect();
       if (!body.name) throw new Error("서비스명은 필수입니다.");
+      if (body.billingDay !== null && (body.billingDay < 1 || body.billingDay > 31)) {
+        throw new Error("결제일은 1~31 사이여야 합니다.");
+      }
 
       const res = editingId
         ? await fetch(`/api/ai-tools/tools/${encodeURIComponent(editingId)}`, {
@@ -755,7 +774,9 @@
       closeModal();
       await refresh();
     } catch (e2) {
-      err.textContent = e2 && e2.message ? e2.message : "저장에 실패했습니다.";
+      console.error("[ai-services] save failed", e2);
+      err.textContent = (e2 && e2.message ? e2.message : "저장에 실패했습니다.")
+        + " — 계속 실패하면 이 문구를 그대로 알려주세요.";
     } finally {
       btn.disabled = false;
     }

@@ -47,6 +47,7 @@ export interface AiTool {
   status: ToolStatus;
   dataState: DataState;
   startedOn?: string | null; // ISO date
+  cancelledOn?: string | null; // ISO date — 해지일(status='cancelled' 근거). 미입력 허용.
   owner?: string; // 담당자
   evidenceUrl?: string; // 영수증·슬랙 링크 (비밀값 금지 — 링크만)
   note?: string;
