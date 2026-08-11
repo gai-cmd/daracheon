@@ -69,12 +69,12 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         // language: 'ko_KR',
         plugins: 'link image table lists code media quickbars',
         toolbar:
-          'undo redo | blocks fontsize | bold italic forecolor | alignleft aligncenter alignright | bullist numlist | link image imgcaption media table | code',
+          'undo redo | blocks fontsize | bold italic forecolor | alignleft aligncenter alignright | bullist numlist | link image imgcaption imgalt media table | code',
         // 플로팅 퀵바 — 이미지 클릭 시 캡션 토글이 바로 보이게 한다.
         // (텍스트 선택/삽입 퀵바는 메인 툴바와 중복이라 끈다.)
         quickbars_insert_toolbar: false,
         quickbars_selection_toolbar: false,
-        quickbars_image_toolbar: 'imgcaption | alignleft aligncenter alignright',
+        quickbars_image_toolbar: 'imgcaption imgalt | alignleft aligncenter alignright',
         // 이미지 선택 시 캡션(figure/figcaption)을 넣고 빼는 토글 버튼.
         // image_caption 대화상자 체크박스와 동일한 마크업(<figure class="image">)을
         // 만들므로 새니타이저·공개 렌더 CSS 와 그대로 호환된다.
@@ -118,6 +118,53 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
               }
               editor.undoManager.add();
               editor.fire('change');
+            },
+          });
+          // 이미지 대체텍스트(alt) 입력 — SEO 체커의 "이미지 대체텍스트" 항목과
+          // 스크린리더 접근성을 위한 필드. 작은 대화상자로 편집한다.
+          editor.ui.registry.addToggleButton('imgalt', {
+            icon: 'accessibility-check',
+            tooltip: '대체텍스트(alt) 입력',
+            onSetup: (api) => {
+              const update = () => {
+                const img = findImg();
+                api.setEnabled(!!img);
+                api.setActive(!!img?.getAttribute('alt'));
+              };
+              editor.on('NodeChange', update);
+              update();
+              return () => editor.off('NodeChange', update);
+            },
+            onAction: () => {
+              const img = findImg();
+              if (!img) return;
+              editor.windowManager.open({
+                title: '이미지 대체텍스트 (alt)',
+                body: {
+                  type: 'panel',
+                  items: [
+                    {
+                      type: 'input',
+                      name: 'alt',
+                      label: '이미지 내용을 설명하는 문장 (검색엔진·스크린리더용)',
+                    },
+                  ],
+                },
+                initialData: { alt: img.getAttribute('alt') ?? '' },
+                buttons: [
+                  { type: 'cancel', text: '취소' },
+                  { type: 'submit', text: '저장', primary: true },
+                ],
+                onSubmit: (api) => {
+                  const alt = (api.getData() as { alt: string }).alt.trim();
+                  if (alt) img.setAttribute('alt', alt);
+                  else img.removeAttribute('alt');
+                  api.close();
+                  editor.undoManager.add();
+                  editor.fire('change');
+                  editor.nodeChanged();
+                },
+              });
             },
           });
         },
