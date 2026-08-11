@@ -2,11 +2,12 @@
  * 블로그 작성 보조 — Gemini 기반.
  *
  *   POST /api/admin/blog/ai-assist
- *   body: { mode: 'summarize' | 'keywords', title?: string, content?: string }
+ *   body: { mode: 'summarize' | 'keywords' | 'slug', title?: string, content?: string }
  *
  *   응답:
  *     summarize: { success: true, summary: string }     // 한국어 ≤ 100자
  *     keywords:  { success: true, keywords: string[] }  // 5~8개
+ *     slug:      { success: true, slug: string }        // 영어 소문자·숫자·하이픈
  *
  * 환경변수: GOOGLE_GENAI_API_KEY 또는 GEMINI_API_KEY
  * 모델: gemini-2.0-flash (저비용·빠름). 필요 시 body.model 로 override.
@@ -26,7 +27,7 @@ const KEYWORDS_MIN = 5;
 const KEYWORDS_MAX = 8;
 
 interface AssistBody {
-  mode?: 'summarize' | 'keywords';
+  mode?: 'summarize' | 'keywords' | 'slug';
   title?: string;
   content?: string;
   model?: string;
@@ -59,6 +60,23 @@ function buildKeywordsPrompt(title: string, body: string): string {
     '- 일반적인 단어보다 검색 의도가 분명한 키워드',
     '- 쉼표로만 구분된 한 줄 텍스트로 출력 (예: "침향, 침향 효능, 베트남 침향")',
     '- 따옴표·번호·설명·마크다운 금지',
+    '',
+    `[제목]\n${title || '(없음)'}`,
+    '',
+    `[본문]\n${body || '(없음)'}`,
+  ].join('\n');
+}
+
+function buildSlugPrompt(title: string, body: string): string {
+  return [
+    '다음 한국어 블로그 글의 URL 슬러그를 영어로 만들어주세요.',
+    '',
+    '요구사항:',
+    '- 글의 핵심 주제를 영어로 번역·요약한 슬러그',
+    '- 영어 소문자·숫자·하이픈(-)만 사용, 공백 금지',
+    '- 3~8개 단어, 최대 60자',
+    '- 검색엔진 친화적으로 핵심 키워드 우선 (예: agarwood-oil-nanoemulsion-immune-study)',
+    '- 결과 슬러그 한 줄만 출력 (설명·따옴표·마크다운 금지)',
     '',
     `[제목]\n${title || '(없음)'}`,
     '',
@@ -111,9 +129,9 @@ export async function POST(request: Request) {
 
     const body = (await request.json().catch(() => ({}))) as AssistBody;
     const mode = body.mode;
-    if (mode !== 'summarize' && mode !== 'keywords') {
+    if (mode !== 'summarize' && mode !== 'keywords' && mode !== 'slug') {
       return NextResponse.json(
-        { success: false, message: 'mode 는 "summarize" 또는 "keywords" 여야 합니다.' },
+        { success: false, message: 'mode 는 "summarize", "keywords" 또는 "slug" 여야 합니다.' },
         { status: 400 }
       );
     }
@@ -131,14 +149,18 @@ export async function POST(request: Request) {
     const ai = new GoogleGenAI({ apiKey });
     const model = body.model && body.model.length > 0 ? body.model : DEFAULT_MODEL;
     const prompt =
-      mode === 'summarize' ? buildSummarizePrompt(title, plain) : buildKeywordsPrompt(title, plain);
+      mode === 'summarize'
+        ? buildSummarizePrompt(title, plain)
+        : mode === 'keywords'
+          ? buildKeywordsPrompt(title, plain)
+          : buildSlugPrompt(title, plain);
 
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
       config: {
         temperature: 0.3,
-        maxOutputTokens: mode === 'summarize' ? 200 : 150,
+        maxOutputTokens: mode === 'summarize' ? 200 : mode === 'keywords' ? 150 : 60,
       },
     });
 
@@ -152,6 +174,26 @@ export async function POST(request: Request) {
 
     if (mode === 'summarize') {
       return NextResponse.json({ success: true, summary: cleanSummary(raw) });
+    }
+    if (mode === 'slug') {
+      // 서버 slugify 와 동일 규칙으로 정제 — 모델이 여분 텍스트를 섞어도 안전.
+      const slug = raw
+        .split('\n')
+        .map((s) => s.trim())
+        .find((s) => s.length > 0)!
+        .toLowerCase()
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^a-z0-9-]+/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 60);
+      if (!slug) {
+        return NextResponse.json(
+          { success: false, message: '슬러그 생성에 실패했습니다. 다시 시도해주세요.' },
+          { status: 502 }
+        );
+      }
+      return NextResponse.json({ success: true, slug });
     }
     const keywords = parseKeywords(raw);
     if (keywords.length < KEYWORDS_MIN) {

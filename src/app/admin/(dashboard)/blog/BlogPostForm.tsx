@@ -140,6 +140,8 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
   const [dragOver, setDragOver] = useState(false);
   const [aiSummaryBusy, setAiSummaryBusy] = useState(false);
   const [aiKeywordsBusy, setAiKeywordsBusy] = useState(false);
+  const [slugWarning, setSlugWarning] = useState(false);
+  const [aiSlugBusy, setAiSlugBusy] = useState(false);
 
   // Unsplash 검색
   const [usQuery, setUsQuery] = useState('');
@@ -272,6 +274,39 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
       });
     } finally {
       setAiSummaryBusy(false);
+    }
+  }
+
+  async function autoGenerateSlug() {
+    if (!state.title.trim() && !state.content.trim()) {
+      setToast({ msg: '제목 또는 본문을 먼저 입력하세요.', ok: false });
+      return;
+    }
+    setAiSlugBusy(true);
+    try {
+      const res = await fetch('/api/admin/blog/ai-assist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode: 'slug',
+          title: state.title,
+          content: state.content,
+        }),
+      });
+      const data = (await res.json()) as { success?: boolean; slug?: string; message?: string };
+      if (!res.ok || !data.success || !data.slug) {
+        throw new Error(data.message ?? '슬러그 생성 실패');
+      }
+      setSlugWarning(false);
+      update('slug', data.slug);
+      setToast({ msg: '영어 슬러그가 생성되었습니다.', ok: true });
+    } catch (err) {
+      setToast({
+        msg: err instanceof Error ? err.message : '슬러그 생성 중 오류',
+        ok: false,
+      });
+    } finally {
+      setAiSlugBusy(false);
     }
   }
 
@@ -522,19 +557,40 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
         <h3 className={styles.sectionTitle}>기본 정보</h3>
         <div className={styles.basicInfoGrid}>
           <div className={styles.formItem}>
-            <label className={styles.label} htmlFor="bf-slug">
-              슬러그 (URL) <span className={styles.required}>*</span>
-            </label>
+            <div className={styles.labelRow}>
+              <label className={styles.label} htmlFor="bf-slug">
+                슬러그 (URL) <span className={styles.required}>*</span>
+              </label>
+              <button
+                type="button"
+                className={styles.autoBtn}
+                onClick={autoGenerateSlug}
+                disabled={aiSlugBusy}
+                title="제목·본문에서 영어 슬러그 자동 생성 (Gemini)"
+              >
+                <SparklesIcon />
+                {aiSlugBusy ? '생성 중…' : '자동 생성'}
+              </button>
+            </div>
             <input
               id="bf-slug"
               className={styles.input}
               type="text"
               value={state.slug}
-              onChange={(e) =>
-                update('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
-              }
+              onChange={(e) => {
+                const raw = e.target.value;
+                const filtered = raw.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                // Korean (or any disallowed char) typed → surface a warning instead of silently dropping it.
+                setSlugWarning(raw.toLowerCase() !== filtered);
+                update('slug', filtered);
+              }}
               placeholder="example-post-slug"
             />
+            {slugWarning && (
+              <p className={styles.help} style={{ color: '#c0392b', fontWeight: 600 }}>
+                한글 등은 슬러그에 사용할 수 없습니다. 영어 소문자·숫자·하이픈(-)으로 입력해 주세요.
+              </p>
+            )}
             <p className={styles.help}>
               URL 에 사용될 고유 식별자입니다. 영문 소문자·숫자·하이픈만 입력됩니다.
             </p>
