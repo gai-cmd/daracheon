@@ -119,6 +119,9 @@ logs/*
 *.backup/
 *-backup/
 *_backup_*/
+# `*-backup/` 이 크론 라우트 디렉터리(src/app/api/cron/daily-backup/)에 오탐으로
+# 걸려 새 파일 추가 시마다 -f 가 필요했다. 소스 트리는 백업 산출물이 아니므로 재포함.
+!src/**/*-backup/
 
 # ===========================================
 # Secrets and Credentials (CRITICAL)
