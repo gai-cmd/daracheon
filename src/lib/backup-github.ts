@@ -46,7 +46,15 @@ async function ensureBranch(token: string, repo: string, branch: string): Promis
   // 브랜치 없음 → main SHA 로 생성 시도. 생성만은 git-db API 가 유일한 경로라
   // fine-grained 토큰에서 실패할 수 있다 — 그 경우 수동 1회 생성을 안내한다.
   const mainRef = await gh(`/repos/${repo}/branches/main`, token);
-  if (!mainRef.ok) throw new Error(`cannot fetch main branch: ${mainRef.status}`);
+  if (!mainRef.ok) {
+    // 404 진단용으로 대상 repo 문자열(비밀 아님)과 토큰 형태·응답 본문을 싣는다.
+    // /branches/main 404 = 토큰이 repo 자체에 접근 불가(값 오류·선택 누락·손상 붙여넣기).
+    const body = (await mainRef.text().catch(() => '')).slice(0, 120);
+    const tokenShape = `${token.slice(0, 11)}…(len=${token.length})`;
+    throw new Error(
+      `cannot fetch main branch: ${mainRef.status} repo="${repo}" token=${tokenShape} body=${body}`
+    );
+  }
   const mainData = (await mainRef.json()) as { commit: { sha: string } };
   const create = await gh(`/repos/${repo}/git/refs`, token, {
     method: 'POST',
