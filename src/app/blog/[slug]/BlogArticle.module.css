@@ -357,6 +357,32 @@
   }
 }
 
+/* 바이라인 — 제목 바로 아래 "이름 이메일". 다크 표면 고정 hex(헌법: 전역 토큰 금지). */
+.byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.88rem;
+  margin: 0 0 18px;
+}
+
+.bylineName {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+}
+
+.bylineEmail {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+}
+
+.bylineEmail:hover {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: underline;
+}
+
 .excerpt {
   font-family: var(--font-sans), sans-serif;
   font-size: clamp(0.95rem, 1.6vw, 1.05rem);

@@ -63,7 +63,6 @@ interface FormState {
   coverImage: string;
   categoryId: string;
   tags: string;
-  author: string;
   status: 'draft' | 'published';
   seoTitle: string;
   seoDescription: string;
@@ -82,7 +81,6 @@ function buildInitialState(initial: BlogPost | undefined, fallbackCategory: stri
     coverImage: initial?.coverImage ?? '',
     categoryId: initial?.categoryId ?? fallbackCategory,
     tags: (initial?.tags ?? []).join(', '),
-    author: initial?.author ?? '대라천',
     status: initial?.status ?? 'draft',
     seoTitle: initial?.seoTitle ?? '',
     seoDescription: initial?.seoDescription ?? '',
@@ -420,7 +418,8 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
       coverImage: state.coverImage || undefined,
       categoryId: state.categoryId,
       tags: state.tags.split(',').map((t) => t.trim()).filter(Boolean),
-      author: state.author.trim() || undefined,
+      // 작성자·이메일은 보내지 않는다 — 서버가 로그인 세션(구글 워크스페이스
+      // 이름 + 이메일)으로 자동 기재한다.
       status: publishOverride ?? state.status,
       seoTitle: state.seoTitle.trim() || undefined,
       seoDescription: state.seoDescription.trim() || undefined,
@@ -922,14 +921,12 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
 
         <div className={styles.basicInfoGrid} style={{ marginTop: 18 }}>
           <div className={styles.formItem}>
-            <label className={styles.label} htmlFor="bf-author">작성자</label>
-            <input
-              id="bf-author"
-              className={styles.input}
-              type="text"
-              value={state.author}
-              onChange={(e) => update('author', e.target.value)}
-            />
+            <label className={styles.label}>작성자</label>
+            <p className={styles.help} style={{ margin: '6px 0 0' }}>
+              {initial?.authorEmail
+                ? `${initial.author} (${initial.authorEmail})`
+                : '저장 시 로그인 계정의 이름·이메일로 자동 기재됩니다.'}
+            </p>
           </div>
           <div className={styles.formItem} style={{ gridColumn: 'span 2' }}>
             <label className={styles.label} htmlFor="bf-tags">태그 (쉼표 구분)</label>

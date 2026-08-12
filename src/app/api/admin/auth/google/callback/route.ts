@@ -102,8 +102,14 @@ export async function GET(request: Request) {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
     if (!userinfoRes.ok) return clearOAuthCookies(redirectToLogin(request, 'oauth_userinfo'));
-    const profile = (await userinfoRes.json()) as { email?: string; email_verified?: boolean };
+    const profile = (await userinfoRes.json()) as {
+      email?: string;
+      email_verified?: boolean;
+      /** 워크스페이스 프로필 이름 (한글 이름) — scope 'profile' 로 수신. */
+      name?: string;
+    };
     const email = profile.email?.trim().toLowerCase();
+    const profileName = typeof profile.name === 'string' ? profile.name.trim() : '';
     if (!email || profile.email_verified === false) {
       return clearOAuthCookies(redirectToLogin(request, 'oauth_email'));
     }
@@ -128,6 +134,8 @@ export async function GET(request: Request) {
     try {
       user.lastLoginAt = new Date().toISOString();
       user.failedAttempts = 0;
+      // 구글 프로필 이름을 기록 — 블로그 바이라인 작성자명의 원천.
+      if (profileName) user.displayName = profileName;
       delete user.lockedUntil;
       users[idx] = user;
       await writeDataMerged('admin-users', users);
@@ -138,7 +146,11 @@ export async function GET(request: Request) {
     await auditSsoLogin(email, user.role, 'login', `구글 SSO 로그인: ${email}`);
 
     // 4) 세션 발급 (토큰은 비밀번호 로그인과 동일)
-    const token = await createSessionToken({ email, role: user.role });
+    const token = await createSessionToken({
+      email,
+      role: user.role,
+      ...(profileName ? { name: profileName } : {}),
+    });
     const response = NextResponse.redirect(new URL(next, request.url));
     // ⚠️ SameSite=Lax (Strict 아님): 이 콜백은 google.com 리디렉션으로 진입하므로,
     //    Strict 세션쿠키는 이어지는 /admin 최초 요청에 전송되지 않아 로그인 화면으로

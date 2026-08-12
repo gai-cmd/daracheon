@@ -194,7 +194,11 @@ export default async function BlogPostPage({
   const isBrandAuthor = !post.author || /대라천|zoel/i.test(post.author);
   const authorEntity = isBrandAuthor
     ? { '@id': `${SITE_URL}/#organization` }
-    : { '@type': 'Person', name: post.author };
+    : {
+        '@type': 'Person',
+        name: post.author,
+        ...(post.authorEmail ? { email: post.authorEmail } : {}),
+      };
 
   const postJsonLd = {
     '@context': 'https://schema.org',
@@ -292,10 +296,17 @@ export default async function BlogPostPage({
               )}
             </div>
             <h1 className={styles.title}>{post.title}</h1>
+            {/* 바이라인 — 제목 바로 아래 "이름 이메일". 이메일이 없으면 이름만. */}
+            <div className={styles.byline}>
+              <span className={styles.bylineName}>{post.author}</span>
+              {post.authorEmail && (
+                <a className={styles.bylineEmail} href={`mailto:${post.authorEmail}`}>
+                  {post.authorEmail}
+                </a>
+              )}
+            </div>
             {post.excerpt && <p className={styles.excerpt}>{post.excerpt}</p>}
             <div className={styles.meta}>
-              <span>{post.author}</span>
-              <span className={styles.dot}>·</span>
               <time dateTime={post.publishedAt ?? post.createdAt}>
                 {formatKoreanDate(post.publishedAt ?? post.createdAt)}
               </time>

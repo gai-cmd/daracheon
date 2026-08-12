@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { readPosts, readPostsForWrite, writePosts } from '@/lib/blog/store';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
@@ -69,6 +71,12 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
     const prev = posts[idx];
     const now = new Date().toISOString();
 
+    // 작성자 자동 귀속: 아직 이메일 귀속이 없는 글(레거시 '대라천' 포함)을 저장하면
+    // 로그인한 관리자의 워크스페이스 이름 + 이메일로 기재한다. 이미 귀속된 글은
+    // 다른 관리자가 수정해도 원작성자를 보존한다.
+    const session = await verifySessionToken((await cookies()).get(SESSION_COOKIE)?.value);
+    const stamp = session && !prev.authorEmail;
+
     // Slug 처리 — 사용자가 명시적으로 바꿨거나, 제목이 바뀌어 자동 갱신 요청한 경우만 변경.
     let nextSlug = prev.slug;
     if (typeof body?.slug === 'string' && body.slug.trim()) {
@@ -100,7 +108,8 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
       coverImage: typeof body?.coverImage === 'string' ? body.coverImage : prev.coverImage,
       categoryId: typeof body?.categoryId === 'string' && body.categoryId ? body.categoryId : prev.categoryId,
       tags: body?.tags === undefined ? prev.tags : normalizeTags(body.tags),
-      author: typeof body?.author === 'string' && body.author.trim() ? body.author.trim() : prev.author,
+      author: stamp ? session.name?.trim() || session.email.split('@')[0] : prev.author,
+      authorEmail: stamp ? session.email : prev.authorEmail,
       status,
       publishedAt:
         status === 'published' ? prev.publishedAt ?? now : prev.publishedAt,

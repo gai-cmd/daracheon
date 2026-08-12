@@ -19,6 +19,8 @@ export const SESSION_MAX_AGE_SECONDS = MAX_AGE_DAYS * 24 * 60 * 60;
 export interface AdminSession {
   email: string;
   role: 'super_admin' | 'admin' | 'editor';
+  /** 구글 SSO 프로필 이름 (워크스페이스 한글 이름). 비밀번호 로그인·구세션엔 없음. */
+  name?: string;
   issuedAt: number;
   expiresAt: number;
 }

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import {
   readPosts,
   readPostsForWrite,
@@ -14,7 +16,12 @@ import {
   type BlogPostStatus,
 } from '@/types/blog';
 import { generateBlogId, slugify, uniqueSlug } from '@/lib/blog/slug';
-import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
+import {
+  estimateReadingTime,
+  extractPlainText,
+  normalizeAuthorEmail,
+  sanitizeBlogHtml,
+} from '@/lib/blog/sanitize';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,6 +90,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    // 작성자 = 로그인한 관리자 본인. 구글 SSO 세션의 워크스페이스 이름 + 이메일을
+    // 서버가 직접 기재한다 (클라이언트 입력이 아니라 로그인 정보가 원천).
+    const session = await verifySessionToken((await cookies()).get(SESSION_COOKIE)?.value);
     const title = typeof body?.title === 'string' ? body.title.trim() : '';
     if (!title) {
       return NextResponse.json(
@@ -137,7 +147,12 @@ export async function POST(request: Request) {
       coverImage: typeof body?.coverImage === 'string' ? body.coverImage : undefined,
       categoryId,
       tags: normalizeTags(body?.tags),
-      author: typeof body?.author === 'string' && body.author.trim() ? body.author.trim() : '대라천',
+      author: session
+        ? session.name?.trim() || session.email.split('@')[0]
+        : typeof body?.author === 'string' && body.author.trim()
+          ? body.author.trim()
+          : '대라천',
+      authorEmail: session?.email ?? normalizeAuthorEmail(body?.authorEmail),
       status,
       publishedAt: status === 'published' ? now : undefined,
       createdAt: now,

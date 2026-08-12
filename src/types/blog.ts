@@ -33,6 +33,8 @@ export interface BlogPost {
   categoryId: string;          // FK -> BlogCategory.id
   tags: string[];
   author: string;              // Display name
+  /** 바이라인 이메일 — 제목 아래 "이름 이메일" 형태로 공개 노출. 비우면 이름만. */
+  authorEmail?: string;
   status: BlogPostStatus;
   publishedAt?: string;        // ISO 8601, set when status becomes 'published'
   createdAt: string;           // ISO 8601

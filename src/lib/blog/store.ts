@@ -74,6 +74,8 @@ interface PostRow {
     seoDescription?: string;
     seoKeywords?: string[];
     ogImage?: string;
+    /** 바이라인 이메일 — 별도 컬럼 대신 seo jsonb 에 동승 (ALTER 마이그레이션 회피). */
+    authorEmail?: string;
   } | null;
   reviewed: boolean;
   view_count: number;
@@ -103,6 +105,7 @@ function rowToPost(r: PostRow): BlogPost {
     categoryId: r.category_id,
     tags: r.tags ?? [],
     author: r.author,
+    authorEmail: r.seo?.authorEmail,
     status: r.status === 'published' ? 'published' : 'draft',
     publishedAt: iso(r.published_at),
     createdAt: iso(r.created_at)!,
@@ -135,6 +138,8 @@ function postSeo(p: BlogPost) {
   if (p.seoDescription) seo.seoDescription = p.seoDescription;
   if (p.seoKeywords?.length) seo.seoKeywords = p.seoKeywords;
   if (p.ogImage) seo.ogImage = p.ogImage;
+  // authorEmail 은 프로덕션 Neon 테이블에 ALTER 실행 창구가 없어 컬럼 대신 jsonb 동승.
+  if (p.authorEmail) seo.authorEmail = p.authorEmail;
   return Object.keys(seo).length ? seo : null;
 }
 

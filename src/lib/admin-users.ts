@@ -5,6 +5,8 @@ export type AdminRole = 'super_admin' | 'admin' | 'editor';
 export interface AdminUser {
   email: string;
   role: AdminRole;
+  /** 구글 SSO 프로필 이름 — 로그인 시마다 갱신. 블로그 바이라인 작성자명의 원천. */
+  displayName?: string;
   passwordHash: string;
   createdAt: string;
   updatedAt: string;
