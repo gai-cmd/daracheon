@@ -276,10 +276,3 @@ export function estimateReadingTime(html: string): number {
   const minutes = Math.max(1, Math.round(text.length / 500));
   return minutes;
 }
-
-/** 바이라인용 이메일 정규화 — 형식이 아니면 저장하지 않는다 (공개 노출 필드). */
-export function normalizeAuthorEmail(raw: unknown): string | undefined {
-  if (typeof raw !== 'string') return undefined;
-  const email = raw.trim();
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : undefined;
-}

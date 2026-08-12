@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import { readData } from '@/lib/db';
+import type { AdminUser } from '@/lib/admin-users';
 import {
   readPosts,
   readPostsForWrite,
@@ -16,12 +18,7 @@ import {
   type BlogPostStatus,
 } from '@/types/blog';
 import { generateBlogId, slugify, uniqueSlug } from '@/lib/blog/slug';
-import {
-  estimateReadingTime,
-  extractPlainText,
-  normalizeAuthorEmail,
-  sanitizeBlogHtml,
-} from '@/lib/blog/sanitize';
+import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
 
 export const dynamic = 'force-dynamic';
 
@@ -90,9 +87,24 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    // 작성자 = 로그인한 관리자 본인. 구글 SSO 세션의 워크스페이스 이름 + 이메일을
-    // 서버가 직접 기재한다 (클라이언트 입력이 아니라 로그인 정보가 원천).
+    // 작성자 귀속: 명시 지정(등록 관리자) > 로그인한 본인(세션) > 브랜드 폴백.
+    // 글은 여러 사람이 쓰므로, 업로드 대행 시 드롭다운으로 실제 작성자를 지정할 수 있다.
     const session = await verifySessionToken((await cookies()).get(SESSION_COOKIE)?.value);
+    const requestedEmail =
+      typeof body?.authorEmail === 'string' ? body.authorEmail.trim().toLowerCase() : '';
+    let author =
+      session?.name?.trim() ||
+      (session ? session.email.split('@')[0] : '') ||
+      (typeof body?.author === 'string' && body.author.trim() ? body.author.trim() : '대라천');
+    let authorEmail = session?.email;
+    if (requestedEmail && requestedEmail !== session?.email) {
+      const admins = await readData<AdminUser>('admin-users');
+      const match = admins.find((u) => u.email === requestedEmail);
+      if (match) {
+        author = match.displayName?.trim() || match.email.split('@')[0];
+        authorEmail = match.email;
+      }
+    }
     const title = typeof body?.title === 'string' ? body.title.trim() : '';
     if (!title) {
       return NextResponse.json(
@@ -147,12 +159,8 @@ export async function POST(request: Request) {
       coverImage: typeof body?.coverImage === 'string' ? body.coverImage : undefined,
       categoryId,
       tags: normalizeTags(body?.tags),
-      author: session
-        ? session.name?.trim() || session.email.split('@')[0]
-        : typeof body?.author === 'string' && body.author.trim()
-          ? body.author.trim()
-          : '대라천',
-      authorEmail: session?.email ?? normalizeAuthorEmail(body?.authorEmail),
+      author,
+      authorEmail,
       status,
       publishedAt: status === 'published' ? now : undefined,
       createdAt: now,

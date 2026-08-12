@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { readDataSafe } from '@/lib/db';
+import type { AdminUser } from '@/lib/admin-users';
 import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
@@ -189,14 +191,21 @@ export default async function BlogPostPage({
     new Set(Array.from(cleanHtml.matchAll(/href=["']([^"']+)["']/g)).map((m) => m[1]))
   ).filter((u) => CITATION_HOSTS.some((h) => u.includes(h)));
 
+  // 작성자 표시명: 귀속 이메일이 있으면 admin-users 의 최신 displayName(구글
+  // 워크스페이스 한글 이름)을 우선한다 — 본인이 SSO 로 한 번 로그인하면 과거에
+  // 귀속해 둔 글의 이름도 재저장 없이 자동 갱신된다.
+  const admins = post.authorEmail ? await readDataSafe<AdminUser>('admin-users') : [];
+  const authorName =
+    admins.find((u) => u.email === post.authorEmail)?.displayName?.trim() || post.author;
+
   // 작성자가 브랜드명(대라천/ZOEL)이면 검증 가능한 Organization 엔티티로 귀속 —
   // YMYL(건강) 주제에서 실명 없는 Person 방출보다 신뢰신호가 강하다. 개인명이면 Person.
-  const isBrandAuthor = !post.author || /대라천|zoel/i.test(post.author);
+  const isBrandAuthor = !authorName || /대라천|zoel/i.test(authorName);
   const authorEntity = isBrandAuthor
     ? { '@id': `${SITE_URL}/#organization` }
     : {
         '@type': 'Person',
-        name: post.author,
+        name: authorName,
         ...(post.authorEmail ? { email: post.authorEmail } : {}),
       };
 
@@ -298,7 +307,7 @@ export default async function BlogPostPage({
             <h1 className={styles.title}>{post.title}</h1>
             {/* 바이라인 — 제목 바로 아래 "이름 이메일". 이메일이 없으면 이름만. */}
             <div className={styles.byline}>
-              <span className={styles.bylineName}>{post.author}</span>
+              <span className={styles.bylineName}>{authorName}</span>
               {post.authorEmail && (
                 <a className={styles.bylineEmail} href={`mailto:${post.authorEmail}`}>
                   {post.authorEmail}
