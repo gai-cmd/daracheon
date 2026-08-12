@@ -35,12 +35,15 @@ const createSchema = z.object({
   email: z.string().email('올바른 이메일을 입력해주세요.'),
   password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다.'),
   role: z.enum(ROLE_VALUES),
+  displayName: z.string().max(60).optional(),
 });
 
 const updateSchema = z.object({
   email: z.string().email(),
   role: z.enum(ROLE_VALUES).optional(),
   password: z.string().min(8).optional(),
+  // 표시 이름(블로그 바이라인·작성자 드롭다운). SSO 로그인 시 구글 프로필 이름으로 덮어써진다.
+  displayName: z.string().max(60).optional(),
 });
 
 const deleteSchema = z.object({
@@ -76,7 +79,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const { email, password, role } = parsed.data;
+    const { email, password, role, displayName } = parsed.data;
     const normalized = email.trim().toLowerCase();
 
     const users = await readDataForWrite('admin-users');
@@ -91,6 +94,7 @@ export async function POST(request: Request) {
     const user: AdminUser = {
       email: normalized,
       role,
+      ...(displayName?.trim() ? { displayName: displayName.trim() } : {}),
       passwordHash: hashPassword(password),
       createdAt: now,
       updatedAt: now,
@@ -155,7 +159,7 @@ export async function PUT(request: Request) {
         { status: 400 }
       );
     }
-    const { email, role, password } = parsed.data;
+    const { email, role, password, displayName } = parsed.data;
     const normalized = email.trim().toLowerCase();
 
     const users = await readDataForWrite('admin-users');
@@ -171,6 +175,11 @@ export async function PUT(request: Request) {
       ...users[idx],
       ...(role ? { role } : {}),
       ...(password ? { passwordHash: hashPassword(password) } : {}),
+      ...(displayName !== undefined
+        ? displayName.trim()
+          ? { displayName: displayName.trim() }
+          : { displayName: undefined }
+        : {}),
       updatedAt: new Date().toISOString(),
     };
     users[idx] = updated;
@@ -179,6 +188,7 @@ export async function PUT(request: Request) {
     const summaryParts: string[] = [];
     if (role) summaryParts.push(`역할=${role}`);
     if (password) summaryParts.push('비밀번호 재설정');
+    if (displayName !== undefined) summaryParts.push(`이름=${displayName.trim() || '(삭제)'}`);
 
     await logAdmin('settings', 'update', {
       targetId: normalized,

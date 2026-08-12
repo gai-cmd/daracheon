@@ -7,6 +7,8 @@ type Role = 'super_admin' | 'admin' | 'editor';
 interface AdminUserView {
   email: string;
   role: Role;
+  /** 표시 이름 — 블로그 바이라인·작성자 드롭다운에 노출. SSO 로그인 시 구글 이름으로 갱신. */
+  displayName?: string;
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;
@@ -48,8 +50,16 @@ export default function AdminUsersPage() {
   const [me, setMe] = useState<{ email: string; role: Role } | null>(null);
 
   const [addOpen, setAddOpen] = useState(false);
-  const [addForm, setAddForm] = useState({ email: '', password: '', role: 'editor' as Role });
+  const [addForm, setAddForm] = useState({
+    email: '',
+    password: '',
+    role: 'editor' as Role,
+    displayName: '',
+  });
   const [saving, setSaving] = useState(false);
+
+  // 이름 인라인 편집 — email 키로 편집 중 값을 보관, blur/Enter 시 저장.
+  const [nameDrafts, setNameDrafts] = useState<Record<string, string>>({});
 
   const [pwTarget, setPwTarget] = useState<string | null>(null);
   const [pwValue, setPwValue] = useState('');
@@ -110,10 +120,32 @@ export default function AdminUsersPage() {
       }
       setToast('계정이 추가되었습니다.');
       setAddOpen(false);
-      setAddForm({ email: '', password: '', role: 'editor' });
+      setAddForm({ email: '', password: '', role: 'editor', displayName: '' });
       await loadUsers();
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleNameSave(email: string) {
+    const draft = nameDrafts[email];
+    const current = users.find((u) => u.email === email)?.displayName ?? '';
+    if (draft === undefined || draft.trim() === current.trim()) return;
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, displayName: draft.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setToast(data.message ?? '이름 저장 실패');
+        return;
+      }
+      setToast('이름이 저장되었습니다.');
+      await loadUsers();
+    } catch (err) {
+      console.error('[Users] name save error:', err);
     }
   }
 
@@ -233,6 +265,7 @@ export default function AdminUsersPage() {
             <thead className="bg-gray-50 text-[0.72rem] uppercase tracking-wider text-gray-500">
               <tr>
                 <th className="px-4 py-3 text-left font-medium">이메일</th>
+                <th className="px-4 py-3 text-left font-medium">이름</th>
                 <th className="px-4 py-3 text-left font-medium">역할</th>
                 <th className="px-4 py-3 text-left font-medium">생성일</th>
                 <th className="px-4 py-3 text-left font-medium">최근 로그인</th>
@@ -247,6 +280,25 @@ export default function AdminUsersPage() {
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {u.email}
                       {isMe && <span className="ml-2 rounded bg-gold-50 px-1.5 py-0.5 text-[0.65rem] text-gold-700">나</span>}
+                    </td>
+                    <td className="px-4 py-3">
+                      {canManage ? (
+                        <input
+                          type="text"
+                          value={nameDrafts[u.email] ?? u.displayName ?? ''}
+                          placeholder="이름 입력"
+                          onChange={(e) =>
+                            setNameDrafts((d) => ({ ...d, [u.email]: e.target.value }))
+                          }
+                          onBlur={() => handleNameSave(u.email)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                          }}
+                          className="w-28 rounded border border-gray-200 px-2 py-1 text-xs"
+                        />
+                      ) : (
+                        <span className="text-gray-700">{u.displayName ?? '-'}</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {canManage ? (
@@ -311,6 +363,16 @@ export default function AdminUsersPage() {
                   type="email"
                   value={addForm.email}
                   onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                  className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+                  autoComplete="off"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-gray-700">이름 (블로그 작성자 표시용)</label>
+                <input
+                  type="text"
+                  value={addForm.displayName}
+                  onChange={(e) => setAddForm({ ...addForm, displayName: e.target.value })}
                   className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
                   autoComplete="off"
                 />
