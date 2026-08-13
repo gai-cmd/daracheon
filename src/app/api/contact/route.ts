@@ -4,7 +4,7 @@ import { readDataForWrite, appendData, readSingleSafe, writeDataMerged } from '@
 import { sendEmail } from '@/lib/mail';
 import { appendToGoogleSheet, notifyTelegram, sendTelegramMessage, type InquiryPayload } from '@/lib/integrations';
 import { notifySlackInquiry } from '@/lib/slack-notify';
-import type { InquiryRecord } from '@/lib/inquiry-reply';
+import { SUPPORT_PHONE, type InquiryRecord } from '@/lib/inquiry-reply';
 
 interface MailSettingsLite { adminEmail?: string }
 
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
       // 제목 끝의 [#inq-...] 토큰 — 고객이 이 메일에 답장하면 인박스 폴링이
       // 어느 문의인지 매칭하는 키. 절대 제거 금지.
       subject: `[대라천] ${subjectLine}문의가 접수되었습니다. [#${newInquiry.id}]`,
-      text: `안녕하세요, ${validated.name}님.\n\n대라천에 문의해 주셔서 감사합니다.\n보내주신 내용은 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 담당자가 답변드리겠습니다.\n\n─────────────────────────\n[문의 유형] ${catDisplay}${validated.subject ? `\n[제목] ${validated.subject}` : ''}\n[접수번호] ${newInquiry.id}\n[문의 내용]\n${validated.message}\n─────────────────────────\n\n추가로 궁금하신 점은 이 메일에 그대로 회신해 주세요.\n\nZOEL LIFE · 대라천 고객지원팀\n전화: 070-4140-4086`,
+      text: `안녕하세요, ${validated.name}님.\n\n대라천에 문의해 주셔서 감사합니다.\n보내주신 내용은 정상적으로 접수되었으며, 영업일 기준 1~2일 이내에 담당자가 답변드리겠습니다.\n\n─────────────────────────\n[문의 유형] ${catDisplay}${validated.subject ? `\n[제목] ${validated.subject}` : ''}\n[접수번호] ${newInquiry.id}\n[문의 내용]\n${validated.message}\n─────────────────────────\n\n추가로 궁금하신 점은 이 메일에 그대로 회신해 주세요.\n\nZOEL LIFE · 대라천 고객지원팀\n전화: ${SUPPORT_PHONE}`,
       html: `<!DOCTYPE html>
 <html lang="ko"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
 <body style="margin:0; padding:0; background:#f5f3ee; font-family:'Apple SD Gothic Neo','맑은 고딕',sans-serif;">
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
 
       <div style="border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#999; line-height:1.9;">
         <strong style="color:#555;">ZOEL LIFE · 대라천 고객지원팀</strong><br />
-        전화: 070-4140-4086<br />
+        전화: ${SUPPORT_PHONE}<br />
         <span style="font-size:11px;">평일 09:00 – 18:00 (점심 12:00 – 13:00 / 주말·공휴일 휴무)</span>
       </div>
     </div>

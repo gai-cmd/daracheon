@@ -50,6 +50,8 @@ const CATEGORY_LABEL: Record<string, string> = {
 // 고객에게 노출되는 지원 이메일(회신 안내용 표기). 실제 회신은 Gmail SMTP
 // 발신자(zoellife.one@gmail.com)로 자연 회신되므로 동일 주소를 표기한다.
 const SUPPORT_EMAIL = 'zoellife.one@gmail.com';
+/** 고객 메일 서명에 싣는 대표 전화. 070 번호는 CS·AS 전용이라 메일에는 쓰지 않는다. */
+export const SUPPORT_PHONE = '02-858-2026';
 
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -99,7 +101,7 @@ export function buildReplyEmail(inq: {
       <div style="border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#999; line-height:1.8;">
         <strong style="color:#555;">ZOEL LIFE · 대라천</strong><br />
         이메일: ${SUPPORT_EMAIL}<br />
-        전화: 070-4140-4086<br />
+        전화: ${SUPPORT_PHONE}<br />
         <span style="font-size:11px;">평일 09:00 - 18:00 (점심 12:00 - 13:00 / 주말·공휴일 휴무)</span>
       </div>
     </div>
@@ -108,7 +110,7 @@ export function buildReplyEmail(inq: {
 </body>
 </html>`;
 
-  const text = `안녕하세요, ${inq.name}님.\n\n문의하신 내용에 대한 답변입니다.\n\n[답변 내용]\n${inq.reply}\n\n감사합니다.\nZOEL LIFE · 대라천\n전화: 070-4140-4086`;
+  const text = `안녕하세요, ${inq.name}님.\n\n문의하신 내용에 대한 답변입니다.\n\n[답변 내용]\n${inq.reply}\n\n감사합니다.\nZOEL LIFE · 대라천\n전화: ${SUPPORT_PHONE}`;
 
   // 제목 끝 [#inq-...] 토큰 — 고객 답장을 인박스 폴링이 이 문의로 매칭하는 키. 유지.
   const subject = `[대라천] 문의하신 내용에 답변이 도착했습니다 [#${inq.id}]`;
