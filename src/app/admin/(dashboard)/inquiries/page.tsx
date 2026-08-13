@@ -11,6 +11,56 @@ const SUPPORT_DEFAULT_HERO = {
   lede: '제품에 대한 질문, 대량 주문 · B2B 문의까지. 평일 09:00 – 18:00, 전담 담당자가 24시간 내 답변드립니다.',
 };
 
+/* ─── 답변 초안 보관 ───
+   작성 중인 답변은 저장 전까지 어디에도 남지 않아, 새로고침·세션 만료·실수로 인한
+   이탈 한 번에 통째로 사라진다 (2026-08-13 "답변이 저장 안 됨" 조사에서 확인).
+   전송에 성공할 때까지 브라우저에 초안을 붙잡아 두고, 성공 즉시 지운다.
+   고객 답변 본문은 PII 이므로 TTL 을 넘긴 초안은 읽는 시점에 폐기한다. */
+const DRAFT_KEY = 'zoel-admin-inquiry-reply-drafts';
+const DRAFT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+interface DraftEntry {
+  text: string;
+  at: number;
+}
+
+function loadDrafts(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, DraftEntry>;
+    const now = Date.now();
+    const alive: Record<string, string> = {};
+    for (const [id, entry] of Object.entries(parsed)) {
+      if (!entry || typeof entry.text !== 'string' || !entry.text.trim()) continue;
+      if (typeof entry.at === 'number' && now - entry.at > DRAFT_TTL_MS) continue;
+      alive[id] = entry.text;
+    }
+    return alive;
+  } catch {
+    return {}; // 손상된 초안은 조용히 버린다 — 목록 로딩을 막아선 안 된다
+  }
+}
+
+function persistDrafts(texts: Record<string, string>) {
+  if (typeof window === 'undefined') return;
+  try {
+    const now = Date.now();
+    const payload: Record<string, DraftEntry> = {};
+    for (const [id, text] of Object.entries(texts)) {
+      if (typeof text === 'string' && text.trim()) payload[id] = { text, at: now };
+    }
+    if (Object.keys(payload).length === 0) {
+      window.localStorage.removeItem(DRAFT_KEY);
+      return;
+    }
+    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+  } catch {
+    /* 용량 초과·프라이빗 모드 — 초안 보관 실패가 답변 작성을 막아선 안 된다 */
+  }
+}
+
 /* ─── Types ─── */
 type InquiryStatus = 'new' | 'in-progress' | 'replied' | 'resolved';
 type InquiryCategory = 'product' | 'order' | 'wholesale' | 'media' | 'other';
@@ -117,6 +167,9 @@ export default function InquiriesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [draftsLoaded, setDraftsLoaded] = useState(false);
+  // 세션이 끊긴 상태 — 저장 실패를 "서버 오류" 로 뭉뚱그리지 않고 재로그인을 안내한다.
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [assigneeTexts, setAssigneeTexts] = useState<Record<string, string>>({});
   const [dueDateTexts, setDueDateTexts] = useState<Record<string, string>>({});
   const [companyTexts, setCompanyTexts] = useState<Record<string, string>>({});
@@ -151,6 +204,36 @@ export default function InquiriesPage() {
   useEffect(() => {
     fetchInquiries();
   }, []);
+
+  /* ─── 초안 복원 (마운트 1회) ─── */
+  // 서버 렌더 결과와 어긋나지 않도록 초기 state 가 아니라 마운트 후에 읽는다.
+  useEffect(() => {
+    const drafts = loadDrafts();
+    if (Object.keys(drafts).length > 0) {
+      setReplyTexts(drafts);
+      setToast('작성 중이던 답변 초안을 복원했습니다.');
+    }
+    setDraftsLoaded(true);
+  }, []);
+
+  /* ─── 초안 보관 ─── */
+  // 복원이 끝나기 전에 쓰면 빈 state 가 보관본을 지워버린다.
+  useEffect(() => {
+    if (!draftsLoaded) return;
+    persistDrafts(replyTexts);
+  }, [replyTexts, draftsLoaded]);
+
+  /* ─── 미저장 답변이 있는 채로 이탈 시 경고 ─── */
+  useEffect(() => {
+    const hasDraft = Object.values(replyTexts).some((t) => t?.trim());
+    if (!hasDraft) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [replyTexts]);
 
   /* Stats */
   const stats = useMemo(() => ({
@@ -195,6 +278,14 @@ export default function InquiriesPage() {
   }
 
   /* ─── Handlers ─── */
+
+  // 미들웨어가 만료 세션을 401 로 끊는다. 이때는 서버 로그에 아무 흔적이 남지 않아
+  // "저장 실패" 로만 안내하면 원인을 알 길이 없다. 재로그인 경로를 명시한다.
+  function notifySessionExpired() {
+    setSessionExpired(true);
+    setToast('로그인이 만료되었습니다. 다시 로그인해 주세요. 작성한 답변은 보관됩니다.');
+  }
+
   async function handleStatusChange(id: string) {
     const inq = inquiries.find((i) => i.id === id);
     if (!inq) return;
@@ -211,6 +302,11 @@ export default function InquiriesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, status: next }),
       });
+      if (res.status === 401) {
+        setInquiries(snapshot);
+        notifySessionExpired();
+        return;
+      }
       if (!res.ok) throw new Error('Status change failed');
     } catch (err) {
       console.error('Status change error:', err);
@@ -248,6 +344,11 @@ export default function InquiriesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, assignee, dueDate, company }),
       });
+      if (res.status === 401) {
+        setInquiries(snapshot);
+        notifySessionExpired();
+        return;
+      }
       const body = await res.json().catch(() => ({}));
       if (!res.ok || body?.success === false) throw new Error(body?.message || `HTTP ${res.status}`);
       setToast('회사명 · 담당자 · 답변기한이 저장되었습니다.');
@@ -295,6 +396,13 @@ export default function InquiriesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, reply: text, status: 'replied' }),
       });
+      if (res.status === 401) {
+        // 세션 만료 — 답변은 초안으로 되살려 두고 재로그인을 안내한다.
+        setInquiries(snapshot);
+        setReplyTexts((prev) => ({ ...prev, [id]: text }));
+        notifySessionExpired();
+        return;
+      }
       const body = await res.json().catch(() => ({}));
       if (!res.ok || body?.success === false) throw new Error(body?.message || 'Reply save failed');
       setToast('답변을 보냈습니다.');
@@ -471,6 +579,32 @@ export default function InquiriesPage() {
       )}
 
       <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* 세션 만료 배너 — 401 은 미들웨어가 끊어 서버 로그에 흔적이 남지 않는다.
+            "저장 실패" 로만 알리면 원인을 알 수 없으므로 재로그인 경로를 직접 준다.
+            색은 dark-theme.css 의 전역 !important 를 피해 인라인으로 고정. */}
+        {sessionExpired && (
+          <div
+            className="mb-6 rounded-xl border px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            style={{ backgroundColor: '#fef3c7', borderColor: '#f59e0b' }}
+          >
+            <div>
+              <p style={{ color: '#78350f', fontWeight: 600, fontSize: '14px', margin: 0 }}>
+                로그인이 만료되어 저장되지 않았습니다.
+              </p>
+              <p style={{ color: '#92400e', fontSize: '13px', margin: '4px 0 0' }}>
+                작성한 답변은 이 브라우저에 보관해 두었습니다. 다시 로그인하면 이어서 보낼 수 있습니다.
+              </p>
+            </div>
+            <a
+              href="/admin/login?next=/admin/inquiries"
+              className="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap"
+              style={{ backgroundColor: '#b45309', color: '#ffffff' }}
+            >
+              다시 로그인
+            </a>
+          </div>
+        )}
+
         {/* HERO EDITOR — /company 통합 후 회사소개 페이지 컨택트 영역과 연결된 support 데이터 (히어로는 별도 사용 안 함) */}
         <div className="mb-8">
           <PageHeroEditor
@@ -787,11 +921,14 @@ export default function InquiriesPage() {
                               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
                             />
                           </div>
+                          {/* 답변 저장과 헷갈리지 않도록 대상 필드를 레이블에 박아 둔다
+                              (기존 "저장" 은 바로 아래 답변란까지 저장하는 것으로 오인됨) */}
                           <button
                             onClick={() => handleSaveMeta(inq.id)}
-                            className="px-4 py-2 bg-white border border-neutral-300 text-xs font-medium text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors h-fit"
+                            title="회사명 · 담당자 · 답변기한만 저장합니다 (답변 본문은 저장되지 않습니다)"
+                            className="px-3 py-2 bg-white border border-neutral-300 text-xs font-medium text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors h-fit whitespace-nowrap"
                           >
-                            저장
+                            담당자 정보 저장
                           </button>
                         </div>
 
@@ -847,8 +984,14 @@ export default function InquiriesPage() {
                         {/* Reply Area */}
                         {inq.status !== 'resolved' && (
                           <div>
-                            <label className="text-xs font-medium text-neutral-500 mb-1 block">
-                              {inq.reply ? '답변 수정' : '답변 작성'}
+                            <label className="text-xs font-medium text-neutral-500 mb-1 flex items-center gap-2">
+                              <span>{inq.reply ? '답변 수정' : '답변 작성'}</span>
+                              {/* 미저장 상태를 명시 — 작성만 하고 전송하지 않는 실수를 줄인다 */}
+                              {replyTexts[inq.id]?.trim() && (
+                                <span style={{ color: '#b45309', fontWeight: 600 }}>
+                                  · 미저장 (임시 보관됨 — &quot;답변 보내기&quot;를 눌러야 발송됩니다)
+                                </span>
+                              )}
                             </label>
                             <textarea
                               value={replyTexts[inq.id] ?? inq.reply ?? ''}
