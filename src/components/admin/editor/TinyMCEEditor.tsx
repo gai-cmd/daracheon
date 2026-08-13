@@ -191,21 +191,24 @@ export default function TinyMCEEditor({ value, onChange }: Props) {
         // 새니타이저(figure/figcaption 허용)와 공개 렌더 CSS(.article figcaption)
         // 모두 이미 지원.
         image_caption: true,
+        // 행간은 블록 서식별로 다르게 — 공개 렌더(BlogArticle.module.css)와 동일 비율.
+        // 큰 제목일수록 조이고(1.3~1.4), 본문은 넉넉하게(1.85) — 균형 유지.
         content_style: [
           'body { font-family: "Noto Sans KR", sans-serif; font-size: 16px; line-height: 1.85; color: #333; }',
           'h1, h2, h3 { font-family: "Noto Serif KR", serif; }',
-          'h1 { font-size: 1.8em; font-weight: 300; margin: 1em 0 0.5em; }',
-          'h2 { font-size: 1.4em; font-weight: 500; color: #b8862c; margin: 1.6em 0 0.6em; padding-top: 0.6em; border-top: 1px solid rgba(212,168,67,0.2); }',
-          'h3 { font-size: 1.15em; font-weight: 500; margin: 1.2em 0 0.4em; }',
+          'h1 { font-size: 1.8em; font-weight: 300; margin: 1em 0 0.5em; line-height: 1.3; }',
+          'h2 { font-size: 1.4em; font-weight: 500; color: #b8862c; margin: 1.6em 0 0.6em; padding-top: 0.6em; border-top: 1px solid rgba(212,168,67,0.2); line-height: 1.35; }',
+          'h3 { font-size: 1.15em; font-weight: 500; margin: 1.2em 0 0.4em; line-height: 1.4; }',
           'p { margin: 0 0 1em; }',
           'a { color: #b8862c; text-decoration: underline; }',
-          'blockquote { border-left: 3px solid #d4a843; padding-left: 16px; margin: 1em 0; color: #555; font-style: italic; }',
+          'blockquote { border-left: 3px solid #d4a843; padding-left: 16px; margin: 1em 0; color: #555; font-style: italic; line-height: 1.75; }',
+          'pre { line-height: 1.7; }',
           'img { max-width: 100%; height: auto; border: 1px solid rgba(212,168,67,0.2); }',
           'iframe { max-width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; display: block; margin: 1.5em 0; }',
           'figure { margin: 1.5em 0; }',
-          'figcaption { font-family: "JetBrains Mono", monospace; font-size: 0.75em; letter-spacing: 0.15em; text-transform: uppercase; color: #888; text-align: center; margin-top: 8px; }',
+          'figcaption { font-family: "Noto Sans KR", sans-serif; font-size: 0.85em; line-height: 1.6; color: #777; text-align: center; margin-top: 8px; }',
           'table { border-collapse: collapse; width: 100%; }',
-          'th, td { border: 1px solid #ddd; padding: 8px 12px; }',
+          'th, td { border: 1px solid #ddd; padding: 8px 12px; line-height: 1.65; }',
           'th { background: rgba(212,168,67,0.08); color: #b8862c; }',
         ].join('\n'),
         // 이미지 — 붙여넣기/드래그/파일선택 모두 Vercel Blob 으로 업로드.

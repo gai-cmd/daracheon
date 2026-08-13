@@ -220,17 +220,36 @@ function registerHooks(purify: DOMPurifyLike) {
   });
 }
 
+/**
+ * 사진설명(캡션)을 입력하지 않은 <figcaption> 제거 — 빈 값(공백·&nbsp;·<br>)
+ * 또는 에디터 삽입 플레이스홀더 그대로면 발행 화면에 나타나지 않아야 한다.
+ * 저장 경로(sanitizeBlogHtml)와 공개 렌더 양쪽에서 호출한다 — 렌더 쪽 호출이
+ * 이 규칙 이전에 저장된 글까지 커버한다. 정규식 대상은 TinyMCE 가 만드는
+ * 단순 <figcaption> 마크업뿐이라 DOM 파서 없이 안전하다.
+ */
+const FIGCAPTION_PLACEHOLDER = '캡션을 입력하세요';
+export function stripEmptyFigcaptions(html: string): string {
+  if (!html) return html;
+  return html.replace(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/gi, (match, inner: string) => {
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/gi, ' ')
+      .trim();
+    return text === '' || text === FIGCAPTION_PLACEHOLDER ? '' : match;
+  });
+}
+
 export function sanitizeBlogHtml(dirty: string): string {
   if (!dirty || typeof dirty !== 'string') return '';
   const purify = getPurify();
-  if (!purify) return dirty; // 정제 라이브러리 로드 실패 → 원본 반환 (page-down 보다 덜 위험)
+  if (!purify) return stripEmptyFigcaptions(dirty); // 정제 라이브러리 로드 실패 → 원본 반환 (page-down 보다 덜 위험)
   try {
     registerHooks(purify);
     const clean = purify.sanitize(dirty, PURIFY_CONFIG as unknown as Parameters<typeof purify.sanitize>[1]);
-    return typeof clean === 'string' ? clean : String(clean);
+    return stripEmptyFigcaptions(typeof clean === 'string' ? clean : String(clean));
   } catch (err) {
     console.warn('[sanitize] sanitize call threw; serving raw HTML', err);
-    return dirty;
+    return stripEmptyFigcaptions(dirty);
   }
 }
 

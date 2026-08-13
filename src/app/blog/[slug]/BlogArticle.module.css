@@ -483,6 +483,7 @@
   font-weight: 600;
   color: #fff !important;
   margin: 34px 0 12px;
+  line-height: 1.4;
 }
 
 .article p {
@@ -571,14 +572,18 @@
   border: 1px solid rgba(212, 168, 67, 0.14);
   border-radius: 12px;
 }
+/* 사진설명(캡션) — 한글 문장이 들어가므로 모노/대문자 라벨체 대신
+   읽히는 산세리프 캡션체. 입력하지 않으면(빈/플레이스홀더) 렌더 전에
+   stripEmptyFigcaptions 가 제거해 화면에 나타나지 않는다. */
 .article figcaption {
   margin-top: 12px;
   text-align: center;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  color: rgba(253, 251, 247, 0.45);
-  text-transform: uppercase;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  color: rgba(253, 251, 247, 0.55);
 }
 
 /* YouTube 등 영상 임베드 — 반응형 16:9 */
@@ -619,6 +624,7 @@
   padding: 16px 18px;
   overflow-x: auto;
   margin: 24px 0;
+  line-height: 1.7;
 }
 .article pre code {
   background: none;
@@ -643,6 +649,7 @@
   padding: 12px 16px;
   text-align: left;
   vertical-align: top;
+  line-height: 1.65;
   border-color: rgba(212, 168, 67, 0.16) !important;
   border-bottom: 1px solid rgba(212, 168, 67, 0.16);
   border-right: 1px solid rgba(255, 255, 255, 0.06);

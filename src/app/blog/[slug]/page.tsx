@@ -8,6 +8,9 @@ import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { readDataSafe } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
 import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
+// sanitize.ts 는 dompurify 를 lazy-require 하므로 top-level import 가 라우트를
+// 죽이지 않는다 — stripEmptyFigcaptions 는 순수 정규식 유틸.
+import { stripEmptyFigcaptions } from '@/lib/blog/sanitize';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from '../BlogCard';
@@ -136,7 +139,8 @@ export default async function BlogPostPage({
   // 본문 HTML 은 밝은 표면 전제의 인라인 색(밝은 배경·어두운 글자)을 지참한다.
   // 렌더 직전 명도 규칙으로 일괄 정규화 — 특정 hex 나열이 아니라 임의의 색을
   // 다크 표면 기준으로 판별하므로 새 콘텐츠에서도 재발하지 않는다.
-  const cleanHtml = normalizeArticleHtmlForDarkTheme(post.content);
+  // 빈/플레이스홀더 캡션 제거 — 이 규칙 도입 전에 저장된 글까지 렌더에서 커버.
+  const cleanHtml = stripEmptyFigcaptions(normalizeArticleHtmlForDarkTheme(post.content));
 
   // ── 사이드바·연결 탐색 데이터 ─────────────────────────────
   const published = posts
