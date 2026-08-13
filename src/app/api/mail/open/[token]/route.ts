@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readDataForWrite, writeDataMerged } from '@/lib/db';
+import { readDataUncached } from '@/lib/db';
 import { verifyTrackToken, TRANSPARENT_GIF } from '@/lib/mail-tracking';
+import { recordMailOpen } from '@/lib/mail-opens';
 import { postSlack } from '@/lib/slack';
 import type { InquiryRecord } from '@/lib/inquiry-reply';
 
@@ -42,11 +43,13 @@ export async function GET(
     const inquiryId = verifyTrackToken(token);
     if (!inquiryId) return gif();
 
-    const inquiries = await readDataForWrite<InquiryRecord>('inquiries');
-    const idx = inquiries.findIndex((q) => q.id === inquiryId);
-    if (idx === -1) return gif();
+    // 문의는 읽기만 한다. 열람 기록을 문의 레코드에 쓰던 시절, 답변 저장 직후의
+    // Blob 전파 지연 구간에 이 쓰기가 끼어들어 발송까지 끝난 답변을 되돌린 적이
+    // 있다 (2026-08-13). 열람 기록은 별도 저장소로 분리했다 — src/lib/mail-opens.ts.
+    const inquiries = await readDataUncached<InquiryRecord>('inquiries');
+    const inq = inquiries.find((q) => q.id === inquiryId);
+    if (!inq) return gif();
 
-    const inq = inquiries[idx];
     const now = Date.now();
 
     // 발송 직후 프리페치 구간은 집계하지 않는다 (거짓 '열람' 방지).
@@ -56,14 +59,7 @@ export async function GET(
     }
 
     const nowIso = new Date(now).toISOString();
-    const isFirst = !inq.openedAt;
-    inquiries[idx] = {
-      ...inq,
-      openedAt: inq.openedAt ?? nowIso,
-      lastOpenAt: nowIso,
-      openCount: (inq.openCount ?? 0) + 1,
-    };
-    await writeDataMerged('inquiries', inquiries);
+    const { isFirst } = await recordMailOpen(inquiryId, inq.replyAt, nowIso);
 
     // 첫 열람만 Slack 스레드에 통지 — 재열람마다 알리면 채널이 시끄러워진다.
     if (isFirst && inq.slackChannel && inq.slackTs) {

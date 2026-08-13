@@ -5,6 +5,7 @@ import { sendEmail } from '@/lib/mail';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import { notifyTelegramReply, updateGoogleSheetReply, updateGoogleSheetMeta } from '@/lib/integrations';
 import { buildReplyEmail } from '@/lib/inquiry-reply';
+import { loadMailOpenMap, pickOpenFor } from '@/lib/mail-opens';
 
 interface Inquiry {
   id: string;
@@ -45,9 +46,15 @@ const NO_STORE_HEADERS = {
 
 export async function GET() {
   try {
-    const inquiries = await readDataUncached('inquiries');
+    // 열람 기록은 별도 저장소에 산다 (src/lib/mail-opens.ts — 2026-08-13 답변
+    // 유실 사고 이후 분리). 화면에서만 합쳐 보여 준다.
+    const [inquiries, opens] = await Promise.all([
+      readDataUncached('inquiries'),
+      loadMailOpenMap(),
+    ]);
+    const merged = inquiries.map((inq: Inquiry) => ({ ...inq, ...pickOpenFor(inq, opens) }));
     return NextResponse.json(
-      { inquiries, total: inquiries.length },
+      { inquiries: merged, total: merged.length },
       { headers: NO_STORE_HEADERS },
     );
   } catch (error) {
