@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { NavItem } from '@/data/navigation';
+import { SMARTSTORE_LOGIN_URL } from '@/data/store';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -136,16 +137,19 @@ export default function Header({ mainNav, brandLogo, productCategories = [] }: H
               <span className={styles.navCtaLabel}>제품상세</span>
             </Link>
 
-            {/* 문의하기 CTA — PC·모바일 모두 항상 노출.
-                회사소개 페이지의 #contact 앵커로 직행. */}
-            <Link
-              href="/company#contact"
+            {/* 구매하기 CTA — PC·모바일 모두 항상 노출. 네이버 로그인 경유 후
+                스마트스토어 제품 페이지로 이동 (2026-08-13: 종전 문의하기 CTA 를
+                교체 — 문의하기는 푸터로 이동). */}
+            <a
+              href={SMARTSTORE_LOGIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={styles.navCta}
-              aria-label="문의하기"
+              aria-label="구매하기"
             >
-              <span className={styles.navCtaIcon} aria-hidden>✉</span>
-              <span className={styles.navCtaLabel}>문의하기</span>
-            </Link>
+              <span className={styles.navCtaIcon} aria-hidden>🛒</span>
+              <span className={styles.navCtaLabel}>구매하기</span>
+            </a>
 
             <button
               type="button"

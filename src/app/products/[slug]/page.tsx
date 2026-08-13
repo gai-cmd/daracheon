@@ -8,6 +8,7 @@ import { formatPrice, parseDisplayPrice } from '@/lib/utils';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import { getGuide } from '@/data/productGuides';
+import { SMARTSTORE_LOGIN_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import VariantSelector from './VariantSelector';
@@ -255,9 +256,16 @@ export default async function ProductDetailPage(
             )}
 
             <div className={styles.ctas}>
-              <Link href="/company#contact" className={styles.btnGold}>
-                제품 문의 →
-              </Link>
+              {/* 구매 진입 — 네이버 로그인 경유 후 스마트스토어 제품 페이지로.
+                  (종전 "제품 문의 →" CTA 를 교체 — 문의는 푸터 문의하기가 담당.) */}
+              <a
+                href={SMARTSTORE_LOGIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.btnNaver}
+              >
+                네이버 스마트 스토어 →
+              </a>
               {getGuide(product.slug) && (
                 <Link href={`/guide#${product.slug}`} className={styles.btnOutline}>
                   📖 복용법·사용설명서
