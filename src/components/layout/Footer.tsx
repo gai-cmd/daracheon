@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SMARTSTORE_LOGIN_URL } from '@/data/store';
+import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import styles from './Footer.module.css';
 
 interface CompanyInfo {
@@ -62,12 +62,12 @@ export default function Footer({ socialLinks = [], company }: Props) {
             </span>
           </Link>
           <p className={styles.brandDesc}>{brandDesc}</p>
-          {/* 사이트 하단 CTA — 구매(네이버 스마트스토어, 로그인 경유)와 문의하기.
+          {/* 사이트 하단 CTA — 구매(네이버 스마트스토어 제품 페이지 직행)와 문의하기.
               (2026-08-13: 헤더 문의하기가 구매하기로 바뀌면서 문의 진입점이
               푸터로 이동. 스토어 버튼은 네이버 브랜드 그린 고정.) */}
           <div className={styles.ctaRow}>
             <a
-              href={SMARTSTORE_LOGIN_URL}
+              href={SMARTSTORE_PRODUCT_URL}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.naverCta}

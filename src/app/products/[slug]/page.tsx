@@ -8,7 +8,7 @@ import { formatPrice, parseDisplayPrice } from '@/lib/utils';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import { getGuide } from '@/data/productGuides';
-import { SMARTSTORE_LOGIN_URL } from '@/data/store';
+import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import VariantSelector from './VariantSelector';
@@ -256,10 +256,10 @@ export default async function ProductDetailPage(
             )}
 
             <div className={styles.ctas}>
-              {/* 구매 진입 — 네이버 로그인 경유 후 스마트스토어 제품 페이지로.
+              {/* 구매 진입 — 스마트스토어 제품 페이지로 직행 (로그인 경유 없음).
                   (종전 "제품 문의 →" CTA 를 교체 — 문의는 푸터 문의하기가 담당.) */}
               <a
-                href={SMARTSTORE_LOGIN_URL}
+                href={SMARTSTORE_PRODUCT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.btnNaver}

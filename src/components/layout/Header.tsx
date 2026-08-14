@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { NavItem } from '@/data/navigation';
-import { SMARTSTORE_LOGIN_URL } from '@/data/store';
+import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -137,18 +137,20 @@ export default function Header({ mainNav, brandLogo, productCategories = [] }: H
               <span className={styles.navCtaLabel}>제품상세</span>
             </Link>
 
-            {/* 구매하기 CTA — PC·모바일 모두 항상 노출. 네이버 로그인 경유 후
-                스마트스토어 제품 페이지로 이동 (2026-08-13: 종전 문의하기 CTA 를
-                교체 — 문의하기는 푸터로 이동). */}
+            {/* 네이버 스마트 스토어 CTA — PC·모바일 모두 항상 노출. 스마트스토어
+                제품 페이지로 직행 (2026-08-13: 종전 문의하기 CTA 를 교체 — 문의하기는
+                푸터로 이동. 2026-08-14: 골드 "구매하기" 를 판매 채널이 드러나는 네이버
+                브랜드 그린 버튼으로 교체 + 로그인 경유 제거 — 푸터·제품 상세와 동일). */}
             <a
-              href={SMARTSTORE_LOGIN_URL}
+              href={SMARTSTORE_PRODUCT_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.navCta}
-              aria-label="구매하기"
+              className={`${styles.navCta} ${styles.storeCta}`}
+              aria-label="네이버 스마트 스토어에서 구매하기"
             >
-              <span className={styles.navCtaIcon} aria-hidden>🛒</span>
-              <span className={styles.navCtaLabel}>구매하기</span>
+              <span className={styles.navCtaLabel}>
+                <span className={styles.storeCtaPrefix}>네이버 </span>스마트 스토어
+              </span>
             </a>
 
             <button

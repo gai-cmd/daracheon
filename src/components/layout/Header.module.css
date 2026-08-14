@@ -133,10 +133,24 @@
 .navCtaIcon { font-size: 0.95rem; line-height: 1; }
 .navCtaLabel { line-height: 1; }
 
+/* 네이버 스마트 스토어 CTA — 네이버 브랜드 그린 고정 hex
+   (헌법: 전역 토큰 의존 금지 — dark-theme.css 리맵과 무관하게 항상 이 색).
+   .navCta 와 합쳐 specificity 확보. */
+.navCta.storeCta {
+  background: #03c75a;
+  color: #fff;
+  box-shadow: 0 4px 14px -4px rgba(3, 199, 90, 0.45);
+}
+.navCta.storeCta:hover {
+  box-shadow: 0 6px 18px -4px rgba(3, 199, 90, 0.6);
+}
+
 /* 모바일에서 텍스트 라벨 숨김 → 아이콘 + 작은 라벨로 컴팩트 */
 @media (max-width: 480px) {
   .navCta { padding: 7px 12px; font-size: 0.78rem; }
   .navCtaIcon { font-size: 0.9rem; }
+  /* 좁은 화면에서는 "네이버 " 접두어를 떼어 로고·햄버거와 한 줄 유지 */
+  .storeCtaPrefix { display: none; }
 }
 
 /* ─── 제품상세 — PC 상단 CTA vs 모바일 우하단 플로팅 버튼 ───
