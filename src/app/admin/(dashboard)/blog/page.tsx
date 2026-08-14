@@ -25,6 +25,9 @@ export default function AdminBlogPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [q, setQ] = useState('');
+  // 목록이 길어져(75편+) 한 화면 스크롤이 과해짐 — 클라이언트 페이지네이션.
+  const PAGE_SIZE = 20;
+  const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
@@ -74,6 +77,11 @@ export default function AdminBlogPage() {
     for (const c of categories) m.set(c.id, c.name);
     return m;
   }, [categories]);
+
+  // 필터 결과가 줄어도 빈 페이지에 갇히지 않게 항상 범위 내로 클램프.
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagePosts = posts.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const allChecked = posts.length > 0 && posts.every((p) => selectedIds.has(p.id));
   function toggleAll() {
@@ -255,7 +263,7 @@ export default function AdminBlogPage() {
                 </td>
               </tr>
             ) : (
-              posts.map((p) => (
+              pagePosts.map((p) => (
                 <tr key={p.id} className="border-t border-warm-200 hover:bg-warm-50">
                   <td className="px-3 py-2">
                     <input
@@ -361,6 +369,31 @@ export default function AdminBlogPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <button
+            type="button"
+            onClick={() => setPage(safePage - 1)}
+            disabled={safePage <= 1}
+            className="rounded border border-warm-300 px-3 py-1.5 text-warm-800 hover:bg-warm-100 disabled:opacity-40"
+          >
+            ← 이전
+          </button>
+          <span className="px-2 text-warm-700">
+            {safePage} / {totalPages} 페이지
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage(safePage + 1)}
+            disabled={safePage >= totalPages}
+            className="rounded border border-warm-300 px-3 py-1.5 text-warm-800 hover:bg-warm-100 disabled:opacity-40"
+          >
+            다음 →
+          </button>
+        </div>
+      )}
 
       {/* Delete confirm */}
       {deleteTarget && (

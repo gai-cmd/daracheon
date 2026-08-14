@@ -146,9 +146,15 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
     posts[idx] = next;
     await writePosts(posts, { upsertIds: [next.id] });
     revalidateBlog(next.slug, prev.slug, next.categoryId);
+    // 상태 전환을 summary 에 명시 — 발행 글이 초안으로 내려간 시점을 audit 만으로
+    // 추적 가능하게 (2026-08-14 무경고 발행취소 사고의 포렌식 공백 해소).
+    const statusNote =
+      prev.status !== next.status
+        ? ` (${prev.status === 'published' ? '발행→초안' : '초안→발행'})`
+        : '';
     await logAdmin('blog', 'update', {
       targetId: next.id,
-      summary: `블로그 글 수정: ${next.title}`,
+      summary: `블로그 글 수정: ${next.title}${statusNote}`,
     });
 
     return NextResponse.json({ success: true, post: next });

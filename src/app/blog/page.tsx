@@ -1,16 +1,32 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from './BlogCard';
+import BlogPagination, { parseBlogPage } from './BlogPagination';
 
 const SITE_URL = 'https://zoellife.com';
+const POSTS_PER_PAGE = 12;
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: '대라천 블로그 — 침향 이야기, 농장 기록, 효능 자료',
+interface BlogSearchParams {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export async function generateMetadata({ searchParams }: BlogSearchParams): Promise<Metadata> {
+  const page = parseBlogPage((await searchParams).page);
+  // 2페이지 이후는 자기 자신을 canonical 로 — 페이지별 URL 이 각각 색인 자격을 갖는다.
+  const canonical = page > 1 ? `${SITE_URL}/blog?page=${page}` : `${SITE_URL}/blog`;
+  const pageSuffix = page > 1 ? ` — ${page}페이지` : '';
+  return buildMetadata(canonical, pageSuffix);
+}
+
+function buildMetadata(canonical: string, pageSuffix: string): Metadata {
+  return {
+  title: `대라천 블로그 — 침향 이야기, 농장 기록, 효능 자료${pageSuffix}`,
   description:
     '대라천 ZOEL LIFE 침향 블로그. 베트남 하띤 직영 농장의 생산 기록, 침향 효능과 사용법, 정통 침향 지식을 정리해 공개합니다.',
   keywords: [
@@ -22,13 +38,13 @@ export const metadata: Metadata = {
     '침향 농장',
     '침향 지식',
   ],
-  alternates: { canonical: `${SITE_URL}/blog` },
+  alternates: { canonical },
   openGraph: {
     type: 'website',
-    url: `${SITE_URL}/blog`,
+    url: canonical,
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    title: '대라천 블로그 — 침향 이야기, 농장 기록, 효능 자료',
+    title: `대라천 블로그 — 침향 이야기, 농장 기록, 효능 자료${pageSuffix}`,
     description: '베트남 하띤 직영 농장 기록 · 침향 효능 · 정통 침향 지식.',
     images: ['/opengraph-image.jpg'],
   },
@@ -38,9 +54,11 @@ export const metadata: Metadata = {
     description: '침향 이야기, 농장 기록, 효능 자료.',
     images: ['/twitter-image.jpg'],
   },
-};
+  };
+}
 
-export default async function BlogListPage() {
+export default async function BlogListPage({ searchParams }: BlogSearchParams) {
+  const page = parseBlogPage((await searchParams).page);
   const [posts, categories] = await Promise.all([
     readPostsSafe(),
     readCategoriesSafe(),
@@ -51,6 +69,12 @@ export default async function BlogListPage() {
     .sort((a, b) =>
       (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
     );
+
+  // 12편/페이지 숫자 페이지네이션. 범위 밖 페이지는 404 — 빈 페이지가
+  // 중복 URL 로 색인되는 것을 막는다.
+  const totalPages = Math.max(1, Math.ceil(published.length / POSTS_PER_PAGE));
+  if (page > totalPages) notFound();
+  const pagePosts = published.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
   const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
@@ -89,7 +113,8 @@ export default async function BlogListPage() {
 
   return (
     <>
-      <JsonLd data={blogJsonLd} />
+      {/* Blog 노드(최신 20편 목록 포함)는 대표 URL 인 1페이지에만 싣는다. */}
+      {page === 1 && <JsonLd data={blogJsonLd} />}
       <JsonLd data={breadcrumb} />
 
       <main className="min-h-screen bg-luxury-black text-luxury-cream">
@@ -135,11 +160,12 @@ export default async function BlogListPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {published.map((p) => (
+                {pagePosts.map((p) => (
                   <BlogCard key={p.id} post={p} category={categoryMap.get(p.categoryId)} />
                 ))}
               </div>
             )}
+            <BlogPagination current={page} totalPages={totalPages} basePath="/blog" />
           </div>
         </section>
       </main>

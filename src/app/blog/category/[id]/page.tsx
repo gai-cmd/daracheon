@@ -5,32 +5,40 @@ import JsonLd from '@/components/ui/JsonLd';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from '../../BlogCard';
+import BlogPagination, { parseBlogPage } from '../../BlogPagination';
 
 const SITE_URL = 'https://zoellife.com';
+const POSTS_PER_PAGE = 12;
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const page = parseBlogPage((await searchParams).page);
   const categories = await readCategoriesSafe();
   const category = categories.find((c) => c.id === id);
   if (!category) {
     return { title: '카테고리를 찾을 수 없습니다 — 대라천 블로그' };
   }
-  const title = `${category.name} — 대라천 블로그`;
+  const pageSuffix = page > 1 ? ` — ${page}페이지` : '';
+  const base = `${SITE_URL}/blog/category/${category.id}`;
+  const canonical = page > 1 ? `${base}?page=${page}` : base;
+  const title = `${category.name} — 대라천 블로그${pageSuffix}`;
   const description =
     category.description ?? `대라천 블로그 ${category.name} 카테고리의 글 모음.`;
   return {
     title,
     description,
-    alternates: { canonical: `${SITE_URL}/blog/category/${category.id}` },
+    alternates: { canonical },
     openGraph: {
       type: 'website',
-      url: `${SITE_URL}/blog/category/${category.id}`,
+      url: canonical,
       siteName: '대라천 ZOEL LIFE',
       locale: 'ko_KR',
       title,
@@ -41,10 +49,13 @@ export async function generateMetadata({
 
 export default async function BlogCategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { id } = await params;
+  const page = parseBlogPage((await searchParams).page);
   const [posts, categories] = await Promise.all([
     readPostsSafe(),
     readCategoriesSafe(),
@@ -57,6 +68,11 @@ export default async function BlogCategoryPage({
     .sort((a, b) =>
       (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
     );
+
+  // /blog 목록과 동일한 12편/페이지 숫자 페이지네이션.
+  const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE));
+  if (page > totalPages) notFound();
+  const pagePosts = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
@@ -125,11 +141,16 @@ export default async function BlogCategoryPage({
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {filtered.map((p) => (
+                {pagePosts.map((p) => (
                   <BlogCard key={p.id} post={p} category={categoryMap.get(p.categoryId)} />
                 ))}
               </div>
             )}
+            <BlogPagination
+              current={page}
+              totalPages={totalPages}
+              basePath={`/blog/category/${category.id}`}
+            />
           </div>
         </section>
       </main>

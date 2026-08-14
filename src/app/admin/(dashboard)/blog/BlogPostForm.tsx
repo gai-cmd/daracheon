@@ -131,6 +131,10 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
   const router = useRouter();
   const fallbackCategory = categories[0]?.id ?? 'uncategorized';
   const [state, setState] = useState<FormState>(() => buildInitialState(initial, fallbackCategory));
+  // 서버에 저장된 실제 발행 상태 — 폼의 status(라디오·자동저장 복원으로 바뀔 수 있음)와
+  // 별개로 추적한다. "발행 중인 글을 초안으로 내리는 저장"을 감지하는 기준값 (2026-08-14
+  // 무경고 발행취소 사고 방지).
+  const [serverStatus, setServerStatus] = useState<'draft' | 'published'>(initial?.status ?? 'draft');
   const [lang, setLang] = useState<Lang>('ko');
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
@@ -181,7 +185,9 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
       const draft = JSON.parse(raw) as { state: FormState; savedAt: string };
       const baseline = initial?.updatedAt ?? '';
       if (!baseline || draft.savedAt > baseline) {
-        setState(draft.state);
+        // status 는 복원하지 않는다 — 발행 전 세션의 낡은 자동저장이 발행 상태를
+        // 초안으로 끌어내리는 것을 차단 (2026-08-14 사고 방지).
+        setState((s) => ({ ...draft.state, status: s.status }));
         setRestored(true);
       }
     } catch {
@@ -423,6 +429,15 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
       setToast({ msg: '제목을 입력하세요.', ok: false });
       return;
     }
+    const nextStatus = publishOverride ?? state.status;
+    // 발행 중인 글을 초안으로 되돌리는 저장은 반드시 명시 확인을 거친다 —
+    // "초안 저장"을 일반 저장으로 오인해 라이브 글이 조용히 내려가던 사고 방지 (2026-08-14).
+    if (serverStatus === 'published' && nextStatus === 'draft') {
+      const ok = window.confirm(
+        '이 글은 현재 발행 중입니다.\n보류(초안)로 되돌리면 공개 페이지에서 즉시 내려갑니다.\n\n계속할까요?'
+      );
+      if (!ok) return;
+    }
     setSaving(true);
     const payload = {
       title: state.title.trim(),
@@ -435,7 +450,7 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
       // 작성자 귀속: 드롭다운 선택값. ''는 생성 시 "내 계정 자동", 수정 시 "브랜드".
       // 검수자(저장자)는 서버에서 절대 자동 귀속되지 않는다.
       authorEmail: (state.authorEmail ?? '').trim(),
-      status: publishOverride ?? state.status,
+      status: nextStatus,
       seoTitle: state.seoTitle.trim() || undefined,
       seoDescription: state.seoDescription.trim() || undefined,
       seoKeywords: state.seoKeywords.split(',').map((t) => t.trim()).filter(Boolean),
@@ -461,6 +476,7 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
         router.push(`/admin/blog/${data.post.id}`);
       } else {
         if (data.post) {
+          setServerStatus(data.post.status);
           setState((s) => ({ ...s, slug: data.post!.slug, status: data.post!.status }));
         }
         router.refresh();
@@ -520,7 +536,7 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
           {mode === 'create' ? '블로그 글 작성' : '블로그 글 수정'}
         </h1>
         <div className={styles.headerActions}>
-          {initial?.slug && state.status === 'published' && (
+          {initial?.slug && serverStatus === 'published' && (
             <a
               href={`/blog/${initial.slug}`}
               target="_blank"
@@ -530,21 +546,23 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
               공개 페이지 보기
             </a>
           )}
+          {/* 발행 중인 글: 기본 동작은 "저장"(발행 유지). 발행 취소는 별도 버튼 +
+              확인 다이얼로그로만 — "초안 저장" 오클릭으로 라이브 글이 내려가던 사고 방지. */}
           <button
             type="button"
             onClick={() => submit('draft')}
             disabled={saving}
             className={styles.btnGhost}
           >
-            {saving ? '저장 중…' : '초안 저장'}
+            {saving ? '저장 중…' : serverStatus === 'published' ? '발행 취소' : '초안 저장'}
           </button>
           <button
             type="button"
-            onClick={() => submit('published')}
+            onClick={() => submit(serverStatus === 'published' ? undefined : 'published')}
             disabled={saving}
             className={styles.btnPrimary}
           >
-            {saving ? '저장 중…' : state.status === 'published' ? '발행 업데이트' : '발행'}
+            {saving ? '저장 중…' : serverStatus === 'published' ? '저장' : '발행'}
           </button>
         </div>
       </div>
@@ -687,6 +705,11 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
                 보류
               </label>
             </div>
+            {serverStatus === 'published' && state.status === 'draft' && (
+              <p className={styles.help}>
+                이 글은 현재 발행 중입니다. 이대로 저장하면 공개 페이지에서 내려갑니다.
+              </p>
+            )}
           </div>
           <div className={styles.formItem}>
             <label className={styles.label}>검수 상태</label>
