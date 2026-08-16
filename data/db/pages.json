@@ -532,7 +532,8 @@
     "tabHeroes": {
       "tab0": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab0-brand.png",
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/imagen-tab1-cert.png",
-      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-hero-modern-1778398873.png"
+      "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/process/process-hero-modern-1778398873.png",
+      "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/imagen-dosage-usage-1778302075112.png"
     },
     "promoVideos": {
       "num": "05",
@@ -1082,27 +1083,65 @@
       "buttonBrandHref": "/brand-story"
     },
     "mediaTab": {
-      "tag": "In the Media · 매체",
-      "title": "매체에 실린 침향",
-      "subtitle": "주요 매체와 기관에서 조명한 대라천 침향의 이야기. 25년의 기록과 공식 인증을 확인하세요.",
+      "tag": "In the Press · 언론 보도",
+      "title": "언론에 실린 침향",
+      "subtitle": "주요 언론이 보도한 대라천 '참'침향의 기록입니다.",
       "items": [
         {
+          "outlet": "이로운넷",
+          "date": "2026.05.21",
+          "title": "조엘라이프, NS홈쇼핑 첫 방송서 '대라천 참침향' 오일캡슐 매진",
+          "summary": "NS홈쇼핑 첫 방송에서 오일 캡슐이 매진됐다는 소식과 베트남 5개 산지 직영 농장 기반을 함께 다뤘습니다.",
+          "link": "https://www.eroun.net/news/articleView.html?idxno=81341"
+        },
+        {
+          "outlet": "뉴스1",
+          "date": "2026.05.19",
+          "title": "NS홈쇼핑, 프리미엄 침향 브랜드 '대라천침향오일' 단독 론칭",
+          "summary": "NS홈쇼핑이 100% 베트남산 원료의 프리미엄 침향 브랜드를 단독 론칭한다는 유통 소식입니다.",
+          "link": "https://www.news1.kr/industry/distribution/6170924"
+        },
+        {
+          "outlet": "글로벌이코노믹",
+          "date": "2026.05.19",
+          "title": "NS홈쇼핑, '대라천침향오일'…침향 오일 캡슐형태",
+          "summary": "20년 이상 자란 베트남산 침향목 원료를 캡슐형으로 만든 제품의 TV홈쇼핑 첫 론칭을 소개했습니다.",
+          "link": "https://www.g-enews.com/article/Distribution/2026/05/202605190842038689a96f092d0c_1"
+        },
+        {
+          "outlet": "이넷뉴스",
+          "date": "2026.05.19",
+          "title": "조엘라이프 '베트남산 침향 오일 캡슐', NS홈쇼핑서 만나볼 수 있어",
+          "summary": "문헌과 식약처 자료에 근거한 베트남산 침향만 사용한다는 원료 기준과 방송 일정을 전했습니다.",
+          "link": "https://www.enetnews.co.kr/news/articleView.html?idxno=50119"
+        },
+        {
+          "outlet": "건강다이제스트",
+          "date": "2026.05.18",
+          "title": "조엘라이프, '대라천 참침향 오일 캡슐' NS홈쇼핑서 공개",
+          "summary": "침향오일 원액에 적송오일·오메가3·비타민E를 배합해 1회 3mg을 담은 캡슐이라는 제품 구성을 소개했습니다.",
+          "link": "https://www.ikunkang.com/news/articleView.html?idxno=50899"
+        },
+        {
+          "outlet": "서울신문",
+          "date": "2026.05.17",
+          "title": "조엘라이프, 원산지·학명 기준 '대라천 참 침향 오일 캡슐' 출시",
+          "summary": "원산지와 학명을 기준으로 원료를 선별했다는 점을 중심으로 신제품 출시를 다뤘습니다.",
+          "link": "https://www.seoul.co.kr/news/economy/2026/05/15/20260515500036"
+        },
+        {
           "outlet": "한국경제",
-          "date": "2025.11",
-          "title": "25년의 기록 — 대라천, 200ha 침향 숲을 일구다",
-          "summary": "베트남 하띤성 200ha 부지 400만 그루의 직영 농장으로 성장한 대라천의 이야기."
+          "date": "2026.05.16",
+          "title": "조엘라이프, 20일 NS홈쇼핑서 베트남산 아갈로차 침향 오일 캡슐 공개",
+          "summary": "베트남산 아갈로차 침향을 원료로 한 오일 캡슐을 5월 20일 NS홈쇼핑에서 처음 선보인다는 내용입니다.",
+          "link": "https://www.hankyung.com/article/202605158245O"
         },
         {
-          "outlet": "한국디자인진흥원",
-          "date": "2026.01",
-          "title": "라이프스타일 브랜드 인증 — 조엘라이프",
-          "summary": "침향 원료의 프리미엄 라이프스타일 브랜드로서 정체성과 디자인 완성도를 인정받아 공식 인증 획득."
-        },
-        {
-          "outlet": "식품의약품안전처",
-          "date": "2026.02",
-          "title": "건강기능식품 규격 부합 — Aquilaria Agallocha Roxburgh",
-          "summary": "식약처 고시 공식 학명에 등재된 진짜 침향.\n대한민국약전외한약(생약)규격집과 식품공전, 두 곳에 공식 등록된 원료."
+          "outlet": "K스피릿",
+          "date": "2026.05.14",
+          "title": "조엘라이프, NS홈쇼핑서 식용 '침향 캡슐' 선보인다",
+          "summary": "베트남에서 25년 이상 재배·연구한 침향을 캡슐로 만든 제품과 5월 20일 방송 일정을 전했습니다.",
+          "link": "http://www.ikoreanspirit.com/news/articleView.html?idxno=85287"
         }
       ]
     },
@@ -1402,7 +1441,7 @@
       "tab1": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1779027718283-158de8869216ea2a1496.webp",
       "tab2": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/about-agarwood/dosage-01-kiom-v3-1778302317992.png",
       "tab3": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1778272816338-efd399c54655f72c1caa.webp",
-      "tab4": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/imagen-dosage-usage-1778302075112.png",
+      "tab4": "",
       "tab5": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/1777362424072-7f111b4423198d384f06.png",
       "tabScriptures": "https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/about-agarwood-tab-scriptures-hero-1779068920387.png"
     },

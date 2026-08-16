@@ -77,6 +77,23 @@ export interface BrandStoryTabHeroes {
   tab0?: string; // 브랜드 스토리
   tab1?: string; // 다양한 인증
   tab2?: string; // 생산 공정
+  // 2026-08-16 — /about-agarwood 에서 이동해 온 '복용 및 사용법' 탭 히어로.
+  tab3?: string; // 복용 및 사용법
+}
+
+/** 복용 및 사용법 — 제품별 복용 안내 한 줄. */
+export interface UsageItem { product: string; instruction: string }
+/**
+ * 복용 및 사용법 탭. 2026-08-16 이전에는 /about-agarwood 6번째 탭이었고
+ * CMS 데이터 없이 코드 기본값으로만 노출됐다. 브랜드 이야기로 이동하면서
+ * 어드민(브랜드 이야기 편집 → 복용 및 사용법)에서 편집 가능해졌다.
+ */
+export interface UsageTab {
+  tag?: string;
+  title?: string;
+  subtitle?: string;
+  introLines?: string[];
+  items: UsageItem[];
 }
 
 export interface PromoVideoItem {
@@ -150,6 +167,7 @@ export interface BrandStoryData {
     totalTimeDesc: string;
     paragraphs?: NarrativeParagraph[];
   };
+  usageTab?: UsageTab;
 }
 
 export default async function BrandStoryPage() {

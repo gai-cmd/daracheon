@@ -7,7 +7,7 @@ import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
-import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, UsageTab, Paper, Scripture } from './page';
+import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, MediaTabData, Paper, Scripture } from './page';
 
 // 경전 탭 — 히어로 이미지 아래, 카드 그리드 위에 들어가는 도입 문단 기본값.
 // admin (scriptureIntro) 에서 덮어쓸 수 있고, 빈 줄(\n\n)로 문단 구분.
@@ -256,31 +256,30 @@ const DEFAULT_SCRIPTURES: Scripture[] = [
   },
 ];
 
-const DEFAULT_USAGE: UsageTab = {
-  tag: 'Dosage & Usage · 복용법',
-  title: '복용 및 사용법',
-  subtitle: '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.',
-  introLines: [
-    '침향의 하루 섭취량은 아퀼라리아 아갈로차 록스버그(AAR)에서 추출한 정품일 경우, 오일 기준 3mg, 분말 기준 0.5g이고, 오일은 아침 공복에, 분말은 저녁에 복용하시는 게 좋습니다.',
-    '채취된 침향은 그 모양 그대로 사용되는 게 가장 좋기에, 고객의 요청이 있기 전까지는 형태를 변형시키거나 가공하지 않습니다.',
-    "대라천 '참'침향은 제품이력제를 도입, 생산부터 유통까지 품질을 보증합니다.",
-  ],
-  items: [
-    { product: '침향캡슐', instruction: '1일 1회 아침식사 후 1캡슐(1일 적정 침향오일 복용량은 3mg)을 권장합니다.' },
-    { product: '침향오일(수지)', instruction: '1일 1~2회 손목이나 인중 또는 목 뒷부분에 발라주거나 소량을 복용합니다.' },
-    { product: '침향수', instruction: '1일 1회 20ml씩 음용하거나 가습기 등을 이용해 취수 및 취향해도 좋습니다.' },
-    { product: '침향스틱', instruction: "조금씩 조각 내 온열판에 올려 취향하시고, 그런 후 '차'처럼 다시 사용해도 좋습니다." },
-    { product: '침향차', instruction: '1일 1회 25~30개의 조각을 뜨거운 물에 우려 마십니다. 재탕 삼탕해도 좋습니다. (뜨거운 물을 붓고 처음 올라오는 향은 반드시 취향하시길 권장합니다)' },
-    { product: '침향단', instruction: '하루 1회 저녁식사 후 침향단을 천천히 씹어서 복용합니다.' },
-    { product: '침향선향', instruction: '취향실을 정해 선향을 충분히 발향시키고 약 30분 후에 들어가 명상하며 취향합니다.' },
-  ],
+// 언론에 실린 침향 — CMS(mediaTab)가 비어 있을 때 쓰는 헤더 기본값.
+// 기사 목록 자체는 기본값을 두지 않는다: 실재하지 않는 보도가 노출되면 안 되므로
+// 항목이 0건이면 목록 대신 안내 문구만 표시한다.
+const DEFAULT_MEDIA_HEADER = {
+  tag: 'In the Press · 언론 보도',
+  title: '언론에 실린 침향',
+  subtitle: "주요 언론이 보도한 대라천 '참'침향의 기록입니다.",
 };
+
+/**
+ * 표기용 날짜('2026.05.16')를 <time dateTime> 속성용 ISO(YYYY-MM-DD)로 변환.
+ * 형식을 알아볼 수 없으면 원본을 그대로 둔다 (서버의 toIsoDate 와 동일 규칙).
+ */
+function toIsoDateAttr(raw: string): string {
+  const m = raw.trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  if (!m) return raw.trim();
+  return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+}
 
 interface Props {
   data: AboutAgarwoodData | null;
 }
 
-const TABS = ['침향이란?', '진짜 침향 구별', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '복용 및 사용법'] as const;
+const TABS = ['침향이란?', '진짜 침향 구별', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '언론에 실린 침향'] as const;
 
 export default function AboutAgarwoodClient({ data }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -317,7 +316,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
   const scriptures: Scripture[] = data?.scriptures && data.scriptures.length > 0 ? data.scriptures : DEFAULT_SCRIPTURES;
   const scriptureIntro: string = (data?.scriptureIntro && data.scriptureIntro.trim()) || DEFAULT_SCRIPTURE_INTRO;
   const papers = data?.papers ?? [];
-  const usageTab = data?.usageTab ?? DEFAULT_USAGE;
+  const mediaTab: MediaTabData = data?.mediaTab ?? { items: [] };
+  const mediaItems = mediaTab.items ?? [];
   const officialSources = data?.officialSourcesSection;
   const auth = data?.authenticityTab ?? DEFAULT_AUTHENTICITY;
   const tabHeroes = data?.tabHeroes ?? {};
@@ -1754,7 +1754,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
         </>
       )}
 
-      {/* ════════════ TAB 5: 복용 및 사용법 ════════════ */}
+      {/* ════════════ TAB 5: 언론에 실린 침향 ════════════
+          외부 언론사 기사 인용 목록. 저작권은 각 언론사에 있으므로
+          제목 + 자체 요약만 노출하고 원문 링크를 반드시 함께 제공한다.
+          구조화 데이터(NewsArticle ItemList)는 서버 컴포넌트(page.tsx)가
+          같은 mediaTab 데이터로 자동 생성한다. */}
       {activeTab === 5 && (
         <>
         <section className={styles.chapter}>
@@ -1762,15 +1766,15 @@ export default function AboutAgarwoodClient({ data }: Props) {
             <div className={styles.chapterGrid}>
               <div>
                 <div className={styles.chapterNum}>01</div>
-                <div className={styles.chapterTag}>{usageTab.tag ?? 'Dosage & Usage · 복용법'}</div>
+                <div className={styles.chapterTag}>{mediaTab.tag ?? DEFAULT_MEDIA_HEADER.tag}</div>
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>{usageTab.title ?? '복용 및 사용법'}</h3>
+                  <h3>{mediaTab.title ?? DEFAULT_MEDIA_HEADER.title}</h3>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
-                    {usageTab.subtitle ?? '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.'}
+                    {mediaTab.subtitle ?? DEFAULT_MEDIA_HEADER.subtitle}
                   </p>
                 </RevealOnScroll>
                 {tabHeroes.tab4 && (
@@ -1787,7 +1791,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     >
                       <Image
                         src={tabHeroes.tab4}
-                        alt="복용 및 사용법 — 상징 이미지"
+                        alt="언론에 실린 침향 — 상징 이미지"
                         fill
                         sizes="(max-width: 768px) 100vw, 880px"
                         style={{ objectFit: 'cover', display: 'block' }}
@@ -1795,50 +1799,176 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     </div>
                   </RevealOnScroll>
                 )}
-                <div style={{ marginTop: 10, marginBottom: 36, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {(usageTab.introLines ?? DEFAULT_USAGE.introLines!).map((line, i) => (
-                    <RevealOnScroll key={i} delay={i * 80}>
-                      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.85, fontWeight: 300, paddingLeft: 14, borderLeft: '2px solid rgba(212,168,67,0.35)' }}>
-                        {line}
-                      </p>
-                    </RevealOnScroll>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                  {(usageTab.items ?? DEFAULT_USAGE.items).map((item, i) => (
-                    <RevealOnScroll key={item.product + i} delay={(i % 7) * 60}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: 20,
-                          padding: '20px 0',
-                          borderBottom: '1px solid rgba(212,168,67,0.15)',
-                          alignItems: 'flex-start',
-                        }}
-                      >
-                        <div style={{ flexShrink: 0, minWidth: 100 }}>
-                          <span
+
+                {mediaItems.length > 0 ? (
+                  <>
+                    <div
+                      style={{
+                        marginTop: 30,
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: 20,
+                      }}
+                    >
+                      {mediaItems.map((item, i) => (
+                        <RevealOnScroll key={(item.link ?? item.title) + i} delay={(i % 6) * 60}>
+                          <article
                             style={{
-                              display: 'inline-block',
-                              padding: '5px 12px',
-                              border: '1px solid rgba(212,168,67,0.4)',
-                              fontFamily: "var(--font-mono), ui-monospace, monospace",
-                              fontSize: '0.65rem',
-                              letterSpacing: '0.12em',
-                              color: 'var(--accent)',
-                              whiteSpace: 'nowrap',
+                              padding: 22,
+                              border: '1px solid rgba(212,168,67,0.2)',
+                              background: 'rgba(255,255,255,0.02)',
+                              height: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
                             }}
                           >
-                            {item.product}
-                          </span>
-                        </div>
-                        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.85, fontWeight: 300, wordBreak: 'keep-all' }}>
-                          {item.instruction}
-                        </p>
-                      </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                              <span
+                                style={{
+                                  padding: '4px 10px',
+                                  border: '1px solid rgba(212,168,67,0.35)',
+                                  fontFamily: "var(--font-mono), ui-monospace, monospace",
+                                  fontSize: '0.62rem',
+                                  letterSpacing: '0.16em',
+                                  color: 'var(--accent)',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {item.outlet}
+                              </span>
+                              {item.date && (
+                                <time
+                                  dateTime={toIsoDateAttr(item.date)}
+                                  style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' }}
+                                >
+                                  {item.date}
+                                </time>
+                              )}
+                            </div>
+
+                            {item.image && (
+                              <div
+                                style={{
+                                  position: 'relative',
+                                  width: '100%',
+                                  aspectRatio: '16/9',
+                                  marginBottom: 14,
+                                  border: '1px solid rgba(212,168,67,0.15)',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                <Image
+                                  src={item.image}
+                                  alt={`${item.outlet} — ${item.title}`}
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 360px"
+                                  style={{ objectFit: 'cover', display: 'block' }}
+                                />
+                              </div>
+                            )}
+
+                            <h4
+                              style={{
+                                fontFamily: "var(--font-serif), serif",
+                                fontSize: '0.98rem',
+                                color: '#fff',
+                                marginBottom: 10,
+                                fontWeight: 400,
+                                lineHeight: 1.5,
+                                wordBreak: 'keep-all',
+                              }}
+                            >
+                              {item.title}
+                            </h4>
+
+                            {item.summary && (
+                              <p
+                                style={{
+                                  fontSize: '0.82rem',
+                                  color: 'rgba(255,255,255,0.65)',
+                                  lineHeight: 1.8,
+                                  fontWeight: 300,
+                                  wordBreak: 'keep-all',
+                                  whiteSpace: 'pre-line',
+                                  flex: 1,
+                                }}
+                              >
+                                {item.summary}
+                              </p>
+                            )}
+
+                            {item.link && (
+                              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.15)' }}>
+                                <a
+                                  href={item.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'block',
+                                    textAlign: 'center',
+                                    padding: '8px 12px',
+                                    border: '1px solid rgba(212,168,67,0.4)',
+                                    background: 'transparent',
+                                    color: 'var(--accent)',
+                                    fontFamily: "var(--font-mono), ui-monospace, monospace",
+                                    fontSize: '0.64rem',
+                                    letterSpacing: '0.18em',
+                                    textTransform: 'uppercase',
+                                    textDecoration: 'none',
+                                    transition: 'background 200ms',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.12)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                  }}
+                                >
+                                  {item.outlet} 원문 보기 →
+                                </a>
+                              </div>
+                            )}
+                          </article>
+                        </RevealOnScroll>
+                      ))}
+                    </div>
+
+                    {/* 인용 근거 고지 — 원문 저작권 표기 + 인용 범위 명시 */}
+                    <RevealOnScroll>
+                      <p
+                        style={{
+                          marginTop: 40,
+                          padding: '18px 20px',
+                          border: '1px solid rgba(212,168,67,0.18)',
+                          background: 'rgba(255,255,255,0.02)',
+                          fontSize: '0.78rem',
+                          color: 'rgba(255,255,255,0.55)',
+                          lineHeight: 1.9,
+                          fontWeight: 300,
+                          wordBreak: 'keep-all',
+                        }}
+                      >
+                        위 목록은 각 언론사가 발행한 기사를 제목과 짧은 요약만 인용하고 원문 링크를 함께 제공하는 보도 인용 목록입니다.
+                        기사의 저작권은 각 언론사에 있으며, 전문(全文)은 원문 링크에서 확인하실 수 있습니다.
+                      </p>
                     </RevealOnScroll>
-                  ))}
-                </div>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      padding: '50px 30px',
+                      textAlign: 'center',
+                      border: '1px dashed rgba(212,168,67,0.25)',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}
+                  >
+                    <div style={{ fontFamily: "var(--font-mono), ui-monospace, monospace", fontSize: '0.68rem', letterSpacing: '0.28em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 10 }}>
+                      Coming Soon
+                    </div>
+                    언론 보도 자료가 곧 업데이트됩니다.
+                  </div>
+                )}
               </div>
             </div>
           </div>

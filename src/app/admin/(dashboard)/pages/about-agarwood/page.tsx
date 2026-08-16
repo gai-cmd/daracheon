@@ -428,30 +428,14 @@ export default function AdminAboutAgarwoodPage() {
     buttonBrand: '브랜드 스토리',
     buttonBrandHref: '/brand-story',
   });
+  // 언론에 실린 침향 — 기본 items 는 반드시 빈 배열.
+  // 실재하지 않는 보도가 기본값으로 채워지면 공개 페이지와 구조화 데이터에
+  // 허위 인용이 나갈 수 있으므로, 항목은 오직 CMS 에 저장된 실제 기사만 사용한다.
   const [mediaTab, setMediaTab] = useState<NonNullable<AboutAgarwoodData['mediaTab']>>({
-    tag: 'In the Media · 매체',
-    title: '매체에 실린 침향',
-    subtitle: '주요 매체와 기관에서 조명한 대라천 침향의 이야기. 25년의 기록과 공식 인증을 확인하세요.',
-    items: [
-      {
-        outlet: '한국경제',
-        date: '2025.11',
-        title: '25년의 기록 — 대라천, 200ha 침향 숲을 일구다',
-        summary: '베트남 하띤성 200ha 부지 400만 그루의 직영 농장에서 25년을 가꿔온 대라천의 이야기.',
-      },
-      {
-        outlet: '한국디자인진흥원',
-        date: '2026.01',
-        title: '라이프스타일 브랜드 인증 — 조엘라이프',
-        summary: '침향 원료의 프리미엄 라이프스타일 브랜드로서 정체성과 디자인 완성도를 인정받아 공식 인증 획득.',
-      },
-      {
-        outlet: '식품의약품안전처',
-        date: '2026.02',
-        title: '건강기능식품 규격 부합 — Aquilaria Agallocha Roxburgh',
-        summary: '식약처 고시 공식 학명에 등재된 진짜 침향. 대한민국약전외한약(생약)규격집과 식품공전, 두 곳에 공식 등록된 원료.',
-      },
-    ],
+    tag: 'In the Press · 언론 보도',
+    title: '언론에 실린 침향',
+    subtitle: "주요 언론이 보도한 대라천 '참'침향의 기록입니다.",
+    items: [],
   });
   const [testimonialsTab, setTestimonialsTab] = useState<NonNullable<AboutAgarwoodData['testimonialsTab']>>({
     tag: 'Testimonials · 후기',
@@ -611,7 +595,7 @@ export default function AdminAboutAgarwoodPage() {
     return arr.filter((_, i) => i !== index);
   }
 
-  const ADMIN_TABS = ['침향이란?', '진짜 침향 구별 방법', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '매체에 실린 침향', '고객이 남긴 침향'];
+  const ADMIN_TABS = ['침향이란?', '진짜 침향 구별 방법', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '언론에 실린 침향', '고객이 남긴 침향'];
 
   if (loading) {
     return (
@@ -1616,14 +1600,24 @@ export default function AdminAboutAgarwoodPage() {
           {activeAdminTab === 5 && (<>
 
           {/* 탭 히어로 이미지 */}
-          <SectionCard title="탭 5 히어로 이미지 · 매체에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
-            <p className="text-xs text-gray-500 mb-3">뉴스·방송·매체 느낌의 이미지를 권장합니다.</p>
+          <SectionCard title="탭 5 히어로 이미지 · 언론에 실린 침향" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
+            <p className="text-xs text-gray-500 mb-3">뉴스·보도·언론 느낌의 이미지를 권장합니다.</p>
             <ImageUploadField label="히어로 이미지" value={tabHeroes.tab4 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab4: url })} subdir="pages" />
           </SectionCard>
 
-          {/* Media Tab */}
-          <SectionCard title="매체 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
+          {/* 언론 보도 목록 — 여기서 추가한 항목이 공개 페이지와 구조화 데이터에 동시에 반영된다. */}
+          <SectionCard title="언론 보도 목록" onSave={() => saveSection('mediaTab', { mediaTab })} saving={saving === 'mediaTab'}>
             <div className="space-y-5">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-xs leading-relaxed text-blue-900">
+                <p className="font-semibold mb-1.5">여기에 추가한 기사는 자동으로 검색엔진·AI 검색용 구조화 데이터(JSON-LD)가 됩니다.</p>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li><b>매체명 · 날짜 · 제목 · 원문 링크</b> 4개가 모두 채워진 항목만 구조화 데이터에 포함됩니다. 하나라도 비면 화면에는 나오지만 검색엔진에는 전달되지 않습니다.</li>
+                  <li>날짜는 <b>2026.05.16</b> 형식으로 입력하세요 (연.월.일). 이 값이 기사 발행일로 전달됩니다.</li>
+                  <li>원문 링크는 해당 언론사 기사 주소를 그대로 넣습니다 — 인용의 근거이자 독자가 전문을 확인하는 경로입니다.</li>
+                  <li>요약은 <b>기사 본문을 그대로 복사하지 말고</b> 1~2문장으로 직접 요약해 주세요. 저작권은 각 언론사에 있습니다.</li>
+                  <li>사실이 아닌 보도나 확인되지 않은 기사는 넣지 마세요. 이 목록은 대외 신뢰의 근거로 쓰입니다.</li>
+                </ul>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <LabeledInput label="태그" value={mediaTab.tag} onChange={(v) => setMediaTab({ ...mediaTab, tag: v })} />
                 <LabeledInput label="제목" value={mediaTab.title} onChange={(v) => setMediaTab({ ...mediaTab, title: v })} />
@@ -1632,12 +1626,26 @@ export default function AdminAboutAgarwoodPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">매체 보도 항목 ({mediaTab.items.length})</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  언론 보도 항목 ({mediaTab.items.length})
+                  {mediaTab.items.length > 0 && (
+                    <span className="ml-2 font-normal text-xs text-gray-500">
+                      구조화 데이터 반영 {mediaTab.items.filter((it) => it.outlet && it.title && it.date && it.link).length}건
+                    </span>
+                  )}
+                </label>
                 <div className="space-y-4">
-                  {mediaTab.items.map((item, i) => (
+                  {mediaTab.items.map((item, i) => {
+                    const schemaReady = !!(item.outlet && item.title && item.date && item.link);
+                    return (
                     <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
+                          <span className={`text-[11px] px-2 py-0.5 rounded-full border ${schemaReady ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-amber-300 bg-amber-50 text-amber-700'}`}>
+                            {schemaReady ? '구조화 데이터 반영' : '매체명·날짜·제목·링크 필요'}
+                          </span>
+                        </div>
                         <div className="flex gap-1">
                           <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
                           <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: moveItem(mediaTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
@@ -1646,19 +1654,20 @@ export default function AdminAboutAgarwoodPage() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                         <input placeholder="매체명 (예: 한국경제)" value={item.outlet} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], outlet: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                        <input placeholder="날짜 (예: 2026.01.15)" value={item.date ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], date: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                        <input placeholder="발행일 (예: 2026.05.16)" value={item.date ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], date: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                       </div>
-                      <input placeholder="기사 제목" value={item.title} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], title: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <textarea placeholder="요약 (선택)" rows={2} value={item.summary ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], summary: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
-                      <input placeholder="원문 링크 (선택, https://...)" value={item.link ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], link: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <input placeholder="기사 제목 (원문 표기 그대로)" value={item.title} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], title: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <textarea placeholder="요약 1~2문장 (기사 본문 복사 금지 — 직접 요약)" rows={2} value={item.summary ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], summary: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
+                      <input placeholder="원문 링크 (https://... — 인용 근거)" value={item.link ?? ''} onChange={(e) => { const n = [...mediaTab.items]; n[i] = { ...n[i], link: e.target.value }; setMediaTab({ ...mediaTab, items: n }); }} className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none" />
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">썸네일 이미지 (선택)</label>
+                        <label className="block text-xs text-gray-500 mb-1">썸네일 이미지 (선택 — 우리가 권리를 가진 이미지만)</label>
                         <ImageUploadField value={item.image ?? ''} onChange={(url) => { const n = [...mediaTab.items]; n[i] = { ...n[i], image: url }; setMediaTab({ ...mediaTab, items: n }); }} subdir="pages" />
                       </div>
                     </div>
-                  ))}
-                  <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: [...mediaTab.items, { outlet: '', title: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
-                    + 매체 보도 추가
+                    );
+                  })}
+                  <button type="button" onClick={() => setMediaTab({ ...mediaTab, items: [...mediaTab.items, { outlet: '', title: '', date: '', link: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 언론 보도 추가
                   </button>
                 </div>
               </div>

@@ -115,13 +115,30 @@ export interface Paper {
 }
 export interface RegistryRow { label: string; value: string }
 export interface RegistrySection { title: string; subtitle?: string; rows: RegistryRow[] }
-export interface UsageItem { product: string; instruction: string; }
-export interface UsageTab {
+/**
+ * 언론에 실린 침향 — 외부 매체 보도 인용 항목.
+ * 저작권은 각 언론사에 있으므로 제목·짧은 요약만 인용하고 `link` 로 원문을 가리킨다.
+ * outlet / date / link 가 모두 채워진 항목만 NewsArticle 구조화 데이터로 노출된다
+ * (미검증 항목이 schema 에 섞이지 않도록 — papers 와 동일 정책).
+ */
+export interface MediaArticle {
+  /** 매체명 (예: 한국경제) */
+  outlet: string;
+  /** 기사 제목 — 원문 표기 그대로 */
+  title: string;
+  /** 발행일. 표기용 'YYYY.MM.DD' (구조화 데이터에서 ISO 로 변환) */
+  date?: string;
+  /** 인용 요약 — 원문 복제가 아닌 자체 요약 1~2문장 */
+  summary?: string;
+  /** 원문 링크 (필수 권장 — 인용 근거이자 구조화 데이터 url) */
+  link?: string;
+  image?: string;
+}
+export interface MediaTabData {
   tag?: string;
   title?: string;
   subtitle?: string;
-  introLines?: string[];
-  items: UsageItem[];
+  items: MediaArticle[];
 }
 
 export interface OfficialSource {
@@ -193,7 +210,9 @@ export interface TabHeroes {
   tab1?: string;  // 진짜 침향 구별 방법
   tab2?: string;  // 문헌에 실린 침향
   tab3?: string;  // 논문에 실린 침향
-  tab4?: string;  // 복용 및 사용법
+  // 2026-08-16 — 복용 및 사용법 탭이 /brand-story 로 이동하면서 이 자리는
+  // '언론에 실린 침향' 히어로가 된다 (어드민의 "탭 5 히어로" 와 동일 key).
+  tab4?: string;  // 언론에 실린 침향
   // 2026-05-18 추가 — 새 탭(경전에 실린 침향) 히어로 이미지.
   // 기존 tab0..tab4 key 는 CMS 에 저장된 의미와 그대로 묶여 있어 위치만 시프트.
   tabScriptures?: string; // 경전에 실린 침향
@@ -220,7 +239,9 @@ export interface AboutAgarwoodData {
   scriptureIntro?: string;
   papers: Paper[];
   cta: { title: string; buttonProducts: string; buttonProductsHref: string; buttonBrand: string; buttonBrandHref: string };
-  usageTab?: UsageTab;
+  // 언론에 실린 침향 탭. 어드민(침향 이야기 편집 → 언론에 실린 침향)에서 편집하며,
+  // 항목을 추가하면 아래 pressJsonLd 가 자동으로 구조화 데이터에 반영한다.
+  mediaTab?: MediaTabData;
 }
 
 export default async function AboutAgarwoodPage() {
@@ -271,13 +292,60 @@ export default async function AboutAgarwoodPage() {
     })),
   } : null;
 
+  // 언론에 실린 침향 — 외부 매체 보도 인용 목록의 구조화 데이터.
+  // 우리가 발행한 기사가 아니므로 페이지의 mainEntity 로 선언하지 않고,
+  // ItemList 안의 NewsArticle 로 "이 브랜드를 다룬 외부 기사" 임을 표현한다.
+  //   · publisher = 실제 발행 매체
+  //   · url       = 원문 링크 (인용 근거)
+  //   · about     = 우리 브랜드 엔티티
+  // 어드민에서 항목을 추가하면 이 배열이 그대로 늘어나므로 별도 코드 수정이 필요 없다.
+  const pressItems = (data?.mediaTab?.items ?? []).filter(
+    (m) => m.title && m.outlet && m.link && m.date,
+  );
+  const pressJsonLd = pressItems.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': `${SITE_URL}/about-agarwood#press`,
+    name: '언론에 실린 침향 — 대라천 참침향 보도 모음',
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    itemListElement: pressItems.slice(0, 50).map((m, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: m.link,
+      item: {
+        '@type': 'NewsArticle',
+        headline: m.title,
+        datePublished: toIsoDate(m.date!),
+        url: m.link,
+        mainEntityOfPage: m.link,
+        publisher: { '@type': 'NewsMediaOrganization', name: m.outlet },
+        about: { '@id': `${SITE_URL}/#brand` },
+        ...(m.image ? { image: m.image } : {}),
+      },
+    })),
+  } : null;
+
   return (
     <>
       <JsonLd data={articleJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       {scholarlyJsonLd && <JsonLd data={scholarlyJsonLd} />}
+      {pressJsonLd && <JsonLd data={pressJsonLd} />}
       <AboutAgarwoodClient data={data} />
     </>
   );
+}
+
+/**
+ * 어드민 표기용 날짜('2026.05.16', '2026-05-16', '2026/05/16')를 schema.org 가
+ * 요구하는 ISO 8601(YYYY-MM-DD)로 변환. 형식을 못 알아보면 원본을 그대로 돌려주고,
+ * 호출부에서 이미 date 존재 여부를 검사하므로 빈 값은 들어오지 않는다.
+ */
+function toIsoDate(raw: string): string {
+  const m = raw.trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  if (!m) return raw.trim();
+  const [, y, mo, d] = m;
+  return `${y}-${mo.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }

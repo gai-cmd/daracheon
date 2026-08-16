@@ -157,6 +157,16 @@ interface BrandStoryData {
     totalTimeDesc: string;
     paragraphs: { title: string; body: string }[];
   };
+  /** 탭 상단 히어로 이미지. tab3 = 복용 및 사용법 (2026-08-16 이동). */
+  tabHeroes?: { tab0?: string; tab1?: string; tab2?: string; tab3?: string };
+  /** 복용 및 사용법 — 2026-08-16 /about-agarwood 에서 이동. */
+  usageTab?: {
+    tag?: string;
+    title?: string;
+    subtitle?: string;
+    introLines?: string[];
+    items: { product: string; instruction: string }[];
+  };
 }
 
 /* ─────────────────────────────────────────────
@@ -415,6 +425,30 @@ export default function AdminBrandStoryPage() {
   });
   const [showroomGallery, setShowroomGallery] = useState<ShowroomGalleryItem[]>([]);
 
+  // 탭 히어로 이미지 (tab3 = 복용 및 사용법) — 기존 tab0~tab2 값은 저장 시 보존한다.
+  const [tabHeroes, setTabHeroes] = useState<NonNullable<BrandStoryData['tabHeroes']>>({});
+  // 복용 및 사용법 — CMS 값이 없으면 공개 페이지의 코드 기본값이 노출되므로,
+  // 어드민 초기값도 동일한 기본 문안으로 채워 편집 출발점을 맞춘다.
+  const [usageTab, setUsageTab] = useState<NonNullable<BrandStoryData['usageTab']>>({
+    tag: 'Dosage & Usage · 복용법',
+    title: '복용 및 사용법',
+    subtitle: '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.',
+    introLines: [
+      '침향의 하루 섭취량은 아퀼라리아 아갈로차 록스버그(AAR)에서 추출한 정품일 경우, 오일 기준 3mg, 분말 기준 0.5g이고, 오일은 아침 공복에, 분말은 저녁에 복용하시는 게 좋습니다.',
+      '채취된 침향은 그 모양 그대로 사용되는 게 가장 좋기에, 고객의 요청이 있기 전까지는 형태를 변형시키거나 가공하지 않습니다.',
+      "대라천 '참'침향은 제품이력제를 도입, 생산부터 유통까지 품질을 보증합니다.",
+    ],
+    items: [
+      { product: '침향캡슐', instruction: '1일 1회 아침식사 후 1캡슐(1일 적정 침향오일 복용량은 3mg)을 권장합니다.' },
+      { product: '침향오일(수지)', instruction: '1일 1~2회 손목이나 인중 또는 목 뒷부분에 발라주거나 소량을 복용합니다.' },
+      { product: '침향수', instruction: '1일 1회 20ml씩 음용하거나 가습기 등을 이용해 취수 및 취향해도 좋습니다.' },
+      { product: '침향스틱', instruction: "조금씩 조각 내 온열판에 올려 취향하시고, 그런 후 '차'처럼 다시 사용해도 좋습니다." },
+      { product: '침향차', instruction: '1일 1회 25~30개의 조각을 뜨거운 물에 우려 마십니다. 재탕 삼탕해도 좋습니다. (뜨거운 물을 붓고 처음 올라오는 향은 반드시 취향하시길 권장합니다)' },
+      { product: '침향단', instruction: '하루 1회 저녁식사 후 침향단을 천천히 씹어서 복용합니다.' },
+      { product: '침향선향', instruction: '취향실을 정해 선향을 충분히 발향시키고 약 30분 후에 들어가 명상하며 취향합니다.' },
+    ],
+  });
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -441,6 +475,16 @@ export default function AdminBrandStoryPage() {
         if (Array.isArray(s?.gallery)) setShowroomGallery(s.gallery);
         // CMS 데이터가 있으면 그것 우선, 없거나 빈 필드/배열이면 초기값(fallback) 유지
         if (d?.hero) setHero(d.hero);
+        if (d?.tabHeroes) setTabHeroes(d.tabHeroes);
+        if (d?.usageTab) {
+          const ut = d.usageTab;
+          setUsageTab((prev) => ({
+            ...prev,
+            ...ut,
+            introLines: Array.isArray(ut.introLines) && ut.introLines.length > 0 ? ut.introLines : prev.introLines,
+            items: Array.isArray(ut.items) && ut.items.length > 0 ? ut.items : prev.items,
+          }));
+        }
         if (d?.brandStoryTab) setBrandStoryTab(d.brandStoryTab);
         if (d?.twentyYearPrinciple) {
           const t = d.twentyYearPrinciple;
@@ -587,7 +631,7 @@ export default function AdminBrandStoryPage() {
     return arr.filter((_, i) => i !== index);
   }
 
-  const ADMIN_TABS = ['브랜드 스토리 + 침향 역사', '다양한 인증', '생산 공정'];
+  const ADMIN_TABS = ['브랜드 스토리 + 침향 역사', '다양한 인증', '생산 공정', '복용 및 사용법'];
 
   if (loading) {
     return (
@@ -1451,6 +1495,92 @@ export default function AdminBrandStoryPage() {
                     className="text-gold-600 hover:text-gold-700 text-sm font-medium border border-dashed border-gold-300 px-4 py-2 rounded-lg w-full"
                   >
                     + 공정 그룹 추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SectionCard>
+
+          </>)}
+          {activeAdminTab === 3 && (<>
+
+          {/* 탭 히어로 이미지 — 복용 및 사용법 (2026-08-16 침향 이야기에서 이동) */}
+          <SectionCard title="탭 4 히어로 이미지 · 복용 및 사용법" onSave={() => saveSection('tabHeroes', { tabHeroes })} saving={saving === 'tabHeroes'}>
+            <p className="text-xs text-gray-500 mb-3">캡슐·오일·스틱 등 제품 복용 장면 이미지를 권장합니다. (16:9)</p>
+            <ImageUploadField label="히어로 이미지" value={tabHeroes.tab3 ?? ''} onChange={(url) => setTabHeroes({ ...tabHeroes, tab3: url })} subdir="pages" />
+          </SectionCard>
+
+          {/* 복용 및 사용법 */}
+          <SectionCard title="탭 4 · 복용 및 사용법" onSave={() => saveSection('usageTab', { usageTab })} saving={saving === 'usageTab'}>
+            <div className="space-y-5">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-xs leading-relaxed text-blue-900">
+                <p className="font-semibold mb-1.5">이 탭은 2026-08-16 이전에는 &lsquo;침향 이야기&rsquo;의 마지막 탭이었고, 지금은 &lsquo;브랜드 이야기&rsquo;의 마지막 탭입니다.</p>
+                <p>복용량·섭취 방법은 소비자가 그대로 따라 하는 정보이므로, 제품 사양이 바뀌면 반드시 여기서 함께 갱신하세요. 질병의 예방·치료 효과를 단정하는 표현은 넣지 마세요.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <LabeledInput label="태그" value={usageTab.tag ?? ''} onChange={(v) => setUsageTab({ ...usageTab, tag: v })} />
+                <LabeledInput label="제목" value={usageTab.title ?? ''} onChange={(v) => setUsageTab({ ...usageTab, title: v })} />
+                <div className="md:col-span-2">
+                  <LabeledTextarea label="부제목" value={usageTab.subtitle ?? ''} onChange={(v) => setUsageTab({ ...usageTab, subtitle: v })} rows={2} />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">도입 문단 ({(usageTab.introLines ?? []).length})</label>
+                <p className="text-xs text-gray-500 mb-2">제품 목록 위에 세로선과 함께 표시되는 안내 문단입니다.</p>
+                <div className="space-y-3">
+                  {(usageTab.introLines ?? []).map((line, i) => (
+                    <div key={i} className="flex gap-2 items-start">
+                      <span className="text-xs text-gray-400 font-mono pt-3 w-6 shrink-0">#{i + 1}</span>
+                      <textarea
+                        rows={2}
+                        value={line}
+                        onChange={(e) => { const n = [...(usageTab.introLines ?? [])]; n[i] = e.target.value; setUsageTab({ ...usageTab, introLines: n }); }}
+                        className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                      />
+                      <div className="flex flex-col gap-1 pt-1">
+                        <button type="button" onClick={() => setUsageTab({ ...usageTab, introLines: moveItem(usageTab.introLines ?? [], i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                        <button type="button" onClick={() => setUsageTab({ ...usageTab, introLines: moveItem(usageTab.introLines ?? [], i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                        <button type="button" onClick={() => setUsageTab({ ...usageTab, introLines: removeItem(usageTab.introLines ?? [], i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setUsageTab({ ...usageTab, introLines: [...(usageTab.introLines ?? []), ''] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 도입 문단 추가
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">제품별 복용 안내 ({usageTab.items.length})</label>
+                <div className="space-y-3">
+                  {usageTab.items.map((item, i) => (
+                    <div key={i} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs text-gray-500 font-mono">#{i + 1}</span>
+                        <div className="flex gap-1">
+                          <button type="button" onClick={() => setUsageTab({ ...usageTab, items: moveItem(usageTab.items, i, i - 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▲</button>
+                          <button type="button" onClick={() => setUsageTab({ ...usageTab, items: moveItem(usageTab.items, i, i + 1) })} className="text-gray-400 hover:text-gray-600 px-1.5 py-0.5 text-xs border rounded">▼</button>
+                          <button type="button" onClick={() => setUsageTab({ ...usageTab, items: removeItem(usageTab.items, i) })} className="text-red-400 hover:text-red-600 px-1.5 py-0.5 text-xs border border-red-200 rounded">삭제</button>
+                        </div>
+                      </div>
+                      <input
+                        placeholder="제품명 (예: 침향캡슐)"
+                        value={item.product}
+                        onChange={(e) => { const n = [...usageTab.items]; n[i] = { ...n[i], product: e.target.value }; setUsageTab({ ...usageTab, items: n }); }}
+                        className="w-full mb-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                      />
+                      <textarea
+                        placeholder="복용·사용 방법"
+                        rows={2}
+                        value={item.instruction}
+                        onChange={(e) => { const n = [...usageTab.items]; n[i] = { ...n[i], instruction: e.target.value }; setUsageTab({ ...usageTab, items: n }); }}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"
+                      />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setUsageTab({ ...usageTab, items: [...usageTab.items, { product: '', instruction: '' }] })} className="text-gold-600 hover:text-gold-700 text-sm font-medium">
+                    + 제품 추가
                   </button>
                 </div>
               </div>

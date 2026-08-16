@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import type { BrandStoryData, PromoVideoItem } from './page';
+import type { BrandStoryData, PromoVideoItem, UsageTab } from './page';
 import type { ShowroomData } from '@/app/showroom/page';
 import ChapterCarousel from '@/components/ui/ChapterCarousel';
 import StickyTabBar from '@/components/layout/StickyTabBar';
@@ -68,7 +68,32 @@ const TAB_LIST = [
   '브랜드 스토리',
   '다양한 인증',
   '생산 공정',
+  '복용 및 사용법',
 ] as const;
+
+/**
+ * 복용 및 사용법 기본값 — 2026-08-16 /about-agarwood 에서 이동.
+ * CMS(brandStory.usageTab)에 값이 있으면 그 값이 우선한다.
+ */
+const DEFAULT_USAGE: UsageTab = {
+  tag: 'Dosage & Usage · 복용법',
+  title: '복용 및 사용법',
+  subtitle: '침향 제품별 올바른 복용법과 사용 방법을 안내합니다.',
+  introLines: [
+    '침향의 하루 섭취량은 아퀼라리아 아갈로차 록스버그(AAR)에서 추출한 정품일 경우, 오일 기준 3mg, 분말 기준 0.5g이고, 오일은 아침 공복에, 분말은 저녁에 복용하시는 게 좋습니다.',
+    '채취된 침향은 그 모양 그대로 사용되는 게 가장 좋기에, 고객의 요청이 있기 전까지는 형태를 변형시키거나 가공하지 않습니다.',
+    "대라천 '참'침향은 제품이력제를 도입, 생산부터 유통까지 품질을 보증합니다.",
+  ],
+  items: [
+    { product: '침향캡슐', instruction: '1일 1회 아침식사 후 1캡슐(1일 적정 침향오일 복용량은 3mg)을 권장합니다.' },
+    { product: '침향오일(수지)', instruction: '1일 1~2회 손목이나 인중 또는 목 뒷부분에 발라주거나 소량을 복용합니다.' },
+    { product: '침향수', instruction: '1일 1회 20ml씩 음용하거나 가습기 등을 이용해 취수 및 취향해도 좋습니다.' },
+    { product: '침향스틱', instruction: "조금씩 조각 내 온열판에 올려 취향하시고, 그런 후 '차'처럼 다시 사용해도 좋습니다." },
+    { product: '침향차', instruction: '1일 1회 25~30개의 조각을 뜨거운 물에 우려 마십니다. 재탕 삼탕해도 좋습니다. (뜨거운 물을 붓고 처음 올라오는 향은 반드시 취향하시길 권장합니다)' },
+    { product: '침향단', instruction: '하루 1회 저녁식사 후 침향단을 천천히 씹어서 복용합니다.' },
+    { product: '침향선향', instruction: '취향실을 정해 선향을 충분히 발향시키고 약 30분 후에 들어가 명상하며 취향합니다.' },
+  ],
+};
 
 function extractYouTubeId(url: string): string | null {
   const m = url.match(/(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/);
@@ -311,6 +336,9 @@ export default function BrandStoryClient({ data, showroom }: Props) {
   const processStats = processTab?.stats ?? [];
   const processGroups = processTab?.processGroups ?? [];
   const processHeroImages = (processTab?.heroImages ?? []).filter(Boolean);
+  const usageTab = data?.usageTab ?? DEFAULT_USAGE;
+  const usageIntroLines = usageTab.introLines ?? DEFAULT_USAGE.introLines!;
+  const usageItems = usageTab.items?.length ? usageTab.items : DEFAULT_USAGE.items;
 
   return (
     <div className={styles.page}>
@@ -1260,6 +1288,99 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* TAB 3 — 복용 및 사용법 (2026-08-16 /about-agarwood 에서 이동) */}
+      {activeTab === 3 && (
+        <section className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div>
+                <div className={styles.chapterNum}>01</div>
+                <div className={styles.chapterTag}>{usageTab.tag ?? DEFAULT_USAGE.tag}</div>
+              </div>
+              <div>
+                <h2 className={styles.chapterTitle}>{usageTab.title ?? DEFAULT_USAGE.title}</h2>
+                <p className={styles.chapterSubtitle}>{usageTab.subtitle ?? DEFAULT_USAGE.subtitle}</p>
+
+                {tabHeroes.tab3 && (
+                  <div
+                    style={{
+                      marginTop: 30,
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '16/9',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={tabHeroes.tab3}
+                      alt="복용 및 사용법 — 상징 이미지"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 880px"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  </div>
+                )}
+
+                <div style={{ marginTop: 24, marginBottom: 36, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {usageIntroLines.map((line, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        fontSize: '0.9rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        lineHeight: 1.85,
+                        fontWeight: 300,
+                        paddingLeft: 14,
+                        borderLeft: '2px solid rgba(212,168,67,0.35)',
+                        wordBreak: 'keep-all',
+                      }}
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {usageItems.map((item, i) => (
+                    <div
+                      key={item.product + i}
+                      style={{
+                        display: 'flex',
+                        gap: 20,
+                        padding: '20px 0',
+                        borderBottom: '1px solid rgba(212,168,67,0.15)',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <div style={{ flexShrink: 0, minWidth: 100 }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            padding: '5px 12px',
+                            border: '1px solid rgba(212,168,67,0.4)',
+                            fontFamily: "var(--font-mono), ui-monospace, monospace",
+                            fontSize: '0.65rem',
+                            letterSpacing: '0.12em',
+                            color: 'var(--accent)',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {item.product}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.85, fontWeight: 300, wordBreak: 'keep-all' }}>
+                        {item.instruction}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       )}
