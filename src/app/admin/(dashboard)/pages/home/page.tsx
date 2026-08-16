@@ -110,6 +110,7 @@ type HomeSectionId =
   | 'problem'
   | 'verified'
   | 'certs'
+  | 'press'
   | 'originAuthority'
   | 'agarwood'
   | 'benefits'
@@ -156,6 +157,7 @@ type SectionMetaMap = Partial<Record<SectionMetaKey, SectionMeta>>;
 // 사용자 지정 — 본문 카드 아래에 항상 펼쳐진 하단 CTA 편집기를 노출할 섹션 목록(2026-05-17).
 const SECTIONS_WITH_BOTTOM_CTA: SectionMetaKey[] = [
   'problem',
+  'press',
   'speciesCompare',
   'originAuthority',
   'certs',
@@ -372,6 +374,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'problem',
   'verified',
   'certs',
+  'press',
   'originAuthority',
   'agarwood',
   'benefits',
@@ -385,6 +388,7 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   problem: 'Problem · 침향 시장 불안 (3 카드)',
   verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교)',
   certs: 'Certifications · 12건 인증 칩 그리드',
+  press: 'In the Press · 언론 보도 (최근 4건 자동 노출)',
   originAuthority: '원산지 권위 · 역사적 기록(왕조 카드) + 5개 지역 (단일 섹션)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
@@ -804,8 +808,17 @@ export default function AdminHomePage() {
         }
         if (Array.isArray(d?.sectionOrder)) {
           const valid = d.sectionOrder.filter((s): s is HomeSectionId => DEFAULT_SECTION_ORDER.includes(s as HomeSectionId));
+          // 새 섹션은 맨 뒤가 아니라 기본 순서상 앞 섹션 뒤에 끼워 넣는다 (공개 페이지와 동일 규칙).
           const withMissing = [...valid];
-          for (const id of DEFAULT_SECTION_ORDER) if (!withMissing.includes(id)) withMissing.push(id);
+          for (const id of DEFAULT_SECTION_ORDER) {
+            if (withMissing.includes(id)) continue;
+            let at = -1;
+            for (let i = DEFAULT_SECTION_ORDER.indexOf(id) - 1; i >= 0; i--) {
+              const pos = withMissing.indexOf(DEFAULT_SECTION_ORDER[i]);
+              if (pos !== -1) { at = pos + 1; break; }
+            }
+            if (at === -1) withMissing.unshift(id); else withMissing.splice(at, 0, id);
+          }
           setSectionOrder(withMissing);
         }
         if (d?.sectionMeta && typeof d.sectionMeta === 'object') {
@@ -1522,6 +1535,22 @@ export default function AdminHomePage() {
               </div>
             </div>
           </SectionCard>
+        );
+
+      case 'press':
+        return (
+          <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-relaxed text-blue-900">
+            <p className="font-semibold mb-2">기사 목록은 여기서 편집하지 않습니다.</p>
+            <p>
+              메인에 노출되는 언론 보도는 <b>침향 이야기 편집 &gt; 언론에 실린 침향</b>의 목록을 그대로 가져옵니다.
+              거기에 기사를 추가하면 <b>발행일이 가장 최근인 4건</b>이 메인에 자동으로 올라오고, 나머지는
+              &lsquo;더 보기&rsquo; 버튼을 통해 침향 이야기 탭에서 볼 수 있습니다.
+            </p>
+            <p className="mt-2">
+              이 화면에서는 위의 <b>섹션 문구</b>(태그·제목·본문)와 아래의 <b>하단 CTA</b>만 조정합니다.
+              섹션을 잠시 내리려면 문구 편집기의 &lsquo;숨김&rsquo;을 켜세요.
+            </p>
+          </div>
         );
 
       default:

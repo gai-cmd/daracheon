@@ -464,6 +464,71 @@
 }
 @media (min-width: 1024px) { .certCaption { font-size: 0.66rem; line-height: 1.45; } }
 
+/* IN THE PRESS — 인증 섹션 다음의 언론 보도 타일.
+   certGrid/certTile 과 같은 조판을 쓰되, 타일 전체가 기사 원문 링크다.
+   certGrid 가 6열인 것과 달리 4건만 노출하므로 4열로 끝을 맞춘다. */
+.pressGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin: 0;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(212, 168, 67, 0.18);
+}
+@media (min-width: 700px) { .pressGrid { grid-template-columns: repeat(4, 1fr); } }
+
+.pressTile {
+  position: relative;
+  background: #0a0b10;
+  padding: 30px 18px 24px;
+  text-decoration: none;
+  transition: background 320ms ease;
+  display: flex;
+  flex-direction: column;
+}
+.pressTile:hover { background: rgba(212, 168, 67, 0.06); }
+.pressTile:hover .certDivider { width: 48px; background: var(--accent); }
+.pressTile:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.pressDate {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+.pressGo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-align: center;
+  margin-top: 12px;
+}
+.pressNotice {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 0.72rem;
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.42);
+  word-break: keep-all;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* PROBLEM — 불안 건드리기 (Showroom → Verified 사이) */
 .problem {
   padding: 50px 0;

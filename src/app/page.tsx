@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import type { Farm } from '@/app/brand-story/page';
+import type { MediaTabData } from '@/app/about-agarwood/page';
 import styles from './page.module.css';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
@@ -158,6 +159,7 @@ export type HomeSectionId =
   | 'problem'
   | 'verified'
   | 'certs'
+  | 'press'
   | 'originAuthority'
   | 'agarwood'
   | 'benefits'
@@ -170,11 +172,28 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'problem',
   'verified',
   'certs',
+  // 공식 인증(기관이 준 근거) 다음에 언론 보도(제3자가 쓴 근거)를 이어 붙인다.
+  'press',
   'originAuthority',
   'agarwood',
   'benefits',
   'process',
 ];
+
+/** 홈 언론 보도 섹션에 노출할 최대 건수. 나머지는 침향 이야기 탭에서 본다. */
+const HOME_PRESS_LIMIT = 4;
+/** 더보기 목적지 — 침향 이야기 > 언론에 실린 침향 탭. */
+const PRESS_TAB_HREF = '/about-agarwood#tab-5';
+
+/**
+ * 표기용 날짜('2026.05.16' / '2026-05-16')를 정렬 가능한 숫자로 바꾼다.
+ * 날짜가 없거나 형식을 못 알아보면 0 을 돌려 목록 뒤로 밀린다.
+ */
+function pressDateKey(raw?: string): number {
+  const m = (raw ?? '').trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  if (!m) return 0;
+  return Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]);
+}
 
 // 섹션별 옵셔널 메타 슬롯 — 어드민에서 섹션 단위로 켤 수 있는 공통 부속.
 // 기존 schema 는 손대지 않고, 값이 있는 슬롯만 위/아래에 덧붙는다.
@@ -579,9 +598,23 @@ function buildHomeItemListJsonLd(siteUrl: string) {
 }
 
 export default async function HomePage() {
-  const pagesData = await readSingleSafe<{ home?: HomeData; brandStory?: { farms?: Farm[] } }>('pages');
+  const pagesData = await readSingleSafe<{
+    home?: HomeData;
+    brandStory?: { farms?: Farm[] };
+    // 언론 보도는 침향 이야기 탭과 동일한 데이터를 읽는다 — 홈 전용 입력창을 따로 두지 않기 위함.
+    aboutAgarwood?: { mediaTab?: MediaTabData };
+  }>('pages');
   const home = pagesData?.home ?? {};
   const farms: Farm[] = pagesData?.brandStory?.farms ?? [];
+  const pressAll = pagesData?.aboutAgarwood?.mediaTab?.items ?? [];
+  // 발행일 내림차순으로 정렬한 뒤 앞에서 4건 — 어드민에서 기사를 목록 어디에 추가하든
+  // 가장 최근 보도가 자동으로 메인에 올라온다(같은 날짜면 입력 순서를 유지).
+  const pressItems = pressAll
+    .filter((m) => m.outlet && m.link)
+    .map((m, i) => ({ m, i }))
+    .sort((a, b) => pressDateKey(b.m.date) - pressDateKey(a.m.date) || a.i - b.i)
+    .slice(0, HOME_PRESS_LIMIT)
+    .map(({ m }) => m);
   const hero = home.hero ?? DEFAULT_HERO;
   const stats = home.stats ?? DEFAULT_STATS;
   const agarwood = home.agarwood ?? DEFAULT_AGARWOOD;
@@ -603,9 +636,18 @@ export default async function HomePage() {
     Array.isArray(home.sectionOrder) && home.sectionOrder.length > 0
       ? home.sectionOrder.filter((id): id is HomeSectionId => DEFAULT_SECTION_ORDER.includes(id as HomeSectionId))
       : DEFAULT_SECTION_ORDER;
-  // 누락된 섹션 ID 가 있으면 끝에 append 해 모든 섹션이 항상 렌더되게 한다.
+  // 누락된 섹션 ID 보정 — 새 섹션이 추가돼도 CMS 에 저장된 옛 순서 때문에 맨 뒤로
+  // 밀리지 않게, 기본 순서에서 바로 앞에 오는 섹션 뒤에 끼워 넣는다.
+  // (어드민이 지정한 기존 섹션들의 상대 순서는 건드리지 않는다.)
   for (const id of DEFAULT_SECTION_ORDER) {
-    if (!sectionOrder.includes(id)) sectionOrder.push(id);
+    if (sectionOrder.includes(id)) continue;
+    let insertAt = -1;
+    for (let i = DEFAULT_SECTION_ORDER.indexOf(id) - 1; i >= 0; i--) {
+      const pos = sectionOrder.indexOf(DEFAULT_SECTION_ORDER[i]);
+      if (pos !== -1) { insertAt = pos + 1; break; }
+    }
+    if (insertAt === -1) sectionOrder.unshift(id);
+    else sectionOrder.splice(insertAt, 0, id);
   }
   const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
   const showroomImage = home.showroomImage;
@@ -645,6 +687,27 @@ export default async function HomePage() {
     topTag: sectionMetaMap.certs?.topTag?.trim() || DEFAULT_CERTS_META.topTag,
     titleQuote: sectionMetaMap.certs?.titleQuote?.trim() || DEFAULT_CERTS_META.titleQuote,
     bodyLead: sectionMetaMap.certs?.bodyLead?.trim() || DEFAULT_CERTS_META.bodyLead,
+  };
+
+  // press 섹션도 certs 와 같이 자체 타이틀이 없어 sectionMeta 가 단일 편집점.
+  // 매체 수는 실제 데이터에서 세므로 보도가 늘면 문구가 자동으로 따라간다.
+  // 문구에 건수·매체명을 넣지 않는다 — 보도가 늘고 바뀌어도 타이틀이 낡지 않게 한다.
+  const DEFAULT_PRESS_META: SectionMeta = {
+    topTag: 'In the Press · 언론 보도',
+    titleQuote: '언론이 직접 확인한\n*대라천 침향의 신뢰*',
+    bodyLead:
+      "주요 경제·산업 매체가 대라천 '참'침향의 원산지와 학명 기준을 직접 다뤘습니다.\n매체명을 누르면 각 언론사의 *기사 원문* 으로 바로 이동합니다.",
+    cta: { label: '언론 보도 더 보기 →', href: PRESS_TAB_HREF, variant: 'gold' },
+  };
+  const effectivePressMeta: SectionMeta = {
+    ...DEFAULT_PRESS_META,
+    ...(sectionMetaMap.press ?? {}),
+    topTag: sectionMetaMap.press?.topTag?.trim() || DEFAULT_PRESS_META.topTag,
+    titleQuote: sectionMetaMap.press?.titleQuote?.trim() || DEFAULT_PRESS_META.titleQuote,
+    bodyLead: sectionMetaMap.press?.bodyLead?.trim() || DEFAULT_PRESS_META.bodyLead,
+    cta: sectionMetaMap.press?.cta?.label && sectionMetaMap.press?.cta?.href
+      ? sectionMetaMap.press.cta
+      : DEFAULT_PRESS_META.cta,
   };
 
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
@@ -703,9 +766,14 @@ export default async function HomePage() {
       <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
       {sectionOrder.map((sectionId) => {
         const rawMeta = sectionMetaMap[sectionId];
-        // certs 는 자체 타이틀이 없으므로 sectionMeta 가 비었더라도 기본 타이틀/본문이 prefix 로 노출되도록 보정.
-        const meta = sectionId === 'certs' ? effectiveCertsMeta : rawMeta;
+        // certs / press 는 자체 타이틀이 없으므로 sectionMeta 가 비었더라도 기본 타이틀/본문이 prefix 로 노출되도록 보정.
+        const meta =
+          sectionId === 'certs' ? effectiveCertsMeta
+          : sectionId === 'press' ? effectivePressMeta
+          : rawMeta;
         if (rawMeta?.hidden) return null;
+        // 노출할 보도가 없으면 헤더/CTA 까지 통째로 숨긴다 — 빈 섹션은 신뢰를 깎는다.
+        if (sectionId === 'press' && pressItems.length === 0) return null;
         const sectionContent = (() => {
           switch (sectionId) {
           case 'hero':
@@ -1010,6 +1078,40 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+            );
+          case 'press':
+            return (
+      // === IN THE PRESS (언론 보도 — 인증 섹션 다음) ===
+      // 데이터 출처는 침향 이야기 탭과 동일한 aboutAgarwood.mediaTab.
+      // 구조화 데이터(NewsArticle)는 /about-agarwood 한 곳에서만 emit 한다 —
+      // 같은 목록을 두 URL 에서 중복 선언하지 않기 위해 여기서는 링크만 건다.
+      <section key="press" className={styles.section} id="press" aria-label="언론에 실린 대라천 침향">
+        <div className={styles.wrap}>
+          <div className={styles.certRow}>
+            <div className={styles.pressGrid}>
+              {pressItems.map((m, i) => (
+                <a
+                  key={`${m.link}-${i}`}
+                  href={m.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.pressTile}
+                  title={m.title}
+                >
+                  <div className={styles.certDivider} aria-hidden="true" />
+                  <div className={styles.certTitle}>{m.outlet}</div>
+                  {m.date && <div className={styles.pressDate}>{m.date}</div>}
+                  <div className={styles.pressGo} aria-hidden="true">원문 →</div>
+                  <span className={styles.srOnly}>{m.title}</span>
+                </a>
+              ))}
+            </div>
+            <p className={styles.pressNotice}>
+              각 언론사가 발행한 기사로, 저작권은 해당 언론사에 있습니다. 매체명을 누르면 기사 원문으로 이동합니다.
+            </p>
           </div>
         </div>
       </section>
