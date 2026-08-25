@@ -245,7 +245,7 @@ const DEFAULT_HERO: HomeHero = {
 const DEFAULT_STATS: HomeStat[] = [
   { value: '25년+', label: '연구 및 재배' },
   { value: '200ha', label: '400만 그루' },
-  { value: '9건', label: '공식 인증' },
+  { value: '12건+', label: '특허 및 인증' },
   { value: '5개 지역', label: '직영 농장' },
 ];
 
@@ -301,7 +301,10 @@ const DEFAULT_CERTS = [
   { mark: 'V', name: '원산지 증명', sub: '베트남 100% 원산지' },
   { mark: 'C', name: 'CITES', sub: '국제 보호 수종' },
   { mark: 'O', name: 'OCOP', sub: '베트남 정부 품질' },
+  { mark: 'R', name: '유기농 재배', sub: '무농약 유기 농법' },
   { mark: 'Z', name: '청정지역', sub: '토양·환경 청정' },
+  { mark: 'P', name: '유기농 완제품', sub: '유기 성분 인증' },
+  { mark: 'T', name: '수지 특허', sub: '식용 수지 특허' },
   { mark: 'H', name: 'HACCP', sub: '식품 안전 관리' },
   { mark: 'G', name: 'GMP', sub: '우수 제조 시설' },
   { mark: 'F', name: 'FDA', sub: '미국 FDA 등록' },
@@ -329,8 +332,8 @@ const DEFAULT_AGARWOOD: HomeAgarwood = {
 };
 
 const DEFAULT_BENEFITS: HomeBenefits = {
-  tag: 'Benefits · 대표적인 가치',
-  title: '침향의 여섯 가지 대표적인 가치',
+  tag: 'Benefits · 연구 기반 효능',
+  title: '침향의 가치, 여섯 가지 효능',
   items: [
     { kicker: 'Qi Circulation', title: '기 뚫고 원기 회복 · 자양강장', description: '몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강, 피로 해소와 활력 증진을 돕습니다.' },
     { kicker: 'Menstruation & Stamina', title: '냉감 · 정력 감퇴 · 복통에 탁월', description: '하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월하고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다.' },
@@ -679,7 +682,7 @@ export default async function HomePage() {
     topTag: `Certifications · ${certs.length}건 공식 인증`,
     titleQuote: '국제·국가 기관이 검증한\n*대라천 침향의 무게*',
     bodyLead:
-      'CITES, HACCP, GMP, FDA, ISO… 한 장의 인증이 아닌 *9건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.',
+      'CITES, HACCP, GMP, ORGANIC, FDA, ISO… 한 장의 인증이 아닌 *12건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.',
   };
   const effectiveCertsMeta: SectionMeta = {
     ...DEFAULT_CERTS_META,
