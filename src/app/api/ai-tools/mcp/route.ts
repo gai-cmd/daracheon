@@ -483,13 +483,16 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(res);
 }
 
-/** 간단 헬스체크·설명 (GET). */
-export async function GET() {
-  return NextResponse.json({
-    server: 'ai-tools-crm MCP',
-    protocol: PROTOCOL_VERSION,
-    transport: 'streamable-http (JSON-RPC 2.0 over POST)',
-    auth: 'Authorization: Bearer <AI_TOOLS_MCP_READ_TOKEN | AI_TOOLS_MCP_WRITE_TOKEN>',
-    tools: TOOLS.map((t) => ({ name: t.name, access: t.access })),
-  });
-}
+/**
+ * GET/DELETE → 405.
+ *
+ * Streamable HTTP 규격상 서버가 SSE 푸시 스트림을 제공하지 않으면 GET 에 405 를 돌려줘야 한다.
+ * 이전에는 GET 이 200 JSON(헬스체크)을 반환했는데, Claude Code 클라이언트는 이 GET 을
+ * SSE 스트림으로 간주해 응답이 즉시 끝나면 곧바로 재접속했다 → 세션당 초당 1~2회 GET 루프
+ * (2026-08-31 Vercel Edge Requests 5.4배 급증 원인). 200 이 아닌 405 만이 이 루프를 끊는다.
+ */
+const METHOD_NOT_ALLOWED = () =>
+  new NextResponse(null, { status: 405, headers: { Allow: 'POST' } });
+
+export const GET = METHOD_NOT_ALLOWED;
+export const DELETE = METHOD_NOT_ALLOWED;
