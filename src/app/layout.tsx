@@ -6,6 +6,7 @@ import ChromeGate from '@/components/layout/ChromeGate';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import GoogleTagManager, { GoogleTagManagerNoScript } from '@/components/analytics/GoogleTagManager';
 import QrBeacon from '@/components/analytics/QrBeacon';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -435,9 +436,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         {/* hreflang 는 metadata.alternates.languages 가 자동 생성 — 중복 선언 제거. */}
         <JsonLd data={siteJsonLd} />
+        <GoogleTagManager />
         <GoogleAnalytics />
       </head>
       <body data-palette="gold">
+        <GoogleTagManagerNoScript />
         <ChromeGate>
           <Header mainNav={mainNav} brandLogo={brandLogo} productCategories={productCategories} />
         </ChromeGate>

@@ -170,6 +170,12 @@ export const ENV_REGISTRY: EnvSpec[] = [
     ifMissing: 'GA 수집 비활성',
   },
   {
+    name: 'NEXT_PUBLIC_GTM_ID',
+    severity: 'optional',
+    purpose: 'Google Tag Manager 컨테이너 ID',
+    ifMissing: '기본 컨테이너 사용',
+  },
+  {
     name: 'NEXT_PUBLIC_NAVER_MAP_CLIENT_ID',
     severity: 'optional',
     purpose: '네이버 지도 클라이언트 ID',

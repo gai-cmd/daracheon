@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
       // *.tile.openstreetmap.org: 관리자 현장 지도(Leaflet) 래스터 타일.
-      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.tile.openstreetmap.org",
+      "img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://drive.google.com https://res.cloudinary.com https://img.youtube.com https://i.ytimg.com https://*.public.blob.vercel-storage.com https://www.google-analytics.com https://www.googletagmanager.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.tile.openstreetmap.org",
       "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
       // vercel.com + blob.vercel-storage.com: /partner 현장 업로드의 브라우저 직행
       //   업로드 경로. @vercel/blob v2 클라이언트 SDK 는 실제로
@@ -64,8 +64,10 @@ const nextConfig: NextConfig = {
       //   2026-07-07 업로드 0% 정지 사고의 근본 원인. SDK 가 CSP 차단을 조용히
       //   재시도해 오류 표시 없이 멈춘 것처럼 보임). blob.vercel-storage.com 계열은
       //   버전에 따라 쓰일 수 있어 함께 허용. public.* 은 읽기 호스트.
-      "connect-src 'self' https://vercel.com https://www.google-analytics.com https://blob.vercel-storage.com https://*.blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.navercorp.com",
-      "frame-src 'self' https://www.youtube.com https://youtube.com https://drive.google.com https://map.naver.com https://*.map.naver.com",
+      "connect-src 'self' https://vercel.com https://www.google-analytics.com https://www.googletagmanager.com https://www.google.com https://blob.vercel-storage.com https://*.blob.vercel-storage.com https://*.public.blob.vercel-storage.com https://*.map.naver.com https://*.map.naver.net https://*.pstatic.net https://*.navercorp.com",
+      // googletagmanager.com: GTM 컨테이너 요구 호스트(img·connect) + noscript iframe(frame).
+      //   Google 태그 플랫폼 CSP 가이드 기준 — 컨테이너 자체에 필요한 최소 집합만 연다.
+      "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://youtube.com https://drive.google.com https://map.naver.com https://*.map.naver.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
