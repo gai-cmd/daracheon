@@ -1,0 +1,5324 @@
+[
+ {
+  "i": 0,
+  "doi": "10.1039/d0np00042f",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 0.99,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 1,
+  "doi": "10.3390/molecules27113386",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 2,
+  "doi": "10.1016/j.indcrop.2021.114129",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 3,
+  "doi": "10.1007/s13199-020-00677-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 4,
+  "doi": "10.1186/s12870-021-03378-8",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 5,
+  "doi": "10.1016/j.arabjc.2022.104435",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 6,
+  "doi": "10.3390/molecules26247708",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 7,
+  "doi": "10.4103/cmac.cmac_43_21",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 8,
+  "doi": "10.1093/gigascience/giaa013",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 9,
+  "doi": "10.1016/j.indcrop.2023.116535",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 10,
+  "doi": "10.1016/j.bioorg.2020.103789",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 11,
+  "doi": "10.1155/2021/5593730",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 12,
+  "doi": "10.3126/ijasbt.v9i1.35984",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 13,
+  "doi": "10.13057/biodiv/d210440",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 14,
+  "doi": "10.1038/s41598-020-59597-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 15,
+  "doi": "10.1038/s41467-022-27971-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 16,
+  "doi": "10.3390/molecules27165350",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 17,
+  "doi": "10.1016/j.phytochem.2021.112920",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 18,
+  "doi": "10.1016/j.indcrop.2022.114603",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 19,
+  "doi": "10.1016/j.phytochem.2020.112578",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 20,
+  "doi": "10.1016/j.plaphy.2021.04.028",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 21,
+  "doi": "10.1111/1755-0998.13154",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 22,
+  "doi": "10.1371/journal.pone.0277136",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 23,
+  "doi": "10.1016/j.biteb.2023.101337",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 24,
+  "doi": "10.1016/j.ijbiomac.2023.123758",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 25,
+  "doi": "10.26525/jtfs32.2.161",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 26,
+  "doi": "10.1007/978-3-030-92030-2_2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 27,
+  "doi": "10.1093/botlinnean/boac014",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 28,
+  "doi": "10.3390/f12121743",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 29,
+  "doi": "10.3390/molecules27093038",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 30,
+  "doi": "10.1021/acs.joc.2c00145",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 31,
+  "doi": "10.1016/j.phytochem.2020.112630",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 32,
+  "doi": "10.3390/f13010043",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 33,
+  "doi": "10.1021/acs.joc.3c00372",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 34,
+  "doi": "10.1016/j.chmed.2022.07.003",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 35,
+  "doi": "10.20961/agsjpa.v22i1.36007",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 36,
+  "doi": "10.13057/biodiv/d221002",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 37,
+  "doi": "10.1038/s41598-020-70030-0",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 38,
+  "doi": "10.1016/j.envres.2023.116633",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 39,
+  "doi": "10.35702/trad.10008",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 40,
+  "doi": "10.1007/s13199-022-00835-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 41,
+  "doi": "10.1016/j.phytol.2021.09.008",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 42,
+  "doi": "10.1007/s10531-023-02727-3",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 43,
+  "doi": "10.33394/jss.v3i1.3681",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 44,
+  "doi": "10.53342/pharmasci.v6i1.208",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 45,
+  "doi": "10.1016/j.indcrop.2021.113605",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 46,
+  "doi": "10.1007/s00284-022-02840-6",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 47,
+  "doi": "10.1016/j.indcrop.2022.116185",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 48,
+  "doi": "10.1016/j.indcrop.2022.115494",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 49,
+  "doi": "10.1038/s41598-022-10785-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 50,
+  "doi": "10.1016/j.heliyon.2021.e06725",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 51,
+  "doi": "10.3389/fpls.2024.1437105",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 52,
+  "doi": "10.3390/plants12162901",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 53,
+  "doi": "10.3390/jof8111197",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 54,
+  "doi": "10.31764/jafp.v1i2.6997",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 55,
+  "doi": "10.1021/acs.jafc.3c04322",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 56,
+  "doi": "10.18343/jipi.25.1.152",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 57,
+  "doi": "10.1088/1755-1315/457/1/012036",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 58,
+  "doi": "10.1155/2020/4575030",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 59,
+  "doi": "10.1007/s12298-021-01040-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 60,
+  "doi": "10.3389/fpls.2023.1326080",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 61,
+  "doi": "10.3390/molecules26020436",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 62,
+  "doi": "10.33545/26631067.2020.v2.i2a.49",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 63,
+  "doi": "10.3389/fphar.2024.1468393",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 64,
+  "doi": "10.1088/1755-1315/648/1/012024",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 65,
+  "doi": "10.1016/j.tfp.2020.100027",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 66,
+  "doi": "10.1007/s40502-020-00505-9",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 67,
+  "doi": "10.3390/genes14020464",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 68,
+  "doi": "10.3390/genes13010008",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 69,
+  "doi": "10.1016/j.bcab.2024.103152",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 70,
+  "doi": "10.7324/japs.2021.1101010",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 71,
+  "doi": "10.1016/j.fitote.2022.105177",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 72,
+  "doi": "10.47349/jbi/16012020/99",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 73,
+  "doi": "10.3390/life11040363",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 74,
+  "doi": "10.13057/biodiv/d230123",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 75,
+  "doi": "10.1371/journal.pone.0304946",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 76,
+  "doi": "10.1039/d2qo00066k",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 77,
+  "doi": "10.3390/ijms24129872",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 78,
+  "doi": "10.3390/d14030211",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 79,
+  "doi": "10.37134/ejsmt.vol8.2.1.2021",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 80,
+  "doi": "10.1016/j.fitote.2022.105421",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 81,
+  "doi": "10.1016/j.fitote.2022.105422",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 82,
+  "doi": "10.13057/biodiv/d220553",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 83,
+  "doi": "10.33759/jrki.v2i2.85",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 84,
+  "doi": "10.51601/ijhp.v3i2.123",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 85,
+  "doi": "10.15294/biosaintifika.v13i2.27809",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 86,
+  "doi": "10.18330/jwallacea.2020.vol9iss1pp1-12",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 87,
+  "doi": "10.1016/j.gecco.2020.e00958",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 88,
+  "doi": "10.1186/s13104-021-05532-9",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 89,
+  "doi": "10.3390/analytica4020018",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 90,
+  "doi": "10.3390/f15010168",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 91,
+  "doi": "10.1016/j.fitote.2023.105564",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 92,
+  "doi": "10.1016/j.fitote.2022.105162",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 93,
+  "doi": "10.3390/pr8020202",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 94,
+  "doi": "10.3390/molecules27010198",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 95,
+  "doi": "10.1128/spectrum.02722-21",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 96,
+  "doi": "10.37231/jab.2021.12.1.227",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 97,
+  "doi": "10.3389/fpls.2024.1320226",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 98,
+  "doi": "10.1088/1755-1315/912/1/012038",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 99,
+  "doi": "10.1016/j.sajb.2022.10.020",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 100,
+  "doi": "10.1371/journal.pone.0270167",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 101,
+  "doi": "10.1002/jemt.24140",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 102,
+  "doi": "10.1088/1757-899x/1092/1/012070",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 103,
+  "doi": "10.3390/f13101618",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 104,
+  "doi": "10.1007/s00468-021-02180-1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 105,
+  "doi": "10.32615/bp.2020.141",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 106,
+  "doi": "10.1016/j.phytochem.2020.112554",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 107,
+  "doi": "10.37134/ejsmt.vol7.2.1.2020",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 108,
+  "doi": "10.1186/s12870-022-03821-4",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 109,
+  "doi": "10.3389/fmicb.2024.1446583",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 110,
+  "doi": "10.3390/molecules25173872",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 111,
+  "doi": "10.7717/peerj.15818",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 112,
+  "doi": "10.29244/agrokreatif.6.1.36-44",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 113,
+  "doi": "10.1016/j.fitote.2020.104542",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 114,
+  "doi": "10.1039/d3gc03708h",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 115,
+  "doi": "10.3390/f11020210",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 116,
+  "doi": "10.13057/biodiv/d231260",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 117,
+  "doi": "10.26656/fr.2017.5(3).382",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 118,
+  "doi": "10.36312/linov.v4i2.452",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 119,
+  "doi": "10.1007/s13205-020-2072-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 120,
+  "doi": "10.29228/ijpbp.8",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 121,
+  "doi": "10.1016/j.indcrop.2023.117804",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 122,
+  "doi": "10.17221/26/2020-rae",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 123,
+  "doi": "10.29244/agrokreatif.7.2.174-184",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 124,
+  "doi": "10.1080/14786419.2020.1716345",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 125,
+  "doi": "10.1088/1755-1315/765/1/012010",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 126,
+  "doi": "10.1007/s44154-024-00179-5",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 127,
+  "doi": "10.1016/j.prp.2023.154895",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 128,
+  "doi": "10.1016/j.indcrop.2024.118835",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 129,
+  "doi": "10.1016/j.fitote.2024.105824",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 130,
+  "doi": "10.1016/j.fsigen.2021.102658",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 131,
+  "doi": "10.13057/biodiv/d220707",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 132,
+  "doi": "10.1371/journal.pone.0310770",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 133,
+  "doi": "10.1016/j.jep.2023.117411",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 134,
+  "doi": "10.26525/jtfs32.1.97",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 135,
+  "doi": "10.22146/ijc.43191",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 136,
+  "doi": "10.3762/bjoc.19.75",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 137,
+  "doi": "10.1016/j.phytol.2021.01.010",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 138,
+  "doi": "10.1016/j.ijbiomac.2021.04.097",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 139,
+  "doi": "10.1155/2021/9944685",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 140,
+  "doi": "10.36899/japs.2024.4.0768",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 141,
+  "doi": "10.1007/s00284-022-02999-y",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 142,
+  "doi": "10.1371/journal.pone.0312102",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 143,
+  "doi": "10.2991/assehr.k.210421.049",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 144,
+  "doi": "10.1016/j.phymed.2022.153935",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 145,
+  "doi": "10.4038/atrsj.v3i1.46",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 146,
+  "doi": "10.1080/23802359.2021.1926362",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 147,
+  "doi": "10.1016/j.ijbiomac.2022.04.021",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 148,
+  "doi": "10.55373/mjchem.v23i2.1013",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 149,
+  "doi": "10.1002/cbdv.202200490",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 150,
+  "doi": "10.3390/ijms242417384",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 151,
+  "doi": "10.1016/j.jcou.2020.01.002",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 152,
+  "doi": "10.1007/s11676-022-01542-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 153,
+  "doi": "10.20527/jss.v4i5.4216",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 154,
+  "doi": "10.26452/ijrps.v12i2.4750",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 155,
+  "doi": "10.1088/1755-1315/712/1/012029",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 156,
+  "doi": "10.3390/agronomy14081727",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 157,
+  "doi": "10.3390/nu15041019",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 158,
+  "doi": "10.37934/araset.48.2.1628",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 159,
+  "doi": "10.33002/nr2581.6853.040307",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 160,
+  "doi": "10.1016/j.fitote.2024.105905",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 161,
+  "doi": "10.1088/1755-1315/830/1/012070",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 162,
+  "doi": "10.1016/j.phytol.2023.04.007",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 163,
+  "doi": "10.3390/molecules28041667",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 164,
+  "doi": "10.13057/biodiv/d230955",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 165,
+  "doi": "10.54207/bsmps2000-2023-vmivkv",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 166,
+  "doi": "10.3390/cimb45110564",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 167,
+  "doi": "10.36312/linov.v5i2.463",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 168,
+  "doi": "10.1186/s12870-025-06574-y",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 169,
+  "doi": "10.14203/jbi.v16i1.3887",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 170,
+  "doi": "10.1016/j.jcou.2023.102615",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 171,
+  "doi": "10.23880/oajpr-16000200",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 172,
+  "doi": "10.1016/j.phytol.2025.02.003",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 173,
+  "doi": "10.37934/arfmts.72.2.112",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 174,
+  "doi": "10.1016/j.catena.2022.106174",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 175,
+  "doi": "10.1016/j.phytochem.2024.114108",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 176,
+  "doi": "10.1088/1755-1315/415/1/012001",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 177,
+  "doi": "10.15376/biores.16.1.176-189",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 178,
+  "doi": "10.23960/jsl.v10i2.523",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 179,
+  "doi": "10.24111/jrihh.v13i2.6939",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 180,
+  "doi": "10.1080/00032719.2021.2005081",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 181,
+  "doi": "10.1016/j.fitote.2024.106012",
+  "resolved": true,
+  "source": "Crossref",
+  "type": "journal-article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 182,
+  "doi": "10.5246/jcps.2021.06.039",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 183,
+  "doi": "10.26525/jtfs2021.33.4.435",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 184,
+  "doi": "10.24111/jrihh.v14i1.7647",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 185,
+  "doi": "10.52759/reactor.v2i2.39",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 186,
+  "doi": "10.21475/ajcs.23.17.12.p3916",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 187,
+  "doi": "10.1080/23802359.2020.1869609",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 188,
+  "doi": "10.1016/j.matpr.2022.02.130",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 189,
+  "doi": "10.1088/1755-1315/959/1/012007",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 190,
+  "doi": "10.13057/biodiv/d210208",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 191,
+  "doi": "10.3389/fpls.2023.1243323",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 192,
+  "doi": "10.20527/jss.v5i1.5048",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 193,
+  "doi": "10.1080/23802359.2019.1703593",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 194,
+  "doi": "10.1038/s41598-022-27195-7",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 195,
+  "doi": "10.1007/s00284-024-04048-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 196,
+  "doi": "10.3390/molecules27144528",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 197,
+  "doi": "10.1021/acs.jafc.4c06383",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 198,
+  "doi": "10.1186/s12864-021-07965-9",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 199,
+  "doi": "10.59465/jphka.v20i2.444",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 200,
+  "doi": "10.59465/jphka.v21i1.444",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 201,
+  "doi": "10.35955/jch.2024.08.87.193",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 202,
+  "doi": "10.22437/jurnalsilvatropika.v8i2.38373",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 203,
+  "doi": "10.12677/ml.2025.136658",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 204,
+  "doi": "10.37577/composite.v8i1.1027",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 205,
+  "doi": "10.32522/ujht.v5i2.5324",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 206,
+  "doi": "10.21276/pt.2024.v1.i3.5",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 207,
+  "doi": "10.29303/abdiinsani.v12i6.2478",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 208,
+  "doi": "10.47709/joa.v1i02.1711",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 209,
+  "doi": "10.31357/jtfe.v14i01.7262",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 210,
+  "doi": "10.22487/kovalen.2021.v7.i1.15478",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 211,
+  "doi": "10.13057/biodiv/d260809",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 212,
+  "doi": "10.20527/jht.v9i1.10482",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 213,
+  "doi": "10.55180/jwt.v11i2.178",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 214,
+  "doi": "10.51542/ijscia.v7i1.23",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 215,
+  "doi": "10.12677/br.2022.111012",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 216,
+  "doi": "10.33394/jss.v3i2.3693",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 217,
+  "doi": "10.58578/aldyas.v3i1.2645",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 218,
+  "doi": "10.12677/hjfns.2025.143049",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 219,
+  "doi": "10.55180/jwt.v15i1.2065",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 220,
+  "doi": "10.24127/biolova.v3i1.1778",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 221,
+  "doi": "10.62872/j4thmx75",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 222,
+  "doi": "10.31764/jau.v8i1.4397",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 223,
+  "doi": "10.1016/j.micres.2026.128576",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 224,
+  "doi": "10.17576/jatma-2023-1101-06",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 225,
+  "doi": "10.29303/jbt.v23i2.4796",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 226,
+  "doi": "10.24843/wsnf.2024.v03.p38",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 227,
+  "doi": "10.24843/jchem.2022.v16.i01.p03",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 228,
+  "doi": "10.20527/frontbiz.v7i4.11555",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 229,
+  "doi": "10.33096/agrotek.v10i1.1113",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 230,
+  "doi": "10.20884/1.bioe.2020.2.3.3090",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 231,
+  "doi": "10.33394/jss.v4i1.3946",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 232,
+  "doi": "10.62872/sej.v1i1.288",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 233,
+  "doi": "10.46703/jurnalpapuasia.vol5.iss2.151",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 234,
+  "doi": "10.55248/gengpi.5.1124.3117",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 235,
+  "doi": "10.33394/jss.v6i2.12726",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 236,
+  "doi": "10.56042/ijtk.v22i4.7202",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 237,
+  "doi": "10.29303/jppipa.v9i11.4600",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 238,
+  "doi": "10.37311/ijpe.v1i3.11417",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 239,
+  "doi": "10.37311/ijpe.v4i2.26754",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 240,
+  "doi": "10.24843/jchem.2022.v16.i02.p01",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 241,
+  "doi": "10.58327/jstfi.v9i1.141",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 242,
+  "doi": "10.52161/jiphar.v9i1.373",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 243,
+  "doi": "10.20527/jss.v8i6.17783",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 244,
+  "doi": "10.64850/kareba.v1i2.88",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 245,
+  "doi": "10.14393/bj-v38n0a2022-54813",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 246,
+  "doi": "10.52045/jca.v5i2.888",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 247,
+  "doi": "10.55180/jwt.v12i1.211",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 248,
+  "doi": "10.33096/mpsj.v1i4.102",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 249,
+  "doi": "10.26656/fr.2017.9(5).036",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 250,
+  "doi": "10.14203/beritabiologi.v21i1.4090",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 251,
+  "doi": "10.24843/jchem.2021.v15.i01.p14",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 252,
+  "doi": "10.31357/jtfe.v12i01.6112",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 253,
+  "doi": "10.69840/marsegu/2.2.2025.132-145",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 254,
+  "doi": "10.24960/jli.v13i2.7919.129-135",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 255,
+  "doi": "10.29303/jbt.v21i2.2710",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 256,
+  "doi": "10.14203/beritabiologi.v21i2.4136",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 257,
+  "doi": "10.30870/educhemia.v6i2.10983",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 258,
+  "doi": "10.30872/jkm.v21i1.1022",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 259,
+  "doi": "10.20527/jps.v7i1.8071",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 260,
+  "doi": "10.20527/jps.v9i2.13803",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 261,
+  "doi": "10.32734/jsi.v9i01.15863",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 262,
+  "doi": "10.31849/jurkim.v3i1.12043",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 263,
+  "doi": "10.52689/higea.v15i2.555",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 264,
+  "doi": "10.20527/jss.v3i4.2344",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 265,
+  "doi": "10.26874/jkk.v6i1.172",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 266,
+  "doi": "10.35799/jbl.11.2.2021.32551",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 267,
+  "doi": "10.5400/jts.2021.v26i1.19-28",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 268,
+  "doi": "10.29303/jbt.v26i1.11402",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 269,
+  "doi": "10.24843/ajoas.2022.v12.i01.p03",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 270,
+  "doi": "10.37874/ms.v8i4.924",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 271,
+  "doi": "10.37341/jurnaljamukusuma.v1i2.11",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 272,
+  "doi": "10.22236/farmasains.v8i2.5407",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 273,
+  "doi": "10.36841/biogenic.v2i2.5479",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 274,
+  "doi": "10.55373/mjchem.v23i2.1004",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 275,
+  "doi": "10.31850/jgt.v11i2.968",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 276,
+  "doi": "10.20527/jss.v3i5.2563",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 277,
+  "doi": "10.1088/1755-1315/1114/1/012042",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 278,
+  "doi": "10.56711/jms.v4i2.1128",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 279,
+  "doi": "10.29122/jbbi.v7i1.3862",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 280,
+  "doi": "10.31032/ijbpas/2020/9.5.5042",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 281,
+  "doi": "10.26525/jtfs2025.37s.si.132",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 282,
+  "doi": "10.31004/jkt.v7i1.55870",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 283,
+  "doi": "10.31004/jkt.v7i1.55869",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 284,
+  "doi": "10.35580/sainsmat102262252021",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 285,
+  "doi": "10.55180/biofoodtech.v2i02.1017",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 286,
+  "doi": "10.31957/jbp.3363",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 287,
+  "doi": "10.30872/jibs.v11i1.5096",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 288,
+  "doi": "10.1016/j.kjs.2026.100565",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 289,
+  "doi": "10.30598/maanuv1i1p01-06",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 290,
+  "doi": "10.5958/2582-2527.2021.00010.5",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 291,
+  "doi": "10.35971/jjhsr.v4i1.11585",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 292,
+  "doi": "10.58578/tsaqofah.v6i4.10674",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 293,
+  "doi": "10.22146/jtbb.59221",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 294,
+  "doi": "10.26418/jhl.v12i1.55049",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 295,
+  "doi": "10.56042/ijnpr.v12i2.33070",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 296,
+  "doi": "10.1016/j.fitote.2024.105901",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 297,
+  "doi": "10.4038/tar.v31i2.8371",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 298,
+  "doi": "10.36378/juatika.v4i1.1195",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 299,
+  "doi": "10.56711/jms.v4i2.1139",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 300,
+  "doi": "10.31357/fesympo.v28.7032",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 301,
+  "doi": "10.25077/jsfk.11.3.179-188.2024",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 302,
+  "doi": "10.31933/g5r19z87",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 303,
+  "doi": "10.36805/jbf.v5i2.1396",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 304,
+  "doi": "10.69840/marsegu/1.4.2024.357-369",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 305,
+  "doi": "10.55373/mjchem.v26i1.324",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 306,
+  "doi": "10.1088/1755-1315/914/1/012070",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 307,
+  "doi": "10.20527/jht.v11i1.15997",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 308,
+  "doi": "10.34007/jons.v1i2.202",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 309,
+  "doi": "10.22487/agrolandnasional.v31i2.2222",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 310,
+  "doi": "10.22146/jik.v16i1.1808",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 311,
+  "doi": "10.31357/fesympo.v30.8941",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 312,
+  "doi": "10.57214/jasira.v1i4.38",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 313,
+  "doi": "10.1177/20426445251332393",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 314,
+  "doi": "10.24817/jkk.v43i2.7137",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 315,
+  "doi": "10.36378/juatika.v5i1.1410",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 316,
+  "doi": "10.1088/1755-1315/1413/1/012030",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 317,
+  "doi": "10.1088/1755-1315/913/1/012068",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 318,
+  "doi": "10.1007/s40203-024-00289-y",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 319,
+  "doi": "10.13057/biodiv/d230525",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 320,
+  "doi": "10.69840/marsegu/1.9.2024.974-991",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 321,
+  "doi": "10.56711/jms.v4i2.1147",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 322,
+  "doi": "10.23960/jiia.v10i4.6068",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 323,
+  "doi": "10.14203/reinwardtia.v21i1.3874",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 324,
+  "doi": "10.1088/1755-1315/1155/1/012018",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 325,
+  "doi": "10.5152/forestist.2020.20009",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 326,
+  "doi": "10.31315/eksergi.v22i3.15114",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 327,
+  "doi": "10.69840/marsegu/1.9.2024.890-901",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 328,
+  "doi": "10.62870/tjst.v21i2.34634",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 329,
+  "doi": "10.20527/jps.v7i1.8087",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2020
+ },
+ {
+  "i": 330,
+  "doi": "10.24843/ijbb.2022.v10.i02.p01",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 331,
+  "doi": "10.17221/104/2021-jfs",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 332,
+  "doi": "10.9734/ajee/2026/v25i5935",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 333,
+  "doi": "10.22194/jgias/26.1844",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 334,
+  "doi": "10.13057/biodiv/d240118",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 335,
+  "doi": "10.33005/envirotek.v15i2.276",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2023
+ },
+ {
+  "i": 336,
+  "doi": "10.1038/s41598-025-87486-7",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 337,
+  "doi": "10.24123/mpi.v6i2.6780",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 338,
+  "doi": "10.1163/22941932-00002103",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2019
+ },
+ {
+  "i": 339,
+  "doi": "10.14716/ijtech.v13i5.5845",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 340,
+  "doi": "10.26538/tjnpr/v9i8.2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 341,
+  "doi": "10.9734/ajraf/2024/v10i1274",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 342,
+  "doi": "10.34011/juriskesbdg.v18i1.3219",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 343,
+  "doi": "10.1016/j.phytochem.2025.114527",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 344,
+  "doi": "10.9734/bji/2025/v29i4784",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 345,
+  "doi": "10.1088/1755-1315/741/1/012049",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 346,
+  "doi": "10.3329/jsau.v12i2.87845",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 347,
+  "doi": "10.1371/journal.pone.0321049",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 348,
+  "doi": "10.46542/pe.2022.222.2429",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 349,
+  "doi": "10.26525/jtfs2022.34.4.458",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 350,
+  "doi": "10.36002/js.v4i2.4311",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 351,
+  "doi": "10.9734/aprj/2021/v7i330156",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2021
+ },
+ {
+  "i": 352,
+  "doi": "10.20961/carakatani.v37i1.58370",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 353,
+  "doi": "10.63369/ijat.2025.21.3.1177-1196",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 354,
+  "doi": "10.11591/ijict.v14i3.pp1163-1171",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 355,
+  "doi": "10.18585/inabj.v14i2.1810",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 356,
+  "doi": "10.1016/j.phytol.2025.103363",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 357,
+  "doi": "10.9734/ijecc/2022/v12i121481",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2022
+ },
+ {
+  "i": 358,
+  "doi": "10.13057/biodiv/d260823",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 359,
+  "doi": "10.13057/biodiv/d250827",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 360,
+  "doi": "10.22373/kenanga.v4i2.5404",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 361,
+  "doi": "10.9734/ajbge/2025/v8i2165",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 362,
+  "doi": "10.2147/dddt.s559380",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 363,
+  "doi": "10.1080/21501203.2025.2602352",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 364,
+  "doi": "10.1016/j.fitote.2026.107329",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 365,
+  "doi": "10.3390/molecules31101593",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 366,
+  "doi": "10.1080/10286020.2026.2661019",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 367,
+  "doi": "10.1002/arch.70167",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 368,
+  "doi": "10.3389/fpls.2026.1750077",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 369,
+  "doi": "10.1016/j.jpha.2025.101478",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 370,
+  "doi": "10.1016/j.fochx.2026.103808",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 371,
+  "doi": "10.1016/j.phytochem.2026.114930",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 372,
+  "doi": "10.1080/10826068.2026.2658165",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 373,
+  "doi": "10.3390/molecules31071135",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 374,
+  "doi": "10.1002/mco2.70722",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 375,
+  "doi": "10.1016/j.aca.2026.345406",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 376,
+  "doi": "10.1002/mnfr.70428",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 377,
+  "doi": "10.1016/j.ijbiomac.2026.151877",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "preprint",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 378,
+  "doi": "10.3897/bdj.14.e182844",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 379,
+  "doi": "10.1016/j.chroma.2026.466921",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 380,
+  "doi": "10.3390/antibiotics15030274",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 381,
+  "doi": "10.3897/mycokeys.129.163092",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 382,
+  "doi": "10.1016/j.fitote.2026.107194",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 383,
+  "doi": "10.1039/d5ra08081a",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 384,
+  "doi": "10.1002/cbdv.71113",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 385,
+  "doi": "10.1016/j.fitote.2026.107170",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 386,
+  "doi": "10.19540/j.cnki.cjcmm.20251104.201",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "other",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 387,
+  "doi": "10.1016/j.yexcr.2026.114947",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 388,
+  "doi": "10.1007/s13258-026-01742-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 389,
+  "doi": "10.1186/s13002-026-00856-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2026
+ },
+ {
+  "i": 390,
+  "doi": "10.1111/1744-7917.70200",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 391,
+  "doi": "10.3390/biomedicines13122855",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 392,
+  "doi": "10.1016/j.jep.2025.121100",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 393,
+  "doi": "10.3389/fmicb.2025.1697407",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 394,
+  "doi": "10.1016/j.dib.2025.112227",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 395,
+  "doi": "10.3390/life15111770",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 396,
+  "doi": "10.3390/jof11110781",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 397,
+  "doi": "10.1007/s12298-025-01640-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 398,
+  "doi": "10.1002/2211-5463.70143",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 399,
+  "doi": "10.1016/s1875-5364(25)60876-4",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 400,
+  "doi": "10.1007/s12013-025-01922-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 401,
+  "doi": "10.1186/s12870-025-07357-1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 402,
+  "doi": "10.1186/s13568-025-01928-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 403,
+  "doi": "10.1186/s12870-025-07333-9",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 404,
+  "doi": "10.36721/pjps.2025.38.5.reg.14241.1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 405,
+  "doi": "10.1038/s41429-025-00866-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 406,
+  "doi": "10.1016/j.fitote.2025.106872",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 407,
+  "doi": "10.3390/ijms26178468",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 408,
+  "doi": "10.1111/1744-7917.70152",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 409,
+  "doi": "10.1016/j.phytochem.2025.114662",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 410,
+  "doi": "10.3897/mycokeys.121.154055",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 411,
+  "doi": "10.1111/pbi.70319",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 412,
+  "doi": "10.3390/ph18081153",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 413,
+  "doi": "10.1021/acs.jnatprod.5c00838",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 414,
+  "doi": "10.1093/jimb/kuaf025",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 415,
+  "doi": "10.1111/pbi.70327",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 416,
+  "doi": "10.3390/plants14152272",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 417,
+  "doi": "10.1002/mnfr.70192",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 418,
+  "doi": "10.3390/insects16070690",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 419,
+  "doi": "10.7717/peerj.19752",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 420,
+  "doi": "10.1002/ece3.71708",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 421,
+  "doi": "10.1371/journal.pone.0327516",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 422,
+  "doi": "10.1371/journal.pone.0327514",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 423,
+  "doi": "10.1038/s41598-025-08606-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 424,
+  "doi": "10.1021/acs.jafc.5c02632",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 425,
+  "doi": "10.1186/s13002-025-00795-z",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 426,
+  "doi": "10.1016/j.ijbiomac.2025.145119",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 427,
+  "doi": "10.1038/s41598-025-04230-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 428,
+  "doi": "10.19540/j.cnki.cjcmm.20250117.201",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 429,
+  "doi": "10.19540/j.cnki.cjcmm.20250204.201",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 430,
+  "doi": "10.3389/fpls.2025.1546050",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 431,
+  "doi": "10.1080/14786419.2025.2508834",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 432,
+  "doi": "10.3390/plants14091323",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 433,
+  "doi": "10.3390/molecules30091984",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 434,
+  "doi": "10.1186/s12879-025-10984-6",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 435,
+  "doi": "10.3390/ph18040514",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 436,
+  "doi": "10.3390/ph18040510",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 437,
+  "doi": "10.3390/life15040651",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 438,
+  "doi": "10.3390/plants14060896",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 439,
+  "doi": "10.1016/j.chmed.2025.02.001",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 440,
+  "doi": "10.3390/plants14071012",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 441,
+  "doi": "10.1038/s41598-025-90487-1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 442,
+  "doi": "10.1371/journal.pone.0320766",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 443,
+  "doi": "10.1038/s41598-025-93462-y",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 444,
+  "doi": "10.1007/s10482-025-02068-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 445,
+  "doi": "10.1111/tpj.70068",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 446,
+  "doi": "10.1186/s13020-025-01073-6",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 447,
+  "doi": "10.3390/ph18020255",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 448,
+  "doi": "10.3390/molecules30040945",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 449,
+  "doi": "10.1080/10286020.2025.2464683",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 450,
+  "doi": "10.3389/fphar.2024.1496792",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 451,
+  "doi": "10.1038/s41598-025-85976-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 452,
+  "doi": "10.12688/f1000research.130618.2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "preprint",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 453,
+  "doi": "10.3390/molecules30020352",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 454,
+  "doi": "10.3897/mycokeys.112.139831",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 455,
+  "doi": "10.19540/j.cnki.cjcmm.20240911.102",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 456,
+  "doi": "10.1016/j.ijbiomac.2025.139654",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2025
+ },
+ {
+  "i": 457,
+  "doi": "10.3897/mycokeys.111.125933",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 458,
+  "doi": "10.5650/jos.ess24228",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 459,
+  "doi": "10.1155/bmri/5595575",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 460,
+  "doi": "10.1371/journal.pone.0316178",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 461,
+  "doi": "10.5582/ddt.2024.01085",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 462,
+  "doi": "10.3897/mycokeys.111.137898",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 463,
+  "doi": "10.3389/fpls.2024.1461048",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 464,
+  "doi": "10.1016/j.fitote.2024.106312",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 465,
+  "doi": "10.3390/ph17111548",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 466,
+  "doi": "10.3390/antibiotics13111074",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 467,
+  "doi": "10.1002/mnfr.202400566",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 468,
+  "doi": "10.1016/j.fitote.2024.106296",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 469,
+  "doi": "10.48130/forres-0024-0028",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 470,
+  "doi": "10.1016/j.jep.2024.119037",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 471,
+  "doi": "10.3390/insects15100746",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 472,
+  "doi": "10.1038/s41598-024-74872-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 473,
+  "doi": "10.1016/j.ijbiomac.2024.135871",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 474,
+  "doi": "10.1002/cbdv.202402114",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 475,
+  "doi": "10.3390/ph17091196",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 476,
+  "doi": "10.19540/j.cnki.cjcmm.20240510.201",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 477,
+  "doi": "10.1016/j.foodchem.2024.141329",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 478,
+  "doi": "10.1016/j.heliyon.2024.e35874",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "i": 479,
+  "doi": "10.3389/fpls.2024.1439087",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": 2024
+ },
+ {
+  "doi": "10.5281/zenodo.22842997",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "preprint",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.14456/jbap.2025.4",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.talo.2026.100682",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s10812-026-02161-7",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.15451/ec2026-09-15-20-1-23",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "review",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.cpb.2026.100663",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.54910/sabrao2026.58.4.12",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.55197/qjssh.v7i4.1308",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.11609/jott.10518.18.8.29532-29543",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s13562-026-01089-5",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s44473-026-00269-4",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.36808/if/2026/v152i6/171205",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.33006/ji-kes.v10i1.1046",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1002/pca.70082",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.snb.2026.140727",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.foohum.2026.101438",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1186/s10086-026-02298-1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.3390/plants15162474",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.tet.2026.135429",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.fsisyn.2026.100721",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.17265/2159-5836/2026.08.011",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.24843/jpsa.2026.v08.i01.p01",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.69840/marsegu/3.4.2026.438-456",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s00468-026-02803-5",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s00248-026-02824-0",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.foodres.2026.119955",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.micres.2026.128596",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.31849/pv7nch76",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s11274-026-05090-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.25258/ijddt.16.61s.111",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.52711/0974-360x.2026.00471",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s10457-026-01565-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.62951/botani.v3i2.601",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.69697/tourcom.v3i2.404",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.3390/insects17070668",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.synbio.2026.05.009",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.indcrop.2026.123723",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.29303/jbt.v26i2.12281",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1002/slct.202506562",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.4186/ej.2026.30.5.49",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1080/17480272.2026.2668029",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1002/ffj.70102",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.5281/zenodo.20082461",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "preprint",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1080/22297928.2026.2690541",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.indcrop.2026.123437",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.22146/mot.106165",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.25077/jijcs.v8i3.203",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.5812/jrps-167592",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.30595/medisains.v24i1.28611",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.13057/biofar/f240101",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.29103/agrium.v23i1.25409",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.9734/bji/2026/v30i2860",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1007/s44489-026-00019-y",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.11591/ijai.v15.i2.pp1087-1096",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.11591/ijai.v15.i2.pp1339-1348",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.37360/blacpma.26.25.2.22",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
+ },
+ {
+  "doi": "10.1016/j.jep.2021.114069",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2021"
+ },
+ {
+  "doi": "10.3390/molecules28020635",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2023"
+ }
+]

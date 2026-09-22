@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  침향 논문 아카이브 주간 철회 확인 (매주 월요일 04:30)
+  설치: cp scripts/launchd/com.zoellife.thesis-weekly.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.zoellife.thesis-weekly.plist
+  해제: launchctl unload ~/Library/LaunchAgents/com.zoellife.thesis-weekly.plist
+  결과: .moai/reports/thesis-cron-YYYYMMDD.md (커밋·푸시는 사람 승인)
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.zoellife.thesis-weekly</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>/Users/gai/personal/works/daerachoen/scripts/thesis-monthly.sh</string>
+    <string>weekly</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/gai/personal/works/daerachoen</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>4</integer><key>Minute</key><integer>30</integer></dict>
+  <key>StandardOutPath</key><string>/Users/gai/personal/works/daerachoen/.moai/logs/thesis-cron.out</string>
+  <key>StandardErrorPath</key><string>/Users/gai/personal/works/daerachoen/.moai/logs/thesis-cron.err</string>
+</dict>
+</plist>

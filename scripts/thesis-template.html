@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>침향·Aquilaria 관련 연구문헌 아카이브</title>
+<style>
+  :root{
+    --bg:#0f1419;--bg2:#0b0f14;--card:#1a2129;--card2:#141b22;--line:#2a3441;
+    --fg:#e6edf3;--mut:#8b98a5;--acc:#4493f8;--kr:#e8463a;
+    --ok:#39d98a;--warn:#e0b341;--red:#f0726a;--purple:#c98bf0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:var(--fg);line-height:1.55;font-size:14px}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+
+  /* header */
+  header{padding:22px 0 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141b22,#0f1419)}
+  h1{margin:0 0 4px;font-size:21px;letter-spacing:-.3px}
+  .sub{color:var(--mut);font-size:12.5px}
+  .sub b{color:#cfe3fb;font-weight:600}
+  .trust{display:inline-flex;align-items:center;gap:6px;background:#0e2f1c;color:#7ee6a8;border:1px solid #1f6e44;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;margin-top:10px}
+
+  /* nav */
+  nav.views{position:sticky;top:0;z-index:30;background:rgba(15,20,25,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav.views .inner{display:flex;gap:4px;max-width:1200px;margin:0 auto;padding:0 18px}
+  nav.views button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mut);padding:13px 16px;font-size:14px;cursor:pointer;font-weight:600}
+  nav.views button.active{color:var(--fg);border-bottom-color:var(--acc)}
+  nav.views button:hover{color:var(--fg)}
+
+  section.view{display:none;padding:22px 0 60px}
+  section.view.active{display:block}
+
+  /* stat cards */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat .n{font-size:26px;font-weight:700;color:var(--acc);line-height:1.1}
+  .stat .n.ok{color:var(--ok)} .stat .n.kr{color:var(--kr)} .stat .n.pp{color:var(--warn)} .stat .n.pu{color:var(--purple)}
+  .stat .l{color:var(--mut);font-size:12px;margin-top:5px}
+  .stat .l small{display:block;color:#6f7d8a;font-size:11px;margin-top:2px}
+
+  /* panels & charts */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+  .panel h3{margin:0 0 14px;font-size:14px;display:flex;align-items:center;gap:8px}
+  .panel h3 .cnt{color:var(--mut);font-weight:400;font-size:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+  .bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px;cursor:pointer}
+  .bar:hover .bar-label{color:var(--fg)}
+  .bar-label{width:130px;flex:none;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+  .bar-track{flex:1;background:#0f1620;border-radius:5px;height:16px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:5px;min-width:2px;transition:width .5s ease}
+  .bar-val{width:38px;flex:none;text-align:right;color:var(--fg);font-variant-numeric:tabular-nums}
+
+  .donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .donut{width:120px;height:120px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;position:relative}
+  .donut::after{content:"";position:absolute;inset:16px;background:var(--card);border-radius:50%}
+  .donut .center{position:relative;z-index:1;text-align:center}
+  .donut .center b{font-size:22px;display:block;line-height:1}
+  .donut .center span{font-size:11px;color:var(--mut)}
+  .legend{font-size:12.5px}
+  .legend .li{display:flex;align-items:center;gap:8px;margin:5px 0}
+  .legend .dot{width:11px;height:11px;border-radius:3px;flex:none}
+  .legend .li .v{margin-left:auto;color:var(--mut);font-variant-numeric:tabular-nums}
+
+  /* domain cards (browse) */
+  .dcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .dcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:transform .12s,border-color .12s}
+  .dcard:hover{transform:translateY(-2px);border-color:var(--acc)}
+  .dcard .ic{font-size:26px}
+  .dcard .dt{font-weight:700;font-size:15px;margin:8px 0 3px}
+  .dcard .dn{color:var(--mut);font-size:12.5px}
+  .dcard .dn b{font-size:20px;color:var(--fg);margin-right:3px}
+  .dcard .dbar{height:4px;border-radius:3px;margin-top:10px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .chip{background:#241733;color:#d3a6f0;border:1px solid #4a2f6e;border-radius:16px;padding:5px 13px;font-size:12.5px;cursor:pointer}
+  .chip:hover{background:#33204a}
+  .chip .c{color:#a988c7;margin-left:5px}
+  .chip.dom{background:#15241b;color:#7ed3a6;border-color:#1f5a3a}
+
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:14px}
+  .controls input,.controls select{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px}
+  .controls input[type=text]{min-width:230px;flex:1}
+  .active-filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;min-height:0}
+  .fpill{background:#1d3148;color:#cfe3fb;border:1px solid #2f5a7e;border-radius:15px;padding:3px 10px 3px 12px;font-size:12px;display:inline-flex;align-items:center;gap:7px}
+  .fpill button{background:none;border:0;color:#9db4cf;cursor:pointer;font-size:14px;line-height:1;padding:0}
+  .rescount{color:var(--mut);font-size:12.5px;margin-bottom:10px}
+
+  /* paper card */
+  .paper{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:11px;overflow:hidden}
+  .paper.read{border-left:3px solid var(--ok)}
+  .paper.pp{border-left:3px solid var(--warn)}
+  .phead{padding:14px 16px;cursor:pointer;display:flex;gap:12px}
+  .phead:hover{background:#19222c}
+  .pmain{flex:1;min-width:0}
+  .ptitle{font-weight:600;font-size:14.5px;line-height:1.45}
+  .ptitle-ko{color:#9db4cf;font-size:13px;margin-top:3px;font-weight:500}
+  .pmeta{color:var(--mut);font-size:12px;margin-top:7px;display:flex;flex-wrap:wrap;gap:5px 12px}
+  .pbadges{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;align-items:center}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:11px;border:1px solid var(--line);background:#22303c;color:var(--mut);white-space:nowrap}
+  .badge.q1{background:#0e2f1c;color:#39d98a;border-color:#1f6e44}
+  .badge.q2{background:#0e2733;color:#43b7f8;border-color:#1f5a7e}
+  .badge.q3{background:#2e2410;color:#e0b341;border-color:#6e5a1f}
+  .badge.q4{background:#2b1f1f;color:#d98a8a;border-color:#6e3f3f}
+  .badge.unk{background:#1c2228;color:#8b98a5}
+  .badge.ver{background:#0e2f1c;color:#7ee6a8;border-color:#1f6e44}
+  .badge.pp{background:#2e2410;color:#e0b341;border-color:#6e5a1f}
+  .badge.retr{background:#2b1515;color:#f0726a;border-color:#6e2f2f}
+  .badge.dom{background:#15241b;color:#7ed3a6;border-color:#1f5a3a}
+  .badge.eff{background:#241733;color:#d3a6f0;border-color:#4a2f6e}
+  .badge.kr{background:#2b1717;color:#f0a0a0;border-color:#6e3030}
+  .badge.scie{background:#14243a;color:#7cc4ff;border-color:#2b5a8a;font-weight:700}
+  .badge.new{background:#0f2e1c;color:#5ee39a;border-color:#1f7a49;font-weight:700}
+  .badge.mat{background:#1f2430;color:#a9b4c4}
+  .badge.mat.warn{background:#2e2410;color:#e0b341;border-color:#6e5a1f}
+  .pside{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-align:right}
+  .verdict-tag{font-size:11px;padding:2px 8px;border-radius:10px;white-space:nowrap}
+  .vt-strong{background:#0e2f1c;color:#39d98a;border:1px solid #1f6e44}
+  .vt-partial{background:#2e2410;color:#e0b341;border:1px solid #6e5a1f}
+  .vt-weak{background:#2b1f1f;color:#f0726a;border:1px solid #6e3f3f}
+  .readdot{font-size:12px;color:var(--mut)} .readdot.on{color:var(--ok)}
+  .expander{color:var(--mut);font-size:18px;transition:transform .15s}
+  .paper.open .expander{transform:rotate(90deg)}
+
+  .pbody{display:none;padding:0 16px 16px;border-top:1px solid var(--line)}
+  .paper.open .pbody{display:block}
+  .tabs{display:flex;gap:6px;margin:12px 0 8px}
+  .tab{background:#16202b;color:var(--mut);border:1px solid var(--line);border-radius:7px;padding:5px 13px;font-size:12px;cursor:pointer}
+  .tab.active{background:#1d3148;color:#cfe3fb;border-color:#2f5a7e}
+  .pane{display:none;white-space:pre-wrap;font-size:13px;color:#dbe4ee;line-height:1.7}
+  .pane.active{display:block}
+  .easy{background:#14231c;border:1px solid #235c3e;border-left:4px solid var(--ok);border-radius:8px;padding:11px 13px;margin:10px 0}
+  .easy .h{color:#7ed3a6;font-weight:700;font-size:12px;margin-bottom:4px}
+  .easy .b{color:#dff3e8;font-size:13px;line-height:1.65}
+  .kws{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .kw{background:#15241b;color:#7ed3a6;border:1px solid #1f5a3a;border-radius:12px;padding:2px 9px;font-size:11.5px}
+  .metatable{width:100%;font-size:12px;color:var(--mut);margin-top:10px;border-collapse:collapse}
+  .metatable td{padding:4px 8px;border-bottom:1px solid #202932;vertical-align:top}
+  .metatable td:first-child{color:#6f7d8a;width:110px;white-space:nowrap}
+  mark.hl{background:#f4e04d;color:#1a1400;padding:0 2px;border-radius:3px;font-weight:600}
+
+  /* review box */
+  .review{background:#101a24;border:1px solid #234055;border-radius:10px;padding:13px;margin-top:14px}
+  .review .rh{font-weight:700;font-size:12.5px;color:#9dc4e8;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .review .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:10px}
+  .review label.rd{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;user-select:none}
+  .review .verdicts{display:flex;gap:6px}
+  .review .vbtn{background:#16202b;border:1px solid var(--line);color:var(--mut);border-radius:7px;padding:5px 11px;font-size:12px;cursor:pointer}
+  .review .vbtn.sel[data-v=strong]{background:#0e2f1c;color:#39d98a;border-color:#1f6e44}
+  .review .vbtn.sel[data-v=partial]{background:#2e2410;color:#e0b341;border-color:#6e5a1f}
+  .review .vbtn.sel[data-v=weak]{background:#2b1f1f;color:#f0726a;border-color:#6e3f3f}
+  .review textarea{width:100%;min-height:60px;background:#0b1219;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px;font-size:13px;font-family:inherit;resize:vertical}
+  .review .rbar{display:flex;gap:10px;align-items:center;margin-top:8px}
+  .review .save{background:var(--acc);color:#fff;border:0;border-radius:7px;padding:7px 15px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .review .rstatus{font-size:12px;color:var(--ok)}
+  .review .rmeta{font-size:11px;color:#6f7d8a;margin-left:auto}
+
+  .btn{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 13px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--acc);color:var(--acc)}
+  .btn.on{background:#1d3148;color:#cfe3fb;border-color:#2f5a7e}
+  footer{color:var(--mut);font-size:12px;padding:24px 0;text-align:center;border-top:1px solid var(--line)}
+  .hide{display:none!important}
+  .synced{font-size:11px;color:var(--mut)}
+  .synced b{color:var(--ok)}
+  .synced.off b{color:var(--warn)}
+  details.log{margin-top:18px}
+  details.log summary{cursor:pointer;color:var(--mut);font-size:12.5px}
+  .logline{font-family:ui-monospace,monospace;font-size:11.5px;padding:3px 0;border-bottom:1px solid var(--line);color:var(--mut)}
+  .lv-ok{color:#5fd28b}.lv-warn{color:#caa86a}.lv-error{color:#f0726a}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>🪵 침향·Aquilaria 관련 연구문헌 아카이브</h1>
+    <div class="sub">
+      2020~2026년 문헌 · <b>최종 수집 <span id="gen"></span></b> · DOI 검증 <span id="verat"></span> · 키워드 <span id="kw"></span>
+    </div>
+    <div class="trust" id="trustBadge">✅ 진위검증: <span id="verSummary"></span></div>
+  </div>
+</header>
+
+<nav class="views">
+  <div class="inner">
+    <button data-view="dash" class="active">📊 검수 대시보드</button>
+    <button data-view="browse">📚 분야별 탐색</button>
+    <button data-view="list">🔎 논문 목록</button>
+  </div>
+</nav>
+
+<!-- ── 대시보드 ── -->
+<section class="view active" id="view-dash">
+  <div class="wrap">
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="grid2">
+      <div class="panel"><h3>🔬 연구분야 분포 <span class="cnt">클릭 시 해당 분야 목록으로</span></h3><div id="chartDomain"></div></div>
+      <div class="panel"><h3>🧪 효능(생리활성) 분포 <span class="cnt">본문 키워드 기반 자동분류</span></h3><div id="chartEff"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>📖 검수 진행률</h3>
+        <div class="donut-wrap">
+          <div class="donut" id="readDonut"><div class="center"><b id="readPct">0%</b><span>읽음</span></div></div>
+          <div class="legend" id="readLegend" style="flex:1"></div>
+        </div>
+      </div>
+      <div class="panel"><h3>⚖️ 검수 판정 분포 <span class="cnt">근거 충분도</span></h3><div id="chartVerdict"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>🏅 국제색인 등급(SJR 분위)</h3><div id="chartQuartile"></div></div>
+      <div class="panel"><h3>📅 발행연도 분포</h3><div id="chartYear"></div></div>
+    </div>
+    <details class="log"><summary>🛠 수집 로그 (소스별 호출 결과)</summary><div id="logBox"></div></details>
+  </div>
+</section>
+
+<!-- ── 분야별 탐색 ── -->
+<section class="view" id="view-browse">
+  <div class="wrap">
+    <div class="panel"><h3>🔬 연구분야 <span class="cnt">축 A — 클릭하면 해당 분야 논문 목록</span></h3>
+      <div class="dcards" id="domainCards"></div>
+    </div>
+    <div class="panel"><h3>🧪 효능(생리활성) <span class="cnt">축 B — 클릭하면 해당 효능 논문 목록</span></h3>
+      <div class="chips" id="effChips"></div>
+    </div>
+    <div class="panel"><h3>🏅 국제색인 등급으로 보기</h3>
+      <div class="chips" id="gradeChips"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 논문 목록 ── -->
+<section class="view" id="view-list">
+  <div class="wrap">
+    <div class="controls">
+      <input type="text" id="q" placeholder="제목·저자·저널·초록 검색…">
+      <select id="fDomain"><option value="">전체 분야</option></select>
+      <select id="fEff"><option value="">전체 효능</option></select>
+      <select id="fGrade">
+        <option value="">전체 등급</option>
+        <option value="broadcast">SJR 분위 산출(Q1~Q4)</option>
+        <option value="Q1">Q1 최상위</option><option value="Q2">Q2 상위</option>
+        <option value="Q3">Q3</option><option value="Q4">Q4</option>
+        <option value="idx_only">Scopus 등재(분위 미산출)</option>
+        <option value="none">색인 미확인</option>
+      </select>
+      <select id="fMat"><option value="">전체 재료</option></select>
+      <label class="chk"><input type="checkbox" id="fNew"> 🆕 신규 추가만</label>
+      <select id="fReview">
+        <option value="">검수: 전체</option>
+        <option value="unread">안읽음</option><option value="read">읽음</option>
+        <option value="strong">판정: 근거충분</option><option value="partial">판정: 부분적</option>
+        <option value="weak">판정: 불충분</option><option value="noverdict">미판정</option>
+      </select>
+      <select id="sort">
+        <option value="date_desc">최신순</option><option value="date_asc">오래된순</option>
+        <option value="cite_desc">인용 많은순</option><option value="sjr_desc">SJR 높은순</option>
+        <option value="grade">등급순(Q1 우선)</option>
+      </select>
+      <input type="text" id="reviewer" placeholder="검수자 이름" style="max-width:130px">
+    </div>
+    <div class="active-filters" id="activeFilters"></div>
+    <div class="rescount" id="resCount"></div>
+    <div id="paperList"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    실제 API 응답 데이터만 수록(OpenAlex·Crossref·PubMed) · 추측/창작 없음 · DOI 원문은 새 탭 · <span class="synced" id="syncState"></span>
+  </div>
+</footer>
+
+<script id="PAPERS" type="application/json">/*{{PAPERS_JSON}}*/</script>
+<script id="META" type="application/json">/*{{META_JSON}}*/</script>
+<script>
+"use strict";
+const PAPERS = JSON.parse(document.getElementById('PAPERS').textContent);
+const META = JSON.parse(document.getElementById('META').textContent);
+
+const DOMAIN_META = {
+  chem:{ic:'🧪',c:'#43b7f8'}, pharm:{ic:'💊',c:'#c98bf0'}, biosyn:{ic:'🧬',c:'#39d98a'},
+  format:{ic:'🌳',c:'#e0b341'}, cultiv:{ic:'🌱',c:'#7ed3a6'}, auth:{ic:'🔍',c:'#f0a76a'},
+  app:{ic:'🏺',c:'#f0726a'}, etc:{ic:'📄',c:'#8b98a5'}
+};
+const LBL = META.domain_labels || {};
+const VERDICT_LBL = {strong:'근거 충분', partial:'부분적', weak:'근거 불충분'};
+
+/* ---------- utils ---------- */
+function esc(s){const d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+function stripTags(s){return String(s==null?'':s).replace(/<[^>]+>/g,'');}
+function flag(cc){if(!cc||cc.length!==2)return '';const A=0x1F1E6,u=cc.toUpperCase();return String.fromCodePoint(A+u.charCodeAt(0)-65)+String.fromCodePoint(A+u.charCodeAt(1)-65);}
+const HL=['agarwood','aquilaria','gyrinops','aloeswood','eaglewood','gaharu','沉香','침향','아퀼라리아','oud','oudh'];
+function highlight(html){let o=html;for(const t of HL){o=o.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark class="hl">$1</mark>');}return o;}
+function gradeOf(p){if(p.quartile)return p.quartile;if(p.scopus)return 'idx_only';return 'none';}
+
+/* ---------- review state (Blob + localStorage) ---------- */
+const LS_KEY='thesis_review_v1', LS_NAME='thesis_reviewer';
+let REVIEW = {};      // doi -> {read,verdict,opinion,reviewer,updatedAt}
+let online = false;
+function loadLocal(){try{REVIEW=JSON.parse(localStorage.getItem(LS_KEY)||'{}')||{};}catch(e){REVIEW={};}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(REVIEW));}catch(e){}}
+function entryOf(doi){return REVIEW[doi]||{read:false,verdict:'',opinion:'',reviewer:'',updatedAt:''};}
+
+async function syncFromServer(){
+  try{
+    const r=await fetch('/api/thesis-review',{cache:'no-store'});
+    if(!r.ok) throw 0;
+    const data=await r.json();
+    if(data&&data.entries){REVIEW=data.entries;saveLocal();online=true;}
+  }catch(e){online=false;}
+  setSyncState();
+}
+async function pushEntry(doi,patch){
+  const e=entryOf(doi);
+  const next={read:e.read,verdict:e.verdict,opinion:e.opinion,reviewer:e.reviewer,...patch,updatedAt:new Date().toISOString()};
+  REVIEW[doi]=next;saveLocal();
+  try{
+    const r=await fetch('/api/thesis-review',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({doi,...patch})});
+    online=r.ok;
+  }catch(e2){online=false;}
+  setSyncState();
+  return next;
+}
+function setSyncState(){
+  const el=document.getElementById('syncState');
+  el.className='synced'+(online?'':' off');
+  el.innerHTML=online?'서버 동기화 <b>ON</b> (여러 기기·검수자 공유)':'서버 동기화 <b>OFF</b> (이 브라우저에만 저장)';
+}
+
+/* ---------- charts ---------- */
+function barChart(el,rows,onClick){
+  const max=Math.max(1,...rows.map(r=>r.value));
+  el.innerHTML='';
+  rows.forEach(r=>{
+    const d=document.createElement('div');d.className='bar';
+    d.innerHTML=`<div class="bar-label">${esc(r.label)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(r.value/max*100).toFixed(1)}%;background:${r.color||'#4493f8'}"></div></div>
+      <div class="bar-val">${r.value}</div>`;
+    if(onClick){d.onclick=()=>onClick(r);}
+    el.appendChild(d);
+  });
+}
+function donut(el,segments){ // segments:[{label,value,color}]
+  const total=segments.reduce((a,s)=>a+s.value,0)||1;
+  let acc=0,stops=[];
+  segments.forEach(s=>{const from=acc/total*360,to=(acc+s.value)/total*360;stops.push(`${s.color} ${from}deg ${to}deg`);acc+=s.value;});
+  el.style.background=`conic-gradient(${stops.join(',')})`;
+}
+
+/* ---------- dashboard ---------- */
+function reviewStats(){
+  let read=0,strong=0,partial=0,weak=0,noverdict=0;
+  PAPERS.forEach(p=>{const e=entryOf(p.doi);if(e.read)read++;
+    if(e.verdict==='strong')strong++;else if(e.verdict==='partial')partial++;else if(e.verdict==='weak')weak++;else noverdict++;});
+  return {read,unread:PAPERS.length-read,strong,partial,weak,noverdict};
+}
+function renderDashboard(){
+  const T=PAPERS.length, rs=reviewStats();
+  const sci=(META.quartile_counts.Q1||0)+(META.quartile_counts.Q2||0)+(META.quartile_counts.Q3||0)+(META.quartile_counts.Q4||0);
+  const cards=[
+    {n:T,l:'총 논문',cls:''},
+    {n:META.verified_count+'/'+T,l:'진위 실존확인',sub:'DOI OpenAlex·Crossref 대조',cls:'ok'},
+    {n:sci,l:'SJR 분위 산출(Q1~Q4)',sub:'Scopus/SCImago 기준',cls:''},
+    {n:(META.scie_count||0)+'/'+T,l:'SCIE 등재 확인',sub:META.scie_checked_at?('MJL 수기 대조 '+META.scie_checked_at):'미대조 — scie-issn.json 채우면 표시',cls:''},
+    {n:META.efficacy_count,l:'효능 논문',sub:'초록에 활성 시험 확인·복합제/내생균 제외',cls:'pu'},
+    {n:META.new_count||0,l:'신규 추가',sub:'최근 수집 '+(META.latest_batch||'-'),cls:'ok'},
+    {n:rs.read,l:'검수 읽음',sub:'전체 '+T+'편 중',cls:'ok'},
+    {n:rs.strong,l:'근거 충분 판정',sub:'검수자 확인',cls:'ok'},
+    {n:META.preprint_count,l:'preprint 주의',sub:'미피어리뷰',cls:'pp'},
+    {n:META.korea_count,l:'한국 포함',cls:'kr'},
+  ];
+  document.getElementById('statGrid').innerHTML=cards.map(c=>
+    `<div class="stat"><div class="n ${c.cls}">${c.n}</div><div class="l">${c.l}${c.sub?'<small>'+c.sub+'</small>':''}</div></div>`).join('');
+
+  barChart(document.getElementById('chartDomain'),
+    Object.entries(META.domain_counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({label:(DOMAIN_META[k]||{}).ic+' '+(LBL[k]||k),value:v,color:(DOMAIN_META[k]||{}).c,key:k})),
+    r=>{setFilter('domain',r.key);switchView('list');});
+  barChart(document.getElementById('chartEff'),
+    Object.entries(META.efficacy_type_counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({label:k,value:v,color:'#c98bf0',key:k})),
+    r=>{setFilter('eff',r.key);switchView('list');});
+
+  // read donut
+  donut(document.getElementById('readDonut'),[{color:'#39d98a',value:rs.read},{color:'#26313c',value:rs.unread}]);
+  document.getElementById('readPct').textContent=Math.round(rs.read/T*100)+'%';
+  document.getElementById('readLegend').innerHTML=
+    `<div class="li"><span class="dot" style="background:#39d98a"></span>읽음<span class="v">${rs.read}</span></div>
+     <div class="li"><span class="dot" style="background:#26313c"></span>안읽음<span class="v">${rs.unread}</span></div>
+     <div class="li"><span class="dot" style="background:#4493f8"></span>근거충분<span class="v">${rs.strong}</span></div>
+     <div class="li"><span class="dot" style="background:#e0b341"></span>부분적<span class="v">${rs.partial}</span></div>
+     <div class="li"><span class="dot" style="background:#f0726a"></span>불충분<span class="v">${rs.weak}</span></div>`;
+
+  barChart(document.getElementById('chartVerdict'),[
+    {label:'✅ 근거 충분',value:rs.strong,color:'#39d98a',key:'strong'},
+    {label:'🟡 부분적',value:rs.partial,color:'#e0b341',key:'partial'},
+    {label:'🔴 근거 불충분',value:rs.weak,color:'#f0726a',key:'weak'},
+    {label:'⚪ 미판정',value:rs.noverdict,color:'#4a5560',key:'noverdict'},
+  ],r=>{setFilter('review',r.key);switchView('list');});
+
+  const qc=META.quartile_counts;
+  barChart(document.getElementById('chartQuartile'),[
+    {label:'Q1 최상위',value:qc.Q1||0,color:'#39d98a'},{label:'Q2 상위',value:qc.Q2||0,color:'#43b7f8'},
+    {label:'Q3',value:qc.Q3||0,color:'#e0b341'},{label:'Q4',value:qc.Q4||0,color:'#d98a8a'},
+    {label:'미확인',value:qc['미확인']||qc['']||0,color:'#4a5560'},
+  ]);
+  barChart(document.getElementById('chartYear'),
+    Object.entries(META.year_counts).filter(([y])=>/^\d{4}$/.test(y)).sort().map(([y,v])=>({label:y,value:v,color:'#4493f8'})));
+
+  document.getElementById('logBox').innerHTML=(META.collection_log||[]).map(l=>
+    `<div class="logline"><span class="lv-${l.level}">[${l.source}]</span> ${esc(l.message)}</div>`).join('');
+}
+
+/* ---------- browse ---------- */
+function renderBrowse(){
+  const maxD=Math.max(1,...Object.values(META.domain_counts));
+  document.getElementById('domainCards').innerHTML=Object.entries(META.domain_counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{
+    const m=DOMAIN_META[k]||{ic:'📄',c:'#888'};
+    return `<div class="dcard" data-dom="${k}"><div class="ic">${m.ic}</div>
+      <div class="dt">${LBL[k]||k}</div><div class="dn"><b>${v}</b>편</div>
+      <div class="dbar" style="width:${(v/maxD*100).toFixed(0)}%;background:${m.c}"></div></div>`;
+  }).join('');
+  document.querySelectorAll('#domainCards .dcard').forEach(c=>c.onclick=()=>{setFilter('domain',c.dataset.dom);switchView('list');});
+
+  document.getElementById('effChips').innerHTML=Object.entries(META.efficacy_type_counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+    `<span class="chip" data-eff="${esc(k)}">${esc(k)}<span class="c">${v}</span></span>`).join('');
+  document.querySelectorAll('#effChips .chip').forEach(c=>c.onclick=()=>{setFilter('eff',c.dataset.eff);switchView('list');});
+
+  const gc=META.quartile_counts, sci=(gc.Q1||0)+(gc.Q2||0)+(gc.Q3||0)+(gc.Q4||0);
+  const grades=[['broadcast','SJR 분위 산출(Q1~Q4)',sci],['Q1','Q1 최상위',gc.Q1||0],['Q2','Q2 상위',gc.Q2||0],
+    ['Q3','Q3',gc.Q3||0],['Q4','Q4',gc.Q4||0],['none','색인 미확인',gc['미확인']||0]];
+  document.getElementById('gradeChips').innerHTML=grades.map(([k,l,v])=>
+    `<span class="chip dom" data-grade="${k}">${l}<span class="c">${v}</span></span>`).join('');
+  document.querySelectorAll('#gradeChips .chip').forEach(c=>c.onclick=()=>{setFilter('grade',c.dataset.grade);switchView('list');});
+}
+
+/* ---------- filters + list ---------- */
+const F={q:'',domain:'',eff:'',grade:'',review:'',mat:'',onlyNew:false,sort:'date_desc'};
+function setFilter(k,v){F[k]=v;
+  if(k==='domain')document.getElementById('fDomain').value=v;
+  if(k==='eff')document.getElementById('fEff').value=v;
+  if(k==='grade')document.getElementById('fGrade').value=v;
+  if(k==='review')document.getElementById('fReview').value=v;
+  if(k==='mat')document.getElementById('fMat').value=v;
+  renderList();
+}
+function matchGrade(p,g){
+  if(!g)return true;
+  if(g==='broadcast')return !!p.quartile;
+  if(g==='idx_only')return !p.quartile&&p.scopus;
+  if(g==='none')return !p.quartile&&!p.scopus;
+  return p.quartile===g;
+}
+function matchReview(p,r){
+  if(!r)return true;const e=entryOf(p.doi);
+  if(r==='read')return e.read; if(r==='unread')return !e.read;
+  if(r==='noverdict')return !e.verdict;
+  return e.verdict===r;
+}
+function filtered(){
+  const q=F.q.trim().toLowerCase();
+  let list=PAPERS.filter(p=>{
+    if(F.domain&&p.domain!==F.domain)return false;
+    if(F.eff&&!(p.efficacy_types||[]).includes(F.eff))return false;
+    if(!matchGrade(p,F.grade))return false;
+    if(F.mat&&p.material!==F.mat)return false;
+    if(F.onlyNew&&!isNew(p))return false;
+    if(!matchReview(p,F.review))return false;
+    if(q){const hay=(stripTags(p.title)+' '+(p.title_ko||'')+' '+(p.authors||[]).join(' ')+' '+p.journal+' '+stripTags(p.abstract)+' '+(p.abstract_ko||'')).toLowerCase();
+      if(!hay.includes(q))return false;}
+    return true;
+  });
+  const q4=(p)=>({Q1:4,Q2:3,Q3:2,Q4:1}[p.quartile]||0);
+  const cmp={
+    date_desc:(a,b)=>(b.published_date||'').localeCompare(a.published_date||''),
+    date_asc:(a,b)=>(a.published_date||'').localeCompare(b.published_date||''),
+    cite_desc:(a,b)=>(b.citation_count||0)-(a.citation_count||0),
+    sjr_desc:(a,b)=>(b.sjr||0)-(a.sjr||0),
+    grade:(a,b)=>q4(b)-q4(a)||(b.sjr||0)-(a.sjr||0),
+  }[F.sort];
+  return list.sort(cmp);
+}
+function activeFilterPills(){
+  const el=document.getElementById('activeFilters');const pills=[];
+  if(F.domain)pills.push(['분야: '+(LBL[F.domain]||F.domain),()=>setFilter('domain','')]);
+  if(F.eff)pills.push(['효능: '+F.eff,()=>setFilter('eff','')]);
+  if(F.grade)pills.push(['등급: '+F.grade,()=>setFilter('grade','')]);
+  if(F.mat)pills.push(['재료: '+((META.material_labels||{})[F.mat]||F.mat),()=>setFilter('mat','')]);
+  if(F.onlyNew)pills.push(['신규 추가만',()=>{F.onlyNew=false;document.getElementById('fNew').checked=false;renderList();}]);
+  if(F.review)pills.push(['검수: '+F.review,()=>setFilter('review','')]);
+  if(F.q)pills.push(['검색: '+F.q,()=>{F.q='';document.getElementById('q').value='';renderList();}]);
+  el.innerHTML='';
+  pills.forEach(([t,fn])=>{const s=document.createElement('span');s.className='fpill';s.innerHTML=esc(t)+' <button>×</button>';s.querySelector('button').onclick=fn;el.appendChild(s);});
+}
+function isNew(p){return !!p.added_batch && p.added_batch===META.latest_batch;}
+function matBadge(p){
+  const l=(META.material_labels||{})[p.material]||'';
+  if(!l||p.material==='unknown')return '';
+  const warn=p.material==='composite'||p.material==='endophyte';
+  return `<span class="badge mat${warn?' warn':''}" title="${warn?'침향 단독 효능으로 귀속 불가':'연구 재료'}">${esc(l)}</span>`;
+}
+function verBadge(p){
+  if(p.retracted)return '<span class="badge retr">⛔ 게재철회</span>';
+  if(p.is_preprint)return '<span class="badge pp">⚠ preprint(미피어리뷰)</span>';
+  if(p.verified)return '<span class="badge ver">✅ 실존확인</span>';
+  return '<span class="badge unk">확인 불가</span>';
+}
+function paperCardHTML(p){
+  const e=entryOf(p.doi);
+  const qcls=p.quartile?('q'+p.quartile[1]):'unk';
+  const eff=(p.efficacy_types||[]).slice(0,4).map(t=>`<span class="badge eff">${esc(t)}</span>`).join('');
+  const dom=`<span class="badge dom">${(DOMAIN_META[p.domain]||{}).ic||''} ${esc(p.domain_label||'')}</span>`;
+  const vt=e.verdict?`<span class="verdict-tag vt-${e.verdict}">${VERDICT_LBL[e.verdict]}</span>`:'';
+  const cls='paper'+(e.read?' read':'')+(p.is_preprint?' pp':'');
+  return `<div class="${cls}" data-doi="${esc(p.doi)}">
+    <div class="phead">
+      <div class="pmain">
+        <div class="ptitle">${highlight(esc(stripTags(p.title)))}</div>
+        ${p.title_ko?`<div class="ptitle-ko">${highlight(esc(p.title_ko))}</div>`:''}
+        <div class="pmeta">
+          <span>${flag((p.country||[])[0])} ${esc((p.authors||[]).slice(0,3).join(', '))}${(p.authors||[]).length>3?' 외':''}</span>
+          <span>${esc(p.journal)}</span>
+          <span>${esc((p.published_date||'').slice(0,7))}</span>
+          <span>인용 ${p.citation_count||0}</span>
+        </div>
+        <div class="pbadges">
+          ${p.quartile?`<span class="badge ${qcls}">SJR ${p.quartile}</span>`:(p.scopus?'<span class="badge idx">Scopus 등재</span>':'<span class="badge unk">색인 미확인</span>')}
+          ${isNew(p)?'<span class="badge new">🆕 NEW '+esc(p.added_batch||'')+'</span>':''}
+          ${p.scie===true?'<span class="badge scie" title="Clarivate Master Journal List 수기 확인">SCIE 등재</span>':''}
+          ${verBadge(p)} ${dom} ${matBadge(p)} ${p.is_review?'<span class="badge">종설</span>':''} ${p.is_korea?'<span class="badge kr">🇰🇷 한국</span>':''}
+          ${eff}
+        </div>
+      </div>
+      <div class="pside">
+        <span class="readdot${e.read?' on':''}">${e.read?'✔ 읽음':'○ 안읽음'}</span>
+        ${vt}
+        <span class="expander">›</span>
+      </div>
+    </div>
+    <div class="pbody" data-lazy="1"></div>
+  </div>`;
+}
+function paperBodyHTML(p){
+  const e=entryOf(p.doi);
+  const kws=(p.keywords_ko||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join('');
+  const easy=p.summary_easy?`<div class="easy"><div class="h">💡 쉬운 설명</div><div class="b">${esc(p.summary_easy)}</div></div>`:'';
+  const relDomains=(p.domains||[]).map(k=>`${(DOMAIN_META[k]||{}).ic||''} ${LBL[k]||k}`).join(' · ');
+  const meta=`<table class="metatable">
+    <tr><td>분류</td><td>${esc(relDomains||p.domain_label||'')}${p.is_review?' · 종설':''}</td></tr>
+    <tr><td>저자</td><td>${esc((p.authors||[]).join(', '))}</td></tr>
+    <tr><td>소속</td><td>${esc((p.affiliations||[]).join(' · '))}</td></tr>
+    <tr><td>저널</td><td>${esc(p.journal)} · ${esc(p.publisher||'')}</td></tr>
+    <tr><td>색인</td><td>${esc(p.indexing||'')} ${p.sjr?('· SJR '+p.sjr):''}</td></tr>
+    <tr><td>진위검증</td><td>${p.verified?('실존 확인됨 ('+esc(p.verify_source||'')+', 제목일치도 '+Math.round((p.title_match||0)*100)+'%)'):'확인 불가'} · 유형 ${esc(p.doc_type||'')}</td></tr>
+    <tr><td>DOI</td><td><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.doi)} ↗</a></td></tr>
+    <tr><td>수집소스</td><td>${esc(p.source_api||'')}</td></tr>
+  </table>`;
+  return `${easy}
+    <div class="tabs"><button class="tab active" data-pane="ko">🇰🇷 한글 초록</button><button class="tab" data-pane="en">영문 초록</button></div>
+    <div class="pane ko active">${p.abstract_ko?highlight(esc(p.abstract_ko)):'<span style="color:#caa86a">이 논문은 원문 초록이 제공되지 않아 번역이 없습니다.</span>'}</div>
+    <div class="pane en">${highlight(esc(stripTags(p.abstract)||'—'))}</div>
+    ${kws?`<div class="kws">${kws}</div>`:''}
+    ${meta}
+    <div class="review">
+      <div class="rh">📝 검수 기록 <span style="color:#6f7d8a;font-weight:400">— 논문을 읽고 브랜딩 근거로 쓸 수 있는지 판정</span></div>
+      <div class="row">
+        <label class="rd"><input type="checkbox" class="rk-read" ${e.read?'checked':''}> 읽음 표시</label>
+        <div class="verdicts">
+          <button class="vbtn${e.verdict==='strong'?' sel':''}" data-v="strong">✅ 근거 충분</button>
+          <button class="vbtn${e.verdict==='partial'?' sel':''}" data-v="partial">🟡 부분적</button>
+          <button class="vbtn${e.verdict==='weak'?' sel':''}" data-v="weak">🔴 근거 불충분</button>
+        </div>
+      </div>
+      <textarea class="rk-opinion" placeholder="검수 의견 (예: 이 논문의 항염 효능은 in vitro 수준 — 상세페이지엔 '실험실 연구' 명시 필요)">${esc(e.opinion||'')}</textarea>
+      <div class="rbar">
+        <button class="save">의견 저장</button>
+        <span class="rstatus"></span>
+        <span class="rmeta">${e.reviewer?('검수: '+esc(e.reviewer)+' · '):''}${e.updatedAt?esc(e.updatedAt.slice(0,16).replace('T',' ')):'미검수'}</span>
+      </div>
+    </div>`;
+}
+function renderList(){
+  const list=filtered();
+  activeFilterPills();
+  document.getElementById('resCount').textContent=`${list.length}편 표시 (전체 ${PAPERS.length}편 중)`;
+  const box=document.getElementById('paperList');
+  box.innerHTML=list.map(paperCardHTML).join('');
+  bindCards();
+}
+function reviewerName(){return document.getElementById('reviewer').value.trim();}
+function bindCards(){
+  document.querySelectorAll('#paperList .paper').forEach(card=>{
+    const doi=card.dataset.doi, p=PAPERS.find(x=>x.doi===doi);
+    card.querySelector('.phead').onclick=()=>{
+      const body=card.querySelector('.pbody');
+      if(body.dataset.lazy==='1'){body.innerHTML=paperBodyHTML(p);body.dataset.lazy='0';bindBody(card,p);}
+      card.classList.toggle('open');
+    };
+  });
+}
+function bindBody(card,p){
+  card.querySelectorAll('.tab').forEach(t=>t.onclick=(ev)=>{ev.stopPropagation();
+    card.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    card.querySelectorAll('.pane').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');card.querySelector('.pane.'+t.dataset.pane).classList.add('active');});
+  const rstatus=card.querySelector('.rstatus');
+  const flash=(m)=>{rstatus.textContent=m;setTimeout(()=>rstatus.textContent='',1800);};
+  card.querySelector('.rk-read').onchange=async(ev)=>{ev.stopPropagation();
+    await pushEntry(p.doi,{read:ev.target.checked,reviewer:reviewerName()||entryOf(p.doi).reviewer});
+    refreshCardChrome(card,p);renderDashboard();};
+  card.querySelectorAll('.vbtn').forEach(b=>b.onclick=async(ev)=>{ev.stopPropagation();
+    const cur=entryOf(p.doi).verdict;const v=(cur===b.dataset.v)?'':b.dataset.v;
+    await pushEntry(p.doi,{verdict:v,read:true,reviewer:reviewerName()||entryOf(p.doi).reviewer});
+    card.querySelectorAll('.vbtn').forEach(x=>x.classList.toggle('sel',x.dataset.v===v&&v!==''));
+    card.querySelector('.rk-read').checked=true;refreshCardChrome(card,p);renderDashboard();flash('판정 저장됨 ✓');});
+  card.querySelector('.save').onclick=async(ev)=>{ev.stopPropagation();
+    const op=card.querySelector('.rk-opinion').value;
+    await pushEntry(p.doi,{opinion:op,read:true,reviewer:reviewerName()||entryOf(p.doi).reviewer});
+    card.querySelector('.rk-read').checked=true;refreshCardChrome(card,p);renderDashboard();flash('저장됨 ✓');};
+  card.querySelector('.rk-opinion').onclick=(ev)=>ev.stopPropagation();
+}
+function refreshCardChrome(card,p){
+  const e=entryOf(p.doi);
+  card.classList.toggle('read',e.read);
+  const rd=card.querySelector('.readdot');rd.className='readdot'+(e.read?' on':'');rd.textContent=e.read?'✔ 읽음':'○ 안읽음';
+  let vt=card.querySelector('.pside .verdict-tag');
+  if(e.verdict){if(!vt){vt=document.createElement('span');card.querySelector('.pside').insertBefore(vt,card.querySelector('.expander'));}
+    vt.className='verdict-tag vt-'+e.verdict;vt.textContent=VERDICT_LBL[e.verdict];}
+  else if(vt){vt.remove();}
+  const rmeta=card.querySelector('.rmeta');if(rmeta)rmeta.textContent=(e.reviewer?('검수: '+e.reviewer+' · '):'')+(e.updatedAt?e.updatedAt.slice(0,16).replace('T',' '):'미검수');
+}
+
+/* ---------- view switch ---------- */
+function switchView(v){
+  document.querySelectorAll('nav.views button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('active',s.id==='view-'+v));
+  if(v==='dash')renderDashboard();
+  if(v==='browse')renderBrowse();
+  window.scrollTo(0,0);
+}
+
+/* ---------- init ---------- */
+function init(){
+  document.getElementById('kw').textContent=(META.keywords||[]).join(', ');
+  document.getElementById('gen').textContent=(META.generated_at||'').slice(0,10);
+  document.getElementById('verat').textContent=META.verified_at||'';
+  document.getElementById('verSummary').textContent=`${META.verified_count}/${META.total}편 DOI 실존 확인 · 조회 출처(OpenAlex·Crossref)에 철회 표시 없음 · preprint ${META.preprint_count}`;
+  // populate selects
+  const fd=document.getElementById('fDomain');
+  Object.entries(META.domain_counts).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>fd.add(new Option(`${LBL[k]||k} (${v})`,k)));
+  const fe=document.getElementById('fEff');
+  Object.entries(META.efficacy_type_counts).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>fe.add(new Option(`${k} (${v})`,k)));
+
+  document.querySelectorAll('nav.views button').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+  document.getElementById('q').oninput=(e)=>{F.q=e.target.value;renderList();};
+  document.getElementById('fDomain').onchange=(e)=>setFilter('domain',e.target.value);
+  document.getElementById('fEff').onchange=(e)=>setFilter('eff',e.target.value);
+  document.getElementById('fGrade').onchange=(e)=>setFilter('grade',e.target.value);
+  document.getElementById('fReview').onchange=(e)=>setFilter('review',e.target.value);
+  const fm=document.getElementById('fMat');
+  Object.entries(META.material_counts||{}).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>fm.add(new Option(`${(META.material_labels||{})[k]||k} (${v})`,k)));
+  fm.onchange=(e)=>setFilter('mat',e.target.value);
+  document.getElementById('fNew').onchange=(e)=>{F.onlyNew=e.target.checked;renderList();};
+  document.getElementById('sort').onchange=(e)=>{F.sort=e.target.value;renderList();};
+  const rv=document.getElementById('reviewer');rv.value=localStorage.getItem(LS_NAME)||'';
+  rv.oninput=()=>localStorage.setItem(LS_NAME,rv.value);
+
+  loadLocal();
+  setSyncState();
+  renderDashboard();renderBrowse();renderList();
+  syncFromServer().then(()=>{renderDashboard();if(document.getElementById('view-list').classList.contains('active'))renderList();});
+}
+init();
+</script>
+</body>
+</html>

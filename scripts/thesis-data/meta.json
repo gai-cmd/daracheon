@@ -1,0 +1,83 @@
+{
+ "keywords": [
+  "agarwood",
+  "Aquilaria",
+  "Gyrinops",
+  "aloeswood",
+  "eaglewood",
+  "gaharu",
+  "沉香"
+ ],
+ "year_from": 2020,
+ "year_to": 2026,
+ "korea_focus": true,
+ "generated_at": "2026-09-22 04:59:07",
+ "total": 480,
+ "korea_count": 7,
+ "scopus_count": 311,
+ "new_count": 58,
+ "source_counts": {
+  "OpenAlex": 200,
+  "Crossref": 200,
+  "PubMed": 200,
+  "SemanticScholar": 0,
+  "Scopus": 0,
+  "WebOfScience": 0
+ },
+ "collection_log": [
+  {
+   "source": "OpenAlex",
+   "level": "ok",
+   "message": "검색 8839건 중 200건 수집 (per_page=200)"
+  },
+  {
+   "source": "Crossref",
+   "level": "ok",
+   "message": "200건 수집"
+  },
+  {
+   "source": "PubMed",
+   "level": "ok",
+   "message": "esearch 200건 → efetch 상세 조회"
+  },
+  {
+   "source": "SemanticScholar",
+   "level": "error",
+   "message": "호출 실패: HTTP 429"
+  },
+  {
+   "source": "Scopus",
+   "level": "warn",
+   "message": "API 키 없음 — 색인 등급은 다른 소스로 검증 불가 (건너뜀)"
+  },
+  {
+   "source": "WebOfScience",
+   "level": "warn",
+   "message": "API 키 없음 — SCI/SCIE 등급 검증 불가 (건너뜀)"
+  },
+  {
+   "source": "relevance",
+   "level": "ok",
+   "message": "관련성 필터: 551건 중 480건 유지, 71건 제외(제목·초록·저널에 키워드 없음)"
+  },
+  {
+   "source": "Scimago",
+   "level": "ok",
+   "message": "저널 마스터리스트 로드: ISSN 58304개 (Scopus/SJR)"
+  },
+  {
+   "source": "Scimago",
+   "level": "ok",
+   "message": "ISSN 교차검증: 311/480건에 Scopus/SJR 등급 부여 (나머지는 미확인)"
+  },
+  {
+   "source": "OpenAlex",
+   "level": "ok",
+   "message": "2026-09-22: 2026-03-26 이후 검색 486건 → 신규 72건 추가"
+  }
+ ],
+ "efficacy_count": 182,
+ "translated_count": 480,
+ "easy_summary_count": 480,
+ "latest_batch": "2026-09-22"
+}
