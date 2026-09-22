@@ -42,6 +42,9 @@ papers.forEach((p, i) => {
   delete p.__docType;
   const scieHit = (p.issn || []).map((i) => scieMap[i]).find((v) => v === true || v === false);
   p.scie = scieHit === undefined ? null : scieHit;
+  // WoS 색인 종류(SCIE/SSCI/AHCI/ESCI) — MJL _products 기록에서 첫 ISSN 기준
+  const prods = (scieMap._products || {})[(p.issn || [])[0]] || [];
+  p.wos_index = prods.map((d) => ({ 'Science Citation Index Expanded': 'SCIE', 'Social Sciences Citation Index': 'SSCI', 'Arts & Humanities Citation Index': 'AHCI', 'Emerging Sources Citation Index': 'ESCI' })[d]).filter(Boolean);
   p.material = materialOf(p);
   p.material_label = MATERIALS[p.material];
   p.efficacy_types_raw = p.efficacy_types || [];
@@ -82,6 +85,7 @@ meta.material_counts = papers.reduce((a, p) => { a[p.material] = (a[p.material] 
 meta.material_labels = MATERIALS;
 meta.scopus_count = papers.filter((p) => p.scopus).length;
 meta.scie_count = papers.filter((p) => p.scie === true).length;
+meta.esci_only_count = papers.filter((p) => p.scie === false && (p.wos_index || []).includes('ESCI')).length;
 meta.scie_checked_at = scieMap._checked_at || '';
 meta.korea_count = papers.filter((p) => p.is_korea).length;
 meta.verified_at = new Date().toISOString().slice(0, 10);

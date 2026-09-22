@@ -244,6 +244,7 @@
       <select id="fEff"><option value="">전체 효능</option></select>
       <select id="fGrade">
         <option value="">전체 등급</option>
+        <option value="scie">SCIE 등재지 게재</option>
         <option value="broadcast">SJR 분위 산출(Q1~Q4)</option>
         <option value="Q1">Q1 최상위</option><option value="Q2">Q2 상위</option>
         <option value="Q3">Q3</option><option value="Q4">Q4</option>
@@ -369,7 +370,7 @@ function renderDashboard(){
     {n:T,l:'총 논문',cls:''},
     {n:META.verified_count+'/'+T,l:'진위 실존확인',sub:'DOI OpenAlex·Crossref 대조',cls:'ok'},
     {n:sci,l:'SJR 분위 산출(Q1~Q4)',sub:'Scopus/SCImago 기준',cls:''},
-    {n:(META.scie_count||0)+'/'+T,l:'SCIE 등재 확인',sub:META.scie_checked_at?('MJL 수기 대조 '+META.scie_checked_at):'미대조 — scie-issn.json 채우면 표시',cls:''},
+    {n:(META.scie_count||0)+'/'+T,l:'SCIE 등재지 게재',sub:META.scie_checked_at?('Clarivate MJL 대조 '+META.scie_checked_at+' · ESCI만 '+(META.esci_only_count||0)+'편'):'미대조',cls:''},
     {n:META.efficacy_count,l:'효능 논문',sub:'초록에 활성 시험 확인·복합제/내생균 제외',cls:'pu'},
     {n:META.new_count||0,l:'신규 추가',sub:'최근 수집 '+(META.latest_batch||'-'),cls:'ok'},
     {n:rs.read,l:'검수 읽음',sub:'전체 '+T+'편 중',cls:'ok'},
@@ -433,7 +434,7 @@ function renderBrowse(){
   document.querySelectorAll('#effChips .chip').forEach(c=>c.onclick=()=>{setFilter('eff',c.dataset.eff);switchView('list');});
 
   const gc=META.quartile_counts, sci=(gc.Q1||0)+(gc.Q2||0)+(gc.Q3||0)+(gc.Q4||0);
-  const grades=[['broadcast','SJR 분위 산출(Q1~Q4)',sci],['Q1','Q1 최상위',gc.Q1||0],['Q2','Q2 상위',gc.Q2||0],
+  const grades=[['scie','SCIE 등재지',META.scie_count||0],['broadcast','SJR 분위 산출(Q1~Q4)',sci],['Q1','Q1 최상위',gc.Q1||0],['Q2','Q2 상위',gc.Q2||0],
     ['Q3','Q3',gc.Q3||0],['Q4','Q4',gc.Q4||0],['none','색인 미확인',gc['미확인']||0]];
   document.getElementById('gradeChips').innerHTML=grades.map(([k,l,v])=>
     `<span class="chip dom" data-grade="${k}">${l}<span class="c">${v}</span></span>`).join('');
@@ -452,6 +453,7 @@ function setFilter(k,v){F[k]=v;
 }
 function matchGrade(p,g){
   if(!g)return true;
+  if(g==='scie')return p.scie===true;
   if(g==='broadcast')return !!p.quartile;
   if(g==='idx_only')return !p.quartile&&p.scopus;
   if(g==='none')return !p.quartile&&!p.scopus;
@@ -532,7 +534,7 @@ function paperCardHTML(p){
         <div class="pbadges">
           ${p.quartile?`<span class="badge ${qcls}">SJR ${p.quartile}</span>`:(p.scopus?'<span class="badge idx">Scopus 등재</span>':'<span class="badge unk">색인 미확인</span>')}
           ${isNew(p)?'<span class="badge new">🆕 NEW '+esc(p.added_batch||'')+'</span>':''}
-          ${p.scie===true?'<span class="badge scie" title="Clarivate Master Journal List 수기 확인">SCIE 등재</span>':''}
+          ${p.scie===true?'<span class="badge scie" title="Clarivate Master Journal List 대조">SCIE 등재</span>':((p.wos_index||[]).includes('ESCI')?'<span class="badge" title="Web of Science ESCI만 등재(SCIE 아님)">ESCI</span>':'')}
           ${verBadge(p)} ${dom} ${matBadge(p)} ${p.is_review?'<span class="badge">종설</span>':''} ${p.is_korea?'<span class="badge kr">🇰🇷 한국</span>':''}
           ${eff}
         </div>

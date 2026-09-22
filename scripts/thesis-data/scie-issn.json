@@ -1,4 +1,1166 @@
 {
- "_note": "ISSN → true(SCIE 등재 확인)/false(미등재 확인). 출처: Clarivate Master Journal List 수기 확인. 확인 안 된 저널은 넣지 않는다(null=미확인).",
- "_checked_at": ""
+ "_note": "ISSN → true(SCIE 등재)/false(미등재 또는 MJL에 없음). 출처: Clarivate Master Journal List 공개 검색(rank-search), thesis-scie-check.mjs. _products 에 저널별 WoS 색인(SCIE/SSCI/AHCI/ESCI) 기록.",
+ "_checked_at": "2026-09-22",
+ "0265-0568": true,
+ "1460-4752": true,
+ "_products": {
+  "0265-0568": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1420-3049": [
+   "Science Citation Index Expanded"
+  ],
+  "0926-6690": [
+   "Science Citation Index Expanded"
+  ],
+  "0334-5114": [
+   "Science Citation Index Expanded"
+  ],
+  "1471-2229": [
+   "Science Citation Index Expanded"
+  ],
+  "1878-5352": [
+   "Science Citation Index Expanded"
+  ],
+  "2589-9473": [
+   "Emerging Sources Citation Index"
+  ],
+  "2047-217X": [
+   "Science Citation Index Expanded"
+  ],
+  "0045-2068": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1687-8760": [
+   "Science Citation Index Expanded"
+  ],
+  "2091-2609": [],
+  "1412-033X": [],
+  "2045-2322": [
+   "Science Citation Index Expanded"
+  ],
+  "2041-1723": [
+   "Science Citation Index Expanded"
+  ],
+  "0031-9422": [
+   "Reaction Citation Index",
+   "Science Citation Index Expanded"
+  ],
+  "0981-9428": [
+   "Science Citation Index Expanded"
+  ],
+  "1755-098X": [],
+  "1932-6203": [
+   "Science Citation Index Expanded"
+  ],
+  "2589-014X": [
+   "Emerging Sources Citation Index"
+  ],
+  "0141-8130": [
+   "Science Citation Index Expanded"
+  ],
+  "0128-1283": [
+   "Science Citation Index Expanded"
+  ],
+  "0071-7886": [],
+  "0024-4074": [
+   "Science Citation Index Expanded"
+  ],
+  "1999-4907": [
+   "Science Citation Index Expanded"
+  ],
+  "0022-3263": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1674-6384": [
+   "Emerging Sources Citation Index"
+  ],
+  "1411-5786": [],
+  "0013-9351": [
+   "Science Citation Index Expanded"
+  ],
+  "2766-9963": [],
+  "1874-3900": [
+   "Science Citation Index Expanded"
+  ],
+  "0960-3115": [
+   "Science Citation Index Expanded"
+  ],
+  "2621-6779": [],
+  "2527-6328": [],
+  "0343-8651": [
+   "Science Citation Index Expanded"
+  ],
+  "2405-8440": [
+   "Science Citation Index Expanded"
+  ],
+  "1664-462X": [
+   "Science Citation Index Expanded"
+  ],
+  "2223-7747": [
+   "Science Citation Index Expanded"
+  ],
+  "2309-608X": [
+   "Science Citation Index Expanded"
+  ],
+  "2809-3607": [],
+  "0021-8561": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "0853-4217": [],
+  "1755-1307": [],
+  "0971-5894": [
+   "Science Citation Index Expanded"
+  ],
+  "2663-1067": [],
+  "1663-9812": [
+   "Science Citation Index Expanded"
+  ],
+  "2666-7193": [
+   "Emerging Sources Citation Index"
+  ],
+  "2662-253X": [
+   "Emerging Sources Citation Index"
+  ],
+  "2073-4425": [
+   "Science Citation Index Expanded"
+  ],
+  "1878-8181": [
+   "Emerging Sources Citation Index"
+  ],
+  "2231-3354": [],
+  "0367-326X": [
+   "Science Citation Index Expanded"
+  ],
+  "2338-834X": [],
+  "2075-1729": [
+   "Science Citation Index Expanded"
+  ],
+  "2052-4110": [],
+  "1422-0067": [
+   "Science Citation Index Expanded"
+  ],
+  "1424-2818": [
+   "Science Citation Index Expanded"
+  ],
+  "2289-7070": [],
+  "2655-8289": [],
+  "2808-845X": [],
+  "2085-191X": [],
+  "2302-299X": [],
+  "2351-9894": [
+   "Science Citation Index Expanded"
+  ],
+  "1756-0500": [
+   "Emerging Sources Citation Index"
+  ],
+  "2673-4532": [
+   "Emerging Sources Citation Index"
+  ],
+  "2227-9717": [
+   "Science Citation Index Expanded"
+  ],
+  "2165-0497": [
+   "Science Citation Index Expanded"
+  ],
+  "1985-5133": [],
+  "0254-6299": [
+   "Science Citation Index Expanded"
+  ],
+  "1059-910X": [
+   "Science Citation Index Expanded"
+  ],
+  "1757-8981": [],
+  "0931-1890": [
+   "Science Citation Index Expanded"
+  ],
+  "0006-3134": [
+   "Science Citation Index Expanded"
+  ],
+  "1664-302X": [
+   "Science Citation Index Expanded"
+  ],
+  "2167-8359": [
+   "Science Citation Index Expanded"
+  ],
+  "2460-8572": [],
+  "1463-9262": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "2550-2166": [],
+  "2541-626X": [],
+  "2190-572X": [
+   "Science Citation Index Expanded"
+  ],
+  "2791-7509": [],
+  "1212-9151": [],
+  "1478-6419": [
+   "Science Citation Index Expanded"
+  ],
+  "2731-0450": [
+   "Emerging Sources Citation Index"
+  ],
+  "0344-0338": [
+   "Science Citation Index Expanded"
+  ],
+  "1872-4973": [
+   "Science Citation Index Expanded"
+  ],
+  "0378-8741": [
+   "Science Citation Index Expanded"
+  ],
+  "1411-9420": [
+   "Emerging Sources Citation Index"
+  ],
+  "1860-5397": [
+   "Science Citation Index Expanded"
+  ],
+  "1741-427X": [],
+  "1018-7081": [
+   "Science Citation Index Expanded"
+  ],
+  "2352-5398": [],
+  "0944-7113": [
+   "Science Citation Index Expanded"
+  ],
+  "2792-1360": [],
+  "2380-2359": [
+   "Science Citation Index Expanded"
+  ],
+  "1511-2292": [],
+  "1612-1872": [
+   "Science Citation Index Expanded"
+  ],
+  "2212-9820": [
+   "Science Citation Index Expanded"
+  ],
+  "1007-662X": [
+   "Science Citation Index Expanded"
+  ],
+  "2622-8963": [],
+  "0975-7538": [],
+  "2073-4395": [
+   "Science Citation Index Expanded"
+  ],
+  "2072-6643": [
+   "Science Citation Index Expanded"
+  ],
+  "2462-1943": [],
+  "2581-6853": [],
+  "0971-9415": [],
+  "1467-3037": [
+   "Science Citation Index Expanded"
+  ],
+  "1532-0464": [
+   "Science Citation Index Expanded"
+  ],
+  "2574-7797": [],
+  "2289-7879": [],
+  "0341-8162": [
+   "Science Citation Index Expanded"
+  ],
+  "1930-2126": [
+   "Science Citation Index Expanded"
+  ],
+  "2339-0913": [],
+  "2086-1400": [],
+  "0003-2719": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1003-1057": [],
+  "2746-0401": [],
+  "1835-2693": [],
+  "2214-7853": [],
+  "1471-2164": [
+   "Science Citation Index Expanded"
+  ],
+  "2540-9689": [],
+  "2621-4113": [],
+  "2330-1708": [],
+  "2685-6646": [],
+  "2599-1183": [],
+  "2828-3155": [],
+  "2829-2421": [],
+  "2235-9362": [],
+  "2477-5398": [],
+  "2085-4722": [],
+  "2337-7992": [],
+  "2088-7019": [],
+  "2708-7972": [],
+  "2168-5665": [],
+  "2776-7175": [],
+  "2964-4984": [],
+  "2166-613X": [],
+  "2716-473X": [],
+  "3046-8523": [],
+  "2614-6541": [],
+  "0944-5013": [
+   "Science Citation Index Expanded"
+  ],
+  "2289-4268": [],
+  "2549-7863": [],
+  "2986-1772": [],
+  "2599-2740": [],
+  "3048-1260": [],
+  "2581-3021": [],
+  "2714-8564": [],
+  "2541-6901": [],
+  "2582-7421": [],
+  "0972-5938": [
+   "Science Citation Index Expanded"
+  ],
+  "2407-795X": [],
+  "2775-3670": [],
+  "2830-201X": [],
+  "2615-8566": [],
+  "3110-2581": [],
+  "1981-3163": [
+   "Science Citation Index Expanded"
+  ],
+  "2723-7966": [],
+  "2987-0887": [],
+  "2337-8751": [],
+  "3048-0183": [],
+  "2502-5007": [],
+  "2502-4787": [],
+  "2476-9258": [],
+  "2460-9560": [],
+  "2622-5158": [],
+  "2808-1374": [],
+  "2541-3554": [],
+  "2655-0938": [],
+  "2656-3282": [],
+  "2086-6682": [],
+  "2654-4008": [],
+  "2548-2114": [],
+  "2798-558X": [],
+  "2621-9816": [],
+  "2988-5566": [],
+  "2407-6279": [],
+  "2808-3911": [],
+  "2548-611X": [],
+  "2277-4998": [],
+  "2774-5848": [],
+  "2579-5686": [],
+  "2962-7990": [],
+  "2503-0450": [],
+  "2775-927X": [],
+  "2307-4108": [
+   "Science Citation Index Expanded"
+  ],
+  "3025-4205": [],
+  "2320-0286": [],
+  "2655-643X": [],
+  "2810-0042": [],
+  "2540-9581": [],
+  "2776-1754": [],
+  "0976-0504": [
+   "Emerging Sources Citation Index"
+  ],
+  "2706-0233": [],
+  "2656-1727": [],
+  "2235-9427": [],
+  "2442-5435": [],
+  "2747-2167": [],
+  "2797-2100": [],
+  "2721-5571": [],
+  "2407-7607": [],
+  "2477-3751": [],
+  "3032-1344": [],
+  "2042-6445": [
+   "Emerging Sources Citation Index"
+  ],
+  "2549-9424": [],
+  "2193-9616": [],
+  "2620-4177": [],
+  "2337-8824": [],
+  "2602-4039": [
+   "Emerging Sources Citation Index"
+  ],
+  "2460-8203": [],
+  "2654-4113": [],
+  "2655-9994": [],
+  "1212-4834": [
+   "Emerging Sources Citation Index"
+  ],
+  "2456-690X": [],
+  "2788-4538": [],
+  "2623-1336": [],
+  "2527-9017": [],
+  "0928-1541": [
+   "Science Citation Index Expanded"
+  ],
+  "2087-2100": [
+   "Emerging Sources Citation Index"
+  ],
+  "2616-0684": [],
+  "2581-7418": [],
+  "2579-8103": [],
+  "2456-7051": [],
+  "2308-1597": [],
+  "1477-2701": [
+   "Emerging Sources Citation Index"
+  ],
+  "2963-0940": [],
+  "2581-9992": [],
+  "2599-2570": [
+   "Emerging Sources Citation Index"
+  ],
+  "2630-0192": [],
+  "2722-2616": [],
+  "2355-9179": [
+   "Emerging Sources Citation Index"
+  ],
+  "2581-8627": [],
+  "2776-9216": [],
+  "1177-8881": [
+   "Science Citation Index Expanded"
+  ],
+  "2150-1203": [
+   "Emerging Sources Citation Index"
+  ],
+  "1028-6020": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "0739-4462": [
+   "Science Citation Index Expanded"
+  ],
+  "2214-0883": [
+   "Science Citation Index Expanded"
+  ],
+  "2590-1575": [
+   "Science Citation Index Expanded"
+  ],
+  "1082-6068": [
+   "Science Citation Index Expanded"
+  ],
+  "2688-2663": [
+   "Emerging Sources Citation Index"
+  ],
+  "0003-2670": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1613-4125": [
+   "Science Citation Index Expanded"
+  ],
+  "1314-2828": [
+   "Science Citation Index Expanded"
+  ],
+  "0021-9673": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "2079-6382": [
+   "Science Citation Index Expanded"
+  ],
+  "1314-4049": [
+   "Science Citation Index Expanded"
+  ],
+  "2046-2069": [
+   "Science Citation Index Expanded"
+  ],
+  "1001-5302": [],
+  "0014-4827": [
+   "Science Citation Index Expanded"
+  ],
+  "1976-9571": [
+   "Science Citation Index Expanded"
+  ],
+  "1746-4269": [
+   "Science Citation Index Expanded"
+  ],
+  "1672-9609": [
+   "Science Citation Index Expanded"
+  ],
+  "2227-9059": [
+   "Science Citation Index Expanded"
+  ],
+  "2352-3409": [
+   "Emerging Sources Citation Index"
+  ],
+  "2211-5463": [
+   "Science Citation Index Expanded"
+  ],
+  "1875-5364": [
+   "Science Citation Index Expanded"
+  ],
+  "1085-9195": [
+   "Science Citation Index Expanded"
+  ],
+  "2191-0855": [
+   "Science Citation Index Expanded"
+  ],
+  "1011-601X": [
+   "Science Citation Index Expanded"
+  ],
+  "0021-8820": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "1467-7644": [
+   "Science Citation Index Expanded"
+  ],
+  "1424-8247": [
+   "Science Citation Index Expanded"
+  ],
+  "0163-3864": [
+   "Reaction Citation Index",
+   "Science Citation Index Expanded"
+  ],
+  "1367-5435": [
+   "Science Citation Index Expanded"
+  ],
+  "2075-4450": [
+   "Science Citation Index Expanded"
+  ],
+  "2045-7758": [
+   "Science Citation Index Expanded"
+  ],
+  "1471-2334": [
+   "Science Citation Index Expanded"
+  ],
+  "0003-6072": [
+   "Science Citation Index Expanded"
+  ],
+  "0960-7412": [
+   "Science Citation Index Expanded"
+  ],
+  "1749-8546": [
+   "Science Citation Index Expanded"
+  ],
+  "2046-1402": [],
+  "1345-8957": [
+   "Science Citation Index Expanded"
+  ],
+  "2314-6141": [
+   "Emerging Sources Citation Index"
+  ],
+  "1881-7831": [
+   "Emerging Sources Citation Index"
+  ],
+  "2767-3812": [
+   "Emerging Sources Citation Index"
+  ],
+  "0308-8146": [
+   "Science Citation Index Expanded"
+  ],
+  "2666-8319": [
+   "Emerging Sources Citation Index"
+  ],
+  "0021-9037": [
+   "Science Citation Index Expanded"
+  ],
+  "2238-4782": [
+   "Emerging Sources Citation Index"
+  ],
+  "2214-6628": [
+   "Emerging Sources Citation Index"
+  ],
+  "1029-7073": [
+   "Emerging Sources Citation Index"
+  ],
+  "2716-6481": [],
+  "0974-7893": [],
+  "0971-7811": [
+   "Science Citation Index Expanded"
+  ],
+  "1126-3504": [
+   "Science Citation Index Expanded"
+  ],
+  "0019-4816": [],
+  "2579-7913": [],
+  "0958-0344": [
+   "Science Citation Index Expanded"
+  ],
+  "0925-4005": [
+   "Science Citation Index Expanded"
+  ],
+  "2949-8244": [
+   "Emerging Sources Citation Index"
+  ],
+  "1435-0211": [
+   "Science Citation Index Expanded"
+  ],
+  "0040-4020": [
+   "Reaction Citation Index",
+   "Science Citation Index Expanded"
+  ],
+  "2589-871X": [
+   "Emerging Sources Citation Index"
+  ],
+  "2159-5836": [],
+  "2301-7694": [],
+  "0095-3628": [
+   "Science Citation Index Expanded"
+  ],
+  "0963-9969": [
+   "Science Citation Index Expanded"
+  ],
+  "1858-4209": [],
+  "0959-3993": [
+   "Science Citation Index Expanded"
+  ],
+  "0975-4415": [],
+  "0974-360X": [],
+  "0167-4366": [
+   "Science Citation Index Expanded"
+  ],
+  "3046-5494": [],
+  "3048-0698": [],
+  "2097-1206": [],
+  "1411-9587": [],
+  "2365-6549": [
+   "Science Citation Index Expanded"
+  ],
+  "0125-8281": [
+   "Emerging Sources Citation Index"
+  ],
+  "1748-0272": [
+   "Science Citation Index Expanded"
+  ],
+  "0882-5734": [
+   "Science Citation Index Expanded"
+  ],
+  "2229-7928": [
+   "Emerging Sources Citation Index"
+  ],
+  "1410-5918": [],
+  "2654-9395": [],
+  "2322-1232": [
+   "Emerging Sources Citation Index"
+  ],
+  "1693-7309": [],
+  "2775-4189": [],
+  "1829-9288": [],
+  "0019-5200": [
+   "Science Citation Index Expanded"
+  ],
+  "2089-4872": [],
+  "0717-7917": [
+   "Science Citation Index Expanded"
+  ]
+ },
+ "1420-3049": true,
+ "1433-1373": true,
+ "0926-6690": true,
+ "1872-633X": true,
+ "0334-5114": true,
+ "1878-7665": true,
+ "1471-2229": true,
+ "1878-5352": true,
+ "1878-5379": true,
+ "2589-9473": false,
+ "2589-9627": false,
+ "2047-217X": true,
+ "0045-2068": true,
+ "1090-2120": true,
+ "1687-8760": true,
+ "1687-8779": true,
+ "2091-2609": false,
+ "1412-033X": false,
+ "2085-4722": false,
+ "2045-2322": true,
+ "2041-1723": true,
+ "0031-9422": true,
+ "1873-3700": true,
+ "0981-9428": true,
+ "1873-2690": true,
+ "1755-098X": false,
+ "1755-0998": false,
+ "1932-6203": true,
+ "2589-014X": false,
+ "0141-8130": true,
+ "1879-0003": true,
+ "0128-1283": true,
+ "2521-9847": true,
+ "0071-7886": false,
+ "2191-7043": false,
+ "2192-4309": false,
+ "0024-4074": true,
+ "1095-8339": true,
+ "1999-4907": true,
+ "0022-3263": true,
+ "1520-6904": true,
+ "1674-6384": false,
+ "2589-3610": false,
+ "1411-5786": false,
+ "2655-7339": false,
+ "0013-9351": true,
+ "1096-0953": true,
+ "2766-9963": false,
+ "1874-3900": true,
+ "1876-7486": true,
+ "0960-3115": true,
+ "1572-9710": true,
+ "2621-6779": false,
+ "2776-7175": false,
+ "2527-6328": false,
+ "2549-3558": false,
+ "0343-8651": true,
+ "1432-0991": true,
+ "2405-8440": true,
+ "1664-462X": true,
+ "2223-7747": true,
+ "2309-608X": true,
+ "2809-3607": false,
+ "0021-8561": true,
+ "1520-5118": true,
+ "0853-4217": false,
+ "2443-3462": false,
+ "1755-1307": false,
+ "1755-1315": false,
+ "0971-5894": true,
+ "0974-0430": true,
+ "2663-1067": false,
+ "2663-1075": false,
+ "1663-9812": true,
+ "2666-7193": false,
+ "2662-253X": false,
+ "2662-2548": false,
+ "2073-4425": true,
+ "1878-8181": false,
+ "2231-3354": false,
+ "0367-326X": true,
+ "1873-6971": true,
+ "2338-834X": false,
+ "2075-1729": true,
+ "2052-4110": false,
+ "2052-4129": false,
+ "1422-0067": true,
+ "1661-6596": true,
+ "1424-2818": true,
+ "2289-7070": false,
+ "2462-2451": false,
+ "2655-8289": false,
+ "2656-131X": false,
+ "2808-845X": false,
+ "2085-191X": false,
+ "2338-7610": false,
+ "2302-299X": false,
+ "2407-7860": false,
+ "2351-9894": true,
+ "1756-0500": false,
+ "2673-4532": false,
+ "2227-9717": true,
+ "2165-0497": true,
+ "1985-5133": false,
+ "2180-1983": false,
+ "0254-6299": true,
+ "1727-9321": true,
+ "1059-910X": true,
+ "1097-0029": true,
+ "1757-8981": false,
+ "1757-899X": false,
+ "0931-1890": true,
+ "1432-2285": true,
+ "0006-3134": true,
+ "1573-8264": true,
+ "1664-302X": true,
+ "2167-8359": true,
+ "2460-8572": false,
+ "2461-095X": false,
+ "1463-9262": true,
+ "1463-9270": true,
+ "2550-2166": false,
+ "2541-626X": false,
+ "2190-572X": true,
+ "2190-5738": true,
+ "2791-7509": false,
+ "1212-9151": false,
+ "1805-9376": false,
+ "1478-6419": true,
+ "1478-6427": true,
+ "2731-0450": false,
+ "0344-0338": true,
+ "1618-0631": true,
+ "1872-4973": true,
+ "1878-0326": true,
+ "0378-8741": true,
+ "1872-7573": true,
+ "1411-9420": false,
+ "2460-1578": false,
+ "1860-5397": true,
+ "2195-951X": true,
+ "1741-427X": false,
+ "1741-4288": false,
+ "1018-7081": true,
+ "2309-8694": true,
+ "2352-5398": false,
+ "2731-8060": false,
+ "0944-7113": true,
+ "1618-095X": true,
+ "2792-1360": false,
+ "2380-2359": true,
+ "1511-2292": false,
+ "2550-1658": false,
+ "1612-1872": true,
+ "1612-1880": true,
+ "2212-9820": true,
+ "2212-9839": true,
+ "1007-662X": true,
+ "1993-0607": true,
+ "2622-8963": false,
+ "0975-7538": false,
+ "2073-4395": true,
+ "2072-6643": true,
+ "2462-1943": false,
+ "2581-6853": false,
+ "0971-9415": false,
+ "1467-3037": true,
+ "1467-3045": true,
+ "1532-0464": true,
+ "1532-0480": true,
+ "2574-7797": false,
+ "2289-7879": false,
+ "0341-8162": true,
+ "1872-6887": true,
+ "1930-2126": true,
+ "2339-0913": false,
+ "2549-5747": false,
+ "2086-1400": false,
+ "2503-0779": false,
+ "0003-2719": true,
+ "1532-236X": true,
+ "1003-1057": false,
+ "2746-0401": false,
+ "1835-2693": false,
+ "1835-2707": false,
+ "2214-7853": false,
+ "1471-2164": true,
+ "2540-9689": false,
+ "0216-0439": false,
+ "2621-4113": false,
+ "2615-8353": false,
+ "2330-1708": false,
+ "2330-1716": false,
+ "2685-6646": false,
+ "2599-1183": false,
+ "2599-1205": false,
+ "2828-3155": false,
+ "2828-4321": false,
+ "2829-2421": false,
+ "2235-9362": false,
+ "2235-9370": false,
+ "2477-5398": false,
+ "2337-7992": false,
+ "2337-7771": false,
+ "2088-7019": false,
+ "2708-7972": false,
+ "2168-5665": false,
+ "2168-5673": false,
+ "2964-4984": false,
+ "2964-4992": false,
+ "2166-613X": false,
+ "2166-6121": false,
+ "2716-473X": false,
+ "2716-4748": false,
+ "3046-8523": false,
+ "2614-6541": false,
+ "2356-2234": false,
+ "0944-5013": true,
+ "1618-0623": true,
+ "2289-4268": false,
+ "2549-7863": false,
+ "1411-9587": false,
+ "2986-1772": false,
+ "2599-2740": false,
+ "1907-9850": false,
+ "3048-1260": false,
+ "2581-3021": false,
+ "1907-574X": false,
+ "2714-8564": false,
+ "2541-6901": false,
+ "2582-7421": false,
+ "0972-5938": true,
+ "0975-1068": true,
+ "2407-795X": false,
+ "2460-2582": false,
+ "2775-3670": false,
+ "2830-201X": false,
+ "2303-2138": false,
+ "2615-8566": false,
+ "2406-8071": false,
+ "3110-2581": false,
+ "1981-3163": true,
+ "2723-7966": false,
+ "2723-7974": false,
+ "2987-0887": false,
+ "2337-8751": false,
+ "0126-1754": false,
+ "3048-0183": false,
+ "2502-5007": false,
+ "2252-3367": false,
+ "2502-4787": false,
+ "2502-4779": false,
+ "2476-9258": false,
+ "1693-5616": false,
+ "2460-9560": false,
+ "2355-5386": false,
+ "2622-5158": false,
+ "2622-5093": false,
+ "2808-1374": false,
+ "2541-3554": false,
+ "2086-9827": false,
+ "2655-0938": false,
+ "2655-1322": false,
+ "2656-3282": false,
+ "2088-9569": false,
+ "2086-6682": false,
+ "0852-257X": false,
+ "2654-4008": false,
+ "2088-155X": false,
+ "2548-2114": false,
+ "2541-2027": false,
+ "2798-558X": false,
+ "2798-0332": false,
+ "2621-9816": false,
+ "2086-6968": false,
+ "2988-5566": false,
+ "3025-0935": false,
+ "2407-6279": false,
+ "2302-4178": false,
+ "2808-3911": false,
+ "2808-392X": false,
+ "2548-611X": false,
+ "2442-2606": false,
+ "2277-4998": false,
+ "2774-5848": false,
+ "2777-0524": false,
+ "2579-5686": false,
+ "2086-6755": false,
+ "2962-7990": false,
+ "2962-8008": false,
+ "2503-0450": false,
+ "2086-3314": false,
+ "2775-927X": false,
+ "2356-1823": false,
+ "2307-4108": true,
+ "3025-4205": false,
+ "2320-0286": false,
+ "2582-2527": false,
+ "2655-643X": false,
+ "2623-0674": false,
+ "2810-0042": false,
+ "2810-0395": false,
+ "2540-9581": false,
+ "2540-9573": false,
+ "2776-1754": false,
+ "2338-3127": false,
+ "0976-0504": false,
+ "0976-0512": false,
+ "2706-0233": false,
+ "1016-1422": false,
+ "2656-1727": false,
+ "2684-785X": false,
+ "2235-9427": false,
+ "2235-9397": false,
+ "2442-5435": false,
+ "2407-7062": false,
+ "2747-2167": false,
+ "2747-2175": false,
+ "2797-2100": false,
+ "2721-5571": false,
+ "2407-7607": false,
+ "0854-641X": false,
+ "2477-3751": false,
+ "0126-4451": false,
+ "3032-1344": false,
+ "3032-1336": false,
+ "2042-6445": false,
+ "2042-6453": false,
+ "2549-9424": false,
+ "2088-026X": false,
+ "2193-9616": false,
+ "2620-4177": false,
+ "2337-7070": false,
+ "2337-8824": false,
+ "0034-365X": false,
+ "2602-4039": false,
+ "2460-8203": false,
+ "1410-394X": false,
+ "2654-4113": false,
+ "1693-024X": false,
+ "2655-9994": false,
+ "2303-3371": false,
+ "1212-4834": false,
+ "1805-935X": false,
+ "2456-690X": false,
+ "2788-4538": false,
+ "2788-4546": false,
+ "2623-1336": false,
+ "2085-501X": false,
+ "2527-9017": false,
+ "2527-6298": false,
+ "0928-1541": true,
+ "2294-1932": true,
+ "2087-2100": false,
+ "2086-9614": false,
+ "2616-0684": false,
+ "2616-0692": false,
+ "2581-7418": false,
+ "2579-8103": false,
+ "1979-8253": false,
+ "2456-7051": false,
+ "2308-1597": false,
+ "1477-2701": false,
+ "1560-2214": false,
+ "2963-0940": false,
+ "2581-9992": false,
+ "2599-2570": false,
+ "2613-9456": false,
+ "2630-0192": false,
+ "2722-2616": false,
+ "2252-8776": false,
+ "2355-9179": false,
+ "2085-3297": false,
+ "2581-8627": false,
+ "2776-9216": false,
+ "2797-3166": false,
+ "1177-8881": true,
+ "2150-1203": false,
+ "1028-6020": true,
+ "1477-2213": true,
+ "0739-4462": true,
+ "1520-6327": true,
+ "2214-0883": true,
+ "2590-1575": true,
+ "1082-6068": true,
+ "1532-2297": true,
+ "2688-2663": false,
+ "0003-2670": true,
+ "1873-4324": true,
+ "1613-4125": true,
+ "1613-4133": true,
+ "1314-2828": true,
+ "0021-9673": true,
+ "1873-3778": true,
+ "2079-6382": true,
+ "1314-4049": true,
+ "2046-2069": true,
+ "1001-5302": false,
+ "0014-4827": true,
+ "1090-2422": true,
+ "1976-9571": true,
+ "2092-9293": true,
+ "1746-4269": true,
+ "1672-9609": true,
+ "1744-7917": true,
+ "2227-9059": true,
+ "2352-3409": false,
+ "2211-5463": true,
+ "1875-5364": true,
+ "1085-9195": true,
+ "1559-0283": true,
+ "2191-0855": true,
+ "1011-601X": true,
+ "3105-9686": true,
+ "0021-8820": true,
+ "1881-1469": true,
+ "1467-7644": true,
+ "1467-7652": true,
+ "1424-8247": true,
+ "0163-3864": true,
+ "1520-6025": true,
+ "1367-5435": true,
+ "1476-5535": true,
+ "2075-4450": true,
+ "2045-7758": true,
+ "1471-2334": true,
+ "0003-6072": true,
+ "1572-9699": true,
+ "0960-7412": true,
+ "1365-313X": true,
+ "1749-8546": true,
+ "2046-1402": false,
+ "1345-8957": true,
+ "1347-3352": true,
+ "2314-6141": false,
+ "1881-7831": false,
+ "1881-784X": false,
+ "2767-3812": false,
+ "0308-8146": true,
+ "1873-7072": true,
+ "2666-8319": false,
+ "0021-9037": true,
+ "1573-8647": true,
+ "2238-4782": false,
+ "2214-6628": false,
+ "1029-7073": false,
+ "2224-8978": false,
+ "2716-6481": false,
+ "0974-7893": false,
+ "0974-7907": false,
+ "0971-7811": true,
+ "0974-1275": true,
+ "1126-3504": true,
+ "1724-5575": true,
+ "0019-4816": false,
+ "2321-094X": false,
+ "2579-7913": false,
+ "0958-0344": true,
+ "1099-1565": true,
+ "0925-4005": true,
+ "1873-3077": true,
+ "2949-8244": false,
+ "1435-0211": true,
+ "1611-4663": true,
+ "0040-4020": true,
+ "1464-5416": true,
+ "2589-871X": false,
+ "2159-5836": false,
+ "2159-5844": false,
+ "2301-7694": false,
+ "2301-7708": false,
+ "0095-3628": true,
+ "1432-184X": true,
+ "0963-9969": true,
+ "1873-7145": true,
+ "1858-4209": false,
+ "2548-608X": false,
+ "0959-3993": true,
+ "1573-0972": true,
+ "0975-4415": false,
+ "0974-360X": false,
+ "0974-3618": false,
+ "0167-4366": true,
+ "1572-9680": true,
+ "3046-5494": false,
+ "3046-5508": false,
+ "3048-0698": false,
+ "3048-121X": false,
+ "2097-1206": false,
+ "2405-805X": false,
+ "2365-6549": true,
+ "0125-8281": false,
+ "1748-0272": true,
+ "1748-0280": true,
+ "0882-5734": true,
+ "1099-1026": true,
+ "2229-7928": false,
+ "2230-7532": false,
+ "1410-5918": false,
+ "2406-9086": false,
+ "2654-9395": false,
+ "2655-3023": false,
+ "2322-1232": false,
+ "2322-5106": false,
+ "1693-7309": false,
+ "2621-2366": false,
+ "2775-4189": false,
+ "2775-4197": false,
+ "1829-9288": false,
+ "2655-1837": false,
+ "0019-5200": true,
+ "0975-6906": true,
+ "2089-4872": false,
+ "2252-8938": false,
+ "0717-7917": true
 }
