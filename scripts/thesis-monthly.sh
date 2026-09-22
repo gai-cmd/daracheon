@@ -16,6 +16,9 @@ REP=".moai/reports/thesis-cron-$(date +%Y%m%d).md"
   if [[ "$MODE" == "monthly" ]]; then
     node scripts/thesis-collect.mjs 2>&1
     echo "--- 한글 번역 대기(pending-ko.json): $(node -e 'console.log(require("./scripts/thesis-data/pending-ko.json").length)') 건 — 채운 뒤 node scripts/thesis-apply-ko.mjs && node scripts/thesis-build.mjs"
+    # 신규 저널의 SCIE 대조(Playwright 패키지가 있을 때만)
+    PW="/Users/gai/work/_wt-syncar-print/node_modules/playwright/index.mjs"
+    [[ -f "$PW" ]] && node scripts/thesis-scie-check.mjs --pw "$PW" 2>&1 | tail -2
     node scripts/thesis-build.mjs 2>&1 | tail -8
     echo "--- git: $(git status --short scripts/thesis-data public/thesis | wc -l | tr -d ' ') 파일 변경 (커밋·푸시는 사람 승인)"
   else
