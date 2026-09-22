@@ -565,7 +565,7 @@ function paperBodyHTML(p){
   </table>`;
   return `${easy}
     <div class="tabs"><button class="tab active" data-pane="ko">🇰🇷 한글 초록</button><button class="tab" data-pane="en">영문 초록</button></div>
-    <div class="pane ko active">${p.abstract_ko?highlight(esc(p.abstract_ko)):'<span style="color:#caa86a">이 논문은 원문 초록이 제공되지 않아 번역이 없습니다.</span>'}</div>
+    <div class="pane ko active">${p.abstract_ko?highlight(esc(p.abstract_ko)):((p.abstract||'').trim().length>40?'<span style="color:#caa86a">한글 번역 준비 중입니다. 영문 초록 탭을 확인하세요.</span>':'<span style="color:#caa86a">이 논문은 원문 초록이 제공되지 않아 번역이 없습니다.</span>')}</div>
     <div class="pane en">${highlight(esc(stripTags(p.abstract)||'—'))}</div>
     ${kws?`<div class="kws">${kws}</div>`:''}
     ${meta}
