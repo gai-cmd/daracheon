@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
-import { parseDisplayPrice } from '@/lib/utils';
 import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
@@ -230,14 +229,10 @@ export default async function ProductsPage() {
   const products = allProducts.filter((p) => p.published !== false);
   const sourceCategories = dbCategories.length > 0 ? dbCategories : DEFAULT_CATEGORIES;
 
-  // 목록 Offer 의 priceValidUntil — 상세 페이지와 동일 규칙(기본 1년 후).
-  const listPriceValidUntil = (() => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() + 1);
-    return d.toISOString().slice(0, 10);
-  })();
-
-  // CollectionPage + ItemList — Google/네이버 제품 목록 리치결과, AI 가 "대라천 제품 목록" 질의에 직접 답변 가능.
+  // CollectionPage + ItemList — 구글 "요약 페이지 + 상세 페이지" 권장 구조.
+  // 목록에는 각 제품의 url 만 두고 Product 본문(offers·평점 등)은 상세 페이지 한 곳에서만 내보낸다.
+  // 예전처럼 목록에 Product 객체를 통째로 실으면 제품 10개가 각각 제품 스니펫 심사 대상이 되어
+  // 실제 후기가 없는 지금은 "aggregateRating 누락" 경고가 제품 수만큼 쌓인다 (GSC 2026-09-23).
   const collectionJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -251,40 +246,12 @@ export default async function ProductsPage() {
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: products.length,
-      itemListElement: products.slice(0, 20).map((p, i) => {
-        // 상세 페이지와 동일 규칙 — price(숫자) 0 이면 화면에 노출 중인 priceDisplay 에서 복원.
-        // offers/review/aggregateRating 이 모두 없는 Product 는 Search Console 제품 스니펫
-        // 심각 오류(리치결과 미표시)가 된다.
-        const offerPrice =
-          typeof p.price === 'number' && p.price > 0 ? p.price : parseDisplayPrice(p.priceDisplay);
-        return {
-          '@type': 'ListItem',
-          position: i + 1,
-          url: `https://zoellife.com/products/${p.slug}`,
-          item: {
-            '@type': 'Product',
-            name: p.name,
-            url: `https://zoellife.com/products/${p.slug}`,
-            ...(p.image ? { image: p.image } : {}),
-            ...(p.shortDescription ? { description: p.shortDescription } : {}),
-            brand: { '@type': 'Brand', name: '대라천 ZOEL LIFE' },
-            ...(offerPrice !== null
-              ? {
-                  offers: {
-                    '@type': 'Offer',
-                    price: offerPrice,
-                    priceCurrency: 'KRW',
-                    priceValidUntil: listPriceValidUntil,
-                    availability: p.inStock
-                      ? 'https://schema.org/InStock'
-                      : 'https://schema.org/OutOfStock',
-                    url: `https://zoellife.com/products/${p.slug}`,
-                  },
-                }
-              : {}),
-          },
-        };
-      }),
+      itemListElement: products.slice(0, 20).map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: p.name,
+        url: `https://zoellife.com/products/${p.slug}`,
+      })),
     },
   };
 
