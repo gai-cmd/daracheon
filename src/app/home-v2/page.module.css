@@ -1,0 +1,365 @@
+/* 메인 단순화 시안 — 현행 홈과 같은 다크·골드 톤, 섹션마다 한 가지 목적만 둔다. */
+
+.page {
+  background: #0a0b10;
+  color: #fdfbf7;
+}
+
+.wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+@media (min-width: 1024px) {
+  .wrap { padding: 0 64px; }
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #d4a843;
+  margin-bottom: 14px;
+}
+
+.h2 {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.4;
+  color: #fdfbf7;
+  margin: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.h2 em { font-style: normal; color: #d4a843; }
+
+.h3 {
+  font-family: var(--font-serif), serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #fdfbf7;
+  margin: 0;
+}
+
+/* 버튼 */
+.btnGold,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 26px;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 240ms ease, color 240ms ease, border-color 240ms ease;
+}
+.btnGold {
+  background: #d4a843;
+  color: #0a0b10;
+  font-weight: 600;
+}
+.btnGold:hover { background: #e2bb5c; }
+.btnGhost {
+  border: 1px solid rgba(253, 251, 247, 0.45);
+  color: #fdfbf7;
+}
+.btnGhost:hover { border-color: #d4a843; color: #d4a843; }
+
+.moreLink {
+  font-size: 0.85rem;
+  color: #d4a843;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.moreLink:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* 1. HERO */
+.hero {
+  position: relative;
+  min-height: min(92vh, 860px);
+  /* 세로 배치 — globals.css 가 첫 섹션에 붙이는 물결 ::after 가 가로 flex 항목이 되어
+     본문 폭을 절반으로 줄이던 문제를 피한다. 물결은 히어로 맨 아래 줄로 떨어진다. */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: calc(var(--nav-h, 72px) + 60px) 0 56px;
+  overflow: hidden;
+}
+.heroBg { object-fit: cover; }
+.heroShade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 11, 16, 0.35) 0%, rgba(10, 11, 16, 0.55) 45%, #0a0b10 100%),
+    linear-gradient(90deg, rgba(10, 11, 16, 0.75) 0%, rgba(10, 11, 16, 0.1) 70%);
+}
+.heroInner {
+  position: relative;
+  width: 100%;
+}
+.heroTitle {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(2.2rem, 5.2vw, 4rem);
+  font-weight: 300;
+  line-height: 1.25;
+  margin: 0 0 22px;
+  color: #fdfbf7;
+  word-break: keep-all;
+}
+.heroTitle em { font-style: normal; color: #d4a843; font-weight: 400; }
+.heroSub {
+  max-width: 640px;
+  margin: 0 0 32px;
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(253, 251, 247, 0.78);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 56px 0 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.3);
+}
+@media (min-width: 700px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+.stat {
+  padding: 18px 0 0;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+}
+.stat dd {
+  margin: 0;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  color: #fdfbf7;
+}
+.stat dt {
+  font-size: 0.78rem;
+  color: rgba(253, 251, 247, 0.55);
+  letter-spacing: 0.04em;
+}
+
+/* 공통 섹션 */
+.section {
+  padding: 88px 0;
+}
+.sectionAlt { background: #0e0f15; }
+
+.head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+/* 2. GATEWAYS — 이미지 위에 제목을 얹은 세로 카드 4장 */
+.gateGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 700px) { .gateGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .gateGrid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+
+.gateCard {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  text-decoration: none;
+  color: #fdfbf7;
+  background: #14161f;
+}
+@media (min-width: 1100px) { .gateCard { aspect-ratio: 3 / 4; } }
+.gateCard:focus-visible { outline: 2px solid #d4a843; outline-offset: 3px; }
+.gateImg {
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+.gateCard:hover .gateImg { transform: scale(1.05); }
+.gateShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 11, 16, 0) 15%, rgba(10, 11, 16, 0.7) 55%, rgba(10, 11, 16, 0.96) 100%);
+}
+.gateText {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 22px 22px;
+}
+.gateKicker {
+  font-size: 0.74rem;
+  color: #d4a843;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+.gateTitle {
+  font-family: var(--font-serif), serif;
+  font-size: 1.3rem;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  word-break: keep-all;
+}
+.gateLine { display: block; }
+.gateBody {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: rgba(253, 251, 247, 0.7);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.gateGo {
+  margin-top: 16px;
+  font-size: 0.8rem;
+  color: #d4a843;
+  transform: translateX(0);
+  transition: transform 240ms ease;
+}
+.gateCard:hover .gateGo { transform: translateX(4px); }
+
+/* 3. PRODUCTS */
+.prodRow {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 6px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 44%;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 168, 67, 0.4) transparent;
+}
+@media (min-width: 700px) { .prodRow { grid-auto-columns: calc((100% - 3 * 14px) / 4); } }
+@media (min-width: 1024px) { .prodRow { grid-auto-columns: calc((100% - 4 * 16px) / 5); gap: 16px; } }
+.prodRow > li { scroll-snap-align: start; min-width: 0; }
+
+.prodCard {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #fdfbf7;
+}
+.prodThumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #14161f;
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  margin-bottom: 14px;
+}
+.prodThumb img { transition: transform 600ms ease; }
+.prodCard:hover .prodThumb img { transform: scale(1.05); }
+.prodCat {
+  font-size: 0.72rem;
+  color: #d4a843;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.prodName {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 4. CHANNELS — 제목만 여기서, 본문은 SnsChannels */
+.channelsHead {
+  padding: 88px 0 0;
+}
+.channelsHead .head { margin-bottom: 8px; }
+.page .channelsBody {
+  border-top: 0;
+  padding-top: 32px;
+  padding-bottom: 88px;
+}
+
+/* 5. NEWS — 텍스트 목록 두 칸 */
+.newsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+@media (min-width: 900px) { .newsGrid { grid-template-columns: 1fr 1fr; gap: 64px; } }
+.newsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.35);
+}
+.newsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.newsList > li { border-bottom: 1px solid rgba(253, 251, 247, 0.08); }
+.newsItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 0;
+  text-decoration: none;
+  color: #fdfbf7;
+}
+.newsItem:hover .newsTitle { color: #d4a843; }
+.newsTitle {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  transition: color 200ms ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.newsMeta {
+  font-size: 0.75rem;
+  color: rgba(253, 251, 247, 0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 6. CLOSING */
+.closing {
+  padding: 96px 0;
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212, 168, 67, 0.12), transparent 70%),
+    #0a0b10;
+}
+.closingInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+}
+.closingInner .heroCtas { justify-content: center; }

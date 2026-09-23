@@ -64,12 +64,12 @@ function ShortsModal({ video, onClose }: { video: SnsVideo; onClose: () => void 
   );
 }
 
-export default function SnsChannels({ data }: { data: SnsChannelsData }) {
+export default function SnsChannels({ data, className }: { data: SnsChannelsData; className?: string }) {
   const [playing, setPlaying] = useState<SnsVideo | null>(null);
   const { youtube, instagram } = data;
 
   return (
-    <section className={styles.section} id="channels" aria-label="대라천 공식 채널">
+    <section className={className ? `${styles.section} ${className}` : styles.section} id="channels" aria-label="대라천 공식 채널">
       <div className={styles.wrap}>
         {youtube.videos.length > 0 && (
           <div className={styles.block}>
