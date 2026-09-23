@@ -568,7 +568,8 @@ function renderMarked(text: string, emClass?: string): React.ReactNode {
 export const metadata: Metadata = {
   // absolute — 루트 template("%s | 조엘라이프 대라천 '참'침향")이 홈 title 에
   // 브랜드를 한 번 더 붙여 2회 중복·53자 초과되던 것을 차단.
-  title: { absolute: "조엘라이프 대라천 '참'침향 - 100% 베트남산 아갈로차 침향" },
+  // 어드민 SEO 메타 제목·OG 제목과 동일 문구(33자)로 통일 (2026-09-23, 네이버 40자 권고).
+  title: { absolute: "조엘라이프 대라천 '참'침향 | 베트남산 아갈로차 정품 침향" },
   // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
   // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:
