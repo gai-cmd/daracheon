@@ -44,11 +44,10 @@ export default function ProductsPageClient({ products, productCategories, hero }
         {hero.heroImage && (
           <NextImage
             src={hero.heroImage}
-            alt=""
+            alt="대라천 '참'침향 제품 소개 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}

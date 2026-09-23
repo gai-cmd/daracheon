@@ -257,11 +257,10 @@ export default async function ProcessPage() {
         {hero.heroImage && (
           <Image
             src={hero.heroImage}
-            alt=""
+            alt="대라천 침향 생산 공정 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}

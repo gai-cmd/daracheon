@@ -329,11 +329,10 @@ export default function AboutAgarwoodClient({ data }: Props) {
         {hero?.heroImage && (
           <Image
             src={hero.heroImage}
-            alt=""
+            alt="침향이란 — 아갈로차 침향 소개 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}

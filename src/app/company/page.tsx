@@ -227,11 +227,10 @@ export default async function CompanyPage() {
         {hero.heroImage && (
           <Image
             src={hero.heroImage}
-            alt=""
+            alt="조엘라이프 대라천 회사 소개 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}

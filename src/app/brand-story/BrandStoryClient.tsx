@@ -347,11 +347,10 @@ export default function BrandStoryClient({ data, showroom }: Props) {
         {hero?.heroBg && (
           <Image
             src={hero.heroBg}
-            alt=""
+            alt="대라천 '참'침향 브랜드 스토리 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}
@@ -487,7 +486,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                       <div className={styles.proofHeroFrame}>
                         <Image
                           src={principle.heroImage}
-                          alt={principle.heroCaption ?? '20년 이상 자란 침향나무'}
+                          alt={principle.heroCaption || '20년 이상 자란 침향나무'}
                           fill
                           sizes="(max-width: 900px) 100vw, 880px"
                           style={{ objectFit: 'cover' }}
@@ -509,7 +508,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             {sec.image ? (
                               <Image
                                 src={sec.image}
-                                alt={sec.imageCaption ?? sec.titleKr}
+                                alt={sec.imageCaption || sec.titleKr}
                                 fill
                                 sizes="(max-width: 900px) 100vw, 420px"
                                 style={{ objectFit: 'cover' }}
@@ -591,7 +590,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                             <div className={styles.timelineImg}>
                               <Image
                                 src={era.image}
-                                alt={era.imageCaption ?? `${era.era} 대라천 침향 역사 이미지`}
+                                alt={era.imageCaption || `${era.era} 대라천 침향 역사 이미지`}
                                 fill
                                 sizes="(max-width: 900px) 100vw, 700px"
                                 style={{ objectFit: 'cover' }}

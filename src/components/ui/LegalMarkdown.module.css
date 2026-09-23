@@ -8,7 +8,9 @@
   overflow-wrap: break-word;
 }
 
-.legal h1 {
+/* .docTitle: 본문 '# 제목'을 h2 로 내린 뒤에도 기존 h1 외형 유지 (H1 중복 방지) */
+.legal h1,
+.legal h2.docTitle {
   font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 3.6vw, 2.4rem);
   font-weight: 300;
@@ -29,6 +31,7 @@
   border-top: 1px solid rgba(212, 168, 67, 0.18);
 }
 
+.legal h2.docTitle,
 .legal h2:first-child,
 .legal > :first-child.legal h2 {
   border-top: none;

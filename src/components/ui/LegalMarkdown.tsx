@@ -161,7 +161,8 @@ export default function LegalMarkdown({ content }: Props) {
         const k = `b-${i}`;
         switch (b.kind) {
           case 'h1':
-            return <h1 key={k}>{renderInline(b.text, k)}</h1>;
+            // 페이지 H1 은 LegalPage 헤더가 담당 — 본문 '# 제목' 은 h2 로 내려 H1 중복을 막는다.
+            return <h2 key={k} className={styles.docTitle}>{renderInline(b.text, k)}</h2>;
           case 'h2':
             return <h2 key={k}>{renderInline(b.text, k)}</h2>;
           case 'h3':

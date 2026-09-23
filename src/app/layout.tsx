@@ -64,6 +64,10 @@ const SITE_URL = normalizeSiteUrl(
 // Naver 검색엔진 가이드라인: 사이트 제목 / OG 제목 ≤40자, 사이트 설명 / OG 설명 ≤80자.
 // (회사 정보 / FAQ / 키워드는 metadata.keywords + JSON-LD 로 보강.)
 const DEFAULT_TITLE = "조엘라이프 대라천 '참'침향 - 100% 베트남산 아갈로차 침향";
+// OG 제목 — 네이버 웹마스터도구 권고(40자 이내). <title> 은 그대로 두고 OG/트위터만 짧게.
+// 어드민 metaTitle 이 40자를 넘으면 이 기본값으로 대체한다 (2026-09-23 네이버 URL 검사 경고).
+const OG_TITLE_MAX = 40;
+const DEFAULT_OG_TITLE = "조엘라이프 대라천 '참'침향 | 베트남산 아갈로차 정품 침향";
 const DEFAULT_DESCRIPTION =
   "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.";
 
@@ -115,6 +119,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = seo?.metaTitle || DEFAULT_TITLE;
   const description = seo?.metaDescription || DEFAULT_DESCRIPTION;
+  const ogTitle = title.length <= OG_TITLE_MAX ? title : DEFAULT_OG_TITLE;
   const keywords = seo?.keywords
     ? seo.keywords.split(',').map((k) => k.trim()).filter(Boolean)
     : DEFAULT_KEYWORDS;
@@ -164,13 +169,13 @@ export async function generateMetadata(): Promise<Metadata> {
       alternateLocale: ['en_US', 'ja_JP', 'vi_VN'],
       url: SITE_URL,
       siteName: '대라천 ZOEL LIFE',
-      title,
+      title: ogTitle,
       description,
       images: [ogImageUrl],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: ogTitle,
       description,
       images: [twImageUrl],
     },

@@ -120,11 +120,10 @@ export default function MediaPageClient({
         {hero.heroImage && (
           <Image
             src={hero.heroImage}
-            alt=""
+            alt="대라천 침향 이야기·언론 보도 대표 이미지"
             fill
             sizes="100vw"
             priority
-            aria-hidden
             style={{ objectFit: 'cover', objectPosition: 'center', opacity: 0.7 }}
           />
         )}

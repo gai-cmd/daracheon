@@ -52,11 +52,10 @@ export default function ShowroomClient({ data }: Props) {
           <div className={styles.heroBg}>
             <Image
               src={hero.heroBg}
-              alt=""
+              alt="대라천 '참'침향 전시장 대표 이미지"
               fill
               sizes="100vw"
               priority
-              aria-hidden
               style={{ objectFit: 'cover', objectPosition: 'center' }}
             />
           </div>
