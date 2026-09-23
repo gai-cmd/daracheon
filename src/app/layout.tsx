@@ -440,6 +440,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         {/* hreflang 는 metadata.alternates.languages 가 자동 생성 — 중복 선언 제거. */}
+        {/* RSS 자동 발견 — metadata.alternates.types 는 홈(page.tsx)의 alternates 재정의에
+            덮여 사라지므로 head 에 직접 선언. 피드 본체: src/app/rss.xml/route.ts */}
+        <link rel="alternate" type="application/rss+xml" title="대라천 ZOEL LIFE 침향 이야기" href={`${SITE_URL}/rss.xml`} />
         <JsonLd data={siteJsonLd} />
         <GoogleTagManager />
         <GoogleAnalytics />
