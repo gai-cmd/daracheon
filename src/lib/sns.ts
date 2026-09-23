@@ -60,6 +60,15 @@ export function cleanVideoTitle(raw: string): string {
     .trim();
 }
 
+/**
+ * 한국어 사이트이므로 제목(해시태그 제외)에 한글이 있는 영상만 남긴다.
+ * 채널에 영문 쇼츠가 섞여 올라오는 경우가 있다(2026-09-09 영문 1편).
+ */
+export function koreanVideosOnly(channels: SnsChannels): SnsChannels {
+  const hasHangul = (v: SnsVideo) => /[가-힣]/.test(cleanVideoTitle(v.title));
+  return { ...channels, youtube: { ...channels.youtube, videos: channels.youtube.videos.filter(hasHangul) } };
+}
+
 /** '2026-09-09T…' → '2026.09.09' */
 export function formatSnsDate(iso: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);

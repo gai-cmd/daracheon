@@ -5,6 +5,7 @@ import { readDataSafe, readSingleSafe } from '@/lib/db';
 import { readPostsSafe } from '@/lib/blog/store';
 import SnsChannels from '@/components/home/SnsChannels';
 import { SNS_SAMPLE } from '@/data/sns-sample';
+import { koreanVideosOnly } from '@/lib/sns';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import styles from './page.module.css';
 
@@ -107,9 +108,10 @@ export default async function HomeV2Page() {
     .slice(0, 4)
     .map(({ m }) => m);
   // 메인에서는 채널 맛보기만 — 쇼츠 한 화면(5), 인스타 한 줄(4).
+  const snsKo = koreanVideosOnly(SNS_SAMPLE);
   const sns = {
-    youtube: { ...SNS_SAMPLE.youtube, videos: SNS_SAMPLE.youtube.videos.slice(0, 5) },
-    instagram: { ...SNS_SAMPLE.instagram, posts: SNS_SAMPLE.instagram.posts.slice(0, 4) },
+    youtube: { ...snsKo.youtube, videos: snsKo.youtube.videos.slice(0, 5) },
+    instagram: { ...snsKo.instagram, posts: snsKo.instagram.posts.slice(0, 4) },
   };
 
   return (

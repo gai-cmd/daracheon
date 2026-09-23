@@ -6,6 +6,7 @@ import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import SnsChannels from '@/components/home/SnsChannels';
 import { SNS_SAMPLE } from '@/data/sns-sample';
+import { koreanVideosOnly } from '@/lib/sns';
 import type { Farm } from '@/app/brand-story/page';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import styles from './page.module.css';
@@ -734,7 +735,7 @@ export default async function HomePage() {
     bodyLead: sectionMetaMap.social?.bodyLead?.trim() || DEFAULT_SOCIAL_META.bodyLead,
   };
   // 시안 단계: 정적 샘플. 자동 연동 후에는 크론이 저장한 Blob 데이터로 교체한다.
-  const snsChannels = SNS_SAMPLE;
+  const snsChannels = koreanVideosOnly(SNS_SAMPLE);
 
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
   function renderMetaPrefix(meta?: SectionMeta) {
