@@ -181,7 +181,7 @@
   <div class="wrap">
     <h1>🪵 침향·Aquilaria 관련 연구문헌 아카이브</h1>
     <div class="sub">
-      2020~2026년 문헌 · <b>최종 수집 <span id="gen"></span></b> · DOI 검증 <span id="verat"></span> · 키워드 <span id="kw"></span>
+      <span id="yrs"></span>년 문헌 · <b>최종 수집 <span id="gen"></span></b> · DOI 검증 <span id="verat"></span> · 키워드 <span id="kw"></span>
     </div>
     <div class="trust" id="trustBadge">✅ 진위검증: <span id="verSummary"></span></div>
   </div>
@@ -651,6 +651,7 @@ function switchView(v){
 function init(){
   document.getElementById('kw').textContent=(META.keywords||[]).join(', ');
   document.getElementById('gen').textContent=(META.generated_at||'').slice(0,10);
+  document.getElementById('yrs').textContent=`${META.year_from}~${META.year_to}`;
   document.getElementById('verat').textContent=META.verified_at||'';
   document.getElementById('verSummary').textContent=`${META.verified_count}/${META.total}편 DOI 실존 확인 · 조회 출처(OpenAlex·Crossref)에 철회 표시 없음 · preprint ${META.preprint_count}`;
   // populate selects

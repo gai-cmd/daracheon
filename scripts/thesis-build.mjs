@@ -79,6 +79,10 @@ meta.preprint_count = preprintCount;
 meta.review_count = reviewCount;
 meta.abstract_ko_count = papers.filter((p) => (p.abstract_ko || '').trim()).length;
 meta.total = papers.length;
+// 연도 범위는 실제 문헌의 발행연도로 — 검토자가 옛 문헌을 --doi 로 넣으면 2020 이전으로 내려간다.
+const years = papers.map((p) => Number((p.published_date || '').slice(0, 4))).filter((y) => y > 1900);
+meta.year_from = Math.min(...years);
+meta.year_to = Math.max(...years);
 meta.efficacy_count = papers.filter((p) => p.efficacy).length;
 meta.excluded_count = rawPapers.length - papers.length;
 meta.material_counts = papers.reduce((a, p) => { a[p.material] = (a[p.material] || 0) + 1; return a; }, {});

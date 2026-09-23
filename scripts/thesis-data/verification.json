@@ -5320,5 +5320,347 @@
   "sim": 1,
   "retracted": false,
   "api_year": "2023"
+ },
+ {
+  "doi": "10.5658/wood.2019.47.4.459",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2019"
+ },
+ {
+  "doi": "10.1021/acs.jnatprod.7b00462",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2017"
+ },
+ {
+  "doi": "10.1021/acs.jnatprod.8b00635",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2019"
+ },
+ {
+  "doi": "10.1080/10412905.2011.9700468",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2011"
+ },
+ {
+  "doi": "10.1016/j.jpba.2017.04.047",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2017"
+ },
+ {
+  "doi": "10.1002/hlca.201200069",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2012"
+ },
+ {
+  "doi": "10.1007/s13196-014-0119-x",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2014"
+ },
+ {
+  "doi": "10.1002/hlca.201100409",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2012"
+ },
+ {
+  "doi": "10.3329/bjar.v42i1.31992",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2017"
+ },
+ {
+  "doi": "10.1016/j.tetlet.2019.151355",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2019"
+ },
+ {
+  "doi": "10.21315/tlsr2018.29.2.2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2018"
+ },
+ {
+  "doi": "10.3390/app13106321",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2023"
+ },
+ {
+  "doi": "10.1039/d3ra08686k",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2024"
+ },
+ {
+  "doi": "10.1055/s-0036-1597079",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2016"
+ },
+ {
+  "doi": "10.20886/ijfr.2011.8.2.114-129",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2011"
+ },
+ {
+  "doi": "10.20402/ajbc.2022.0076",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2022"
+ },
+ {
+  "doi": "10.11598/btb.2013.20.2.258",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2014"
+ },
+ {
+  "doi": "10.1177/1934578x221080326",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2022"
+ },
+ {
+  "doi": "10.6116/kjh.2011.26.1.097",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2011"
+ },
+ {
+  "doi": "10.17582/journal.jahp/2022/10.2.221.225",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2022"
+ },
+ {
+  "doi": "10.1021/acsomega.3c05783",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2023"
+ },
+ {
+  "doi": "10.1088/1755-1315/591/1/012022",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2020"
+ },
+ {
+  "doi": "10.1007/s12257-022-0345-9",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2023"
+ },
+ {
+  "doi": "10.6116/kjh.2013.28.5.13",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2013"
+ },
+ {
+  "doi": "10.11002/kjfp.2015.22.3.437",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2015"
+ },
+ {
+  "doi": "10.6116/kjh.2011.26.1.007",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2011"
+ },
+ {
+  "doi": "10.1007/s13273-024-00458-2",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2024"
+ },
+ {
+  "doi": "10.1186/s12906-017-1902-1",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2017"
+ },
+ {
+  "doi": "10.3390/nu6093536",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2014"
+ },
+ {
+  "doi": "10.12692/ijb/16.4.187-192",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2020"
+ },
+ {
+  "doi": "10.20886/jpth.2020.14.2.121-128",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2020"
+ },
+ {
+  "doi": "10.3390/ijms21155465",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2020"
+ },
+ {
+  "doi": "10.1155/2019/8721858",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2019"
+ },
+ {
+  "doi": "10.14374/hfs.2015.23.2.235",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2015"
+ },
+ {
+  "doi": "10.6116/kjh.2012.27.4.25",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2012"
+ },
+ {
+  "doi": "10.21097/ksw.2022.5.17.2.205",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2022"
+ },
+ {
+  "doi": "10.5762/kais.2021.22.3.536",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2021"
+ },
+ {
+  "doi": "10.20402/ajbc.2025.0092",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2025"
  }
 ]

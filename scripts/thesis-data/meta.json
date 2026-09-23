@@ -8,14 +8,14 @@
   "gaharu",
   "沉香"
  ],
- "year_from": 2020,
+ "year_from": 2011,
  "year_to": 2026,
  "korea_focus": true,
- "generated_at": "2026-09-22 04:59:07",
+ "generated_at": "2026-09-23 03:31:33",
  "total": 480,
  "korea_count": 7,
  "scopus_count": 311,
- "new_count": 58,
+ "new_count": 38,
  "source_counts": {
   "OpenAlex": 200,
   "Crossref": 200,
@@ -74,10 +74,15 @@
    "source": "OpenAlex",
    "level": "ok",
    "message": "2026-09-22: 2026-03-26 이후 검색 486건 → 신규 72건 추가"
+  },
+  {
+   "source": "OpenAlex",
+   "level": "ok",
+   "message": "2026-09-23: 2026-09-23 이후 검색 38건 → 신규 38건 추가"
   }
  ],
  "efficacy_count": 182,
  "translated_count": 480,
  "easy_summary_count": 480,
- "latest_batch": "2026-09-22"
+ "latest_batch": "2026-09-23"
 }

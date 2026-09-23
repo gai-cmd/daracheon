@@ -1,6 +1,6 @@
 {
  "_note": "ISSN → true(SCIE 등재)/false(미등재 또는 MJL에 없음). 출처: Clarivate Master Journal List 공개 검색(rank-search), thesis-scie-check.mjs. _products 에 저널별 WoS 색인(SCIE/SSCI/AHCI/ESCI) 기록.",
- "_checked_at": "2026-09-22",
+ "_checked_at": "2026-09-23",
  "0265-0568": true,
  "1460-4752": true,
  "_products": {
@@ -646,7 +646,61 @@
   "2089-4872": [],
   "0717-7917": [
    "Science Citation Index Expanded"
-  ]
+  ],
+  "1017-0715": [],
+  "1041-2905": [
+   "Science Citation Index Expanded"
+  ],
+  "0731-7085": [
+   "Science Citation Index Expanded"
+  ],
+  "0018-019X": [
+   "Science Citation Index Expanded",
+   "Reaction Citation Index"
+  ],
+  "0972-172X": [
+   "Emerging Sources Citation Index"
+  ],
+  "0258-7122": [],
+  "0040-4039": [
+   "Reaction Citation Index",
+   "Science Citation Index Expanded"
+  ],
+  "1985-3718": [
+   "Emerging Sources Citation Index"
+  ],
+  "2076-3417": [
+   "Science Citation Index Expanded"
+  ],
+  "0032-0943": [
+   "Science Citation Index Expanded"
+  ],
+  "2355-7079": [
+   "Emerging Sources Citation Index"
+  ],
+  "2466-2046": [],
+  "0215-6334": [],
+  "1555-9475": [
+   "Science Citation Index Expanded"
+  ],
+  "1229-1765": [],
+  "2308-2801": [],
+  "2470-1343": [
+   "Science Citation Index Expanded"
+  ],
+  "1226-8372": [
+   "Science Citation Index Expanded"
+  ],
+  "1738-7248": [],
+  "1738-642X": [
+   "Science Citation Index Expanded"
+  ],
+  "1472-6882": [],
+  "2220-6655": [],
+  "1693-7147": [],
+  "1229-1218": [],
+  "1975-4051": [],
+  "1975-4701": []
  },
  "1420-3049": true,
  "1433-1373": true,
@@ -1162,5 +1216,53 @@
  "0975-6906": true,
  "2089-4872": false,
  "2252-8938": false,
- "0717-7917": true
+ "0717-7917": true,
+ "1017-0715": false,
+ "2233-7180": false,
+ "1041-2905": true,
+ "2163-8152": true,
+ "0731-7085": true,
+ "1873-264X": true,
+ "0018-019X": true,
+ "1522-2675": true,
+ "0972-172X": false,
+ "0976-8432": false,
+ "0258-7122": false,
+ "2408-8293": false,
+ "0040-4039": true,
+ "1873-3581": true,
+ "1985-3718": false,
+ "2180-4249": false,
+ "2076-3417": true,
+ "0032-0943": true,
+ "1439-0221": true,
+ "2355-7079": false,
+ "2406-8195": false,
+ "2466-2046": false,
+ "2466-2054": false,
+ "0215-6334": false,
+ "1907-770X": false,
+ "2309-544X": false,
+ "1555-9475": true,
+ "1934-578X": true,
+ "1229-1765": false,
+ "2288-7199": false,
+ "2308-2801": false,
+ "2470-1343": true,
+ "1226-8372": true,
+ "1976-3816": true,
+ "1738-7248": false,
+ "2287-7428": false,
+ "1738-642X": true,
+ "2092-8467": true,
+ "1472-6882": false,
+ "2220-6655": false,
+ "2222-5234": false,
+ "1693-7147": false,
+ "2527-8665": false,
+ "1229-1218": false,
+ "1975-4051": false,
+ "2765-4419": false,
+ "1975-4701": false,
+ "2288-4688": false
 }

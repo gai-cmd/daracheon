@@ -27748,5 +27748,2258 @@
   "verify_source": "OpenAlex",
   "title_match": 1,
   "added_batch": "2026-09-22"
+ },
+ {
+  "title": "Antioxidant and Antifungal Activity of Endophytic Fungi Associated with Agarwood Trees",
+  "title_ko": "침향나무에 사는 내생균의 항산화·항진균 활성",
+  "authors": [
+   "Asep Kurnia Hidayat",
+   "Maman Turjaman",
+   "Sarah Asih Faulina",
+   "Fadel Ridwan",
+   "Aryanto Aryanto",
+   "Najmulah Najmulah",
+   "Tun Tedja Irawadi",
+   "Apri Heri Iswanto"
+  ],
+  "affiliations": [
+   "Forest Research",
+   "Ministry of Environment",
+   "IPB University",
+   "Universitas Sumatera Utara"
+  ],
+  "country": [
+   "GB",
+   "KR",
+   "ID"
+  ],
+  "journal": "Journal of the Korean Wood Science and Technology",
+  "publisher": "The Korean Society of Wood Science Technology",
+  "issn": [
+   "1017-0715",
+   "2233-7180"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.5658/wood.2019.47.4.459",
+  "url": "https://doi.org/10.5658/wood.2019.47.4.459",
+  "published_date": "2019-07-01",
+  "abstract": "Several species of Aquilaria and Gyrinops are native to Indonesia and well known as agarwood-producing trees with a high economic value. Their bioactive compounds have a wide spectrum of uses, such as in medicine and cosmetics. These genera have undergone extensive search for novel bioactive compounds. The purpose of this study was to isolate, identify, and characterize the endophytic fungi community associated with Aquilaria malaccensis, A. microcarpa, Gyrinops versteegii, and A. crassna trees and investigate their bioactive properties as antioxidant agents and antagonists. A total of 50 fungi were successfully isolated from different tissues of the four species of agarwood-producing trees. Two isolates exhibited strong antioxidant activity, namely, Apodus oryzae (R2MC3A, IC50 60.92 mg/mL) and Diaporthe sp. (P1DS1[C], IC50 76.65 mg/mL). Two isolates, Pestalotiopsis theae (P3BS3[B]) and Curvularia sp. (P2CD3A), showed >75% antifungal activity against pathogenic Fusarium solani. The results revealed that endophytic fungi associated with the studied agarwood-producing trees had potential antioxidant and antifungal activities for further applications in biotechnology.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "내생균",
+   "항산화",
+   "항진균",
+   "아퀼라리아",
+   "기리놉스"
+  ],
+  "summary_easy": "침향을 만드는 나무(아퀼라리아·기리놉스) 속에는 눈에 보이지 않는 곰팡이들이 함께 살아요. 인도네시아 연구진이 네 종류의 침향나무에서 곰팡이 50종을 골라내 어떤 것이 산화를 막고 다른 곰팡이를 억제하는지 살펴봤어요. 침향 자체가 아니라 나무 속 곰팡이를 다룬 기초 연구예요.",
+  "citation_count": 31,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Aquilanols A and B, Macrocyclic Humulene-Type Sesquiterpenoids from the Agarwood of Aquilaria malaccensis",
+  "title_ko": "아퀼라리아 말라켄시스 침향의 거대고리 후물렌형 세스퀴테르펜, 아퀼라놀 A·B",
+  "authors": [
+   "Chi Thanh Ma",
+   "Taeyong Eom",
+   "Eunji Cho",
+   "Bo Wu",
+   "Tae Ryong Kim",
+   "Ki Oh",
+   "Sang Beom Han",
+   "Sung Won Kwon",
+   "Jeong Hill Park"
+  ],
+  "affiliations": [
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Chung-Ang University",
+   "Seoul National University",
+   "New Generation University College",
+   "China Medical University"
+  ],
+  "country": [
+   "VN",
+   "KR",
+   "CN",
+   "ET"
+  ],
+  "journal": "Journal of Natural Products",
+  "publisher": "American Chemical Society",
+  "issn": [
+   "0163-3864",
+   "1520-6025"
+  ],
+  "indexing": "Scopus 등재 · SJR Q2 (2024)",
+  "scopus": true,
+  "quartile": "Q2",
+  "sjr": 0.629,
+  "doi": "10.1021/acs.jnatprod.7b00462",
+  "url": "https://doi.org/10.1021/acs.jnatprod.7b00462",
+  "published_date": "2017-10-30",
+  "abstract": "Four new and five known sesquiterpenoids were isolated from the agarwood of Aquilaria malaccensis. Aquilanols A and B (1 and 2) have an unprecedented macrocyclic humulene structure with a bicyclic 7/10 ring system. Compound 2 was obtained as a scalemic mixture that was resolved by HPLC analysis using a chiral column. Their structures were deduced based on spectroscopic data analysis, and the absolute configurations were unambiguously determined by X-ray crystallographic data and ECD spectroscopic analysis. A putative biosynthetic pathway of these sesquiterpenoids is proposed.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "세스퀴테르펜",
+   "아퀼라놀",
+   "성분 분리",
+   "구조 규명"
+  ],
+  "summary_easy": "말레이시아산 침향(A. malaccensis)에서 새로운 향 성분 네 가지를 찾아낸 연구예요. 그중 아퀼라놀 A와 B는 지금까지 보고된 적 없는 큰 고리 모양 구조를 갖고 있었고, X선 결정 분석으로 모양을 확정했어요. 성분의 구조를 밝힌 화학 연구이지 효능을 시험한 것은 아니에요.",
+  "citation_count": 46,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Adiponectin-Secretion-Promoting Phenylethylchromones from the Agarwood of Aquilaria malaccensis",
+  "title_ko": "아디포넥틴 분비를 촉진하는 아퀼라리아 말라켄시스 침향의 페닐에틸크로몬",
+  "authors": [
+   "Sungjin Ahn",
+   "Chi Thanh Ma",
+   "Jin‐Ho Choi",
+   "Seungchan An",
+   "Moon Young Lee",
+   "Thi Hong Van Le",
+   "Jeong Joo Pyo",
+   "Joochang Lee",
+   "Min Sik Choi",
+   "Sung Won Kwon",
+   "Jeong Hill Park",
+   "Minsoo Noh"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Dongduk Women's University"
+  ],
+  "country": [
+   "KR",
+   "VN"
+  ],
+  "journal": "Journal of Natural Products",
+  "publisher": "American Chemical Society",
+  "issn": [
+   "0163-3864",
+   "1520-6025"
+  ],
+  "indexing": "Scopus 등재 · SJR Q2 (2024)",
+  "scopus": true,
+  "quartile": "Q2",
+  "sjr": 0.629,
+  "doi": "10.1021/acs.jnatprod.8b00635",
+  "url": "https://doi.org/10.1021/acs.jnatprod.8b00635",
+  "published_date": "2019-01-23",
+  "abstract": "The therapeutic potential of adiponectin regulation has received interest because of its association with diverse human disease conditions, such as diabetes, obesity, atherosclerosis, and cancer. Phenylethylchromone derivatives from Aquilaria malaccensis-derived agarwood promoted adiponectin secretion during adipogenesis in human bone marrow mesenchymal stem cells, and 5,6-dihydroxy-2-(2-phenylethyl)chromone (1) was identified as a new chromone derivative. A target identification study with the most potent adiponectin-secretion-promoting phenylethylchromones, 6-methoxy-2-(2-phenylethyl)chromone (3) and 7-methoxy-2-(2-phenylethyl)chromone (4), showed that they are PPARγ partial agonists. Therefore, the diverse therapeutic effects of agarwood are associated with a PPARγ-mediated adiponectin-secretion-promoting mechanism.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "크로몬",
+   "아디포넥틴",
+   "줄기세포",
+   "대사"
+  ],
+  "summary_easy": "아디포넥틴은 지방세포가 내는 호르몬으로 당뇨·비만과 관련이 깊어요. 침향의 크로몬 성분들이 사람 줄기세포 실험에서 이 호르몬 분비를 늘렸고, 새 성분 하나도 발견했어요. 세포 수준 실험이라 사람에게 같은 효과가 있다고 말할 단계는 아니에요.",
+  "citation_count": 33,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Identification of Odor-active Components of Agarwood Essential Oils from Thailand by Solid Phase Microextraction-GC/MS and GC-O",
+  "title_ko": "태국산 침향 정유의 향 활성 성분 규명 (SPME-GC/MS·GC-O)",
+  "authors": [
+   "Patcharee Pripdeevech",
+   "Weeraya Khummueng",
+   "Seung-Kook Park"
+  ],
+  "affiliations": [
+   "Mae Fah Luang University",
+   "Prince of Songkla University",
+   "Kyung Hee University"
+  ],
+  "country": [
+   "TH",
+   "KR"
+  ],
+  "journal": "Journal of Essential Oil Research",
+  "publisher": "Taylor & Francis",
+  "issn": [
+   "1041-2905",
+   "2163-8152"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1080/10412905.2011.9700468",
+  "url": "https://doi.org/10.1080/10412905.2011.9700468",
+  "published_date": "2011-07-01",
+  "abstract": "Volatile components from the essential oils of Aquilaria malaccensis, A. subintegra and A. crassna were investigated by gas chromatography (GC), gas chromatography-mass spectrometry (GC/MS), and gas chromatography-olfactometry (GC-O). A total of 31 volatile constituents were identified from the three agarwood oils. A subset of 18 out of the 31 components was identified from the essential oil of A. malaccensis with the major components being isoamyl dodecanoate, guaia-1(10),11-dien-15-ol, karanone, cyclocolorenone and jinkoheremol. Aquilaria subintegra oil yielded 28 identified compounds with the most abundant components being isoamyl dodecanoate, kusunol, jinkoh-eremol, epoxybulnesene and β-agarofuran, while 30 volatile compounds from A. crassna were identified, with isoamyl dodecanoate, β-agarofuran, kusunol, dehydrojinkoh-eremol and 9,11-eremophiladien-8-one as the main constituents. The aroma-active compounds of the three samples were analyzed by HS-SPME-GC-O. A total of 74 odor-active components were characterized by using the GC-O technique. The major components responsible for the aroma included β-agarofuran, 4-phenyl-2-butanone, furfural and benzaldehyde, while the minor aroma notes were attributed to (E)-α-bergamotene, α-humulene, α-bulnesene, α-agarofuran, nor-ketoagarofuran, epoxybulnesene, agarospirol, jinkoh-eremol, kusunol, acorenone B, selina-3,11-dien-14-al and 9,11-eremophiladien-8-one, considered to be the most important aroma impact compounds for the characteristic aroma of agarwood essential oils",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "정유",
+   "향기 성분",
+   "GC-O",
+   "태국 침향"
+  ],
+  "summary_easy": "태국에서 나는 침향나무 세 종의 정유에서 어떤 분자가 실제로 '향'을 내는지 기계(GC-MS)와 사람 코(GC-O)로 함께 확인한 연구예요. 휘발 성분 31가지를 찾았고 종마다 주요 성분이 달랐어요. 이 분야에서 가장 많이 인용되는 향 분석 논문 중 하나예요.",
+  "citation_count": 97,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Multi-platform metabolomics and a genetic approach support the authentication of agarwood produced by Aquilaria crassna and Aquilaria malaccensis",
+  "title_ko": "다중 플랫폼 대사체학과 유전 분석으로 뒷받침한 A. crassna·A. malaccensis 침향의 진위 판별",
+  "authors": [
+   "Huy Truong Nguyen",
+   "Jung-Eun Min",
+   "Nguyen Phuoc Long",
+   "Chi Thanh Ma",
+   "Thi Hong Van Le",
+   "Jeongmi Lee",
+   "Jeong Hill Park",
+   "Sung Won Kwon"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "Ton Duc Thang University",
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Sungkyunkwan University",
+   "National University College"
+  ],
+  "country": [
+   "KR",
+   "VN",
+   "PR"
+  ],
+  "journal": "Journal of Pharmaceutical and Biomedical Analysis",
+  "publisher": "Elsevier BV",
+  "issn": [
+   "0731-7085",
+   "1873-264X"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1016/j.jpba.2017.04.047",
+  "url": "https://doi.org/10.1016/j.jpba.2017.04.047",
+  "published_date": "2017-05-04",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "진위 판별",
+   "대사체학",
+   "DNA 분석",
+   "품질"
+  ],
+  "summary_easy": "비싼 침향은 가짜나 다른 종이 섞이기 쉬워요. 이 연구는 성분 분석 여러 방법과 DNA 분석을 함께 써서 두 침향나무 종에서 난 침향을 구별하는 기준을 세웠어요. 원문 초록이 데이터베이스에 없어 제목과 서지 정보로 요약했어요.",
+  "citation_count": 19,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Eight New 2‐(2‐Phenylethyl)chromone (=2‐(2‐Phenylethyl)‐4 H ‐1‐benzopyran‐4‐one) Derivatives from Aquilaria malaccensis Agarwood",
+  "title_ko": "아퀼라리아 말라켄시스 침향의 새로운 2-(2-페닐에틸)크로몬 유도체 8종",
+  "authors": [
+   "Bo Wu",
+   "Sung Won Kwon",
+   "Gwi Seo Hwang",
+   "Jeong Hill Park"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "Gachon University",
+   "Kyung Hee University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Helvetica Chimica Acta",
+  "publisher": "Wiley",
+  "issn": [
+   "0018-019X",
+   "1522-2675"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1002/hlca.201200069",
+  "url": "https://doi.org/10.1002/hlca.201200069",
+  "published_date": "2012-09-01",
+  "abstract": "Abstract Eight new and eight known 2‐(2‐phenylethyl)chromone (=2‐(2‐phenylethyl)‐4 H ‐1‐benzopyran‐4‐one) derivatives, i.e. , 1 – 8 and 9 – 16 , respectively, together with the two known sesquiterpenoids 17 and 18 were isolated from a 70% MeOH extract of Aquilaria malaccensis (AM) agarwood chips. Their structures were determined based on extensive spectroscopic analysis and comparison with reported data.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "크로몬",
+   "성분 분리",
+   "구조 규명"
+  ],
+  "summary_easy": "침향의 대표 성분군인 크로몬 가운데 새로운 것 8가지와 이미 알려진 8가지를 침향 조각의 메탄올 추출물에서 분리해 구조를 밝힌 연구예요. 침향 화학의 기초 자료이고, 효능 실험은 포함되지 않았어요.",
+  "citation_count": 52,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Reliability of sonic tomography to detect agarwood in Aquilaria microcarpa Baill.",
+  "title_ko": "음파 단층촬영으로 아퀼라리아 미크로카르파 속 침향을 찾아내는 방법의 신뢰성",
+  "authors": [
+   "Ningsie Indahsuary",
+   "Dodi Nandika",
+   "Lina Karlinasari",
+   "Erdi Santoso"
+  ],
+  "affiliations": [
+   "IPB University",
+   "Ministry of Environment"
+  ],
+  "country": [
+   "ID",
+   "KR"
+  ],
+  "journal": "Journal of the Indian Academy of Wood Science",
+  "publisher": "Springer Science+Business Media",
+  "issn": [
+   "0972-172X",
+   "0976-8432"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1007/s13196-014-0119-x",
+  "url": "https://doi.org/10.1007/s13196-014-0119-x",
+  "published_date": "2014-06-01",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "음파 단층촬영",
+   "비파괴 검사",
+   "재배"
+  ],
+  "summary_easy": "살아 있는 나무를 베지 않고 소리(음파)로 속을 들여다봐서 침향이 생겼는지 알아보려는 연구예요. 나무를 상하게 하지 않고 검사하는 방법을 다룬 임업 기술 논문이에요. 원문 초록이 데이터베이스에 없어 제목으로 요약했어요.",
+  "citation_count": 15,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Sesquiterpenoids and 2‐(2‐Phenylethyl)‐4H‐chromen‐4‐one (=2‐(2‐Phenylethyl)‐4H‐1‐benzopyran‐4‐one) Derivatives from Aquilaria malaccensis Agarwood",
+  "title_ko": "아퀼라리아 말라켄시스 침향의 세스퀴테르펜과 2-(2-페닐에틸)크로몬 유도체",
+  "authors": [
+   "Bo Wu",
+   "Jin Gyun Lee",
+   "Chang Ju Lim",
+   "Shao Dong Jia",
+   "Sung Won Kwon",
+   "Gwi Seo Hwang",
+   "Jeong Hill Park"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "Gachon University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Helvetica Chimica Acta",
+  "publisher": "Wiley",
+  "issn": [
+   "0018-019X",
+   "1522-2675"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1002/hlca.201100409",
+  "url": "https://doi.org/10.1002/hlca.201100409",
+  "published_date": "2012-04-01",
+  "abstract": "Abstract The four new sesquiterpenoids 1–4, and the new 2‐(2‐phenylethyl)‐4H‐chromen‐4‐one (=2‐(2‐phenylethyl)‐4H‐1‐benzopyran‐4‐one) derivative 5, together with the two known sesquiterpenoids 6 and 7, the five known chromenones 8–12, and 1‐hydroxy‐1,5‐diphenylpentan‐3‐one (13), were isolated from a 70% MeOH extract of Aquilaria malaccensis agarwood chips. Their structures were elucidated on the basis of comprehensive spectral analyses and comparison with literature data.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "세스퀴테르펜",
+   "크로몬",
+   "성분 분리"
+  ],
+  "summary_easy": "침향 조각에서 새로운 향 성분(세스퀴테르펜) 4가지와 새 크로몬 1가지를 포함해 13가지 성분을 분리하고 구조를 밝힌 연구예요. 위의 2012년 연구와 같은 팀의 앞선 성과로, 역시 성분 화학에 한정돼요.",
+  "citation_count": 41,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The economic benefit of agarwood production through aeration method into the Aquilaria malaccensis tree in Bangladesh",
+  "title_ko": "방글라데시 아퀼라리아 말라켄시스 나무의 통기법 침향 생산과 경제적 이익",
+  "authors": [
+   "Milon Chowdhury",
+   "Afroja Rahman",
+   "M. Gulam Hussain",
+   "Ehsanul Kabir"
+  ],
+  "affiliations": [
+   "Bangladesh Agricultural University",
+   "Chungnam National University"
+  ],
+  "country": [
+   "BD",
+   "KR"
+  ],
+  "journal": "Bangladesh Journal of Agricultural Research",
+  "publisher": "",
+  "issn": [
+   "0258-7122",
+   "2408-8293"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.3329/bjar.v42i1.31992",
+  "url": "https://doi.org/10.3329/bjar.v42i1.31992",
+  "published_date": "2017-03-29",
+  "abstract": "Abstract not availableBangladesh J. Agril. Res. 42(1): 191-196, March 2017",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "재배",
+   "통기법",
+   "경제성",
+   "방글라데시"
+  ],
+  "summary_easy": "나무에 구멍을 내 공기를 통하게 해서 침향이 생기게 하는 방법이 방글라데시 농가에 얼마나 이익이 되는지 살핀 짧은 보고예요. 재배·경제 자료이며 원문 초록은 제공되지 않아요.",
+  "citation_count": 8,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Malacinones A and B, two novel sesquiterpenoids with 6/6/5 tricyclic ring system from the agarwood of Aquilaria malaccensis",
+  "title_ko": "아퀼라리아 말라켄시스 침향의 새로운 6/6/5 삼환 세스퀴테르펜, 말라시논 A·B",
+  "authors": [
+   "Chi Thanh Ma",
+   "Eunji Cho",
+   "Huy Truong Nguyen",
+   "Bo Wu",
+   "Thi Hong Van Le",
+   "Ki Oh",
+   "Sung Won Kwon",
+   "Minh Duc Nguyen",
+   "Jeong Hill Park"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Ton Duc Thang University",
+   "China Medical University"
+  ],
+  "country": [
+   "KR",
+   "VN",
+   "CN"
+  ],
+  "journal": "Tetrahedron Letters",
+  "publisher": "Elsevier BV",
+  "issn": [
+   "0040-4039",
+   "1873-3581"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1016/j.tetlet.2019.151355",
+  "url": "https://doi.org/10.1016/j.tetlet.2019.151355",
+  "published_date": "2019-11-03",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "세스퀴테르펜",
+   "말라시논",
+   "구조 규명"
+  ],
+  "summary_easy": "침향에서 처음 보고되는 고리 구조를 가진 향 성분 두 가지(말라시논 A·B)를 찾아 구조를 밝힌 화학 논문이에요. 효능 시험은 포함되지 않았고, 원문 초록은 데이터베이스에 없어요.",
+  "citation_count": 9,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Phylogenetic Relatedness of Several Agarwood-Producing Taxa (Thymelaeaceae) from Indonesia",
+  "title_ko": "인도네시아 침향 생산 식물(팥꽃나무과) 여러 분류군의 계통 관계",
+  "authors": [
+   "Shiou Yih Lee",
+   "Maman Turjaman",
+   "Rozi Mohamed"
+  ],
+  "affiliations": [
+   "Universiti Putra Malaysia",
+   "Ministry of Environment"
+  ],
+  "country": [
+   "MY",
+   "KR"
+  ],
+  "journal": "Tropical Life Sciences Research",
+  "publisher": "Penerbit Universiti Sains Malaysia",
+  "issn": [
+   "1985-3718",
+   "2180-4249"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.21315/tlsr2018.29.2.2",
+  "url": "https://doi.org/10.21315/tlsr2018.29.2.2",
+  "published_date": "2018-01-01",
+  "abstract": "F showed capability to categorise agarwood-producing species based on their regions: East Indonesia and West Indonesia, using Wallace's Line as the divider. In addition, we discuss challenges in species identification and taxonomy of agarwood-producing genera, and their conservation efforts in Indonesia.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "계통 분류",
+   "종 식별",
+   "보전",
+   "인도네시아"
+  ],
+  "summary_easy": "인도네시아에서 침향을 만드는 나무들이 서로 얼마나 가까운지 DNA로 따져 본 연구예요. 월리스선을 기준으로 동·서 인도네시아 종이 갈리는 경향을 확인했고, 종 구별이 어려운 문제와 보전 노력도 함께 다뤘어요.",
+  "citation_count": 23,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Protective Effects of Aquilaria agallocha and Aquilaria malaccensis Edible Plant Extracts against Lung Cancer, Inflammation, and Oxidative Stress—In Silico and In Vitro Study",
+  "title_ko": "식용 침향나무(A. agallocha·A. malaccensis) 추출물의 폐암·염증·산화스트레스에 대한 보호 효과 — 컴퓨터 예측과 세포 실험",
+  "authors": [
+   "Jinnatun Nahar",
+   "Vinothini Boopathi",
+   "Esrat Jahan Rupa",
+   "Muhammad Awais",
+   "Anjali Kariyarath Valappil",
+   "Md Niaj Morshed",
+   "Mohanapriya Murugesan",
+   "Reshmi Akter",
+   "Dong Uk Yang",
+   "Dong Uk Yang",
+   "Ramya Mathiyalagan",
+   "Deok‐Chun Yang",
+   "Deok‐Chun Yang",
+   "Seok-Kyu Jung"
+  ],
+  "affiliations": [
+   "Kyung Hee University",
+   "Kongju National University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Applied Sciences",
+  "publisher": "Multidisciplinary Digital Publishing Institute",
+  "issn": [
+   "2076-3417"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.3390/app13106321",
+  "url": "https://doi.org/10.3390/app13106321",
+  "published_date": "2023-05-22",
+  "abstract": "The family Thymelaeaceae, which includes huge evergreen trees that are sparsely distributed in tropical rainforests, includes the genus Aquilaria. Numerous medical conditions, including inflammation, cancer, and oxidative stress have been traditionally treated using Aquilaria agallocha and Aquilaria malaccensis. In this study, we evaluated in silico and biological activity with A. agallocha and A. malaccensis sample for more conformation. Raw 264.7 macrophage cells and HacaT cells were used, together with the MTT, ROS, NO, and wound healing assays, to investigate the possible cytotoxicity in A549 lung cancer. Thus, A. agallocha and A. malaccensis showed significant cytotoxicity against A549 cancer cells at 1000 µg/mL. Furthermore, we observed an elevated ROS level in cancer cells. The wound healing assay showed cancer cell inhibition activity. While BCL-2 decreased in the intrinsic route, p53, Bax, Caspase 3, and Caspase 9 were elevated by A.A and A.M. Additionally, we have also conducted an in silico evaluation followed by molecular dynamics (MD) simulations, along with ADMET and biological activity prediction to further validate the experimental results. In normal cells, both samples showed less toxicity at 1000 µg/mL and suppressed the LPS-treated NO and ROS levels against the inflammation. Additionally, A.A and A.M suppressed the pro-inflammatory gene expression of COX-2, iNOS, TNF-α, IL-6, and IL-8 in RAW 264.7 cells. On the other hand, A.A and A.M extract effectively suppressed oxidative stress by increasing the antioxidative gene expression in H2O2-induced HaCat cells at 50 μg/mL. This study revealed that the plant extracts from A. agallocha and A. malaccensis could exert a cytotoxic effect on lung adenocarcinoma cells through the activation of an intrinsic signaling pathway. Moreover, it could be a potential source of anti-inflammatory, antioxidant, and anti-cancer agents after consideration of in vivo and clinical studies.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "폐암 세포",
+   "항염",
+   "항산화",
+   "세포 실험"
+  ],
+  "summary_easy": "한국 연구진이 침향나무 두 종의 추출물을 폐암 세포와 면역세포에 넣어 독성·활성산소·염증 신호가 어떻게 바뀌는지 봤어요. 컴퓨터 예측과 세포 실험을 함께 한 초기 단계 연구라, 사람에게 효과가 있다고 말하기엔 이르다는 점을 함께 봐야 해요.",
+  "citation_count": 15,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Sesquiterpenoids and hexanorcucurbitacin from Aquilaria malaccensis agarwood with anti-inflammatory effects by inhibiting the STAT1/AKT/MAPK/NLRP3 pathway",
+  "title_ko": "STAT1/AKT/MAPK/NLRP3 경로 억제로 항염 효과를 보인 아퀼라리아 말라켄시스 침향의 세스퀴테르펜과 헥사노르쿠쿠르비타신",
+  "authors": [
+   "Chi Thanh Ma",
+   "Tianqi Huang",
+   "Jae Sik Yu",
+   "Tú Loan Lý",
+   "Kim Long Vu‐Huynh",
+   "Sung Won Kwon",
+   "Jeong Hill Park",
+   "Hyun Ok Yang"
+  ],
+  "affiliations": [
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Sejong University",
+   "Korea Institute of Science and Technology",
+   "Korea University of Science and Technology",
+   "Ton Duc Thang University",
+   "Seoul National University"
+  ],
+  "country": [
+   "KR",
+   "VN"
+  ],
+  "journal": "RSC Advances",
+  "publisher": "Royal Society of Chemistry",
+  "issn": [
+   "2046-2069"
+  ],
+  "indexing": "Scopus 등재 · SJR Q2 (2024)",
+  "scopus": true,
+  "quartile": "Q2",
+  "sjr": 0.777,
+  "doi": "10.1039/d3ra08686k",
+  "url": "https://doi.org/10.1039/d3ra08686k",
+  "published_date": "2024-01-01",
+  "abstract": "A rare hexanortriterpenoid significantly attenuated the proinflammatory mediators, STAT1/AKT/MAPK, and MAPK/NLRP3 signaling pathways for preventing neuroinflammatory disorders in BV2 microglial cells.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "신경염증",
+   "미세아교세포",
+   "항염",
+   "성분 분리"
+  ],
+  "summary_easy": "침향에서 드문 종류의 성분(헥사노르트리테르펜)을 찾았고, 뇌 면역세포(미세아교세포) 실험에서 염증 신호를 크게 줄였다는 결과예요. 신경 염증과 관련된 성분 연구이며 세포 수준 실험이에요.",
+  "citation_count": 5,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Chemical constituents of agarwood from Aquilaria malaccensis",
+  "title_ko": "아퀼라리아 말라켄시스 침향의 화학 성분",
+  "authors": [
+   "CT Ma",
+   "Bo Wu",
+   "SW Kwon",
+   "JH Park"
+  ],
+  "affiliations": [
+   "Seoul National University",
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "China Medical University",
+   "Ton Duc Thang University"
+  ],
+  "country": [
+   "KR",
+   "VN",
+   "CN"
+  ],
+  "journal": "Planta Medica",
+  "publisher": "Thieme Medical Publishers (Germany)",
+  "issn": [
+   "0032-0943",
+   "1439-0221"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1055/s-0036-1597079",
+  "url": "https://doi.org/10.1055/s-0036-1597079",
+  "published_date": "2016-12-14",
+  "abstract": "The Aquilaria genus, consisting of 14 species of trees which belong to Thymelaeaceae, is mainly distributed in the rainforest of Southeast Asia and India [1]. Several species of this genus produce a dark aromatic resin in response to the insects, physical cut, microbial infections, or chemical stimulation [2, 3]. The resin-deposited heartwood is known as agarwood, which has long been used as incense, and as a sedative, analgesic, and digestive herbal medicine in Asia [4, 5]. We studied chemical constituents of agarwood from A. malaccensis . As a result, we isolated more than 60 compounds which include 27phenylethyl-chromones, 18 sesquiterpenes, and 7 flavonoids. Sesquiterpenes are belong to guaiane, eudesmane or eremophilane. Four sesquiterpenes and eight chromones were found to be new compounds. Amomg them are (1b,4ab,7b,8ab)-octahydro-7-[1-(hydroxymethyl)ethenyl]-1,8a-dimethylnaphthalen-4a(2 H)-ol and rel-(1aR,2R,3R,7bS)-1a,2,3,7b-tetrahydro-2,3-dihydroxy-5-[2-(4-methoxyphenyl)ethyl]-7 H-oxireno[f] [1]benzopyran-7-one. Some phenylethyl-chromone compounds showed strong anti-proliferation activity against A549 human lung cancer cell (GI 50 : ˜8µM). Agarwood is a potential source of many kinds of sesquiterpene and chromone compounds.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "화학 성분",
+   "크로몬",
+   "세스퀴테르펜",
+   "학회 초록"
+  ],
+  "summary_easy": "침향에서 60가지가 넘는 성분을 분리한 연구의 학회 초록이에요. 페닐에틸크로몬 27종, 세스퀴테르펜 18종 등이 포함돼요. 침향이 향·진정·진통·소화에 전통적으로 쓰였다는 배경 설명과 함께 성분 목록을 정리했어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Feasibility Study of Business in Agarwood Inoculation at Different Stem Diameters and Inoculation Periods",
+  "title_ko": "줄기 굵기와 접종 기간에 따른 침향 접종 사업의 타당성",
+  "authors": [
+   "Sri Suharti",
+   "Pratiwi Pratiwi",
+   "Erdy Santoso",
+   "Maman Turjaman"
+  ],
+  "affiliations": [
+   "Forest Research",
+   "Ministry of Environment"
+  ],
+  "country": [
+   "GB",
+   "KR"
+  ],
+  "journal": "Indonesian Journal of Forestry Research",
+  "publisher": "Ministry of Environment and Forestry",
+  "issn": [
+   "2355-7079",
+   "2406-8195"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.20886/ijfr.2011.8.2.114-129",
+  "url": "https://doi.org/10.20886/ijfr.2011.8.2.114-129",
+  "published_date": "2011-10-01",
+  "abstract": "Indonesia signifies as the biggest agarwood producer country in the world. Its demand and price tend to increase and have brought about over exploitation of agarwood. Consequently, its population in nature has decreased significantly. To overcome the situation, since 1995, agarwood has been included in the CITES Appendix II. However, illegal exploitation remains persistent and reaches an excessive level. In order to deal with it, agarwood cultivation and its artificial production have been undertaken at several provinces in Indonesia. Some supporting factors for agarwood cultivation and artificial production are the availability of potential land for extensive cultivation, appropriate agro climate condition, simple cultivation technique and already being well adopted by farmers, the availability of necessary pathogen for agarwood inoculation, and the increasing demand with relatively high price. The research aims to analyze the feasibility study of agarwood inoculation business at several stem diameters (15 - 25 cm; 26 -35 cm and 36 - 40 cm) and periods of inoculation (1 - 5 years). Data were collected through field observation and literature study. The results showed that inoculation on agarwood producer tree stands at 12.5% interest rate afforded positive net present value (NPV), internal rate of return (IRR) is much higher than market interest and benefit cost (B/C) ratio >2 for those three diameter classes. Furthermore, if agarwood harvesting is delayed until five years after inoculation, NPV, IRR and B/C ratio would be much higher. It can be concluded that inoculation on agarwood producer tree stands (at appropriate age for inoculation) is feasible to be developed.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "인공 접종",
+   "재배",
+   "경제성",
+   "CITES"
+  ],
+  "summary_easy": "인도네시아에서 나무에 균을 접종해 침향을 인공으로 만드는 사업이 나무 굵기와 기간에 따라 얼마나 수익이 나는지 계산한 연구예요. 자연 침향이 줄어 1995년부터 CITES 부속서 II에 오른 배경도 설명해요. 재배·경제 자료예요.",
+  "citation_count": 11,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "A Comparative Analysis of the Volatile Components of Agarwood from Vietnam and other Regions",
+  "title_ko": "베트남산과 다른 지역산 침향의 휘발 성분 비교 분석",
+  "authors": [
+   "Kwang Ho Jung",
+   "Keun-Jae Lee",
+   "Keun-Jae Lee"
+  ],
+  "affiliations": [
+   "Kwangwoon University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Asian Journal of Beauty and Cosmetology",
+  "publisher": "Korea Institute of Dermatological Sciences",
+  "issn": [
+   "2466-2046",
+   "2466-2054"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.20402/ajbc.2022.0076",
+  "url": "https://doi.org/10.20402/ajbc.2022.0076",
+  "published_date": "2022-12-29",
+  "abstract": "Purpose: The objective of this study was to evaluate the quality of five different types of agarwood from Vietnam and 4 other areas and analyze the volatile chemical components by gas chromatography mass spectrometry (GC-MS). We attempted to identify the ingredients that have previously been reported to have skin health benefits, and reviewed their potential future use as raw materials for natural cosmetics.Methods: The five sources of Aquilaria crassna (A. crassna) were from Vietnamese, Indonesian, Malaysian, Myanmar, and Cambodian agarwoods. The volatile chemical components of each agarwood were analyzed by GC-MS. The Vietnamese agarwood was selected as a standard by identifying A. crassna through DNA analysis.Results: GC-MS analysis revealed that ‘sesquiterpene’ was contained in all the agarwood samples. The four sesquiterpene components, italicene ether, epi-γ-eudesmol, δ-guaiene, and α-agarofuran were commonly detected in all agarwood samples. Eight simple volatile aromatic compound components (1-octanol, 4-(4-methoxyphenyl)-2-butanone, 4-phenyl-2-butanone, benzaldehyde, ethylbenzene, nonanal, octanal, and 2-ethyl-1-hexanol) were commonly detected. The sesquiterpene components, α-agarofuran, β-selinene, α-curcumene, and α-santalol have been reported to have anti-inflammatory, antioxidant, antibacterial, and anti-skin cancer properties, respectively.Conclusion: This study demonstrated a substantial difference in the quality of the volatile component composition in each of the four source areas other than A. crassna from Vietnam. Agarwood contains sesquiterpene, which has a unique fragrance and is beneficial for skin health, and it is expected to be utilized as a raw material for natural cosmetics and developed in the future as a functional cosmetic with high added value.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "휘발 성분",
+   "산지 비교",
+   "화장품 원료",
+   "GC-MS"
+  ],
+  "summary_easy": "베트남·인도네시아·말레이시아·미얀마·캄보디아산 침향 다섯 가지의 향 성분을 GC-MS로 분석해 비교한 한국 연구예요. 피부 건강과 관련해 보고된 성분이 어느 산지에 많은지 살펴, 천연 화장품 원료로 쓸 가능성을 검토했어요.",
+  "citation_count": 5,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Anatomical Characters of Aquilaria microcarpa Interacting with Fusarium sp",
+  "title_ko": "푸사리움균과 상호작용하는 아퀼라리아 미크로카르파의 해부학적 특징",
+  "authors": [
+   "Rima Herlina Siburian",
+   "Ulfah Juniarti Siregar",
+   "Iskandar Z. Siregar",
+   "Erdy Santoso",
+   "Imam Wahyudi"
+  ],
+  "affiliations": [
+   "IPB University",
+   "Ministry of Environment"
+  ],
+  "country": [
+   "ID",
+   "KR"
+  ],
+  "journal": "BIOTROPIA",
+  "publisher": "SEAMEO, BIOTROP",
+  "issn": [
+   "0215-6334",
+   "1907-770X",
+   "2309-544X"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.11598/btb.2013.20.2.258",
+  "url": "https://doi.org/10.11598/btb.2013.20.2.258",
+  "published_date": "2014-02-27",
+  "abstract": "AbstractAquilaria microcarpa is one of agarwood-producing plants, Interaction of pathogenic fungi may cause physiological changes in plants that have an impact on visual changes in cells, tissues or organs of plants. This study aims to determine differences in the anatomical characters of Aquilaria microcarpa that have been inoculated with Fusarium sp. Observations of anatomical characters showed that traits of inoculated and un-inoculated Aquilaria microcarpa in general are partly different. The difference was found in wood color, odor/aroma, the pores of wood and leather inserted visible. Chemical compounds contained in the plant interact with fusarium was Elemol, Baimuxinal, 3-phenyl-2-butanone, chromen-4-one.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "푸사리움",
+   "목재 해부",
+   "침향 형성"
+  ],
+  "summary_easy": "침향나무에 곰팡이(푸사리움)를 접종하면 나무 조직이 어떻게 달라지는지 현미경으로 본 연구예요. 접종한 나무는 목재 색·냄새·물관 모양이 달라졌어요. 침향이 생기는 과정을 조직 수준에서 관찰한 기초 자료예요.",
+  "citation_count": 2,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "α-Glucosidase Inhibitory Activity and Quantitative Contribution of Phenolic Compounds From Vietnamese Aquilaria crassna Leaves",
+  "title_ko": "베트남 아퀼라리아 크라스나 잎의 페놀 화합물과 α-글루코시다아제 억제 활성",
+  "authors": [
+   "Thi Ngoc Tram Nguyen",
+   "Thanh Duy Le",
+   "Phuoc Long Nguyen",
+   "Duc Hanh Nguyen",
+   "Huynh Van Thi Nguyen",
+   "Tấn Khanh Nguyễn",
+   "Manh Hung Tran",
+   "Thi Hong Van Le"
+  ],
+  "affiliations": [
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "University of Science and Technology - The University of Da Nang",
+   "Dong A University",
+   "Seoul National University"
+  ],
+  "country": [
+   "VN",
+   "KR"
+  ],
+  "journal": "Natural Product Communications",
+  "publisher": "SAGE Publishing",
+  "issn": [
+   "1555-9475",
+   "1934-578X"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1177/1934578x221080326",
+  "url": "https://doi.org/10.1177/1934578x221080326",
+  "published_date": "2022-03-01",
+  "abstract": "Aquilaria crassna Pierre ex Lecomte, Thymelaeaceae, is cultivated for producing resinous heartwood, also called agarwood. Its leaves are a source of herbal tea in Vietnam due to its rich content of polyphenols. However, the α-glucosidase inhibition activity and the contents of phenolic compounds in leaves of different ages have not yet been determined. In the current study, 7 polyphenols [iriflophenone 3,5-C- β-D-diglucoside (1), iriflophenone 3-C- β-D-glucoside (2), mangiferin (3), iriflophenone 2- O- α-rhamnoside (4), genkwanin 5- O- β-primeveroside (5), genkwanin 4′-methyl ether 5- O- β-primeveroside (6), and genkwanin (7)] were isolated from the leaves of A crassna. Among them, genkwanin (7), an O-methylated flavone, was the most active compound that inhibited α-glucosidase activity, with an IC 50 value of 24.0 μM. Molecular docking studies were performed to understand the binding interactions of the active compounds. In addition, a reliable and straightforward reversed-phase HPLC method was developed to determine the content of compounds in different leaves of A crassna. Mangiferin (3) showed the highest content. The contents of 1-4 contributed to the total polyphenolic contents and significantly decreased from the youngest to the oldest leaf. The contents of 5-7 fluctuated through various ages of leaves. Compounds 5 and 6 showed a low accumulation in the first and second leaves, then obtained high contents among middle leaves and declined in the oldest. These results suggested that A crassna and its polyphenols may prevent the development and progression of diabetes through α-glucosidase inhibition. Also, the analysis of the polyphenol content in A crassna may be helpful for tea product manufacture.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "잎 추출물",
+   "폴리페놀",
+   "α-글루코시다아제",
+   "베트남"
+  ],
+  "summary_easy": "침향나무 '잎'을 우린 차가 베트남에서 널리 마셔지는데, 그 잎의 폴리페놀 7가지가 당을 분해하는 효소(α-글루코시다아제)를 얼마나 억제하는지 잰 연구예요. 침향(수지)이 아니라 잎을 다룬 연구라는 점에 주의해야 해요.",
+  "citation_count": 4,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "A Study on the Actual Origin Species of Aquilaria malaccensis Imported from Indonesia",
+  "title_ko": "인도네시아에서 아퀼라리아 말라켄시스로 수입된 약재의 실제 기원종 연구",
+  "authors": [
+   "In-Rak Kim",
+   "Beyung-Su Park"
+  ],
+  "affiliations": [
+   "Dong-Eui University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "The Korea Journal of Herbology",
+  "publisher": "Korea Association of Herbology",
+  "issn": [
+   "1229-1765",
+   "2288-7199"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.6116/kjh.2011.26.1.097",
+  "url": "https://doi.org/10.6116/kjh.2011.26.1.097",
+  "published_date": "2011-01-01",
+  "abstract": "ABSTRACT Objectives：The purpose of this research is to identify the actual origin species imported as Aquilaria malaccensis from Indonesia.Methods：After producing the permanent preparat by cutting off the specimen thinly, we observed its characteristics. Results：The imported ones have not interxylary parenchyma, so none is in the genus aquilaria. Since the aliform parenchyma is mostly observed around the vessel pore, they are in the genus gonystylus, and the rest have no aliform parenchyma, so their specimen is unidentified. Conclusion：The imported as A. malaccensis are not in the genus aquilaria, but most of them are in the genus gonystylus and, for the rest, the specimen is unidentified.Key words：Aquilaria agallocha, A. malaccensis, traumatic parenchyma, agarwood, aliform parenchyma, Gonystylus sp. anatomical features 서 론 침향은 본초서로는 名醫別錄에 처음 수록되었으나 향을 즐기는 자들이 주로 사용하고 약으로는 惡核과 毒腫을 치료하는데 일부 사용하였다 1) . 法華經이나 聖經에도 침향의 향기를 하늘의 향기에 비유하였고 2,3) , 조선시대에는 왕이 제사지낼 때 독점적으로 사용하였다 4) . 꽃의 색깔은 唐本草",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "기원종",
+   "진위 감별",
+   "수입 약재",
+   "본초학"
+  ],
+  "summary_easy": "한국에 '침향'으로 수입된 약재를 얇게 잘라 현미경으로 봤더니, 대부분 침향나무(아퀼라리아)가 아니라 고니스틸루스라는 다른 나무였다는 연구예요. 국내 유통 침향의 진위 문제를 조직학으로 보여준 중요한 자료예요.",
+  "citation_count": 2,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Agarwood (Aquilaria crassna) Inhibits Beta-amyloid and Tau-protein Formation in a Mouse Obesity Model",
+  "title_ko": "비만 생쥐 모델에서 침향(A. crassna)의 베타아밀로이드·타우 단백질 형성 억제",
+  "authors": [
+   "Hye-myoung Jang",
+   "Ju-Hyeun Kim",
+   "Garam Park",
+   "Yoon Dong Choi",
+   "Sun-Eui Kim",
+   "Gwang Joo Jeon"
+  ],
+  "affiliations": [
+   "Hankyong National University",
+   "Laboratoire de Génie Chimique",
+   "Hoseo University",
+   "GeneMatrix (South Korea)"
+  ],
+  "country": [
+   "FR",
+   "KR"
+  ],
+  "journal": "Journal of Animal Health and Production",
+  "publisher": "",
+  "issn": [
+   "2308-2801"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.17582/journal.jahp/2022/10.2.221.225",
+  "url": "https://doi.org/10.17582/journal.jahp/2022/10.2.221.225",
+  "published_date": "2022-01-01",
+  "abstract": "Dementia related diseases such as Alzheimer's and Parkinson's became one of the most concerning social issues, almost a prime concern in aging era of todays as crucial as cancers.We have studied Agarwood (Aquiralia crassna) extract (AE) and its effects on prevention of dementia related diseases through ICR mice experiment.The mice were fed with 5 mg of AE per day for 16 weeks to see the effect of AE on inhibition of two major biomarkers of beta-amyloid (Aβ) and tau-protein (τ-protein) formed in the brain tissues.Under the hypothesis of obesity inducing potential dementia, mice were fed with high-fat energy diet to gain excessive weight.The experimental groups in this study are 1) high-fat diet fed only (control) and 2) high-fat diet fed with AE added (AE group).After the experiment was terminated, they were slaughtered and brains were obtained.Throughout the experiment, measured were changes of body weight, blood chemical compositions, Aβ and τ-protein expression.Western blot assay was made for Aβ and τ-protein expression.For blood chemical compositions, both LDL and HDL tended to increase in AE group than those in the control.Though body weights increased in the AE group than those in the control, AE significantly reduced both Aβ and τ-protein formation at p=0.05, indicating potentially preventative and medicinal effects of Agarwood against Alzheimer's and other dementia related diseases.Aβ and τ protein formation in AE group were significantly decreased than those in the control group.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "동물 실험",
+   "베타아밀로이드",
+   "타우",
+   "비만"
+  ],
+  "summary_easy": "고지방 먹이로 살찌운 생쥐에게 침향 추출물을 16주간 먹였더니 치매와 관련된 뇌 단백질(베타아밀로이드·타우)이 덜 생겼다는 동물 실험이에요. 생쥐 결과라 사람의 치매 예방 효과로 바로 옮길 수는 없어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Agarperoxinols A and B: Two Unprecedented Tricyclic 6/6/7 Rearranged Humulene-Type Sesquiterpenoids That Attenuated the Neuroinflammation in LPS-Stimulated Microglial Models",
+  "title_ko": "LPS로 자극한 미세아교세포에서 신경염증을 줄인 새로운 6/6/7 삼환 후물렌형 세스퀴테르펜, 아가페록시놀 A·B",
+  "authors": [
+   "Chi Thanh Ma",
+   "Sang Bin Lee",
+   "In Ho Cho",
+   "Jae Sik Yu",
+   "Tianqi Huang",
+   "Tae Min Lee",
+   "Tú Loan Lý",
+   "Sung Won Kwon",
+   "Jeong Hill Park",
+   "Hyun Ok Yang"
+  ],
+  "affiliations": [
+   "University of Medicine and Pharmacy at Ho Chi Minh City",
+   "Sejong University",
+   "Seoul National University",
+   "Korea Institute of Science and Technology",
+   "Korea University of Science and Technology",
+   "Ton Duc Thang University"
+  ],
+  "country": [
+   "KR",
+   "VN"
+  ],
+  "journal": "ACS Omega",
+  "publisher": "American Chemical Society",
+  "issn": [
+   "2470-1343"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1021/acsomega.3c05783",
+  "url": "https://doi.org/10.1021/acsomega.3c05783",
+  "published_date": "2023-11-09",
+  "abstract": "High Resolution Image Download MS PowerPoint Slide Agarperoxinols A and B ( 1–2 ), two naturally occurring humulene-type sesquiterpenoids with an unprecedented tricyclic 6/6/7 ring, were discovered from the agarwood of Aquilaria malaccensis . Their structures were unambiguously determined by various spectroscopic data, experimental ECD calculations, and single-crystal X-ray diffraction analysis. Agarperoxinol B showed significant and dose-dependent neuroinflammatory inhibitory effects on various proinflammatory mediators, including NO, TNF-α, IL-6, and IL-1β, and suppressed iNOS and COX-2 enzymes in LPS-activated microglial cells. A mechanistic study demonstrated that agarperoxinol B remarkably inhibited the phosphorylation of the Akt and JNK signaling pathways. Agarperoxinol B also significantly reduced the expression of the microglial markers Iba-1, COX-2, and TNF-α in the mouse cerebral cortex. Our findings introduce a bioactive compound from natural products that decreases proinflammatory factor production and has application for the treatment of neurodegenerative diseases.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "신경염증",
+   "세스퀴테르펜",
+   "미세아교세포",
+   "구조 규명"
+  ],
+  "summary_easy": "침향에서 처음 보고되는 고리 구조의 성분 두 가지를 찾았고, 그중 B가 뇌 면역세포의 염증 물질(NO·TNF-α·IL-6·IL-1β)을 용량에 따라 줄였어요. 세포 실험이며, 구조 규명과 작용 기전을 함께 다뤘어요.",
+  "citation_count": 7,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The enhancement of added value of agarwood by diversification product",
+  "title_ko": "제품 다양화를 통한 침향의 부가가치 향상",
+  "authors": [
+   "Gusmailina",
+   "Suwardi Sumadiwangsa"
+  ],
+  "affiliations": [
+   "Ministry of Environment"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "IOP Conference Series Earth and Environmental Science",
+  "publisher": "IOP Publishing",
+  "issn": [
+   "1755-1315",
+   "1755-1307"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1088/1755-1315/591/1/012022",
+  "url": "https://doi.org/10.1088/1755-1315/591/1/012022",
+  "published_date": "2020-11-01",
+  "abstract": "Abstract Non-timber forest products are one group of commodity forest products that need to be optimally used because they are generally high value and can be utilized directly and cultivated by communities around the forest. One of the commodities is agarwood, in which the value varies greatly. Its price per kg ranges from 10 thousand to 10 million. The price of low-quality aloes, or often called kemedangan, also varies greatly from 10 thousand to several million rupiahs for each kg. Until now, agarwood is only obtained from natural products, in which its potential is depleting and has been included in Appendix II Cites IX in Florida. Kemedangan has the opportunity to increase its utilization, such as the isolation of chemical components by distillation (essential oil) and extraction using organic solvents (extracts) or diversification of products such as the manufacture of the synthetic aloes (black magic wood / BMW), incense, makmul, and hio. This paper presents, in general, the profile of Indonesia’s agarwood and the prospect of increasing added value through diversification of products, such as efficient refining, extraction, and manufacturing of finished products.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "부가가치",
+   "가공품",
+   "인도네시아",
+   "학회논문"
+  ],
+  "summary_easy": "인도네시아 학회 논문으로, 품질 낮은 침향(케메당안)의 가격이 kg당 수천 원에서 수백만 원까지 크게 벌어지는 현실을 짚고, 가공품으로 만들어 가치를 높이는 방안을 다뤘어요. 산업·경제 자료예요.",
+  "citation_count": 3,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Agarwood Pill Enhances Immune Function in Cyclophosphamide-induced Immunosuppressed Mice",
+  "title_ko": "시클로포스파미드로 면역이 억제된 생쥐에서 침향환의 면역 기능 증진",
+  "authors": [
+   "Seon Yeong Ji",
+   "Hyesook Lee",
+   "Hyun Hwangbo",
+   "Min Yeong Kim",
+   "Da Hye Kim",
+   "Beom Su Park",
+   "Young Tae Koo",
+   "Jin‐Soo Kim",
+   "Ki Won Lee",
+   "Jong Cheul Ko",
+   "Gi‐Young Kim",
+   "EunJin Bang",
+   "Yung Hyun Choi"
+  ],
+  "affiliations": [
+   "Dong-Eui University",
+   "Pusan National University",
+   "Kwangdong Pharmaceutical",
+   "Jeju National University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Biotechnology and Bioprocess Engineering",
+  "publisher": "Springer Science+Business Media",
+  "issn": [
+   "1226-8372",
+   "1976-3816"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1007/s12257-022-0345-9",
+  "url": "https://doi.org/10.1007/s12257-022-0345-9",
+  "published_date": "2023-02-01",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "면역",
+   "동물 실험",
+   "침향환"
+  ],
+  "summary_easy": "항암제로 면역을 떨어뜨린 생쥐에게 침향환을 먹였을 때 면역 지표가 회복되는지 본 한국 동물 실험이에요. 원문 초록이 데이터베이스에 없어 제목과 서지 정보로 요약했어요. 생쥐 결과라 사람 효과로 바로 이어지지는 않아요.",
+  "citation_count": 5,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The Scientific Name of Aquilariae Lignum based on distribution of Aquilaria spp.",
+  "title_ko": "아퀼라리아속 분포에 근거한 침향(Aquilariae Lignum)의 학명 고찰",
+  "authors": [
+   "In-Rak Kim"
+  ],
+  "affiliations": [
+   "Dong-Eui University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "The Korea Journal of Herbology",
+  "publisher": "Korea Association of Herbology",
+  "issn": [
+   "1229-1765",
+   "2288-7199"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.6116/kjh.2013.28.5.13",
+  "url": "https://doi.org/10.6116/kjh.2013.28.5.13",
+  "published_date": "2013-09-30",
+  "abstract": "Objectives : The purpose of this study is correct the scientific name of Aquilariae Lignum in Korean Herbal Pharmacoepia. Methods : The production areas of Aquilariae Lignum and its trading status with China in Chinese history, Sanscrit-Chinese Translation Sutra, Naming year and the discovered district in main Aquilaria spp., Several nation's Pharmacoepia, The Plant List(TPL), Convention on International Trade in Endangered Species of Wild fauna and flora(CITES) and The International Union for Conservation of Nature(IUCN) were cross-checked. Results : The records in the Jiaozhouyiwuzhi written in the early 2nd century said that Aquilariae Lignum was produced in Vietnam. NanfangCaomuZhuang written in 304 said that Agarwood in Vietnam had white flowers. Vietnam had led production and trading of Aquilariae Lignum until Qing Dynasty. Aquilariae Lignum from Malaysia and Indonesia was not traded with China. In Sanscrit-Chinese Translation Sutra, India Aquilariae Lignum was translated as Vietnam Aquilariae Lignum. Aquilaria malaccensis was discovered from Malay-Peninsular in 1783, and has green or dirty yellow flowers. A. agallocha from North-Eastern India in 1814, white flowers. A. crasssna from Vietnam in 1914, white flowers. A. crassna is different from A. malaccensis in several ways, such as flower, fruit, seed and disribution. In several Nation's Pharmacoepia, A. crassna was a synonym of A. agallocha. But in TPL, CITES and IUCN, A. malaccensis was an accepted name, and A. agallocha was a synonym of A. malaccensis. Conclusions : These results show that the original species of Aquilariae Lignum in Korea Herbal Pharmacoepia should be reversed from A. agallocha to A. crassna Pierre ex Lacomte.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "학명",
+   "약전",
+   "본초학",
+   "CITES"
+  ],
+  "summary_easy": "대한민국약전에 적힌 침향의 학명이 실제 산지·역사 기록·국제 규약(CITES·IUCN)과 맞는지 따져 본 연구예요. 2세기 문헌부터 여러 나라 약전까지 대조해 학명을 바로잡을 근거를 제시했어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Evaluation of free radical scavenging and pancreatic lipase inhibitory effects of Aquilaria agallocha extracts",
+  "title_ko": "아퀼라리아 아갈로차 추출물의 자유라디칼 소거 및 췌장 리파아제 억제 효과 평가",
+  "authors": [
+   "Ha Yeong Lee",
+   "In-Chul Lee",
+   "Jae Hoon Kwak",
+   "Tae Hoon Kim"
+  ],
+  "affiliations": [
+   "Korea Environmental Industry and Technology Institute",
+   "Seowon University",
+   "Daegu Haany University",
+   "Daegu University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Korean Journal of Food Preservation",
+  "publisher": "The Korean Society of Food Preservation",
+  "issn": [
+   "1738-7248",
+   "2287-7428"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.11002/kjfp.2015.22.3.437",
+  "url": "https://doi.org/10.11002/kjfp.2015.22.3.437",
+  "published_date": "2015-06-01",
+  "abstract": "In a continuing screening of selected medicinal plants native to South Korea, the antioxidant and pancreatic lipase inhibitory activities of an aqueous methanolic extract from the heartwood of Aquilaria agallocha were investigated. Eighty percent of the methanolic extract of A. agallocha was further divided into CH2Cl2, EtOAc and n-BuOH in order to yield four solvent-soluble portions, namely CH2Cl2-soluble, EtOAc-soluble, n-BuOH-soluble and H2O residue. The antioxidant properties were evaluated by employing radical scavenging assays using 1,1-diphenyl-2-picrylhydrazyl (DPPH) and 2,2’-azino-bis (3-ethylbenzothiazoline-6-sulphonic acid) (ABTS+) radicals, while the anti-obesity efficacy of A. agallocha extracts and solvent-soluble portions were tested by porcine pancreatic lipase assay. All tested samples showed dose-dependent radical scavenging and pancreatic lipase inhibitory activities. Among the tested extracts and solvent-soluble portions, the CH2Cl2-soluble portion showed much higher radical scavenging activity and pancreatic lipase inhibitory properties when compared with other solvent-soluble portions. This result suggested that there was a significant relationship between the total phenolic content and biological efficacies, and A. agallocha extract might be considered as a new potential source of natural antioxidants and as a pancreatic lipase inhibitory source. A more systematic investigation of this biomass will be performed for further investigation of activity against antioxidative and anti-obesity effects.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "항산화",
+   "췌장 리파아제",
+   "추출 분획",
+   "시험관 실험"
+  ],
+  "summary_easy": "침향 심재의 메탄올 추출물을 용매별로 나눠 활성산소를 없애는 힘(DPPH·ABTS)과 지방 분해 효소를 억제하는 정도를 잰 한국 연구예요. 시험관 실험 결과이며, 어느 분획에 활성이 몰려 있는지를 보여줘요.",
+  "citation_count": 3,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "GC-MS Analysis of Chemical Constituents from Various Agarwood",
+  "title_ko": "여러 산지 침향의 GC-MS 화학 성분 분석",
+  "authors": [
+   "Kwhang-Ho Shin",
+   "Kyu-Yeol Choi",
+   "Sung Yong Cho",
+   "Duk-Kyun Ahn",
+   "Seong Kyu Park"
+  ],
+  "affiliations": [
+   "Kyung Hee University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "The Korea Journal of Herbology",
+  "publisher": "Korea Association of Herbology",
+  "issn": [
+   "1229-1765",
+   "2288-7199"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.6116/kjh.2011.26.1.007",
+  "url": "https://doi.org/10.6116/kjh.2011.26.1.007",
+  "published_date": "2011-01-01",
+  "abstract": "Objectives : The purpose of this study is to evaluate the quality of four different kinds of agarwood and analysis chemical constituents by GC-MS. Methods : Four source plants were two of Vietnamese agarwood, Indonesian agarwood and Myanmar agarwood. These plant materials were named sample No. 1-4. The chemical constituents of each agarwood were analysed by GC-MS. Results : GC-MS analysis showed that -selinene was found in all the samples. The Vietnamese agarwood, Sample 1, and 4 has contained 6.861% and 7.497% of -selinene and reached the highest level at the retention times 46.245 and 46.274 (min). Sample 2, the Myanmar agarwood has contained 1.608%, the lowest level of -selinene, and it also has contained about 20% of -eudesmol and 4.076% of valerianol. Sample 3, the Indonesian agarwood has contained 9.59% of -selinene, 9.493% of -selinene and shown its highest level (more than 19%) at the retention time 43.998 (min). Conclusion : It suggested that -selinene could be a standard marker to evaluate agarwood by GC-MS analysis.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "GC-MS",
+   "산지 비교",
+   "셀리넨",
+   "품질"
+  ],
+  "summary_easy": "베트남산 둘, 인도네시아산, 미얀마산 침향 네 가지의 성분을 GC-MS로 분석해 품질을 비교한 한국 연구예요. 모든 시료에서 셀리넨이 검출됐고 산지마다 비율이 달랐어요. 국내에서 산지별 침향 성분을 비교한 초기 자료예요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Ethyl acetate layer of a methanol extract from Aquilaria crassna promotes oxidative stress-mediated apoptosis in non-small-cell lung cancer cells",
+  "title_ko": "아퀼라리아 크라스나 메탄올 추출물의 에틸아세테이트층이 비소세포폐암 세포에서 산화스트레스 매개 세포사멸을 촉진",
+  "authors": [
+   "Kwang-Youn Kim",
+   "You Lim Hwang",
+   "Kwang‐Il Park",
+   "Soon‐Cheol Ahn"
+  ],
+  "affiliations": [
+   "Korea Institute of Oriental Medicine",
+   "Pusan National University",
+   "Gyeongsang National University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Molecular & Cellular Toxicology",
+  "publisher": "Springer Science+Business Media",
+  "issn": [
+   "1738-642X",
+   "2092-8467"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1007/s13273-024-00458-2",
+  "url": "https://doi.org/10.1007/s13273-024-00458-2",
+  "published_date": "2024-05-16",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "폐암 세포",
+   "세포사멸",
+   "산화스트레스",
+   "세포 실험"
+  ],
+  "summary_easy": "침향나무 추출물의 특정 분획이 폐암 세포에 활성산소를 늘려 세포가 스스로 죽게 만드는지 본 한국 세포 실험이에요. 원문 초록이 데이터베이스에 없어 제목으로 요약했어요. 세포 수준 결과라 항암 효과라고 단정할 수 없어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The ethanol extract of Aquilariae Lignum ameliorates hippocampal oxidative stress in a repeated restraint stress mouse model",
+  "title_ko": "반복 구속 스트레스 생쥐 모델에서 침향 에탄올 추출물의 해마 산화스트레스 개선",
+  "authors": [
+   "Hyun-Yong Lee",
+   "Jin‐Seok Lee",
+   "Hyeong-Geug Kim",
+   "Wonyong Kim",
+   "Seung-Bae Lee",
+   "Yung Hyun Choi",
+   "Chang‐Gue Son"
+  ],
+  "affiliations": [
+   "Daejeon University",
+   "Dong-Eui University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "BMC Complementary and Alternative Medicine",
+  "publisher": "BioMed Central",
+  "issn": [
+   "1472-6882"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1186/s12906-017-1902-1",
+  "url": "https://doi.org/10.1186/s12906-017-1902-1",
+  "published_date": "2017-08-10",
+  "abstract": "BACKGROUND: Chronic stress contributes to the development of brain disorders, such as neurodegenerative and psychiatric diseases. Oxidative damage is well known as a causative factor for pathogenic process in brain tissues. The aim of this study is to evaluate the neuroprotective effect of a 30% ethanol extract of Aquilariae Lignum (ALE) in repeated stress-induced hippocampal oxidative injury. METHODS: Fifty BALB/c male mice (12 weeks old) were randomly divided into five groups (n = 10). For 11 consecutive days, each group was orally administered with distilled water, ALE (20 or 80 mg/kg) or N-acetylcysteine (NAC; 100 mg/kg), and then all mice (except unstressed group) were subjected to restraint stress for 6 h. On the final day, brain tissues and sera were isolated, and stress hormones and hippocampal oxidative alterations were examined. We also treated lipopolysaccharide (LPS, 1 μg/mL)-stimulated BV2 microglial cells with ALE (1 and 5 μg/mL) or NAC (10 μM) to investigate the pharmacological mechanism. RESULTS: Restraint stress considerably increased the serum levels of corticosterone and adrenaline and the hippocampal levels of reactive oxygen species (ROS), nitric oxide (NO), and malondialdehyde (MDA). ALE administration significantly attenuated the above abnormalities. ALE also significantly normalized the stress-induced activation of astrocytes and microglial cells in the hippocampus as well as the elevation of pro-inflammatory cytokines, such as tumor necrosis factor-alpha (TNF-α) and interleukin-1 beta (IL-1β). The in vitro assay outcome supplemented ALE could dramatically block NF-κB activation in microglia. The anti-oxidative stress effects of ALE were supported by the results of antioxidant components, 4-hydroxynonenal (4-HNE), NADPH oxidase 2 (NOX2), inducible nitric oxide synthase (iNOS) and NFE2L2 (Nrf2) in the hippocampal tissues. CONCLUSIONS: We firstly demonstrated the neuroprotective potentials of A. Lignum against hippocampal oxidative injury in repeated restraint stress. The corresponding mechanisms might involve modulations in the release of ROS, pro-inflammatory cytokines and stress hormones.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "스트레스",
+   "해마",
+   "항산화",
+   "동물 실험"
+  ],
+  "summary_easy": "생쥐를 11일간 반복해서 묶어 스트레스를 준 뒤 침향 30% 에탄올 추출물을 먹였더니 기억을 담당하는 뇌 부위(해마)의 산화 손상이 줄었다는 한국 동물 실험이에요. 비교약으로 N-아세틸시스테인을 썼어요.",
+  "citation_count": 42,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Fermentation with Aquilariae Lignum Enhances the Anti-Diabetic Activity of Green Tea in Type II Diabetic db/db Mouse",
+  "title_ko": "침향 발효가 제2형 당뇨 db/db 생쥐에서 녹차의 항당뇨 활성을 높인다",
+  "authors": [
+   "Su Jin Kang",
+   "Ji Eun Lee",
+   "Eun Kyoung Lee",
+   "Dae Hwa Jung",
+   "Chang‐Hyun Song",
+   "Soo‐Jin Park",
+   "Seong Hun Choi",
+   "Chang-Hyun Han",
+   "Sae‐Kwang Ku",
+   "Young Joon Lee"
+  ],
+  "affiliations": [
+   "Daegu Haany University",
+   "Korea Institute of Oriental Medicine"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Nutrients",
+  "publisher": "Multidisciplinary Digital Publishing Institute",
+  "issn": [
+   "2072-6643"
+  ],
+  "indexing": "Scopus 등재 · SJR Q1 (2024)",
+  "scopus": true,
+  "quartile": "Q1",
+  "sjr": 1.473,
+  "doi": "10.3390/nu6093536",
+  "url": "https://doi.org/10.3390/nu6093536",
+  "published_date": "2014-09-09",
+  "abstract": "The major components of tea may be significantly influenced according to the type of fermentation, and consequently the effects of different teas will differ. We examined whether green tea fermented with Aquilariae Lignum (fGT) shows a stronger anti-diabetic effect than unfermented green tea (GT) on mice with type 2 diabetes. To evaluate the anti-obesity effect of fGT, we assessed body weight, fecal excretion, serum leptin levels, exocrine pancreatic zymogen granule contents, and periovarian fat weight and adiponectin contents. Blood glucose levels, pancreatic weight, and numbers of pancreatic islet insulin- and glucagon-producing cells were determined to evaluate anti-hypoglycemic effects, while total cholesterol, triglyceride, and low- and high-density lipoprotein levels were determined to evaluate anti-hyperlipidemic effects. The antioxidant effect of fGT was detected by measuring malondialdehyde and glutathione contents and the activities of catalase and superoxide dismutase. fGT showed anti-obesity, anti-hypoglycemic, anti-hyperlipidemia, and antioxidant effects. Additionally, fGT exerted stronger anti-diabetic effects compared with GT. Collectively, these results suggested that fGT fermented with the appropriate amounts of Aquilariae Lignum (49:1) has a stronger effect compared with GT. Thus, fGT is a promising and potent new therapeutic agent for type 2 diabetes.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "발효 녹차",
+   "당뇨",
+   "동물 실험",
+   "비만"
+  ],
+  "summary_easy": "녹차를 침향과 함께 발효시키면 보통 녹차보다 당뇨 생쥐의 혈당·체중·췌장 지표가 더 좋아지는지 본 한국 동물 실험이에요. 이 분야에서 인용이 많은 논문이지만, 침향 단독이 아니라 '침향 발효 녹차'의 효과라는 점을 구분해야 해요.",
+  "citation_count": 66,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "In vitro anticancer effect of Aquilaria crassna extract on human mammary gland cancer cells",
+  "title_ko": "인간 유방암 세포에 대한 아퀼라리아 크라스나 추출물의 시험관 항암 효과",
+  "authors": [
+   "Hye Myoung Jang",
+   "Ji Hye Lee",
+   "Ju Hyeun Kim",
+   "Garam Park",
+   "Gwang J. Jeon"
+  ],
+  "affiliations": [
+   "Hankyong National University",
+   "Anyang University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "International Journal of Biosciences (IJB)",
+  "publisher": "",
+  "issn": [
+   "2220-6655",
+   "2222-5234"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.12692/ijb/16.4.187-192",
+  "url": "https://doi.org/10.12692/ijb/16.4.187-192",
+  "published_date": "2020-04-01",
+  "abstract": "Agarwood has long been known for its therapeutic effects. In the current study, anticancer effects of Aquilaria crassna extracts (ACE) on human breast cancer in vitro with MDA-MB-231 and MCF-7 cancer cells were studied. Cell survival and cell death were investigated mainly by Immunofluorescence (IF) assay. The gene expressions of PCNA and BCL-2 for cancer cell proliferation, Caspase-3 for apoptosis and VEGF for angiogenesis were detected. The Hoechst analysis was also made to confirm the degradation of nucleus membrane. The cancer cells treated with ACE showed effects of cytotoxicity with significant increase in Caspase-3 expression in the treated group compared to the control. The potential blood vessel formation induced by VEGF was significantly lower in the cancer cells treated with ACE. Also, MMP2 were highly expressed. We concluded that the Aquilaria crassna extract showed anticancerous effects in human mammay gland cells.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "유방암 세포",
+   "세포사멸",
+   "세포 실험"
+  ],
+  "summary_easy": "유방암 세포주 두 종에 침향나무 추출물을 넣어 세포가 죽는지, 관련 유전자(카스파제-3 등)가 어떻게 바뀌는지 본 세포 실험이에요. 인용이 거의 없는 소규모 학술지 논문이고, 세포 수준 결과예요.",
+  "citation_count": 0,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "KERAGAMAN GENETIK AQUILARIA MALACCENSIS DARI BANGKA BARAT DAN IMPLIKASINYA UNTUK PENGELOLAAN TEGAKAN BENIH",
+  "title_ko": "서방카 아퀼라리아 말라켄시스의 유전 다양성과 채종림 관리에 대한 시사점",
+  "authors": [
+   "ILG Nurtjahjaningsih",
+   "AYPBC Widyatmoko",
+   "Liliek Haryjanto",
+   "Yuliah Yuliah",
+   "Yayan Hadiyan",
+   "Balai Besar Penelitian dan Pengembangan Bioteknologi dan Pemuliaan Tanaman Hutan"
+  ],
+  "affiliations": [
+   "Ministry of Environment"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Jurnal Pemuliaan Tanaman Hutan",
+  "publisher": "",
+  "issn": [
+   "1693-7147",
+   "2527-8665"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.20886/jpth.2020.14.2.121-128",
+  "url": "https://doi.org/10.20886/jpth.2020.14.2.121-128",
+  "published_date": "2020-12-30",
+  "abstract": "Aquilaria malaccensis (agarwood) is a native species to Indonesia, it produces fragrance. Aim in this study was to assess genetic diversity and structure of A. malaccensis in order to manage seed stand to produce high quality and quantity seeds/seedlings. Leaf samples for DNA template were collected from populations at western Bangka i.e. Air Gantang, Pelangas, and Simpang Gong. Amplifications of 14 RAPD markers were confirmed; 42 DNA samples of A. malaccensis were analysed using RAPD markers. Parameters of genetic diversity within population i.e. private alleles (PA) and expected heterozygosity (H) were calculated using GeneAlex software. Genetic structure among populations were determined as genetic distance (Da), Analysis Molecular of Variance (AMOVA), a neighbor-joining tree, were calculated using GeneAlex and PopTrew software. Eleven out of 14 RAPD markers were produced 104 stable and polymorphic alleles; PE were found at Air Gantang and Pelangas, 1 and 2 alleles, respectively. The H ranged between 0.133 (Simpang Gong) and 0.328 (Pelangas). The Da was moderate (0.099). AMOVA showed significant genetic diversity among populations (14%). A neighbor-joining tree showed the populations divided into two clusters with high boostrap value, and concordance with their geographical positions. Restricted gene flow might cause a high genetic relationship among populations. Low HEE in Simpang Gong caused this population was priored to being conserved; Air Gantang and Pelangas should be designed as different conservation units due to the population contained different private alleles.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "유전 다양성",
+   "RAPD",
+   "채종림",
+   "인도네시아"
+  ],
+  "summary_easy": "인도네시아 방카섬 세 지역의 침향나무 42그루 DNA를 분석해 유전적으로 얼마나 다양한지 살핀 연구예요. 좋은 씨앗을 얻기 위한 채종림을 어떻게 관리할지 제안해요. 인도네시아어 논문이며 재배·보전 자료예요.",
+  "citation_count": 0,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Aquilariae Lignum Methylene Chloride Fraction Attenuates IL-1β-Driven Neuroinflammation in BV2 Microglial Cells",
+  "title_ko": "침향 메틸렌클로라이드 분획이 BV2 미세아교세포에서 IL-1β 매개 신경염증을 완화",
+  "authors": [
+   "Jin‐Seok Lee",
+   "Yoo-Jin Jeon",
+   "Ji-Yun Kang",
+   "Sam-Keun Lee",
+   "Hwa-Dong Lee",
+   "Chang‐Gue Son"
+  ],
+  "affiliations": [
+   "Daejeon University",
+   "National Development Institute of Korean Medicine"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "International Journal of Molecular Sciences",
+  "publisher": "Multidisciplinary Digital Publishing Institute",
+  "issn": [
+   "1422-0067",
+   "1661-6596"
+  ],
+  "indexing": "Scopus 등재 · SJR Q1 (2024)",
+  "scopus": true,
+  "quartile": "Q1",
+  "sjr": 1.273,
+  "doi": "10.3390/ijms21155465",
+  "url": "https://doi.org/10.3390/ijms21155465",
+  "published_date": "2020-07-30",
+  "abstract": "Microglial hyperactivation and neuroinflammation are known to induce neuronal death, which is one of the main causes of neurodegenerative disorders. We previously found that Aquilariae Lignum extract attenuated both neuronal excitotoxicity and neuroinflammation in vivo and in vitro. For further analysis, we extracted the methylene chloride fraction of Aquilariae Lignum to determine the bioactive compounds. In this study, we investigated the anti-neuroinflammatory effects and underlying mechanisms of the Aquilariae Lignum fraction (ALF) using lipopolysaccharide (LPS)-stimulated BV2 microglial cells. BV2 cells were pretreated with ALF (0.5, 1, and 2.5 μg/mL) before treatment with LPS (1 μg/mL). Pretreatment with ALF significantly attenuated the LPS-induced overproductions of nitric oxide (NO), cyclooxygenase-2 (COX-2), prostaglandin E2 (PGE2), and interleukin (IL)-1β. These anti-inflammatory effects were supported by ALF-mediated modulation of the nuclear factor-kappa B (NF-κB) pathway. Furthermore, ALF exerted strong anti-inflammasome effects, as shown by IL-1β-specific inhibitory activity, but not activity against tumor necrosis factor (TNF)-α, along with inhibition of caspase-1 activity and NACHT, LRR, and PYD domain-containing protein 3 (NLRP3)-related molecules. These results indicate the potent anti-neuroinflammatory activity of ALF and that its underlying mechanism may involve the regulation of NLRP3 inflammasome-derived neuroinflammation in microglial cells.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "신경염증",
+   "미세아교세포",
+   "IL-1β",
+   "세포 실험"
+  ],
+  "summary_easy": "뇌 면역세포가 지나치게 활성화되면 신경세포가 죽는데, 침향의 특정 분획이 그 염증 신호(IL-1β 등)를 줄이는 과정을 한국 연구진이 세포 실험으로 밝혔어요. 앞선 동물 실험의 후속 연구로, 작용 원리를 다뤘어요.",
+  "citation_count": 17,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Acute and Subchronic Oral Toxicity of Fermented Green Tea with Aquilariae Lignum in Rodents",
+  "title_ko": "침향 발효 녹차의 설치류 급성·아만성 경구 독성",
+  "authors": [
+   "Sol Lee",
+   "Phil Hyun Song",
+   "Young Joon Lee",
+   "Sae‐Kwang Ku",
+   "Chang‐Hyun Song"
+  ],
+  "affiliations": [
+   "Daegu Haany University",
+   "Yeungnam University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Evidence-based Complementary and Alternative Medicine",
+  "publisher": "Hindawi Publishing Corporation",
+  "issn": [
+   "1741-427X",
+   "1741-4288"
+  ],
+  "indexing": "Scopus 등재 · SJR Q3 (2022)",
+  "scopus": true,
+  "quartile": "Q3",
+  "sjr": 0.469,
+  "doi": "10.1155/2019/8721858",
+  "url": "https://doi.org/10.1155/2019/8721858",
+  "published_date": "2019-09-10",
+  "abstract": "Green tea is generally considered safe, but there have been concerns regarding side effects relating to the main component, catechins, especially hepatotoxicities. We have previously shown beneficial effects of fermented green tea with Aquilariae Lignum (fGT) via an oral route in diabetic and obese models. Thus, the toxicological safety of fGT was assessed at limited oral doses for a rodent. Mice or rats of both genders were orally administered distilled water as a control and fGT at 2.0, 1.0, and 0.5 g/kg. There were no mortalities or gross abnormalities in the fGT groups for 2 weeks following the single oral dose in mice. No fGT-relevant abnormalities were found in postmortem and histopathological examinations, suggesting LD50of fGT at more than 2.0 g/kg with no specific target organs. There were also no fGT-relevant mortalities or abnormal signs in the repeated oral dose for 13 weeks in rats. In the fGT groups, no body weight changes or daily metabolic changes were found, and hematological and serum biochemical ranges were normal. The postmortem and histopathological examinations revealed few fGT-related abnormalities in most of the organs including the liver, although slight lymphoid cell hyperplasia in the lymph node was observed in a few rats with fGT at 2.0 g/kg. This may be secondary to increased immune response to the highest dose because there were no histopathological lesions or organ weight changes. It suggests nontoxic safety of fGT at up to 2.0 g/kg, which provides useful information for clinical use.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "독성 시험",
+   "안전성",
+   "발효 녹차",
+   "동물 실험"
+  ],
+  "summary_easy": "침향 발효 녹차를 생쥐와 쥐에게 많은 양(체중 kg당 최대 2g)으로 먹여 안전한지 확인한 한국 독성 시험이에요. 단회 투여와 반복 투여 모두에서 사망이나 이상이 없었다고 보고했어요. 효능이 아니라 안전성 자료예요.",
+  "citation_count": 11,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Study on the \"Moschus substitute for Aquilariae Resinatum Lignum or Aucklandiae Radix\" of Gongjin-Dan In The Classic Literature.",
+  "title_ko": "고전 문헌 속 공진단의 '사향 대신 침향 또는 목향' 대체에 관한 연구",
+  "authors": [
+   "Min-Seok Lee",
+   "Jong‐Hoon Lee",
+   "Taekwan Yoon",
+   "Jang-Cheon Lee",
+   "Boo-Kyun Lee"
+  ],
+  "affiliations": [
+   "Pusan National University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Herbal Formula Science",
+  "publisher": "",
+  "issn": [
+   "1229-1218"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.14374/hfs.2015.23.2.235",
+  "url": "https://doi.org/10.14374/hfs.2015.23.2.235",
+  "published_date": "2015-12-31",
+  "abstract": "Objectives : The object of this paper is to seek and provide evidences for the possibilities of substitutional use of Aquilariae Resinatum Lignum and Aucklandiae Radix for Moschus as an ingredient of Gongjin-dan by clarifying the similarities and differences among these herbs in the classic literatures. Methods : We have found out the features of Moschus, Aquilariae Resinatum Lignum and Aucklandiae Radix by searching Qi, Flavor and Effect of each herb in 『Shennongbencaojing』, 『Zhengleibencao』, 『Bencaogangmu』, 『Dongeuibogam』, 『Bencaobeiyao』, 『Euijongsonik』 and 『Bangyakhappyeon』. And we have compared and analyzed the fomula of Gongjin-dan and other prescriptions in 『Beijiqianjinyaofang』, 『Shengjizonglu』, 『Shiyidexiaofang』, 『Dongeuibogam』, 『Euijongsonik』, 『Euibanghwaltu』 and 『Bangyakhappyeon』. Results : We could find out the similarities and differences in Qi, Flavor and Effect among Moschus, Aquilariae Resinatum Lignum and Aucklandiae Radix. And we could also find the examples of substitutional use of Aquilariae Resinatum Lignum as an ingredient of Gongjin-dan by comparing the formula of Gongjin-dan in the classic literatures as above. And in the other prescription, Aucklandiae Radix was also used instead of Moschus. Conclusions : All of three herbs have pungent in Flavor and warm in Qi. And these herbs also have similar effects in dispersing invading pathogenic factors and smoothening the flow of Qi. And according to 『Bencaobeiyao』, 『Euijongsonik』 and 『Bangyakhappyeon』, Aquilariae Resinatum Lignum and Aucklandiae Radix direct and regulate the Qi in common. The substitutional use of Aquilariae Resinatum Lignum and Aucklandiae Radix instead of Moschus in Gonjin-dan seems to be related to 'the ascent of Water and descent of Fire' effect of Gongjin-dan.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "공진단",
+   "사향 대체",
+   "문헌 연구",
+   "방제학"
+  ],
+  "summary_easy": "공진단에서 비싼 사향 대신 침향이나 목향을 쓸 수 있다는 근거가 옛 의서(신농본초경·동의보감 등)에 어떻게 나오는지 찾은 문헌 연구예요. 세 약재의 성질과 효능을 비교했어요. 실험이 아닌 고전 문헌 고찰이에요.",
+  "citation_count": 2,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "A Philological study on Submersion Property of Aquilariae Lignum",
+  "title_ko": "침향의 침수성에 관한 문헌학적 연구",
+  "authors": [
+   "Su‐Jin Park",
+   "In-Rak Kim"
+  ],
+  "affiliations": [
+   "Dong-Eui University"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "The Korea Journal of Herbology",
+  "publisher": "Korea Association of Herbology",
+  "issn": [
+   "1229-1765",
+   "2288-7199"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.6116/kjh.2012.27.4.25",
+  "url": "https://doi.org/10.6116/kjh.2012.27.4.25",
+  "published_date": "2012-07-30",
+  "abstract": "Objectives : The purpose of this study is searching for grounds of new regulations about submerging properties of Aquilariae Lignum described in the Korean Herbal Pharmacopoeia. Methods : Through the investigation of the various Chinese histories and herbal classics, the definitions of Aquilariae Lignum and documents on actual trade and discrimination methods by sinking under water. Results : In Jiaozhouyiwuzhi(交州異物志) written in the early 2nd century, Aquilariae Lignum was defined as heart wood part or knots sinking under water due to hard and dark deposition of resins. Also, which are not sinking were defined as zhan xiang(棧香), and which are floating were named as qian xiang(槧香). The definitions of Aquilariae Lignum had not been changed till Ching Dynasty era, but the classification and the names about not-sinking and floating Lignum materials were a little changed. Conclusions : These results indicate that it is reasonable to make a regulation that \"Aquilariae Lignum sinks under water\" in the property description of The Korean Herbal Pharmacopoeia.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "침수성",
+   "문헌 연구",
+   "약전",
+   "감별"
+  ],
+  "summary_easy": "물에 가라앉는 침향만 진품으로 치던 옛 기준이 어디서 왔는지 2세기 문헌부터 중국 의서까지 훑은 연구예요. 가라앉는 것은 침향, 뜨는 것은 잔향 등으로 구분했던 기록을 정리해 약전 규정의 근거를 찾았어요.",
+  "citation_count": 2,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The Effect of Agarwood Inhalation on Adults Stress and Brain-waves",
+  "title_ko": "침향 흡입이 성인의 스트레스와 뇌파에 미치는 영향",
+  "authors": [
+   "Hynu-Duck Park",
+   "Heewook Weon"
+  ],
+  "affiliations": [],
+  "country": [],
+  "journal": "Journal of the Korean society for Wellness",
+  "publisher": "",
+  "issn": [
+   "1975-4051",
+   "2765-4419"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.21097/ksw.2022.5.17.2.205",
+  "url": "https://doi.org/10.21097/ksw.2022.5.17.2.205",
+  "published_date": "2022-05-31",
+  "abstract": "이 연구는 건강한 성인 24명을 대상으로 실험군 12명과 대조군 12명으로 침향 흡입요법으로 스트레스 반응 정도와 뇌파 중 안정상태에 출현되는 알파파에 미치는 영향을 탐색하는 것이다. 대상자의 스트레스는 정도는 수정판 스트레스 반응 척도(SRI–MF)와 뇌파측정(19 Channel, Brainmaster Discovery)을 이용하여 탐색하였다. 실험군은 전기향로 온도를 90℃로 설정하여 침향편을 올려놓고 흡입전과 후 스트레스 반응과 뇌파 측정을 비교 분석하였고, 대조군은 전기향로 온도를 0℃로 설정하여 고욤나무편을 올려놓고 흡입 전과후 스트레스 반응과 뇌파 측정을 비교 분석하였다. 수집된 자료는 Neuro Guide와 LORETA에 의해 분석 되었으며, SPSS/WIN 21.0 프로그램으로 기술 통계, 비모수 검정을 하였다. 결과는 첫째, 실험군은 침향 흡입 전보다 흡입 후에 스트레스 반응 지수가 유의하게 감소하였고, 대조군은 차이가 없었다. 둘째, 실험군의 알파파 절대 세기가 FP1을 제외한 모든 영역에서 증가하였다. 뇌파측정에서 유의하게 변화하였다. 반면 아무런 냄새가 나지 않는 고욤나무편을 흡입한 후에 대조군의 알파파 변화는 유의하게 변화하지 않았다.셋 째, 로레타에서 알파파 뇌 영역의 차이는 변연계, 측두엽, 전두엽에서 8~9Hz의 Brodmann’s Area 36번으로 확인되었다. 뇌파에서 알파파는 이완과 안정 상태가 되어 스트레스가 완화된다. 이러한 결과로 침향 향기 자극을 받은 뇌는 알파파의 증가로 이완되어 스트레스를 완화시키는 대처 자원이 될 수 있는 가능성을 시사한다.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "흡입",
+   "스트레스",
+   "뇌파",
+   "알파파"
+  ],
+  "summary_easy": "건강한 성인 24명을 둘로 나눠 한쪽은 전기향로(90℃)로 침향을, 다른 쪽은 향이 없는 고욤나무 조각을 흡입하게 하고 스트레스 척도와 뇌파를 잰 한국 연구예요. 침향 쪽은 스트레스 지수가 줄고 안정 뇌파(알파파)가 늘었어요. 24명 소규모 연구라는 한계가 있어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": false,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "The effect of agarwood inhalation using an electric incense burner on stress and brain waves",
+  "title_ko": "전기향로를 이용한 침향 흡입이 스트레스와 뇌파에 미치는 영향",
+  "authors": [
+   "Hyun-Duck Park",
+   "Hee Wook Weon"
+  ],
+  "affiliations": [],
+  "country": [],
+  "journal": "Journal of the Korea Academia-Industrial cooperation Society",
+  "publisher": "The Korea Academia-Industrial Cooperation Society",
+  "issn": [
+   "1975-4701",
+   "2288-4688"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.5762/kais.2021.22.3.536",
+  "url": "https://doi.org/10.5762/kais.2021.22.3.536",
+  "published_date": "2021-01-01",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "흡입",
+   "스트레스",
+   "뇌파",
+   "전기향로"
+  ],
+  "summary_easy": "전기향로로 침향을 태워 향을 맡았을 때 스트레스와 뇌파가 어떻게 달라지는지 본 한국 연구로, 위 2022년 연구와 같은 흐름이에요. 원문 초록이 데이터베이스에 없어 제목으로 요약했어요.",
+  "citation_count": 1,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": false,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Volatile Components in Agarwood from Laos and Thailand: A Comparative Study and Evaluation of Their Medicinal and Cosmetic Potential",
+  "title_ko": "라오스·태국산 침향의 휘발 성분: 비교 연구와 의약·화장품 활용 가능성 평가",
+  "authors": [
+   "Woojin Cho",
+   "Kwang Ho Jung"
+  ],
+  "affiliations": [
+   "International Bar Association"
+  ],
+  "country": [
+   "GB"
+  ],
+  "journal": "Asian Journal of Beauty and Cosmetology",
+  "publisher": "Korea Institute of Dermatological Sciences",
+  "issn": [
+   "2466-2046",
+   "2466-2054"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.20402/ajbc.2025.0092",
+  "url": "https://doi.org/10.20402/ajbc.2025.0092",
+  "published_date": "2025-12-18",
+  "abstract": "Purpose: To provide a comprehensive volatile chemical profile of agarwood from Laos and Thailand using gas chromatography–mass spectrometry (GC–MS). The data were compared with results previously published from five other geographic sources, enabling a robust evaluation of agarwood’s suitability for pharmaceutical and cosmetic applications. Methods: Volatile components of agarwood samples from Laos and Thailand (samples 6 and 7) were analyzed using the GC–MS protocols described in earlier studies. A subsequent evaluation of the sesquiterpenes identified in all seven samples was conducted using a systematic literature review of major databases, focusing on in vitro and in vivo reports of biological activity. Results: GC–MS analysis revealed that agarwood from Laos and Thailand contained volatile organic compounds (VOCs), monoterpenes, and sesquiterpenes, consistent with previous reports. Across the seven samples, three common sequiterpenes–italicene ether, epi-γ-eudesmol, and α-agarofuranㅡthree shared VOCS were identified. The literature review of 38 compounds produced 157 references, categorized into 15 biological activity domains, including anticancer, antimicrobial, anti-inflammatory, neuroprotective, immunomodulatory, metabolic, and musculoskeletal effects. Anti-inflammatory pathways mediated by cytokine regulation were most frequently observed. Conclusion: This is the first Korean comparative analysis of the volatile components of agarwood from seven geographic regions. The integrated GC–MS and literature-based findings highlight anti-inflammatory activity as a major biological mechanism. These results provide a solid foundation for future statistical analyses and in vitro/in vivo validation of individual compounds to advance agarwood research and its medicinal and cosmetic applications.",
+  "abstract_ko": "",
+  "keywords_ko": [
+   "휘발 성분",
+   "산지 비교",
+   "화장품",
+   "세스퀴테르펜"
+  ],
+  "summary_easy": "라오스와 태국에서 난 침향의 향 성분을 GC-MS로 분석하고, 앞서 발표한 다섯 산지 결과와 합쳐 일곱 산지를 비교한 한국 연구예요. 발견된 세스퀴테르펜들이 의약·화장품에 쓰일 수 있는지 문헌을 체계적으로 검토했어요.",
+  "citation_count": 0,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": false,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-23 03:31:33",
+  "last_updated": "2026-09-23 03:31:33",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-23"
  }
 ]
