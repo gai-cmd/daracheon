@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import SnsChannels from '@/components/home/SnsChannels';
+import { SNS_SAMPLE } from '@/data/sns-sample';
 import type { Farm } from '@/app/brand-story/page';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import styles from './page.module.css';
@@ -160,6 +162,7 @@ export type HomeSectionId =
   | 'verified'
   | 'certs'
   | 'press'
+  | 'social'
   | 'originAuthority'
   | 'agarwood'
   | 'benefits'
@@ -174,6 +177,8 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'certs',
   // 공식 인증(기관이 준 근거) 다음에 언론 보도(제3자가 쓴 근거)를 이어 붙인다.
   'press',
+  // 언론(제3자) 다음에 우리 채널(쇼츠·인스타)로 이어 준다 — 2026-09-23 시안.
+  'social',
   'originAuthority',
   'agarwood',
   'benefits',
@@ -714,6 +719,23 @@ export default async function HomePage() {
       : DEFAULT_PRESS_META.cta,
   };
 
+  // social(공식 채널) 섹션도 자체 타이틀이 없어 sectionMeta 가 단일 편집점.
+  const DEFAULT_SOCIAL_META: SectionMeta = {
+    topTag: 'Official Channels · 공식 채널',
+    titleQuote: '농장에서 찻잔까지,\n*지금의 대라천*을 영상으로 전합니다',
+    bodyLead:
+      '베트남 직영 농장의 현장과 침향 이야기를 유튜브와 인스타그램에 꾸준히 올립니다.\n영상을 누르면 이 화면에서 바로 재생됩니다.',
+  };
+  const effectiveSocialMeta: SectionMeta = {
+    ...DEFAULT_SOCIAL_META,
+    ...(sectionMetaMap.social ?? {}),
+    topTag: sectionMetaMap.social?.topTag?.trim() || DEFAULT_SOCIAL_META.topTag,
+    titleQuote: sectionMetaMap.social?.titleQuote?.trim() || DEFAULT_SOCIAL_META.titleQuote,
+    bodyLead: sectionMetaMap.social?.bodyLead?.trim() || DEFAULT_SOCIAL_META.bodyLead,
+  };
+  // 시안 단계: 정적 샘플. 자동 연동 후에는 크론이 저장한 Blob 데이터로 교체한다.
+  const snsChannels = SNS_SAMPLE;
+
   // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
   function renderMetaPrefix(meta?: SectionMeta) {
     if (!meta) return null;
@@ -774,6 +796,7 @@ export default async function HomePage() {
         const meta =
           sectionId === 'certs' ? effectiveCertsMeta
           : sectionId === 'press' ? effectivePressMeta
+          : sectionId === 'social' ? effectiveSocialMeta
           : rawMeta;
         if (rawMeta?.hidden) return null;
         // 노출할 보도가 없으면 헤더/CTA 까지 통째로 숨긴다 — 빈 섹션은 신뢰를 깎는다.
@@ -1120,6 +1143,8 @@ export default async function HomePage() {
         </div>
       </section>
             );
+          case 'social':
+            return <SnsChannels key="social" data={snsChannels} />;
           case 'originAuthority':
             return (
       // === ORIGIN AUTHORITY (역사적 기록 + 5개 지역 직영 — 하나의 섹션으로 통합. 2026-05-17) ===

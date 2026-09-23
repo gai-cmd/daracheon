@@ -1,0 +1,290 @@
+/* 홈 '공식 채널' 섹션 — 인증·언론 타일과 같은 골드 헤어라인 어휘를 따른다. */
+
+.section {
+  padding: 50px 0 70px;
+  border-top: 1px solid rgba(212, 168, 67, 0.12);
+  background: #0a0b10;
+}
+
+.wrap {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+@media (min-width: 1024px) {
+  .wrap { padding: 0 64px; }
+}
+
+.block + .block { margin-top: 64px; }
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(212, 168, 67, 0.18);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 168, 67, 0.45);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.platform {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.accountName {
+  font-family: var(--font-serif), serif;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.96);
+  line-height: 1.3;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.handle {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 6px;
+  font-weight: 300;
+}
+
+.followBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border: 1px solid rgba(212, 168, 67, 0.55);
+  color: var(--accent);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 240ms ease, color 240ms ease;
+}
+.followBtn:hover {
+  background: var(--accent);
+  color: #0a0b10;
+}
+
+/* YouTube Shorts — 세로 9:16 카드 가로 스크롤. 데스크톱은 5장이 한 화면에 든다. */
+.shortsRow {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 8px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 44%;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 168, 67, 0.4) transparent;
+}
+@media (min-width: 700px) { .shortsRow { grid-auto-columns: calc((100% - 3 * 14px) / 4); } }
+@media (min-width: 1024px) { .shortsRow { grid-auto-columns: calc((100% - 4 * 16px) / 5); gap: 16px; } }
+
+.shortItem { scroll-snap-align: start; min-width: 0; }
+
+.shortCard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.shortCard:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.shortThumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #14161f;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+}
+.shortThumb img { transition: transform 480ms ease; }
+.shortCard:hover .shortThumb img { transform: scale(1.04); }
+
+.play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 11, 16, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  font-size: 0.9rem;
+  padding-left: 3px;
+  opacity: 0.85;
+  transition: opacity 240ms ease, background 240ms ease;
+}
+.shortCard:hover .play { opacity: 1; background: rgba(212, 168, 67, 0.85); }
+
+.shortTitle {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shortDate {
+  margin-top: 6px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Instagram — 정사각 그리드. 골드 1px 격자(certGrid 와 같은 방식). */
+.igGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  border: 1px solid rgba(212, 168, 67, 0.18);
+  background: rgba(212, 168, 67, 0.18);
+}
+@media (min-width: 700px) { .igGrid { grid-template-columns: repeat(4, 1fr); } }
+
+.igTile {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #14161f;
+}
+.igTile:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.igTile img { transition: transform 480ms ease, filter 480ms ease; }
+.igTile:hover img { transform: scale(1.04); filter: brightness(0.55); }
+
+.igType {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.igCaption {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #fff;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+.igTile:hover .igCaption,
+.igTile:focus-visible .igCaption { opacity: 1; transform: none; }
+
+.empty {
+  margin: 0;
+  padding: 28px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+  word-break: keep-all;
+}
+
+/* 쇼츠 재생 모달 — 세로 9:16 프레임 */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.92);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  height: min(86dvh, 820px);
+  aspect-ratio: 9 / 17.4;
+  max-width: 100%;
+  background: #000;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+}
+.modalFrame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+}
+.modalBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #0a0b10;
+  border-top: 1px solid rgba(212, 168, 67, 0.2);
+}
+.modalTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modalClose {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* 모바일은 2열 × 3줄(6장)까지만 — 8장이면 스크롤이 과하게 길어진다. */
+@media (max-width: 699px) {
+  .igGrid > li:nth-child(n + 7) { display: none; }
+}
