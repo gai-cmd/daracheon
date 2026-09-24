@@ -83,7 +83,7 @@ export default function ShippingNoticePopup() {
           <li>연휴 직후 물량이 몰려 평소보다 1~2일 더 걸릴 수 있습니다.</li>
         </ul>
 
-        <p className={styles.thanks}>기다려 주셔서 감사합니다. — 대라천 ZOEL LIFE</p>
+        <p className={styles.thanks}>기다려 주셔서 감사합니다. — 대라천 ZOELLIFE</p>
 
         <div className={styles.actions}>
           <button type="button" className={styles.ghost} onClick={hideToday}>
