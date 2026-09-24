@@ -1,0 +1,149 @@
+/* dark-theme.css 가 전역 토큰과 h2/p 색을 !important 로 덮으므로 고정 hex + !important 사용 */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(10, 8, 6, 0.62);
+  animation: fade 0.2s ease-out;
+}
+
+.panel {
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 32px 28px 24px;
+  border-radius: 14px;
+  background: #fdfbf7;
+  border: 1px solid #d9c9a3;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  word-break: keep-all;
+  font-family: var(--font-sans), 'Noto Sans KR', sans-serif;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: #a8842f !important;
+}
+
+.title {
+  margin: 0 0 14px;
+  font-family: var(--font-serif), 'Noto Serif KR', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f1a14 !important;
+}
+
+.lead {
+  margin: 0 0 20px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #4a4238 !important;
+}
+
+.table {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #f4ecdb;
+  text-align: left;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.row dt {
+  flex: 0 0 64px;
+  font-weight: 600;
+  color: #7a6440 !important;
+}
+
+.row dd {
+  margin: 0;
+  color: #1f1a14 !important;
+}
+
+.row dd.accent {
+  font-weight: 700;
+  color: #9a2f1f !important;
+}
+
+.notes {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.notes li {
+  position: relative;
+  padding-left: 12px;
+  color: #5e554a !important;
+}
+
+.notes li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+}
+
+.thanks {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: #7a6440 !important;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ghost {
+  background: transparent;
+  border: 1px solid #cbb98f;
+  color: #5e554a !important;
+}
+
+.primary {
+  background: #1f1a14;
+  border: 1px solid #1f1a14;
+  color: #fdfbf7 !important;
+  font-weight: 600;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .panel { padding: 28px 20px 20px; }
+  .title { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop { animation: none; }
+}
