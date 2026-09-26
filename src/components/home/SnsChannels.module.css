@@ -89,22 +89,23 @@
   color: #0a0b10;
 }
 
-/* YouTube Shorts — 세로 9:16 카드 가로 스크롤. 데스크톱은 5장이 한 화면에 든다. */
+/* YouTube — 가로 16:9 카드 가로 스크롤. 공식 채널(@ZoelLife_official_00)은 쇼츠 없이
+   일반 영상만 있다(2026-09-26). 데스크톱 2장, 태블릿 2장, 모바일 한 장 반. */
 .shortsRow {
   list-style: none;
   margin: 0;
   padding: 0 0 8px;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 44%;
+  grid-auto-columns: 86%;
   gap: 14px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
   scrollbar-color: rgba(212, 168, 67, 0.4) transparent;
 }
-@media (min-width: 700px) { .shortsRow { grid-auto-columns: calc((100% - 3 * 14px) / 4); } }
-@media (min-width: 1024px) { .shortsRow { grid-auto-columns: calc((100% - 4 * 16px) / 5); gap: 16px; } }
+@media (min-width: 700px) { .shortsRow { grid-auto-columns: calc((100% - 14px) / 2); } }
+@media (min-width: 1024px) { .shortsRow { grid-auto-columns: calc((100% - 24px) / 2); gap: 24px; } }
 
 .shortItem { scroll-snap-align: start; min-width: 0; }
 
@@ -125,7 +126,7 @@
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: #14161f;
   border: 1px solid rgba(212, 168, 67, 0.18);
@@ -234,7 +235,7 @@
   word-break: keep-all;
 }
 
-/* 쇼츠 재생 모달 — 세로 9:16 프레임 */
+/* 영상 재생 모달 — 가로 16:9 프레임 */
 .modal {
   position: fixed;
   inset: 0;
@@ -247,15 +248,14 @@
 .modalBody {
   display: flex;
   flex-direction: column;
-  height: min(86dvh, 820px);
-  aspect-ratio: 9 / 17.4;
+  width: min(100%, 1100px, calc((86dvh - 52px) * 16 / 9));
   max-width: 100%;
   background: #000;
   border: 1px solid rgba(212, 168, 67, 0.35);
 }
 .modalFrame {
-  flex: 1;
   width: 100%;
+  aspect-ratio: 16 / 9;
   border: 0;
 }
 .modalBar {

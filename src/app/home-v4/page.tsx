@@ -5,7 +5,7 @@ import { readDataSafe } from '@/lib/db';
 import { SNS_SAMPLE } from '@/data/sns-sample';
 import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
 import { InViewVideo, Manifesto, MotionRoot } from './Motion';
-import ShortsReel from './ShortsReel';
+import VideoFeature from './VideoFeature';
 import ProductIndex from './ProductIndex';
 import styles from './page.module.css';
 
@@ -117,9 +117,12 @@ export default async function HomeV4Page() {
     .slice(0, 5)
     .map((p) => ({ slug: p.slug, name: p.name, nameEn: p.nameEn, category: p.category, image: p.image }));
 
-  // 한국어 사이트이므로 한글 제목 쇼츠만 — 제목은 해시태그·'MD' 꼬리를 정리해서 쓴다.
+  // 한국어 사이트이므로 한글 제목 영상만 — 제목은 해시태그·'MD' 꼬리를 정리해서 쓴다.
+  // 최신 영상이 앞에 오도록 게시일 내림차순(같은 날이면 원래 순서).
   const sns = koreanVideosOnly(SNS_SAMPLE);
-  const reel = sns.youtube.videos.map((v) => ({
+  const videos = [...sns.youtube.videos]
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    .map((v) => ({
     id: v.id,
     title: cleanVideoTitle(v.title),
     date: formatSnsDate(v.publishedAt),
@@ -196,19 +199,19 @@ export default async function HomeV4Page() {
         <Manifesto text={MANIFESTO} label="대라천이 일하는 방식" />
       </div>
 
-      {/* 3. SHORTS REEL — 공식 채널 쇼츠 */}
-      {reel.length > 0 && (
+      {/* 3. YOUTUBE — 공식 채널 영상 (가로 16:9) */}
+      {videos.length > 0 && (
         <section className={`${styles.section} ${styles.sectionDeep}`}>
           <div className={styles.wrap}>
             <header className={styles.headRow} data-reveal="">
               <div>
                 <span className={styles.pillLabel}>
-                  <YoutubeMark /> 공식 채널 · YouTube Shorts
+                  <YoutubeMark /> 공식 채널 · YouTube
                 </span>
                 <h2 className={styles.h2}>
-                  농장의 오늘을
+                  농장의 오늘을,
                   <br />
-                  <span className={styles.accent}>짧게,</span> 영상으로
+                  <span className={styles.accent}>영상으로</span>
                 </h2>
               </div>
               <a href={sns.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.btnGhostSm}>
@@ -216,8 +219,8 @@ export default async function HomeV4Page() {
               </a>
             </header>
           </div>
-          <div data-reveal="">
-            <ShortsReel videos={reel} />
+          <div className={styles.wrap}>
+            <VideoFeature videos={videos} />
           </div>
         </section>
       )}

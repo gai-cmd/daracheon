@@ -15,23 +15,23 @@ import styles from './page.module.css';
 /**
  * 메인 시안 C(벤토형) 클라이언트 조각 모음.
  *
- * - BentoRoot: 스크롤 등장(reveal)·타일 스포트라이트·쇼츠 모달을 한곳에서 관리한다.
+ * - BentoRoot: 스크롤 등장(reveal)·타일 스포트라이트·유튜브 모달을 한곳에서 관리한다.
  * - 움직임은 전부 `prefers-reduced-motion: reduce` 에서 멈춘다 — 자동 재생·카운트업 없이 최종 상태만 보여 준다.
  */
 
-export interface ShortItem {
+export interface VideoItem {
   id: string;
   title: string;
   date: string;
   thumbnail: string;
 }
 
-interface ShortsCtx {
-  videos: ShortItem[];
+interface VideoCtx {
+  videos: VideoItem[];
   open: (index: number) => void;
 }
 
-const ShortsContext = createContext<ShortsCtx>({ videos: [], open: () => {} });
+const VideoContext = createContext<VideoCtx>({ videos: [], open: () => {} });
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -44,7 +44,7 @@ export function BentoRoot({
   className,
   children,
 }: {
-  videos: ShortItem[];
+  videos: VideoItem[];
   className?: string;
   children: ReactNode;
 }) {
@@ -116,18 +116,18 @@ export function BentoRoot({
   }, []);
 
   return (
-    <ShortsContext.Provider value={{ videos, open }}>
+    <VideoContext.Provider value={{ videos, open }}>
       <div ref={rootRef} className={className}>
         {children}
       </div>
-      {playing !== null && videos[playing] && <ShortsModal video={videos[playing]} onClose={close} />}
-    </ShortsContext.Provider>
+      {playing !== null && videos[playing] && <VideoModal video={videos[playing]} onClose={close} />}
+    </VideoContext.Provider>
   );
 }
 
-/* ───────────── 쇼츠 모달 ───────────── */
+/* ───────────── 유튜브 모달 (가로 16:9) ───────────── */
 
-function ShortsModal({ video, onClose }: { video: ShortItem; onClose: () => void }) {
+function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -164,16 +164,16 @@ function ShortsModal({ video, onClose }: { video: ShortItem; onClose: () => void
   );
 }
 
-/* ───────────── 최신 쇼츠 타일 ───────────── */
+/* ───────────── 최신 유튜브 영상 타일 ───────────── */
 
-export function LatestShort() {
-  const { videos, open } = useContext(ShortsContext);
+export function LatestVideo() {
+  const { videos, open } = useContext(VideoContext);
   const [idx, setIdx] = useState(0);
   const [hold, setHold] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const count = videos.length;
 
-  // 화면 안에 있고 커서가 올라가 있지 않을 때만 7초마다 다음 쇼츠로 넘긴다.
+  // 화면 안에 있고 커서가 올라가 있지 않을 때만 7초마다 다음 영상으로 넘긴다.
   useEffect(() => {
     if (count < 2 || prefersReducedMotion()) return;
     const el = boxRef.current;
@@ -199,12 +199,12 @@ export function LatestShort() {
   return (
     <div
       ref={boxRef}
-      className={styles.shortBox}
+      className={styles.ytBox}
       onPointerEnter={() => setHold(true)}
       onPointerLeave={() => setHold(false)}
     >
       {/* 배경은 같은 썸네일을 흐리게 깔아 타일 전체를 채운다 */}
-      <div className={styles.shortBackdrop} aria-hidden="true">
+      <div className={styles.ytBackdrop} aria-hidden="true">
         {videos.map((s, i) => (
           <Image
             key={s.id}
@@ -212,32 +212,31 @@ export function LatestShort() {
             alt=""
             fill
             sizes="30vw"
-            className={styles.shortBackdropImg}
+            className={styles.ytBackdropImg}
             data-active={i === idx ? '' : undefined}
           />
         ))}
       </div>
 
-      <div className={styles.shortTop}>
+      <div className={styles.ytTop}>
         <span className={styles.chip}>
-          <YoutubeMark size={14} /> YouTube Shorts
+          <YoutubeMark size={14} /> YouTube
         </span>
-        <span className={styles.shortCount}>
+        <span className={styles.ytCount}>
           {String(idx + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
         </span>
       </div>
 
-      <div className={styles.shortStage}>
-      <button type="button" className={styles.shortFrame} onClick={() => open(idx)} aria-label={`${v.title} 재생`}>
+      <button type="button" className={styles.ytFrame} onClick={() => open(idx)} aria-label={`${v.title} 재생`}>
         {videos.map((s, i) => (
           <Image
             key={s.id}
             src={s.thumbnail}
             alt=""
             fill
-            sizes="(max-width: 640px) 60vw, 240px"
+            sizes="(max-width: 640px) 90vw, (max-width: 1099px) 45vw, 420px"
             priority={i === 0}
-            className={styles.shortFrameImg}
+            className={styles.ytFrameImg}
             data-active={i === idx ? '' : undefined}
           />
         ))}
@@ -247,45 +246,47 @@ export function LatestShort() {
           </svg>
         </span>
       </button>
-      </div>
 
-      <div className={styles.shortBottom}>
-        <div className={styles.shortMeta}>
-          <span className={styles.shortTitle} key={v.id}>
+      <div className={styles.ytBottom}>
+        <div className={styles.ytMeta}>
+          <span className={styles.ytTitle} key={v.id}>
             {v.title}
           </span>
-          <span className={styles.shortDate}>{v.date}</span>
+          <span className={styles.ytDate}>{v.date}</span>
         </div>
-        <div className={styles.miniCtl}>
-          <button type="button" onClick={() => step(-1)} aria-label="이전 쇼츠">
-            ‹
-          </button>
-          <button type="button" onClick={() => step(1)} aria-label="다음 쇼츠">
-            ›
-          </button>
-        </div>
+        {count > 1 && (
+          <div className={styles.miniCtl}>
+            <button type="button" onClick={() => step(-1)} aria-label="이전 영상">
+              ‹
+            </button>
+            <button type="button" onClick={() => step(1)} aria-label="다음 영상">
+              ›
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ───────────── 공식 채널 썸네일 한 칸 ───────────── */
+/* ───────────── 공식 채널 영상 한 칸 (16:9) ───────────── */
 
-export function ShortThumb({ index }: { index: number }) {
-  const { videos, open } = useContext(ShortsContext);
+export function VideoThumb({ index }: { index: number }) {
+  const { videos, open } = useContext(VideoContext);
   const v = videos[index];
   if (!v) return null;
   return (
     <button type="button" className={styles.chThumb} onClick={() => open(index)} aria-label={`${v.title} 재생`}>
       <span className={styles.chThumbImg}>
-        <Image src={v.thumbnail} alt="" fill sizes="(max-width: 640px) 40vw, 150px" style={{ objectFit: 'cover' }} />
+        <Image src={v.thumbnail} alt="" fill sizes="(max-width: 640px) 90vw, 360px" style={{ objectFit: 'cover' }} />
         <span className={styles.chPlay} aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14">
+          <svg viewBox="0 0 24 24" width="16" height="16">
             <path fill="currentColor" d="M8 5.5v13l11-6.5z" />
           </svg>
         </span>
       </span>
       <span className={styles.chTitle}>{v.title}</span>
+      <span className={styles.chDate}>{v.date}</span>
     </button>
   );
 }

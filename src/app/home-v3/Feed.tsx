@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { FeedFilter, FeedItem, ShortItem, VideoItem } from './types';
-import ShortsModal from './ShortsModal';
+import type { FeedFilter, FeedItem, VideoItem, YoutubeItem } from './types';
+import YoutubeModal from './YoutubeModal';
 import { BagIcon, DocIcon, InstagramIcon, NewsIcon, PlayIcon } from './icons';
 import styles from './page.module.css';
 
 const FILTERS: Array<{ id: FeedFilter; label: string }> = [
   { id: 'all', label: '전체' },
-  { id: 'short', label: '쇼츠' },
+  { id: 'youtube', label: '유튜브' },
   { id: 'insta', label: '인스타그램' },
   { id: 'video', label: '농장 영상' },
   { id: 'product', label: '제품' },
@@ -20,7 +20,6 @@ const FILTERS: Array<{ id: FeedFilter; label: string }> = [
 
 /** 필터별 '더 보기' 목적지 — 전체 보기에서는 띄우지 않는다. */
 const MORE: Partial<Record<FeedFilter, { href: string; label: string; external?: boolean }>> = {
-  short: { href: 'https://www.youtube.com/@ZoelLife.official', label: '유튜브 채널에서 더 보기', external: true },
   insta: { href: 'https://www.instagram.com/zoellife_official/', label: '인스타그램에서 더 보기', external: true },
   video: { href: '/media', label: '농장 이야기 전체 보기' },
   product: { href: '/products', label: '전체 제품 보기' },
@@ -41,8 +40,8 @@ function colsFor(width: number): number {
 function estimateHeight(it: FeedItem, colW: number): number {
   const caption = 64;
   switch (it.kind) {
-    case 'short':
-      return colW * (16 / 9) + caption;
+    case 'youtube':
+      return colW * (9 / 16) + caption;
     case 'video':
       return colW * (it.ratio === 'tall' ? 5 / 4 : 9 / 16) + caption;
     case 'insta':
@@ -60,11 +59,11 @@ function estimateHeight(it: FeedItem, colW: number): number {
 
 const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
-export default function Feed({ items }: { items: FeedItem[] }) {
+export default function Feed({ items, youtubeUrl }: { items: FeedItem[]; youtubeUrl: string }) {
   const [filter, setFilter] = useState<FeedFilter>('all');
   const [cols, setCols] = useState(4);
   const [colW, setColW] = useState(260);
-  const [playing, setPlaying] = useState<ShortItem | null>(null);
+  const [playing, setPlaying] = useState<YoutubeItem | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   // 컨테이너 폭을 재서 열 수를 정한다.
@@ -101,9 +100,11 @@ export default function Feed({ items }: { items: FeedItem[] }) {
     return out;
   }, [visible, cols, colW]);
 
-  const openShort = useCallback((s: ShortItem) => setPlaying(s), []);
-  const closeShort = useCallback(() => setPlaying(null), []);
-  const more = MORE[filter];
+  const openVideo = useCallback((v: YoutubeItem) => setPlaying(v), []);
+  const closeVideo = useCallback(() => setPlaying(null), []);
+  // 유튜브 '더 보기'는 데이터의 채널 주소를 따른다.
+  const more =
+    filter === 'youtube' ? { href: youtubeUrl, label: '유튜브 채널에서 더 보기', external: true } : MORE[filter];
 
   return (
     <section id="feed" className={styles.feed} aria-label="대라천 새 소식">
@@ -130,7 +131,7 @@ export default function Feed({ items }: { items: FeedItem[] }) {
             <div key={ci} className={styles.col}>
               {col.map(({ item, order }) => (
                 <Reveal key={item.key} delay={Math.min(order, 10) * 45}>
-                  <Card item={item} onOpenShort={openShort} />
+                  <Card item={item} onOpenVideo={openVideo} />
                 </Reveal>
               ))}
             </div>
@@ -152,7 +153,7 @@ export default function Feed({ items }: { items: FeedItem[] }) {
         </div>
       )}
 
-      {playing && <ShortsModal videoId={playing.videoId} title={playing.title} onClose={closeShort} />}
+      {playing && <YoutubeModal videoId={playing.videoId} title={playing.title} onClose={closeVideo} />}
     </section>
   );
 }
@@ -187,18 +188,18 @@ function Reveal({ children, delay }: { children: ReactNode; delay: number }) {
   );
 }
 
-function Card({ item, onOpenShort }: { item: FeedItem; onOpenShort: (s: ShortItem) => void }) {
+function Card({ item, onOpenVideo }: { item: FeedItem; onOpenVideo: (v: YoutubeItem) => void }) {
   switch (item.kind) {
-    case 'short':
+    case 'youtube':
       return (
-        <button type="button" className={styles.card} onClick={() => onOpenShort(item)} aria-label={`쇼츠 재생: ${item.title}`}>
-          <span className={`${styles.media} ${styles.ratioShort}`}>
+        <button type="button" className={styles.card} onClick={() => onOpenVideo(item)} aria-label={`유튜브 영상 재생: ${item.title}`}>
+          <span className={`${styles.media} ${styles.ratioWide}`}>
             <Image src={item.thumb} alt="" fill sizes="(max-width: 700px) 50vw, 20vw" className={styles.mediaImg} />
             <span className={styles.playBadge} aria-hidden="true">
               <PlayIcon />
             </span>
           </span>
-          <Meta title={item.title} sub={`유튜브 쇼츠 · ${item.date}`} icon={<PlayIcon />} />
+          <Meta title={item.title} sub={`유튜브 · ${item.date}`} icon={<PlayIcon />} />
         </button>
       );
     case 'video':

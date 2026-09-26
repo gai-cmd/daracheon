@@ -11,10 +11,10 @@ import {
   CountUp,
   HeroVideo,
   HoverVideo,
-  LatestShort,
-  ShortThumb,
+  LatestVideo,
+  VideoThumb,
   YoutubeMark,
-  type ShortItem,
+  type VideoItem,
 } from './BentoClient';
 import styles from './page.module.css';
 
@@ -134,9 +134,9 @@ export default async function HomeV5Page() {
     .slice(0, 6)
     .map(({ m }) => m);
 
-  // 한국어 사이트 — 한글 제목 쇼츠만, 제목은 해시태그·꼬리표를 걷어 낸다.
+  // 공식 유튜브 채널(가로 16:9 일반 영상). 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다.
   const snsKo = koreanVideosOnly(SNS_SAMPLE);
-  const shorts: ShortItem[] = snsKo.youtube.videos.map((v) => ({
+  const videos: VideoItem[] = snsKo.youtube.videos.map((v) => ({
     id: v.id,
     title: cleanVideoTitle(v.title),
     date: formatSnsDate(v.publishedAt),
@@ -147,7 +147,7 @@ export default async function HomeV5Page() {
   const igCells = [0, 1, 2, 3].map((i) => [ig.posts[i], ig.posts[i + 4]].filter(Boolean));
 
   return (
-    <BentoRoot videos={shorts} className={styles.page}>
+    <BentoRoot videos={videos} className={styles.page}>
       {/* 전역 CSS 가 main > div > section:first-of-type 에 물결 장식을 붙이므로 한 겹 더 감싼다 */}
       <div className={styles.inner}>
         {/* 1. 인트로 */}
@@ -197,12 +197,37 @@ export default async function HomeV5Page() {
             </span>
           </Link>
 
-          {/* 최신 쇼츠 */}
-          {shorts.length > 0 && (
-            <div className={`${styles.tile} ${styles.tShort}`} data-tile="" data-reveal="">
-              <LatestShort />
+          {/* 최신 유튜브 영상 */}
+          {videos.length > 0 && (
+            <div className={`${styles.tile} ${styles.tYt}`} data-tile="" data-reveal="">
+              <LatestVideo />
             </div>
           )}
+
+          {/* On-Air */}
+          <Link href="/home-shopping" className={`${styles.tile} ${styles.tOnair}`} data-tile="" data-reveal="">
+            <HoverVideo src={VIDEO.title} />
+            <span className={styles.onairShade} aria-hidden="true" />
+            <span className={styles.onairMark} aria-hidden="true">
+              ON AIR
+            </span>
+            <Go />
+            <span className={styles.onairBadge}>
+              <span className={styles.onairDot} aria-hidden="true" />
+              ON AIR
+            </span>
+            <span className={styles.eq} aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ ['--i' as string]: i }} />
+              ))}
+            </span>
+            <span className={styles.tileText}>
+              <span className={styles.kicker}>홈쇼핑 방송</span>
+              <span className={styles.cardTitleLg}>On-Air 특별관</span>
+              <span className={styles.cardSub}>방송 다시보기</span>
+            </span>
+          </Link>
+
 
           {/* 숫자 */}
           <div className={`${styles.tile} ${styles.tStats}`} data-tile="" data-reveal="">
@@ -301,30 +326,6 @@ export default async function HomeV5Page() {
             <span className={styles.tileText}>
               <span className={styles.kicker}>전시장</span>
               <span className={styles.cardTitleLg}>원목부터 완제품까지, 직접 보고 맡아 보세요</span>
-            </span>
-          </Link>
-
-          {/* On-Air */}
-          <Link href="/home-shopping" className={`${styles.tile} ${styles.tOnair}`} data-tile="" data-reveal="">
-            <HoverVideo src={VIDEO.title} />
-            <span className={styles.onairShade} aria-hidden="true" />
-            <span className={styles.onairMark} aria-hidden="true">
-              ON AIR
-            </span>
-            <Go />
-            <span className={styles.onairBadge}>
-              <span className={styles.onairDot} aria-hidden="true" />
-              ON AIR
-            </span>
-            <span className={styles.eq} aria-hidden="true">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} style={{ ['--i' as string]: i }} />
-              ))}
-            </span>
-            <span className={styles.tileText}>
-              <span className={styles.kicker}>홈쇼핑 방송</span>
-              <span className={styles.cardTitleLg}>On-Air 특별관</span>
-              <span className={styles.cardSub}>방송 다시보기</span>
             </span>
           </Link>
 
@@ -458,8 +459,8 @@ export default async function HomeV5Page() {
             </div>
           )}
 
-          {/* 공식 채널 — 쇼츠 한 줄 */}
-          {shorts.length > 0 && (
+          {/* 공식 채널 — 유튜브 영상 (16:9) */}
+          {videos.length > 0 && (
             <div className={`${styles.tile} ${styles.tChannel}`} data-tile="" data-reveal="">
               <div className={styles.tileHead}>
                 <span className={styles.igAccount}>
@@ -478,8 +479,8 @@ export default async function HomeV5Page() {
                 </a>
               </div>
               <div className={styles.chRow}>
-                {shorts.slice(0, 5).map((v, i) => (
-                  <ShortThumb key={v.id} index={i} />
+                {videos.slice(0, 2).map((v, i) => (
+                  <VideoThumb key={v.id} index={i} />
                 ))}
               </div>
             </div>

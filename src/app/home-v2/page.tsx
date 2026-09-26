@@ -107,7 +107,7 @@ export default async function HomeV2Page() {
     .sort((a, b) => dateKey(b.m.date) - dateKey(a.m.date) || a.i - b.i)
     .slice(0, 4)
     .map(({ m }) => m);
-  // 메인에서는 채널 맛보기만 — 쇼츠 한 화면(5), 인스타 한 줄(4).
+  // 메인에서는 채널 맛보기만 — 유튜브 최신(최대 5), 인스타 한 줄(4).
   const snsKo = koreanVideosOnly(SNS_SAMPLE);
   const sns = {
     youtube: { ...snsKo.youtube, videos: snsKo.youtube.videos.slice(0, 5) },
@@ -205,7 +205,7 @@ export default async function HomeV2Page() {
         </section>
       )}
 
-      {/* 4. CHANNELS — 쇼츠·인스타 맛보기 */}
+      {/* 4. CHANNELS — 유튜브·인스타 맛보기 */}
       <section className={styles.channelsHead}>
         <div className={styles.wrap}>
           <header className={styles.head}>

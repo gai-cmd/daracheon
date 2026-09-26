@@ -393,7 +393,7 @@ const SECTION_LABELS: Record<HomeSectionId, string> = {
   verified: 'Verified · 식약처 고시 기준 (Notice 헤드 + 4 인용 + 종 비교)',
   certs: 'Certifications · 12건 인증 칩 그리드',
   press: 'In the Press · 언론 보도 (최근 4건 자동 노출)',
-  social: 'Official Channels · 유튜브 쇼츠 + 인스타그램 (시안)',
+  social: 'Official Channels · 유튜브 + 인스타그램 (시안)',
   originAuthority: '원산지 권위 · 역사적 기록(왕조 카드) + 5개 지역 (단일 섹션)',
   agarwood: 'Agarwood · 신들의 나무',
   benefits: 'Benefits · 6대 효능',
@@ -1563,7 +1563,7 @@ export default function AdminHomePage() {
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900">
             <p className="font-semibold mb-2">시안 단계 — 게시물은 아직 샘플입니다.</p>
             <p>
-              유튜브 쇼츠(@ZoelLife.official)와 인스타그램(@zoellife_official) 게시물은 자동 연동이 붙으면
+              유튜브(@ZoelLife_official_00)와 인스타그램(@zoellife_official) 게시물은 자동 연동이 붙으면
               매일 최신 게시물로 채워집니다. 지금은 섹션 문구(태그·제목·본문)와 숨김만 조정합니다.
             </p>
           </div>

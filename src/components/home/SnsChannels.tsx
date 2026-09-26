@@ -28,7 +28,7 @@ function InstagramMark() {
   );
 }
 
-function ShortsModal({ video, onClose }: { video: SnsVideo; onClose: () => void }) {
+function VideoModal({ video, onClose }: { video: SnsVideo; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -79,7 +79,7 @@ export default function SnsChannels({ data, className }: { data: SnsChannelsData
                   <YoutubeMark />
                 </span>
                 <div>
-                  <div className={styles.platform}>YouTube Shorts</div>
+                  <div className={styles.platform}>YouTube</div>
                   <div className={styles.accountName}>
                     {youtube.name} <span className={styles.handle}>{youtube.handle}</span>
                   </div>
@@ -97,7 +97,7 @@ export default function SnsChannels({ data, className }: { data: SnsChannelsData
                   <li key={v.id} className={styles.shortItem}>
                     <button type="button" className={styles.shortCard} onClick={() => setPlaying(v)}>
                       <span className={styles.shortThumb}>
-                        <Image src={v.thumbnail} alt="" fill sizes="(max-width: 700px) 45vw, 20vw" style={{ objectFit: 'cover' }} />
+                        <Image src={v.thumbnail} alt="" fill sizes="(max-width: 700px) 86vw, 50vw" style={{ objectFit: 'cover' }} />
                         <span className={styles.play} aria-hidden="true">▶</span>
                       </span>
                       <span className={styles.shortTitle}>{title}</span>
@@ -152,7 +152,7 @@ export default function SnsChannels({ data, className }: { data: SnsChannelsData
         </div>
       </div>
 
-      {playing && <ShortsModal video={playing} onClose={() => setPlaying(null)} />}
+      {playing && <VideoModal video={playing} onClose={() => setPlaying(null)} />}
     </section>
   );
 }

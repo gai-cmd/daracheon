@@ -292,7 +292,6 @@
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
   isolation: isolate;
 }
-.ratioShort { aspect-ratio: 9 / 16; }
 .ratioSquare { aspect-ratio: 1 / 1; }
 .ratioProduct { aspect-ratio: 4 / 5; }
 .ratioWide { aspect-ratio: 16 / 9; }
@@ -555,7 +554,7 @@
   .playBadge { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
 }
 
-/* ── 쇼츠 모달 ─────────────────────────── */
+/* ── 유튜브 모달 ─────────────────────────── */
 .modal {
   position: fixed;
   inset: 0;
@@ -569,7 +568,8 @@
   animation: fadeIn 220ms ease;
 }
 .modalBody {
-  width: min(400px, 100%, calc((100dvh - 120px) * 9 / 16));
+  /* 화면 폭 92%, 최대 1100px — 세로가 낮은 화면에서는 높이에 맞춰 줄인다 */
+  width: min(92vw, 1100px, calc((100dvh - 140px) * 16 / 9));
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -577,7 +577,7 @@
 }
 .modalFrame {
   width: 100%;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 16 / 9;
   border: 0;
   border-radius: 16px;
   background: #000000;

@@ -178,7 +178,7 @@ const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
   'certs',
   // 공식 인증(기관이 준 근거) 다음에 언론 보도(제3자가 쓴 근거)를 이어 붙인다.
   'press',
-  // 언론(제3자) 다음에 우리 채널(쇼츠·인스타)로 이어 준다 — 2026-09-23 시안.
+  // 언론(제3자) 다음에 우리 채널(유튜브·인스타)로 이어 준다 — 2026-09-23 시안.
   'social',
   'originAuthority',
   'agarwood',

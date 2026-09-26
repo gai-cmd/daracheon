@@ -3,14 +3,14 @@
  * 서버(page.tsx)에서 데이터를 이 모양으로 정리해 클라이언트 피드(Feed.tsx)에 넘긴다.
  */
 
-export type FeedFilter = 'all' | 'short' | 'video' | 'insta' | 'product' | 'blog' | 'press';
+export type FeedFilter = 'all' | 'youtube' | 'video' | 'insta' | 'product' | 'blog' | 'press';
 
 interface Base {
   key: string;
 }
 
-export interface ShortItem extends Base {
-  kind: 'short';
+export interface YoutubeItem extends Base {
+  kind: 'youtube';
   videoId: string;
   title: string;
   date: string;
@@ -72,4 +72,4 @@ export interface PromoItem extends Base {
   cta: string;
 }
 
-export type FeedItem = ShortItem | VideoItem | InstaItem | ProductItem | BlogItem | PressItem | PromoItem;
+export type FeedItem = YoutubeItem | VideoItem | InstaItem | ProductItem | BlogItem | PressItem | PromoItem;

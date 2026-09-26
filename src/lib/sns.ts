@@ -1,5 +1,5 @@
 /**
- * 홈 '공식 채널' 섹션(YouTube 쇼츠 + Instagram) 공용 타입·헬퍼.
+ * 홈 '공식 채널' 섹션(YouTube + Instagram) 공용 타입·헬퍼.
  *
  * 2026-09-23 시안 단계: 데이터는 src/data/sns-sample.ts 의 정적 샘플을 쓴다.
  * 자동 연동 단계에서는 크론이 YouTube RSS·Instagram API 결과를 같은 모양
@@ -13,7 +13,7 @@ export interface SnsVideo {
   title: string;
   /** ISO 8601 */
   publishedAt: string;
-  /** 세로(9:16) 썸네일 URL */
+  /** 썸네일 URL — 공식 채널은 가로 16:9 영상이다 (2026-09-26 채널 교체) */
   thumbnail: string;
 }
 

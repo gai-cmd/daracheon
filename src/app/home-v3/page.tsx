@@ -13,7 +13,7 @@ import styles from './page.module.css';
  * 메인 시안 A — 갤러리형 (2026-09-26).
  *
  * motionsites.ai 메인처럼 첫 화면을 '살아 있는 피드'로 둔다.
- * 쇼츠·농장 영상·인스타그램·제품·블로그·언론 보도를 한 갤러리에 섞어
+ * 유튜브·농장 영상·인스타그램·제품·블로그·언론 보도를 한 갤러리에 섞어
  * 필터 칩으로 골라 보게 한다. 현행 다크·골드·명조 톤과 의도적으로 결을 달리한
  * 비교용 시안이라 검색 노출을 막는다.
  */
@@ -71,12 +71,12 @@ const PROMOS: Array<{ href: string; kicker: string; line: string; body: string; 
  * 이 순서가 대략 '왼쪽 위 → 오른쪽 아래' 읽기 순서가 된다.
  */
 const PATTERN: FeedItem['kind'][] = [
-  'video', 'short', 'promo', 'product', 'insta',
-  'short', 'blog', 'video', 'press', 'product',
-  'insta', 'short', 'video', 'product', 'blog',
-  'press', 'promo', 'short', 'video', 'insta',
-  'product', 'short', 'blog', 'video', 'press',
-  'short', 'promo', 'product', 'insta', 'video',
+  'video', 'youtube', 'promo', 'product', 'insta',
+  'youtube', 'blog', 'video', 'press', 'product',
+  'insta', 'youtube', 'video', 'product', 'blog',
+  'press', 'promo', 'youtube', 'video', 'insta',
+  'product', 'youtube', 'blog', 'video', 'press',
+  'youtube', 'promo', 'product', 'insta', 'video',
 ];
 
 interface ProductLite {
@@ -137,8 +137,8 @@ export default async function HomeV3Page() {
   const catName = new Map(categories.map((c) => [c.id, c.name]));
   const sns = koreanVideosOnly(SNS_SAMPLE);
 
-  const shorts: FeedItem[] = sns.youtube.videos.slice(0, 6).map((v) => ({
-    kind: 'short',
+  const youtube: FeedItem[] = sns.youtube.videos.slice(0, 6).map((v) => ({
+    kind: 'youtube',
     key: `yt-${v.id}`,
     videoId: v.id,
     title: cleanVideoTitle(v.title),
@@ -215,7 +215,7 @@ export default async function HomeV3Page() {
 
   const promos: FeedItem[] = PROMOS.map((p, i) => ({ kind: 'promo', key: `promo-${i}`, ...p }));
 
-  const items = interleave([...shorts, ...videos, ...insta, ...products, ...blog, ...press, ...promos]);
+  const items = interleave([...youtube, ...videos, ...insta, ...products, ...blog, ...press, ...promos]);
 
   return (
     <div className={styles.page}>
@@ -251,7 +251,7 @@ export default async function HomeV3Page() {
       </section>
 
       {/* 2~3. 필터 칩 + 메이슨리 피드 */}
-      <Feed items={items} />
+      <Feed items={items} youtubeUrl={sns.youtube.url} />
 
       {/* 4. CLOSING — 문의 */}
       <section className={styles.closing}>

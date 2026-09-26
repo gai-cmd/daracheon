@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import styles from './page.module.css';
 
-/** 쇼츠 세로 재생 모달 — ESC·바깥 클릭으로 닫고, 열려 있는 동안 본문 스크롤을 막는다. */
-export default function ShortsModal({ videoId, title, onClose }: { videoId: string; title: string; onClose: () => void }) {
+/** 유튜브 가로(16:9) 재생 모달 — ESC·바깥 클릭으로 닫고, 열려 있는 동안 본문 스크롤을 막는다. */
+export default function YoutubeModal({ videoId, title, onClose }: { videoId: string; title: string; onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {

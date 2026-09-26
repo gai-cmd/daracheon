@@ -337,13 +337,13 @@ a.tile:focus-visible {
 
 /* ── 배치 (≥1100px, 12열) ── */
 .tHero { grid-column: span 8; grid-row: span 6; }
-.tShort { grid-column: span 4; grid-row: span 6; }
+.tYt { grid-column: span 4; grid-row: span 4; }
 .tStats { grid-column: span 4; grid-row: span 5; }
 .tRing { grid-column: span 4; grid-row: span 5; }
 .tIg { grid-column: span 4; grid-row: span 5; }
-.tBrand { grid-column: span 5; grid-row: span 3; }
-.tShowroom { grid-column: span 4; grid-row: span 3; }
-.tOnair { grid-column: span 3; grid-row: span 3; }
+.tBrand { grid-column: span 6; grid-row: span 3; }
+.tShowroom { grid-column: span 6; grid-row: span 3; }
+.tOnair { grid-column: span 4; grid-row: span 2; }
 .tMarquee { grid-column: span 12; grid-row: span 1; }
 .tProducts { grid-column: span 8; grid-row: span 4; }
 .tPress { grid-column: span 4; grid-row: span 4; }
@@ -413,8 +413,8 @@ a.tile:focus-visible {
   font-weight: 300;
 }
 
-/* ───────── 최신 쇼츠 타일 ───────── */
-.shortBox {
+/* ───────── 최신 유튜브 영상 타일 (16:9) ───────── */
+.ytBox {
   position: absolute;
   inset: 0;
   display: flex;
@@ -422,24 +422,23 @@ a.tile:focus-visible {
   gap: 14px;
   padding: 16px;
 }
-.shortBackdrop {
+.ytBackdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
 }
-.shortBackdropImg {
+.ytBackdropImg {
   object-fit: cover;
   filter: blur(30px) saturate(1.2) brightness(0.42);
   transform: scale(1.35);
   opacity: 0;
   transition: opacity 0.9s ease;
 }
-.shortBackdropImg[data-active] { opacity: 1; }
-.shortTop,
-.shortStage,
-.shortBottom { position: relative; z-index: 1; }
-.shortTop {
+.ytBackdropImg[data-active] { opacity: 1; }
+.ytTop,
+.ytBottom { position: relative; z-index: 1; }
+.ytTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -461,41 +460,36 @@ a.tile:focus-visible {
   text-transform: uppercase;
 }
 .chip svg { color: #ff4e45; }
-.shortCount {
+.ytCount {
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 11.5px;
   letter-spacing: 0.06em;
   color: #bdbdbd;
 }
-.shortStage {
-  flex: 1;
-  min-height: 0;
-}
-.shortFrame {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  translate: -50% 0;
-  aspect-ratio: 9 / 16;
-  max-width: 100%;
+.ytFrame {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 18px;
+  border-radius: 14px;
   overflow: hidden;
   background: #0d0d0d;
   cursor: pointer;
   box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.85);
   transition: transform 0.45s var(--ease);
 }
-.shortFrame:hover { transform: scale(1.02); }
-.shortFrame:focus-visible { outline: 2px solid #f3dcb4; outline-offset: 3px; }
-.shortFrameImg {
+.ytFrame:hover { transform: scale(1.02); }
+.ytFrame:focus-visible { outline: 2px solid #f3dcb4; outline-offset: 3px; }
+.ytFrameImg {
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.7s ease;
 }
-.shortFrameImg[data-active] { opacity: 1; }
+.ytFrameImg[data-active] { opacity: 1; }
 .playBtn {
   position: absolute;
   left: 50%;
@@ -512,15 +506,16 @@ a.tile:focus-visible {
   transition: transform 0.35s var(--ease);
 }
 .playBtn svg { margin-left: 3px; }
-.shortFrame:hover .playBtn { transform: scale(1.1); }
-.shortBottom {
+.ytFrame:hover .playBtn { transform: scale(1.1); }
+.ytBottom {
+  margin-top: auto;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
 }
-.shortMeta { min-width: 0; }
-.shortTitle {
+.ytMeta { min-width: 0; }
+.ytTitle {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -535,7 +530,7 @@ a.tile:focus-visible {
 @keyframes fadeUp {
   from { opacity: 0; translate: 0 6px; }
 }
-.shortDate {
+.ytDate {
   display: block;
   margin-top: 4px;
   font-size: 12px;
@@ -807,10 +802,10 @@ a.tile:focus-visible {
 }
 .onairMark {
   position: absolute;
-  right: 14px;
-  top: 92px;
+  right: 18px;
+  bottom: 16px;
   z-index: 1;
-  font-size: clamp(34px, 3.4vw, 50px);
+  font-size: clamp(30px, 3vw, 44px);
   font-weight: 300;
   letter-spacing: 0.2em;
   line-height: 1;
@@ -851,8 +846,8 @@ a.tile:focus-visible {
 }
 .eq {
   position: absolute;
-  top: 60px;
-  left: 22px;
+  top: 21px;
+  left: 130px;
   z-index: 2;
   display: flex;
   align-items: flex-end;
@@ -1089,13 +1084,13 @@ a.tile:focus-visible {
 .blogItem:hover .blogArrow { transform: translateX(4px); color: #f3dcb4; }
 .blogItem:hover .blogTitle { color: #f3dcb4; }
 
-/* ───────── 공식 채널 쇼츠 줄 ───────── */
+/* ───────── 공식 채널 — 가로 영상 두 편 ───────── */
 .chRow {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
   align-items: start;
 }
 .chThumb {
@@ -1111,7 +1106,7 @@ a.tile:focus-visible {
 .chThumbImg {
   position: relative;
   display: block;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
   background: #1f1f1f;
@@ -1122,12 +1117,12 @@ a.tile:focus-visible {
 .chThumb:focus-visible { outline: 2px solid #f3dcb4; outline-offset: 3px; border-radius: 14px; }
 .chPlay {
   position: absolute;
-  left: 8px;
-  bottom: 8px;
+  left: 12px;
+  bottom: 12px;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
   background: rgba(253, 248, 239, 0.92);
   color: #141414;
@@ -1138,11 +1133,18 @@ a.tile:focus-visible {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-top: 8px;
-  font-size: 12.5px;
+  margin-top: 10px;
+  font-size: 0.95rem;
   font-weight: 400;
   line-height: 1.55;
-  color: #cfcfcf;
+  color: #eaeaea;
+}
+.chThumb:hover .chTitle { color: #f3dcb4; }
+.chDate {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #8a8a8a;
 }
 
 /* ───────── 마무리 띠 ───────── */
@@ -1190,8 +1192,7 @@ a.tile:focus-visible {
 .modalBody {
   display: flex;
   flex-direction: column;
-  height: min(86dvh, 820px);
-  aspect-ratio: 9 / 17.4;
+  width: min(92vw, 1100px);
   max-width: 100%;
   overflow: hidden;
   border-radius: 20px;
@@ -1199,8 +1200,10 @@ a.tile:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 .modalFrame {
-  flex: 1;
+  display: block;
   width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: calc(90dvh - 60px);
   border: 0;
 }
 .modalBar {
@@ -1240,12 +1243,12 @@ a.tile:focus-visible {
     gap: 12px;
   }
   .tHero { grid-column: span 6; grid-row: span 5; }
-  .tShort { grid-column: span 3; grid-row: span 7; }
+  .tYt { grid-column: span 3; grid-row: span 4; }
   .tStats { grid-column: span 3; grid-row: span 4; }
   .tRing { grid-column: span 3; grid-row: span 3; }
   .tIg { grid-column: span 3; grid-row: span 5; }
   .tBrand { grid-column: span 3; grid-row: span 5; }
-  .tShowroom { grid-column: span 3; grid-row: span 3; }
+  .tShowroom { grid-column: span 6; grid-row: span 3; }
   .tOnair { grid-column: span 3; grid-row: span 3; }
   .tMarquee { grid-column: span 6; grid-row: span 1; }
   .tProducts { grid-column: span 6; grid-row: span 4; }
@@ -1271,7 +1274,8 @@ a.tile:focus-visible {
   .grid > .tile { grid-column: 1 / -1; grid-row: auto; }
   .tHero { aspect-ratio: 4 / 5; }
   .heroText { padding: 22px; }
-  .tShort { height: 600px; }
+  .tYt { min-height: 0; }
+  .ytBox { position: relative; inset: auto; }
   .tRing { min-height: 340px; }
   .tBrand,
   .tShowroom { height: 300px; }
@@ -1280,17 +1284,7 @@ a.tile:focus-visible {
   .tProducts { min-height: 360px; }
   .tPress { height: 380px; }
   .countNum { font-size: 44px; }
-  .chRow {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 40%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    margin: 0 -20px;
-    padding: 0 20px 4px;
-    scrollbar-width: none;
-  }
-  .chRow > * { scroll-snap-align: start; }
+  .chRow { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .sectionHead { margin-top: 80px; }
   .closing { margin: 80px 0 90px; padding: 32px 24px; }
   .closing .ctas { justify-content: flex-start; }
@@ -1324,7 +1318,7 @@ a.tile:focus-visible {
   .ring,
   .ringGlow::before,
   .marquee,
-  .shortTitle { animation: none; }
+  .ytTitle { animation: none; }
   .ring,
   .ringGlow::before { --angle: 300deg; }
   .igImgAlt { animation: none; opacity: 0; }
