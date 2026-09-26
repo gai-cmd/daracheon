@@ -11,6 +11,7 @@ import {
   CountUp,
   HeroVideo,
   HoverVideo,
+  IgReels,
   LatestVideo,
   VideoThumb,
   YoutubeMark,
@@ -143,8 +144,6 @@ export default async function HomeV5Page() {
     thumbnail: v.thumbnail,
   }));
   const ig = snsKo.instagram;
-  // 인스타 2×2 — 칸마다 사진 두 장을 번갈아 보여 준다(8장 → 4칸).
-  const igCells = [0, 1, 2, 3].map((i) => [ig.posts[i], ig.posts[i + 4]].filter(Boolean));
 
   return (
     <BentoRoot videos={videos} className={styles.page}>
@@ -263,16 +262,9 @@ export default async function HomeV5Page() {
             </span>
           </Link>
 
-          {/* 인스타그램 2×2 */}
-          <a
-            href={ig.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${styles.tile} ${styles.tIg}`}
-            data-tile=""
-            data-reveal=""
-          >
-            <span className={styles.tileHead}>
+          {/* 인스타그램 — 공식 계정 릴스 커버를 세로(9:16) 그대로 넘겨 본다 */}
+          <div className={`${styles.tile} ${styles.tIg}`} data-tile="" data-reveal="">
+            <a href={ig.url} target="_blank" rel="noopener noreferrer" className={`${styles.tileHead} ${styles.igHeadLink}`}>
               <span className={styles.igAccount}>
                 <span className={styles.igMark}>
                   <InstagramMark size={16} />
@@ -283,24 +275,11 @@ export default async function HomeV5Page() {
                 </span>
               </span>
               <Go />
-            </span>
-            <span className={styles.igGrid}>
-              {igCells.map((cell, i) => (
-                <span key={i} className={styles.igCell} style={{ ['--i' as string]: i }}>
-                  {cell.map((p, j) => (
-                    <Image
-                      key={p.id}
-                      src={p.image}
-                      alt={j === 0 ? p.caption ?? '' : ''}
-                      fill
-                      sizes="(max-width: 640px) 45vw, 180px"
-                      className={j === 0 ? styles.igImg : `${styles.igImg} ${styles.igImgAlt}`}
-                    />
-                  ))}
-                </span>
-              ))}
-            </span>
-          </a>
+            </a>
+            <IgReels
+              posts={ig.posts.map((p) => ({ id: p.id, permalink: p.permalink, image: p.image, caption: p.caption ?? '' }))}
+            />
+          </div>
 
           {/* 브랜드 이야기 — 호버 시 증류 영상 */}
           <Link href="/brand-story" className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">

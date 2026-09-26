@@ -75,7 +75,7 @@ const PATTERN: FeedItem['kind'][] = [
   'youtube', 'blog', 'video', 'press', 'product',
   'insta', 'youtube', 'video', 'product', 'blog',
   'press', 'promo', 'youtube', 'video', 'insta',
-  'product', 'youtube', 'blog', 'video', 'press',
+  'product', 'insta', 'blog', 'video', 'press',
   'youtube', 'promo', 'product', 'insta', 'video',
 ];
 
@@ -157,19 +157,16 @@ export default async function HomeV3Page() {
     href: '/media',
   }));
 
-  // 인스타그램은 API 연결 전 샘플 — 영상 포스터와 겹치지 않는 사진만 고른다.
-  const igPick = new Set(['s3', 's7', 's8', 's6']);
-  const insta: FeedItem[] = sns.instagram.posts
-    .filter((p) => igPick.has(p.id))
-    .map((p) => ({
-      kind: 'insta',
-      key: `ig-${p.id}`,
-      href: p.permalink,
-      image: p.image,
-      caption: p.caption ?? sns.instagram.name,
-      handle: sns.instagram.handle,
-      mediaType: p.mediaType,
-    }));
+  // 인스타그램 — @zoellife_official 실제 릴스 전부(최신순). 표지는 /public 에 둔 세로 이미지.
+  const insta: FeedItem[] = sns.instagram.posts.map((p) => ({
+    kind: 'insta',
+    key: `ig-${p.id}`,
+    href: p.permalink,
+    image: p.image,
+    caption: p.caption ?? sns.instagram.name,
+    handle: sns.instagram.handle,
+    mediaType: p.mediaType,
+  }));
 
   // 어드민 제품 목록 순서를 그대로 따른다 — 앞쪽이 대표 제품.
   const products: FeedItem[] = productsRaw

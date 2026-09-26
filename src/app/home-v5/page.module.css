@@ -736,35 +736,104 @@ a.tile:focus-visible {
   color: #f3dcb4;
 }
 .ytMark { color: #ff4e45; }
-.igGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-  aspect-ratio: 1;
-  max-height: 100%;
-  margin: auto 0 0;
+.igHeadLink {
+  text-decoration: none;
+  color: inherit;
 }
-.igCell {
+.igReels {
   position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.igStage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
+}
+/* 가운데 카드는 무대 높이를 꽉 채우고, 양옆 카드는 작게·어둡게 반쯤 보인다 */
+.igCard {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  aspect-ratio: 9 / 16;
   border-radius: 14px;
+  overflow: hidden;
   background: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: calc(3 - var(--abs));
+  transform: translateX(calc(-50% + var(--off) * 64%)) scale(calc(1 - var(--abs) * 0.18));
+  opacity: calc(1 - var(--abs) * 0.45);
+  filter: brightness(calc(1 - var(--abs) * 0.35));
+  transition: transform 0.7s var(--ease), opacity 0.7s ease, filter 0.7s ease;
 }
-.igImg {
-  object-fit: cover;
-  transition: transform 1.2s var(--ease);
-}
-.tIg:hover .igImg { transform: scale(1.04); }
-.igImgAlt {
+.igCard[aria-hidden] {
   opacity: 0;
-  animation: igFade 12s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 3s);
+  pointer-events: none;
 }
-@keyframes igFade {
-  0%, 38% { opacity: 0; }
-  50%, 88% { opacity: 1; }
-  100% { opacity: 0; }
+.igCard[data-center] {
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.9);
+}
+.igCard:focus-visible { outline: 2px solid #f3dcb4; outline-offset: 2px; }
+.igCardImg {
+  object-fit: cover;
+  object-position: center 35%;
+}
+.igReelMark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.6);
+  color: #fdfbf7;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.igReelMark svg { margin-left: 1px; }
+.igFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.igCaption {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #eaeaea;
+  animation: fadeUp 0.6s var(--ease);
+}
+.igDots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.igDots button {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: width 0.3s var(--ease), background 0.3s ease;
+}
+.igDots button[aria-current] {
+  width: 18px;
+  background: #d4a843;
 }
 
 /* ───────── 전시장 / 브랜드 / On-Air ───────── */
@@ -1275,6 +1344,7 @@ a.tile:focus-visible {
   .tHero { aspect-ratio: 4 / 5; }
   .heroText { padding: 22px; }
   .tYt { min-height: 0; }
+  .igStage { flex: none; height: 400px; }
   .ytBox { position: relative; inset: auto; }
   .tRing { min-height: 340px; }
   .tBrand,
@@ -1321,7 +1391,8 @@ a.tile:focus-visible {
   .ytTitle { animation: none; }
   .ring,
   .ringGlow::before { --angle: 300deg; }
-  .igImgAlt { animation: none; opacity: 0; }
+  .igCard,
+  .igCaption { transition: none; animation: none; }
   .prodTrack,
   .tickerTrack { animation: none; }
   .prodViewport { overflow-x: auto; }

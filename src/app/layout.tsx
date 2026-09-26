@@ -240,7 +240,7 @@ const siteJsonLd = {
       ],
       areaServed: ['KR', 'JP', 'VN'],
       sameAs: [
-        'https://www.instagram.com/daracheon',
+        'https://www.instagram.com/zoellife_official/',
         'https://www.youtube.com/@ZoelLife_official_00',
       ],
       contactPoint: {

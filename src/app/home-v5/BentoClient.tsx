@@ -291,6 +291,103 @@ export function VideoThumb({ index }: { index: number }) {
   );
 }
 
+/* ───────────── 인스타그램 릴스 커버 (가운데 크게 + 양옆 살짝) ───────────── */
+
+export interface ReelItem {
+  id: string;
+  permalink: string;
+  image: string;
+  caption: string;
+}
+
+/**
+ * 릴스 커버는 9:16 세로에 글씨가 얹혀 있어 정사각으로 자르면 문구가 잘린다.
+ * 세로 비율 그대로 가운데 한 장 + 양옆 한 장씩 보여 주고, 3.5초마다 다음 릴스로 돌린다.
+ */
+export function IgReels({ posts }: { posts: ReelItem[] }) {
+  const [idx, setIdx] = useState(0);
+  const [hold, setHold] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const count = posts.length;
+
+  useEffect(() => {
+    if (count < 2 || prefersReducedMotion()) return;
+    const el = boxRef.current;
+    if (!el) return;
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+    });
+    io.observe(el);
+    const t = window.setInterval(() => {
+      if (visible && !hold) setIdx((i) => (i + 1) % count);
+    }, 3500);
+    return () => {
+      io.disconnect();
+      window.clearInterval(t);
+    };
+  }, [count, hold]);
+
+  if (count === 0) return null;
+  const half = Math.floor(count / 2);
+
+  return (
+    <div
+      ref={boxRef}
+      className={styles.igReels}
+      onPointerEnter={() => setHold(true)}
+      onPointerLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={() => setHold(false)}
+    >
+      <div className={styles.igStage}>
+        {posts.map((p, i) => {
+          // 현재 카드 기준 상대 위치 (-2 … 2). 1 을 넘는 카드는 뒤에 숨긴다.
+          const off = ((i - idx + count + half) % count) - half;
+          const shown = Math.abs(off) <= 1;
+          return (
+            <a
+              key={p.id}
+              href={p.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.igCard}
+              style={{ ['--off' as string]: off, ['--abs' as string]: Math.abs(off) }}
+              data-center={off === 0 ? '' : undefined}
+              aria-hidden={shown ? undefined : true}
+              tabIndex={shown ? undefined : -1}
+              aria-label={`인스타그램 릴스: ${p.caption}`}
+            >
+              <Image src={p.image} alt="" fill sizes="(max-width: 640px) 60vw, 220px" className={styles.igCardImg} />
+              <span className={styles.igReelMark} aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="12" height="12">
+                  <path fill="currentColor" d="M8 5.5v13l11-6.5z" />
+                </svg>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+      <div className={styles.igFoot}>
+        <span className={styles.igCaption} key={posts[idx].id}>
+          {posts[idx].caption}
+        </span>
+        <span className={styles.igDots}>
+          {posts.map((p, i) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-label={`${i + 1}번째 릴스 보기`}
+              aria-current={i === idx ? 'true' : undefined}
+              onClick={() => setIdx(i)}
+            />
+          ))}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────── 영상 ───────────── */
 
 /**

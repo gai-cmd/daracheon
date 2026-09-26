@@ -133,7 +133,7 @@ export default function SnsChannels({ data, className }: { data: SnsChannelsData
               {instagram.posts.map((p) => (
                 <li key={p.id}>
                   <a href={p.permalink} target="_blank" rel="noopener noreferrer" className={styles.igTile}>
-                    <Image src={p.image} alt={p.caption ?? ''} fill sizes="(max-width: 700px) 50vw, 25vw" style={{ objectFit: 'cover' }} />
+                    <Image src={p.image} alt={p.caption ?? ''} fill sizes="(max-width: 700px) 50vw, 20vw" style={{ objectFit: 'cover' }} />
                     {p.mediaType && p.mediaType !== 'IMAGE' && (
                       <span className={styles.igType} aria-hidden="true">
                         {p.mediaType === 'VIDEO' ? '▶' : '❐'}

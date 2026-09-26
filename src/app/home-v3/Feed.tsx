@@ -45,7 +45,7 @@ function estimateHeight(it: FeedItem, colW: number): number {
     case 'video':
       return colW * (it.ratio === 'tall' ? 5 / 4 : 9 / 16) + caption;
     case 'insta':
-      return colW + caption;
+      return colW * (4 / 3) + caption;
     case 'product':
       return colW * (5 / 4) + caption;
     case 'blog':
@@ -207,15 +207,21 @@ function Card({ item, onOpenVideo }: { item: FeedItem; onOpenVideo: (v: YoutubeI
     case 'insta':
       return (
         <a href={item.href} target="_blank" rel="noopener noreferrer" className={styles.card}>
-          <span className={`${styles.media} ${styles.ratioSquare}`}>
-            <Image src={item.image} alt="" fill sizes="(max-width: 700px) 50vw, 20vw" className={styles.mediaImg} />
-            {item.mediaType && item.mediaType !== 'IMAGE' && (
-              <span className={styles.cornerTag} aria-hidden="true">
-                {item.mediaType === 'VIDEO' ? '릴스' : '여러 장'}
+          {/* 릴스 표지는 9:16 이고 글자가 위·가운데에 있어 3:4 로 자르되 기준점을 위쪽(35%)에 둔다 */}
+          <span className={`${styles.media} ${styles.ratioReel}`}>
+            <Image src={item.image} alt="" fill sizes="(max-width: 700px) 50vw, 20vw" className={`${styles.mediaImg} ${styles.reelImg}`} />
+            {item.mediaType === 'VIDEO' && (
+              <span className={`${styles.cornerTag} ${styles.reelTag}`} aria-hidden="true">
+                <PlayIcon />
+                릴스
               </span>
             )}
           </span>
-          <Meta title={item.caption} sub={`인스타그램 · ${item.handle}`} icon={<InstagramIcon />} />
+          <Meta
+            title={item.caption}
+            sub={item.mediaType === 'VIDEO' ? '인스타그램 · 릴스' : `인스타그램 · ${item.handle}`}
+            icon={<InstagramIcon />}
+          />
         </a>
       );
     case 'product':

@@ -107,11 +107,11 @@ export default async function HomeV2Page() {
     .sort((a, b) => dateKey(b.m.date) - dateKey(a.m.date) || a.i - b.i)
     .slice(0, 4)
     .map(({ m }) => m);
-  // 메인에서는 채널 맛보기만 — 유튜브 최신(최대 5), 인스타 한 줄(4).
+  // 메인에서는 채널 맛보기만 — 유튜브 최신(최대 5), 인스타 한 줄(5).
   const snsKo = koreanVideosOnly(SNS_SAMPLE);
   const sns = {
     youtube: { ...snsKo.youtube, videos: snsKo.youtube.videos.slice(0, 5) },
-    instagram: { ...snsKo.instagram, posts: snsKo.instagram.posts.slice(0, 4) },
+    instagram: { ...snsKo.instagram, posts: snsKo.instagram.posts.slice(0, 5) },
   };
 
   return (

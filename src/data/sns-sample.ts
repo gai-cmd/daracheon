@@ -7,14 +7,18 @@ import type { SnsChannels } from '@/lib/sns';
  *   이 채널은 쇼츠 없이 가로 16:9 일반 영상만 있다. 썸네일은 시안이라 i.ytimg.com 을
  *   그대로 쓴다 — 자동 연동 단계에서 크론이 Vercel Blob 으로 복사한 URL 로
  *   대체한다(외부 CDN 금지 원칙). 이전 샘플은 @ZoelLife.official 채널 쇼츠였다.
- * - Instagram: API 연결 전이라 게시물 데이터가 없다. 사이트에 이미 있는
- *   Blob 이미지로 자리만 채우고, 링크는 계정 프로필로 보낸다.
+ * - Instagram: 공식 계정 @zoellife_official 공개 게시물 스냅샷 (2026-09-26, 최신 12건 중 5건).
+ *   전부 세로 9:16 릴스라 표지를 /public/images/sns/instagram/ 에 복사해 쓴다(외부 CDN 금지).
+ *   제외: 반려동물·캐릭터 표지 5건(DdqHZZ8RCeL, Db-IN7QxzFn, DbsMiG6xBp6, DbcicZvRv85,
+ *   DbciWTzRvky), 효능 주장 캡션 2건(Db444GPx3Gh, Db4azP0RosO).
+ *   자동 동기화(Meta 공식 API 토큰 필요)가 붙으면 크론 결과로 대체한다.
  */
 
 // maxresdefault = 16:9 1280x720 (hqdefault 는 4:3 에 검은 띠가 들어간다).
 const YT_THUMB = (id: string) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-const BLOB = 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
 const IG_URL = 'https://www.instagram.com/zoellife_official/';
+const IG_REEL = (code: string) => `https://www.instagram.com/reel/${code}/`;
+const IG_IMG = (code: string) => `/images/sns/instagram/${code}.jpg`;
 
 export const SNS_SAMPLE: SnsChannels = {
   youtube: {
@@ -31,14 +35,11 @@ export const SNS_SAMPLE: SnsChannels = {
     handle: '@zoellife_official',
     url: IG_URL,
     posts: [
-      { id: 's1', permalink: IG_URL, image: `${BLOB}/pages/process/process-02-farm.jpg`, caption: '하띤 직영 농장의 아침' },
-      { id: 's2', permalink: IG_URL, image: `${BLOB}/pages/process/process-05-harvest.jpg`, caption: '원물 채취 현장', mediaType: 'VIDEO' },
-      { id: 's3', permalink: IG_URL, image: `${BLOB}/uploads/pages/species-card-roxburgh.jpg`, caption: '아갈로차 록스버그 원목 단면', mediaType: 'CAROUSEL_ALBUM' },
-      { id: 's4', permalink: IG_URL, image: `${BLOB}/pages/process/process-01-seedling.jpg`, caption: '묘목 육성' },
-      { id: 's5', permalink: IG_URL, image: `${BLOB}/pages/process/process-06-distill.jpg`, caption: '증기 증류 공정', mediaType: 'VIDEO' },
-      { id: 's6', permalink: IG_URL, image: `${BLOB}/pages/process/process-03-organic.jpg`, caption: '20년 오르가닉 육성' },
-      { id: 's7', permalink: IG_URL, image: `${BLOB}/pages/process/process-04-resin.jpg`, caption: '수지 형성', mediaType: 'CAROUSEL_ALBUM' },
-      { id: 's8', permalink: IG_URL, image: `${BLOB}/pages/hero/home-hero-default.jpg`, caption: "대라천 '참'침향" },
+      { id: 'DdkZiWmRCeu', permalink: IG_REEL('DdkZiWmRCeu'), image: IG_IMG('DdkZiWmRCeu'), caption: '매일 애쓰는 밤, 나를 챙기는 작은 습관', mediaType: 'VIDEO' },
+      { id: 'DcDUH3aRpKO', permalink: IG_REEL('DcDUH3aRpKO'), image: IG_IMG('DcDUH3aRpKO'), caption: '이 나무가 세상에서 가장 비싼 기름이 되기까지', mediaType: 'VIDEO' },
+      { id: 'DcAA9lbxQH6', permalink: IG_REEL('DcAA9lbxQH6'), image: IG_IMG('DcAA9lbxQH6'), caption: '사장님 몰래 침향나무 태우기', mediaType: 'VIDEO' },
+      { id: 'Db7r8uLxjDT', permalink: IG_REEL('Db7r8uLxjDT'), image: IG_IMG('Db7r8uLxjDT'), caption: '진짜 침향을 태우면 생기는 일', mediaType: 'VIDEO' },
+      { id: 'DbsRQMfRXsI', permalink: IG_REEL('DbsRQMfRXsI'), image: IG_IMG('DbsRQMfRXsI'), caption: '침향 살 때 딱 3가지만 확인하세요', mediaType: 'VIDEO' },
     ],
   },
 };

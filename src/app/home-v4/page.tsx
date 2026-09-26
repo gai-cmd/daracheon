@@ -129,8 +129,9 @@ export default async function HomeV4Page() {
     thumbnail: v.thumbnail,
   }));
   const igPosts = sns.instagram.posts;
-  // 인스타 띠는 두 줄이 서로 반대로 흐른다 — 두 번째 줄은 순서를 뒤집어 같은 사진이 나란히 붙지 않게.
-  const igRows = [igPosts, [...igPosts].reverse()];
+  // 릴스 표지(세로 9:16)를 한 줄로 흘린다. 게시물이 적어 한 벌로는 화면 폭을 못 채우므로
+  // 두 번 이어 붙인 것을 '한 벌'로 삼고, 끊김 없는 루프를 위해 그 한 벌을 다시 두 번 깐다.
+  const igSet = igPosts.length < 8 ? [...igPosts, ...igPosts] : igPosts;
 
   return (
     <MotionRoot>
@@ -281,23 +282,46 @@ export default async function HomeV4Page() {
         </section>
       )}
 
-      {/* 6. INSTAGRAM — 두 줄이 반대로 흐르는 사진 띠 */}
+      {/* 6. INSTAGRAM — 릴스 표지가 한 줄로 흐르는 띠 (마우스를 올리면 멈춤) */}
       {igPosts.length > 0 && (
-        <section className={styles.igSection} aria-label="인스타그램">
-          <div className={styles.igRows} aria-hidden="true">
-            {igRows.map((row, r) => (
-              <div key={r} className={styles.igRow} data-dir={r === 0 ? 'left' : 'right'}>
-                <div className={styles.igTrack}>
-                  {[0, 1].map((copy) =>
-                    row.map((p) => (
-                      <span key={`${copy}-${p.id}`} className={styles.igTile}>
-                        <Image src={p.image} alt="" fill sizes="(max-width: 700px) 38vw, 240px" style={{ objectFit: 'cover' }} />
-                      </span>
-                    )),
-                  )}
-                </div>
-              </div>
-            ))}
+        <section className={styles.igSection} aria-label="인스타그램 릴스">
+          <div className={styles.igRow}>
+            <ul className={styles.igTrack}>
+              {[0, 1].map((copy) =>
+                igSet.map((p, i) => {
+                  // 첫 벌의 첫 5개만 보조기기·키보드에 노출 — 나머지는 루프용 복제
+                  const dup = copy === 1 || i >= igPosts.length;
+                  return (
+                    <li key={`${copy}-${i}-${p.id}`} className={styles.igItem} aria-hidden={dup ? true : undefined}>
+                      <a
+                        href={p.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.igTile}
+                        tabIndex={dup ? -1 : undefined}
+                        aria-label={p.caption ? `인스타그램 릴스: ${p.caption}` : '인스타그램 릴스'}
+                      >
+                        <Image
+                          src={p.image}
+                          alt=""
+                          fill
+                          sizes="(max-width: 700px) 42vw, 220px"
+                          className={styles.igImg}
+                        />
+                        {p.mediaType === 'VIDEO' && (
+                          <span className={styles.igReel} aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="13" height="13">
+                              <path fill="currentColor" d="M8 5v14l11-7z" />
+                            </svg>
+                          </span>
+                        )}
+                        {p.caption && <span className={styles.igCaption}>{p.caption}</span>}
+                      </a>
+                    </li>
+                  );
+                }),
+              )}
+            </ul>
           </div>
           <div className={styles.igCenter}>
             <a href={sns.instagram.url} target="_blank" rel="noopener noreferrer" className={styles.igPill}>

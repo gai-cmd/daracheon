@@ -838,28 +838,89 @@
   background: #121212;
   color: #ffffff;
 }
-.igRows {
-  display: grid;
-  gap: 16px;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+.igRow {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.igRow { overflow: hidden; }
 .igTrack {
   display: flex;
   width: max-content;
-  animation: marquee 70s linear infinite;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: marquee 60s linear infinite;
 }
-.igRow[data-dir='right'] .igTrack { animation-direction: reverse; }
+/* 눌러 보려는 사람을 위해 마우스를 올리면 흐름을 멈춘다 */
+.igRow:hover .igTrack,
+.igRow:focus-within .igTrack { animation-play-state: paused; }
+.igItem {
+  flex: 0 0 auto;
+  margin-right: 16px;
+}
+/* 릴스 표지는 세로 9:16 + 표지 글씨가 많아 자르지 않고 비율 그대로 보여 준다 */
 .igTile {
   position: relative;
-  flex: 0 0 auto;
-  width: clamp(140px, 17vw, 240px);
-  aspect-ratio: 1;
-  margin-right: 16px;
+  display: block;
+  width: clamp(150px, 15vw, 220px);
+  aspect-ratio: 9 / 16;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   background: #1c1c1c;
+  color: #ffffff;
+  text-decoration: none;
+  transition: border-color 0.4s ease, transform 0.5s var(--ease);
+}
+.igTile:hover {
+  color: #ffffff;
+  border-color: rgba(212, 168, 67, 0.5);
+  transform: translateY(-4px);
+}
+.igTile:focus-visible {
+  outline: 2px solid #d4a843;
+  outline-offset: 3px;
+}
+.igImg {
+  object-fit: cover;
+  object-position: center 35%;
+}
+.igReel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+}
+.igReel svg { margin-left: 2px; }
+.igCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 48px 14px 14px;
+  background: linear-gradient(to top, rgba(8, 8, 8, 0.92) 0%, rgba(8, 8, 8, 0.6) 55%, transparent 100%);
+  font-family: var(--font-sans), 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  word-break: keep-all;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s var(--ease);
+}
+.igTile:hover .igCaption,
+.igTile:focus-visible .igCaption {
+  opacity: 1;
+  transform: none;
 }
 .igCenter {
   position: absolute;
@@ -868,7 +929,15 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: radial-gradient(ellipse 36% 46% at 50% 50%, rgba(10, 10, 10, 0.78), transparent 100%);
+  background: radial-gradient(ellipse 26% 30% at 50% 50%, rgba(10, 10, 10, 0.55), transparent 100%);
+}
+/* 좁은 화면에서는 가운데 알약이 표지 글씨를 너무 많이 가리므로 띠 아래로 내린다 */
+@media (max-width: 767px) {
+  .igCenter {
+    position: static;
+    margin-top: 28px;
+    background: none;
+  }
 }
 .igPill {
   display: inline-flex;
@@ -936,6 +1005,8 @@
   .scrollLine::after { animation: none; }
   .ticker { overflow-x: auto; }
   .igRow { overflow-x: auto; }
+  .igTile,
+  .igCaption { transition: none; }
   .manifesto { height: auto; }
   .manifestoSticky {
     position: static;

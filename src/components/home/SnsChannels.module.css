@@ -176,7 +176,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Instagram — 정사각 그리드. 골드 1px 격자(certGrid 와 같은 방식). */
+/* Instagram — 공식 계정 게시물은 전부 세로 릴스라 3:4 세로 타일로 보여 준다(표지 글자가 잘리지 않게).
+   골드 1px 격자(certGrid 와 같은 방식). 데스크톱 한 줄 5장, 모바일 2열. */
 .igGrid {
   list-style: none;
   margin: 0;
@@ -187,15 +188,16 @@
   border: 1px solid rgba(212, 168, 67, 0.18);
   background: rgba(212, 168, 67, 0.18);
 }
-@media (min-width: 700px) { .igGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 700px) { .igGrid { grid-template-columns: repeat(5, 1fr); } }
 
 .igTile {
   position: relative;
   display: block;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #14161f;
 }
+.igTile img { object-position: center 35%; }
 .igTile:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .igTile img { transition: transform 480ms ease, filter 480ms ease; }
 .igTile:hover img { transform: scale(1.04); filter: brightness(0.55); }
@@ -284,7 +286,7 @@
   cursor: pointer;
 }
 
-/* 모바일은 2열 × 3줄(6장)까지만 — 8장이면 스크롤이 과하게 길어진다. */
+/* 모바일은 2열 × 2줄(4장)까지만 — 홀수 장이 남으면 빈 칸이 생긴다. */
 @media (max-width: 699px) {
-  .igGrid > li:nth-child(n + 7) { display: none; }
+  .igGrid > li:nth-child(n + 5) { display: none; }
 }
