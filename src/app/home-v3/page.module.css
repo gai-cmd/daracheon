@@ -1,0 +1,675 @@
+/*
+ * 메인 시안 A — 갤러리형.
+ * 현행 다크·골드·명조 톤과 결을 달리한다: 거의 검정 바탕, 굵은 고딕, 알약 모양 버튼,
+ * 은은한 호박(수지)색 하나만 포인트로 쓴다.
+ * ⚠ dark-theme.css 가 전역 토큰과 h1~h6 색을 뒤집으므로 색은 전부 고정 hex 로 쓰고,
+ *   제목 색은 부모에서 상속시킨다.
+ */
+
+.page {
+  background: #121212;
+  color: #f5f3ef;
+  font-family: var(--font-sans), system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  overflow-x: clip;
+}
+
+/* ── 공통 버튼 ─────────────────────────────── */
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease, border-color 200ms ease;
+}
+.btnPrimary {
+  color: #1b140a;
+  background: linear-gradient(to top, #f3dcb4 20%, #fdf8ef 80%);
+  box-shadow: 0 0 0 1px rgba(255, 236, 205, 0.5) inset, 0 8px 28px -10px rgba(236, 180, 100, 0.55);
+}
+.btnPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(255, 236, 205, 0.7) inset, 0 12px 34px -10px rgba(236, 180, 100, 0.75);
+}
+.btnGhost {
+  color: #f5f3ef;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.btnGhost:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+.btnPrimary:focus-visible,
+.btnGhost:focus-visible,
+.chip:focus-visible,
+.card:focus-visible {
+  outline: 2px solid #f3c98b;
+  outline-offset: 3px;
+}
+
+/* ── 1. HERO ──────────────────────────────── */
+.hero {
+  position: relative;
+  color: #ffffff;
+  text-align: center;
+  padding: calc(var(--nav-bar-h, 72px) + 96px) 16px 64px;
+}
+.heroGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 38%, rgba(214, 150, 70, 0.14), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%);
+}
+.heroInner {
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 12px;
+  border-radius: 999px;
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cfc9bf;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin-bottom: 28px;
+}
+.badgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f0b86a;
+  box-shadow: 0 0 0 3px rgba(240, 184, 106, 0.18), 0 0 12px rgba(240, 184, 106, 0.8);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+}
+.titleEm {
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  padding-right: 0.06em;
+  color: #e9e3d9;
+}
+
+/* 빛나는 그라데이션 글자: 흐린 복제본을 뒤에 깔고 앞에는 선명한 글자 */
+.gradWrap {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+.grad,
+.gradGlow {
+  background: linear-gradient(100deg, #fff4dd 0%, #f6cf8e 30%, #e79a4c 55%, #f7d49b 78%, #fff1d6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.grad {
+  position: relative;
+}
+.gradGlow {
+  position: absolute;
+  inset: 0;
+  filter: blur(22px);
+  opacity: 0.55;
+  animation: glowPulse 5.5s ease-in-out infinite;
+  user-select: none;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+
+.sub {
+  margin: 26px auto 34px;
+  max-width: 640px;
+  color: #9d9a94;
+  font-size: clamp(0.95rem, 1.3vw, 1.06rem);
+  line-height: 1.7;
+  font-weight: 400;
+  word-break: keep-all;
+}
+.brWide { display: none; }
+@media (min-width: 760px) {
+  .brWide { display: inline; }
+}
+
+.facts {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 6px;
+  color: #77736d;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.facts li + li::before {
+  content: '·';
+  margin: 0 12px;
+  color: #4a4743;
+}
+@media (max-width: 560px) {
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 8px 18px;
+  }
+  .facts li + li::before { content: none; }
+}
+
+/* ── 2. 필터 칩 ──────────────────────────── */
+.feed {
+  padding: 0 16px 72px;
+  scroll-margin-top: calc(var(--nav-bar-h, 72px) + 8px);
+}
+@media (min-width: 1024px) {
+  .feed { padding: 0 32px 96px; }
+}
+
+.chipBar {
+  position: sticky;
+  top: calc(var(--nav-bar-h, 72px) + 12px);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 28px;
+  max-width: 1600px;
+}
+.chipRow {
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(28, 28, 28, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chipRow::-webkit-scrollbar { display: none; }
+@media (max-width: 720px) {
+  /* 칩이 넘치면 오른쪽 끝을 흐려 옆으로 밀 수 있음을 알린다 */
+  .chipRow {
+    -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+    mask-image: linear-gradient(to right, #000 85%, transparent);
+  }
+}
+.chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: transparent;
+  color: #a9a59f;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background 200ms ease, color 200ms ease;
+}
+.chip:hover { color: #f5f3ef; }
+.chipOn,
+.chipOn:hover {
+  background: #3a3834;
+  color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* ── 3. 메이슨리 그리드 ─────────────────── */
+.gridWrap {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.grid {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 520px) {
+  .grid, .col { gap: 12px; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.revealIn {
+  opacity: 1;
+  transform: none;
+}
+
+.card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.card:hover { transform: translateY(-2px); }
+
+.media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #1c1c1c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  isolation: isolate;
+}
+.ratioShort { aspect-ratio: 9 / 16; }
+.ratioSquare { aspect-ratio: 1 / 1; }
+.ratioProduct { aspect-ratio: 4 / 5; }
+.ratioWide { aspect-ratio: 16 / 9; }
+.ratioTall { aspect-ratio: 4 / 5; }
+.ratioBlog { aspect-ratio: 16 / 10; }
+
+.mediaImg,
+.mediaVideo {
+  object-fit: cover;
+  color: transparent; /* 이미지가 깨져도 대체 글자가 카드에 드러나지 않게 */
+  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.mediaVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.card:hover .mediaImg,
+.card:hover .mediaVideo {
+  transform: scale(1.03);
+}
+
+.playBadge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(18, 18, 18, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 260ms ease, background 260ms ease;
+}
+.card:hover .playBadge {
+  transform: scale(1.08);
+  background: rgba(18, 18, 18, 0.65);
+}
+
+.cornerTag,
+.liveTag {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #f5f3ef;
+  background: rgba(18, 18, 18, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a867f;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+.liveTagOn .liveDot {
+  background: #f0b86a;
+  box-shadow: 0 0 8px rgba(240, 184, 106, 0.9);
+}
+
+/* 카드 아래 제목·분류 */
+.meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 2px 2px;
+}
+.metaText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.metaTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.38;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.metaSub {
+  font-size: 0.8rem;
+  color: #8a867f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.metaIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  margin-top: 3px;
+  color: #77736d;
+  transition: color 200ms ease;
+}
+.card:hover .metaIcon { color: #f0b86a; }
+
+/* 글자 카드 — 블로그(표지 없음)·언론 보도 */
+.textCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 20px 18px;
+  border-radius: 14px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 190px;
+  transition: border-color 260ms ease, background 260ms ease;
+}
+.textCardBlog {
+  background: linear-gradient(160deg, #221d16 0%, #1a1a1a 60%);
+}
+.card:hover .textCard {
+  border-color: rgba(240, 184, 106, 0.3);
+  background-color: #1e1e1e;
+}
+.textKicker {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #d9a664;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.textTitle {
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.38;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.textBody {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #8f8b84;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: keep-all;
+}
+.textFoot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: #77736d;
+  padding-top: 6px;
+}
+.textFoot .metaIcon { margin-top: 0; }
+
+/* 안내 카드 — motionsites 의 기능 소개 카드처럼 */
+.promo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 20px 20px;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse 90% 60% at 100% 0%, rgba(214, 150, 70, 0.16), transparent 60%),
+    #161616;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: border-color 260ms ease;
+}
+.card:hover .promo { border-color: rgba(240, 184, 106, 0.35); }
+.promoKicker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d9a664;
+}
+.promoLine {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  word-break: keep-all;
+}
+.promoBody {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #8f8b84;
+  word-break: keep-all;
+}
+.promoBtn {
+  align-self: flex-start;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #141414;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background 200ms ease;
+}
+.card:hover .promoBtn { background: #fdf1dc; }
+
+.moreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+@media (max-width: 520px) {
+  .metaTitle { font-size: 0.86rem; }
+  .metaSub { font-size: 0.72rem; }
+  .meta { gap: 6px; padding-top: 9px; }
+  .textCard { padding: 16px 14px 14px; min-height: 170px; gap: 10px; }
+  .textTitle { font-size: 0.98rem; }
+  .textBody { -webkit-line-clamp: 4; font-size: 0.78rem; }
+  .promo { padding: 18px 14px 16px; }
+  .promoLine { font-size: 1.04rem; }
+  .promoBody { font-size: 0.76rem; }
+  .promoBtn { font-size: 0.76rem; padding: 0 12px; min-height: 32px; }
+  .playBadge { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
+}
+
+/* ── 쇼츠 모달 ─────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: rgba(8, 8, 8, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 220ms ease;
+}
+.modalBody {
+  width: min(400px, 100%, calc((100dvh - 120px) * 9 / 16));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: popIn 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.modalFrame {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border: 0;
+  border-radius: 16px;
+  background: #000000;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+}
+.modalBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #f5f3ef;
+}
+.modalTitle {
+  flex: 1 1 auto;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.modalClose {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #1c1c1c;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.modalClose:hover { background: #2a2a2a; }
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes popIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+/* ── 4. CLOSING ─────────────────────────── */
+.closing {
+  color: #ffffff;
+  padding: 0 16px 104px;
+}
+.closingInner {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 64px 24px;
+  border-radius: 24px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 50% 80% at 50% 110%, rgba(214, 150, 70, 0.2), transparent 70%),
+    #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.closingTitle {
+  margin: 0;
+  font-size: clamp(30px, 4.4vw, 60px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+}
+.closingSub {
+  margin: 16px auto 30px;
+  color: #9d9a94;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+@media (min-width: 1024px) {
+  .closing { padding: 0 32px 120px; }
+}
+
+/* ── 움직임 줄이기 ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gradGlow { animation: none; opacity: 0.5; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .card, .mediaImg, .mediaVideo, .playBadge, .btnPrimary { transition: none; }
+  .card:hover { transform: none; }
+  .card:hover .mediaImg, .card:hover .mediaVideo { transform: none; }
+  .modal, .modalBody { animation: none; }
+}
+
+/* 전역 곡선 장식(globals.css — 제목 em 밑줄·첫 섹션 물결)은 이 시안의 결과 맞지 않아 끈다. */
+.page .titleEm::after,
+.page .hero::after {
+  content: none;
+  display: none;
+}
