@@ -1,7 +1,8 @@
 /*
  * 메인 시안 A — 갤러리형.
- * 현행 다크·골드·명조 톤과 결을 달리한다: 거의 검정 바탕, 굵은 고딕, 알약 모양 버튼,
- * 은은한 호박(수지)색 하나만 포인트로 쓴다.
+ * 배치는 motionsites 식 갤러리지만 글자 체계는 현행 사이트와 맞춘다:
+ * 큰 제목은 명조(Noto Serif KR 300~500), 강조어는 정자 골드 #d4a843,
+ * 라벨·분류는 모노 대문자 간격, 본문은 고딕 300~400.
  * ⚠ dark-theme.css 가 전역 토큰과 h1~h6 색을 뒤집으므로 색은 전부 고정 hex 로 쓰고,
  *   제목 색은 부모에서 상속시킨다.
  */
@@ -30,7 +31,7 @@
   border-radius: 999px;
   font-size: 0.94rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   text-decoration: none;
   white-space: nowrap;
   transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease, border-color 200ms ease;
@@ -93,10 +94,11 @@
   border-radius: 999px;
   background: #1c1c1c;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #cfc9bf;
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  color: #d4a843;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
   margin-bottom: 28px;
 }
 .badgeDot {
@@ -109,48 +111,25 @@
 
 .title {
   margin: 0;
-  font-size: clamp(40px, 7vw, 96px);
-  font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(2.2rem, 5.6vw, 4.6rem);
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: 0;
   word-break: keep-all;
 }
+/* 강조어 — 현행 히어로의 '진짜 침향'처럼 정자 골드, 아주 옅은 빛만 천천히 숨쉬게 */
 .titleEm {
-  font-style: italic;
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  padding-right: 0.06em;
-  color: #e9e3d9;
+  font-style: normal;
+  font-weight: 400;
+  color: #d4a843;
 }
-
-/* 빛나는 그라데이션 글자: 흐린 복제본을 뒤에 깔고 앞에는 선명한 글자 */
-.gradWrap {
-  position: relative;
-  display: inline-block;
-  white-space: nowrap;
-}
-.grad,
-.gradGlow {
-  background: linear-gradient(100deg, #fff4dd 0%, #f6cf8e 30%, #e79a4c 55%, #f7d49b 78%, #fff1d6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-.grad {
-  position: relative;
-}
-.gradGlow {
-  position: absolute;
-  inset: 0;
-  filter: blur(22px);
-  opacity: 0.55;
+.glow {
   animation: glowPulse 5.5s ease-in-out infinite;
-  user-select: none;
 }
 @keyframes glowPulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.75; }
+  0%, 100% { text-shadow: 0 0 18px rgba(212, 168, 67, 0.12); }
+  50% { text-shadow: 0 0 26px rgba(212, 168, 67, 0.3); }
 }
 
 .sub {
@@ -159,7 +138,7 @@
   color: #9d9a94;
   font-size: clamp(0.95rem, 1.3vw, 1.06rem);
   line-height: 1.7;
-  font-weight: 400;
+  font-weight: 300;
   word-break: keep-all;
 }
 .brWide { display: none; }
@@ -177,7 +156,7 @@
   row-gap: 6px;
   color: #77736d;
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 .facts li + li::before {
   content: '·';
@@ -245,7 +224,7 @@
   font: inherit;
   font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   white-space: nowrap;
   transition: background 200ms ease, color 200ms ease;
 }
@@ -373,7 +352,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #f5f3ef;
   background: rgba(18, 18, 18, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -408,9 +387,9 @@
 }
 .metaTitle {
   font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.38;
-  letter-spacing: -0.015em;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0;
   color: #ffffff;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -420,8 +399,10 @@
   overflow: hidden;
 }
 .metaSub {
-  font-size: 0.8rem;
-  color: #8a867f;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: rgba(212, 168, 67, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -455,26 +436,29 @@
   background-color: #1e1e1e;
 }
 .textKicker {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #d9a664;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: #d4a843;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .textTitle {
+  font-family: var(--font-serif), serif;
   font-size: 1.12rem;
-  font-weight: 800;
-  line-height: 1.38;
-  letter-spacing: -0.025em;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
   color: #ffffff;
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
 .textBody {
   font-size: 0.84rem;
-  line-height: 1.6;
+  font-weight: 300;
+  line-height: 1.7;
   color: #8f8b84;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -489,6 +473,7 @@
   justify-content: space-between;
   font-size: 0.76rem;
   color: #77736d;
+  font-variant-numeric: tabular-nums;
   padding-top: 6px;
 }
 .textFoot .metaIcon { margin-top: 0; }
@@ -510,23 +495,26 @@
 }
 .card:hover .promo { border-color: rgba(240, 184, 106, 0.35); }
 .promoKicker {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #d9a664;
+  color: #d4a843;
 }
 .promoLine {
-  font-size: 1.25rem;
-  font-weight: 800;
-  line-height: 1.32;
-  letter-spacing: -0.03em;
+  font-family: var(--font-serif), serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
   color: #ffffff;
   word-break: keep-all;
 }
 .promoBody {
   font-size: 0.82rem;
-  line-height: 1.55;
+  font-weight: 300;
+  line-height: 1.7;
   color: #8f8b84;
   word-break: keep-all;
 }
@@ -541,7 +529,7 @@
   background: #ffffff;
   color: #141414;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 600;
   transition: background 200ms ease;
 }
 .card:hover .promoBtn { background: #fdf1dc; }
@@ -554,13 +542,14 @@
 
 @media (max-width: 520px) {
   .metaTitle { font-size: 0.86rem; }
-  .metaSub { font-size: 0.72rem; }
+  .metaSub { font-size: 0.6rem; letter-spacing: 0.02em; }
   .meta { gap: 6px; padding-top: 9px; }
   .textCard { padding: 16px 14px 14px; min-height: 170px; gap: 10px; }
-  .textTitle { font-size: 0.98rem; }
+  .textTitle { font-size: 1rem; }
+  .textKicker, .promoKicker { font-size: 0.6rem; letter-spacing: 0.14em; }
   .textBody { -webkit-line-clamp: 4; font-size: 0.78rem; }
   .promo { padding: 18px 14px 16px; }
-  .promoLine { font-size: 1.04rem; }
+  .promoLine { font-size: 1.08rem; }
   .promoBody { font-size: 0.76rem; }
   .promoBtn { font-size: 0.76rem; padding: 0 12px; min-height: 32px; }
   .playBadge { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
@@ -603,8 +592,8 @@
 .modalTitle {
   flex: 1 1 auto;
   font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.55;
   word-break: keep-all;
 }
 .modalClose {
@@ -640,17 +629,19 @@
 }
 .closingTitle {
   margin: 0;
-  font-size: clamp(30px, 4.4vw, 60px);
-  font-weight: 900;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
   word-break: keep-all;
 }
 .closingSub {
   margin: 16px auto 30px;
   color: #9d9a94;
   font-size: 0.98rem;
-  line-height: 1.6;
+  font-weight: 300;
+  line-height: 1.7;
   word-break: keep-all;
 }
 @media (min-width: 1024px) {
@@ -659,7 +650,7 @@
 
 /* ── 움직임 줄이기 ──────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .gradGlow { animation: none; opacity: 0.5; }
+  .glow { animation: none; text-shadow: 0 0 18px rgba(212, 168, 67, 0.18); }
   .reveal { opacity: 1; transform: none; transition: none; }
   .card, .mediaImg, .mediaVideo, .playBadge, .btnPrimary { transition: none; }
   .card:hover { transform: none; }

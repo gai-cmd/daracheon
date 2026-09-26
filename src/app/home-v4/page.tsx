@@ -208,7 +208,7 @@ export default async function HomeV4Page() {
                 <h2 className={styles.h2}>
                   농장의 오늘을
                   <br />
-                  <i className={styles.italic}>짧게,</i> 영상으로
+                  <span className={styles.accent}>짧게,</span> 영상으로
                 </h2>
               </div>
               <a href={sns.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.btnGhostSm}>
@@ -266,7 +266,7 @@ export default async function HomeV4Page() {
               <div>
                 <span className={styles.pillLabel}>Products</span>
                 <h2 className={styles.h2}>
-                  대라천 <i className={styles.italic}>&lsquo;참&rsquo;</i>침향
+                  대라천 <span className={styles.accent}>&lsquo;참&rsquo;</span>침향
                 </h2>
               </div>
               <Link href="/products" className={styles.btnGhostSm}>

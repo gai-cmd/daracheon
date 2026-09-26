@@ -159,7 +159,7 @@ export default async function HomeV5Page() {
           <h1 className={styles.headline} data-reveal="">
             묘목부터 증류까지,
             <br />
-            <i className={styles.italic}>직접</i> 키운 <span className={styles.glow}>진짜 침향</span>
+            직접 키운 <span className={styles.glow}>진짜 침향</span>
           </h1>
           <p className={styles.subline} data-reveal="">
             식약처 등재 학명 <span className={styles.nowrap}>Aquilaria Agallocha Roxburgh</span>.
@@ -253,7 +253,7 @@ export default async function HomeV5Page() {
                   <InstagramMark size={16} />
                 </span>
                 <span>
-                  <span className={styles.cardTitle}>{ig.handle}</span>
+                  <span className={`${styles.cardTitle} ${styles.handle}`}>{ig.handle}</span>
                   <span className={styles.cardSub}>Instagram</span>
                 </span>
               </span>

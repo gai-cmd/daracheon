@@ -228,13 +228,9 @@ export default async function HomeV3Page() {
             농장 · 제품 · 공식 채널 소식
           </span>
           <h1 className={styles.title}>
-            진짜 침향의 <em className={styles.titleEm}>오늘</em>을,
+            진짜 침향의 오늘을,
             <br />
-            <span className={styles.gradWrap}>
-              <span className={styles.gradGlow} aria-hidden="true">농장에서 바로</span>
-              <span className={styles.grad}>농장에서 바로</span>
-            </span>{' '}
-            전합니다
+            <em className={`${styles.titleEm} ${styles.glow}`}>농장에서 바로</em> 전합니다
           </h1>
           <p className={styles.sub}>
             베트남 직영 농장의 하루부터 제품과 언론 보도까지 한곳에 모았습니다.{' '}
