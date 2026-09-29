@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import { saveAdminPage } from '@/lib/adminSave';
 
@@ -1579,9 +1580,13 @@ export default function AdminHomePage() {
           순서를 변경한 뒤 <strong className="text-gold-700">[순서 저장]</strong> 을 눌러야 저장됩니다.
         </p>
 
-        {/* 공개 메인(/)은 코드(src/app/page.tsx)로 관리한다 — 이 화면 값은 메인에 쓰이지 않는다. */}
+        {/* 공개 메인(/)은 pages.homeMain 을 읽는다 — 이 화면(pages.home) 값은 메인에 쓰이지 않는다. */}
         <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-amber-900">
-          이 화면의 항목은 공개 메인(/)에 반영되지 않습니다. 메인은 코드로 관리되며, 일부 항목(solutionCta 등)만 다른 페이지가 참조합니다.
+          이 화면의 항목은 공개 메인(/)에 반영되지 않습니다. 메인 문구·영상·이미지는{' '}
+          <Link href="/admin/pages/home-main" className="font-semibold underline underline-offset-2">
+            메인 페이지
+          </Link>{' '}
+          화면에서 편집하세요. 이 화면은 일부 항목(solutionCta 등)만 다른 페이지가 참조합니다.
         </div>
 
         {/* 섹션 순서 저장 바 — 변경이 있을 때만 활성. */}

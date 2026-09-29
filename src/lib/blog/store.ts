@@ -217,6 +217,63 @@ export async function readPostsSafe(): Promise<BlogPost[]> {
   }
 }
 
+/** 메인 블로그 타일용 요약 — 타일이 쓰는 필드만 담는다. */
+export type BlogPostSummary = Pick<BlogPost, 'slug' | 'title' | 'publishedAt' | 'createdAt'>;
+
+interface PostSummaryRow {
+  slug: string;
+  title: string;
+  published_at: Date | null;
+  created_at: Date;
+}
+
+async function readLatestPublishedPosts(limit: number): Promise<BlogPostSummary[]> {
+  if (!isNeonEnabled()) {
+    // Blob 폴백은 전체 목록 한 번 읽기뿐이라 기존 안전망 읽기를 그대로 쓴다.
+    const posts = await readPostsSafe();
+    return posts
+      .filter((p) => p.status === 'published')
+      .sort((a, b) => (b.publishedAt ?? b.createdAt ?? '').localeCompare(a.publishedAt ?? a.createdAt ?? ''))
+      .slice(0, limit)
+      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt, createdAt: p.createdAt }));
+  }
+  // 본문(content·content_json)은 읽지 않는다. 정렬은 /blog 와 같다 — 발행일, 없으면 작성일.
+  const rows = await sql()<PostSummaryRow[]>`
+    SELECT slug, title, published_at, created_at FROM blog_posts
+    WHERE status = 'published'
+    ORDER BY COALESCE(published_at, created_at) DESC
+    LIMIT ${limit}
+  `;
+  return rows.map((r) => ({
+    slug: r.slug,
+    title: r.title,
+    publishedAt: iso(r.published_at),
+    createdAt: iso(r.created_at)!,
+  }));
+}
+
+/**
+ * 공개 메인 블로그 타일 — 발행된 최신 글 limit 개.
+ * 절대 던지지 않고, timeoutMs 안에 답이 없으면 [] 로 끝낸다(느린 Neon 이 메인을 붙잡지 않게).
+ */
+export async function readLatestPublishedPostsSafe(limit = 3, timeoutMs = 2000): Promise<BlogPostSummary[]> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<BlogPostSummary[]>((resolve) => {
+    timer = setTimeout(() => {
+      console.error(`[blog:store] latest posts read timed out after ${timeoutMs}ms on public path`);
+      resolve([]);
+    }, timeoutMs);
+  });
+  try {
+    return await Promise.race([readLatestPublishedPosts(limit), timeout]);
+  } catch (err) {
+    console.error('[blog:store] latest posts read failed on public path', err);
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function writePosts(posts: BlogPost[], hints: BlogWriteHints = {}): Promise<void> {
   if (!isNeonEnabled()) {
     await writeDataMerged(BLOG_POSTS_FILE, posts, { removedIds: hints.removedIds });

@@ -11,6 +11,8 @@ const PAGE_PUBLIC_PATHS: Record<string, string[]> = {
   aboutAgarwood: ['/about-agarwood'],
   brandStory: ['/brand-story'],
   home: ['/'],
+  // 벤토형 메인(/) 편집 데이터 — /admin/pages/home-main 에서 저장한다.
+  homeMain: ['/'],
   company: ['/company'],
   process: ['/process', '/media'],
   // /support 는 /company 로 통합됨. support 데이터는 여전히 어드민 편집 가능하지만

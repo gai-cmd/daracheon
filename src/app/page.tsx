@@ -1,10 +1,12 @@
+import { Fragment, type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
-import { readPostsSafe } from '@/lib/blog/store';
-import { SNS_SAMPLE } from '@/data/sns-sample';
+import { readLatestPublishedPostsSafe } from '@/lib/blog/store';
+import { isOwnAsset, parseEmphasis, resolveHomeMain, safeHref } from '@/lib/home-main';
 import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
+import JsonLd from '@/components/ui/JsonLd';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import type { Announcement } from '@/app/api/admin/announcement/route';
 import {
@@ -27,11 +29,14 @@ import styles from './page.module.css';
  * 영상·카운트업·흐르는 띠·회전 테두리로 '살아 있는' 느낌을 준다.
  * 순서: 인트로 → 공지 띠(어드민 공지가 켜져 있을 때만) → 소식(자주 갱신되는 블록)
  * → 둘러보기 그리드 → 마무리 띠. 재방문 고객이 새 소식부터 보도록 소식 그리드를 인트로 바로 아래에 둔다.
+ *
+ * 문구·링크·영상·이미지·공식 채널 목록은 어드민 '메인 페이지'(/admin/pages/home-main)가
+ * pages.homeMain 에 저장한다. 저장값이 없으면 src/lib/home-main.ts 의 기본값(처음 올린 문구)이 나온다.
  */
 
 export const dynamic = 'force-dynamic';
 
-// 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
+// 홈은 root layout 의 SITE_URL/siteJsonLd 를 쓰고, 여기서는 대표 제품 ItemList JSON-LD 만 붙인다.
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
   // absolute — 루트 template("%s | 조엘라이프 대라천 '참'침향")이 홈 title 에
@@ -45,39 +50,8 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
-const BLOB = 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
-
-// 영상은 원본(16~44MB)이 아니라 5MB 이하(H.264·faststart·무음)로 다시 인코딩한 6~9초 루프를 쓴다.
-// 원본은 다른 페이지가 그대로 쓰므로 건드리지 않고, 새 경로 uploads/home-main/ 에 따로 올렸다.
-const VIDEO = {
-  farm: `${BLOB}/uploads/home-main/farm-loop.mp4`,
-  brand: `${BLOB}/uploads/home-main/brand-loop.mp4`,
-  showroom: `${BLOB}/uploads/home-main/showroom-loop.mp4`,
-  title: `${BLOB}/uploads/home-main/onair-loop.mp4`,
-};
-
-const IMG = {
-  farm: `${BLOB}/uploads/home-main/farm-poster.jpg`,
-  company: `${BLOB}/pages/hero/company-hero-default.jpg`,
-  showroom: `${BLOB}/uploads/home-main/showroom-poster.jpg`,
-  species: `${BLOB}/uploads/pages/species-card-roxburgh.jpg`,
-};
-
-const STATS = [
-  { value: 25, unit: '년', label: '직영 재배' },
-  { value: 200, unit: 'ha', label: '직영 농장 합계' },
-  { value: 5, unit: '개 지역', label: '베트남 직영' },
-  { value: 12, unit: '건 이상', label: '공식 인증' },
-];
-
-const MARQUEE = [
-  '식약처 등재 학명 Aquilaria Agallocha Roxburgh',
-  '베트남 직영 농장 25년',
-  '베트남 5개 지역 직영 농장 약 200ha',
-  '원산지부터 직접 책임',
-  '묘목부터 채취·증류까지',
-  '공식 인증 12건 이상',
-];
+// 구조화 데이터의 url 은 미리보기 도메인이 섞이지 않도록 정식 도메인으로 고정한다 (/products 와 동일).
+const SITE_URL = 'https://zoellife.com';
 
 interface ProductLite {
   slug: string;
@@ -87,27 +61,47 @@ interface ProductLite {
   published?: boolean;
 }
 
-/** 외부 CDN 금지 원칙 — Blob·번들 자산만 통과시킨다. */
-function isOwnAsset(url?: string): url is string {
-  return !!url && (url.startsWith(BLOB) || url.startsWith('/'));
-}
-
 /** '2026.05.16' / '2026-05-16' → 정렬용 숫자. 형식을 모르면 0. */
 function dateKey(raw?: string): number {
   const m = (raw ?? '').trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
   return m ? Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]) : 0;
 }
 
-/** 어드민이 입력한 공지 링크 — 사이트 내부 경로와 http(s) 만 통과시킨다. */
-function safeHref(raw?: string): string | null {
-  const v = (raw ?? '').trim();
-  if (v.startsWith('/') && !v.startsWith('//')) return v;
-  return /^https?:\/\//i.test(v) ? v : null;
-}
-
 function formatDot(iso?: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
   return m ? `${m[1]}.${m[2]}.${m[3]}` : '';
+}
+
+/** 제목 표기 → JSX. 줄바꿈은 <br />, *강조* 는 금색(glow). */
+function renderTitle(src: string): ReactNode[] {
+  return parseEmphasis(src).map((t, i) =>
+    t.type === 'br' ? (
+      <br key={i} />
+    ) : t.type === 'em' ? (
+      <span key={i} className={styles.glow}>
+        {t.value}
+      </span>
+    ) : (
+      t.value
+    ),
+  );
+}
+
+/**
+ * 인트로 부제 표기 → JSX. 줄바꿈은 데스크톱에서만 꺾이고(brDesk), *구절* 은 한 줄로 묶는다(nowrap).
+ * 모바일에서는 줄바꿈이 사라지므로 줄바꿈 뒤 글자 앞에 공백 한 칸을 둬 앞뒤 글자가 붙지 않게 한다.
+ */
+function renderSubline(src: string): ReactNode[] {
+  const tokens = parseEmphasis(src);
+  return tokens.map((t, i) => {
+    const afterBreak = tokens[i - 1]?.type === 'br';
+    if (t.type === 'br') return <br key={i} className={styles.brDesk} />;
+    if (t.type === 'em') {
+      const span = <span className={styles.nowrap}>{t.value}</span>;
+      return <Fragment key={i}>{afterBreak ? ' ' : null}{span}</Fragment>;
+    }
+    return afterBreak && !/^\s/.test(t.value) ? ` ${t.value}` : t.value;
+  });
 }
 
 function InstagramMark({ size = 18 }: { size?: number }) {
@@ -133,12 +127,17 @@ function Go() {
 }
 
 export default async function HomePage() {
-  const [pagesData, productsRaw, postsRaw, announcement] = await Promise.all([
-    readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData } }>('pages'),
+  const [pagesData, productsRaw, posts, announcement] = await Promise.all([
+    readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData }; homeMain?: unknown }>('pages'),
     readDataSafe<ProductLite>('products'),
-    readPostsSafe(),
+    // 블로그 최신 발행글 3개 — 본문은 읽지 않고, 2초 안에 답이 없으면 타일을 숨긴다.
+    readLatestPublishedPostsSafe(3),
     readSingleSafe<Partial<Announcement>>('announcement'),
   ]);
+
+  // 어드민 '메인 페이지'에서 저장한 문구·링크·미디어. 저장 전이면 전부 기본값.
+  const hm = resolveHomeMain(pagesData?.homeMain);
+  const { intro, news, tiles, closing } = hm;
 
   // 어드민 '공지' 설정(/admin/settings) — 켜져 있고 문구가 있을 때만 소식 위에 한 줄 띠로 보인다.
   const noticeText = announcement?.enabled ? (announcement.text ?? '').trim() : '';
@@ -147,30 +146,45 @@ export default async function HomePage() {
         text: noticeText,
         href: safeHref(announcement?.link),
         label: (announcement?.linkLabel ?? '').trim() || '자세히 보기',
+        // gold 는 기본 .notice 가 이미 금색이라 덧붙일 클래스가 없다.
         className:
           announcement?.variant === 'red'
             ? styles.noticeRed
             : announcement?.variant === 'dark'
               ? styles.noticeDark
-              : styles.noticeGold,
+              : '',
       }
     : null;
 
   // 어드민 제품 목록 순서를 그대로 따른다 — 앞의 5개가 대표 제품.
   const products = productsRaw.filter((p) => p.published !== false && isOwnAsset(p.image)).slice(0, 5);
-  const posts = postsRaw
-    .filter((p) => p.status === 'published')
-    .sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''))
-    .slice(0, 3);
+  // 기사 링크는 공지와 같은 검사(사이트 내부 경로·http(s))를 통과한 것만 싣는다.
   const press = (pagesData?.aboutAgarwood?.mediaTab?.items ?? [])
-    .filter((m) => m.outlet && m.link)
+    .map((m) => ({ ...m, link: safeHref(m.link) }))
+    .filter((m): m is typeof m & { link: string } => !!m.outlet && !!m.link)
     .map((m, i) => ({ m, i }))
     .sort((a, b) => dateKey(b.m.date) - dateKey(a.m.date) || a.i - b.i)
     .slice(0, 6)
     .map(({ m }) => m);
 
+  // 대표 제품 타일과 같은 목록으로 ItemList 구조화 데이터를 만든다 (실제 슬러그).
+  const productListJsonLd =
+    products.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: '대라천 ZOEL LIFE 대표 침향 제품',
+          itemListElement: products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: p.name,
+            url: `${SITE_URL}/products/${p.slug}`,
+          })),
+        }
+      : null;
+
   // 공식 유튜브 채널(가로 16:9 일반 영상). 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다.
-  const snsKo = koreanVideosOnly(SNS_SAMPLE);
+  const snsKo = koreanVideosOnly({ youtube: hm.youtube, instagram: hm.instagram });
   const videos: VideoItem[] = snsKo.youtube.videos.map((v) => ({
     id: v.id,
     title: cleanVideoTitle(v.title),
@@ -181,36 +195,36 @@ export default async function HomePage() {
 
   return (
     <BentoRoot videos={videos} className={styles.page}>
+      {/* 대표 제품 ItemList 구조화 데이터 — 화면에는 그려지지 않는다 */}
+      {productListJsonLd && <JsonLd data={productListJsonLd} />}
       {/* 전역 CSS 가 main > div > section:first-of-type 에 물결 장식을 붙이므로 한 겹 더 감싼다 */}
       <div className={styles.inner}>
         {/* 1. 인트로 */}
         <header className={styles.intro}>
           <span className={styles.badge} data-reveal="">
-            <span className={styles.badgeChip}>25년</span>
-            베트남 직영 농장에서 기른 침향
+            <span className={styles.badgeChip}>{intro.badgeChip}</span>
+            {intro.badgeText}
           </span>
           <h1 className={styles.headline} data-reveal="">
-            묘목부터 증류까지,
-            <br />
-            직접 키운 <span className={styles.glow}>진짜 침향</span>
+            {renderTitle(intro.headline)}
           </h1>
           <p className={styles.subline} data-reveal="">
-            식약처 등재 학명 <span className={styles.nowrap}>Aquilaria Agallocha Roxburgh</span>.
-            <br className={styles.brDesk} /> 원산지부터 직접 책임지는 대라천 &lsquo;참&rsquo;침향입니다.
+            {renderSubline(intro.subline)}
           </p>
           <div className={styles.ctas} data-reveal="">
-            <Link href="/products" className={styles.btnPrimary}>
-              제품 보기
+            <Link href={intro.primary.href} className={styles.btnPrimary}>
+              {intro.primary.label}
             </Link>
-            <Link href="/about-agarwood" className={styles.btnGhost}>
-              진짜 침향 구별법 <span aria-hidden="true">→</span>
+            <Link href={intro.secondary.href} className={styles.btnGhost}>
+              {`${intro.secondary.label} `}
+              <span aria-hidden="true">→</span>
             </Link>
           </div>
         </header>
 
         {/* 2. 공지 띠 — 어드민 공지 설정이 켜져 있을 때만 */}
         {notice && (
-          <aside className={`${styles.notice} ${notice.className}`} aria-label="공지" data-reveal="">
+          <aside className={`${styles.notice} ${notice.className}`.trim()} aria-label="공지" data-reveal="">
             <span className={styles.noticeChip}>공지</span>
             <p className={styles.noticeText}>{notice.text}</p>
             {notice.href &&
@@ -229,11 +243,11 @@ export default async function HomePage() {
         {/* 3. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
         <header className={styles.sectionHead} data-reveal="">
           <span className={styles.badge}>
-            <span className={styles.badgeChip}>NEW</span>
-            소식
+            <span className={styles.badgeChip}>{news.chip}</span>
+            {news.label}
           </span>
           <h2 id="home-news-title" className={styles.h2}>
-            새로 올라온 <span className={styles.glow}>대라천 소식</span>
+            {renderTitle(news.title)}
           </h2>
         </header>
 
@@ -258,9 +272,10 @@ export default async function HomePage() {
                         <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
                           <span className={styles.prodThumb}>
                             {/* 소식이 첫 화면에 오면서 첫 제품 사진이 모바일 LCP 요소가 되었다 — 첫 장만 우선 로딩 */}
+                            {/* 제품명은 바로 옆 글자로 읽히므로 사진은 장식(alt="") */}
                             <Image
                               src={p.image!}
-                              alt={k === 0 ? p.name : ''}
+                              alt=""
                               fill
                               sizes="200px"
                               priority={k === 0 && i === 0}
@@ -382,22 +397,18 @@ export default async function HomePage() {
         </h2>
         <section className={`${styles.grid} ${styles.gridBrand}`} aria-labelledby="home-brand-title">
           {/* 히어로: 농장 영상 */}
-          <Link href="/media" className={`${styles.tile} ${styles.tHero}`} data-tile="" data-reveal="">
-            <HeroVideo src={VIDEO.farm} poster={IMG.farm} />
+          <Link href={tiles.hero.href} className={`${styles.tile} ${styles.tHero}`} data-tile="" data-reveal="">
+            <HeroVideo src={tiles.hero.video} poster={tiles.hero.poster} />
             <span className={styles.scrim} aria-hidden="true" />
             <span className={styles.liveChip}>
               <span className={styles.liveDot} aria-hidden="true" />
-              농장 영상
+              {tiles.hero.chip}
             </span>
             <Go />
             <span className={styles.heroText}>
-              <span className={styles.kicker}>침향 농장 이야기</span>
-              <span className={styles.heroTitle}>
-                베트남 직영 농장,
-                <br />
-                침향 분류 작업 현장
-              </span>
-              <span className={styles.heroSub}>묘목부터 채취·증류까지, 영상과 사진으로 전합니다</span>
+              <span className={styles.kicker}>{tiles.hero.kicker}</span>
+              <span className={styles.heroTitle}>{renderTitle(tiles.hero.title)}</span>
+              <span className={styles.heroSub}>{tiles.hero.sub}</span>
             </span>
           </Link>
 
@@ -409,8 +420,8 @@ export default async function HomePage() {
           )}
 
           {/* On-Air */}
-          <Link href="/home-shopping" className={`${styles.tile} ${styles.tOnair}`} data-tile="" data-reveal="">
-            <HoverVideo src={VIDEO.title} />
+          <Link href={tiles.onair.href} className={`${styles.tile} ${styles.tOnair}`} data-tile="" data-reveal="">
+            <HoverVideo src={tiles.onair.video} />
             <span className={styles.onairShade} aria-hidden="true" />
             <span className={styles.onairMark} aria-hidden="true">
               ON AIR
@@ -426,9 +437,9 @@ export default async function HomePage() {
               ))}
             </span>
             <span className={styles.tileText}>
-              <span className={styles.kicker}>홈쇼핑 방송</span>
-              <span className={styles.cardTitleLg}>On-Air 특별관</span>
-              <span className={styles.cardSub}>방송 다시보기</span>
+              <span className={styles.kicker}>{tiles.onair.kicker}</span>
+              <span className={styles.cardTitleLg}>{renderTitle(tiles.onair.title)}</span>
+              <span className={styles.cardSub}>{tiles.onair.sub}</span>
             </span>
           </Link>
 
@@ -436,11 +447,11 @@ export default async function HomePage() {
           {/* 숫자 */}
           <div className={`${styles.tile} ${styles.tStats}`} data-tile="" data-reveal="">
             <div className={styles.tileHead}>
-              <span className={styles.kicker}>숫자로 보는 대라천</span>
+              <span className={styles.kicker}>{tiles.stats.kicker}</span>
             </div>
             <dl className={styles.stats}>
-              {STATS.map((s) => (
-                <div key={s.label} className={styles.stat}>
+              {hm.stats.map((s, i) => (
+                <div key={`${i}-${s.label}`} className={styles.stat}>
                   <dt className={styles.statLabel}>{s.label}</dt>
                   <dd className={styles.statValue}>
                     <CountUp value={s.value} />
@@ -452,18 +463,18 @@ export default async function HomePage() {
           </div>
 
           {/* 구별법 — 회전하는 빛 테두리 */}
-          <Link href="/about-agarwood" className={`${styles.tile} ${styles.tRing}`} data-tile="" data-reveal="">
+          <Link href={tiles.ring.href} className={`${styles.tile} ${styles.tRing}`} data-tile="" data-reveal="">
             <span className={styles.ring} aria-hidden="true" />
             <span className={styles.ringGlow} aria-hidden="true" />
             <span className={styles.specimen} aria-hidden="true">
-              <Image src={IMG.species} alt="" fill sizes="120px" className={styles.specimenImg} />
+              <Image src={tiles.ring.image} alt="" fill sizes="120px" className={styles.specimenImg} />
             </span>
             <Go />
             <span className={styles.ringBody}>
-              <span className={styles.kicker}>진짜 침향 구별법</span>
-              <span className={styles.ringTitle}>진짜 침향은 학명부터 확인합니다</span>
-              <span className={styles.latin}>Aquilaria Agallocha Roxburgh</span>
-              <span className={styles.ringNote}>식약처 등재 학명 · 인증 · 산지로 가려내는 법</span>
+              <span className={styles.kicker}>{tiles.ring.kicker}</span>
+              <span className={styles.ringTitle}>{renderTitle(tiles.ring.title)}</span>
+              <span className={styles.latin}>{tiles.ring.latin}</span>
+              <span className={styles.ringNote}>{tiles.ring.note}</span>
             </span>
           </Link>
 
@@ -487,29 +498,29 @@ export default async function HomePage() {
           </div>
 
           {/* 브랜드 이야기 — 호버 시 증류 영상 */}
-          <Link href="/brand-story" className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">
-            <Image src={IMG.company} alt="" fill sizes="(max-width: 640px) 100vw, 40vw" className={styles.media} />
-            <HoverVideo src={VIDEO.brand} />
+          <Link href={tiles.brand.href} className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">
+            <Image src={tiles.brand.image} alt="" fill sizes="(max-width: 640px) 100vw, 40vw" className={styles.media} />
+            <HoverVideo src={tiles.brand.video} />
             <span className={styles.scrim} aria-hidden="true" />
             <Go />
             <span className={styles.tileText}>
-              <span className={styles.kicker}>브랜드 이야기</span>
-              <span className={styles.cardTitleLg}>25년, 한 회사가 원산지부터 잇습니다</span>
-              <span className={styles.cardSub}>베트남 직영 생산부터 한국 직판까지</span>
+              <span className={styles.kicker}>{tiles.brand.kicker}</span>
+              <span className={styles.cardTitleLg}>{renderTitle(tiles.brand.title)}</span>
+              <span className={styles.cardSub}>{tiles.brand.sub}</span>
             </span>
           </Link>
 
           {/* 전시장 — 호버 시 전시장 영상 */}
-          <Link href="/showroom" className={`${styles.tile} ${styles.tShowroom}`} data-tile="" data-reveal="">
-            <HoverVideo src={VIDEO.showroom} poster={IMG.showroom} />
+          <Link href={tiles.showroom.href} className={`${styles.tile} ${styles.tShowroom}`} data-tile="" data-reveal="">
+            <HoverVideo src={tiles.showroom.video} poster={tiles.showroom.poster} />
             <span className={styles.scrim} aria-hidden="true" />
             <span className={styles.hoverHint} aria-hidden="true">
               ▶ 영상
             </span>
             <Go />
             <span className={styles.tileText}>
-              <span className={styles.kicker}>전시장</span>
-              <span className={styles.cardTitleLg}>원목부터 완제품까지, 직접 보고 맡아 보세요</span>
+              <span className={styles.kicker}>{tiles.showroom.kicker}</span>
+              <span className={styles.cardTitleLg}>{renderTitle(tiles.showroom.title)}</span>
             </span>
           </Link>
 
@@ -518,8 +529,8 @@ export default async function HomePage() {
             <div className={styles.marquee}>
               {[0, 1].map((k) => (
                 <span key={k} className={styles.marqueeRun} aria-hidden={k === 1 ? true : undefined}>
-                  {MARQUEE.map((m) => (
-                    <span key={m} className={styles.marqueeItem}>
+                  {hm.marquee.map((m, i) => (
+                    <span key={`${i}-${m}`} className={styles.marqueeItem}>
                       {m}
                       <span className={styles.marqueeSep}>✦</span>
                     </span>
@@ -532,15 +543,14 @@ export default async function HomePage() {
 
         {/* 5. 마무리 띠 */}
         <div className={styles.closing} data-reveal="">
-          <p className={styles.closingLine}>
-            진짜 침향, <span className={styles.glow}>직접 확인해 보세요</span>
-          </p>
+          <p className={styles.closingLine}>{renderTitle(closing.line)}</p>
           <div className={styles.ctas}>
-            <Link href="/company#contact" className={styles.btnPrimary}>
-              문의하기
+            <Link href={closing.primary.href} className={styles.btnPrimary}>
+              {closing.primary.label}
             </Link>
-            <Link href="/showroom" className={styles.btnGhost}>
-              전시장 둘러보기 <span aria-hidden="true">→</span>
+            <Link href={closing.secondary.href} className={styles.btnGhost}>
+              {`${closing.secondary.label} `}
+              <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>

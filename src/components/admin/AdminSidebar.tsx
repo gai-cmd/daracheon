@@ -21,6 +21,7 @@ interface NotificationCounts {
 
 const navItems: NavItem[] = [
   { label: '대시보드', href: '/admin', icon: '◉' },
+  { label: '메인 페이지', href: '/admin/pages/home-main', icon: '⌂' },
   { label: '침향 이야기', href: '/admin/pages/about-agarwood', icon: '◎' },
   { label: '브랜드 이야기', href: '/admin/pages/brand-story', icon: '◈' },
   { label: '침향 농장 이야기', href: '/admin/media', icon: '▣' },
@@ -36,7 +37,7 @@ const navItems: NavItem[] = [
   { label: 'QR코드 관리', href: '/admin/qr-codes', icon: '▦' },
   { label: '리뷰 관리', href: '/admin/reviews', icon: '◇', badgeKey: 'reviews_pending' },
   { label: '블로그', href: '/admin/blog', icon: '✎' },
-  { label: '홈편집', href: '/admin/pages/home', icon: '⌂' },
+  { label: '이전 홈편집', href: '/admin/pages/home', icon: '⌂' },
   { label: '계정 관리', href: '/admin/users', icon: '⦿', superAdminOnly: true },
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },
   { label: 'DB 관리', href: '/admin/db', icon: '▦', superAdminOnly: true },
@@ -57,7 +58,8 @@ const BADGE_COLORS: Record<keyof NotificationCounts, string> = {
 
 function isActive(pathname: string, href: string): boolean {
   if (href === '/admin') return pathname === '/admin';
-  return pathname.startsWith(href);
+  // 정확히 같거나 뒤에 '/' 가 이어질 때만 — '/admin/pages/home' 이 '/admin/pages/home-main' 에서 켜지지 않게.
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 const REFRESH_INTERVAL_MS = 30_000;
