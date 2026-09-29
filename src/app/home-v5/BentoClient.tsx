@@ -235,7 +235,6 @@ export function LatestVideo() {
             alt=""
             fill
             sizes="(max-width: 640px) 90vw, (max-width: 1099px) 45vw, 420px"
-            priority={i === 0}
             className={styles.ytFrameImg}
             data-active={i === idx ? '' : undefined}
           />
@@ -400,11 +399,16 @@ export function HeroVideo({ src, poster }: { src: string; poster: string }) {
   useEffect(() => {
     const v = ref.current;
     if (!v || prefersReducedMotion()) return;
-    v.preload = 'auto';
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) v.play().catch(() => {});
-      else v.pause();
-    });
+    // 화면 아래로 내려간 타일이 스크롤 전에 영상 7MB 를 미리 받지 않도록, 가까워질 때 로딩을 시작한다.
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          v.preload = 'auto';
+          v.play().catch(() => {});
+        } else v.pause();
+      },
+      { rootMargin: '300px 0px' },
+    );
     io.observe(v);
     return () => io.disconnect();
   }, []);

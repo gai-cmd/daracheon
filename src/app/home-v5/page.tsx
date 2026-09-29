@@ -182,12 +182,12 @@ export default async function HomeV5Page() {
             <span className={styles.badgeChip}>NEW</span>
             소식
           </span>
-          <h2 className={styles.h2}>
+          <h2 id="v5-news-title" className={styles.h2}>
             새로 올라온 <span className={styles.glow}>대라천 소식</span>
           </h2>
         </header>
 
-        <section className={styles.grid} aria-label="대라천 소식">
+        <section className={styles.grid} aria-labelledby="v5-news-title">
           {/* 대표 제품 — 흐르는 카드 */}
           {products.length > 0 && (
             <div className={`${styles.tile} ${styles.tProducts}`} data-tile="" data-reveal="">
@@ -203,11 +203,19 @@ export default async function HomeV5Page() {
               <div className={styles.prodViewport}>
                 <ul className={styles.prodTrack}>
                   {[0, 1].map((k) =>
-                    products.map((p) => (
+                    products.map((p, i) => (
                       <li key={`${k}-${p.slug}`} className={styles.prodItem} aria-hidden={k === 1 ? true : undefined}>
                         <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
                           <span className={styles.prodThumb}>
-                            <Image src={p.image!} alt={k === 0 ? p.name : ''} fill sizes="200px" style={{ objectFit: 'cover' }} />
+                            {/* 소식이 첫 화면에 오면서 첫 제품 사진이 모바일 LCP 요소가 되었다 — 첫 장만 우선 로딩 */}
+                            <Image
+                              src={p.image!}
+                              alt={k === 0 ? p.name : ''}
+                              fill
+                              sizes="200px"
+                              priority={k === 0 && i === 0}
+                              style={{ objectFit: 'cover' }}
+                            />
                           </span>
                           {p.category && <span className={styles.cardSub}>{p.category}</span>}
                           <span className={styles.prodName}>{p.name}</span>
@@ -318,7 +326,11 @@ export default async function HomeV5Page() {
         </section>
 
         {/* 3. 벤토 그리드 — 대라천을 알아가는 문들 */}
-        <section className={`${styles.grid} ${styles.gridBrand}`} aria-label="대라천 둘러보기">
+        {/* 소식 제목 아래에 딸려 읽히지 않도록 화면에는 보이지 않는 제목을 둔다 */}
+        <h2 id="v5-brand-title" className={styles.srOnly}>
+          대라천 둘러보기
+        </h2>
+        <section className={`${styles.grid} ${styles.gridBrand}`} aria-labelledby="v5-brand-title">
           {/* 히어로: 농장 영상 */}
           <Link href="/media" className={`${styles.tile} ${styles.tHero}`} data-tile="" data-reveal="">
             <HeroVideo src={VIDEO.farm} poster={IMG.farm} />
