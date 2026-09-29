@@ -980,6 +980,61 @@ a.tile:focus-visible {
 }
 /* 소식 그리드 다음에 오는 둘러보기 그리드 — 제목이 없으니 여백으로 구획을 나눈다 */
 .gridBrand { margin-top: 88px; }
+/* ───────── 공지 띠 — 어드민 공지 설정이 켜져 있을 때만 나온다 ───────── */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin: 0 0 26px;
+  padding: 8px 10px 8px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 168, 67, 0.34);
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.1), rgba(22, 22, 22, 0.9) 55%), #161616;
+  color: #f5f3ef;
+}
+.noticeChip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: linear-gradient(to top, #f3dcb4 20%, #fdf8ef 80%);
+  color: #141414;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+.noticeText {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  word-break: keep-all;
+  color: #eaeaea;
+}
+.noticeDark {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #161616;
+}
+.noticeRed {
+  border-color: rgba(255, 78, 69, 0.42);
+  background: linear-gradient(90deg, rgba(255, 78, 69, 0.12), rgba(22, 22, 22, 0.9) 55%), #161616;
+}
+.noticeRed .noticeChip {
+  background: rgba(255, 78, 69, 0.16);
+  border: 1px solid rgba(255, 78, 69, 0.4);
+  color: #ffb3ad;
+}
 /* 화면 낭독기용 제목 — 눈에는 보이지 않는다 */
 .srOnly {
   position: absolute;
@@ -1371,6 +1426,15 @@ a.tile:focus-visible {
   .countNum { font-size: 44px; }
   .chRow { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .gridBrand { margin-top: 64px; }
+  .notice {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 12px;
+    border-radius: 20px;
+  }
+  .noticeText { flex: 1 1 calc(100% - 76px); font-size: 14px; }
+  .notice .more { margin-left: auto; }
   .closing { margin: 80px 0 90px; padding: 32px 24px; }
   .closing .ctas { justify-content: flex-start; }
   .tile:hover,

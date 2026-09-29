@@ -6,6 +6,7 @@ import { readPostsSafe } from '@/lib/blog/store';
 import { SNS_SAMPLE } from '@/data/sns-sample';
 import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
 import type { MediaTabData } from '@/app/about-agarwood/page';
+import type { Announcement } from '@/app/api/admin/announcement/route';
 import {
   BentoRoot,
   CountUp,
@@ -24,8 +25,8 @@ import styles from './page.module.css';
  *
  * 메인 전체를 촘촘한 벤토 그리드 두 장으로 구성한다. 타일 하나하나가 하위 페이지로 가는 문이고,
  * 영상·카운트업·흐르는 띠·회전 테두리로 '살아 있는' 느낌을 준다.
- * 순서(2026-09-29 정정): 인트로 → 소식(자주 갱신되는 블록) → 둘러보기 그리드 → 마무리 띠.
- * 재방문 고객이 새 소식부터 보도록 소식 그리드를 인트로 바로 아래로 올렸다.
+ * 순서(2026-09-29 정정): 인트로 → 공지 띠(어드민 공지가 켜져 있을 때만) → 소식(자주 갱신되는 블록)
+ * → 둘러보기 그리드 → 마무리 띠. 재방문 고객이 새 소식부터 보도록 소식 그리드를 인트로 바로 아래로 올렸다.
  * 현행 홈의 골드·명조 톤에서 벗어나 #121212 바탕 + Noto Sans KR 굵은 제목 + 절제된 앰버 포인트로 간다.
  * 비교용 별도 경로라 검색 노출을 막는다.
  */
@@ -90,6 +91,13 @@ function dateKey(raw?: string): number {
   return m ? Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]) : 0;
 }
 
+/** 어드민이 입력한 공지 링크 — 사이트 내부 경로와 http(s) 만 통과시킨다. */
+function safeHref(raw?: string): string | null {
+  const v = (raw ?? '').trim();
+  if (v.startsWith('/') && !v.startsWith('//')) return v;
+  return /^https?:\/\//i.test(v) ? v : null;
+}
+
 function formatDot(iso?: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
   return m ? `${m[1]}.${m[2]}.${m[3]}` : '';
@@ -118,11 +126,28 @@ function Go() {
 }
 
 export default async function HomeV5Page() {
-  const [pagesData, productsRaw, postsRaw] = await Promise.all([
+  const [pagesData, productsRaw, postsRaw, announcement] = await Promise.all([
     readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData } }>('pages'),
     readDataSafe<ProductLite>('products'),
     readPostsSafe(),
+    readSingleSafe<Partial<Announcement>>('announcement'),
   ]);
+
+  // 어드민 '공지' 설정(/admin/settings) — 켜져 있고 문구가 있을 때만 소식 위에 한 줄 띠로 보인다.
+  const noticeText = announcement?.enabled ? (announcement.text ?? '').trim() : '';
+  const notice = noticeText
+    ? {
+        text: noticeText,
+        href: safeHref(announcement?.link),
+        label: (announcement?.linkLabel ?? '').trim() || '자세히 보기',
+        className:
+          announcement?.variant === 'red'
+            ? styles.noticeRed
+            : announcement?.variant === 'dark'
+              ? styles.noticeDark
+              : styles.noticeGold,
+      }
+    : null;
 
   // 어드민 제품 목록 순서를 그대로 따른다 — 앞의 5개가 대표 제품.
   const products = productsRaw.filter((p) => p.published !== false && isOwnAsset(p.image)).slice(0, 5);
@@ -176,7 +201,25 @@ export default async function HomeV5Page() {
           </div>
         </header>
 
-        {/* 2. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
+        {/* 2. 공지 띠 — 어드민 공지 설정이 켜져 있을 때만 */}
+        {notice && (
+          <aside className={`${styles.notice} ${notice.className}`} aria-label="공지" data-reveal="">
+            <span className={styles.noticeChip}>공지</span>
+            <p className={styles.noticeText}>{notice.text}</p>
+            {notice.href &&
+              (notice.href.startsWith('/') ? (
+                <Link href={notice.href} className={styles.more}>
+                  {notice.label} →
+                </Link>
+              ) : (
+                <a href={notice.href} target="_blank" rel="noopener noreferrer" className={styles.more}>
+                  {notice.label} →
+                </a>
+              ))}
+          </aside>
+        )}
+
+        {/* 3. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
         <header className={styles.sectionHead} data-reveal="">
           <span className={styles.badge}>
             <span className={styles.badgeChip}>NEW</span>
@@ -325,7 +368,7 @@ export default async function HomeV5Page() {
           )}
         </section>
 
-        {/* 3. 벤토 그리드 — 대라천을 알아가는 문들 */}
+        {/* 4. 벤토 그리드 — 대라천을 알아가는 문들 */}
         {/* 소식 제목 아래에 딸려 읽히지 않도록 화면에는 보이지 않는 제목을 둔다 */}
         <h2 id="v5-brand-title" className={styles.srOnly}>
           대라천 둘러보기
@@ -480,7 +523,7 @@ export default async function HomeV5Page() {
           </div>
         </section>
 
-        {/* 4. 마무리 띠 */}
+        {/* 5. 마무리 띠 */}
         <div className={styles.closing} data-reveal="">
           <p className={styles.closingLine}>
             진짜 침향, <span className={styles.glow}>직접 확인해 보세요</span>
