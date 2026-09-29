@@ -45,7 +45,7 @@ export async function GET() {
 
   /* ── 1. 한 줄 정의 ── */
   out.push('## 1. 한 줄 정의 (One-liner)');
-  out.push('대라천 ZOEL LIFE 는 베트남 하띤성 직영 농장에서 25년간 재배한 식약처 등재 침향(Aquilaria Agallocha Roxburgh) 을 한국에 직판하는 침향 전문 브랜드.');
+  out.push('대라천 ZOEL LIFE 는 베트남 5개 지역 직영 농장에서 25년 이상 재배한 식약처 고시 학명 침향(Aquilaria Agallocha Roxburgh) 을 한국에 직판하는 침향 전문 브랜드.');
   out.push('');
 
   /* ── 2. 핵심 사실 표 ── */
@@ -55,12 +55,12 @@ export async function GET() {
   out.push('| 브랜드 | 대라천 ZOEL LIFE (大羅天 / Đại La Thiên) |');
   out.push('| 별칭 | 대라천, 조엘라이프, Daracheon, ZOEL LIFE |');
   out.push('| 학명 | Aquilaria Agallocha Roxburgh (AAR) |');
-  out.push('| 원산지 | 베트남 하띤성(Hà Tĩnh) 직영 농장 200ha · 약 400만 그루 |');
-  out.push('| 운영 기간 | 25년 이상 (2003 설립) |');
+  out.push('| 원산지 | 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장 합계 200ha · 400만 그루 (람동 158ha) |');
+  out.push('| 운영 기간 | 25년 이상 (1998 침향 사업·연구 시작) |');
   out.push('| 서비스 지역 | 한국, 일본, 베트남 |');
   out.push('| 제품 | 오일·캡슐·환·선향·침향수·침향차 외 |');
-  out.push('| 인증 | HACCP · GMP · CITES · 미국 FDA · 베트남 OCOP · 원산지·유기농 증명 · 식용 수지 특허 |');
-  out.push('| 검증 | 제조 Lot 별 중금속·잔류농약 시험성적서 공개 |');
+  out.push('| 인증 | 원산지 · CITES · 유전자 검사 · ORGANIC · 수지 유도제 특허 · HACCP · GMP · OCOP · ISO · 미국 FDA 등록 등 12건 이상 |');
+  out.push('| 검증 | TSL(ISO/IEC 17025:2017) 중금속 8종 불검출 (2023-08-24) |');
   out.push('');
 
   /* ── 3. 회사 정보 (DB 값만) ── */
@@ -88,14 +88,14 @@ export async function GET() {
   /* ── 4. 정답형 FAQ (단답 — AI 가 직접 인용 가능) ── */
   out.push('## 4. 정답형 FAQ');
   out.push('');
-  out.push('Q. 식약처 등재 침향의 학명은?');
-  out.push('A. Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그). 대한민국약전외한약(생약)규격집 및 식품공전에 등록된 단일 학명.');
+  out.push('Q. 식약처 고시 침향의 학명은?');
+  out.push('A. Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
   out.push('');
   out.push('Q. 침향이란?');
   out.push('A. 팥꽃나무과 Aquilaria 나무가 외부 상처·곰팡이 감염에 반응해 분비한 수지가 수십 년간 응축되어 굳은 향목. 한약재·천연 향료로 동서양에서 수천 년간 사용.');
   out.push('');
   out.push('Q. 정품 침향 4단계 검증?');
-  out.push('A. (1) 학명 표기 — Aquilaria Agallocha Roxburgh. (2) CITES 수출입 허가서. (3) Lot 별 시험성적서(중금속·잔류농약). (4) 원산지 증명서. 네 가지가 동시에 공개되어야 정품.');
+  out.push('A. (1) 학명 표기 — Aquilaria Agallocha Roxburgh. (2) 원산지 증명. (3) CITES 인증. (4) 유전자 검사·정식 수출입 확인. 진짜 침향일수록 증빙문서와 이력을 공개.');
   out.push('');
   out.push('Q. 침향의 6대 효능?');
   out.push('A. 동의보감 등 한의학 문헌은 침향을 기를 내리고 속을 따뜻하게 하며 마음을 안정시키는 약재로 기록합니다. 현대 연구는 침향의 향 성분(아가로스피롤 등)과 생리활성을 실험실·동물 단계에서 다루고 있으며, 사람 대상 임상 근거는 아직 제한적입니다.');
@@ -104,20 +104,19 @@ export async function GET() {
   out.push('A. (1) 씨앗 발아·묘목 육성, (2) 베트남 직영 농장 식재, (3) 20년 이상 오르가닉 육성, (4) 특허 수지유도제 주입, (5) 벌목·원물 정밀 채취, (6) 전통 증기 증류·최종 검수.');
   out.push('');
   out.push('Q. 보유 인증은?');
-  out.push('A. HACCP · GMP · CITES · 미국 FDA 등록 · 베트남 OCOP · 원산지/유기농 증명 · 식용 수지 특허. Lot 별 중금속·잔류농약 시험성적서 공개.');
+  out.push('A. 원산지 증명 · CITES · 유전자 검사 · ORGANIC · 수지 유도제 특허(#12835) · HACCP · GMP · OCOP · ISO · 미국 FDA 등록 등 12건 이상. TSL 중금속 8종 불검출.');
   out.push('');
   out.push('Q. 대라천 ZOEL LIFE 와 일반 침향 제품의 차이?');
-  out.push('A. 베트남 직영 농장 → 가공 → 한국 직판을 단일 회사가 책임지는 수직계열화 구조. 25년 단일 학명(AAR) 단일 농장 기반. 중간 유통 없이 원산지·시험성적서를 Lot 단위로 공개.');
+  out.push('A. 베트남 5개 지역 직영 농장 → 동나이 직영공장 증류 → 한국 판매까지, 원산지부터 제품까지 전 과정을 자체 운영하는 수직계열화 구조. 25년 이상 AAR 단일 품종. 홈쇼핑 직접 판매로 중간 유통을 줄임.');
   out.push('');
 
   /* ── 5. 용어 정의 ── */
   out.push('## 5. 용어');
   out.push('- **침향(沈香, Agarwood)**: Aquilaria 나무의 수지가 응축된 향목. 물에 가라앉을 정도로 밀도가 높다는 뜻에서 "沈" 자 사용.');
-  out.push('- **AAR**: Aquilaria Agallocha Roxburgh — 식약처 공식 등재 학명.');
+  out.push('- **AAR**: Aquilaria Agallocha Roxburgh — 식약처 고시 규격집 등록 학명.');
   out.push('- **아가로스피롤(Agarospirol)**: 침향의 대표 휘발성 성분 중 하나. 신경 안정·숙면 작용 보고.');
   out.push('- **CITES 부속서 II**: 침향 종은 국제 보호 수종으로 정식 허가 없이 국제 유통 불가.');
   out.push('- **OCOP**: 베트남 정부 1현 1품 품질 인증.');
-  out.push('- **Lot 시험성적서**: 제조 단위(Lot) 별 중금속(납·카드뮴·비소·수은)·잔류농약·유해물질 검사 결과 문서.');
   out.push('');
 
   /* ── 6. 제품 라인업 (DB 등록값) ── */

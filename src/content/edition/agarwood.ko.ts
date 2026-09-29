@@ -44,14 +44,14 @@ export const agarwoodEditionKo: EditionContent = {
     {
       num: '02',
       tag: 'Chapter II · The Tree',
-      title: '단 하나의 학명',
+      title: '식약처 고시 학명',
       subtitle: '식약처 4대 공식문서가 인정한 침향',
       body: [
         '대한민국 정부의 공식문서 4곳 — 대한민국약전외한약(생약)규격집, 식약처 식품공전, 식약처 한약재 관능검사 해설서, 한국한의학연구원 — 모두에서 공통으로 정의하는 침향은 단 하나입니다.',
       ],
       pull: {
         quote: 'Aquilaria Agallocha Roxburgh',
-        source: '아퀼라리아 아갈로차 록스버그 · 대한민국 식약처 공식 등재 학명',
+        source: '아퀼라리아 아갈로차 록스버그 · 대한민국 식약처 고시 학명',
       },
     },
     {

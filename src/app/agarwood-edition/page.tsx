@@ -88,7 +88,7 @@ export default async function AgarwoodEditionLandingPage({
               fontWeight: 300,
             }}
           >
-            베트남 5개 성, 200ha의 직영 농장, 25년의 시간. 식약처가 인정한 단 하나의 학명{' '}
+            베트남 5개 성, 200ha의 직영 농장, 25년 이상의 시간. 식약처 고시 한약재 규격집에 등록된 학명{' '}
             <em style={{ color: 'var(--accent-soft)', fontStyle: 'normal' }}>
               Aquilaria Agallocha Roxburgh
             </em>
@@ -142,8 +142,8 @@ export default async function AgarwoodEditionLandingPage({
               }}
             >
               {[
-                '베트남 5개 성 25년 직영 농장 영상 기록',
-                '식약처 4대 공식문서가 인정한 단 하나의 학명',
+                '베트남 5개 성 25년 이상 직영 농장 영상 기록',
+                '식약처 4대 공식문서에 기재된 침향 학명',
                 '진짜 침향을 가리는 3가지 기준 (학명·산지·증빙)',
                 'CITES·ISO·GMP 등 보유 인증서 원본',
                 '제품 라인업 7종 · 복용·사용법 가이드',

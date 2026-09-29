@@ -246,7 +246,7 @@ export default function AdminBrandStoryPage() {
     sourceTag: 'THE SOURCE',
     sourceTitle: '',
     sourceBody:
-      '베트남 5개 성(하띤·동나이·냐짱·푸국·람동)에 자리한 대라천 직영 농장.\n\n현재는 하띤성 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
+      '베트남 5개 성(하띤·동나이·냐짱·푸꾸옥·람동)에 자리한 대라천 직영 농장.\n\n현재는 합계 200ha 부지에서 400만 그루 이상의 침향나무를 직접 관리하며, 원료 재배부터 가공·유통까지 전 과정을 수직계열화하여 품질을 보증합니다.',
   });
   const [twentyYearPrinciple, setTwentyYearPrinciple] = useState<NonNullable<BrandStoryData['twentyYearPrinciple']>>({
     tag: 'THE 20-YEAR PROOF',

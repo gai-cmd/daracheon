@@ -30,7 +30,7 @@ interface SocialLink {
 const SEO_DEFAULTS: SeoSettings = {
   metaTitle: '대라천 ZOEL LIFE — 정품 침향 전문 브랜드',
   metaDescription:
-    "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.",
+    "조엘라이프 대라천 '참'침향. 식약처 고시 학명 Aquilaria Agallocha Roxburgh, 베트남 5개 지역 직영 농장 200ha.",
   keywords:
     "침향, 대라천, 참침향, ZOEL LIFE, 조엘라이프, 침향 효능, 침향 오일, 침향 캡슐, 침향환, 침향단, 침향 선향, 침향수, 침향차, 침향 스틱, 베트남 침향, 베트남 직영 침향, 프리미엄 침향, 진짜 침향, 정품 침향, Aquilaria Agallocha Roxburgh, 아퀼라리아 아갈로차 록스버그, 식약처 침향, 약전 침향, CITES 침향, 침향 구매, 침향 도매, 침향 B2B, 침향 OEM, 하띤 침향, 동나이 침향, 냐짱 침향",
   ogImage: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765420985/agarwood/18_ch1_gift_tradition.png',

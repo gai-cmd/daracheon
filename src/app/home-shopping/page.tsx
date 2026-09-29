@@ -52,7 +52,7 @@ interface NsHeroFallback {
 const DEFAULT_HOME_SHOPPING_HERO: HomeShoppingHero = {
   titleLine1: 'TV 홈쇼핑',
   titleEmphasis: '편성표 · 다시보기',
-  lede: '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.',
+  lede: 'NS홈쇼핑·NS Shop+ 방송 편성표와 다시보기입니다. 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.',
 };
 
 const DEFAULT_NS_HEAD: NsHead = {
@@ -89,10 +89,10 @@ const DEFAULT_NS_HERO_FALLBACK: NsHeroFallback = {
 export const metadata: Metadata = {
   title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
   description:
-    '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 대라천 ZOEL LIFE 침향 라이브 방송 시간표, 다시보기, Lot 인증서를 실시간으로 확인하세요.',
+    'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기. 2회 연속 매진 소식과 다음 편성 안내를 확인하세요.',
   keywords: [
     '침향 홈쇼핑', '침향 TV 홈쇼핑', '대라천 홈쇼핑', 'ZOEL LIFE 홈쇼핑', '조엘라이프 홈쇼핑',
-    '롯데홈쇼핑 침향', '현대홈쇼핑 침향', 'CJ온스타일 침향', 'GS홈쇼핑 침향',
+    'NS홈쇼핑 침향', 'NS Shop+ 침향',
     '홈쇼핑 편성표', '침향 방송 편성표', '침향 다시보기',
     '침향 라이브 방송', '침향 생방송',
   ],
@@ -103,13 +103,13 @@ export const metadata: Metadata = {
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
-    description: '롯데·현대·CJ·GS 정규 편성. 침향 라이브 방송 시간표·다시보기·Lot 인증서 실시간 확인.',
+    description: 'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기. 2회 연속 매진.',
     images: ['/opengraph-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'On-Air 특별관 — TV 홈쇼핑 편성표',
-    description: '롯데·현대·CJ·GS 침향 편성표·다시보기.',
+    description: 'NS홈쇼핑 대라천 침향 편성표·다시보기.',
     images: ['/twitter-image.jpg'],
   },
 };

@@ -14,9 +14,9 @@ const SITE_URL = 'https://zoellife.com';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장',
+  title: '침향 영상·사진 미디어 — 베트남 5개 직영 농장 현장',
   description:
-    '베트남 하띤 200ha 대라천 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정을 미디어로 공개. 침향 영상, 침향 농장 다큐, 침향 인증 자료.',
+    '베트남 5개 지역 200ha 대라천 직영 침향 농장의 영상·사진 갤러리. 묘목부터 채취·증류까지 현장 기록. 침향 영상, 침향 농장 다큐, 침향 인증 자료.',
   keywords: [
     '침향 영상', '침향 다큐멘터리', '침향 농장 영상', '침향 사진',
     '대라천 영상', 'ZOEL LIFE 영상', '조엘라이프 영상',
@@ -29,16 +29,16 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/media',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    title: '침향 영상·사진 미디어 — 베트남 하띤 농장 현장',
-    description: '베트남 하띤 200ha 직영 침향 농장의 영상·사진 갤러리. 25년의 시간, 묘목부터 채취·증류까지 전 공정 미디어 공개.',
+    title: '침향 영상·사진 미디어 — 베트남 5개 직영 농장 현장',
+    description: '베트남 5개 지역 200ha 직영 침향 농장의 영상·사진 갤러리. 묘목부터 채취·증류까지 현장 기록.',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg',
-      alt: '대라천 침향 미디어 — 베트남 하띤 농장 영상·사진 갤러리',
+      alt: '대라천 침향 미디어 — 베트남 5개 직영 농장 영상·사진 갤러리',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '침향 영상·사진 미디어 — 하띤 농장 현장',
+    title: '침향 영상·사진 미디어 — 베트남 5개 직영 농장 현장',
     description: '대라천 직영 침향 농장의 영상·사진 갤러리.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg'],
   },
@@ -80,7 +80,7 @@ function buildMediaJsonLd(media: MediaItem[]) {
       '@id': `${SITE_URL}/media#page`,
       name: '침향 영상·사진 미디어',
       url: `${SITE_URL}/media`,
-      description: '베트남 하띤 200ha 직영 농장 영상·사진 갤러리.',
+      description: '베트남 5개 지역 200ha 직영 농장 영상·사진 갤러리.',
       isPartOf: { '@id': `${SITE_URL}/#website` },
       about: { '@id': `${SITE_URL}/#brand` },
     },
@@ -124,7 +124,7 @@ function buildMediaJsonLd(media: MediaItem[]) {
 
 const DEFAULT_HERO: FarmStoryData['hero'] = {
   kicker: '침향 농장 이야기 · Farm Story',
-  titleLine1: '베트남 하띤의',
+  titleLine1: '베트남 5개 농장의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
   lede: '호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
@@ -172,7 +172,7 @@ const DEFAULT_CHAPTERS: FarmStoryData['chapters'] = [
     body: '아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
     imageSrc: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',
     imageAlt: '베트남 하띤(Ha Tinh) 직영 농장',
-    imageCaption: '하띤 · Ha Tinh · 메인 대규모 농장 (200ha)',
+    imageCaption: '하띤 · Ha Tinh · 직영 농장',
   },
   {
     num: '03',
@@ -305,7 +305,7 @@ const DEFAULT_MEDIA: MediaItem[] = [
   {
     id: 'p-default-1',
     type: 'photo',
-    title: '하띤 · Ha Tinh 메인 대규모 농장 (200ha)',
+    title: '하띤 · Ha Tinh 직영 농장',
     source: '대라천 공식',
     date: '2026-04-11',
     image: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',

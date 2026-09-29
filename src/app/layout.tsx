@@ -70,7 +70,7 @@ const DEFAULT_TITLE = "조엘라이프 대라천 '참'침향 - 100% 베트남산
 const OG_TITLE_MAX = 40;
 const DEFAULT_OG_TITLE = "조엘라이프 대라천 '참'침향 | 베트남산 아갈로차 정품 침향";
 const DEFAULT_DESCRIPTION =
-  "조엘라이프 대라천 '참'침향. 식약처 등재 Aquilaria Agallocha Roxburgh, 베트남 200ha 직영 25년.";
+  "조엘라이프 대라천 '참'침향. 식약처 고시 학명 Aquilaria Agallocha Roxburgh, 베트남 5개 지역 직영 농장 200ha.";
 
 // 검색 의도별로 키워드 카테고리화 — Title/Description 으로 잡기 어려운 long-tail
 // 까지 metadata.keywords 로 보강. (Google 자체는 keywords 가중치 낮지만
@@ -89,7 +89,7 @@ const KW_BENEFIT = [
 const KW_ORIGIN = [
   '베트남 침향', '하띤 침향', '베트남 하띤성 침향', '직영 농장 침향',
   'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
-  '식약처 등재 침향', '대한민국약전외한약 침향', 'CITES 침향',
+  '식약처 고시 침향', '대한민국약전외한약 침향', 'CITES 침향',
 ];
 const KW_COMPARE = [
   '진짜 침향', '정품 침향', '프리미엄 침향', '명품 침향',
@@ -109,7 +109,7 @@ const DEFAULT_KEYWORDS = [
 // 어드민 SEO ogImage 입력은 호환을 위해 인터페이스만 유지.
 const SITE_OG_IMAGE_PATH = '/opengraph-image.jpg';
 const SITE_OG_IMAGE_ALT =
-  '대라천 ZOEL LIFE — 베트남 직영 25년, 학명 Aquilaria Agallocha Roxburgh 정품 침향';
+  '대라천 ZOEL LIFE — 베트남 직영 25년 이상, 학명 Aquilaria Agallocha Roxburgh 정품 침향';
 const SITE_TW_IMAGE_PATH = '/twitter-image.jpg';
 
 interface SeoData { metaTitle?: string; metaDescription?: string; keywords?: string; ogImage?: string }
@@ -225,6 +225,7 @@ const siteJsonLd = {
       '@type': 'Organization',
       '@id': `${SITE_URL}/#organization`,
       name: '대라천 ZOEL LIFE',
+      legalName: '조엘라이프 주식회사',
       alternateName: ['대라천', 'Daracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
       url: SITE_URL,
       logo: imageObject({
@@ -233,8 +234,7 @@ const siteJsonLd = {
         caption: '대라천 ZOEL LIFE 브랜드 로고',
       }),
       description:
-        '식약처 공식 등재 침향(Aquilaria Agallocha Roxburgh) 전문 브랜드. 베트남 하띤성 200ha 직영 농장에서 25년간 400만 그루를 직접 관리.',
-      foundingDate: '2003',
+        '식약처 고시 학명 Aquilaria Agallocha Roxburgh 침향 전문 브랜드. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장 200ha에서 400만 그루를 25년 이상 재배·관리.',
       knowsAbout: [
         '침향', 'Agarwood', 'Aquilaria Agallocha Roxburgh',
         '침향 효능', '한약재', '천연 향료', '베트남 침향',
@@ -247,6 +247,7 @@ const siteJsonLd = {
       contactPoint: {
         '@type': 'ContactPoint',
         email: 'contact@daracheon.com',
+        telephone: '+82-70-4140-4086',
         contactType: 'customer service',
         availableLanguage: ['Korean', 'Japanese', 'English'],
       },
@@ -259,7 +260,7 @@ const siteJsonLd = {
       logo: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
       slogan: 'Genuine Only · 진짜 침향만',
       description:
-        '베트남 직영 25년, 학명 보증 정품 침향 전문 브랜드. Aquilaria Agallocha Roxburgh.',
+        '베트남 직영 25년 이상, 학명 보증 정품 침향 전문 브랜드. Aquilaria Agallocha Roxburgh.',
     },
     {
       '@type': 'WebSite',
@@ -319,10 +320,10 @@ const siteJsonLd = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: '식약처 등재 침향의 학명은 무엇인가요?',
+          name: '식약처 고시 침향의 학명은 무엇인가요?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: '대한민국약전외한약(생약)규격집과 식품공전에 공식 등록된 침향의 학명은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그, AAR)입니다. 이 학명만 한약재 침향으로 인정됩니다.',
+            text: '식약처 고시 대한민국약전외한약(생약)규격집에 등록된 침향의 학명은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그, AAR)입니다. 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있으며, 규격집(한약재)에는 AAR만 올라 있습니다.',
           },
         },
         {
@@ -330,7 +331,7 @@ const siteJsonLd = {
           name: '대라천 ZOEL LIFE 침향은 어디에서 재배되나요?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: '베트남 하띤성 200ha 직영 농장에서 25년간 직접 재배·관리한 약 400만 그루의 Aquilaria 나무에서만 채취합니다. 농장→가공→한국 직판까지 단일 회사가 담당합니다.',
+            text: '베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장에서 재배합니다. 전체 200ha 부지에서 400만 그루의 Aquilaria Agallocha Roxburgh 침향나무를 25년 이상 직접 관리하며, 원산지부터 제품까지 전 과정을 자체 운영합니다.',
           },
         },
         {
@@ -338,7 +339,7 @@ const siteJsonLd = {
           name: '진짜 침향과 가짜 침향은 어떻게 구별하나요?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: '첫째 학명(Aquilaria Agallocha Roxburgh) 표기 확인, 둘째 CITES 수출입 허가서, 셋째 Lot별 시험성적서(중금속·잔류농약), 넷째 원산지 증명서. 이 네 가지가 동시에 공개되어야 정품으로 볼 수 있습니다.',
+            text: '첫째 학명(Aquilaria Agallocha Roxburgh) 표기 확인, 둘째 원산지 증명, 셋째 CITES 인증, 넷째 유전자 검사와 정식 수출입 확인. 진짜 침향일수록 이러한 증빙문서와 이력을 숨기지 않습니다.',
           },
         },
         {
@@ -354,7 +355,7 @@ const siteJsonLd = {
           name: '대라천 침향은 어떤 인증을 보유하고 있나요?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'HACCP, GMP(우수 의약품 제조관리 기준), CITES(국제 보호종 수출입 허가), 미국 FDA 등록, 베트남 OCOP, 원산지·유기농 증명, 식용 수지 특허를 보유하고 있으며, 제조 Lot별 중금속·잔류농약 시험성적서를 공개합니다.',
+            text: '원산지 증명, CITES, 유전자 검사, ORGANIC(유기농), 수지 유도제 특허(#12835), HACCP, GMP, OCOP, ISO, 미국 FDA 등록 등 12건 이상의 인증·특허를 보유하고 있으며, TSL(ISO/IEC 17025:2017) 안전성 시험에서 중금속 8종 불검출 판정을 받았습니다.',
           },
         },
         {

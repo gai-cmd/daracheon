@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
   description:
-    '식약처 공식 등재 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
+    '식약처 고시 학명 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
     // 토픽
     '침향', '沈香', 'Agarwood', 'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
@@ -30,20 +30,20 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://zoellife.com/about-agarwood' },
   openGraph: {
     type: 'article',
-    title: '침향 이야기 — 식약처 등재 Aquilaria Agallocha Roxburgh',
+    title: '침향 이야기 — 식약처 고시 학명 Aquilaria Agallocha Roxburgh',
     description: '학명·정의·효능·문헌·논문·매체 보도까지, 진짜 침향을 알아야 할 모든 것.',
     url: 'https://zoellife.com/about-agarwood',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png',
-      alt: '침향 이야기 — 식약처 등재 Aquilaria Agallocha Roxburgh 정의·효능·문헌',
+      alt: '침향 이야기 — 식약처 고시 학명 Aquilaria Agallocha Roxburgh 정의·효능·문헌',
     }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
-    description: '식약처 공식 등재 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
+    description: '식약처 고시 학명 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png'],
   },
 };
@@ -90,7 +90,7 @@ const faqJsonLd = {
   },
   mainEntity: [
     { '@type': 'Question', name: '침향이란 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '침향(沈香)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지가 수십 년간 나무 속에 쌓여 굳은 향목입니다.' } },
-    { '@type': 'Question', name: '공식 침향의 학명은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '대한민국약전외한약(생약)규격집과 식약처 식품공전에 공식 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)입니다.' } },
+    { '@type': 'Question', name: '공식 침향의 학명은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '대한민국약전외한약(생약)규격집에 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)이며, 식약처 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있습니다.' } },
     { '@type': 'Question', name: '침향의 대표적인 효능은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '기혈 순환, 원기 회복, 신경 안정 및 숙면 유도, 항염 및 혈관 건강 개선, 뇌 질환 예방, 소화 기능 향상 등이 주요 효능으로 알려져 있습니다.' } },
   ],
 };

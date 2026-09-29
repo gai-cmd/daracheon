@@ -268,11 +268,11 @@ const DEFAULT_PROCESS: HomeProcess = {
     '벌목 및 원물 정밀 채취',
     '최고급 제품 가공 및 검수',
   ],
-  durations: ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'],
+  durations: ['6 — 12 Months', 'Vietnam 5 Farms · 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'HACCP · GMP'],
 };
 
 const DEFAULT_VERIFICATION: VerificationRow[] = [
-  { num: '01', label: '원산지 — 베트남 하띤 직영 200ha', meta: 'CITES' },
+  { num: '01', label: '원산지 — 베트남 5개 지역 직영 200ha', meta: 'CITES' },
   { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
@@ -922,7 +922,7 @@ export default function AdminHomePage() {
                 {verification.map((r, i) => (
                   <div key={i} className="grid grid-cols-[72px_1fr_140px_auto] items-center gap-2">
                     <input value={r.num} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], num: e.target.value }; setVerification(n); }} placeholder="01" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
-                    <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 하띤 직영 200ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
+                    <input value={r.label} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], label: e.target.value }; setVerification(n); }} placeholder="라벨 (예: 원산지 — 베트남 5개 지역 직영 200ha)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
                     <input value={r.meta} onChange={(e) => { const n = [...verification]; n[i] = { ...n[i], meta: e.target.value }; setVerification(n); }} placeholder="메타 (예: CITES)" className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none" />
                     <div className="flex gap-1">
                       <button type="button" onClick={() => setVerification(moveItem(verification, i, i - 1))} className="rounded border border-gray-200 px-2 py-1 text-xs">▲</button>
@@ -1086,7 +1086,7 @@ export default function AdminHomePage() {
 
       case 'speciesCompare':
         return (
-          <SectionCard title="종 비교 · 학명별 식약처 등재 비교 + 등록 기준 정의" onSave={() => saveSection('problem', { problem })} saving={saving === 'problem'}>
+          <SectionCard title="종 비교 · 학명별 식약처 등록 비교 + 등록 기준 정의" onSave={() => saveSection('problem', { problem })} saving={saving === 'problem'}>
             <div className="space-y-5">
               <p className="text-xs text-gray-500">
                 💡 Verified 섹션 내부(4 인용 카드와 인증 그리드 사이)에 렌더링됩니다.

@@ -370,9 +370,9 @@ export default function AdminAboutAgarwoodPage() {
     solutionCta: {
       title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
       pillars: [
-        { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 등재' },
+        { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 고시' },
         { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
-        { label: '산지', text: '베트남 하띤 직영 200ha — 역사적 정품 산지' },
+        { label: '산지', text: '베트남 5개 지역 직영 200ha — 역사적 정품 산지' },
       ],
       buttons: [
         { label: '구매 전 확인사항 보기', href: '/about-agarwood', variant: 'gold' },

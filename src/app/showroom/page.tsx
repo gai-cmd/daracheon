@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: 'article',
     title: "대라천 '참'침향 전시장 — 천년의 향기를 직접 체험",
     description:
-      '베트남 직영 본관에서 만나는 대라천 침향의 모든 라인업·원목·증류·시향. 21장의 사진으로 전하는 진짜 침향의 공간.',
+      '베트남 동나이성 직영 본관에서 만나는 대라천 침향의 모든 라인업·원목·증류·시향. 20장의 사진으로 전하는 진짜 침향의 공간.',
     url: 'https://zoellife.com/showroom',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',

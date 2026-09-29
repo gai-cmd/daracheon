@@ -59,7 +59,7 @@ interface HomeShoppingPageData {
 const DEFAULT_HERO: HomeShoppingHero = {
   titleLine1: 'TV 홈쇼핑',
   titleEmphasis: '편성표 · 다시보기',
-  lede: '롯데·현대·CJ·GS 홈쇼핑 정규 편성 중. 실시간 방송은 각 홈쇼핑 앱과 ZOEL LIFE 웹에서 동시 송출됩니다.',
+  lede: 'NS홈쇼핑·NS Shop+ 방송 편성표와 다시보기입니다. 다음 편성은 확정되는 대로 본 페이지에 안내드립니다.',
 };
 
 const DEFAULT_NS_HEAD: NsHead = {

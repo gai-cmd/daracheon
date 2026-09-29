@@ -16,7 +16,7 @@ const PRODUCTS_DEFAULT_HERO = {
   kicker: '제품 소개 · Products',
   titleLine1: '수십 년 숙성의 시간을',
   titleEmphasis: '담은 고귀한 제품',
-  lede: '베트남 Ha Tinh 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업. 모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.',
+  lede: '베트남 직영 농장에서 25년간 연구한 침향을, 전통 제법과 현대 과학으로 완성한 라인업. 모든 제품은 Lot 번호로 농장·가공·검사 이력을 조회할 수 있습니다.',
 };
 
 /** Badge text → CSS class 매핑. 대소문자 무관. */

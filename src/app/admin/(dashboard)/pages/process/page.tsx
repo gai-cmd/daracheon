@@ -105,7 +105,7 @@ const DEFAULT_FARMS: Farm[] = [
 
 const DEFAULT_HERO: ProcessHero = {
   kicker: '침향 농장 이야기 · Farm Story',
-  titleLine1: '베트남 하띤의',
+  titleLine1: '베트남 5개 농장의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
   lede:
@@ -149,7 +149,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     stats: [],
     imageSrc: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',
     imageAlt: '베트남 하띤(Ha Tinh) 직영 농장',
-    imageCaption: '하띤 · Ha Tinh · 메인 대규모 농장 (200ha)',
+    imageCaption: '하띤 · Ha Tinh · 직영 농장',
   },
   {
     num: '03',

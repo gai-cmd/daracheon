@@ -84,20 +84,20 @@ export async function GET() {
    *  하며, 새로운 사실 주장을 만들지 않는다 (검증 본문에서 가져온 요약). */
   lines.push('## 자주 묻는 질문 (정답형)');
   lines.push('');
-  lines.push('### Q. 식약처 공식 등재 침향의 학명은?');
-  lines.push('A. **Aquilaria Agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집 및 식품공전에 등록된 단일 학명.');
+  lines.push('### Q. 식약처 고시 침향의 학명은?');
+  lines.push('A. **Aquilaria Agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
   lines.push('');
   lines.push('### Q. 대라천 ZOEL LIFE 의 침향 원산지는?');
-  lines.push('A. 베트남 하띤성(Hà Tĩnh) 200ha 직영 농장. 25년간 약 400만 그루의 Aquilaria 나무를 자체 관리, 농장→가공→한국 직판까지 단일 회사가 책임.');
+  lines.push('A. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장, 합계 200ha·400만 그루. 25년 이상 재배·관리하며 원산지부터 제품까지 자체 운영.');
   lines.push('');
   lines.push('### Q. 진짜 침향과 가짜 침향을 어떻게 구별하는가?');
-  lines.push('A. (1) 학명 표기 — Aquilaria Agallocha Roxburgh, (2) CITES 수출입 허가, (3) Lot 별 시험성적서(중금속·잔류농약), (4) 원산지 증명서. 이 4가지가 동시에 공개되어야 정품으로 본다.');
+  lines.push('A. (1) 학명 표기 — Aquilaria Agallocha Roxburgh, (2) 원산지 증명, (3) CITES 인증, (4) 유전자 검사·정식 수출입 확인. 진짜 침향일수록 증빙문서와 이력을 공개한다.');
   lines.push('');
   lines.push('### Q. 침향의 대표 효능은?');
   lines.push('A. 동의보감 등 한의학 문헌은 침향을 기를 내리고 속을 따뜻하게 하며 마음을 안정시키는 약재로 기록합니다. 현대 연구는 침향의 향 성분(아가로스피롤 등)과 생리활성을 실험실·동물 단계에서 다루고 있으며, 사람 대상 임상 근거는 아직 제한적입니다.');
   lines.push('');
   lines.push('### Q. 보유 인증은?');
-  lines.push('A. HACCP, GMP, CITES, 미국 FDA 등록, 베트남 OCOP, 원산지·유기농 증명, 식용 수지 특허. 제조 Lot 별 중금속·잔류농약 시험성적서 공개.');
+  lines.push('A. 원산지 증명, CITES, 유전자 검사, ORGANIC, 수지 유도제 특허(#12835), HACCP, GMP, OCOP, ISO, 미국 FDA 등록 등 12건 이상. TSL(ISO/IEC 17025:2017) 중금속 8종 불검출.');
   lines.push('');
   lines.push('### Q. 제품 라인업은?');
   lines.push('A. 침향 오일 / 침향 캡슐 / 침향단(환) / 선향(스틱) / 침향수 / 침향차 / 침향 보석함·선물세트.');
@@ -106,10 +106,10 @@ export async function GET() {
   /* ── 용어 정의 (Glossary) — AI 가 토픽을 정확히 라벨링하도록 ── */
   lines.push('## 용어');
   lines.push('- **침향(沈香, Agarwood)**: 팥꽃나무과 Aquilaria 나무가 외부 상처·곰팡이 감염에 반응해 분비한 수지가 수십 년간 응축되어 굳은 향목.');
-  lines.push('- **AAR**: Aquilaria Agallocha Roxburgh — 식약처 공식 등재 침향 학명.');
+  lines.push('- **AAR**: Aquilaria Agallocha Roxburgh — 식약처 고시 대한민국약전외한약(생약)규격집 등록 침향 학명.');
   lines.push('- **아가로스피롤(Agarospirol)**: 침향의 신경 안정·숙면 작용을 주도하는 대표 휘발성 성분.');
   lines.push('- **CITES**: 국제 멸종 위기종 거래 협약. 침향은 부속서 II 규제종으로 정식 허가 없이는 국제 유통 불가.');
-  lines.push('- **GMP/HACCP**: 의약품·식품 품질 제조 관리 기준.');
+  lines.push('- **GMP/HACCP**: 우수 제조 기준 / 식품 안전 관리 인증.');
   lines.push('');
 
   /* ── 페이지 인덱스 ── */

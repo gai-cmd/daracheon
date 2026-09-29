@@ -7,9 +7,9 @@ import styles from '@/styles/zoel/story-page.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
+  title: '침향 농장·생산 공정 — 베트남 5개 농장 200ha 직영',
   description:
-    '베트남 하띤(Ha Tinh) 북위 18°의 대라천 직영 침향 농장 200ha·약 400만 그루. 62가구 현지 공동체 파트너십, 4단계 원산지 검증, HACCP·GMP 6단계 생산 공정 — 묘목부터 완제품까지 모든 과정 공개.',
+    '베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 직영 농장 200ha·400만 그루. 묘목부터 증류까지 생산 현장 공개.',
   keywords: [
     '침향 농장', '베트남 침향 농장', '하띤 침향 농장', '하띤성 침향',
     '침향 생산 공정', '침향 제조 공정', '침향 가공',
@@ -23,17 +23,17 @@ export const metadata: Metadata = {
     url: 'https://zoellife.com/process',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
-    title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
-    description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증 · HACCP·GMP 6단계 공정.',
+    title: '침향 농장·생산 공정 — 베트남 5개 농장 200ha 직영',
+    description: '베트남 5개 직영 농장 200ha · 400만 그루. 묘목부터 증류까지 생산 현장.',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg',
-      alt: '베트남 하띤성 200ha 직영 침향 농장 — 대라천 25년 생산 공정',
+      alt: '베트남 5개 지역 200ha 직영 침향 농장 — 대라천 생산 공정',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
-    description: '북위 18° 베트남 하띤 200ha · 약 400만 그루. 4단계 원산지 검증.',
+    title: '침향 농장·생산 공정 — 베트남 5개 농장 200ha 직영',
+    description: '베트남 5개 직영 농장 200ha · 400만 그루. 묘목부터 증류까지 생산 현장.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-farm-hatinh.jpg'],
   },
 };
@@ -81,7 +81,7 @@ interface ProcessData {
 
 const DEFAULT_HERO: ProcessHero = {
   kicker: '침향 농장 이야기 · Farm Story',
-  titleLine1: '베트남 하띤의',
+  titleLine1: '베트남 5개 농장의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
   lede:
@@ -97,7 +97,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     body: '아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
     imageSrc: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',
     imageAlt: '베트남 하띤(Ha Tinh) 직영 농장',
-    imageCaption: '하띤 · Ha Tinh · 메인 대규모 농장 (200ha)',
+    imageCaption: '하띤 · Ha Tinh · 직영 농장',
   },
   {
     num: '02',
@@ -192,7 +192,7 @@ export default async function ProcessPage() {
     '@type': 'HowTo',
     name: '대라천 침향 생산 공정',
     description:
-      '베트남 하띤 200ha 직영 농장에서 식목부터 수확·검증까지, 25년이 걸리는 대라천 침향의 전 공정.',
+      '베트남 5개 지역 200ha 직영 농장에서 식목부터 수확·검증까지, 25년이 걸리는 대라천 침향의 전 공정.',
     totalTime: 'P25Y',
     step: chapters.map((ch, i) => ({
       '@type': 'HowToStep',
@@ -233,7 +233,7 @@ export default async function ProcessPage() {
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: '침향 농장·생산 공정 — 베트남 하띤 200ha 직영',
+    headline: '침향 농장·생산 공정 — 베트남 5개 농장 200ha 직영',
     description: hero.lede,
     image: hero.heroImage ?? chapters[0]?.imageSrc,
     inLanguage: 'ko-KR',

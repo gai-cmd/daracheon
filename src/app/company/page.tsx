@@ -16,7 +16,7 @@ interface FaqItemWithMeta extends FaqItem {
 export const metadata: Metadata = {
   title: '회사소개 — 조엘라이프(주)',
   description:
-    '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 베트남 하띤성 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지 완벽한 가치사슬을 구축한 프리미엄 침향 전문 브랜드.',
+    '대라천 ZOEL LIFE(조엘라이프) 회사 소개·문의·FAQ·오시는 길. 베트남 5개 지역 직영 농장 200ha, 25년 이상 — 원산지부터 제품까지 자체 운영하는 프리미엄 침향 전문 브랜드.',
   keywords: [
     '대라천', '대라천 회사', '대라천 본사', 'ZOEL LIFE', 'ZOEL LIFE 회사', '조엘라이프', '조엘라이프 회사소개',
     '침향 회사', '침향 전문 회사', '침향 브랜드 회사',
@@ -27,19 +27,19 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     title: '회사소개 — 조엘라이프(주) ZOEL LIFE',
-    description: '베트남 하띤 200ha 직영 농장 25년 — 원산지부터 글로벌 유통까지의 프리미엄 침향 전문 브랜드 조엘라이프 회사 소개.',
+    description: '베트남 5개 지역 200ha 직영 농장, 25년 이상 — 원산지부터 글로벌 유통까지의 프리미엄 침향 전문 브랜드 조엘라이프 회사 소개.',
     url: 'https://zoellife.com/company',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg',
-      alt: '조엘라이프(주) 대라천 ZOEL LIFE — 베트남 직영 25년 프리미엄 침향 브랜드',
+      alt: '조엘라이프(주) 대라천 ZOEL LIFE — 베트남 직영 25년 이상 프리미엄 침향 브랜드',
     }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '회사소개 — 조엘라이프(주) ZOEL LIFE',
-    description: '베트남 하띤 200ha 직영 농장 25년 — 프리미엄 침향 전문 브랜드 회사 소개.',
+    description: '베트남 5개 지역 200ha 직영 농장, 25년 이상 — 프리미엄 침향 전문 브랜드 회사 소개.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/company-hero-default.jpg'],
   },
 };
@@ -55,28 +55,26 @@ const companyJsonLd = {
       // 루트 layout 의 #organization 과 동일 실체. parentOrganization 으로 연결해
       // Knowledge Graph 가 두 노드를 동일 엔티티로 통합.
       parentOrganization: { '@id': 'https://zoellife.com/#organization' },
-      name: '대라천 ZOEL LIFE Co., Ltd.',
+      name: '조엘라이프(주) ZOEL LIFE Co., Ltd.',
       alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프', '大羅天'],
       description:
-        '1999년 베트남 하띤 직영 농장에서 시작해 2003년 한국에 본사를 설립한 침향 전문 기업. 원산지·원료·제조·시험 4단계 검증 체계.',
+        "베트남 5개 지역 직영 농장 기반의 대라천 '참'침향을 수입·판매하는 조엘라이프(주) 본사.",
       url: 'https://zoellife.com',
       // 로고/대표 이미지는 우리 인프라에 실제로 존재하는 파일만 참조한다.
       // (이전: /images/logo.png · /images/og-default.jpg 는 파일 없음 — 404)
       logo: 'https://zoellife.com/images/ZOEL-LIFE-logo.png',
       image: 'https://zoellife.com/opengraph-image.jpg',
-      telephone: '+82-70-4140-4086',
+      telephone: '+82-2-858-2026',
       email: 'contact@daracheon.com',
-      foundingDate: '2003',
       founder: {
         '@type': 'Person',
         name: '박병주',
         jobTitle: '대표',
-        description: '전 식품영양학과 교수, 베트남 농업부 자문위원. 25년간 침향 원목 수확까지 직접 관리.',
       },
       address: {
         '@type': 'PostalAddress',
-        streetAddress: '테헤란로 521 파르나스타워 5층',
-        addressLocality: '강남구',
+        streetAddress: '벚꽃로36길 30, 1511호',
+        addressLocality: '금천구',
         addressRegion: '서울특별시',
         addressCountry: 'KR',
       },
@@ -142,13 +140,13 @@ const DEFAULT_CHAPTERS: CompanyChapter[] = [
     num: '01',
     tag: 'About',
     title: '회사 개요',
-    body: '대라천 ZOEL LIFE Co., Ltd.는 1999년 베트남 하띤 직영 농장에서 시작해, 2003년 한국에 본사를 설립한 침향 전문 기업입니다. "진짜를 증명한다"는 단 하나의 원칙으로 25년간 원산지·원료·제조·시험의 4단계 검증 체계를 구축해왔습니다.',
+    body: '대라천 ZOEL LIFE Co., Ltd.는 베트남 5개 지역 직영 농장 기반의 대라천 ‘참’침향을 수입·판매하는 침향 전문 기업입니다. "진짜를 증명한다"는 단 하나의 원칙으로 25년간 원산지·원료·제조·시험의 4단계 검증 체계를 구축해왔습니다.',
   },
   {
     num: '02',
     tag: 'Leadership',
-    title: '창립자 · 박병주 대표',
-    body: '전 식품영양학과 교수, 베트남 농업부 자문위원. 1999년 하띤에서 첫 침향나무를 만난 뒤 25년간 한 그루 한 그루의 수확까지 직접 관리해 왔습니다. 저서 《침향, 수지가 말하는 25년》(2022) — "한국 시장에 진짜 침향을 돌려놓겠다"는 약속으로 일해온 증거.',
+    title: '대표자 · 박병주',
+    body: '조엘라이프(주) 대표자 박병주. 원료의 생산부터 브랜드 기획, 마케팅, 온·오프라인 유통, 고객 서비스에 이르기까지 전 과정을 책임 있게 관리합니다.',
   },
   {
     num: '03',

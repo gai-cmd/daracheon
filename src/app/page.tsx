@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
   // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:
-    '식약처 등재 정품 침향(Aquilaria Agallocha Roxburgh). 베트남 200ha 직영 농장 25년 한국 직판.',
+    '식약처 고시 학명 Aquilaria Agallocha Roxburgh 침향. 베트남 5개 지역 직영 농장 200ha, 25년 이상.',
   alternates: { canonical: '/' },
 };
 

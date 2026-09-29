@@ -36,22 +36,26 @@ describe('resolveHomeMain — 저장값이 없을 때', () => {
   it('keeps the current hard-coded home content as the default', () => {
     const d = HOME_MAIN_DEFAULTS;
     expect(d.intro).toEqual({
-      badgeChip: '25년',
+      badgeChip: '25년 이상',
       badgeText: '베트남 직영 농장에서 기른 침향',
       headline: '묘목부터 증류까지,\n직접 키운 *진짜 침향*',
-      subline: '식약처 등재 학명 *Aquilaria Agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
+      subline: '식약처 고시 학명 *Aquilaria Agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
       primary: { label: '제품 보기', href: '/products' },
       secondary: { label: '진짜 침향 구별법', href: '/about-agarwood' },
     });
     expect(d.news).toEqual({ chip: 'NEW', label: '소식', title: '새로 올라온 *대라천 소식*' });
     expect(d.stats).toEqual([
-      { value: 25, unit: '년', label: '직영 재배' },
+      { value: 25, unit: '년 이상', label: '연구 및 생산재배' },
       { value: 200, unit: 'ha', label: '직영 농장 합계' },
       { value: 5, unit: '개 지역', label: '베트남 직영' },
-      { value: 12, unit: '건 이상', label: '공식 인증' },
+      { value: 12, unit: '건 이상', label: '인증·특허' },
     ]);
     expect(d.marquee).toHaveLength(6);
-    expect(d.marquee[0]).toBe('식약처 등재 학명 Aquilaria Agallocha Roxburgh');
+    expect(d.marquee[0]).toBe('식약처 고시 학명 Aquilaria Agallocha Roxburgh');
+    expect(d.marquee).toContain('베트남 직영 농장 25년 이상');
+    expect(d.marquee).toContain('인증·특허 12건 이상');
+    expect(d.tiles.ring.note).toBe('식약처 고시 학명 · 인증 · 산지로 가려내는 법');
+    expect(d.tiles.brand.title).toBe('25년 이상, 원산지부터 직접 잇습니다');
     expect(d.tiles.hero).toEqual({
       chip: '농장 영상',
       kicker: '침향 농장 이야기',
@@ -90,7 +94,7 @@ describe('resolveHomeMain — 부분 저장', () => {
   it('overrides only the saved fields and keeps every other default', () => {
     const out = resolveHomeMain({ intro: { headline: '  새 제목\n*강조*  ' } });
     expect(out.intro.headline).toBe('새 제목\n*강조*');
-    expect(out.intro.badgeChip).toBe('25년');
+    expect(out.intro.badgeChip).toBe('25년 이상');
     expect(out.intro.primary).toEqual({ label: '제품 보기', href: '/products' });
     expect(out.news).toEqual(HOME_MAIN_DEFAULTS.news);
     expect(out.tiles).toEqual(HOME_MAIN_DEFAULTS.tiles);
