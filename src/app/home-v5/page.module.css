@@ -50,7 +50,8 @@
 .intro {
   position: relative;
   text-align: center;
-  padding: calc(var(--nav-bar-h, 72px) + 76px) 0 64px;
+  /* 소식 그리드가 첫 화면에 걸리도록 위아래 여백을 줄였다 (2026-09-29) */
+  padding: calc(var(--nav-bar-h, 72px) + 44px) 0 40px;
   color: #f5f3ef;
 }
 .intro::before {
@@ -94,9 +95,9 @@
 }
 
 .headline {
-  margin: 26px auto 0;
+  margin: 20px auto 0;
   max-width: 16em;
-  font-size: clamp(34px, 5.2vw, 64px);
+  font-size: clamp(32px, 4.6vw, 56px);
   font-weight: 300;
   line-height: 1.25;
   letter-spacing: 0;
@@ -111,7 +112,7 @@
 }
 
 .subline {
-  margin: 22px auto 0;
+  margin: 16px auto 0;
   max-width: 620px;
   font-size: 16.5px;
   line-height: 1.7;
@@ -124,7 +125,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  margin-top: 30px;
+  margin-top: 24px;
 }
 .btnPrimary,
 .btnGhost {
@@ -972,13 +973,15 @@ a.tile:focus-visible {
   to { transform: translateX(-50%); }
 }
 
-/* ───────── 소식 제목 ───────── */
+/* ───────── 소식 제목 (인트로 바로 아래) ───────── */
 .sectionHead {
-  margin: 110px 0 28px;
+  margin: 0 0 22px;
   color: #f5f3ef;
 }
+/* 소식 그리드 다음에 오는 둘러보기 그리드 — 제목이 없으니 여백으로 구획을 나눈다 */
+.gridBrand { margin-top: 88px; }
 .h2 {
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   font-size: clamp(28px, 3.2vw, 44px);
   font-weight: 400;
   line-height: 1.4;
@@ -1355,7 +1358,7 @@ a.tile:focus-visible {
   .tPress { height: 380px; }
   .countNum { font-size: 44px; }
   .chRow { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-  .sectionHead { margin-top: 80px; }
+  .gridBrand { margin-top: 64px; }
   .closing { margin: 80px 0 90px; padding: 32px 24px; }
   .closing .ctas { justify-content: flex-start; }
   .tile:hover,

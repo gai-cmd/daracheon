@@ -24,6 +24,8 @@ import styles from './page.module.css';
  *
  * 메인 전체를 촘촘한 벤토 그리드 두 장으로 구성한다. 타일 하나하나가 하위 페이지로 가는 문이고,
  * 영상·카운트업·흐르는 띠·회전 테두리로 '살아 있는' 느낌을 준다.
+ * 순서(2026-09-29 정정): 인트로 → 소식(자주 갱신되는 블록) → 둘러보기 그리드 → 마무리 띠.
+ * 재방문 고객이 새 소식부터 보도록 소식 그리드를 인트로 바로 아래로 올렸다.
  * 현행 홈의 골드·명조 톤에서 벗어나 #121212 바탕 + Noto Sans KR 굵은 제목 + 절제된 앰버 포인트로 간다.
  * 비교용 별도 경로라 검색 노출을 막는다.
  */
@@ -174,8 +176,149 @@ export default async function HomeV5Page() {
           </div>
         </header>
 
-        {/* 2. 벤토 그리드 1 — 대라천을 알아가는 문들 */}
-        <section className={styles.grid} aria-label="대라천 둘러보기">
+        {/* 2. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
+        <header className={styles.sectionHead} data-reveal="">
+          <span className={styles.badge}>
+            <span className={styles.badgeChip}>NEW</span>
+            소식
+          </span>
+          <h2 className={styles.h2}>
+            새로 올라온 <span className={styles.glow}>대라천 소식</span>
+          </h2>
+        </header>
+
+        <section className={styles.grid} aria-label="대라천 소식">
+          {/* 대표 제품 — 흐르는 카드 */}
+          {products.length > 0 && (
+            <div className={`${styles.tile} ${styles.tProducts}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>대표 제품</span>
+                  <span className={styles.cardSub}>대라천 &lsquo;참&rsquo;침향</span>
+                </span>
+                <Link href="/products" className={styles.more}>
+                  전체 보기 →
+                </Link>
+              </div>
+              <div className={styles.prodViewport}>
+                <ul className={styles.prodTrack}>
+                  {[0, 1].map((k) =>
+                    products.map((p) => (
+                      <li key={`${k}-${p.slug}`} className={styles.prodItem} aria-hidden={k === 1 ? true : undefined}>
+                        <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
+                          <span className={styles.prodThumb}>
+                            <Image src={p.image!} alt={k === 0 ? p.name : ''} fill sizes="200px" style={{ objectFit: 'cover' }} />
+                          </span>
+                          {p.category && <span className={styles.cardSub}>{p.category}</span>}
+                          <span className={styles.prodName}>{p.name}</span>
+                        </Link>
+                      </li>
+                    )),
+                  )}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* 언론 보도 — 세로로 흐르는 목록 */}
+          {press.length > 0 && (
+            <div className={`${styles.tile} ${styles.tPress}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>언론 보도</span>
+                  <span className={styles.cardSub}>기사 원문으로 연결됩니다</span>
+                </span>
+                <Link href="/about-agarwood#tab-5" className={styles.more}>
+                  더 보기 →
+                </Link>
+              </div>
+              <div className={styles.tickerViewport}>
+                <ul className={styles.tickerTrack}>
+                  {[0, 1].map((k) =>
+                    press.map((m, i) => (
+                      <li key={`${k}-${m.link}-${i}`} aria-hidden={k === 1 ? true : undefined}>
+                        <a
+                          href={m.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.pressItem}
+                          tabIndex={k === 1 ? -1 : undefined}
+                        >
+                          <span className={styles.pressOutlet}>
+                            {m.outlet}
+                            {m.date ? <span className={styles.pressDate}> · {m.date}</span> : null}
+                          </span>
+                          <span className={styles.pressTitle}>{m.title || m.outlet}</span>
+                        </a>
+                      </li>
+                    )),
+                  )}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* 블로그 최신 3 */}
+          {posts.length > 0 && (
+            <div className={`${styles.tile} ${styles.tBlog}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>블로그</span>
+                  <span className={styles.cardSub}>침향을 더 깊이 읽는 글</span>
+                </span>
+                <Link href="/blog" className={styles.more}>
+                  더 보기 →
+                </Link>
+              </div>
+              <ol className={styles.blogList}>
+                {posts.map((p, i) => (
+                  <li key={p.slug}>
+                    <Link href={`/blog/${p.slug}`} className={styles.blogItem}>
+                      <span className={styles.blogIdx}>{String(i + 1).padStart(2, '0')}</span>
+                      <span className={styles.blogText}>
+                        <span className={styles.blogTitle}>{p.title}</span>
+                        <span className={styles.blogDate}>{formatDot(p.publishedAt)}</span>
+                      </span>
+                      <span className={styles.blogArrow} aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* 공식 채널 — 유튜브 영상 (16:9) */}
+          {videos.length > 0 && (
+            <div className={`${styles.tile} ${styles.tChannel}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span className={styles.igAccount}>
+                  <span className={`${styles.igMark} ${styles.ytMark}`}>
+                    <YoutubeMark size={16} />
+                  </span>
+                  <span>
+                    <span className={styles.cardTitle}>공식 채널</span>
+                    <span className={styles.cardSub}>
+                      {snsKo.youtube.name} {snsKo.youtube.handle}
+                    </span>
+                  </span>
+                </span>
+                <a href={snsKo.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.more}>
+                  채널 구독 →
+                </a>
+              </div>
+              <div className={styles.chRow}>
+                {videos.slice(0, 2).map((v, i) => (
+                  <VideoThumb key={v.id} index={i} />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* 3. 벤토 그리드 — 대라천을 알아가는 문들 */}
+        <section className={`${styles.grid} ${styles.gridBrand}`} aria-label="대라천 둘러보기">
           {/* 히어로: 농장 영상 */}
           <Link href="/media" className={`${styles.tile} ${styles.tHero}`} data-tile="" data-reveal="">
             <HeroVideo src={VIDEO.farm} poster={IMG.farm} />
@@ -323,147 +466,6 @@ export default async function HomeV5Page() {
               ))}
             </div>
           </div>
-        </section>
-
-        {/* 3. 벤토 그리드 2 — 소식 */}
-        <header className={styles.sectionHead} data-reveal="">
-          <span className={styles.badge}>
-            <span className={styles.badgeChip}>NEW</span>
-            소식
-          </span>
-          <h2 className={styles.h2}>
-            새로 올라온 <span className={styles.glow}>대라천 소식</span>
-          </h2>
-        </header>
-
-        <section className={styles.grid} aria-label="대라천 소식">
-          {/* 대표 제품 — 흐르는 카드 */}
-          {products.length > 0 && (
-            <div className={`${styles.tile} ${styles.tProducts}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span>
-                  <span className={styles.cardTitle}>대표 제품</span>
-                  <span className={styles.cardSub}>대라천 &lsquo;참&rsquo;침향</span>
-                </span>
-                <Link href="/products" className={styles.more}>
-                  전체 보기 →
-                </Link>
-              </div>
-              <div className={styles.prodViewport}>
-                <ul className={styles.prodTrack}>
-                  {[0, 1].map((k) =>
-                    products.map((p) => (
-                      <li key={`${k}-${p.slug}`} className={styles.prodItem} aria-hidden={k === 1 ? true : undefined}>
-                        <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
-                          <span className={styles.prodThumb}>
-                            <Image src={p.image!} alt={k === 0 ? p.name : ''} fill sizes="200px" style={{ objectFit: 'cover' }} />
-                          </span>
-                          {p.category && <span className={styles.cardSub}>{p.category}</span>}
-                          <span className={styles.prodName}>{p.name}</span>
-                        </Link>
-                      </li>
-                    )),
-                  )}
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* 언론 보도 — 세로로 흐르는 목록 */}
-          {press.length > 0 && (
-            <div className={`${styles.tile} ${styles.tPress}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span>
-                  <span className={styles.cardTitle}>언론 보도</span>
-                  <span className={styles.cardSub}>기사 원문으로 연결됩니다</span>
-                </span>
-                <Link href="/about-agarwood#tab-5" className={styles.more}>
-                  더 보기 →
-                </Link>
-              </div>
-              <div className={styles.tickerViewport}>
-                <ul className={styles.tickerTrack}>
-                  {[0, 1].map((k) =>
-                    press.map((m, i) => (
-                      <li key={`${k}-${m.link}-${i}`} aria-hidden={k === 1 ? true : undefined}>
-                        <a
-                          href={m.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.pressItem}
-                          tabIndex={k === 1 ? -1 : undefined}
-                        >
-                          <span className={styles.pressOutlet}>
-                            {m.outlet}
-                            {m.date ? <span className={styles.pressDate}> · {m.date}</span> : null}
-                          </span>
-                          <span className={styles.pressTitle}>{m.title || m.outlet}</span>
-                        </a>
-                      </li>
-                    )),
-                  )}
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* 블로그 최신 3 */}
-          {posts.length > 0 && (
-            <div className={`${styles.tile} ${styles.tBlog}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span>
-                  <span className={styles.cardTitle}>블로그</span>
-                  <span className={styles.cardSub}>침향을 더 깊이 읽는 글</span>
-                </span>
-                <Link href="/blog" className={styles.more}>
-                  더 보기 →
-                </Link>
-              </div>
-              <ol className={styles.blogList}>
-                {posts.map((p, i) => (
-                  <li key={p.slug}>
-                    <Link href={`/blog/${p.slug}`} className={styles.blogItem}>
-                      <span className={styles.blogIdx}>{String(i + 1).padStart(2, '0')}</span>
-                      <span className={styles.blogText}>
-                        <span className={styles.blogTitle}>{p.title}</span>
-                        <span className={styles.blogDate}>{formatDot(p.publishedAt)}</span>
-                      </span>
-                      <span className={styles.blogArrow} aria-hidden="true">
-                        →
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {/* 공식 채널 — 유튜브 영상 (16:9) */}
-          {videos.length > 0 && (
-            <div className={`${styles.tile} ${styles.tChannel}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span className={styles.igAccount}>
-                  <span className={`${styles.igMark} ${styles.ytMark}`}>
-                    <YoutubeMark size={16} />
-                  </span>
-                  <span>
-                    <span className={styles.cardTitle}>공식 채널</span>
-                    <span className={styles.cardSub}>
-                      {snsKo.youtube.name} {snsKo.youtube.handle}
-                    </span>
-                  </span>
-                </span>
-                <a href={snsKo.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.more}>
-                  채널 구독 →
-                </a>
-              </div>
-              <div className={styles.chRow}>
-                {videos.slice(0, 2).map((v, i) => (
-                  <VideoThumb key={v.id} index={i} />
-                ))}
-              </div>
-            </div>
-          )}
         </section>
 
         {/* 4. 마무리 띠 */}
