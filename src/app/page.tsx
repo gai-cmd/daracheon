@@ -1,567 +1,35 @@
 import type { Metadata } from 'next';
-import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { readSingleSafe } from '@/lib/db';
-import JsonLd from '@/components/ui/JsonLd';
-import type { Farm } from '@/app/brand-story/page';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { readPostsSafe } from '@/lib/blog/store';
+import { SNS_SAMPLE } from '@/data/sns-sample';
+import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
 import type { MediaTabData } from '@/app/about-agarwood/page';
+import type { Announcement } from '@/app/api/admin/announcement/route';
+import {
+  BentoRoot,
+  CountUp,
+  HeroVideo,
+  HoverVideo,
+  IgReels,
+  LatestVideo,
+  VideoThumb,
+  YoutubeMark,
+  type VideoItem,
+} from './BentoClient';
 import styles from './page.module.css';
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
-  .replace(/\\[nrt]/g, '')
-  .replace(/\s+/g, '')
-  .replace(/^['"]+|['"]+$/g, '')
-  .replace(/\/+$/, '');
+/**
+ * 메인 홈 — 벤토 그리드형.
+ *
+ * 메인 전체를 촘촘한 벤토 그리드 두 장으로 구성한다. 타일 하나하나가 하위 페이지로 가는 문이고,
+ * 영상·카운트업·흐르는 띠·회전 테두리로 '살아 있는' 느낌을 준다.
+ * 순서: 인트로 → 공지 띠(어드민 공지가 켜져 있을 때만) → 소식(자주 갱신되는 블록)
+ * → 둘러보기 그리드 → 마무리 띠. 재방문 고객이 새 소식부터 보도록 소식 그리드를 인트로 바로 아래에 둔다.
+ */
 
 export const dynamic = 'force-dynamic';
-
-export interface HomeHero {
-  sectionTag: string;
-  titleKr: string;
-  subtitle: string;
-  heroBg: string;
-  ctaPrimaryLabel: string;
-  ctaPrimaryHref: string;
-  ctaSecondaryLabel: string;
-  ctaSecondaryHref: string;
-}
-
-export interface HomeStat { value: string; label: string }
-export interface NoticeItem { num: string; text: string }
-
-export interface HomeNotice {
-  tag: string;
-  title: string;
-  body: string;
-  items: NoticeItem[];
-  badges: string[];
-  ctaLabel: string;
-  ctaHref: string;
-}
-
-export interface AgarwoodCard { title: string; description: string; kicker?: string; image?: string }
-export interface HomeAgarwood { tag: string; title: string; cards: AgarwoodCard[] }
-export interface BenefitItem { title: string; description: string; kicker?: string; image?: string }
-export interface HomeBenefits { tag: string; title: string; items: BenefitItem[] }
-export interface ProcessStepItem { title: string; duration?: string }
-export interface HomeProcess {
-  tag: string;
-  title: string;
-  steps: string[];
-  durations?: string[];
-}
-
-export interface VerificationRow { num: string; label: string; meta: string }
-export interface VerifiedCard { step: string; title: string; en: string; body: string }
-export interface CertChip { mark: string; name: string; sub: string }
-
-export interface HomeShowroomImage {
-  src: string;
-  tag?: string;
-  title?: string;
-  body?: string;
-}
-
-export interface HomeProblemImage {
-  src: string;
-  alt?: string;
-}
-
-export interface ProblemCard {
-  tag: string;
-  title: string;
-  body: string;
-  image?: { src: string; alt?: string };
-}
-
-export interface SpeciesRow {
-  latin: string;
-  alias: string;
-  pharmacopoeia: boolean;
-  foodCode: boolean;
-  note: string;
-  image?: { src: string; alt: string };
-}
-
-export interface SpeciesDef {
-  tag: string;
-  title: string;
-  body: string;
-}
-
-export interface HomeProblem {
-  tag: string;
-  title: string;
-  lead: string;
-  image?: HomeProblemImage;
-  cards: ProblemCard[];
-  speciesTitle: string;
-  species: SpeciesRow[];
-  speciesFoot: string;
-  speciesDefHerb?: SpeciesDef;
-  speciesDefFood?: SpeciesDef;
-  // 종 비교 카드 안 ✓/✗ 라벨 — admin 에서 편집 가능. 비어있으면 아래 기본값.
-  pharmacopoeiaLabel?: string;
-  foodCodeLabel?: string;
-}
-
-export interface SolutionPillar {
-  label: string;
-  text: string;
-}
-
-export interface SolutionButton {
-  label: string;
-  href: string;
-  variant?: 'gold' | 'outline';
-}
-
-export interface HomeSolutionCta {
-  title: string;
-  pillars: SolutionPillar[];
-  buttons: SolutionButton[];
-}
-
-// 새 섹션: 원산지·학명 권위 (식약처 고시 + 역사적 기록 + 5개 지역 농장) — 2026-05-17 추가.
-export interface OriginEra {
-  era: string;       // "당나라 시대"
-  text: string;      // 해당 시대의 침향 산지 기록 설명
-}
-export interface OriginAuthorityRegulationBlock {
-  numTag: string;       // "01 식약처 고시 — 아퀼라리아 아갈로차 록스버그"
-  titleLine1: string;   // "침향을 고를 때,"
-  titleLine2: string;   // "이젠 학명·품종부터 확인하세요!"
-  intro: string;        // "가짜가 많을수록 진짜가 드러납니다."
-  body: string;         // 식약처 등록 출처 본문 — *강조* / \n 줄바꿈
-}
-export interface OriginAuthorityHistoryBlock {
-  numTag: string;       // "02 역사적 기록 — 베트남이 정품 산지"
-  title: string;        // "역사적 기록에서는 '베트남산'을 최고로 여기고 있습니다."
-  lead: string;         // "수천 년 동안 이어진 문헌들이 그 가치를 증명합니다."
-  eras: OriginEra[];    // 왕조별 기록
-  closing: string;      // "이처럼 시대를 거슬러 올라가도 ..."
-}
-export interface OriginAuthorityFarmsBlock {
-  numTag: string;       // "03 베트남 5개 지역 직영"
-  text: string;         // "그 베트남산 침향을 베트남 현지 5개 지역에 농장을 두고 있다"
-}
-export interface HomeOriginAuthority {
-  regulation: OriginAuthorityRegulationBlock;
-  history: OriginAuthorityHistoryBlock;
-  farms: OriginAuthorityFarmsBlock;
-}
-
-export type HomeSectionId =
-  | 'hero'
-  | 'trustStrip'
-  | 'showroom'
-  | 'problem'
-  | 'verified'
-  | 'certs'
-  | 'press'
-  | 'originAuthority'
-  | 'agarwood'
-  | 'benefits'
-  | 'process';
-
-const DEFAULT_SECTION_ORDER: HomeSectionId[] = [
-  'hero',
-  'trustStrip',
-  'showroom',
-  'problem',
-  'verified',
-  'certs',
-  // 공식 인증(기관이 준 근거) 다음에 언론 보도(제3자가 쓴 근거)를 이어 붙인다.
-  'press',
-  'originAuthority',
-  'agarwood',
-  'benefits',
-  'process',
-];
-
-/** 홈 언론 보도 섹션에 노출할 최대 건수. 나머지는 침향 이야기 탭에서 본다. */
-const HOME_PRESS_LIMIT = 4;
-/** 더보기 목적지 — 침향 이야기 > 언론에 실린 침향 탭. */
-const PRESS_TAB_HREF = '/about-agarwood#tab-5';
-
-/**
- * 표기용 날짜('2026.05.16' / '2026-05-16')를 정렬 가능한 숫자로 바꾼다.
- * 날짜가 없거나 형식을 못 알아보면 0 을 돌려 목록 뒤로 밀린다.
- */
-function pressDateKey(raw?: string): number {
-  const m = (raw ?? '').trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
-  if (!m) return 0;
-  return Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]);
-}
-
-// 섹션별 옵셔널 메타 슬롯 — 어드민에서 섹션 단위로 켤 수 있는 공통 부속.
-// 기존 schema 는 손대지 않고, 값이 있는 슬롯만 위/아래에 덧붙는다.
-export interface SectionMetaCta {
-  label: string;
-  href: string;
-  variant?: 'gold' | 'outline';
-}
-export interface SectionMeta {
-  hidden?: boolean;        // true → 해당 섹션 자체를 렌더하지 않음
-  topTag?: string;         // 섹션 상단 태그 (예: "Notice · 침향을 고르기 전에")
-  titleQuote?: string;     // 제목 인용문 — *...* 강조 / \n 줄바꿈 지원
-  bodyLead?: string;       // 본문 리드 — *...* 강조 / \n 줄바꿈 지원
-  cta?: SectionMetaCta;    // 섹션 하단 CTA 버튼
-}
-
-export interface HomeData {
-  hero?: HomeHero;
-  stats?: HomeStat[];
-  notice?: HomeNotice;
-  agarwood?: HomeAgarwood;
-  benefits?: HomeBenefits;
-  process?: HomeProcess;
-  verification?: VerificationRow[];
-  verifiedCards?: VerifiedCard[];
-  certs?: CertChip[];
-  showroomImage?: HomeShowroomImage;
-  problemImage?: HomeProblemImage;
-  problem?: HomeProblem;
-  solutionCta?: HomeSolutionCta;
-  originAuthority?: HomeOriginAuthority;
-  sectionOrder?: HomeSectionId[];
-  // 'speciesCompare' 는 sectionOrder 키가 아니지만, 별도 인라인 CTA 메타 슬롯을 허용한다(2026-05-17).
-  sectionMeta?: Partial<Record<HomeSectionId | 'speciesCompare', SectionMeta>>;
-}
-
-const DEFAULT_HERO: HomeHero = {
-  sectionTag: 'Genuine Only · 진짜 침향만',
-  titleKr: '대라천은, 진짜 침향만 다룹니다',
-  subtitle: '한 품종, 한 나라 — Aquilaria Agallocha Roxburgh, 베트남 직영.\n25년, 한 회사 — 베트남 직영 생산 · 한국 직판. 조엘라이프가 원산지부터 연결합니다.\n프리미엄이 아니라 근거로 증명합니다.',
-  heroBg:
-    'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg',
-  ctaPrimaryLabel: '검증 과정 보기 →',
-  ctaPrimaryHref: '/brand-story',
-  ctaSecondaryLabel: '제품 보기',
-  ctaSecondaryHref: '/products',
-};
-
-const DEFAULT_STATS: HomeStat[] = [
-  { value: '25년+', label: '연구 및 재배' },
-  { value: '200ha', label: '400만 그루' },
-  { value: '12건+', label: '특허 및 인증' },
-  { value: '5개 지역', label: '직영 농장' },
-];
-
-const DEFAULT_VERIFICATION = [
-  { num: '01', label: '원산지 — 베트남 하띤 직영 200ha', meta: 'CITES' },
-  { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
-  { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
-  { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
-];
-
-const DEFAULT_NOTICE: HomeNotice = {
-  tag: 'Notice — 식약처 고시 기준',
-  title: '가짜가 많을수록,\n*진짜는 드러난다*',
-  body:
-    "이젠 학명/품종부터 확인하세요!\n식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전', '한약재 관능검사 해설서'와 '한국한의학연구원 한약자원연구센터'에\n공식 등록된 침향은 *‘Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)’* 입니다.\n\n대라천 ‘참’침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.",
-  items: [
-    { num: '01', text: '대한민국약전외한약\n(생약)규격집' },
-    { num: '02', text: '식약처\n식품공전' },
-    { num: '03', text: '한약재 관능검사\n해설서' },
-    { num: '04', text: '원색\n한약재감별도감' },
-    { num: '05', text: '한국한의학연구원\n한약자원연구센터' },
-  ],
-  badges: [],
-  ctaLabel: '',
-  ctaHref: '',
-};
-
-const DEFAULT_VERIFIED_CARDS = [
-  {
-    step: '01 · Origin',
-    title: '학명 확인된 AAR',
-    en: 'Aquilaria Agallocha Roxburgh',
-    body:
-      "식약처 '대한민국약전외한약(생약)규격집'에 등록된 공식 학명. 유전자(DNA) 검증으로 종 일치 확인 후에만 가공 단계로 진입합니다.",
-  },
-  {
-    step: '02 · Process',
-    title: 'HACCP·GMP 생산',
-    en: 'Controlled Manufacturing',
-    body:
-      '원료 수령·분쇄·배합·충전·포장의 5단계 공정을 HACCP 및 GMP 시설에서 관리. 공정별 기록이 Lot 단위로 유지됩니다.',
-  },
-  {
-    step: '03 · Evidence',
-    title: 'Lot별 시험성적서',
-    en: 'Per-Batch Lab Reports',
-    body:
-      '중금속(납·카드뮴·비소·수은)·잔류농약·유해물질 검사를 제조 Lot 단위로 실시. 결과는 제품 패키지 QR로 언제든 열람 가능합니다.',
-  },
-];
-
-const DEFAULT_CERTS = [
-  { mark: 'V', name: '원산지 증명', sub: '베트남 100% 원산지' },
-  { mark: 'C', name: 'CITES', sub: '국제 보호 수종' },
-  { mark: 'O', name: 'OCOP', sub: '베트남 정부 품질' },
-  { mark: 'R', name: '유기농 재배', sub: '무농약 유기 농법' },
-  { mark: 'Z', name: '청정지역', sub: '토양·환경 청정' },
-  { mark: 'P', name: '유기농 완제품', sub: '유기 성분 인증' },
-  { mark: 'T', name: '수지 특허', sub: '식용 수지 특허' },
-  { mark: 'H', name: 'HACCP', sub: '식품 안전 관리' },
-  { mark: 'G', name: 'GMP', sub: '우수 제조 시설' },
-  { mark: 'F', name: 'FDA', sub: '미국 FDA 등록' },
-  { mark: 'S', name: '유해물질', sub: '중금속·잔류농약 0' },
-  { mark: 'L', name: '성분 검사서', sub: '수지 함량 분석' },
-];
-
-const DEFAULT_AGARWOOD: HomeAgarwood = {
-  tag: 'Agarwood · 신들의 나무',
-  title: '수천 년을 지나온 가장 귀한 약재이자 향',
-  cards: [
-    {
-      title: '동서양의 역사적 가치',
-      description: '수천 년 전부터 왕실과 귀족들만이 향유할 수 있었던, 동서양을 막론하고 최고의 가치로 인정받아 온 귀한 약재이자 향입니다.',
-    },
-    {
-      title: '20년 이상의 긴 생육 시간',
-      description: '20년 이상 생육된 침향나무에서 채취한 수지는 함량이 높아 약재로서 효능과 가치를 인정받습니다.',
-    },
-    {
-      title: '논문에서 발표하는 침향',
-      description: '침향과 침향나무 연구는 전 세계에서 이어지고 있으며, 성분·향·생리활성을 다룬 학술 논문이 국제 학술지에 꾸준히 실리고 있습니다.',
-    },
-  ],
-};
-
-const DEFAULT_BENEFITS: HomeBenefits = {
-  tag: 'Benefits · 연구 기반 효능',
-  title: '침향의 가치, 여섯 가지 효능',
-  items: [
-    { kicker: 'Qi Circulation', title: '기 뚫고 원기 회복 · 자양강장', description: '몸속 기혈 순환으로 막힌 기를 뚫고 찬 기운을 몰아내 따뜻한 성질로 몸의 기운을 보강, 피로 해소와 활력 증진을 돕습니다.' },
-    { kicker: 'Menstruation & Stamina', title: '냉감 · 정력 감퇴 · 복통에 탁월', description: '하복부 냉감, 월경불순, 남성 정력 감퇴, 잦은 소변 증상에 탁월하고, 이런 증상에 수반해 하복통 심한 사람에게 많이 활용됩니다.' },
-    { title: '신경 안정 · 숙면', description: "침향의 '아가로스피롤' 성분은 천연 신경 안정제 역할. 예민해진 신경을 이완시키고 심리적 안정과 불면증 개선에 효과적입니다." },
-    { title: '항염 · 혈관 건강', description: '항염 작용으로 사이토카인을 억제하고 혈전을 막아, 만성 염증을 가라앉히고 혈관을 튼튼하게 합니다.' },
-    { title: '뇌 질환 예방', description: '뇌혈류를 개선하고 뇌세포를 보호해, 뇌졸중·퇴행성 뇌 질환 예방 가능성을 높입니다.' },
-    { title: '소화 · 복통 완화', description: '기(氣)를 잘 통하게 하고 위를 따뜻하게 하여 만성 위장 질환, 위궤양, 장염 증세를 완화하고 복통을 멈추게 합니다.' },
-  ],
-};
-
-const DEFAULT_PROCESS: HomeProcess = {
-  tag: 'Craftsmanship · 6단계 공정',
-  title: '씨앗에서 완제품까지 20년이 넘는 시간',
-  steps: [
-    '씨앗 발아 및 묘목 육성',
-    '베트남 직영 농장 식재',
-    '20년 이상 오르가닉 육성',
-    '특허 수지유도제 주입',
-    '벌목 및 원물 정밀 채취',
-    '전통 증기 증류 · 최종 검수',
-  ],
-};
-
-const PROCESS_DURATIONS = ['6 — 12 Months', 'Ha Tinh 200ha', '20+ Years', '3 — 5 Years', 'Controlled Harvest', 'Steam Distillation · GMP'];
-
-const PROCESS_IMAGES = [
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-01-seedling.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-02-farm.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-03-organic.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-04-resin.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-05-harvest.jpg',
-  'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/process/process-06-distill.jpg',
-];
-
-const DEFAULT_PROBLEM: HomeProblem = {
-  tag: 'Notice · 침향을 고르기 전에',
-  title: '침향을 구매할 때 가장 흔한 실수는\n*"좋다"는 말만 듣고 고르는 것*입니다.',
-  lead: '침향에 대한 관심과 제품이 빠르게 늘어나는 지금,\n\'침향\' 두 글자 · \'아가우드\' 한 단어만으로는 충분하지 않습니다.\n진짜 침향은 *학명 · 인증 · 산지* 세 가지로 확인됩니다.',
-  cards: [
-    { tag: '01 · 학명', title: '정부 공식 학명을 확인할 수 있는가?', body: "제품 설명에 '침향' · '아가우드'라고만 표기된 경우가 많습니다. 식약처 기준 학명까지 명시되어야 진짜를 분별할 수 있습니다." },
-    { tag: '02 · 인증', title: '증빙 문서가 공개되어 있는가?', body: 'CITES, 원산지 증명, 자유판매증명서, 학명·품종 인증, 정식 수입 증빙 — 진짜 침향일수록 이력을 숨기지 않습니다.' },
-    { tag: '03 · 산지', title: '어느 나라, 어느 농장에서 왔는가?', body: '베트남? 인도네시아? 중국? 시대를 막론하고 베트남이 정품 산지로 기록되어 왔습니다. 산지 이력 추적이 가능해야 합니다.' },
-  ],
-  speciesTitle: '같은 침향(아퀼라리아 · Aquilaria) 이라도, 품종에 따라 식약처 고시 기준은 다릅니다',
-  species: [
-    {
-      latin: 'Aquilaria agallocha Roxburgh',
-      alias: '베트남산 아퀼라리아 아갈로차 록스버그 침향',
-      pharmacopoeia: true,
-      foodCode: true,
-      note: '대한약전외한약(생약)규격집 · 식품공전 양쪽 모두 공식 등록.',
-      image: {
-        src: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/species-card-roxburgh.jpg',
-        alt: '베트남산 아퀼라리아 아갈로차 록스버그 침향 원목 단면',
-      },
-    },
-    {
-      latin: 'Aquilaria malaccensis Lam.',
-      alias: '인도네시아산 말라센시스 램 침향',
-      pharmacopoeia: false,
-      foodCode: true,
-      note: '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용되는 등급의 침향.',
-      image: {
-        src: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/species-card-malaccensis.jpg',
-        alt: '인도네시아산 아퀼라리아 말라센시스 침향 원목 단면 — 수지가 적고 결이 거친 식용 등급',
-      },
-    },
-  ],
-  speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
-  speciesDefHerb: {
-    tag: '의약품 · 한약(생약)',
-    title: '‘대한약전외한약(생약)규격집 등록’ 이란?',
-    body: '해당 한약재·생약이 식품의약품안전처의 공식 품질 기준에 따라 안전성과 유효성을 인정받아 *의약품 원료*로 등록되고, 법적으로 제조·유통·판매할 수 있음을 의미합니다.',
-  },
-  speciesDefFood: {
-    tag: '식품 · 식용 원료',
-    title: '‘식품공전 등록’ 이란?',
-    body: '해당 식품·원료가 식품의약품안전처의 국가 안전·품질 기준을 충족해, 합법적으로 제조·유통·판매할 수 있는 *공식 식품*으로 인정받았음을 의미합니다.',
-  },
-};
-
-const DEFAULT_ORIGIN_AUTHORITY: HomeOriginAuthority = {
-  regulation: {
-    numTag: '01 식약처 고시 - 아퀼라리아 아갈로차 록스버그',
-    titleLine1: '침향을 고를 때,',
-    titleLine2: '이젠 학명·품종부터 확인하세요!',
-    intro: '*가짜가 많을수록 진짜가 드러납니다.*',
-    body:
-      "식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서',\n'원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 공식 등록 및 기재된 침향은\n*'아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'* 입니다.",
-  },
-  history: {
-    numTag: '02 역사적 기록 - 베트남이 정품 산지',
-    title: "역사적 기록에서는 *'베트남산'을 최고로 여기고 있습니다.*",
-    lead: '수천 년 동안 이어진 문헌들이 그 가치를 증명하고 있습니다.',
-    eras: [
-      { era: '당나라 시대', text: '침향의 주요 산지를 교지, 임읍으로 기록하고 있는데 이 지역은 현재의 베트남에 해당합니다.' },
-      { era: '송나라 시대', text: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
-      { era: '원나라 시대', text: '안남 지역으로 현재의 베트남에 해당합니다.' },
-      { era: '명나라 시대', text: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
-      { era: "'향승'", text: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
-      { era: '조선 시대', text: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
-    ],
-    closing:
-      '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
-  },
-  farms: {
-    numTag: '03 베트남 5개 지역 직영 농장',
-    text: '역사적으로 *베트남산을 최고로 여기는* 그 베트남산 침향을, 대라천은 *베트남 현지 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동)* 에 직영 농장을 두고 직접 재배합니다.',
-  },
-};
-
-// admin 인라인 마크업.
-//
-//   *텍스트*               → 골드 <em> (legacy, 기존 데이터 유지)
-//   **텍스트**             → <strong> (굵게, 색 유지)
-//   [red]텍스트[/]         → 색 — gold/red/green/white/gray
-//   [lg]텍스트[/]          → 크기 — xs/sm/lg/xl/2xl (배수)
-//   [red,b,lg]텍스트[/]    → 콤마로 조합 (색·크기·b 굵게)
-//   [/red] 처럼 명시적 close 도 허용 (실제로는 [/...] 무엇이든 close)
-//   \n                     → <br />
-//   중첩 OK — parseInline 이 재귀 호출.
-const COLOR_MAP: Record<string, string> = {
-  gold: 'var(--accent, #d4a843)',
-  red: '#e07b6e',
-  green: '#7fb18c',
-  white: '#ffffff',
-  gray: 'rgba(255,255,255,0.55)',
-};
-const SIZE_MAP: Record<string, string> = {
-  xs: '0.75em',
-  sm: '0.875em',
-  lg: '1.25em',
-  xl: '1.5em',
-  '2xl': '2em',
-};
-const KNOWN_TAGS = new Set<string>([
-  ...Object.keys(COLOR_MAP),
-  ...Object.keys(SIZE_MAP),
-  'b',
-  'bold',
-]);
-
-function parseInline(
-  text: string,
-  emClass: string | undefined,
-  keyPrefix: string,
-): React.ReactNode[] {
-  const nodes: React.ReactNode[] = [];
-  let i = 0;
-  let idx = 0;
-  while (i < text.length) {
-    if (text.startsWith('**', i)) {
-      const end = text.indexOf('**', i + 2);
-      if (end !== -1) {
-        nodes.push(
-          <strong key={`${keyPrefix}-b${idx++}`}>
-            {parseInline(text.slice(i + 2, end), emClass, `${keyPrefix}-bi${idx}`)}
-          </strong>,
-        );
-        i = end + 2;
-        continue;
-      }
-    }
-    if (text[i] === '*') {
-      const end = text.indexOf('*', i + 1);
-      if (end !== -1) {
-        nodes.push(
-          <em key={`${keyPrefix}-e${idx++}`} className={emClass}>
-            {parseInline(text.slice(i + 1, end), emClass, `${keyPrefix}-ei${idx}`)}
-          </em>,
-        );
-        i = end + 1;
-        continue;
-      }
-    }
-    if (text[i] === '[') {
-      const tagEnd = text.indexOf(']', i + 1);
-      if (tagEnd !== -1) {
-        const rawTag = text.slice(i + 1, tagEnd).trim().toLowerCase();
-        const parts = rawTag.split(/[,\s+]+/).filter(Boolean);
-        const isKnown = parts.length > 0 && parts.every((p) => KNOWN_TAGS.has(p));
-        if (isKnown) {
-          // close: [/] 또는 [/anything]
-          const closeMatch = text.slice(tagEnd + 1).match(/\[\/[^\]]*\]/);
-          if (closeMatch && closeMatch.index !== undefined) {
-            const innerStart = tagEnd + 1;
-            const innerEnd = innerStart + closeMatch.index;
-            const inner = text.slice(innerStart, innerEnd);
-            const style: React.CSSProperties = {};
-            let bold = false;
-            for (const p of parts) {
-              if (COLOR_MAP[p]) style.color = COLOR_MAP[p];
-              else if (SIZE_MAP[p]) style.fontSize = SIZE_MAP[p];
-              else if (p === 'b' || p === 'bold') bold = true;
-            }
-            const childNodes = parseInline(inner, emClass, `${keyPrefix}-si${idx}`);
-            const styled = (
-              <span
-                key={`${keyPrefix}-s${idx++}`}
-                style={Object.keys(style).length ? style : undefined}
-              >
-                {bold ? <strong>{childNodes}</strong> : childNodes}
-              </span>
-            );
-            nodes.push(styled);
-            i = innerEnd + closeMatch[0].length;
-            continue;
-          }
-        }
-      }
-    }
-    let j = i + 1;
-    while (j < text.length && text[j] !== '*' && text[j] !== '[') j++;
-    nodes.push(text.slice(i, j));
-    i = j;
-  }
-  return nodes;
-}
-
-function renderMarked(text: string, emClass?: string): React.ReactNode {
-  const lines = text.split('\n');
-  return lines.map((line, li) => (
-    <span key={`line-${li}`}>
-      {parseInline(line, emClass, `${li}`)}
-      {li < lines.length - 1 && <br />}
-    </span>
-  ));
-}
 
 // 홈은 root layout 의 SITE_URL/siteJsonLd 를 사용 — 별도 canonical/JSON-LD 미부착.
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
@@ -577,739 +45,506 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
-// 홈 전용 ItemList JSON-LD — AI 검색이 "대라천 침향 제품" 질문에 직접 응답할 때
-// 인용 후보로 활용. 실제 제품 슬러그를 외부 데이터에서 빌드해 나열.
-function buildHomeItemListJsonLd(siteUrl: string) {
-  const items = [
-    { name: '침향 오일', slug: 'agarwood-oil' },
-    { name: '침향 캡슐', slug: 'agarwood-capsule' },
-    { name: '침향단(환)', slug: 'agarwood-pill' },
-    { name: '선향(스틱)', slug: 'agarwood-incense' },
-    { name: '침향수', slug: 'agarwood-water' },
-    { name: '침향차', slug: 'agarwood-tea' },
-  ];
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: '대라천 ZOEL LIFE 대표 침향 제품',
-    itemListElement: items.map((it, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      url: `${siteUrl}/products/${it.slug}`,
-      name: it.name,
-    })),
-  };
+const BLOB = 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
+
+// 영상은 원본(16~44MB)이 아니라 5MB 이하(H.264·faststart·무음)로 다시 인코딩한 6~9초 루프를 쓴다.
+// 원본은 다른 페이지가 그대로 쓰므로 건드리지 않고, 새 경로 uploads/home-main/ 에 따로 올렸다.
+const VIDEO = {
+  farm: `${BLOB}/uploads/home-main/farm-loop.mp4`,
+  brand: `${BLOB}/uploads/home-main/brand-loop.mp4`,
+  showroom: `${BLOB}/uploads/home-main/showroom-loop.mp4`,
+  title: `${BLOB}/uploads/home-main/onair-loop.mp4`,
+};
+
+const IMG = {
+  farm: `${BLOB}/uploads/home-main/farm-poster.jpg`,
+  company: `${BLOB}/pages/hero/company-hero-default.jpg`,
+  showroom: `${BLOB}/uploads/home-main/showroom-poster.jpg`,
+  species: `${BLOB}/uploads/pages/species-card-roxburgh.jpg`,
+};
+
+const STATS = [
+  { value: 25, unit: '년', label: '직영 재배' },
+  { value: 200, unit: 'ha', label: '직영 농장 합계' },
+  { value: 5, unit: '개 지역', label: '베트남 직영' },
+  { value: 12, unit: '건 이상', label: '공식 인증' },
+];
+
+const MARQUEE = [
+  '식약처 등재 학명 Aquilaria Agallocha Roxburgh',
+  '베트남 직영 농장 25년',
+  '베트남 5개 지역 직영 농장 약 200ha',
+  '원산지부터 직접 책임',
+  '묘목부터 채취·증류까지',
+  '공식 인증 12건 이상',
+];
+
+interface ProductLite {
+  slug: string;
+  name: string;
+  category?: string;
+  image?: string;
+  published?: boolean;
+}
+
+/** 외부 CDN 금지 원칙 — Blob·번들 자산만 통과시킨다. */
+function isOwnAsset(url?: string): url is string {
+  return !!url && (url.startsWith(BLOB) || url.startsWith('/'));
+}
+
+/** '2026.05.16' / '2026-05-16' → 정렬용 숫자. 형식을 모르면 0. */
+function dateKey(raw?: string): number {
+  const m = (raw ?? '').trim().match(/^(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/);
+  return m ? Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]) : 0;
+}
+
+/** 어드민이 입력한 공지 링크 — 사이트 내부 경로와 http(s) 만 통과시킨다. */
+function safeHref(raw?: string): string | null {
+  const v = (raw ?? '').trim();
+  if (v.startsWith('/') && !v.startsWith('//')) return v;
+  return /^https?:\/\//i.test(v) ? v : null;
+}
+
+function formatDot(iso?: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
+  return m ? `${m[1]}.${m[2]}.${m[3]}` : '';
+}
+
+function InstagramMark({ size = 18 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1.1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1.1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 4.8a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Zm5.2-9.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"
+      />
+    </svg>
+  );
+}
+
+/** 타일 오른쪽 위 화살표 원 — 호버 시 45° 돈다. */
+function Go() {
+  return (
+    <span className={styles.go} aria-hidden="true">
+      <svg viewBox="0 0 16 16" width="14" height="14">
+        <path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
 }
 
 export default async function HomePage() {
-  const pagesData = await readSingleSafe<{
-    home?: HomeData;
-    brandStory?: { farms?: Farm[] };
-    // 언론 보도는 침향 이야기 탭과 동일한 데이터를 읽는다 — 홈 전용 입력창을 따로 두지 않기 위함.
-    aboutAgarwood?: { mediaTab?: MediaTabData };
-  }>('pages');
-  const home = pagesData?.home ?? {};
-  const farms: Farm[] = pagesData?.brandStory?.farms ?? [];
-  const pressAll = pagesData?.aboutAgarwood?.mediaTab?.items ?? [];
-  // 발행일 내림차순으로 정렬한 뒤 앞에서 4건 — 어드민에서 기사를 목록 어디에 추가하든
-  // 가장 최근 보도가 자동으로 메인에 올라온다(같은 날짜면 입력 순서를 유지).
-  const pressItems = pressAll
+  const [pagesData, productsRaw, postsRaw, announcement] = await Promise.all([
+    readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData } }>('pages'),
+    readDataSafe<ProductLite>('products'),
+    readPostsSafe(),
+    readSingleSafe<Partial<Announcement>>('announcement'),
+  ]);
+
+  // 어드민 '공지' 설정(/admin/settings) — 켜져 있고 문구가 있을 때만 소식 위에 한 줄 띠로 보인다.
+  const noticeText = announcement?.enabled ? (announcement.text ?? '').trim() : '';
+  const notice = noticeText
+    ? {
+        text: noticeText,
+        href: safeHref(announcement?.link),
+        label: (announcement?.linkLabel ?? '').trim() || '자세히 보기',
+        className:
+          announcement?.variant === 'red'
+            ? styles.noticeRed
+            : announcement?.variant === 'dark'
+              ? styles.noticeDark
+              : styles.noticeGold,
+      }
+    : null;
+
+  // 어드민 제품 목록 순서를 그대로 따른다 — 앞의 5개가 대표 제품.
+  const products = productsRaw.filter((p) => p.published !== false && isOwnAsset(p.image)).slice(0, 5);
+  const posts = postsRaw
+    .filter((p) => p.status === 'published')
+    .sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''))
+    .slice(0, 3);
+  const press = (pagesData?.aboutAgarwood?.mediaTab?.items ?? [])
     .filter((m) => m.outlet && m.link)
     .map((m, i) => ({ m, i }))
-    .sort((a, b) => pressDateKey(b.m.date) - pressDateKey(a.m.date) || a.i - b.i)
-    .slice(0, HOME_PRESS_LIMIT)
+    .sort((a, b) => dateKey(b.m.date) - dateKey(a.m.date) || a.i - b.i)
+    .slice(0, 6)
     .map(({ m }) => m);
-  const hero = home.hero ?? DEFAULT_HERO;
-  const stats = home.stats ?? DEFAULT_STATS;
-  const agarwood = home.agarwood ?? DEFAULT_AGARWOOD;
-  const benefits = home.benefits ?? DEFAULT_BENEFITS;
-  const processData = home.process ?? DEFAULT_PROCESS;
-  const verification = home.verification ?? DEFAULT_VERIFICATION;
-  const verifiedCards = home.verifiedCards ?? DEFAULT_VERIFIED_CARDS;
-  const certs = home.certs ?? DEFAULT_CERTS;
-  const notice: HomeNotice = home.notice
-    ? {
-        ...DEFAULT_NOTICE,
-        ...home.notice,
-        items: home.notice.items && home.notice.items.length > 0 ? home.notice.items : DEFAULT_NOTICE.items,
-      }
-    : DEFAULT_NOTICE;
-  // verifiedCards 는 현재 프론트에서 렌더되지 않음 — admin 호환 위해 변수는 유지.
-  void verifiedCards;
-  const sectionOrder: HomeSectionId[] =
-    Array.isArray(home.sectionOrder) && home.sectionOrder.length > 0
-      ? home.sectionOrder.filter((id): id is HomeSectionId => DEFAULT_SECTION_ORDER.includes(id as HomeSectionId))
-      : DEFAULT_SECTION_ORDER;
-  // 누락된 섹션 ID 보정 — 새 섹션이 추가돼도 CMS 에 저장된 옛 순서 때문에 맨 뒤로
-  // 밀리지 않게, 기본 순서에서 바로 앞에 오는 섹션 뒤에 끼워 넣는다.
-  // (어드민이 지정한 기존 섹션들의 상대 순서는 건드리지 않는다.)
-  for (const id of DEFAULT_SECTION_ORDER) {
-    if (sectionOrder.includes(id)) continue;
-    let insertAt = -1;
-    for (let i = DEFAULT_SECTION_ORDER.indexOf(id) - 1; i >= 0; i--) {
-      const pos = sectionOrder.indexOf(DEFAULT_SECTION_ORDER[i]);
-      if (pos !== -1) { insertAt = pos + 1; break; }
-    }
-    if (insertAt === -1) sectionOrder.unshift(id);
-    else sectionOrder.splice(insertAt, 0, id);
-  }
-  const processDurations = home.process?.durations ?? PROCESS_DURATIONS;
-  const showroomImage = home.showroomImage;
-  // problem 섹션: 신규 problem.image 우선, 없으면 legacy problemImage 사용
-  const problem: HomeProblem = home.problem
-    ? { ...DEFAULT_PROBLEM, ...home.problem, cards: home.problem.cards ?? DEFAULT_PROBLEM.cards, species: home.problem.species ?? DEFAULT_PROBLEM.species }
-    : DEFAULT_PROBLEM;
-  const problemImage = problem.image ?? home.problemImage;
-  // solutionCta 는 2026-05-17 부터 about-agarwood (진짜 침향 구별 탭) 로 이동.
-  // 기존 home.solutionCta blob 데이터는 about-agarwood/page.tsx 의 legacy fallback 이 처리.
-  const originAuthority: HomeOriginAuthority = home.originAuthority
-    ? {
-        regulation: { ...DEFAULT_ORIGIN_AUTHORITY.regulation, ...home.originAuthority.regulation },
-        history: {
-          ...DEFAULT_ORIGIN_AUTHORITY.history,
-          ...home.originAuthority.history,
-          eras:
-            Array.isArray(home.originAuthority.history?.eras) && home.originAuthority.history.eras.length > 0
-              ? home.originAuthority.history.eras
-              : DEFAULT_ORIGIN_AUTHORITY.history.eras,
-        },
-        farms: { ...DEFAULT_ORIGIN_AUTHORITY.farms, ...home.originAuthority.farms },
-      }
-    : DEFAULT_ORIGIN_AUTHORITY;
-  const sectionMetaMap = home.sectionMeta ?? {};
 
-  // certs 섹션은 자체 타이틀/본문이 없어 sectionMeta 가 단일 편집점. admin 이 비웠을 때 fallback.
-  const DEFAULT_CERTS_META: SectionMeta = {
-    topTag: `Certifications · ${certs.length}건 공식 인증`,
-    titleQuote: '국제·국가 기관이 검증한\n*대라천 침향의 무게*',
-    bodyLead:
-      'CITES, HACCP, GMP, ORGANIC, FDA, ISO… 한 장의 인증이 아닌 *12건의 공식 인증서* 로\n원산지·품종·안전성·재배·가공 전 과정의 신뢰를 입증합니다.',
-  };
-  const effectiveCertsMeta: SectionMeta = {
-    ...DEFAULT_CERTS_META,
-    ...(sectionMetaMap.certs ?? {}),
-    topTag: sectionMetaMap.certs?.topTag?.trim() || DEFAULT_CERTS_META.topTag,
-    titleQuote: sectionMetaMap.certs?.titleQuote?.trim() || DEFAULT_CERTS_META.titleQuote,
-    bodyLead: sectionMetaMap.certs?.bodyLead?.trim() || DEFAULT_CERTS_META.bodyLead,
-  };
-
-  // press 섹션도 certs 와 같이 자체 타이틀이 없어 sectionMeta 가 단일 편집점.
-  // 매체 수는 실제 데이터에서 세므로 보도가 늘면 문구가 자동으로 따라간다.
-  // 문구에 건수·매체명을 넣지 않는다 — 보도가 늘고 바뀌어도 타이틀이 낡지 않게 한다.
-  const DEFAULT_PRESS_META: SectionMeta = {
-    topTag: 'In the Press · 언론 보도',
-    titleQuote: '언론이 직접 확인한\n*대라천 침향의 신뢰*',
-    bodyLead:
-      "주요 경제·산업 매체가 대라천 '참'침향의 원산지와 학명 기준을 직접 다뤘습니다.\n매체명을 누르면 각 언론사의 *기사 원문* 으로 바로 이동합니다.",
-    cta: { label: '언론 보도 더 보기 →', href: PRESS_TAB_HREF, variant: 'gold' },
-  };
-  const effectivePressMeta: SectionMeta = {
-    ...DEFAULT_PRESS_META,
-    ...(sectionMetaMap.press ?? {}),
-    topTag: sectionMetaMap.press?.topTag?.trim() || DEFAULT_PRESS_META.topTag,
-    titleQuote: sectionMetaMap.press?.titleQuote?.trim() || DEFAULT_PRESS_META.titleQuote,
-    bodyLead: sectionMetaMap.press?.bodyLead?.trim() || DEFAULT_PRESS_META.bodyLead,
-    cta: sectionMetaMap.press?.cta?.label && sectionMetaMap.press?.cta?.href
-      ? sectionMetaMap.press.cta
-      : DEFAULT_PRESS_META.cta,
-  };
-
-  // 섹션 메타 블록 — topTag/titleQuote/bodyLead 가 하나라도 있을 때 섹션 위에 렌더.
-  function renderMetaPrefix(meta?: SectionMeta) {
-    if (!meta) return null;
-    const hasAny = meta.topTag || meta.titleQuote || meta.bodyLead;
-    if (!hasAny) return null;
-    return (
-      <section className={styles.sectionMetaPrefix} aria-hidden={false}>
-        <div className={styles.wrap}>
-          <div className={styles.metaPrefixInner}>
-            {meta.topTag && <span className={styles.metaTopTag}>{meta.topTag}</span>}
-            {meta.titleQuote && (
-              <h2 className={styles.metaTitleQuote}>{renderMarked(meta.titleQuote)}</h2>
-            )}
-            {meta.bodyLead && (
-              <p className={styles.metaBodyLead}>{renderMarked(meta.bodyLead)}</p>
-            )}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // 섹션 하단 CTA 버튼 — label·href 가 모두 있을 때만 렌더.
-  function renderMetaSuffix(meta?: SectionMeta) {
-    const cta = meta?.cta;
-    if (!cta?.label || !cta?.href) return null;
-    return (
-      <section className={styles.sectionMetaSuffix}>
-        <div className={styles.wrap}>
-          <div className={styles.metaCtaWrap}>
-            <Link
-              href={cta.href}
-              className={cta.variant === 'outline' ? styles.btnOutline : styles.btnGold}
-            >
-              {cta.label}
-            </Link>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // 공식 유튜브 채널(가로 16:9 일반 영상). 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다.
+  const snsKo = koreanVideosOnly(SNS_SAMPLE);
+  const videos: VideoItem[] = snsKo.youtube.videos.map((v) => ({
+    id: v.id,
+    title: cleanVideoTitle(v.title),
+    date: formatSnsDate(v.publishedAt),
+    thumbnail: v.thumbnail,
+  }));
+  const ig = snsKo.instagram;
 
   return (
-    <div className={styles.page}>
-      {/* LCP 최적화: hero 배경 이미지를 preload 로 우선 페치.
-          background-image 는 브라우저가 CSS 파싱 후에야 로드를 시작해 LCP 가 나빠진다. */}
-      <link
-        rel="preload"
-        as="image"
-        href={hero.heroBg}
-        // @ts-expect-error fetchPriority 는 React 19 부터 정식 지원
-        fetchpriority="high"
-      />
-      <JsonLd data={buildHomeItemListJsonLd(SITE_URL)} />
-      {sectionOrder.map((sectionId) => {
-        const rawMeta = sectionMetaMap[sectionId];
-        // certs / press 는 자체 타이틀이 없으므로 sectionMeta 가 비었더라도 기본 타이틀/본문이 prefix 로 노출되도록 보정.
-        const meta =
-          sectionId === 'certs' ? effectiveCertsMeta
-          : sectionId === 'press' ? effectivePressMeta
-          : rawMeta;
-        if (rawMeta?.hidden) return null;
-        // 노출할 보도가 없으면 헤더/CTA 까지 통째로 숨긴다 — 빈 섹션은 신뢰를 깎는다.
-        if (sectionId === 'press' && pressItems.length === 0) return null;
-        const sectionContent = (() => {
-          switch (sectionId) {
-          case 'hero':
-            return (
-      // === HERO ===
-      <section key="hero" className={`${styles.hero} orn-grain orn-grain--faint`}>
-        <div
-          className={styles.heroBg}
-          style={{ backgroundImage: `url('${hero.heroBg}')` }}
-          aria-hidden
-        />
-        <div
-          className="orn-plume"
-          aria-hidden
-          style={{ right: '4%', bottom: '-80px', opacity: 0.42, zIndex: 1 }}
-        />
-        <div className={styles.heroContent}>
-          <div className={styles.wrap}>
-            <div className={styles.heroRow}>
-              <div>
-                <h1>
-                  {hero.titleKr.split(',').length > 1 ? (
-                    <>
-                      {hero.titleKr.split(',')[0]},
-                      <br />
-                      <em>{hero.titleKr.split(',').slice(1).join(',').trim()}</em>
-                    </>
-                  ) : (
-                    hero.titleKr
-                  )}
-                </h1>
-                <p className={styles.heroSub} style={{ whiteSpace: 'pre-line' }}>{hero.subtitle}</p>
-              </div>
-
-              {/* 3-Point Verification Card (edit in /admin/pages/home) */}
-              <div className={styles.heroTrust}>
-                <div className={styles.heroTrustTitle}>3-Point Verification</div>
-                {verification.map((row, i) => {
-                  const sepMatch = row.label.match(/^(.+?)\s*[-—–]\s*(.+)$/);
-                  const keyword = sepMatch ? sepMatch[1] : row.label;
-                  const rest = sepMatch ? sepMatch[2] : '';
-                  return (
-                    <div key={`${row.num}-${i}`} className={styles.heroTrustRow}>
-                      <div className={styles.heroTrustNum}>{row.num}</div>
-                      <div className={styles.heroTrustLabel}>
-                        <span className={styles.heroTrustKeyword}>{keyword}</span>
-                        {rest && (
-                          <>
-                            <span className={styles.heroTrustSep}> - </span>
-                            <span className={styles.heroTrustRest}>{rest}</span>
-                          </>
-                        )}
-                      </div>
-                      <div className={styles.heroTrustMeta}>{row.meta}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+    <BentoRoot videos={videos} className={styles.page}>
+      {/* 전역 CSS 가 main > div > section:first-of-type 에 물결 장식을 붙이므로 한 겹 더 감싼다 */}
+      <div className={styles.inner}>
+        {/* 1. 인트로 */}
+        <header className={styles.intro}>
+          <span className={styles.badge} data-reveal="">
+            <span className={styles.badgeChip}>25년</span>
+            베트남 직영 농장에서 기른 침향
+          </span>
+          <h1 className={styles.headline} data-reveal="">
+            묘목부터 증류까지,
+            <br />
+            직접 키운 <span className={styles.glow}>진짜 침향</span>
+          </h1>
+          <p className={styles.subline} data-reveal="">
+            식약처 등재 학명 <span className={styles.nowrap}>Aquilaria Agallocha Roxburgh</span>.
+            <br className={styles.brDesk} /> 원산지부터 직접 책임지는 대라천 &lsquo;참&rsquo;침향입니다.
+          </p>
+          <div className={styles.ctas} data-reveal="">
+            <Link href="/products" className={styles.btnPrimary}>
+              제품 보기
+            </Link>
+            <Link href="/about-agarwood" className={styles.btnGhost}>
+              진짜 침향 구별법 <span aria-hidden="true">→</span>
+            </Link>
           </div>
-        </div>
-      </section>
-            );
-          case 'trustStrip':
-            return (
-      // === TRUST STRIP ===
-      <section key="trustStrip" className={styles.trustStrip}>
-        <div className={styles.trustStripInner}>
-          {stats.map((s) => (
-            <div key={s.label} className={styles.trustStat}>
-              <div className="num">{s.value}</div>
-              <div className="lbl">{s.label}</div>
-              <div className="caption">{/* TODO: caption 필드 없음 */}</div>
+        </header>
+
+        {/* 2. 공지 띠 — 어드민 공지 설정이 켜져 있을 때만 */}
+        {notice && (
+          <aside className={`${styles.notice} ${notice.className}`} aria-label="공지" data-reveal="">
+            <span className={styles.noticeChip}>공지</span>
+            <p className={styles.noticeText}>{notice.text}</p>
+            {notice.href &&
+              (notice.href.startsWith('/') ? (
+                <Link href={notice.href} className={styles.more}>
+                  {notice.label} →
+                </Link>
+              ) : (
+                <a href={notice.href} target="_blank" rel="noopener noreferrer" className={styles.more}>
+                  {notice.label} →
+                </a>
+              ))}
+          </aside>
+        )}
+
+        {/* 3. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
+        <header className={styles.sectionHead} data-reveal="">
+          <span className={styles.badge}>
+            <span className={styles.badgeChip}>NEW</span>
+            소식
+          </span>
+          <h2 id="home-news-title" className={styles.h2}>
+            새로 올라온 <span className={styles.glow}>대라천 소식</span>
+          </h2>
+        </header>
+
+        <section className={styles.grid} aria-labelledby="home-news-title">
+          {/* 대표 제품 — 흐르는 카드 */}
+          {products.length > 0 && (
+            <div className={`${styles.tile} ${styles.tProducts}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>대표 제품</span>
+                  <span className={styles.cardSub}>대라천 &lsquo;참&rsquo;침향</span>
+                </span>
+                <Link href="/products" className={styles.more}>
+                  전체 보기 →
+                </Link>
+              </div>
+              <div className={styles.prodViewport}>
+                <ul className={styles.prodTrack}>
+                  {[0, 1].map((k) =>
+                    products.map((p, i) => (
+                      <li key={`${k}-${p.slug}`} className={styles.prodItem} aria-hidden={k === 1 ? true : undefined}>
+                        <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
+                          <span className={styles.prodThumb}>
+                            {/* 소식이 첫 화면에 오면서 첫 제품 사진이 모바일 LCP 요소가 되었다 — 첫 장만 우선 로딩 */}
+                            <Image
+                              src={p.image!}
+                              alt={k === 0 ? p.name : ''}
+                              fill
+                              sizes="200px"
+                              priority={k === 0 && i === 0}
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </span>
+                          {p.category && <span className={styles.cardSub}>{p.category}</span>}
+                          <span className={styles.prodName}>{p.name}</span>
+                        </Link>
+                      </li>
+                    )),
+                  )}
+                </ul>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-            );
-          case 'showroom':
-            return showroomImage?.src ? (
-      // === SHOWROOM IMAGE ===
-        <section key="showroom" className={styles.section} aria-label="대라천 침향 전시장">
-          <div className={styles.wrap}>
-            <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
-              {showroomImage.tag && <span className={styles.tag}>{showroomImage.tag}</span>}
-              {showroomImage.title && (
-                <h2 className={styles.h2} style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.4rem)' }}>
-                  {showroomImage.title}
-                </h2>
-              )}
-              <div className={styles.line} />
-              {showroomImage.body && (
-                <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
-                  {showroomImage.body}
-                </p>
-              )}
+          )}
+
+          {/* 언론 보도 — 세로로 흐르는 목록 */}
+          {press.length > 0 && (
+            <div className={`${styles.tile} ${styles.tPress}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>언론 보도</span>
+                  <span className={styles.cardSub}>기사 원문으로 연결됩니다</span>
+                </span>
+                <Link href="/about-agarwood#tab-5" className={styles.more}>
+                  더 보기 →
+                </Link>
+              </div>
+              <div className={styles.tickerViewport}>
+                <ul className={styles.tickerTrack}>
+                  {[0, 1].map((k) =>
+                    press.map((m, i) => (
+                      <li key={`${k}-${m.link}-${i}`} aria-hidden={k === 1 ? true : undefined}>
+                        <a
+                          href={m.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.pressItem}
+                          tabIndex={k === 1 ? -1 : undefined}
+                        >
+                          <span className={styles.pressOutlet}>
+                            {m.outlet}
+                            {m.date ? <span className={styles.pressDate}> · {m.date}</span> : null}
+                          </span>
+                          <span className={styles.pressTitle}>{m.title || m.outlet}</span>
+                        </a>
+                      </li>
+                    )),
+                  )}
+                </ul>
+              </div>
             </div>
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 1200,
-                margin: '0 auto',
-                aspectRatio: '6 / 5',
-                overflow: 'hidden',
-                border: '1px solid rgba(212,168,67,0.2)',
-                background: '#000',
-              }}
-            >
-              <Image
-                src={showroomImage.src}
-                alt={showroomImage.title ?? '대라천 침향 전시장'}
-                fill
-                sizes="(max-width: 1200px) 100vw, 1200px"
-                style={{ objectFit: 'cover', display: 'block' }}
-              />
+          )}
+
+          {/* 블로그 최신 3 */}
+          {posts.length > 0 && (
+            <div className={`${styles.tile} ${styles.tBlog}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>블로그</span>
+                  <span className={styles.cardSub}>침향을 더 깊이 읽는 글</span>
+                </span>
+                <Link href="/blog" className={styles.more}>
+                  더 보기 →
+                </Link>
+              </div>
+              <ol className={styles.blogList}>
+                {posts.map((p, i) => (
+                  <li key={p.slug}>
+                    <Link href={`/blog/${p.slug}`} className={styles.blogItem}>
+                      <span className={styles.blogIdx}>{String(i + 1).padStart(2, '0')}</span>
+                      <span className={styles.blogText}>
+                        <span className={styles.blogTitle}>{p.title}</span>
+                        <span className={styles.blogDate}>{formatDot(p.publishedAt)}</span>
+                      </span>
+                      <span className={styles.blogArrow} aria-hidden="true">
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* 공식 채널 — 유튜브 영상 (16:9) */}
+          {videos.length > 0 && (
+            <div className={`${styles.tile} ${styles.tChannel}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span className={styles.igAccount}>
+                  <span className={`${styles.igMark} ${styles.ytMark}`}>
+                    <YoutubeMark size={16} />
+                  </span>
+                  <span>
+                    <span className={styles.cardTitle}>공식 채널</span>
+                    <span className={styles.cardSub}>
+                      {snsKo.youtube.name} {snsKo.youtube.handle}
+                    </span>
+                  </span>
+                </span>
+                <a href={snsKo.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.more}>
+                  채널 구독 →
+                </a>
+              </div>
+              <div className={styles.chRow}>
+                {videos.slice(0, 2).map((v, i) => (
+                  <VideoThumb key={v.id} index={i} />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* 4. 벤토 그리드 — 대라천을 알아가는 문들 */}
+        {/* 소식 제목 아래에 딸려 읽히지 않도록 화면에는 보이지 않는 제목을 둔다 */}
+        <h2 id="home-brand-title" className={styles.srOnly}>
+          대라천 둘러보기
+        </h2>
+        <section className={`${styles.grid} ${styles.gridBrand}`} aria-labelledby="home-brand-title">
+          {/* 히어로: 농장 영상 */}
+          <Link href="/media" className={`${styles.tile} ${styles.tHero}`} data-tile="" data-reveal="">
+            <HeroVideo src={VIDEO.farm} poster={IMG.farm} />
+            <span className={styles.scrim} aria-hidden="true" />
+            <span className={styles.liveChip}>
+              <span className={styles.liveDot} aria-hidden="true" />
+              농장 영상
+            </span>
+            <Go />
+            <span className={styles.heroText}>
+              <span className={styles.kicker}>침향 농장 이야기</span>
+              <span className={styles.heroTitle}>
+                베트남 직영 농장,
+                <br />
+                침향 분류 작업 현장
+              </span>
+              <span className={styles.heroSub}>묘목부터 채취·증류까지, 영상과 사진으로 전합니다</span>
+            </span>
+          </Link>
+
+          {/* 최신 유튜브 영상 */}
+          {videos.length > 0 && (
+            <div className={`${styles.tile} ${styles.tYt}`} data-tile="" data-reveal="">
+              <LatestVideo />
+            </div>
+          )}
+
+          {/* On-Air */}
+          <Link href="/home-shopping" className={`${styles.tile} ${styles.tOnair}`} data-tile="" data-reveal="">
+            <HoverVideo src={VIDEO.title} />
+            <span className={styles.onairShade} aria-hidden="true" />
+            <span className={styles.onairMark} aria-hidden="true">
+              ON AIR
+            </span>
+            <Go />
+            <span className={styles.onairBadge}>
+              <span className={styles.onairDot} aria-hidden="true" />
+              ON AIR
+            </span>
+            <span className={styles.eq} aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ ['--i' as string]: i }} />
+              ))}
+            </span>
+            <span className={styles.tileText}>
+              <span className={styles.kicker}>홈쇼핑 방송</span>
+              <span className={styles.cardTitleLg}>On-Air 특별관</span>
+              <span className={styles.cardSub}>방송 다시보기</span>
+            </span>
+          </Link>
+
+
+          {/* 숫자 */}
+          <div className={`${styles.tile} ${styles.tStats}`} data-tile="" data-reveal="">
+            <div className={styles.tileHead}>
+              <span className={styles.kicker}>숫자로 보는 대라천</span>
+            </div>
+            <dl className={styles.stats}>
+              {STATS.map((s) => (
+                <div key={s.label} className={styles.stat}>
+                  <dt className={styles.statLabel}>{s.label}</dt>
+                  <dd className={styles.statValue}>
+                    <CountUp value={s.value} />
+                    <span className={styles.statUnit}>{s.unit}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* 구별법 — 회전하는 빛 테두리 */}
+          <Link href="/about-agarwood" className={`${styles.tile} ${styles.tRing}`} data-tile="" data-reveal="">
+            <span className={styles.ring} aria-hidden="true" />
+            <span className={styles.ringGlow} aria-hidden="true" />
+            <span className={styles.specimen} aria-hidden="true">
+              <Image src={IMG.species} alt="" fill sizes="120px" className={styles.specimenImg} />
+            </span>
+            <Go />
+            <span className={styles.ringBody}>
+              <span className={styles.kicker}>진짜 침향 구별법</span>
+              <span className={styles.ringTitle}>진짜 침향은 학명부터 확인합니다</span>
+              <span className={styles.latin}>Aquilaria Agallocha Roxburgh</span>
+              <span className={styles.ringNote}>식약처 등재 학명 · 인증 · 산지로 가려내는 법</span>
+            </span>
+          </Link>
+
+          {/* 인스타그램 — 공식 계정 릴스 커버를 세로(9:16) 그대로 넘겨 본다 */}
+          <div className={`${styles.tile} ${styles.tIg}`} data-tile="" data-reveal="">
+            <a href={ig.url} target="_blank" rel="noopener noreferrer" className={`${styles.tileHead} ${styles.igHeadLink}`}>
+              <span className={styles.igAccount}>
+                <span className={styles.igMark}>
+                  <InstagramMark size={16} />
+                </span>
+                <span>
+                  <span className={`${styles.cardTitle} ${styles.handle}`}>{ig.handle}</span>
+                  <span className={styles.cardSub}>Instagram</span>
+                </span>
+              </span>
+              <Go />
+            </a>
+            <IgReels
+              posts={ig.posts.map((p) => ({ id: p.id, permalink: p.permalink, image: p.image, caption: p.caption ?? '' }))}
+            />
+          </div>
+
+          {/* 브랜드 이야기 — 호버 시 증류 영상 */}
+          <Link href="/brand-story" className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">
+            <Image src={IMG.company} alt="" fill sizes="(max-width: 640px) 100vw, 40vw" className={styles.media} />
+            <HoverVideo src={VIDEO.brand} />
+            <span className={styles.scrim} aria-hidden="true" />
+            <Go />
+            <span className={styles.tileText}>
+              <span className={styles.kicker}>브랜드 이야기</span>
+              <span className={styles.cardTitleLg}>25년, 한 회사가 원산지부터 잇습니다</span>
+              <span className={styles.cardSub}>베트남 직영 생산부터 한국 직판까지</span>
+            </span>
+          </Link>
+
+          {/* 전시장 — 호버 시 전시장 영상 */}
+          <Link href="/showroom" className={`${styles.tile} ${styles.tShowroom}`} data-tile="" data-reveal="">
+            <HoverVideo src={VIDEO.showroom} poster={IMG.showroom} />
+            <span className={styles.scrim} aria-hidden="true" />
+            <span className={styles.hoverHint} aria-hidden="true">
+              ▶ 영상
+            </span>
+            <Go />
+            <span className={styles.tileText}>
+              <span className={styles.kicker}>전시장</span>
+              <span className={styles.cardTitleLg}>원목부터 완제품까지, 직접 보고 맡아 보세요</span>
+            </span>
+          </Link>
+
+          {/* 흐르는 띠 */}
+          <div className={`${styles.tile} ${styles.tMarquee}`} data-reveal="">
+            <div className={styles.marquee}>
+              {[0, 1].map((k) => (
+                <span key={k} className={styles.marqueeRun} aria-hidden={k === 1 ? true : undefined}>
+                  {MARQUEE.map((m) => (
+                    <span key={m} className={styles.marqueeItem}>
+                      {m}
+                      <span className={styles.marqueeSep}>✦</span>
+                    </span>
+                  ))}
+                </span>
+              ))}
             </div>
           </div>
         </section>
-            ) : null;
-          case 'problem':
-            return (
-      // === PROBLEM ===
-      <section key="problem" className={styles.problem} aria-label="침향 시장의 위험과 진짜 침향 구별 기준">
-        <div className={styles.wrap}>
-          <div className={styles.problemHeadRow}>
-            <div className={styles.problemHead}>
-              <span className={styles.problemWarning}>{problem.tag}</span>
-              <h2 className={styles.problemQuote}>{renderMarked(problem.title)}</h2>
-              <div className={styles.problemHeadLine} />
-              <p className={styles.problemLead}>{renderMarked(problem.lead)}</p>
-            </div>
 
-            {/* 우측: 다큐멘터리 정물 사진 — 이미지가 있을 때만 표시 */}
-            {problemImage?.src && (
-              <div className={styles.problemImageWrap}>
-                <Image
-                  src={problemImage.src}
-                  alt={problemImage.alt ?? '인증서·도장·CITES 마크 정물'}
-                  fill
-                  sizes="(max-width: 1000px) 100vw, 45vw"
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className={styles.problemGrid}>
-            {problem.cards.map((c, i) => (
-              <div key={`${c.tag}-${i}`} className={styles.problemCard}>
-                {c.image?.src && (
-                  <div className={styles.problemCardImage}>
-                    <Image
-                      src={c.image.src}
-                      alt={c.image.alt ?? c.title}
-                      fill
-                      sizes="(max-width: 800px) 100vw, 33vw"
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
-                )}
-                <div className={styles.problemCardBody}>
-                  <div className={styles.problemCardTag}>{c.tag}</div>
-                  <h3>{c.title}</h3>
-                  <p>{c.body}</p>
-                </div>
-              </div>
-            ))}
+        {/* 5. 마무리 띠 */}
+        <div className={styles.closing} data-reveal="">
+          <p className={styles.closingLine}>
+            진짜 침향, <span className={styles.glow}>직접 확인해 보세요</span>
+          </p>
+          <div className={styles.ctas}>
+            <Link href="/company#contact" className={styles.btnPrimary}>
+              문의하기
+            </Link>
+            <Link href="/showroom" className={styles.btnGhost}>
+              전시장 둘러보기 <span aria-hidden="true">→</span>
+            </Link>
           </div>
         </div>
-      </section>
-            );
-          case 'verified':
-            return (
-      // === VERIFIED (notice head + refGrid + speciesCompare + certs) ===
-      <section key="verified" className={styles.verified} id="verified">
-        <div className={styles.wrap}>
-          <div className={styles.verifiedHead}>
-            {/* notice.tag 를 problemWarning 스타일로 렌더 — Problem 섹션의 경고 칩과 시각 톤 통일(2026-05-17). */}
-            <span className={styles.problemWarning}>{notice.tag}</span>
-            <h2 className={styles.h2}>{renderMarked(notice.title)}</h2>
-            <div className={styles.line} />
-            {notice.body.split('\n\n').map((para, pi) => (
-              <p key={`notice-p-${pi}`}>{renderMarked(para)}</p>
-            ))}
-          </div>
-
-          <div className={styles.refGrid}>
-            {notice.items.map(({ num, text }, idx) => (
-              <div key={`${num}-${idx}`} className={styles.refCard}>
-                <span className={styles.refNum}>{num}</span>
-                <p className={styles.refLabel}>{text.split('\n').map((line, i) => (
-                  <span key={i}>{line}{i === 0 && <br />}</span>
-                ))}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* SPECIES COMPARE — refGrid 와 certRow 사이에 삽입(2026-05-17 이동). */}
-          <div className={styles.speciesCompare}>
-            <div className={styles.speciesCompareTitle}>{problem.speciesTitle}</div>
-            <div className={styles.speciesTable}>
-              {problem.species.map((s, i) => {
-                const isOfficial = s.pharmacopoeia && s.foodCode;
-                return (
-                  <div
-                    key={`${s.latin}-${i}`}
-                    className={`${styles.speciesRow} ${isOfficial ? styles.speciesRowOfficial : styles.speciesRowWarning} ${s.image ? styles.speciesRowWithImg : ''}`}
-                  >
-                    {s.image && (
-                      <div className={styles.speciesCardImg}>
-                        <Image
-                          src={s.image.src}
-                          alt={s.image.alt}
-                          fill
-                          sizes="(max-width: 800px) 110px, 140px"
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                    )}
-                    <div className={styles.speciesBadge}>
-                      {isOfficial ? '공식 등록 침향' : '식용 원료 한정'}
-                    </div>
-                    <div className={styles.speciesHeader}>
-                      <div className={styles.speciesKorean}>{s.alias}</div>
-                      <div className={styles.speciesLatin}>{s.latin}</div>
-                    </div>
-                    <div className={styles.speciesMarks}>
-                      <div className={`${styles.speciesMark} ${s.pharmacopoeia ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
-                        <span className={styles.speciesMarkIcon}>{s.pharmacopoeia ? '✓' : '✗'}</span>
-                        <span className={styles.speciesMarkLabel}>{problem.pharmacopoeiaLabel?.trim() || '대한약전외한약(생약)규격집'}</span>
-                      </div>
-                      <div className={`${styles.speciesMark} ${s.foodCode ? styles.speciesMarkOk : styles.speciesMarkNo}`}>
-                        <span className={styles.speciesMarkIcon}>{s.foodCode ? '✓' : '✗'}</span>
-                        <span className={styles.speciesMarkLabel}>{problem.foodCodeLabel?.trim() || '식품공전'}</span>
-                      </div>
-                    </div>
-                    <div className={`${styles.speciesSummary} ${isOfficial ? styles.speciesSummaryGood : styles.speciesSummaryWarn}`}>
-                      {isOfficial
-                        ? '양쪽 모두 공식 등록'
-                        : '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용'}
-                    </div>
-                    <p className={styles.speciesNote}>{s.note}</p>
-                  </div>
-                );
-              })}
-            </div>
-            <p className={styles.speciesFoot}>{problem.speciesFoot}</p>
-
-            <div className={styles.speciesDefs}>
-              {problem.speciesDefHerb && (
-                <div className={styles.speciesDefHerb}>
-                  <div className={styles.speciesDefTag}>{renderMarked(problem.speciesDefHerb.tag)}</div>
-                  <div className={styles.speciesDefTitle}>{renderMarked(problem.speciesDefHerb.title)}</div>
-                  <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefHerb.body)}</p>
-                </div>
-              )}
-              {problem.speciesDefFood && (
-                <div className={styles.speciesDefFood}>
-                  <div className={styles.speciesDefTag}>{renderMarked(problem.speciesDefFood.tag)}</div>
-                  <div className={styles.speciesDefTitle}>{renderMarked(problem.speciesDefFood.title)}</div>
-                  <p className={styles.speciesDefBody}>{renderMarked(problem.speciesDefFood.body)}</p>
-                </div>
-              )}
-            </div>
-
-            {/* speciesCompare 전용 하단 CTA (sectionMeta.speciesCompare.cta). 어드민에서 채워야 표시. 2026-05-17 추가. */}
-            {(() => {
-              const speciesCta = sectionMetaMap.speciesCompare?.cta;
-              if (!speciesCta?.label || !speciesCta?.href) return null;
-              return (
-                <div className={styles.metaCtaWrap}>
-                  <Link
-                    href={speciesCta.href}
-                    className={speciesCta.variant === 'outline' ? styles.btnOutline : styles.btnGold}
-                  >
-                    {speciesCta.label}
-                  </Link>
-                </div>
-              );
-            })()}
-          </div>
-
-          {/* Certifications 는 sectionOrder 의 'certs' 로 분리되어 별도 섹션으로 렌더(2026-05-17). */}
-          {/* SOLUTION CTA 는 about-agarwood (진짜 침향 구별 탭) 로 이동(2026-05-17) */}
-        </div>
-      </section>
-            );
-          case 'certs':
-            return (
-      // === CERTIFICATIONS ===
-      <section key="certs" className={styles.section} id="certs" aria-label="대라천 침향 인증">
-        <div className={styles.wrap}>
-          {/* 타이틀/본문은 sectionMeta.certs (admin 편집) 에서 단일 관리. renderMetaPrefix 가 섹션 위에 렌더한다. */}
-          <div className={styles.certRow}>
-            <div className={styles.certGrid}>
-              {certs.map((c, i) => (
-                <div key={`${c.name}-${i}`} className={styles.certTile}>
-                  <div className={styles.certDivider} aria-hidden="true" />
-                  <div className={styles.certTitle}>{c.name}</div>
-                  <div className={styles.certCaption}>{c.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-            );
-          case 'press':
-            return (
-      // === IN THE PRESS (언론 보도 — 인증 섹션 다음) ===
-      // 데이터 출처는 침향 이야기 탭과 동일한 aboutAgarwood.mediaTab.
-      // 구조화 데이터(NewsArticle)는 /about-agarwood 한 곳에서만 emit 한다 —
-      // 같은 목록을 두 URL 에서 중복 선언하지 않기 위해 여기서는 링크만 건다.
-      <section key="press" className={styles.section} id="press" aria-label="언론에 실린 대라천 침향">
-        <div className={styles.wrap}>
-          <div className={styles.certRow}>
-            <div className={styles.pressGrid}>
-              {pressItems.map((m, i) => (
-                <a
-                  key={`${m.link}-${i}`}
-                  href={m.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.pressTile}
-                  title={m.title}
-                >
-                  <div className={styles.certDivider} aria-hidden="true" />
-                  <div className={styles.certTitle}>{m.outlet}</div>
-                  {m.date && <div className={styles.pressDate}>{m.date}</div>}
-                  <div className={styles.pressGo} aria-hidden="true">원문 →</div>
-                  <span className={styles.srOnly}>{m.title}</span>
-                </a>
-              ))}
-            </div>
-            <p className={styles.pressNotice}>
-              각 언론사가 발행한 기사로, 저작권은 해당 언론사에 있습니다. 매체명을 누르면 기사 원문으로 이동합니다.
-            </p>
-          </div>
-        </div>
-      </section>
-            );
-          case 'originAuthority':
-            return (
-      // === ORIGIN AUTHORITY (역사적 기록 + 5개 지역 직영 — 하나의 섹션으로 통합. 2026-05-17) ===
-      // 식약처 고시(regulation) 블록은 verified 섹션에서 다루므로 여기선 렌더하지 않음.
-      // 5개 지역(farms) 도 별도 번호 태그 없이 history 본문 끝에 이어붙인다.
-      <section key="originAuthority" className={styles.originAuth} aria-label="역사적 기록 · 베트남 5개 지역 직영">
-        <div className={styles.wrap}>
-          {/* 텍스트 블록 — 920px 가독 폭으로 가운데 정렬 */}
-          <div className={styles.originAuthBlock}>
-            {/* numTag 를 problemWarning 스타일로(verified 섹션과 시각 톤 통일). title 은 problemQuote 로 다른 섹션 H2 와 사이즈·폰트 통일(2026-05-17). */}
-            <span className={styles.problemWarning}>{originAuthority.history.numTag}</span>
-            <h2 className={styles.problemQuote}>{renderMarked(originAuthority.history.title)}</h2>
-            <p className={styles.originAuthIntro}>{renderMarked(originAuthority.history.lead)}</p>
-          </div>
-
-          {/* era 그리드 — originAuthBlock 의 max-width 밖에서 .wrap full-width 로 (certRow/certGrid 좌우 폭과 동일) */}
-          <div className={styles.originAuthEras}>
-            {originAuthority.history.eras.map((e, i) => (
-              <div key={`${e.era}-${i}`} className={styles.originAuthEra}>
-                <div className={styles.originAuthEraName}>{e.era}</div>
-                <div className={styles.originAuthEraText}>{renderMarked(e.text)}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* 마무리 + 5개 지역 텍스트 — era 그리드와 동일한 .wrap full-width 로 (어중간한 행 바꿈 방지) */}
-          <p className={styles.originAuthClosing}>{renderMarked(originAuthority.history.closing)}</p>
-
-          {/* 5개 지역 직영 농장 카드 그리드 — /media THE FIELD 와 동일 데이터(brandStory.farms) 사용. 2026-05-17 추가. */}
-          {farms.length > 0 && (
-            <div className={styles.originAuthFarms} style={{ '--farms-count': farms.length } as React.CSSProperties}>
-              {farms.map((farm, i) => (
-                <div key={`${farm.nameVi}-${i}`} className={styles.originAuthFarmCard}>
-                  {farm.image && (
-                    <div className={styles.originAuthFarmThumb}>
-                      <Image
-                        src={farm.image}
-                        alt={`${farm.name} (${farm.nameVi}) 농장`}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 20vw"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  )}
-                  <div className={styles.originAuthFarmKicker}>농장 · {String(i + 1).padStart(2, '0')}</div>
-                  <div className={styles.originAuthFarmName}>
-                    {farm.name}
-                    <span className={styles.originAuthFarmNameVi}>({farm.nameVi})</span>
-                  </div>
-                  <div className={styles.originAuthFarmDesc}>{farm.desc}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {originAuthority.farms.text && (
-            <p className={styles.originAuthFarmsText}>{renderMarked(originAuthority.farms.text)}</p>
-          )}
-        </div>
-      </section>
-            );
-          case 'agarwood':
-            return (
-      // === AGARWOOD INTRO ===
-      <section key="agarwood" className={`${styles.section} ${styles.sectionAlt}`}>
-        <div className={styles.wrap}>
-          <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
-            <span className={styles.tag}>{agarwood.tag}</span>
-            <h2 className={styles.h2}>{agarwood.title}</h2>
-            <div className={styles.line} />
-          </div>
-          <div className={styles.agGrid}>
-            {agarwood.cards.map((c, i) => {
-              const kicker = c.kicker ?? (['Heritage', 'Time', 'Research'][i] ?? 'Insight');
-              return (
-                <div key={`${c.title}-${i}`} className={styles.agCard} style={{ overflow: 'hidden', padding: 0 }}>
-                  {c.image && (
-                    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <Image
-                        src={c.image}
-                        alt={`${c.title} — ${kicker}`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        style={{ objectFit: 'cover', display: 'block' }}
-                      />
-                    </div>
-                  )}
-                  <div style={{ padding: 26 }}>
-                    <div className={styles.agNum}>{String(i + 1).padStart(2, '0')} · {kicker}</div>
-                    <h3>{c.title}</h3>
-                    <p>{c.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-            );
-          case 'benefits':
-            return (
-      // === BENEFITS ===
-      <section key="benefits" className={styles.section} id="benefits">
-        <div className={styles.wrap}>
-          <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
-            <span className={styles.tag}>{benefits.tag}</span>
-            <h2 className={styles.h2}>{benefits.title}</h2>
-            <div className={styles.line} />
-          </div>
-          <div className={styles.benGrid}>
-            {benefits.items.map((b, i) => {
-              const kicker = b.kicker ?? (['Qi Circulation', 'Vitality', 'Relaxation', 'Anti-inflammatory', 'Brain Health', 'Digestion'][i] ?? 'Benefit');
-              return (
-                <div key={`${b.title}-${i}`} className={styles.benItem} style={{ borderTop: 'none', overflow: 'hidden', padding: 0 }}>
-                  {b.image && (
-                    <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
-                      <Image
-                        src={b.image}
-                        alt={`침향 효능 ${i + 1} — ${b.title}`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        style={{ objectFit: 'cover', display: 'block' }}
-                      />
-                    </div>
-                  )}
-                  <div style={{ padding: '18px 0 0', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-                    <div className={styles.benIdx}>{String(i + 1).padStart(2, '0')}</div>
-                    <div className={styles.benKo}>{kicker}</div>
-                    <h4>{b.title}</h4>
-                    <p>{b.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-            );
-          case 'process':
-            return (
-      // === PROCESS ===
-      <section key="process" className={`${styles.section} ${styles.sectionAlt}`} id="process">
-        <div className={styles.wrap}>
-          <div className="head" style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto 30px' }}>
-            <span className={styles.tag}>{processData.tag}</span>
-            <h2 className={styles.h2}>{processData.title}</h2>
-            <div className={styles.line} />
-            <p style={{ fontSize: '1rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.7)', fontWeight: 300 }}>
-              묘목 발아에서 정밀 채취, 최종 검수까지 — 모든 단계의 책임을 감추지 않고 공개합니다.
-            </p>
-          </div>
-          <div className={styles.procGrid}>
-            {processData.steps.map((step, i) => (
-              <div key={`${step}-${i}`} className={styles.procStep}>
-                <div className={styles.procIdx}>{String(i + 1).padStart(2, '0')}</div>
-                <h4>{step}</h4>
-                <div className={styles.procDur}>{processDurations[i] ?? '—'}</div>
-                {PROCESS_IMAGES[i] && (
-                  <div className={styles.procImgWrap}>
-                    <Image
-                      src={PROCESS_IMAGES[i]}
-                      alt={`침향 6단계 공정 ${String(i + 1).padStart(2, '0')} — ${step}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className={styles.procImg}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-            );
-          default:
-            return null;
-          }
-        })();
-        const prefix = renderMetaPrefix(meta);
-        const suffix = renderMetaSuffix(meta);
-        if (!sectionContent && !prefix && !suffix) return null;
-        if (!prefix && !suffix) return sectionContent;
-        return (
-          <React.Fragment key={`wrap-${sectionId}`}>
-            {prefix}
-            {sectionContent}
-            {suffix}
-          </React.Fragment>
-        );
-      })}
-    </div>
+      </div>
+    </BentoRoot>
   );
 }

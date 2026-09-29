@@ -1575,9 +1575,14 @@ export default function AdminHomePage() {
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-2 text-3xl font-bold text-gray-900">홈 편집</h1>
         <p className="mb-6 text-gray-500">
-          / (홈) 페이지의 모든 섹션을 한 곳에서 편집합니다. 각 섹션 우상단의 <strong className="text-gold-700">▲ 위로 / ▼ 아래로</strong> 버튼으로
-          순서를 변경한 뒤 <strong className="text-gold-700">[순서 저장]</strong> 을 눌러야 사이트에 반영됩니다.
+          이전 메인 홈의 섹션 편집 화면입니다. 각 섹션 우상단의 <strong className="text-gold-700">▲ 위로 / ▼ 아래로</strong> 버튼으로
+          순서를 변경한 뒤 <strong className="text-gold-700">[순서 저장]</strong> 을 눌러야 저장됩니다.
         </p>
+
+        {/* 공개 메인(/)은 코드(src/app/page.tsx)로 관리한다 — 이 화면 값은 메인에 쓰이지 않는다. */}
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/40 p-4 text-sm text-amber-900">
+          이 화면의 항목은 공개 메인(/)에 반영되지 않습니다. 메인은 코드로 관리되며, 일부 항목(solutionCta 등)만 다른 페이지가 참조합니다.
+        </div>
 
         {/* 섹션 순서 저장 바 — 변경이 있을 때만 활성. */}
         <div
