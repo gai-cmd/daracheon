@@ -144,6 +144,17 @@ describe('resolveHomeMain — 외부 자산·링크 차단', () => {
     expect(out.tiles.brand.video).toBe(HOME_MAIN_DEFAULTS.tiles.brand.video);
   });
 
+  it('keeps only the first of duplicate YouTube ids and Instagram permalinks', () => {
+    const video = { id: 'AAAAAAAAAAA', title: '영상', publishedAt: '', thumbnail: '/images/sns/youtube/a.jpg' };
+    const post = { permalink: 'https://www.instagram.com/reel/AAA/', image: '/images/sns/instagram/a.jpg' };
+    const out = resolveHomeMain({
+      youtube: { videos: [video, { ...video, title: '중복' }] },
+      instagram: { posts: [post, { ...post, caption: '중복' }] },
+    });
+    expect(out.youtube.videos.map((v) => v.title)).toEqual(['영상']);
+    expect(out.instagram.posts).toHaveLength(1);
+  });
+
   it('rejects javascript:, protocol-relative and backslash hrefs', () => {
     const out = resolveHomeMain({
       intro: {

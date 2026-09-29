@@ -39,7 +39,7 @@ const ADD_BTN =
 
 const MARKUP_HINT = '엔터 = 줄바꿈, *텍스트* = 금색 강조';
 const IMAGE_HINT = '외부 링크(유튜브·인스타 이미지 주소)는 쓸 수 없고 업로드한 이미지만 표시됩니다.';
-const VIDEO_HINT = '5MB 이하 H.264 mp4 권장 — 큰 영상은 모바일 데이터 소모가 큽니다.';
+const VIDEO_HINT = '4MB 이하 H.264 mp4 권장 — 업로드 한도에 걸릴 수 있고, 큰 영상은 모바일 데이터 소모가 큽니다.';
 const BLANK_HINT = '비워 두면 기본 문구가 나옵니다.';
 
 const SECTIONS: { key: HomeMainSectionKey; title: string }[] = [
@@ -315,6 +315,7 @@ function SectionCard({
   desc,
   stored,
   saving,
+  busy,
   onSave,
   onReset,
   children,
@@ -324,6 +325,8 @@ function SectionCard({
   desc?: string;
   stored: boolean;
   saving: boolean;
+  /** 다른 섹션 저장 중이거나 첫 로드 실패 — 동시 저장이 서로를 덮어쓰지 않도록 버튼을 막는다. */
+  busy: boolean;
   onSave: () => void;
   onReset: () => void;
   children: React.ReactNode;
@@ -348,12 +351,12 @@ function SectionCard({
         <button
           type="button"
           onClick={onReset}
-          disabled={saving}
+          disabled={busy}
           className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40"
         >
           기본값으로 되돌리기
         </button>
-        <button type="button" onClick={onSave} disabled={saving} className="adm-btn-primary px-6 disabled:opacity-50">
+        <button type="button" onClick={onSave} disabled={busy} className="adm-btn-primary px-6 disabled:opacity-50">
           {saving ? '저장 중...' : '저장'}
         </button>
       </div>
@@ -370,6 +373,8 @@ export default function AdminHomeMainPage() {
   // 서버에 저장돼 있는 homeMain 원본 — 섹션별 '저장한 값 / 기본값' 표시에 쓴다.
   const [stored, setStored] = useState<Stored>({});
   const [hm, setHm] = useState<HomeMain>(() => resolveHomeMain(null));
+  // 첫 로드가 실패하면 화면의 기본값이 저장값처럼 보여, 저장 시 실제 저장값을 덮어쓸 수 있다 — 저장을 막는다.
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -382,13 +387,15 @@ export default function AdminHomeMainPage() {
       try {
         const res = await fetch('/api/admin/pages', { cache: 'no-store' });
         if (res.status === 404) return;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as { pages?: { homeMain?: unknown } };
         const raw = data.pages?.homeMain;
         setStored(isRecord(raw) ? raw : {});
         setHm(resolveHomeMain(raw));
       } catch (err) {
         console.error('Failed to fetch homeMain:', err);
-        setToast({ msg: '데이터 로드 실패', type: 'error' });
+        setLoadFailed(true);
+        setToast({ msg: '데이터 로드 실패 — 새로고침 전까지 저장할 수 없습니다', type: 'error' });
       } finally {
         setLoading(false);
       }
@@ -458,6 +465,7 @@ export default function AdminHomeMainPage() {
       desc,
       stored: key in stored,
       saving: saving === key,
+      busy: saving !== null || loadFailed,
       onSave: () => saveSection(key),
       onReset: () => void resetSection(key, title),
     };

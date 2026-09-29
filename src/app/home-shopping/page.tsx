@@ -89,7 +89,7 @@ const DEFAULT_NS_HERO_FALLBACK: NsHeroFallback = {
 export const metadata: Metadata = {
   title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
   description:
-    'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기. 2회 연속 매진 소식과 다음 편성 안내를 확인하세요.',
+    'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기. 매진 소식과 다음 편성 안내를 확인하세요.',
   keywords: [
     '침향 홈쇼핑', '침향 TV 홈쇼핑', '대라천 홈쇼핑', 'ZOEL LIFE 홈쇼핑', '조엘라이프 홈쇼핑',
     'NS홈쇼핑 침향', 'NS Shop+ 침향',
@@ -103,7 +103,7 @@ export const metadata: Metadata = {
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     title: 'On-Air 특별관 — TV 홈쇼핑 편성표·다시보기',
-    description: 'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기. 2회 연속 매진.',
+    description: 'NS홈쇼핑 대라천 ‘참’침향오일 방송 편성표·다시보기와 매진 소식.',
     images: ['/opengraph-image.jpg'],
   },
   twitter: {

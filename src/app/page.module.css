@@ -85,6 +85,9 @@
   align-items: center;
   height: 24px;
   padding: 0 10px;
+  /* '25년 이상'처럼 길어진 칩이 좁은 폰에서 두 줄로 깨지지 않게 */
+  white-space: nowrap;
+  flex-shrink: 0;
   border-radius: 999px;
   background: linear-gradient(to top, #f3dcb4 20%, #fdf8ef 80%);
   color: #141414;

@@ -361,8 +361,8 @@ function resolveYoutube(v: unknown): SnsYoutubeChannel {
     if (!isRecord(item)) continue;
     const id = typeof item.id === 'string' ? item.id.trim() : '';
     const thumbnail = typeof item.thumbnail === 'string' ? item.thumbnail.trim() : '';
-    // 썸네일이 외부 CDN(i.ytimg.com 등)이면 그 영상은 싣지 않는다.
-    if (!isYoutubeId(id) || !isOwnAsset(thumbnail)) continue;
+    // 썸네일이 외부 CDN(i.ytimg.com 등)이면 그 영상은 싣지 않는다. 같은 영상이 두 번이면 앞의 것만(React key 중복 방지).
+    if (!isYoutubeId(id) || !isOwnAsset(thumbnail) || videos.some((x) => x.id === id)) continue;
     videos.push({
       id,
       title: text(item.title, ''),
@@ -387,7 +387,7 @@ function resolveInstagram(v: unknown): SnsInstagramAccount {
     if (!isRecord(item)) continue;
     const permalink = typeof item.permalink === 'string' ? item.permalink.trim() : '';
     const image = typeof item.image === 'string' ? item.image.trim() : '';
-    if (!isInstagramPermalink(permalink) || !isOwnAsset(image)) continue;
+    if (!isInstagramPermalink(permalink) || !isOwnAsset(image) || posts.some((x) => x.permalink === permalink)) continue;
     posts.push({
       id: text(item.id, instagramCode(permalink)),
       permalink,
