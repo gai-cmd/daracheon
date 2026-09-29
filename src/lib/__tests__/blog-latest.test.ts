@@ -21,6 +21,11 @@ vi.mock('@/lib/db', () => ({
   writeDataMerged: vi.fn(),
 }));
 
+// unstable_cache 는 Next 런타임(incrementalCache) 밖에서 동작하지 않으므로 통과 함수로 대신한다.
+vi.mock('next/cache', () => ({
+  unstable_cache: <T extends (...args: never[]) => unknown>(fn: T) => fn,
+}));
+
 vi.mock('postgres', () => ({
   default: () =>
     (strings: TemplateStringsArray, ...values: unknown[]) => {

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { readData } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
-import { readPosts, readPostsForWrite, writePosts } from '@/lib/blog/store';
+import { BLOG_LATEST_TAG, readPosts, readPostsForWrite, writePosts } from '@/lib/blog/store';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import { type BlogPost, type BlogPostStatus } from '@/types/blog';
@@ -19,6 +19,8 @@ function revalidateBlog(slug?: string, prevSlug?: string, categoryId?: string) {
   if (prevSlug && prevSlug !== slug) revalidatePath(`/blog/${prevSlug}`, 'layout');
   if (categoryId) revalidatePath(`/blog/category/${categoryId}`, 'layout');
   revalidatePath('/', 'layout');
+  // 메인 블로그 타일 캐시(5분)도 즉시 비운다.
+  revalidateTag(BLOG_LATEST_TAG);
 }
 
 function normalizeStatus(raw: unknown): BlogPostStatus {

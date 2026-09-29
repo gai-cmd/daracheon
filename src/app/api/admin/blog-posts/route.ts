@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { readData } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
 import {
+  BLOG_LATEST_TAG,
   readPosts,
   readPostsForWrite,
   readCategoriesForWrite,
@@ -30,6 +31,8 @@ function revalidateBlog(slug?: string, categoryId?: string) {
   if (slug) revalidatePath(`/blog/${slug}`, 'layout');
   if (categoryId) revalidatePath(`/blog/category/${categoryId}`, 'layout');
   revalidatePath('/', 'layout');
+  // 메인 블로그 타일 캐시(5분)도 즉시 비운다.
+  revalidateTag(BLOG_LATEST_TAG);
 }
 
 function normalizeStatus(raw: unknown): BlogPostStatus {

@@ -1,4 +1,5 @@
 import postgres from 'postgres';
+import { unstable_cache } from 'next/cache';
 import {
   BLOG_CATEGORIES_FILE,
   BLOG_POSTS_FILE,
@@ -253,6 +254,20 @@ async function readLatestPublishedPosts(limit: number): Promise<BlogPostSummary[
 }
 
 /**
+ * 메인 블로그 타일 캐시 태그 — 어드민 글 저장·삭제 시 revalidateTag 로 즉시 비운다.
+ * 캐시가 없으면 콜드 연결(서울 함수 → 싱가포르 Neon)이 2초를 넘겨 타일이 빠지는 일이
+ * 매 콜드 요청마다 생긴다(2026-09-29 로컬 첫 요청에서 재현).
+ */
+export const BLOG_LATEST_TAG = 'blog:latest';
+
+// 실패(throw)는 캐시되지 않고, 제한 시간에 걸려도 조회 자체는 끝까지 돌아 다음 요청용 캐시를 채운다.
+const readLatestPublishedPostsCached = unstable_cache(
+  (limit: number) => readLatestPublishedPosts(limit),
+  ['blog-latest-published'],
+  { revalidate: 300, tags: [BLOG_LATEST_TAG] },
+);
+
+/**
  * 공개 메인 블로그 타일 — 발행된 최신 글 limit 개.
  * 절대 던지지 않고, timeoutMs 안에 답이 없으면 [] 로 끝낸다(느린 Neon 이 메인을 붙잡지 않게).
  */
@@ -265,7 +280,7 @@ export async function readLatestPublishedPostsSafe(limit = 3, timeoutMs = 2000):
     }, timeoutMs);
   });
   try {
-    return await Promise.race([readLatestPublishedPosts(limit), timeout]);
+    return await Promise.race([readLatestPublishedPostsCached(limit), timeout]);
   } catch (err) {
     console.error('[blog:store] latest posts read failed on public path', err);
     return [];
