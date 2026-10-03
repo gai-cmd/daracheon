@@ -7,7 +7,7 @@ import { readDataSafe, readDataUncached } from '@/lib/db';
 import { formatPrice, parseDisplayPrice } from '@/lib/utils';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
-import { getGuide } from '@/data/productGuides';
+import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
@@ -70,9 +70,11 @@ export default async function ProductDetailPage(
 ) {
   const { slug } = await params;
   // products 는 uncached — 어드민 토글이 즉시 반영되도록.
-  const [products, reviews] = await Promise.all([
+  const [products, reviews, storedGuides] = await Promise.all([
     readDataUncached<Product>('products'),
     readDataSafe<ReviewRecord>('reviews'),
+    // 제품상세(포장 표시사항) — /guide 와 같은 원천: 어드민 저장값(blob) 우선, 없으면 코드 기본값.
+    readDataSafe<ProductGuide>('product-guides'),
   ]);
   const product = products.find((p) => p.slug === slug);
   if (!product) notFound();
@@ -89,6 +91,24 @@ export default async function ProductDetailPage(
     .slice(0, 3);
 
   const specEntries = Object.entries(product.specs ?? {});
+
+  // 포장 표시사항을 상세 본문에도 싣는다 — 종전엔 /guide 로 가는 버튼뿐이라 제품 상세 본문이
+  // 450~750자로 얇았다. 표시사항 "그대로"라 효능 문구가 섞이지 않는다.
+  const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => g.slug === product.slug);
+  const countryOfOrigin = guide?.sections
+    .flatMap((sec) => sec.body)
+    .map((line) => /^제조국\s*[:：]\s*(.+)$/.exec(line.trim())?.[1]?.trim())
+    .find(Boolean);
+
+  // 검색어 주제 페이지로 가는 내부 링크 — 오일 제품은 '침향 오일' 허브를 맨 앞에.
+  const topicLinks = [
+    ...(product.category === '오일'
+      ? [{ href: '/agarwood-oil', label: '침향 오일 고르는 법', desc: '72시간 증류 공정과 좋은 침향 오일의 기준' }]
+      : []),
+    { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+    { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법', desc: '학명·산지·증빙 서류로 확인하는 법' },
+    { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌으로 보는 침향' },
+  ];
 
   // Product JSON-LD (Google 제품 리치 결과 + AI Overview 엔티티 매칭)
   // AggregateRating / Review 는 reviews.json 에서 동일 제품 slug·id 로 필터.
@@ -146,6 +166,7 @@ export default async function ProductDetailPage(
     brand: { '@id': 'https://zoellife.com/#brand' },
     manufacturer: { '@id': 'https://zoellife.com/#organization' },
     category: product.category,
+    ...(countryOfOrigin ? { countryOfOrigin: { '@type': 'Country', name: countryOfOrigin } } : {}),
     isPartOf: { '@id': 'https://zoellife.com/#website' },
     ...(hasPrice
       ? {
@@ -266,7 +287,7 @@ export default async function ProductDetailPage(
               >
                 네이버 스마트 스토어 →
               </a>
-              {getGuide(product.slug) && (
+              {guide && (
                 <Link href={`/guide#${product.slug}`} className={styles.btnOutline}>
                   📖 복용법·사용설명서
                 </Link>
@@ -295,6 +316,50 @@ export default async function ProductDetailPage(
             </div>
           </section>
         )}
+
+        {/* 섭취·보관 안내 — 포장 표시사항(제품상세) 원문 */}
+        {guide && guide.sections.length > 0 && (
+          <section className={styles.guide} aria-labelledby="product-guide-title">
+            <div className={styles.specsHead}>Guide · 섭취·보관 안내</div>
+            <h2 id="product-guide-title">
+              {product.name} <em>섭취·보관 안내</em>
+            </h2>
+            {guide.tagline && <p className={styles.guideTagline}>{guide.tagline}</p>}
+            <div className={styles.guideGrid}>
+              {guide.sections.map((sec) => (
+                <div key={sec.title} className={styles.guideCard}>
+                  <h3 className={styles.guideTitle}>{sec.title}</h3>
+                  <ul className={styles.guideList}>
+                    {sec.body.map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className={styles.guideNote}>
+              포장의 식품 한글표시사항을 옮긴 내용입니다. 큰 글씨로 보기:{' '}
+              <Link href={`/guide#${product.slug}`}>복용 가이드</Link>
+            </p>
+          </section>
+        )}
+
+        {/* 함께 읽어보세요 — 주제 허브 내부 링크 */}
+        <section className={styles.topics} aria-labelledby="product-topics-title">
+          <h2 id="product-topics-title">
+            함께 <em>읽어보세요</em>
+          </h2>
+          <ul className={styles.topicGrid}>
+            {topicLinks.map((t) => (
+              <li key={t.href}>
+                <Link href={t.href} className={styles.topicCard}>
+                  <span className={styles.topicLabel}>{t.label} →</span>
+                  <span className={styles.topicDesc}>{t.desc}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         {/* Related */}
         {related.length > 0 && (
