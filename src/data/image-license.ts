@@ -38,8 +38,7 @@ export const IMAGE_LICENSE_CONTENT = `# 이미지 이용 안내
 
 허가가 필요한 이용은 아래로 문의해 주십시오. 사용 목적, 매체, 게재 기간, 대상 이미지 URL 을 함께 보내주시면 검토 후 회신드립니다.
 
-- 이메일: **contact@daracheon.com**
-- 문의 양식: [고객 지원 · 문의하기](/company#contact)
+- 문의하기: [회사소개 · 문의하기](/company#contact)
 
 ## 제5조 (면책)
 

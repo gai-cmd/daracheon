@@ -6,7 +6,7 @@ export const company = {
   sloganEn: 'Nature Truth Value',
   description:
     'ZOEL LIFE(조엘라이프)는 베트남 직영 농장에서 25년간 연구한 최고급 침향(Agarwood) 제품을 제공합니다.',
-  url: 'https://www.daracheon.com',
+  url: 'https://zoellife.com',
   email: 'bj0202@gmail.com',
   phone: '070-4140-4086',
   ceo: '박병주',

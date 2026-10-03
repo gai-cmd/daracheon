@@ -241,9 +241,11 @@ const siteJsonLd = {
         'https://www.instagram.com/zoellife_official/',
         'https://www.youtube.com/@ZoelLife_official_00',
       ],
+      // 공개 이메일 없음 — 문의는 /company 문의하기 폼으로 받는다(접수 시 슬랙 공유).
+      // (종전 contact@daracheon.com 은 도메인이 존재하지 않아 수신 불가였다.)
       contactPoint: {
         '@type': 'ContactPoint',
-        email: 'contact@daracheon.com',
+        url: `${SITE_URL}/company#contact`,
         telephone: '+82-70-4140-4086',
         contactType: 'customer service',
         availableLanguage: ['Korean', 'Japanese', 'English'],

@@ -65,7 +65,7 @@ const companyJsonLd = {
       logo: 'https://zoellife.com/images/ZOEL-LIFE-logo.png',
       image: 'https://zoellife.com/opengraph-image.jpg',
       telephone: '+82-2-858-2026',
-      email: 'contact@daracheon.com',
+      // 공개 이메일 없음 — 문의는 이 페이지의 문의하기 폼(#contact)으로 받는다.
       founder: {
         '@type': 'Person',
         name: '박병주',
