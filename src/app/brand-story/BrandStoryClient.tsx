@@ -394,8 +394,8 @@ export default function BrandStoryClient({ data, showroom }: Props) {
       />
 
       {/* TAB 0 — Brand Story + History (통합) */}
-      {activeTab === 0 && (
-        <section className={styles.chapter}>
+      <div role="tabpanel" id={`tabpanel-0`} hidden={activeTab !== 0}>
+<section className={styles.chapter}>
           <div className={styles.wrap}>
             {/* 01 — 브랜드 스토리 */}
             <div className={styles.chapterGrid}>
@@ -834,15 +834,15 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             )}
           </div>
         </section>
-      )}
+      </div>
 
       {activePromoVideo && (
         <PromoVideoModal item={activePromoVideo} onClose={() => setActivePromoVideo(null)} />
       )}
 
       {/* TAB 1 — Certifications */}
-      {activeTab === 1 && (
-        <section className={`${styles.chapter} ${styles.chapterAlt}`}>
+      <div role="tabpanel" id={`tabpanel-1`} hidden={activeTab !== 1}>
+<section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1154,11 +1154,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             </div>
           </div>
         </section>
-      )}
+      </div>
 
       {/* TAB 2 — Process */}
-      {activeTab === 2 && (
-        <section className={`${styles.chapter} ${styles.chapterAlt}`}>
+      <div role="tabpanel" id={`tabpanel-2`} hidden={activeTab !== 2}>
+<section className={`${styles.chapter} ${styles.chapterAlt}`}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1289,11 +1289,11 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             ))}
           </div>
         </section>
-      )}
+      </div>
 
       {/* TAB 3 — 복용 및 사용법 (2026-08-16 /about-agarwood 에서 이동) */}
-      {activeTab === 3 && (
-        <section className={styles.chapter}>
+      <div role="tabpanel" id={`tabpanel-3`} hidden={activeTab !== 3}>
+<section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div>
@@ -1382,7 +1382,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
             </div>
           </div>
         </section>
-      )}
+      </div>
 
     </div>
   );

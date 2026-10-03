@@ -108,8 +108,6 @@ const DEFAULT_KEYWORDS = [
 // 정적 OG 이미지 — public/opengraph-image.jpg (1200x630, 단일 진실 공급원).
 // 어드민 SEO ogImage 입력은 호환을 위해 인터페이스만 유지.
 const SITE_OG_IMAGE_PATH = '/opengraph-image.jpg';
-const SITE_OG_IMAGE_ALT =
-  '대라천 ZOEL LIFE — 베트남 직영 25년 이상, 학명 Aquilaria Agallocha Roxburgh 정품 침향';
 const SITE_TW_IMAGE_PATH = '/twitter-image.jpg';
 
 interface SeoData { metaTitle?: string; metaDescription?: string; keywords?: string; ogImage?: string }
@@ -154,7 +152,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     // 파비콘 / apple-touch-icon 은 src/app/icon.png + apple-icon.png 로
     // Next.js 가 자동 생성. 매뉴얼 선언 제거 — 충돌 방지.
-    title: { default: title, template: "%s | 조엘라이프 대라천 '참'침향" },
+    title: { default: title, template: "%s | 대라천 '참'침향" },
     description,
     keywords,
     authors: [{ name: '대라천 ZOEL LIFE (Daeracheon)', url: SITE_URL }],
@@ -167,7 +165,6 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: 'website',
       locale: 'ko_KR',
-      alternateLocale: ['en_US', 'ja_JP', 'vi_VN'],
       url: SITE_URL,
       siteName: '대라천 ZOEL LIFE',
       title: ogTitle,
@@ -216,7 +213,7 @@ export const viewport: Viewport = {
   colorScheme: 'light dark',
 };
 
-// @graph 로 Organization + Brand + WebSite 를 한번에 선언.
+// @graph 로 사이트 공통 엔티티(Organization + Brand + WebSite)만 선언 — 모든 페이지 공통.
 // Google 의 Knowledge Panel / Sitelinks Searchbox / Brand Card 후보로 진입.
 const siteJsonLd = {
   '@context': 'https://schema.org',
@@ -279,95 +276,9 @@ const siteJsonLd = {
         'query-input': 'required name=search_term_string',
       },
     },
-    // 홈을 단일 WebPage 엔티티로 선언 — Google 의 mainEntityOfPage
-    // 및 AI 엔진의 페이지·사이트 매핑에 사용.
-    {
-      '@type': 'WebPage',
-      '@id': `${SITE_URL}/#webpage`,
-      url: SITE_URL,
-      name: '대라천 ZOEL LIFE — 진짜 침향',
-      inLanguage: 'ko-KR',
-      isPartOf: { '@id': `${SITE_URL}/#website` },
-      about: { '@id': `${SITE_URL}/#brand` },
-      primaryImageOfPage: { '@id': `${SITE_URL}/#primary-image` },
-      breadcrumb: { '@id': `${SITE_URL}/#breadcrumb-home` },
-    },
-    imageObject({
-      id: `${SITE_URL}/#primary-image`,
-      url: `${SITE_URL}${SITE_OG_IMAGE_PATH}`,
-      caption: SITE_OG_IMAGE_ALT,
-    }),
-    {
-      '@type': 'BreadcrumbList',
-      '@id': `${SITE_URL}/#breadcrumb-home`,
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL },
-      ],
-    },
-    // AI Overview / Perplexity / ChatGPT Search 가 직접 인용하기 좋은
-    // 답변형 FAQ. 홈에 본문은 없지만 schema 로 토픽 권위를 선언.
-    {
-      '@type': 'FAQPage',
-      '@id': `${SITE_URL}/#faq`,
-      inLanguage: 'ko-KR',
-      isPartOf: { '@id': `${SITE_URL}/#website` },
-      about: { '@id': `${SITE_URL}/#brand` },
-      // 음성 어시스턴트·AI 답변 엔진이 단답 인용할 후보 — 모든 FAQ 본문.
-      speakable: {
-        '@type': 'SpeakableSpecification',
-        cssSelector: ['[itemprop=acceptedAnswer]'],
-      },
-      mainEntity: [
-        {
-          '@type': 'Question',
-          name: '식약처 고시 침향의 학명은 무엇인가요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '식약처 고시 대한민국약전외한약(생약)규격집에 등록된 침향의 학명은 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그, AAR)입니다. 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있으며, 규격집(한약재)에는 AAR만 올라 있습니다.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '대라천 ZOEL LIFE 침향은 어디에서 재배되나요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장에서 재배합니다. 전체 200ha 부지에서 400만 그루의 Aquilaria Agallocha Roxburgh 침향나무를 25년 이상 직접 관리하며, 원산지부터 제품까지 전 과정을 자체 운영합니다.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '진짜 침향과 가짜 침향은 어떻게 구별하나요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '첫째 학명(Aquilaria Agallocha Roxburgh) 표기 확인, 둘째 원산지 증명, 셋째 CITES 인증, 넷째 유전자 검사와 정식 수출입 확인. 진짜 침향일수록 이러한 증빙문서와 이력을 숨기지 않습니다.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '침향의 대표 효능은 무엇인가요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '동의보감 등 한의학 문헌은 침향을 기를 내리고 속을 따뜻하게 하며 마음을 안정시키는 약재로 기록합니다. 현대 연구는 침향의 향 성분(아가로스피롤 등)과 생리활성을 실험실·동물 단계에서 다루고 있으며, 사람 대상 임상 근거는 아직 제한적입니다.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '대라천 침향은 어떤 인증을 보유하고 있나요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '원산지 증명, CITES, 유전자 검사, ORGANIC(유기농), 수지 유도제 특허(#12835), HACCP, GMP, OCOP, ISO, 미국 FDA 등록 등 12건 이상의 인증·특허를 보유하고 있으며, TSL(ISO/IEC 17025:2017) 안전성 시험에서 중금속 8종 불검출 판정을 받았습니다.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: '침향은 어떻게 복용하나요?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: '대라천 ZOEL LIFE 는 캡슐, 침향단(환), 침향수, 침향차, 침향 오일, 선향(스틱) 형태로 제공됩니다. 캡슐과 환은 식후 1정/1환을 물과 함께, 차·수는 1일 1~2회 따뜻한 물에 우려 음용합니다. 자세한 복용법은 제품 패키지의 표기를 따르세요.',
-          },
-        },
-      ],
-    },
+    // 홈 전용 노드(WebPage·홈 Breadcrumb·FAQPage)는 src/app/page.tsx 로 옮겼다.
+    // 여기 두면 모든 페이지에 홈 WebPage/Breadcrumb/FAQPage 가 중복 삽입돼
+    // (FAQPage·BreadcrumbList 2개씩) 구조화 데이터 오류와 '화면에 없는 FAQ' 마크업이 된다.
   ],
 };
 

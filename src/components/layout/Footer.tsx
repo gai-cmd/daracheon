@@ -111,6 +111,10 @@ export default function Footer({ socialLinks = [], company }: Props) {
         <div className={styles.bottom}>
           <span>© 2026 ZOEL LIFE Co., Ltd. All rights reserved.</span>
           <div className={styles.bottomLinks}>
+            {/* 주제 허브 — 모든 페이지에서 핵심 검색어 페이지로 가는 내부 링크 */}
+            <Link href="/about-agarwood">침향이란</Link>
+            <Link href="/vietnam-agarwood">베트남 침향</Link>
+            <Link href="/agarwood-oil">침향 오일</Link>
             <Link href="/blog">블로그</Link>
             <Link href="/privacy">개인정보처리방침</Link>
             <Link href="/terms">이용약관</Link>

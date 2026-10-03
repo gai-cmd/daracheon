@@ -30,6 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified, changeFrequency: 'weekly', priority: 1.0, alternates: withAlternates(baseUrl) },
     { url: `${baseUrl}/about-agarwood`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/about-agarwood`) },
+    // 핵심 검색어 주제 허브 — '베트남 침향' · '침향 오일'
+    { url: `${baseUrl}/vietnam-agarwood`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/vietnam-agarwood`) },
+    { url: `${baseUrl}/agarwood-oil`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-oil`) },
     { url: `${baseUrl}/brand-story`, lastModified, changeFrequency: 'monthly', priority: 0.8, alternates: withAlternates(`${baseUrl}/brand-story`) },
     { url: `${baseUrl}/showroom`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/showroom`) },
     { url: `${baseUrl}/products`, lastModified, changeFrequency: 'weekly', priority: 0.9, alternates: withAlternates(`${baseUrl}/products`) },

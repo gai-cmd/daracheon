@@ -99,6 +99,12 @@ export async function GET() {
   lines.push('### Q. 보유 인증은?');
   lines.push('A. 원산지 증명, CITES, 유전자 검사, ORGANIC, 수지 유도제 특허(#12835), HACCP, GMP, OCOP, ISO, 미국 FDA 등록 등 12건 이상. TSL(ISO/IEC 17025:2017) 중금속 8종 불검출.');
   lines.push('');
+  lines.push('### Q. 베트남 침향이 좋은 침향으로 꼽히는 이유는?');
+  lines.push('A. 교주이물지·남방초목상 등 침향을 기록한 옛 문헌이 산지를 교주·교지(지금의 베트남)로 적었고, 송사·원사·향승 등 역대 기록에서도 점성·안남 같은 베트남 지역이 주요 산지로 반복해 등장한다. 자세히: ' + `${SITE_URL}/vietnam-agarwood`);
+  lines.push('');
+  lines.push('### Q. 침향 오일은 어떻게 만드는가?');
+  lines.push('A. 수지가 앉은 침향 원목을 세척·절단·건조·분쇄한 뒤 72시간 고온(증기) 증류해 얻는다. 대라천 에센셜 오일은 25년산 Aquilaria Agallocha Roxburgh 원목 약 400kg에서 20~25cc만 추출. 자세히: ' + `${SITE_URL}/agarwood-oil`);
+  lines.push('');
   lines.push('### Q. 제품 라인업은?');
   lines.push('A. 침향 오일 / 침향 캡슐 / 침향단(환) / 선향(스틱) / 침향수 / 침향차 / 침향 보석함·선물세트.');
   lines.push('');
@@ -116,6 +122,8 @@ export async function GET() {
   lines.push('## 페이지');
   lines.push(`- 홈: ${SITE_URL}`);
   lines.push(`- 침향 이야기: ${SITE_URL}/about-agarwood`);
+  lines.push(`- 베트남 침향 (산지 문헌·학명·5개 직영 농장): ${SITE_URL}/vietnam-agarwood`);
+  lines.push(`- 침향 오일 (정의·72시간 증류 공정·고르는 법·사용법): ${SITE_URL}/agarwood-oil`);
   lines.push(`- 브랜드 스토리: ${SITE_URL}/brand-story`);
   lines.push(`- 제품 소개: ${SITE_URL}/products`);
   lines.push(`- 회사소개: ${SITE_URL}/company`);

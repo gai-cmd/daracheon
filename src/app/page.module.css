@@ -1289,6 +1289,104 @@ a.tile:focus-visible {
   color: #8a8a8a;
 }
 
+/* ───────── 자주 묻는 질문 (홈 하단 · FAQPage 구조화 데이터와 같은 문구) ─────────
+   전역 dark-theme 토큰 리맵 함정을 피하려 색은 고정 hex 로 둔다. */
+.faq {
+  margin: 110px 0 0;
+  color: #f5f3ef;
+}
+.faqList {
+  display: grid;
+  gap: 10px;
+}
+.faqItem {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #161616;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.faqItem[open] {
+  border-color: rgba(212, 168, 67, 0.34);
+  background: linear-gradient(180deg, rgba(212, 168, 67, 0.06), rgba(22, 22, 22, 0) 60%), #161616;
+}
+.faqSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 24px;
+  cursor: pointer;
+  list-style: none;
+}
+.faqSummary::-webkit-details-marker { display: none; }
+.faqSummary:focus-visible {
+  outline: 2px solid #d4a843;
+  outline-offset: 2px;
+  border-radius: 18px;
+}
+.faqQ {
+  margin: 0;
+  font-family: var(--font-serif), 'Noto Serif KR', serif;
+  font-size: clamp(16px, 1.5vw, 19px);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  word-break: keep-all;
+  color: #f5f3ef;
+}
+.faqIcon {
+  position: relative;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+.faqIcon::before,
+.faqIcon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: #d4a843;
+  transition: transform 0.3s var(--ease);
+}
+.faqIcon::after { transform: rotate(90deg); }
+.faqItem[open] .faqIcon::after { transform: rotate(0deg); }
+.faqA {
+  margin: 0;
+  padding: 0 24px 22px;
+  max-width: 62em;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.9;
+  word-break: keep-all;
+  color: #c9c5bd;
+}
+.faqTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+.faqTopic {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 168, 67, 0.34);
+  font-size: 14px;
+  color: #f3dcb4;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.faqTopic:hover {
+  background: rgba(212, 168, 67, 0.12);
+  color: #f5f3ef;
+}
+
 /* ───────── 마무리 띠 ───────── */
 .closing {
   display: flex;
@@ -1403,6 +1501,9 @@ a.tile:focus-visible {
 
 /* ───────── 모바일 (≤640px, 1열) ───────── */
 @media (max-width: 640px) {
+  .faq { margin-top: 72px; }
+  .faqSummary { padding: 16px 18px; }
+  .faqA { padding: 0 18px 18px; font-size: 14px; }
   .inner { padding: 0 16px; }
   .intro { padding: calc(var(--nav-bar-h, 72px) + 44px) 0 44px; }
   .subline { font-size: 15px; }

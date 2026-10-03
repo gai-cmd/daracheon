@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import LegalPage from '@/components/ui/LegalPage';
 import { DEFAULT_TERMS, type LegalDoc } from '@/data/legal';
+import { pageOpenGraph } from '@/lib/seo/og';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
     '조엘라이프 주식회사(대라천 ZOEL LIFE)가 운영하는 zoellife.com 의 이용약관. 서비스 이용 조건, 이용자 의무, 회사의 의무, 면책 조항 등을 안내합니다.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://zoellife.com/terms' },
+  openGraph: pageOpenGraph({
+    path: '/terms',
+    title: '이용약관 | 대라천 ZOEL LIFE',
+    description: '조엘라이프 주식회사(대라천 ZOEL LIFE)가 운영하는 zoellife.com 의 이용약관.',
+  }),
 };
 
 interface PagesData {

@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import AboutAgarwoodClient from './AboutAgarwoodClient';
+import FaqSection from '@/components/seo/FaqSection';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
+import { faqPageNode, type FaqEntry } from '@/lib/seo/home-faq';
 
 // Admin 저장 / 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
 // readSingleUncached 는 unstable_cache 우회하므로 blob 1 회 read 비용은
@@ -9,7 +12,8 @@ import AboutAgarwoodClient from './AboutAgarwoodClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
+  // '침향' 단독 검색어 허브 — 제목 첫머리에 검색어, 정의·학명·산지·구별법을 한 줄로 (템플릿 포함 37자).
+  title: '침향이란? 학명·산지·진짜 침향 구별법 총정리',
   description:
     '식약처 고시 학명 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
@@ -77,23 +81,50 @@ const breadcrumbJsonLd = {
   ],
 };
 
+// '침향' 허브 FAQ — 화면 하단 FAQ 섹션과 FAQPage 구조화 데이터의 단일 원천.
+// (종전 JSON-LD 전용 FAQ 는 화면에 없었고, 효능 답변에 질병 예방 단정이 섞여 있어
+//  홈 FAQ(bf8dce8)와 같은 전통 문헌 중심 문구로 맞췄다.)
+const ABOUT_FAQ: FaqEntry[] = [
+  {
+    q: '침향이란 무엇인가요?',
+    a: '침향(沈香)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지가 수십 년간 나무 속에 쌓여 굳은 향목입니다. 대한민국약전외한약(생약)규격집은 "침향나무의 수지가 침착된 수간목"으로 정의합니다.',
+  },
+  {
+    q: '침향은 어떻게 만들어지나요?',
+    a: '벌레·바람·낙뢰 같은 외부 충격으로 침향나무에 상처가 생기고, 그 부위로 곰팡이균이 들어가면 나무가 스스로를 지키려 수지를 분비합니다. 이 수지가 수십 년에 걸쳐 축적·숙성되어 침향이 됩니다.',
+  },
+  {
+    q: '공식 침향의 학명은 무엇인가요?',
+    a: '대한민국약전외한약(생약)규격집에 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)이며, 식약처 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있습니다.',
+  },
+  {
+    q: '침향의 주산지는 어디인가요?',
+    a: '교주이물지·남방초목상 등 침향을 기록한 옛 문헌은 산지를 교주·교지, 곧 지금의 베트남으로 적었고, 송사·원사·향승 등 역대 기록에서도 점성·안남 같은 베트남 지역이 반복해 등장합니다.',
+  },
+  {
+    q: '진짜 침향은 어떻게 구별하나요?',
+    a: '학명·품종(Aquilaria Agallocha Roxburgh), 원산지, 증빙 서류 세 가지로 확인합니다. 원산지 증명서, CITES 인증서, 정식 수입 서류, 유전자 검사 결과를 공개하는지 살펴보세요.',
+  },
+  {
+    q: '침향의 대표적인 효능은 무엇인가요?',
+    a: '동의보감 등 한의학 문헌은 침향을 기를 내리고 속을 따뜻하게 하며 마음을 안정시키는 약재로 기록합니다. 현대 연구는 침향의 향 성분(아가로스피롤 등)과 생리활성을 실험실·동물 단계에서 다루고 있으며, 사람 대상 임상 근거는 아직 제한적입니다.',
+  },
+];
+
 const faqJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  '@id': `${SITE_URL}/about-agarwood#faq`,
-  inLanguage: 'ko-KR',
-  isPartOf: { '@id': `${SITE_URL}/#website` },
-  about: { '@id': `${SITE_URL}/#brand` },
-  speakable: {
-    '@type': 'SpeakableSpecification',
-    cssSelector: ['[itemprop=acceptedAnswer]'],
-  },
-  mainEntity: [
-    { '@type': 'Question', name: '침향이란 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '침향(沈香)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지가 수십 년간 나무 속에 쌓여 굳은 향목입니다.' } },
-    { '@type': 'Question', name: '공식 침향의 학명은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '대한민국약전외한약(생약)규격집에 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)이며, 식약처 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있습니다.' } },
-    { '@type': 'Question', name: '침향의 대표적인 효능은 무엇인가요?', acceptedAnswer: { '@type': 'Answer', text: '기혈 순환, 원기 회복, 신경 안정 및 숙면 유도, 항염 및 혈관 건강 개선, 뇌 질환 예방, 소화 기능 향상 등이 주요 효능으로 알려져 있습니다.' } },
-  ],
+  ...faqPageNode(`${SITE_URL}/about-agarwood#faq`, ABOUT_FAQ, {
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#brand` },
+  }),
 };
+
+const TOPIC_LINKS: TopicLink[] = [
+  { href: '/vietnam-agarwood', label: '베트남 침향', desc: '천 년의 문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+  { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
+  { href: '/process', label: '침향 농장·생산 공정', desc: '묘목부터 증류까지 베트남 현장 기록' },
+  { href: '/products', label: '침향 제품', desc: '침향 오일·침향단·침향수·침향차 라인업' },
+];
 
 export interface FormationStep { step: string; title: string; description: string; image?: string }
 export interface SpecialReason { title: string; description: string; image?: string }
@@ -334,6 +365,8 @@ export default async function AboutAgarwoodPage() {
       {scholarlyJsonLd && <JsonLd data={scholarlyJsonLd} />}
       {pressJsonLd && <JsonLd data={pressJsonLd} />}
       <AboutAgarwoodClient data={data} />
+      <FaqSection title="침향 자주 묻는 질문" entries={ABOUT_FAQ} />
+      <TopicLinks title="침향, 더 깊이 알아보기" links={TOPIC_LINKS} />
     </>
   );
 }

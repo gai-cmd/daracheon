@@ -135,6 +135,8 @@ export async function GET() {
   out.push('## 7. 페이지 지도');
   out.push(`- 홈: ${SITE_URL}`);
   out.push(`- 침향 정의·문헌·논문: ${SITE_URL}/about-agarwood`);
+  out.push(`- 베트남 침향 (산지 문헌·학명·5개 직영 농장): ${SITE_URL}/vietnam-agarwood`);
+  out.push(`- 침향 오일 (정의·72시간 증류 공정·고르는 법·사용법): ${SITE_URL}/agarwood-oil`);
   out.push(`- 브랜드 스토리: ${SITE_URL}/brand-story`);
   out.push(`- 6단계 검증 공정: ${SITE_URL}/process`);
   out.push(`- 제품 전체: ${SITE_URL}/products`);

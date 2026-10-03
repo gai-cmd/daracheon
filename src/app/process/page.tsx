@@ -3,11 +3,12 @@ import Image from 'next/image';
 import { readSingleSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import styles from '@/styles/zoel/story-page.module.css';
+import TopicLinks from '@/components/seo/TopicLinks';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '침향 농장·생산 공정 — 베트남 5개 농장 200ha 직영',
+  title: '베트남 침향 농장·생산 공정 — 5개 직영 농장 200ha',
   description:
     '베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 직영 농장 200ha·400만 그루. 묘목부터 증류까지 생산 현장 공개.',
   keywords: [
@@ -357,7 +358,7 @@ export default async function ProcessPage() {
                 )}
               </div>
               <div className={styles.chapterBody}>
-                <h3>{ch.title}</h3>
+                <h2>{ch.title}</h2>
                 <p>{ch.body}</p>
                 {ch.imageSrc && (
                   <figure style={{ margin: '32px 0 0' }}>
@@ -409,7 +410,7 @@ export default async function ProcessPage() {
               <div className={styles.chapterTag}>{videos.tag}</div>
             </div>
             <div className={styles.chapterBody}>
-              <h3>{videos.title}</h3>
+              <h2>{videos.title}</h2>
               <p>{videos.body}</p>
               <div
                 style={{
@@ -465,7 +466,7 @@ export default async function ProcessPage() {
               <div className={styles.chapterTag}>{certs.tag}</div>
             </div>
             <div className={styles.chapterBody}>
-              <h3>{certs.title}</h3>
+              <h2>{certs.title}</h2>
               <p>{certs.body}</p>
 
               <div
@@ -581,6 +582,15 @@ export default async function ProcessPage() {
           </div>
         </div>
       </section>
+      <TopicLinks
+        title="베트남 침향, 더 알아보기"
+        links={[
+          { href: '/vietnam-agarwood', label: '베트남 침향', desc: '천 년의 문헌이 기록한 침향의 주산지, 베트남' },
+          { href: '/agarwood-oil', label: '침향 오일', desc: '동나이 직영 공장의 72시간 증류 공정' },
+          { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌으로 보는 침향' },
+          { href: '/showroom', label: '대라천 쇼룸', desc: '베트남 동나이 직영 침향 전시장' },
+        ]}
+      />
     </>
   );
 }

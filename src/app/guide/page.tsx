@@ -5,6 +5,7 @@ import styles from '@/styles/zoel/story-page.module.css';
 import { readDataSafe } from '@/lib/db';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 import JsonLd from '@/components/ui/JsonLd';
+import { pageOpenGraph } from '@/lib/seo/og';
 
 const SITE_URL = 'https://zoellife.com';
 
@@ -13,6 +14,11 @@ export const metadata: Metadata = {
   description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
   // self-canonical — 없으면 루트 홈 canonical 을 상속해 홈 중복으로 색인된다.
   alternates: { canonical: `${SITE_URL}/guide` },
+  openGraph: pageOpenGraph({
+    path: '/guide',
+    title: '제품상세 · 복용 가이드 | 대라천 침향',
+    description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
+  }),
 };
 
 export const dynamic = 'force-dynamic';

@@ -4,11 +4,12 @@ import type { Product } from '@/data/products';
 import JsonLd from '@/components/ui/JsonLd';
 import ProductsPageClient from './ProductsPageClient';
 import styles from './page.module.css';
+import TopicLinks from '@/components/seo/TopicLinks';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: '제품 소개 — 수십 년 숙성의 고귀한 침향 제품',
+  title: '침향 제품 — 침향 오일·침향단·침향수·침향차',
   description:
     "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria Agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
   keywords: [
@@ -275,6 +276,15 @@ export default async function ProductsPage() {
       <JsonLd data={breadcrumbJsonLd} />
       {/* Hero(탭 포함) + 제품 그리드 — 클라이언트 컴포넌트 */}
       <ProductsPageClient products={products} productCategories={productCategories} hero={productsHero} />
+      <TopicLinks
+        title="침향 제품, 고르기 전에 읽어 보세요"
+        links={[
+          { href: '/agarwood-oil', label: '침향 오일 고르는 법', desc: '학명·원산지·나무 수령·함량으로 보는 좋은 침향 오일' },
+          { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+          { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법', desc: '학명·산지·증빙 서류 세 가지 확인법' },
+          { href: '/guide', label: '복용·보관 가이드', desc: '제품별 복용 방법과 주의사항' },
+        ]}
+      />
     </>
   );
 }

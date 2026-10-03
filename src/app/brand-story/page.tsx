@@ -7,7 +7,7 @@ import type { ShowroomData } from '@/app/showroom/page';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "브랜드 스토리 — 대라천 '참'침향",
+  title: '브랜드 스토리 — 베트남 직영 농장 25년 침향 여정',
   description:
     "베트남 5개 지역 200ha·400만 그루 규모의 직영 농장에서 25년 이상 가꿔온 대라천 '참'침향의 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
   keywords: [

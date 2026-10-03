@@ -3,6 +3,7 @@ import LegalPage from '@/components/ui/LegalPage';
 import JsonLd from '@/components/ui/JsonLd';
 import { IMAGE_LICENSE_CONTENT, IMAGE_LICENSE_EFFECTIVE_DATE } from '@/data/image-license';
 import { SITE_URL, IMAGE_LICENSE_URL } from '@/lib/seo/image';
+import { pageOpenGraph } from '@/lib/seo/og';
 
 export const metadata: Metadata = {
   title: '이미지 이용 안내',
@@ -10,6 +11,11 @@ export const metadata: Metadata = {
     'zoellife.com 에 게시된 사진·영상 등 이미지 자산의 저작권 귀속과 이용 조건, 사용 허가 문의 방법을 안내합니다.',
   robots: { index: true, follow: true },
   alternates: { canonical: IMAGE_LICENSE_URL },
+  openGraph: pageOpenGraph({
+    path: '/image-license',
+    title: '이미지 이용 안내 | 대라천 ZOEL LIFE',
+    description: 'zoellife.com 에 게시된 사진·영상 등 이미지 자산의 저작권 귀속과 이용 조건 안내.',
+  }),
 };
 
 // 이 페이지 자체가 모든 ImageObject 의 license · acquireLicensePage 목적지다.

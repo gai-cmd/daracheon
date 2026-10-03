@@ -7,6 +7,8 @@ import { readLatestPublishedPostsSafe } from '@/lib/blog/store';
 import { isOwnAsset, parseEmphasis, resolveHomeMain, safeHref } from '@/lib/home-main';
 import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
 import JsonLd from '@/components/ui/JsonLd';
+import { imageObject } from '@/lib/seo/image';
+import { HOME_FAQ, faqPageNode } from '@/lib/seo/home-faq';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import type { Announcement } from '@/app/api/admin/announcement/route';
 import {
@@ -36,22 +38,64 @@ import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
 
-// 홈은 root layout 의 SITE_URL/siteJsonLd 를 쓰고, 여기서는 대표 제품 ItemList JSON-LD 만 붙인다.
+// 홈은 root layout 의 사이트 공통 JSON-LD(Organization·Brand·WebSite)에 더해 홈 전용 WebPage·FAQPage·대표 제품 ItemList 를 붙인다.
 // (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
 export const metadata: Metadata = {
   // absolute — 루트 template("%s | 조엘라이프 대라천 '참'침향")이 홈 title 에
   // 브랜드를 한 번 더 붙여 2회 중복·53자 초과되던 것을 차단.
   // 어드민 SEO 메타 제목·OG 제목과 동일 문구(33자)로 통일 (2026-09-23, 네이버 40자 권고).
-  title: { absolute: "조엘라이프 대라천 '참'침향 | 베트남산 아갈로차 정품 침향" },
+  // 2026-10-03: 핵심 검색어(베트남 침향·침향 오일)를 제목에 직접 넣는다 (31자, 네이버 40자 권고 이내).
+  title: { absolute: "조엘라이프 대라천 '참'침향 | 베트남 침향·침향 오일" },
   // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
   // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:
-    '식약처 고시 학명 Aquilaria Agallocha Roxburgh 침향. 베트남 5개 지역 직영 농장 200ha, 25년 이상.',
+    '베트남 5개 직영 농장에서 25년 이상 기른 학명 Aquilaria Agallocha Roxburgh 침향. 침향 오일·침향단·침향수.',
   alternates: { canonical: '/' },
 };
 
 // 구조화 데이터의 url 은 미리보기 도메인이 섞이지 않도록 정식 도메인으로 고정한다 (/products 와 동일).
 const SITE_URL = 'https://zoellife.com';
+
+// 홈 전용 노드 — root layout 의 Organization/Brand/WebSite(@id 참조)와 이어진다.
+// FAQPage 는 아래 '자주 묻는 질문' 섹션에 실제로 보이는 문답과 같은 원천(HOME_FAQ)을 쓴다.
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: "조엘라이프 대라천 '참'침향 — 베트남 침향·침향 오일",
+      inLanguage: 'ko-KR',
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+      primaryImageOfPage: { '@id': `${SITE_URL}/#primary-image` },
+      breadcrumb: { '@id': `${SITE_URL}/#breadcrumb-home` },
+    },
+    imageObject({
+      id: `${SITE_URL}/#primary-image`,
+      url: `${SITE_URL}/opengraph-image.jpg`,
+      caption: '대라천 ZOEL LIFE — 베트남 직영 25년 이상, 학명 Aquilaria Agallocha Roxburgh 정품 침향',
+    }),
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${SITE_URL}/#breadcrumb-home`,
+      itemListElement: [{ '@type': 'ListItem', position: 1, name: '홈', item: SITE_URL }],
+    },
+    faqPageNode(`${SITE_URL}/#faq`, HOME_FAQ, {
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#brand` },
+    }),
+  ],
+};
+
+// 홈 FAQ 아래 '더 알아보기' — 핵심 검색어별 주제 페이지로 가는 내부 링크(앵커 텍스트 = 검색어).
+const TOPIC_LINKS = [
+  { href: '/about-agarwood', label: '침향이란? 학명·형성·문헌' },
+  { href: '/vietnam-agarwood', label: '베트남 침향 — 산지와 역사' },
+  { href: '/agarwood-oil', label: '침향 오일 — 증류·고르는 법' },
+  { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법' },
+];
 
 interface ProductLite {
   slug: string;
@@ -195,7 +239,8 @@ export default async function HomePage() {
 
   return (
     <BentoRoot videos={videos} className={styles.page}>
-      {/* 대표 제품 ItemList 구조화 데이터 — 화면에는 그려지지 않는다 */}
+      {/* 홈 전용 구조화 데이터(WebPage·Breadcrumb·FAQPage) + 대표 제품 ItemList */}
+      <JsonLd data={homeJsonLd} />
       {productListJsonLd && <JsonLd data={productListJsonLd} />}
       {/* 전역 CSS 가 main > div > section:first-of-type 에 물결 장식을 붙이므로 한 겹 더 감싼다 */}
       <div className={styles.inner}>
@@ -272,10 +317,10 @@ export default async function HomePage() {
                         <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
                           <span className={styles.prodThumb}>
                             {/* 소식이 첫 화면에 오면서 첫 제품 사진이 모바일 LCP 요소가 되었다 — 첫 장만 우선 로딩 */}
-                            {/* 제품명은 바로 옆 글자로 읽히므로 사진은 장식(alt="") */}
+                            {/* 이미지 검색(네이버·구글) 노출용으로 제품명을 alt 에 싣는다. 복제 트랙(k=1)은 aria-hidden 이라 중복 낭독 없음 */}
                             <Image
                               src={p.image!}
-                              alt=""
+                              alt={k === 0 ? `${p.name} — 대라천 '참'침향` : ''}
                               fill
                               sizes="200px"
                               priority={k === 0 && i === 0}
@@ -499,7 +544,7 @@ export default async function HomePage() {
 
           {/* 브랜드 이야기 — 호버 시 증류 영상 */}
           <Link href={tiles.brand.href} className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">
-            <Image src={tiles.brand.image} alt="" fill sizes="(max-width: 640px) 100vw, 40vw" className={styles.media} />
+            <Image src={tiles.brand.image} alt="베트남 직영 농장의 침향나무 — 대라천 브랜드 이야기" fill sizes="(max-width: 640px) 100vw, 40vw" className={styles.media} />
             <HoverVideo src={tiles.brand.video} />
             <span className={styles.scrim} aria-hidden="true" />
             <Go />
@@ -541,7 +586,39 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* 5. 마무리 띠 */}
+        {/* 5. 자주 묻는 질문 — 홈의 유일한 '읽는 본문'. FAQPage 구조화 데이터와 같은 문구(HOME_FAQ).
+             답변은 <details> 안에 있어도 HTML 에 그대로 실려 검색·AI 크롤러가 읽는다. */}
+        <section className={styles.faq} aria-labelledby="home-faq-title">
+          <header className={styles.sectionHead}>
+            <span className={styles.badge}>
+              <span className={styles.badgeChip}>FAQ</span>
+              침향 기본 지식
+            </span>
+            <h2 id="home-faq-title" className={styles.h2}>
+              침향, 자주 묻는 질문
+            </h2>
+          </header>
+          <div className={styles.faqList}>
+            {HOME_FAQ.map((f, i) => (
+              <details key={f.q} className={styles.faqItem} open={i === 0}>
+                <summary className={styles.faqSummary}>
+                  <h3 className={styles.faqQ}>{f.q}</h3>
+                  <span className={styles.faqIcon} aria-hidden="true" />
+                </summary>
+                <p className={styles.faqA}>{f.a}</p>
+              </details>
+            ))}
+          </div>
+          <nav className={styles.faqTopics} aria-label="침향 더 알아보기">
+            {TOPIC_LINKS.map((t) => (
+              <Link key={t.href} href={t.href} className={styles.faqTopic}>
+                {t.label} <span aria-hidden="true">→</span>
+              </Link>
+            ))}
+          </nav>
+        </section>
+
+        {/* 6. 마무리 띠 */}
         <div className={styles.closing} data-reveal="">
           <p className={styles.closingLine}>{renderTitle(closing.line)}</p>
           <div className={styles.ctas}>

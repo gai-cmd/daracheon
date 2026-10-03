@@ -203,6 +203,8 @@
 /* 제목 — 홈 .h2 표준과 동일.
    Noto Serif KR · clamp(1.6rem, 5.2vw, 2.6rem) · weight 200.
    chapterBody 를 사용하는 모든 페이지(about-agarwood, media, company …)에 공통 적용. */
+/* h2 = 섹션 제목(문서 개요상 H1 다음 단계). 기존 h3 와 동일한 시각 스타일. */
+.chapterBody h2,
 .chapterBody h3 {
   font-family: var(--font-serif), serif;
   font-size: clamp(1.6rem, 5.2vw, 2.6rem);
@@ -215,6 +217,7 @@
   word-break: keep-all;
   overflow-wrap: break-word;
 }
+.chapterBody h2 em,
 .chapterBody h3 em {
   color: var(--accent);
   font-style: normal;

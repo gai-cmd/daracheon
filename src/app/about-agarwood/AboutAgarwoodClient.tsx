@@ -369,8 +369,8 @@ export default function AboutAgarwoodClient({ data }: Props) {
       />
 
       {/* ════════════ TAB 0: 침향이란? ════════════ */}
-      {activeTab === 0 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-0`} hidden={activeTab !== 0}>
+<>
           {/* Chapter 01 — Definition */}
           <section className={styles.chapter}>
             <div className={styles.wrap}>
@@ -381,7 +381,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h3>
+                    <h2>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h2>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
                     <p className={styles.chapterSubtitle}>
@@ -492,7 +492,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>{data?.formationSectionTitle ?? '침향은 어떻게 만들어지나요?'}</h3>
+                    <h2>{data?.formationSectionTitle ?? '침향은 어떻게 만들어지나요?'}</h2>
                   </RevealOnScroll>
                   <RevealOnScroll delay={100}>
                     <p className={styles.chapterSubtitle}>
@@ -566,7 +566,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>{data?.specialReasonsSectionTitle ?? '침향이 특별한 4가지 이유'}</h3>
+                    <h2>{data?.specialReasonsSectionTitle ?? '침향이 특별한 4가지 이유'}</h2>
                   </RevealOnScroll>
                   <div
                     style={{
@@ -638,7 +638,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                 </div>
                 <div className={styles.chapterBody}>
                   <RevealOnScroll>
-                    <h3>{data?.benefitsSectionTitle ?? '침향의 효능에 주목!'}</h3>
+                    <h2>{data?.benefitsSectionTitle ?? '침향의 효능에 주목!'}</h2>
                   </RevealOnScroll>
                   <div
                     style={{
@@ -705,7 +705,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </div>
                   <div className={styles.chapterBody}>
                     <RevealOnScroll>
-                      <h3>{dosageSection.title}</h3>
+                      <h2>{dosageSection.title}</h2>
                     </RevealOnScroll>
                     <div style={{ marginTop: 26, display: 'grid', gap: 20 }}>
                       {dosageSection.items.map((item, i) => (
@@ -785,7 +785,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
                   </div>
                   <div className={styles.chapterBody}>
                     <RevealOnScroll>
-                      <h3>{officialSources.title}</h3>
+                      <h2>{officialSources.title}</h2>
                     </RevealOnScroll>
                     <RevealOnScroll delay={100}>
                       <p className={styles.chapterSubtitle}>
@@ -884,11 +884,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
             </section>
           )}
         </>
-      )}
+      </div>
 
       {/* ════════════ TAB 1: 진짜 침향 구별 방법 ════════════ */}
-      {activeTab === 1 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-1`} hidden={activeTab !== 1}>
+<>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -898,7 +898,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>진짜 침향 구별 방법</h3>
+                  <h2>진짜 침향 구별 방법</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1043,7 +1043,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>{auth.check01Title}</h3>
+                  <h2>{auth.check01Title}</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1127,7 +1127,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>{auth.check02Title}</h3>
+                  <h2>{auth.check02Title}</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1217,7 +1217,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>{auth.check03Title}</h3>
+                  <h2>{auth.check03Title}</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1250,11 +1250,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </div>
         </section>
         </>
-      )}
+      </div>
 
       {/* ════════════ TAB 2: 경전에 실린 침향 ════════════ */}
-      {activeTab === 2 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-2`} hidden={activeTab !== 2}>
+<>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1264,7 +1264,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>경전에 실린 침향</h3>
+                  <h2>경전에 실린 침향</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1405,11 +1405,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </div>
         </section>
         </>
-      )}
+      </div>
 
       {/* ════════════ TAB 3: 문헌에 실린 침향 ════════════ */}
-      {activeTab === 3 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-3`} hidden={activeTab !== 3}>
+<>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1419,7 +1419,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>문헌에 실린 침향</h3>
+                  <h2>문헌에 실린 침향</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1535,11 +1535,11 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </div>
         </section>
         </>
-      )}
+      </div>
 
       {/* ════════════ TAB 4: 논문에 실린 침향 ════════════ */}
-      {activeTab === 4 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-4`} hidden={activeTab !== 4}>
+<>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1549,7 +1549,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>논문에 실린 침향</h3>
+                  <h2>논문에 실린 침향</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1751,15 +1751,15 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </div>
         </section>
         </>
-      )}
+      </div>
 
       {/* ════════════ TAB 5: 언론에 실린 침향 ════════════
           외부 언론사 기사 인용 목록. 저작권은 각 언론사에 있으므로
           제목 + 자체 요약만 노출하고 원문 링크를 반드시 함께 제공한다.
           구조화 데이터(NewsArticle ItemList)는 서버 컴포넌트(page.tsx)가
           같은 mediaTab 데이터로 자동 생성한다. */}
-      {activeTab === 5 && (
-        <>
+      <div role="tabpanel" id={`tabpanel-5`} hidden={activeTab !== 5}>
+<>
         <section className={styles.chapter}>
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
@@ -1769,7 +1769,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
               </div>
               <div className={styles.chapterBody}>
                 <RevealOnScroll>
-                  <h3>{mediaTab.title ?? DEFAULT_MEDIA_HEADER.title}</h3>
+                  <h2>{mediaTab.title ?? DEFAULT_MEDIA_HEADER.title}</h2>
                 </RevealOnScroll>
                 <RevealOnScroll delay={100}>
                   <p className={styles.chapterSubtitle}>
@@ -1973,7 +1973,7 @@ export default function AboutAgarwoodClient({ data }: Props) {
           </div>
         </section>
         </>
-      )}
+      </div>
 
       {/* ════════════ 논문 요약 모달 ════════════ */}
       {paperSummaryOpen && (

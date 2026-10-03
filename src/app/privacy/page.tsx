@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import LegalPage from '@/components/ui/LegalPage';
 import { DEFAULT_PRIVACY, type LegalDoc } from '@/data/legal';
+import { pageOpenGraph } from '@/lib/seo/og';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
     '조엘라이프 주식회사(대라천 ZOEL LIFE)의 개인정보처리방침. zoellife.com 이용자의 개인정보 수집·이용·보관·파기에 관한 사항을 안내합니다.',
   robots: { index: true, follow: true },
   alternates: { canonical: 'https://zoellife.com/privacy' },
+  openGraph: pageOpenGraph({
+    path: '/privacy',
+    title: '개인정보처리방침 | 대라천 ZOEL LIFE',
+    description: '조엘라이프 주식회사(대라천 ZOEL LIFE)의 개인정보처리방침.',
+  }),
 };
 
 interface PagesData {
