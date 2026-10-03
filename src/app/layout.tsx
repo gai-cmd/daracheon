@@ -157,7 +157,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: title, template: "%s | 조엘라이프 대라천 '참'침향" },
     description,
     keywords,
-    authors: [{ name: '대라천 ZOEL LIFE (Daracheon)', url: SITE_URL }],
+    authors: [{ name: '대라천 ZOEL LIFE (Daeracheon)', url: SITE_URL }],
     creator: '대라천 ZOEL LIFE',
     publisher: '대라천 ZOEL LIFE',
     applicationName: '대라천 ZOEL LIFE',
@@ -226,7 +226,7 @@ const siteJsonLd = {
       '@id': `${SITE_URL}/#organization`,
       name: '대라천 ZOEL LIFE',
       legalName: '조엘라이프 주식회사',
-      alternateName: ['대라천', 'Daracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
+      alternateName: ['대라천', 'Daeracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
       url: SITE_URL,
       logo: imageObject({
         url: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,

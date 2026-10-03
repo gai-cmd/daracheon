@@ -7,7 +7,7 @@ import type { EditionContent } from './types';
  */
 export const agarwoodEditionKo: EditionContent = {
   cover: {
-    kicker: 'Daracheon · Limited Digital Edition',
+    kicker: 'Daeracheon · Limited Digital Edition',
     title: '진짜 침향,',
     titleHighlight: '219,000시간의 기다림',
     subtitle:

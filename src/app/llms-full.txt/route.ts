@@ -53,7 +53,7 @@ export async function GET() {
   out.push('| 항목 | 값 |');
   out.push('| --- | --- |');
   out.push('| 브랜드 | 대라천 ZOEL LIFE (大羅天 / Đại La Thiên) |');
-  out.push('| 별칭 | 대라천, 조엘라이프, Daracheon, ZOEL LIFE |');
+  out.push('| 별칭 | 대라천, 조엘라이프, Daeracheon, ZOEL LIFE |');
   out.push('| 학명 | Aquilaria Agallocha Roxburgh (AAR) |');
   out.push('| 원산지 | 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장 합계 200ha · 400만 그루 (람동 158ha) |');
   out.push('| 운영 기간 | 25년 이상 (1998 침향 사업·연구 시작) |');

@@ -436,7 +436,7 @@
   align-items: stretch;
 }
 @media (min-width: 900px) {
-  .proofGrid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .proofGrid { grid-template-columns: repeat(3, 1fr); gap: 20px; grid-template-rows: auto; }
 }
 
 .proofCard {
@@ -528,6 +528,22 @@
   word-break: keep-all;
   margin-top: 6px;
   flex: 1;
+}
+
+@media (min-width: 900px) {
+  /* 3열에서는 카드 4행(이미지·영문 태그·제목·본문)을 서브그리드로 공유한다.
+     영문 태그가 카드마다 1줄/2줄로 갈려도 한글 제목 줄이 항상 같은 높이에 정렬된다. */
+  .proofCard {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+  .proofCardBody { display: contents; }
+  .proofCardImg { grid-row: 1; }
+  .proofCardTitleEn { grid-row: 2; padding: 18px 20px 0; }
+  .proofCardTitle { grid-row: 3; padding: 8px 20px 0; }
+  .proofCardBodyText { grid-row: 4; padding: 14px 20px 22px; margin-top: 0; }
 }
 
 /* 클로징 박스 */

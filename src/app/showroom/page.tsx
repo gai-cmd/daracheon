@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   keywords: [
     '대라천 침향 전시장', '대라천 쇼룸', '대라천 매장', 'ZOEL LIFE 쇼룸',
     '베트남 침향 전시관', '동나이 대라천', 'Áo dài 도슨트', '침향 시향',
-    'Daracheon Agarwood Showroom', '大羅天 沈香 展示場', '쇼룸',
+    'Daeracheon Agarwood Showroom', '大羅天 沈香 展示場', '쇼룸',
   ],
   alternates: { canonical: 'https://zoellife.com/showroom' },
   openGraph: {

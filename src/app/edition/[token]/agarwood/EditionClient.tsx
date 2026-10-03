@@ -115,7 +115,7 @@ function ReaderStrip({ reader }: { reader: Props['reader'] }) {
         gap: 16,
       }}
     >
-      <span style={{ color: GOLD_SOFT }}>Daracheon · Limited Edition</span>
+      <span style={{ color: GOLD_SOFT }}>Daeracheon · Limited Edition</span>
       <span style={{ textAlign: 'right' }}>
         Curated for <strong style={{ color: '#fff' }}>{reader.name}</strong>
         {reader.company ? <span style={{ marginLeft: 8, opacity: 0.6 }}> · {reader.company}</span> : null}
@@ -1151,7 +1151,7 @@ function Closing({ closing, reader }: { closing: EditionContent['closing']; read
             color: 'rgba(255,255,255,0.3)',
           }}
         >
-          End of Edition · Daracheon · ZOEL LIFE
+          End of Edition · Daeracheon · ZOEL LIFE
         </div>
       </div>
     </section>

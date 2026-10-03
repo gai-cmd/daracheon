@@ -408,7 +408,7 @@ export default function AdminBrandStoryPage() {
   const [showroomHero, setShowroomHero] = useState<ShowroomData['hero']>({
     sectionTag: '대라천 침향 전시장 · ZOEL LIFE Showroom',
     titleKr: "대라천 '참'침향 전시장",
-    titleEn: 'Daracheon Agarwood Showroom',
+    titleEn: 'Daeracheon Agarwood Showroom',
     subtitle: '베트남 직영 본관 — 침향 원목·증류·시향까지 한 공간에.',
     heroBg: '',
   });
