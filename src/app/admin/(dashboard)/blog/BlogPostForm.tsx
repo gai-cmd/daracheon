@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import type { BlogCategory, BlogPost } from '@/types/blog';
 import { analyzeSeo, SEO_GRADE_COLOR, SEO_GRADE_LABEL } from '@/lib/blog/seo-check';
 import styles from './BlogPostForm.module.css';
+import ImageAltPanel from './ImageAltPanel';
 
 // TinyMCE 는 client-only — SSR 비활성.
 const TinyMCEEditor = dynamic(() => import('@/components/admin/editor/TinyMCEEditor'), {
@@ -804,6 +805,12 @@ export default function BlogPostForm({ initial, categories, mode }: BlogPostForm
           value={state.content}
           onChange={(html) => update('content', html)}
         />
+      </section>
+
+      {/* 3-1. 본문 이미지 대체텍스트(alt) — 이미지마다 alt 를 한 화면에서 채운다 */}
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>이미지 대체텍스트 (alt)</h3>
+        <ImageAltPanel html={state.content} onChange={(html) => update('content', html)} />
       </section>
 
       {/* 4. SEO 미리보기 + 보조 메타 */}

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { readDataSafe } from '@/lib/db';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { blogSitemapDates } from '@/lib/blog/sitemap-dates';
 import type { Product } from '@/data/products';
 import { canonicalProductSlug } from '@/lib/product-slugs';
 
@@ -20,7 +21,8 @@ function getBaseUrl(): string {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
-  const lastModified = new Date();
+  // lastmod 는 실제 수정 시각을 아는 블로그 글·카테고리·목록에만 넣는다. 정적 페이지·제품에
+  // 요청 시각을 넣으면 매 크롤마다 '방금 바뀜'이 되어 검색엔진이 사이트 전체 lastmod 를 불신한다.
 
   // 모든 URL 에 단일 ko-KR + x-default hreflang 신호를 부여 — Google 이
   // 다국어 변형이 없음을 명확히 인지하도록 한다. (단일 한국어 사이트.)
@@ -29,26 +31,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified, changeFrequency: 'weekly', priority: 1.0, alternates: withAlternates(baseUrl) },
-    { url: `${baseUrl}/about-agarwood`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/about-agarwood`) },
+    { url: baseUrl, changeFrequency: 'weekly', priority: 1.0, alternates: withAlternates(baseUrl) },
+    { url: `${baseUrl}/about-agarwood`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/about-agarwood`) },
     // 핵심 검색어 주제 허브 — '베트남 침향' · '침향 오일'
-    { url: `${baseUrl}/vietnam-agarwood`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/vietnam-agarwood`) },
-    { url: `${baseUrl}/agarwood-oil`, lastModified, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-oil`) },
-    { url: `${baseUrl}/brand-story`, lastModified, changeFrequency: 'monthly', priority: 0.8, alternates: withAlternates(`${baseUrl}/brand-story`) },
-    { url: `${baseUrl}/showroom`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/showroom`) },
-    { url: `${baseUrl}/products`, lastModified, changeFrequency: 'weekly', priority: 0.9, alternates: withAlternates(`${baseUrl}/products`) },
-    { url: `${baseUrl}/home-shopping`, lastModified, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/home-shopping`) },
-    { url: `${baseUrl}/company`, lastModified, changeFrequency: 'monthly', priority: 0.6, alternates: withAlternates(`${baseUrl}/company`) },
-    { url: `${baseUrl}/media`, lastModified, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/media`) },
-    { url: `${baseUrl}/reviews`, lastModified, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/reviews`) },
-    { url: `${baseUrl}/process`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/process`) },
-    { url: `${baseUrl}/blog`, lastModified, changeFrequency: 'weekly', priority: 0.8, alternates: withAlternates(`${baseUrl}/blog`) },
-    { url: `${baseUrl}/guide`, lastModified, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/guide`) },
-    { url: `${baseUrl}/privacy`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/privacy`) },
-    { url: `${baseUrl}/terms`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/terms`) },
+    { url: `${baseUrl}/vietnam-agarwood`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/vietnam-agarwood`) },
+    { url: `${baseUrl}/agarwood-oil`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-oil`) },
+    { url: `${baseUrl}/brand-story`, changeFrequency: 'monthly', priority: 0.8, alternates: withAlternates(`${baseUrl}/brand-story`) },
+    { url: `${baseUrl}/showroom`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/showroom`) },
+    { url: `${baseUrl}/products`, changeFrequency: 'weekly', priority: 0.9, alternates: withAlternates(`${baseUrl}/products`) },
+    { url: `${baseUrl}/home-shopping`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/home-shopping`) },
+    { url: `${baseUrl}/company`, changeFrequency: 'monthly', priority: 0.6, alternates: withAlternates(`${baseUrl}/company`) },
+    { url: `${baseUrl}/media`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/media`) },
+    { url: `${baseUrl}/reviews`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/reviews`) },
+    { url: `${baseUrl}/process`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/process`) },
+    { url: `${baseUrl}/blog`, changeFrequency: 'weekly', priority: 0.8, alternates: withAlternates(`${baseUrl}/blog`) },
+    { url: `${baseUrl}/guide`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/guide`) },
+    { url: `${baseUrl}/privacy`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/privacy`) },
+    { url: `${baseUrl}/terms`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/terms`) },
     // 모든 ImageObject 의 license · acquireLicensePage 목적지 — 크롤러가 실제로
     // 도달해야 이미지 라이선스 구조화 데이터가 유효하다.
-    { url: `${baseUrl}/image-license`, lastModified, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/image-license`) },
+    { url: `${baseUrl}/image-license`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/image-license`) },
   ];
 
   let productDetailRoutes: MetadataRoute.Sitemap = [];
@@ -61,7 +63,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const url = `${baseUrl}/products/${canonicalProductSlug(p.slug)}`;
         return {
           url,
-          lastModified,
           changeFrequency: 'weekly' as const,
           priority: 0.8,
           alternates: withAlternates(url),
@@ -77,25 +78,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       readPostsSafe(),
       readCategoriesSafe(),
     ]);
-    const published = posts.filter((p) => p.status === 'published' && p.slug);
-    const postRoutes: MetadataRoute.Sitemap = published.map((p) => {
+    // 잘못된/빈 updatedAt 은 helper 가 publishedAt 또는 '날짜 없음'으로 처리 — Invalid Date 가
+    // toISOString RangeError 로 catch 에 흘러 블로그 전량이 sitemap 에서 사라지던 경로도 막는다.
+    const dates = blogSitemapDates(posts, categories);
+    const blogIndex = staticRoutes.find((r) => r.url === `${baseUrl}/blog`);
+    if (blogIndex && dates.latest) blogIndex.lastModified = dates.latest;
+    const postRoutes: MetadataRoute.Sitemap = dates.posts.map((p) => {
       const url = `${baseUrl}/blog/${p.slug}`;
-      // 잘못된/빈 updatedAt 이 Invalid Date → toISOString RangeError → catch 로 흘러
-      // 블로그 전량이 sitemap 에서 조용히 사라지는 것을 방어.
-      const d = new Date(p.updatedAt);
       return {
         url,
-        lastModified: Number.isNaN(d.getTime()) ? lastModified : d,
+        ...(p.lastModified ? { lastModified: p.lastModified } : {}),
         changeFrequency: 'monthly' as const,
         priority: 0.7,
         alternates: withAlternates(url),
       };
     });
-    const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => {
+    // 발행 글이 0편인 카테고리는 noindex 페이지라 sitemap 에서 뺀다 (helper 가 걸러 줌).
+    const categoryRoutes: MetadataRoute.Sitemap = dates.categories.map((c) => {
       const url = `${baseUrl}/blog/category/${c.id}`;
       return {
         url,
-        lastModified,
+        ...(c.lastModified ? { lastModified: c.lastModified } : {}),
         changeFrequency: 'weekly' as const,
         priority: 0.5,
         alternates: withAlternates(url),

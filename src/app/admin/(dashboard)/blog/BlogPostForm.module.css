@@ -741,3 +741,66 @@
 :global(html.admin-dark) .restoredBtn {
   background: #262622;
 }
+
+/* 본문 이미지 대체텍스트(alt) 패널 — ImageAltPanel */
+.altPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.altMissingCount {
+  color: #b3261e;
+}
+.altList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.altRow {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px;
+  border: 1px solid var(--warm-200, #e8e3d8);
+  border-radius: 4px;
+}
+.altThumb {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: #f4f1ea;
+}
+.altField {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.altBadge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #8a1c14;
+  background: #fbe9e7;
+}
+:global(html.admin-dark) .altRow {
+  border-color: #35352e;
+}
+:global(html.admin-dark) .altThumb {
+  background: #262622;
+}
+:global(html.admin-dark) .altMissingCount {
+  color: #f2a39b;
+}
+:global(html.admin-dark) .altBadge {
+  color: #f6c4bd;
+  background: #3a1d1a;
+}

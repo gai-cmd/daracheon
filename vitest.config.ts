@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
   },
+  // tsconfig 의 jsx: preserve(Next 기본값)로는 컴포넌트(.tsx)를 import 하는 테스트가 파싱되지 않는다.
+  oxc: { jsx: { runtime: 'automatic' } },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

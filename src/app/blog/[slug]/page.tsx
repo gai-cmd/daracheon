@@ -202,9 +202,10 @@ export default async function BlogPostPage({
   const authorName =
     admins.find((u) => u.email === post.authorEmail)?.displayName?.trim() || post.author;
 
-  // 작성자가 브랜드명(대라천/ZOEL)이면 검증 가능한 Organization 엔티티로 귀속 —
+  // 작성자가 브랜드·법인명(대라천/조엘라이프/ZOEL)이면 검증 가능한 Organization 엔티티로 귀속 —
   // YMYL(건강) 주제에서 실명 없는 Person 방출보다 신뢰신호가 강하다. 개인명이면 Person.
-  const isBrandAuthor = !authorName || /대라천|zoel/i.test(authorName);
+  // '조엘라이프(주)'가 Person 으로 나가던 누락(2026-10-06)을 막기 위해 한글 '조엘'도 포함.
+  const isBrandAuthor = !authorName || /대라천|조엘|zoel/i.test(authorName);
   const authorEntity = isBrandAuthor
     ? { '@id': `${SITE_URL}/#organization` }
     : {
@@ -475,6 +476,8 @@ export default async function BlogPostPage({
                         <li key={p.id}>
                           <Link href={`/blog/${p.slug}`} className={styles.postItem}>
                             {p.coverImage ? (
+                              // 같은 링크 안에 제목 글자가 있으므로 장식 이미지로 둔다(alt="", WCAG H2) —
+                              // alt 에 제목을 넣으면 화면 낭독기가 제목을 두 번 읽는다.
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 src={p.coverImage}

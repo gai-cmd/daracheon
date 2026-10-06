@@ -26,6 +26,23 @@ const nextConfig: NextConfig = {
         destination: '/products/daeracheon-cham-agarwood-oil-capsule',
         statusCode: 301,
       },
+      // 블로그 슬러그 정리(2026-10-06) — 중복 회피로 자동 부여된 '-2/-3/-4' 슬러그를 제목에 맞게
+      // 바꾸고 이미 색인된 옛 주소를 영구 이동. DB(blog_posts.slug) 변경과 짝.
+      {
+        source: '/blog/agarwood-pharmacopoeia-spec-authentication-2',
+        destination: '/blog/agarwood-sustainability-management',
+        statusCode: 301,
+      },
+      {
+        source: '/blog/agarwood-pharmacopoeia-spec-authentication-3',
+        destination: '/blog/mfds-defines-agarwood-as-aquilaria-agallocha',
+        statusCode: 301,
+      },
+      {
+        source: '/blog/agarwood-pharmacopoeia-spec-authentication-4',
+        destination: '/blog/agarwood-species-herbal-vs-food-standards',
+        statusCode: 301,
+      },
       // www → apex 정규화. 네이버 지도 Web 서비스 URL 등록이 apex 만 허용해서
       // www 도메인에서는 인증 실패. 모든 트래픽을 apex 로 영구 이동.
       {

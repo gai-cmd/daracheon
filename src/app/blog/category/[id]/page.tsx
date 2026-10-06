@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
@@ -12,6 +13,10 @@ const POSTS_PER_PAGE = 12;
 
 export const dynamic = 'force-dynamic';
 
+// generateMetadata 와 페이지가 같은 요청에서 글·카테고리를 한 번만 읽도록 요청 단위로 묶는다.
+const getPosts = cache(readPostsSafe);
+const getCategories = cache(readCategoriesSafe);
+
 export async function generateMetadata({
   params,
   searchParams,
@@ -21,11 +26,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const page = parseBlogPage((await searchParams).page);
-  const categories = await readCategoriesSafe();
+  const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
   const category = categories.find((c) => c.id === id);
   if (!category) {
     return { title: '카테고리를 찾을 수 없습니다 — 대라천 블로그' };
   }
+  // 발행 글이 0편인 카테고리는 '글이 없습니다' 안내뿐인 얇은 페이지 — 색인하지 않는다.
+  // 링크는 따라가도록 follow 유지. sitemap 에서도 빠진다 (lib/blog/sitemap-dates).
+  // 글 읽기가 실패하면 readPostsSafe 가 [] 를 돌려주므로, 글을 읽었을 때만 판정한다 —
+  // 일시 장애로 모든 카테고리에 noindex 가 붙는 것을 막는다.
+  const isEmpty =
+    posts.length > 0 && !posts.some((p) => p.status === 'published' && p.categoryId === id);
   const pageSuffix = page > 1 ? ` — ${page}페이지` : '';
   const base = `${SITE_URL}/blog/category/${category.id}`;
   const canonical = page > 1 ? `${base}?page=${page}` : base;
@@ -36,6 +47,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical },
+    ...(isEmpty ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       url: canonical,
@@ -56,10 +68,7 @@ export default async function BlogCategoryPage({
 }) {
   const { id } = await params;
   const page = parseBlogPage((await searchParams).page);
-  const [posts, categories] = await Promise.all([
-    readPostsSafe(),
-    readCategoriesSafe(),
-  ]);
+  const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
   const category = categories.find((c) => c.id === id);
   if (!category) notFound();
 
