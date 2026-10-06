@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readDataUncached, readSingleSafe } from '@/lib/db';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import { autoSplitMixed, formatBroadcastDateTime, isInlineExpired, toWatchUrl } from '@/lib/broadcasts';
+import { resolveNsVideos } from '@/lib/ns-videos';
 import BroadcastCountdown from '@/components/BroadcastCountdown';
 import JsonLd from '@/components/ui/JsonLd';
 import NsBrandVideoGallery, { type NsBrandVideo } from './NsBrandVideoGallery';
@@ -469,6 +470,7 @@ export default async function HomeShoppingPage({
       nsSoldOuts?: Partial<NsSoldOut>[];
       nsHeroFallback?: Partial<NsHeroFallback>;
       nsVideos?: NsBrandVideo[];
+      nsVideosHidden?: boolean;
     };
   }>('pages');
   const hero: HomeShoppingHero = { ...DEFAULT_HOME_SHOPPING_HERO, ...pagesData?.homeShopping?.hero };
@@ -481,10 +483,13 @@ export default async function HomeShoppingPage({
       ? nsSoldOutsRaw.map((s) => ({ ...DEFAULT_NS_SOLD_OUT, ...s }))
       : [{ ...DEFAULT_NS_SOLD_OUT, ...pagesData?.homeShopping?.nsSoldOut }];
   const nsHeroFallback: NsHeroFallback = { ...DEFAULT_NS_HERO_FALLBACK, ...pagesData?.homeShopping?.nsHeroFallback };
-  const nsVideos: NsBrandVideo[] =
-    pagesData?.homeShopping?.nsVideos && pagesData.homeShopping.nsVideos.length > 0
-      ? pagesData.homeShopping.nsVideos
-      : NS_BRAND_VIDEOS_FALLBACK;
+  // 어드민 '영상 노출' 스위치(nsVideosHidden)와 빈 URL 카드 제외는 resolveNsVideos 가 처리.
+  // 갤러리·상단 모니터·재방송 카드가 모두 이 목록을 쓰므로 한 곳에서 걸러낸다.
+  const nsVideos: NsBrandVideo[] = resolveNsVideos(
+    pagesData?.homeShopping?.nsVideos,
+    pagesData?.homeShopping?.nsVideosHidden,
+    NS_BRAND_VIDEOS_FALLBACK,
+  );
   const allRawBeforeSplit = dbBroadcasts.length > 0 ? dbBroadcasts : DEFAULT_BROADCASTS;
   // mixed 레코드(홈쇼핑+협찬방송 동거)를 in-memory 로 분리. 어드민 GET 에서
   // 영구 저장하므로 첫 어드민 방문 후엔 멱등 no-op.
@@ -555,14 +560,17 @@ export default async function HomeShoppingPage({
       {/* NS 홈쇼핑 제작 브랜드 영상 — 방송 종료 후 다시보기 갤러리 */}
       <section className={styles.ns} id="ns-videos">
         <div className={styles.wrap}>
-          <div className={styles.nsHead}>
-            <div className={styles.nsKicker}>{nsHead.kicker}</div>
-            <h2>
-              {nsHead.titleLead}
-              <em>{nsHead.titleEmphasis}</em>
-            </h2>
-            <p className={styles.nsLede}>{nsHead.lede}</p>
-          </div>
+          {/* 영상 갤러리 소개 문구 — 보여줄 영상이 없으면 안내만 남지 않도록 함께 숨긴다. */}
+          {nsVideos.length > 0 && (
+            <div className={styles.nsHead}>
+              <div className={styles.nsKicker}>{nsHead.kicker}</div>
+              <h2>
+                {nsHead.titleLead}
+                <em>{nsHead.titleEmphasis}</em>
+              </h2>
+              <p className={styles.nsLede}>{nsHead.lede}</p>
+            </div>
+          )}
 
           {/* SOLD-OUT 배너 — NS Shop+ 방송에서 매진된 인증 화면. 1차·2차 … 순서대로 스택. */}
           {soldOutList.map((so, i) => (

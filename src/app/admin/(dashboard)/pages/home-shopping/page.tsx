@@ -54,6 +54,7 @@ interface HomeShoppingPageData {
   nsSoldOuts?: NsSoldOut[];
   nsHeroFallback?: NsHeroFallback;
   nsVideos?: NsVideo[];
+  nsVideosHidden?: boolean;
 }
 
 const DEFAULT_HERO: HomeShoppingHero = {
@@ -154,6 +155,7 @@ export default function AdminHomeShoppingHeroPage() {
   const [nsSoldOuts, setNsSoldOuts] = useState<NsSoldOut[]>([DEFAULT_NS_SOLD_OUT]);
   const [nsHeroFallback, setNsHeroFallback] = useState<NsHeroFallback>(DEFAULT_NS_HERO_FALLBACK);
   const [nsVideos, setNsVideos] = useState<NsVideo[]>([]);
+  const [nsVideosHidden, setNsVideosHidden] = useState(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -177,6 +179,7 @@ export default function AdminHomeShoppingHeroPage() {
         }
         if (d?.nsHeroFallback) setNsHeroFallback({ ...DEFAULT_NS_HERO_FALLBACK, ...d.nsHeroFallback });
         if (d?.nsVideos) setNsVideos(d.nsVideos);
+        if (typeof d?.nsVideosHidden === 'boolean') setNsVideosHidden(d.nsVideosHidden);
       } catch (err) {
         console.error('Failed to fetch homeShopping:', err);
         setToast({ msg: '데이터 로드 실패', type: 'error' });
@@ -187,7 +190,7 @@ export default function AdminHomeShoppingHeroPage() {
     fetchData();
   }, []);
 
-  async function savePartial<K extends keyof HomeShoppingPageData>(key: K, value: HomeShoppingPageData[K], tag: typeof saving) {
+  async function savePartial<K extends keyof HomeShoppingPageData>(key: K, value: HomeShoppingPageData[K], tag: typeof saving): Promise<boolean> {
     setSaving(tag);
     try {
       const res = await fetch('/api/admin/pages', { cache: 'no-store' });
@@ -197,15 +200,26 @@ export default function AdminHomeShoppingHeroPage() {
       const result = await saveAdminPage('homeShopping', merged);
       if (!result.ok) {
         setToast({ msg: `저장 실패: ${result.msg}`, type: 'error' });
-        return;
+        return false;
       }
       setToast({ msg: `저장 완료${result.totalMs ? ` (${result.totalMs}ms)` : ''}`, type: 'success' });
+      return true;
     } catch (err) {
       console.error('Save error:', err);
       setToast({ msg: `저장 실패: ${err instanceof Error ? err.message : String(err)}`, type: 'error' });
+      return false;
     } finally {
       setSaving(null);
     }
+  }
+
+  // 영상 노출 스위치는 클릭 즉시 저장한다. 카드의 '저장' 버튼과 별개로, 서버 값 위에 이 키만 병합하므로
+  // 아래 목록을 편집 중이어도 영향이 없다. 저장에 실패하면 스위치를 원래대로 되돌린다.
+  async function toggleNsVideosVisible(visible: boolean) {
+    const prev = nsVideosHidden;
+    setNsVideosHidden(!visible);
+    const ok = await savePartial('nsVideosHidden', !visible, 'nsVideos');
+    if (!ok) setNsVideosHidden(prev);
   }
 
   if (loading) {
@@ -416,11 +430,26 @@ export default function AdminHomeShoppingHeroPage() {
           {/* 5. NS Videos — 영상 4편 메타 (URL 변경 가능) */}
           <SectionCard
             title="NS · 영상 4편 메타"
-            description="갤러리 카드 텍스트와 mp4 URL. URL 은 Vercel Blob 에 업로드된 자체 호스팅 mp4 만 사용하세요 (외부 CDN 금지)."
+            description="갤러리 카드 텍스트와 mp4 URL. URL 은 Vercel Blob 에 업로드된 자체 호스팅 mp4 만 사용하세요 (외부 CDN 금지). URL 을 비우고 저장한 카드는 공개 페이지에서 빠집니다."
             onSave={() => savePartial('nsVideos', nsVideos, 'nsVideos')}
             saving={saving === 'nsVideos'}
           >
             <div className="space-y-6">
+              <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={!nsVideosHidden}
+                  disabled={saving === 'nsVideos'}
+                  onChange={(e) => { void toggleNsVideosVisible(e.target.checked); }}
+                  className="mt-0.5 h-4 w-4"
+                />
+                <span>
+                  <span className="block text-sm font-medium text-gray-800">공개 페이지에 영상 노출</span>
+                  <span className="block text-xs text-gray-500">
+                    끄면 하단 갤러리와 상단 모니터·재방송 카드의 영상이 모두 숨겨집니다. 체크를 바꾸면 바로 저장됩니다 (아래 목록 내용은 그대로 보존).
+                  </span>
+                </span>
+              </label>
               {nsVideos.length === 0 && (
                 <p className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                   영상 데이터가 비어있습니다 — 현재는 코드 fallback (Blob URL 4개) 으로 노출됩니다. 변경하려면 아래 폼으로 추가/저장하세요.
