@@ -129,8 +129,8 @@ export function isInlineExpired(
 }
 
 /**
- * 임의의 YouTube/Vimeo/일반 URL 을 외부 시청용 링크로 정규화.
- * YouTube embed/`youtu.be` 는 `watch?v=` 형태로, 그 외에는 원본 URL 을 그대로 돌려준다.
+ * 임의의 YouTube/Vimeo/일반 URL을 외부 시청용 링크로 정규화.
+ * YouTube embed/`youtu.be` 는 `watch?v=` 형태로, 그 외에는 원본 URL을 그대로 돌려준다.
  * (아웃링크 전환 시 임베드 URL 이 아니라 일반 시청 페이지로 보내기 위함)
  */
 export function toWatchUrl(url: string): string {

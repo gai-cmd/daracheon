@@ -15,7 +15,7 @@ const DESCRIPTION = '고문헌이 기록한 침향의 주산지 베트남. 학�
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ['베트남 침향', '베트남산 침향', '베트남 침향 농장', '하띤 침향', '베트남 침향 구별', '아갈로차 침향', 'Aquilaria Agallocha Roxburgh', '베트남 침향 가격'],
+  keywords: ['베트남 침향', '베트남산 침향', '베트남 침향 농장', '하띤 침향', '베트남 침향 구별', '아갈로차 침향', 'Aquilaria agallocha Roxburgh', '베트남 침향 가격'],
   alternates: { canonical: `${SITE_URL}${VIETNAM_AGARWOOD.path}` },
   openGraph: pageOpenGraph({
     path: VIETNAM_AGARWOOD.path,

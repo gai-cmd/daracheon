@@ -11,6 +11,7 @@ import { productGuides as defaultGuides, type ProductGuide } from '@/data/produc
 import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
+import { canonicalProductSlug, isSameProductSlug } from '@/lib/product-slugs';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
@@ -32,7 +33,7 @@ export const dynamic = 'force-dynamic';
 export async function generateStaticParams() {
   const products = await readDataSafe<Product>('products');
   // 비공개 제품은 sitemap/정적 빌드 대상에서 제외.
-  return products.filter((p) => p.published !== false).map((p) => ({ slug: p.slug }));
+  return products.filter((p) => p.published !== false).map((p) => ({ slug: canonicalProductSlug(p.slug) }));
 }
 
 export async function generateMetadata(
@@ -40,9 +41,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const products = await readDataSafe<Product>('products');
-  const product = products.find((p) => p.slug === slug);
+  const product = products.find((p) => isSameProductSlug(p.slug, slug));
   if (!product) return { title: '제품 상세 | ZOEL LIFE' };
-  const url = `https://zoellife.com/products/${product.slug}`;
+  const url = `https://zoellife.com/products/${canonicalProductSlug(product.slug)}`;
   const description = product.shortDescription || product.description?.slice(0, 160);
   return {
     // absolute — 루트 template 이 브랜드를 또 붙여 "…참'침향 | 조엘라이프 대라천 '참'침향"
@@ -76,8 +77,10 @@ export default async function ProductDetailPage(
     // 제품상세(포장 표시사항) — /guide 와 같은 원천: 어드민 저장값(blob) 우선, 없으면 코드 기본값.
     readDataSafe<ProductGuide>('product-guides'),
   ]);
-  const product = products.find((p) => p.slug === slug);
+  const product = products.find((p) => isSameProductSlug(p.slug, slug));
   if (!product) notFound();
+  // 구조화 데이터·내부 링크는 항상 정식 slug — 운영 데이터 slug 정정 전에도 옛 주소를 내보내지 않는다.
+  const pageSlug = canonicalProductSlug(product.slug);
 
   // 비공개 제품은 관리자 세션이 있을 때만 접근 허용.
   if (product.published === false) {
@@ -94,7 +97,7 @@ export default async function ProductDetailPage(
 
   // 포장 표시사항을 상세 본문에도 싣는다 — 종전엔 /guide 로 가는 버튼뿐이라 제품 상세 본문이
   // 450~750자로 얇았다. 표시사항 "그대로"라 효능 문구가 섞이지 않는다.
-  const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => g.slug === product.slug);
+  const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
   const countryOfOrigin = guide?.sections
     .flatMap((sec) => sec.body)
     .map((line) => /^제조국\s*[:：]\s*(.+)$/.exec(line.trim())?.[1]?.trim())
@@ -146,7 +149,7 @@ export default async function ProductDetailPage(
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    '@id': `https://zoellife.com/products/${product.slug}#product`,
+    '@id': `https://zoellife.com/products/${pageSlug}#product`,
     name: product.name,
     ...(product.nameEn ? { alternateName: product.nameEn } : {}),
     description: product.description,
@@ -179,7 +182,7 @@ export default async function ProductDetailPage(
             availability: product.inStock
               ? 'https://schema.org/InStock'
               : 'https://schema.org/OutOfStock',
-            url: `https://zoellife.com/products/${product.slug}`,
+            url: `https://zoellife.com/products/${pageSlug}`,
             seller: { '@id': 'https://zoellife.com/#organization' },
           },
         }
@@ -209,7 +212,7 @@ export default async function ProductDetailPage(
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: '홈', item: 'https://zoellife.com' },
       { '@type': 'ListItem', position: 2, name: '제품 소개', item: 'https://zoellife.com/products' },
-      { '@type': 'ListItem', position: 3, name: product.name, item: `https://zoellife.com/products/${product.slug}` },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://zoellife.com/products/${pageSlug}` },
     ],
   };
 
@@ -285,10 +288,10 @@ export default async function ProductDetailPage(
                 rel="noopener noreferrer"
                 className={styles.btnNaver}
               >
-                네이버 스마트 스토어 →
+                네이버 스마트스토어 →
               </a>
               {guide && (
-                <Link href={`/guide#${product.slug}`} className={styles.btnOutline}>
+                <Link href={`/guide#${pageSlug}`} className={styles.btnOutline}>
                   📖 복용법·사용설명서
                 </Link>
               )}
@@ -339,7 +342,7 @@ export default async function ProductDetailPage(
             </div>
             <p className={styles.guideNote}>
               포장의 식품 한글표시사항을 옮긴 내용입니다. 큰 글씨로 보기:{' '}
-              <Link href={`/guide#${product.slug}`}>복용 가이드</Link>
+              <Link href={`/guide#${pageSlug}`}>복용 가이드</Link>
             </p>
           </section>
         )}

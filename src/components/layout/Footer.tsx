@@ -72,7 +72,7 @@ export default function Footer({ socialLinks = [], company }: Props) {
               rel="noopener noreferrer"
               className={styles.naverCta}
             >
-              네이버 스마트 스토어
+              네이버 스마트스토어
             </a>
             <Link href="/company#contact" className={styles.contactCta}>
               <span aria-hidden>✉</span>
@@ -119,10 +119,7 @@ export default function Footer({ socialLinks = [], company }: Props) {
             <Link href="/privacy">개인정보처리방침</Link>
             <Link href="/terms">이용약관</Link>
             <Link href="/image-license">이미지 이용 안내</Link>
-            <Link href="/admin">관리자</Link>
-            {/* /thesis · /admin 은 잠금 영역 — robots.ts 에서 크롤 제외했지만
-                링크 자체도 rel=nofollow 로 크롤러 진입 신호를 끊는다. */}
-            <a href="/thesis" rel="nofollow">thesis</a>
+            {/* 관리자(/admin)·논문 아카이브(/thesis) 링크는 공개 메뉴에서 제거 — 직접 주소로만 접근 (2026-10-06 점검). */}
           </div>
         </div>
       </div>

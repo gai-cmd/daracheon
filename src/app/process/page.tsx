@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     '침향 생산 공정', '침향 제조 공정', '침향 가공',
     '침향 재배', '침향 수지 유도', '침향 증류', '침향 HACCP', '침향 GMP',
     '대라천 농장', 'ZOEL LIFE 농장',
-    '원산지 침향', 'CITES 침향', 'Aquilaria Agallocha Roxburgh 농장',
+    '원산지 침향', 'CITES 침향', 'Aquilaria agallocha Roxburgh 농장',
   ],
   alternates: { canonical: 'https://zoellife.com/process' },
   openGraph: {
@@ -86,7 +86,7 @@ const DEFAULT_HERO: ProcessHero = {
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
   lede:
-    '호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
+    '호찌민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
 };
 
 // Farm images sourced from data/db/pages.json brandStory.farms (Google Drive / Cloudinary)
@@ -95,7 +95,7 @@ const DEFAULT_CHAPTERS: ProcessChapter[] = [
     num: '01',
     tag: 'Location',
     title: '북위 18° — 침향의 마지막 기후대',
-    body: '아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
+    body: '아퀼라리아 아갈로차(Aquilaria agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
     imageSrc: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',
     imageAlt: '베트남 하띤(Ha Tinh) 직영 농장',
     imageCaption: '하띤 · Ha Tinh · 직영 농장',
@@ -139,7 +139,7 @@ const DEFAULT_VIDEOS: NonNullable<ProcessData['productionVideos']> = {
   num: '05',
   tag: 'Videos',
   title: '생산 영상 — 농장 현장',
-  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
+  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria agallocha Roxburgh의 하루를 영상으로 공개합니다.',
   items: [
     { id: '1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g', title: '하띤성 대규모 재배지 드론 촬영' },
     { id: '1oKXg0SyCbFy63C8hzQrPBs7THV4xIROE', title: '침향나무 식목·관수 루틴' },
@@ -244,7 +244,7 @@ export default async function ProcessPage() {
     mainEntityOfPage: 'https://zoellife.com/process',
     about: { '@id': 'https://zoellife.com/#brand' },
     keywords:
-      '침향 농장, 베트남 침향, 하띤 침향, 침향 생산 공정, HACCP, GMP, CITES, Aquilaria Agallocha Roxburgh',
+      '침향 농장, 베트남 침향, 하띤 침향, 침향 생산 공정, HACCP, GMP, CITES, Aquilaria agallocha Roxburgh',
   };
 
   return (

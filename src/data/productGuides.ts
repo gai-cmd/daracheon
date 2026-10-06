@@ -24,9 +24,9 @@ export interface ProductGuide {
 
 export const productGuides: ProductGuide[] = [
   {
-    slug: 'daerachoen-cham-agarwood-oil-capsule',
+    slug: 'daeracheon-cham-agarwood-oil-capsule',
     name: '대라천 참침향 오일 캡슐',
-    // 제품 상세(/products/daerachoen-cham-agarwood-oil-capsule)의 대표 이미지와 동일.
+    // 제품 상세(/products/daeracheon-cham-agarwood-oil-capsule)의 대표 이미지와 동일.
     image:
       'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/05-1FBgKsB6OO4pEwZ62rbGcKvLyDbNwkZZv.jpg',
     tagline: '침향나무 수지가 침착된 수간목오일 3,000mcg 함유 · 507.5mg × 30캡슐',
@@ -45,7 +45,7 @@ export const productGuides: ProductGuide[] = [
           '정제어유 (참다랑어오일)',
           '비타민E',
           '침향나무 수지가 침착된 수간목오일 0.59%',
-          '캡슐기제: 젤라틴(돼지), 글리세린, D-소비톨(감미료), 에틸바닐린, 파라옥시안식향산메틸(보존료), 식용색소 적색 제102호(착색료)',
+          '캡슐기제: 젤라틴(돼지), 글리세린, D-소르비톨(감미료), 에틸바닐린, 파라옥시안식향산메틸(보존료), 식용색소 적색 제102호(착색료)',
           '※ 돼지고기 함유',
         ],
       },

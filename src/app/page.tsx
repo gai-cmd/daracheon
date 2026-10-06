@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   // Naver 검색엔진 사이트 설명 가이드라인: 80자 이내.
   // (긴 본문은 OG description / FAQ schema / 본문 카피로 보강.)
   description:
-    '베트남 5개 직영 농장에서 25년 이상 기른 학명 Aquilaria Agallocha Roxburgh 침향. 침향 오일·침향단·침향수.',
+    '베트남 5개 직영 농장에서 25년 이상 기른 학명 Aquilaria agallocha Roxburgh 침향. 침향 오일·침향단·침향수.',
   alternates: { canonical: '/' },
 };
 
@@ -75,7 +75,7 @@ const homeJsonLd = {
     imageObject({
       id: `${SITE_URL}/#primary-image`,
       url: `${SITE_URL}/opengraph-image.jpg`,
-      caption: '대라천 ZOEL LIFE — 베트남 직영 25년 이상, 학명 Aquilaria Agallocha Roxburgh 정품 침향',
+      caption: '대라천 ZOEL LIFE — 베트남 직영 25년 이상, 학명 Aquilaria agallocha Roxburgh 정품 침향',
     }),
     {
       '@type': 'BreadcrumbList',

@@ -27,10 +27,10 @@ const PROCESS_TAB = {
     {
       title: '침향 생산과정',
       titleEn: 'AGARWOOD PRODUCTION',
-      description: "좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다. 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 '참'침향은 당분간 누구도 흉내내기 어려운 '명품'이 될 것입니다.",
+      description: "좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다. 대라천 '참'침향은 자체적인 유기농 특허기술을 적용한 독보적인 방법으로 생산되며, 이 모든 과정을 모니터링하여 투명하게 고객분들께 제공합니다. 대라천 '참'침향은 당분간 누구도 흉내 내기 어려운 '명품'이 될 것입니다.",
       image: 'https://lh3.googleusercontent.com/d/1nhqc4UMyUUgBJKwMBX8pPabVgj_M231g=w1280',
       steps: [
-        { step: '01', name: '식목', duration: '최소 20년', desc: 'Aquilaria Agallocha Roxburgh 묘목을 베트남 5개 사업장에 식재. GPS 개별 번호 부여로 나무 한 그루씩 이력 추적.' },
+        { step: '01', name: '식목', duration: '최소 20년', desc: 'Aquilaria agallocha Roxburgh 묘목을 베트남 5개 사업장에 식재. GPS 개별 번호 부여로 나무 한 그루씩 이력 추적.' },
         { step: '02', name: '유기농 관리', duration: '5~20년 이상', desc: '유기농 인증 기준(TCVN 11041-2:2017)에 따른 지속적인 재배 관리. 화학 농약 사용 금지.' },
         { step: '03', name: '수지 앉힘', duration: '2~10년', desc: '특허 #12835 식용가능 천연 수지유도제 주입. 나무에 천공 후 유도관 삽입으로 침향 수지 형성.' },
         { step: '04', name: '수지 관리', duration: '2~10년', desc: '수지 형성 상태를 정기적으로 모니터링하고 관리. 최적의 수지 품질 유지.' },

@@ -10,7 +10,7 @@ import { encryptString, isEncryptionConfigured } from './backup-crypto';
  * 둘 다 사라진다(실제로 같은 날 105개 blob 을 지우는 마이그레이션을 수행했다).
  *
  * 이 모듈은 스냅샷을 **다른 스토어**에 한 벌 더 둔다. 그 스토어는 private 로
- * 생성돼 있어 URL 을 알아도 인증 없이는 읽히지 않는다 — public 스토어인
+ * 생성돼 있어 URL을 알아도 인증 없이는 읽히지 않는다 — public 스토어인
  * 라이브 저장소에서 벌어졌던 노출(인증 없이 고객 PII 전체 다운로드)이 구조적으로
  * 불가능하다.
  *

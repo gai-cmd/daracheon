@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     '베트남 침향', '하띤성 농장', '베트남 하띤성 침향', '직영 농장 침향',
     '200ha 농장', '400만 그루',
     // 학명/공정
-    'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+    'Aquilaria agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
     '침향 농장', '침향 생산 공정', '침향 재배', '침향 수지 유도',
     '침향 증류', 'HACCP 침향', 'GMP 침향',
     // 신뢰/카테고리
@@ -242,7 +242,7 @@ export default async function BrandStoryPage() {
     dateModified: '2026-04-17',
     image: 'https://zoellife.com/opengraph-image.jpg',
     keywords:
-      '대라천, ZOEL LIFE, 조엘라이프, 침향 브랜드, 베트남 침향, 25년 침향, Aquilaria Agallocha Roxburgh',
+      '대라천, ZOEL LIFE, 조엘라이프, 침향 브랜드, 베트남 침향, 25년 침향, Aquilaria agallocha Roxburgh',
   };
 
   return (

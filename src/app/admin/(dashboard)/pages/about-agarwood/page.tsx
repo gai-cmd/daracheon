@@ -319,14 +319,14 @@ export default function AdminAboutAgarwoodPage() {
     titleKr: '이젠 진짜 침향,',
     titleEn: '학명부터 확인하세요',
     subtitle:
-      "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria Agallocha Roxburgh.",
+      "식약처 고시 '대한민국약전외한약(생약)규격집'과 '식약처 식품공전'. 두 곳에 공식 등재된 바로 그 침향 — Aquilaria agallocha Roxburgh.",
     heroImage: '',
   });
   const [definitionSection, setDefinitionSection] = useState<AboutAgarwoodData['definitionSection']>({
     title: '침향(沈香)이란 무엇인가?',
     subtitle: '자연이 수십 년에 걸쳐 빚어낸 신비의 향, 물에 가라앉는 귀한 향나무 (세계 3대 향 중 하나)',
     body: '침향(沈香, Agarwood)은 팥꽃나무과 Aquilaria 나무가 외부 상처나 곰팡이 감염에 맞서 분비한 수지(樹脂)가 수십 년간 나무 속에 쌓여 굳은 향목(香木)입니다.',
-    officialNameCallout: '아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)',
+    officialNameCallout: '아퀼라리아 아갈로차 록스버그(Aquilaria agallocha Roxburgh)',
     images: [],
   });
   const [formationSteps, setFormationSteps] = useState<FormationStep[]>([
@@ -338,7 +338,7 @@ export default function AdminAboutAgarwoodPage() {
   const [specialReasons, setSpecialReasons] = useState<SpecialReason[]>([
     { title: '수십 년의 시간', description: '20년 이상의 긴 시간이 만들어낸 자연의 결정체입니다.' },
     { title: '희귀한 수지', description: '전 세계적으로 생산량이 제한된 귀한 향목입니다.' },
-    { title: '학명 기반 품질', description: '식약처 고시 학명 Aquilaria Agallocha Roxburgh.' },
+    { title: '학명 기반 품질', description: '식약처 고시 학명 Aquilaria agallocha Roxburgh.' },
     { title: '동서양 의학서', description: '동의보감·본초강목 등 수천 년간 약재로 기록.' },
   ]);
   const [benefits, setBenefits] = useState<Benefit[]>([
@@ -370,7 +370,7 @@ export default function AdminAboutAgarwoodPage() {
     solutionCta: {
       title: '조엘라이프는 *학명 · 인증 · 산지*를 기준으로\n고객이 직접 확인할 수 있는 침향을 제안합니다.',
       pillars: [
-        { label: '학명', text: 'Aquilaria Agallocha Roxburgh — 식약처 고시' },
+        { label: '학명', text: 'Aquilaria agallocha Roxburgh — 식약처 고시' },
         { label: '인증', text: 'CITES · OCOP · HACCP · GMP · FDA — 12건 인증' },
         { label: '산지', text: '베트남 5개 지역 직영 200ha — 역사적 정품 산지' },
       ],
@@ -380,12 +380,12 @@ export default function AdminAboutAgarwoodPage() {
       ],
     },
     check01Title: '학명을 따져봐야 한다',
-    check01Body: '대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria Agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)입니다.',
+    check01Body: '대한민국 정부의 공식문서 4곳에서 동일하게 등록된 침향은 Aquilaria agallocha Roxburgh (아퀼라리아 아갈로차 록스버그)입니다.',
     check01Sources: [
-      { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria Agallocha Roxburgh로 명확히 정의.' },
-      { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria Agallocha Roxburgh / Aquilaria Malaccensis Lam.' },
-      { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria Agallocha Roxburgh로 정의.' },
-      { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria Agallocha Roxburgh로 설명.' },
+      { label: '대한민국약전외한약(생약)규격집', value: '침향의 학명을 Aquilaria agallocha Roxburgh로 명확히 정의.' },
+      { label: '식약처 식품공전', value: '식용 가능한 침향의 학명 2종 — Aquilaria agallocha Roxburgh / Aquilaria malaccensis Lam.' },
+      { label: '식약처 한약재 관능검사 해설서', value: '침향나무를 Aquilaria agallocha Roxburgh로 정의.' },
+      { label: '한국한의학연구원 한약자원연구센터', value: '침향을 상록교목 Aquilaria agallocha Roxburgh로 설명.' },
     ],
     check01Summary: {
       line1: 'VIHECO 중앙제약 성분명세서에는 **Aquilaria agallocha Roxburgh** 학명이 명시되어 있습니다.',
@@ -401,7 +401,7 @@ export default function AdminAboutAgarwoodPage() {
       { era: '송나라 시대', body: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
       { era: '원나라 시대', body: '안남 지역으로 현재의 베트남에 해당합니다.' },
       { era: '명나라 시대', body: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
-      { era: "'향승'", body: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+      { era: "'향승'", body: '진납을 최상으로, 점성을 그다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
       { era: '조선 시대', body: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
     ],
     check02EraOutro: '이처럼 시대를 거슬러 올라가도, 그리고 여러 나라의 기록을 살펴봐도 공통적으로 등장하는 중심지는 바로 *지금의 베트남 지역*입니다. 그래서 오늘날에도 베트남산 침향이 높은 가치를 인정받고 있는 것입니다.',
@@ -467,7 +467,7 @@ export default function AdminAboutAgarwoodPage() {
         name: '정*현',
         role: '40대 · 직장인',
         rating: 4,
-        body: '학명(Aquilaria Agallocha Roxburgh)을 직접 확인하고 구매했습니다. 진짜 침향의 그윽한 향과 품질에 만족하고 있어요.',
+        body: '학명(Aquilaria agallocha Roxburgh)을 직접 확인하고 구매했습니다. 진짜 침향의 그윽한 향과 품질에 만족하고 있어요.',
         product: '대라천 침향 오일',
       },
     ],

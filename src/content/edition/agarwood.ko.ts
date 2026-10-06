@@ -11,14 +11,14 @@ export const agarwoodEditionKo: EditionContent = {
     title: '진짜 침향,',
     titleHighlight: '219,000시간의 기다림',
     subtitle:
-      "베트남 5개 성, 200ha의 직영 농장, 25년의 시간. 학명 Aquilaria Agallocha Roxburgh의 진짜 이야기.",
+      "베트남 5개 성, 200ha의 직영 농장, 25년의 시간. 학명 Aquilaria agallocha Roxburgh의 진짜 이야기.",
     edition: 'Edition 01 · 2026 Spring',
     backgroundImage: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/home-hero-default.jpg',
   },
   foreword: {
     greeting: '귀한 시간을 내어 이 에디션을 펼쳐 주셔서 감사합니다.',
     body: [
-      '대라천은 베트남 5개 성(하띤·동나이·냐짱·푸국·람동) 직영 농장에서 단 하나의 종 — Aquilaria Agallocha Roxburgh — 에만 25년을 바쳤습니다.',
+      '대라천은 베트남 5개 성(하띤·동나이·냐짱·푸국·람동) 직영 농장에서 단 하나의 종 — Aquilaria agallocha Roxburgh — 에만 25년을 바쳤습니다.',
       "이 디지털 에디션은 그 25년의 기록을 한 권에 압축한 한정 자료입니다. 학명·산지·증빙. 이 세 가지로 진짜 침향을 가리는 방법을 페이지 너머로 전합니다.",
     ],
     signature: '대라천 · ZOEL LIFE',
@@ -50,7 +50,7 @@ export const agarwoodEditionKo: EditionContent = {
         '대한민국 정부의 공식문서 4곳 — 대한민국약전외한약(생약)규격집, 식약처 식품공전, 식약처 한약재 관능검사 해설서, 한국한의학연구원 — 모두에서 공통으로 정의하는 침향은 단 하나입니다.',
       ],
       pull: {
-        quote: 'Aquilaria Agallocha Roxburgh',
+        quote: 'Aquilaria agallocha Roxburgh',
         source: '아퀼라리아 아갈로차 록스버그 · 대한민국 식약처 고시 학명',
       },
     },
@@ -84,7 +84,7 @@ export const agarwoodEditionKo: EditionContent = {
       title: '진짜를 가리는 3가지',
       subtitle: '학명 · 산지 · 증빙문서',
       body: [
-        '학명: 식약처 4대 공식문서 모두 Aquilaria Agallocha Roxburgh로 정의.',
+        '학명: 식약처 4대 공식문서 모두 Aquilaria agallocha Roxburgh로 정의.',
         '산지: 명대 1611년 향승(香乘) 등 고문헌이 최상품으로 기록한 베트남 중부 지역.',
         '증빙: 원산지 증명서, 정식 수입 증빙, 유기농 인증서, CITES 인증서, 성분검사서, 유해물질성적서. CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 통과 불가능.',
       ],
@@ -110,7 +110,7 @@ export const agarwoodEditionKo: EditionContent = {
     title: "대라천 '참'침향 7종",
     subtitle: '캡슐 · 오일 · 침향수 · 스틱 · 차 · 침향단 · 선향',
     items: [
-      { category: 'CAPSULE', name: '침향캡슐', description: '1일 1회 아침식사 후 1캡슐(침향오일 3mg). 기혈 순환·자양강장에 도움.' },
+      { category: 'CAPSULE', name: '침향캡슐', description: '1일 1회, 1회 1캡슐(침향 오일 3mg), 식사와 관계없이 섭취. 기혈 순환·자양강장에 도움.' },
       { category: 'OIL', name: '침향오일(수지)', description: '1일 1~2회 손목·인중·목 뒷부분에 도포 또는 소량 복용.' },
       { category: 'WATER', name: '침향수', description: '1일 1회 20ml 음용 또는 가습기로 취향. 깨끗한 베이스.' },
       { category: 'STICK', name: '침향스틱', description: "조각을 온열판에 올려 취향. '차'처럼 다시 사용 가능." },

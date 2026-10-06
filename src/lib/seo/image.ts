@@ -36,7 +36,7 @@ export const COPYRIGHT_NOTICE = '© 조엘라이프 주식회사 (대라천 ZOEL
 export const DEFAULT_CREDIT = '대라천 ZOEL LIFE';
 
 export interface ImageObjectInput {
-  /** 이미지 파일 URL. 상대경로면 SITE_URL 을 붙인다. */
+  /** 이미지 파일 URL. 상대경로면 SITE_URL을 붙인다. */
   url: string;
   /** 접근성·검색용 설명. */
   caption?: string;

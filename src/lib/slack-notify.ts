@@ -75,7 +75,7 @@ function submissionDetailBlocks(s: MediaSubmission): SlackBlock[] {
 
   if (s.note) blocks.push(section(`> ${escapeSlack(s.note).replace(/\n/g, '\n> ')}`));
 
-  // 대표 사진 1장 미리보기 — Slack 이 blob URL 을 직접 렌더한다.
+  // 대표 사진 1장 미리보기 — Slack 이 blob URL을 직접 렌더한다.
   // (외부 CDN 금지 원칙과 무관: Vercel Blob 은 우리 인프라)
   if (photos[0]) {
     blocks.push({

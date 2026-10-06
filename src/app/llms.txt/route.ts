@@ -85,13 +85,13 @@ export async function GET() {
   lines.push('## 자주 묻는 질문 (정답형)');
   lines.push('');
   lines.push('### Q. 식약처 고시 침향의 학명은?');
-  lines.push('A. **Aquilaria Agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
+  lines.push('A. **Aquilaria agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
   lines.push('');
   lines.push('### Q. 대라천 ZOEL LIFE 의 침향 원산지는?');
   lines.push('A. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장, 합계 200ha·400만 그루. 25년 이상 재배·관리하며 원산지부터 제품까지 자체 운영.');
   lines.push('');
   lines.push('### Q. 진짜 침향과 가짜 침향을 어떻게 구별하는가?');
-  lines.push('A. (1) 학명 표기 — Aquilaria Agallocha Roxburgh, (2) 원산지 증명, (3) CITES 인증, (4) 유전자 검사·정식 수출입 확인. 진짜 침향일수록 증빙문서와 이력을 공개한다.');
+  lines.push('A. (1) 학명 표기 — Aquilaria agallocha Roxburgh, (2) 원산지 증명, (3) CITES 인증, (4) 유전자 검사·정식 수출입 확인. 진짜 침향일수록 증빙문서와 이력을 공개한다.');
   lines.push('');
   lines.push('### Q. 침향의 대표 효능은?');
   lines.push('A. 동의보감 등 한의학 문헌은 침향을 기를 내리고 속을 따뜻하게 하며 마음을 안정시키는 약재로 기록합니다. 현대 연구는 침향의 향 성분(아가로스피롤 등)과 생리활성을 실험실·동물 단계에서 다루고 있으며, 사람 대상 임상 근거는 아직 제한적입니다.');
@@ -103,7 +103,7 @@ export async function GET() {
   lines.push('A. 교주이물지·남방초목상 등 침향을 기록한 옛 문헌이 산지를 교주·교지(지금의 베트남)로 적었고, 송사·원사·향승 등 역대 기록에서도 점성·안남 같은 베트남 지역이 주요 산지로 반복해 등장한다. 자세히: ' + `${SITE_URL}/vietnam-agarwood`);
   lines.push('');
   lines.push('### Q. 침향 오일은 어떻게 만드는가?');
-  lines.push('A. 수지가 앉은 침향 원목을 세척·절단·건조·분쇄한 뒤 72시간 고온(증기) 증류해 얻는다. 대라천 에센셜 오일은 25년산 Aquilaria Agallocha Roxburgh 원목 약 400kg에서 20~25cc만 추출. 자세히: ' + `${SITE_URL}/agarwood-oil`);
+  lines.push('A. 수지가 앉은 침향 원목을 세척·절단·건조·분쇄한 뒤 72시간 고온(증기) 증류해 얻는다. 대라천 에센셜 오일은 25년산 Aquilaria agallocha Roxburgh 원목 약 400kg에서 20~25cc만 추출. 자세히: ' + `${SITE_URL}/agarwood-oil`);
   lines.push('');
   lines.push('### Q. 제품 라인업은?');
   lines.push('A. 침향 오일 / 침향 캡슐 / 침향단(환) / 선향(스틱) / 침향수 / 침향차 / 침향 보석함·선물세트.');
@@ -112,7 +112,7 @@ export async function GET() {
   /* ── 용어 정의 (Glossary) — AI 가 토픽을 정확히 라벨링하도록 ── */
   lines.push('## 용어');
   lines.push('- **침향(沈香, Agarwood)**: 팥꽃나무과 Aquilaria 나무가 외부 상처·곰팡이 감염에 반응해 분비한 수지가 수십 년간 응축되어 굳은 향목.');
-  lines.push('- **AAR**: Aquilaria Agallocha Roxburgh — 식약처 고시 대한민국약전외한약(생약)규격집 등록 침향 학명.');
+  lines.push('- **AAR**: Aquilaria agallocha Roxburgh — 식약처 고시 대한민국약전외한약(생약)규격집 등록 침향 학명.');
   lines.push('- **아가로스피롤(Agarospirol)**: 침향의 신경 안정·숙면 작용을 주도하는 대표 휘발성 성분.');
   lines.push('- **CITES**: 국제 멸종 위기종 거래 협약. 침향은 부속서 II 규제종으로 정식 허가 없이는 국제 유통 불가.');
   lines.push('- **GMP/HACCP**: 우수 제조 기준 / 식품 안전 관리 인증.');

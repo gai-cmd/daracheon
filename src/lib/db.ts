@@ -62,7 +62,7 @@ const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
 // 우리 Blob 스토어의 공개 호스트 (비밀 아님 — layout.tsx preconnect·CSP 에도 명시).
 // pathname 은 `${BLOB_PREFIX}${filename}.json` 으로 결정적이므로, 읽기는 list()
-// 없이 콘텐츠 URL 을 직접 구성할 수 있다 (P2 ③c fast-path). 스토어 교체 시 env 로 오버라이드.
+// 없이 콘텐츠 URL을 직접 구성할 수 있다 (P2 ③c fast-path). 스토어 교체 시 env 로 오버라이드.
 const BLOB_PUBLIC_BASE =
   process.env.BLOB_PUBLIC_BASE ?? 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
 

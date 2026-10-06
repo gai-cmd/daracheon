@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: '침향 제품 — 침향 오일·침향단·침향수·침향차',
   description:
-    "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria Agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
+    "대라천 '참'침향 오일·환·수·차·스틱·향·염주 전 라인업. 25년 이상 숙성된 Aquilaria agallocha Roxburgh 정품, Lot 번호로 농장·가공·검사 이력 조회.",
   keywords: [
     // 브랜드 + 카테고리 의도
     '대라천 제품', 'ZOEL LIFE 제품', '조엘라이프 제품', '대라천 침향 라인업',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     '침향 보석함', '침향 선물세트',
     // 품질/스펙
     '25년산 침향', '베트남 직영 침향', '정품 침향',
-    'Aquilaria Agallocha Roxburgh 제품',
+    'Aquilaria agallocha Roxburgh 제품',
   ],
   alternates: { canonical: 'https://zoellife.com/products' },
   openGraph: {
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/01-1i2ZoP2rT3PhgGMtyTXA8A8D6bh7AJPTk.jpg',
-      alt: "대라천 '참'침향 오일 캡슐 — 25년 숙성 Aquilaria Agallocha Roxburgh 정품",
+      alt: "대라천 '참'침향 오일 캡슐 — 25년 숙성 Aquilaria agallocha Roxburgh 정품",
     }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '제품 소개 — 대라천 침향 제품',
-    description: '25년 숙성 Aquilaria Agallocha Roxburgh 정품 라인업.',
+    description: '25년 숙성 Aquilaria agallocha Roxburgh 정품 라인업.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/products/cham-oil-capsule-2026-05/01-1i2ZoP2rT3PhgGMtyTXA8A8D6bh7AJPTk.jpg'],
   },
 };
@@ -85,7 +85,7 @@ const DEFAULT_CATEGORIES: ProductCategory[] = [
 const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 'cham-oil-capsule',
-    slug: 'daerachoen-cham-agarwood-oil-capsule',
+    slug: 'daeracheon-cham-agarwood-oil-capsule',
     name: "대라천 '참'침향 오일 캡슐",
     nameEn: 'Daeracheon Cham Agarwood Oil Capsule',
     category: '오일',
@@ -100,16 +100,16 @@ const DEFAULT_PRODUCTS: Product[] = [
       'https://lh3.googleusercontent.com/d/12L68teBwD-GcDTEcHemlnKmkmFQKFJhZ=w1280',
     ],
     description:
-      "25년 이상 숙성된 Aquilaria Agallocha Roxburgh 침향나무 수지의 오일 0.59%를 담은 대라천의 시그니처 연질캡슐.",
+      "25년 이상 숙성된 Aquilaria agallocha Roxburgh 침향나무 수지의 오일 0.59%를 담은 대라천의 시그니처 연질캡슐.",
     shortDescription: '25년산 정품 침향오일 연질캡슐 — 30캡슐 기프트박스.',
     features: [
-      'Aquilaria Agallocha Roxburgh (정품 학명 인증)',
+      'Aquilaria agallocha Roxburgh (정품 학명 인증)',
       '침향나무 수지 오일 0.59% 함유',
       '507.5mg × 30캡슐 = 총 15.225g',
     ],
     specs: {
       원산지: '베트남 (하띤, 동나이, 냐짱, 푸꿕, 람동)',
-      수종: 'Aquilaria Agallocha Roxburgh',
+      수종: 'Aquilaria agallocha Roxburgh',
       중량: '507.5mg × 30캡슐 (15.225g)',
       인증: 'Organic, HACCP, OCOP',
     },
@@ -131,7 +131,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     priceDisplay: '650,000원',
     image: 'https://lh3.googleusercontent.com/d/1YSbJhJZTJ2I5Lq69rdgZDY2y2yPTZDH9=w1280',
     description:
-      '25년산 Aquilaria Agallocha Roxburgh 원목을 72시간 고온증류하여 얻은 순수 침향 에센셜 오일 100%.',
+      '25년산 Aquilaria agallocha Roxburgh 원목을 72시간 고온증류하여 얻은 순수 침향 에센셜 오일 100%.',
     shortDescription: '25년산 침향 100% 에센셜 오일, 72시간 고온증류 추출.',
     features: ['침향 에센셜 오일 100% (25년산)', '72시간 고온증류 추출', '취향·복용·마사지 다용도 사용'],
     specs: {
@@ -157,7 +157,7 @@ const DEFAULT_PRODUCTS: Product[] = [
       '노니엑기스·북방감초·인삼·칵깐(녹용)·콜라겐·표고에 25년산 침향분말 10%를 더한 전통 방식의 환제(丸劑).',
     shortDescription: '25년산 침향분말 10% 배합 전통 환 — 1일 1단 식후 복용.',
     features: ['25년산 침향분말 10% 배합', '1일 1회 1단 식후 복용', 'Organic / HACCP / OCOP 인증'],
-    specs: { 중량: '1단 5g × 15단 (총 75g)', 유통기한: '3년', 인증: 'Organic, HACCP, OCOP' },
+    specs: { 중량: '1단 5g × 15단 (총 75g)', 소비기한: '3년', 인증: 'Organic, HACCP, OCOP' },
     inStock: true,
   },
   {
@@ -174,7 +174,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: '25년산 침향에 동충하초·제비집을 더해 완성한 대라천의 최고급 복합 환.',
     shortDescription: '25년산 침향·동충하초·제비집 복합 프리미엄 환.',
     features: ['25년산 침향 + 동충하초 + 제비집', '1박스 3병 × 20포 = 60포 구성'],
-    specs: { 포장: '1박스 3병 × 60포', 유통기한: '3년', 인증: 'Organic, HACCP, OCOP' },
+    specs: { 포장: '1박스 3병 × 60포', 소비기한: '3년', 인증: 'Organic, HACCP, OCOP' },
     inStock: true,
   },
   {
@@ -191,7 +191,7 @@ const DEFAULT_PRODUCTS: Product[] = [
     description: '25년산 침향 증류 추출물 100%로 만든 대라천 침향수. 분무·가습기로 확산시켜 취향하거나, 음용할 수 있는 일상형 제품.',
     shortDescription: '25년산 침향 증류 추출물 100% — 분무·음용 다용도.',
     features: ['침향 증류 추출물 100% (25년산)', '1일 음용 권장량 20ml'],
-    specs: { 부피: '1병 500ml', 유통기한: '2년', 인증: 'Organic, HACCP, OCOP' },
+    specs: { 부피: '1병 500ml', 소비기한: '2년', 인증: 'Organic, HACCP, OCOP' },
     inStock: true,
   },
   {
@@ -205,10 +205,10 @@ const DEFAULT_PRODUCTS: Product[] = [
     price: 95000,
     priceDisplay: '95,000원',
     image: 'https://lh3.googleusercontent.com/d/1BHqj8esblrca2p8kxG7c1Jawaql7H3AP=w1280',
-    description: '25년산 침향과 베트남 전통 항암차 파라미냐(Paramignya)를 블렌딩한 허브티.',
+    description: '25년산 침향과 베트남 전통차 파라미냐(Paramignya)를 블렌딩한 허브티.',
     shortDescription: '25년산 침향 + 베트남 전통 파라미냐 블렌드 — 3탕 가능.',
     features: ['25년산 침향 + 파라미냐 블렌드', '30포 / 1박스 (총 75g)'],
-    specs: { 중량: '1포 2.5g × 30포 (75g)', 유통기한: '4년', 인증: 'Organic, HACCP, OCOP' },
+    specs: { 중량: '1포 2.5g × 30포 (75g)', 소비기한: '4년', 인증: 'Organic, HACCP, OCOP' },
     inStock: true,
   },
 ];

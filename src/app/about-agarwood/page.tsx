@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   // '침향' 단독 검색어 허브 — 제목 첫머리에 검색어, 정의·학명·산지·구별법을 한 줄로 (템플릿 포함 37자).
   title: '침향이란? 학명·산지·진짜 침향 구별법 총정리',
   description:
-    '식약처 고시 학명 침향(沈香, Aquilaria Agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
+    '식약처 고시 학명 침향(沈香, Aquilaria agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
     // 토픽
-    '침향', '沈香', 'Agarwood', 'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+    '침향', '沈香', 'Agarwood', 'Aquilaria agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
     // 정의/지식 의도
     '침향이란', '침향 정의', '침향 학명', '침향 등급', '침향 종류',
     '침향 형성 과정', '침향 수지', '침향 향', '세계 3대 향',
@@ -34,19 +34,19 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://zoellife.com/about-agarwood' },
   openGraph: {
     type: 'article',
-    title: '침향 이야기 — 식약처 고시 학명 Aquilaria Agallocha Roxburgh',
+    title: '침향 이야기 — 식약처 고시 학명 Aquilaria agallocha Roxburgh',
     description: '학명·정의·효능·문헌·논문·매체 보도까지, 진짜 침향을 알아야 할 모든 것.',
     url: 'https://zoellife.com/about-agarwood',
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     images: [{
       url: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png',
-      alt: '침향 이야기 — 식약처 고시 학명 Aquilaria Agallocha Roxburgh 정의·효능·문헌',
+      alt: '침향 이야기 — 식약처 고시 학명 Aquilaria agallocha Roxburgh 정의·효능·문헌',
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '침향 이야기 — 학명 Aquilaria Agallocha Roxburgh',
+    title: '침향 이야기 — 학명 Aquilaria agallocha Roxburgh',
     description: '식약처 고시 학명 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png'],
   },
@@ -95,7 +95,7 @@ const ABOUT_FAQ: FaqEntry[] = [
   },
   {
     q: '공식 침향의 학명은 무엇인가요?',
-    a: '대한민국약전외한약(생약)규격집에 등록된 침향은 Aquilaria Agallocha Roxburgh(AAR)이며, 식약처 식품공전에는 AAR과 Aquilaria Malaccensis Lam.이 식용 원료로 등록돼 있습니다.',
+    a: '대한민국약전외한약(생약)규격집에 등록된 침향은 Aquilaria agallocha Roxburgh(AAR)이며, 식약처 식품공전에는 AAR과 Aquilaria malaccensis Lam.이 식용 원료로 등록돼 있습니다.',
   },
   {
     q: '침향의 주산지는 어디인가요?',
@@ -103,7 +103,7 @@ const ABOUT_FAQ: FaqEntry[] = [
   },
   {
     q: '진짜 침향은 어떻게 구별하나요?',
-    a: '학명·품종(Aquilaria Agallocha Roxburgh), 원산지, 증빙 서류 세 가지로 확인합니다. 원산지 증명서, CITES 인증서, 정식 수입 서류, 유전자 검사 결과를 공개하는지 살펴보세요.',
+    a: '학명·품종(Aquilaria agallocha Roxburgh), 원산지, 증빙 서류 세 가지로 확인합니다. 원산지 증명서, CITES 인증서, 정식 수입 서류, 유전자 검사 결과를 공개하는지 살펴보세요.',
   },
   {
     q: '침향의 대표적인 효능은 무엇인가요?',

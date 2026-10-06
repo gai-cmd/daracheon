@@ -113,7 +113,7 @@ export const HOME_MAIN_DEFAULTS: HomeMain = {
     badgeChip: '25년 이상',
     badgeText: '베트남 직영 농장에서 기른 침향',
     headline: '묘목부터 증류까지,\n직접 키운 *진짜 침향*',
-    subline: '식약처 고시 학명 *Aquilaria Agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
+    subline: '식약처 고시 학명 *Aquilaria agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
     primary: { label: '제품 보기', href: '/products' },
     secondary: { label: '진짜 침향 구별법', href: '/about-agarwood' },
   },
@@ -125,7 +125,7 @@ export const HOME_MAIN_DEFAULTS: HomeMain = {
     { value: 12, unit: '건 이상', label: '인증·특허' },
   ],
   marquee: [
-    '식약처 고시 학명 Aquilaria Agallocha Roxburgh',
+    '식약처 고시 학명 Aquilaria agallocha Roxburgh',
     '베트남 직영 농장 25년 이상',
     '베트남 5개 지역 직영 농장 약 200ha',
     '원산지부터 직접 책임',
@@ -153,7 +153,7 @@ export const HOME_MAIN_DEFAULTS: HomeMain = {
     ring: {
       kicker: '진짜 침향 구별법',
       title: '진짜 침향은 학명부터 확인합니다',
-      latin: 'Aquilaria Agallocha Roxburgh',
+      latin: 'Aquilaria agallocha Roxburgh',
       note: '식약처 고시 학명 · 인증 · 산지로 가려내는 법',
       href: '/about-agarwood',
       image: `${B}/uploads/pages/species-card-roxburgh.jpg`,

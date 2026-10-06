@@ -979,7 +979,7 @@ function parseYouTubeStartSeconds(raw: string | null): number {
   return h * 3600 + min * 60 + s;
 }
 
-/** YouTube/Vimeo URL 을 임베드 가능한 src 로 변환. 실패 시 null.
+/** YouTube/Vimeo URL을 임베드 가능한 src 로 변환. 실패 시 null.
  *  YouTube 의 `t` / `start` 시작 시간 파라미터는 임베드 URL 의 `start` 로 보존. */
 function extractEmbed(url: string): string | null {
   try {

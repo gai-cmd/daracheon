@@ -127,7 +127,7 @@ const DEFAULT_HERO: FarmStoryData['hero'] = {
   titleLine1: '베트남 5개 농장의',
   titleEmphasis: '200헥타르, 25년의 시간',
   latLabel: 'Lat 18° N · Ha Tinh, Vietnam',
-  lede: '호치민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
+  lede: '호찌민에서 북쪽으로 500km, 베트남 중부의 하띤(Ha Tinh) — 연평균 습도 84%, 해발 300~600m의 아열대 산림. 침향나무가 가장 깊은 수지를 만드는 유일한 기후. 대라천은 이곳에서 25년째 직영 농장을 운영합니다.',
   heroImage:
     'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/vn/site-showroom-1778043495627.jpg',
 };
@@ -137,7 +137,7 @@ const DEFAULT_SCENE_SECTION: SceneSection = {
   tag: 'THE FIELD',
   title: '대라천 침향 현장',
   subtitle: '하띤, 냐짱, 람동, 동나이, 푸꾸옥의 200ha 부지에 400만 그루',
-  body: "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 '진정한 침향'이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 냐짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허 받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
+  body: "베트남 5대 핵심 산지에 조성된 약 200헥타르 규모의 대라천 침향 직영 농장은 '진정한 침향'이 태어나는 심장부입니다. 약 400만 그루의 침향나무가 자라는 이곳은, 단순한 재배지를 넘어 생명과 시간이 빚어내는 가치의 원천입니다.\n\n하띤, 냐짱, 람동, 동나이, 푸꾸옥 등 베트남을 대표하는 침향 산지에 구축된 대라천의 대규모 농장은 철저한 관리와 체계적인 시스템을 기반으로 운영됩니다.\n\n이곳에서 생산되고 모든 아갈로차(Agallocha) 침향나무에는 개별 고유번호가 부여되어 전 생육 이력이 정밀하게 관리되며, 특허받은 수지 유도 기술을 통해 최상의 품질을 구현합니다.\n\n또한 생산부터 가공, 출시까지 전 과정을 투명하게 공개하며, CITES 국제 인증, 유기농(Organic), HACCP 품질 인증, 베트남 정부 OCOP 품질 보증 등 다양한 국제 및 공인 인증, 특허들을 통해 대라천 '참'침향의 가치를 객관적으로 증명하고 있습니다.",
   images: [
     'https://lh3.googleusercontent.com/d/13tVS4hk6RF6BbMEddB0TcWsCP2RF_Zrc=w1280',
     'https://lh3.googleusercontent.com/d/1Cb_a1JSUJe5RHgSPs6vjyn1Mr3G_rlQ0=w1280',
@@ -158,7 +158,7 @@ const DEFAULT_SCENE_SECTION: SceneSection = {
     {
       image:
         'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/farms/scene-extras/02-hatinh-resin-ant.jpg',
-      alt: '하띤 농장 5년차 수지 작업 침향나무 — 개미집 형성',
+      alt: '하띤 농장 5년 차 수지 작업 침향나무 — 개미집 형성',
       body: '하띤 농장에서 5년간 수지 작업을 진행해 온 침향나무로, 작업 부위에는 현재 개미집이 형성되어 있습니다. 사용된 수지 유도제는 천연 성분 기반으로 개미도 서식할 수 있는 환경이며, 침향나무는 개미 활동으로 인해 지속적인 자연 스트레스를 받고 있는 상태입니다. 이러한 조건은 수지 생성과 축적을 더욱 촉진하는 환경으로 평가되며, 향후 수지 함량이 높은 우수한 품질의 침향으로 성장할 가능성이 기대되는 침향나무입니다.',
     },
   ],
@@ -169,7 +169,7 @@ const DEFAULT_CHAPTERS: FarmStoryData['chapters'] = [
     num: '02',
     tag: 'Location',
     title: '북위 18° — 침향의 마지막 기후대',
-    body: '아퀼라리아 아갈로차(Aquilaria Agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
+    body: '아퀼라리아 아갈로차(Aquilaria agallocha Roxburgh)는 북위 10°~22° 사이 아열대 산림에서만 자연 수지를 만듭니다. 베트남 하띤은 그 중에서도 연평균 강수량 2,400mm, 안개일 수 180일 — 수지가 가장 깊게 침착되는 미기후를 갖춘, 세계에서 가장 북쪽 끝 침향 산지입니다.',
     imageSrc: 'https://lh3.googleusercontent.com/d/1xedUAtI2JRIwwjyLKmHRV_laaOApjEbf=w1280',
     imageAlt: '베트남 하띤(Ha Tinh) 직영 농장',
     imageCaption: '하띤 · Ha Tinh · 직영 농장',
@@ -213,7 +213,7 @@ const DEFAULT_PROCESS_VIDEOS: FarmStoryData['processVideos'] = {
   num: '06',
   tag: 'Videos',
   title: '생산과정 — 농장 현장',
-  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria Agallocha Roxburgh의 하루를 영상으로 공개합니다.',
+  body: '베트남 5개 지역 직영 농장에서 식목부터 25년 자연 숙성까지, Aquilaria agallocha Roxburgh의 하루를 영상으로 공개합니다.',
   items: [
     { src: '/uploads/media/farm-video-01.mp4', title: '하띤성 대규모 재배지 드론 촬영' },
     { src: '/uploads/media/farm-video-02.mp4', title: '침향나무 식목·관수 루틴' },
@@ -275,11 +275,11 @@ const DEFAULT_MEDIA: MediaItem[] = [
   {
     id: 'v-default-4',
     type: 'video',
-    title: '하띤성 · 침향 생산 나무 현장 확인 — Aquilaria Agallocha',
+    title: '하띤성 · 침향 생산 나무 현장 확인 — Aquilaria agallocha',
     source: 'Vietnam Agarwood',
     date: '2023-06-01',
     image: 'https://img.youtube.com/vi/kpj5UIW9wTc/hqdefault.jpg',
-    excerpt: '베트남 하띤성에서 Aquilaria Agallocha 침향 생산 나무를 직접 확인하는 현장 영상.',
+    excerpt: '베트남 하띤성에서 Aquilaria agallocha 침향 생산 나무를 직접 확인하는 현장 영상.',
     url: 'https://www.youtube.com/watch?v=kpj5UIW9wTc',
   },
   {
@@ -399,7 +399,7 @@ export default async function MediaPage() {
     chapters: process?.chapters?.length ? process.chapters : DEFAULT_CHAPTERS,
     // DB 항목은 src(URL) 또는 id(Google Drive 파일 ID) 둘 중 하나로 저장될 수 있다.
     // id 만 있으면 Drive preview 임베드 URL 로 변환해 src 를 채운다 — 클라이언트는
-    // drive.google.com URL 을 iframe 으로 임베드.
+    // drive.google.com URL을 iframe 으로 임베드.
     processVideos: rawVideos
       ? {
           ...rawVideos,

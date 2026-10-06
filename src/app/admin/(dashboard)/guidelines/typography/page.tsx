@@ -378,7 +378,7 @@ export default function TypographyGuidelinePage() {
           </div>
           <SpecLabel>제목 3 — Serif 600 · 1.4</SpecLabel>
           <div style={{ fontFamily: SERIF, fontSize: 17.3, fontWeight: 600, lineHeight: 1.4, color: '#fff' }}>
-            Aquilaria Agallocha Roxburgh
+            Aquilaria agallocha Roxburgh
           </div>
           <SpecLabel>본문 — Sans 300 · 1.95</SpecLabel>
           <div style={{ fontFamily: SANS, fontSize: 16.3, fontWeight: 300, lineHeight: 1.95, letterSpacing: '-0.005em', color: 'rgba(255,255,255,0.72)' }}>
@@ -459,7 +459,7 @@ export default function TypographyGuidelinePage() {
             <tbody>
               {[
                 ['복용법', '1일 1회 1캡슐', '충분한 물과 함께'],
-                ['유통기한', '3년', '냉장 보관 권장'],
+                ['소비기한', '3년', '냉장 보관 권장'],
               ].map((row) => (
                 <tr key={row[0]}>
                   {row.map((cell) => (
@@ -495,7 +495,7 @@ export default function TypographyGuidelinePage() {
               margin: 0,
             }}
           >{`아쿠일라리아 아갈로차 록스버그
-Aquilaria Agallocha Roxburgh — 침향나무 학명`}</pre>
+Aquilaria agallocha Roxburgh — 침향나무 학명`}</pre>
         </Specimen>
       </Section>
 

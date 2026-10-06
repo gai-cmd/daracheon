@@ -62,7 +62,8 @@ export function fixShowroomCopy(pages: Obj | null | undefined): { changed: boole
 /** products 배열에서 캡슐 description 문장만 교체(제자리). */
 export function fixCapsuleCopy(products: unknown[]): { changed: boolean; report: FixReport[] } {
   const field = `products.${CAPSULE_SLUG}.description`;
-  const cap = products.find((p): p is Obj => isObj(p) && p.slug === CAPSULE_SLUG);
+  // 2026-10-06 slug 정정(daerachoen → daeracheon) 이후에도 같은 제품을 찾는다.
+  const cap = products.find((p): p is Obj => isObj(p) && (p.slug === CAPSULE_SLUG || p.slug === 'daeracheon-cham-agarwood-oil-capsule'));
   let status: FixStatus;
   if (!cap || typeof cap.description !== 'string') status = 'missing';
   else if (cap.description.includes(CAPSULE_TO)) status = 'already';

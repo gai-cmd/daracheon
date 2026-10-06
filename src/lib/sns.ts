@@ -4,7 +4,7 @@
  * 지금은 src/data/sns-sample.ts 의 정적 스냅샷을 쓴다.
  * 자동 연동이 붙으면 크론이 YouTube RSS·Instagram API 결과를 같은 모양
  * (SnsChannels)으로 Blob 에 저장하고, 썸네일은 외부 CDN 금지 원칙에 따라
- * Vercel Blob 으로 복사한 URL 을 thumbnail/image 에 채운다.
+ * Vercel Blob 으로 복사한 URL을 thumbnail/image 에 채운다.
  */
 
 export interface SnsVideo {

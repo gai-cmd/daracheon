@@ -36,7 +36,7 @@ export const company = {
       nameEn: 'CITES',
       icon: '🛡️',
       description:
-        '멸종위기 야생동식물 국제거래 협약 인증 (IIA-DNI-007)',
+        'CITES 대상 재배시설 등록 (동나이성 산림청 관리번호 IIA-DNI-007)',
     },
     {
       name: 'HACCP 인증',

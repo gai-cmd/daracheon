@@ -39,7 +39,7 @@ describe('resolveHomeMain — 저장값이 없을 때', () => {
       badgeChip: '25년 이상',
       badgeText: '베트남 직영 농장에서 기른 침향',
       headline: '묘목부터 증류까지,\n직접 키운 *진짜 침향*',
-      subline: '식약처 고시 학명 *Aquilaria Agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
+      subline: '식약처 고시 학명 *Aquilaria agallocha Roxburgh*.\n원산지부터 직접 책임지는 대라천 ‘참’침향입니다.',
       primary: { label: '제품 보기', href: '/products' },
       secondary: { label: '진짜 침향 구별법', href: '/about-agarwood' },
     });
@@ -51,7 +51,7 @@ describe('resolveHomeMain — 저장값이 없을 때', () => {
       { value: 12, unit: '건 이상', label: '인증·특허' },
     ]);
     expect(d.marquee).toHaveLength(6);
-    expect(d.marquee[0]).toBe('식약처 고시 학명 Aquilaria Agallocha Roxburgh');
+    expect(d.marquee[0]).toBe('식약처 고시 학명 Aquilaria agallocha Roxburgh');
     expect(d.marquee).toContain('베트남 직영 농장 25년 이상');
     expect(d.marquee).toContain('인증·특허 12건 이상');
     expect(d.tiles.ring.note).toBe('식약처 고시 학명 · 인증 · 산지로 가려내는 법');

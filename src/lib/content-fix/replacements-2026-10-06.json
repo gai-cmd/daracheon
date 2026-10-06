@@ -1,0 +1,840 @@
+{
+  "_comment": "2026-10-06 표기·맞춤법 점검 결과 반영표. 코드(src)·시드(data/db)·운영 Blob(pages/products/faq/product-guides)·블로그 DB 에 같은 표를 적용한다. scope: code|data|blog (data = Blob JSON 파일들). regex=true 면 JS/Python 공통 문법만 사용. blogSlug 가 있으면 그 블로그 글에만 적용. 순서대로 적용된다.",
+  "rules": [
+    {
+      "id": "slug-capsule",
+      "from": "daerachoen-cham-agarwood-oil-capsule",
+      "to": "daeracheon-cham-agarwood-oil-capsule",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-chimhyang-tree",
+      "from": "참향나무",
+      "to": "침향나무",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-thymelaeaceae",
+      "from": "Thymeleaceae",
+      "to": "Thymelaeaceae",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-patkkot",
+      "from": "팟꽃나무과",
+      "to": "팥꽃나무과",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-agallocha-ko",
+      "from": "아가로차",
+      "to": "아갈로차",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-phuquoc",
+      "from": "푸꼬옥",
+      "to": "푸꾸옥",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-mfds",
+      "from": "식품의약안전처",
+      "to": "식품의약품안전처",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-kp-herbal",
+      "from": "대한약전외한약",
+      "to": "대한민국약전외한약",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-balkyeot",
+      "from": "밝혔니다다",
+      "to": "밝혔습니다",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-sorbitol",
+      "from": "D-소비톨",
+      "to": "D-소르비톨",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-future",
+      "from": "침향 산업의 미래를 공급망에 있다",
+      "to": "침향 산업의 미래는 공급망에 있다",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-mental-title",
+      "from": "현재인의 정신건강 문제의 침향오일의 재조명",
+      "to": "현대인의 정신건강 문제와 침향 오일의 재조명",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-rediscovery",
+      "from": "과학적 재발(?!견)",
+      "to": "과학적 재발견",
+      "regex": true,
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-stray-quote-1",
+      "from": "점성(占城)'으로",
+      "to": "점성(占城)으로",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-stray-quote-2",
+      "from": "깨달음'을",
+      "to": "깨달음을",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-methoxy",
+      "from": "P-메토실 벤질아세톤",
+      "to": "p-메톡시벤질아세톤",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-typhoid",
+      "from": "티프스균",
+      "to": "티푸스균",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-nanfang",
+      "from": "南方草木状",
+      "to": "南方草木狀",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-gloss",
+      "from": "광택 때까지",
+      "to": "광택이 날 때까지",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "typo-dan",
+      "from": "보배로운 환(丹)",
+      "to": "보배로운 단(丹)",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "label-iso22000",
+      "from": "ISO 22000:2018 Food Safety M.",
+      "to": "ISO 22000:2018 Food Safety Management System",
+      "scope": [
+        "code",
+        "data"
+      ]
+    },
+    {
+      "id": "label-wild-plant",
+      "from": "Wild Plant Cultivation Facility R.",
+      "to": "Wild Plant Cultivation Facility Registration",
+      "scope": [
+        "code",
+        "data"
+      ]
+    },
+    {
+      "id": "label-asia-brand",
+      "from": "아시아 선도기업 10대 B.",
+      "to": "아시아 선도기업 10대 브랜드",
+      "scope": [
+        "code",
+        "data"
+      ]
+    },
+    {
+      "id": "edit-three-to-two",
+      "from": "세 가지로 나뉩니다",
+      "to": "두 가지로 나뉩니다",
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "why-aquilaria-agallocha-roxburgh-matters"
+    },
+    {
+      "id": "edit-yield-400",
+      "from": "500kg",
+      "to": "400kg",
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "why-is-agarwood-so-expensive"
+    },
+    {
+      "id": "edit-chimhyanggok",
+      "from": "천향곡",
+      "to": "침향곡",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "edit-question-mark",
+      "from": "어떤 침향일까요(?![?？])",
+      "to": "어떤 침향일까요?",
+      "regex": true,
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "agarwood-oil-hypoxia-gut-study"
+    },
+    {
+      "id": "edit-double-space",
+      "from": "(?<=[^\\s>])  +(?=[^\\s<])",
+      "to": " ",
+      "regex": true,
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "agarwood-oil-hypoxia-gut-study"
+    },
+    {
+      "id": "unify-shelf-life",
+      "from": "유통기한",
+      "to": "소비기한",
+      "scope": [
+        "code",
+        "data"
+      ],
+      "keys": true
+    },
+    {
+      "id": "unify-hcmc",
+      "from": "호치민",
+      "to": "호찌민",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-store-1",
+      "from": "네이버스마트스토어",
+      "to": "네이버 스마트스토어",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-store-2",
+      "from": "네이버 스마트 스토어",
+      "to": "네이버 스마트스토어",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-brand-1",
+      "from": "대라천참침향",
+      "to": "대라천 '참'침향",
+      "scope": [
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-brand-2",
+      "from": "대라천'참'침향",
+      "to": "대라천 '참'침향",
+      "scope": [
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-quote-cham",
+      "from": "‘참’",
+      "to": "'참'",
+      "scope": [
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-quote-real",
+      "from": "‘진짜'",
+      "to": "'진짜'",
+      "scope": [
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-hff-1",
+      "from": "건강기능성식품",
+      "to": "건강기능식품",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-hff-2",
+      "from": "건강 기능성 식품",
+      "to": "건강기능식품",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-binomial-1",
+      "from": "Aquilaria Agallocha",
+      "to": "Aquilaria agallocha",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "unify-binomial-2",
+      "from": "Aquilaria Malaccensis",
+      "to": "Aquilaria malaccensis",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-1",
+      "from": "한 눈에",
+      "to": "한눈에",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-2",
+      "from": "흉내내",
+      "to": "흉내 내",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-3",
+      "from": "흉내낼",
+      "to": "흉내 낼",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-4",
+      "from": "보호 받는",
+      "to": "보호받는",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-5",
+      "from": "특허 받은",
+      "to": "특허받은",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-6",
+      "from": "수천 년 간",
+      "to": "수천 년간",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-7",
+      "from": "(\\d)년 경(?=[\\s,.)]|$)",
+      "to": "$1년경",
+      "regex": true,
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-8",
+      "from": "오래 전",
+      "to": "오래전",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-9",
+      "from": "그 다음",
+      "to": "그다음",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-10",
+      "from": "그 동안",
+      "to": "그동안",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-11",
+      "from": "어찌보면",
+      "to": "어찌 보면",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-12",
+      "from": "상당부분",
+      "to": "상당 부분",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-13",
+      "from": "개봉후",
+      "to": "개봉 후",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-14",
+      "from": "(\\d)년차",
+      "to": "$1년 차",
+      "regex": true,
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-15",
+      "from": "(\\d)일차",
+      "to": "$1일 차",
+      "regex": true,
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-16",
+      "from": "조각 내",
+      "to": "조각내",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-17",
+      "from": "나눠먹였",
+      "to": "나눠 먹였",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-18",
+      "from": "배어나오",
+      "to": "배어 나오",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-19",
+      "from": "산지일뿐",
+      "to": "산지일 뿐",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-20",
+      "from": "회복시키는데",
+      "to": "회복시키는 데",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-21",
+      "from": "다스리는데",
+      "to": "다스리는 데",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "space-22",
+      "from": "가리키는데",
+      "to": "가리키는 데",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-1",
+      "from": "Roxburgh 인가",
+      "to": "Roxburgh인가",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-2",
+      "from": "Aquilaria 의",
+      "to": "Aquilaria의",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-3",
+      "from": "GC-MS 를",
+      "to": "GC-MS를",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-4",
+      "from": "ZOEL LIFE 는",
+      "to": "ZOEL LIFE는",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-5",
+      "from": "zoellife\\.com (의|에)",
+      "to": "zoellife.com$1",
+      "regex": true,
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-6",
+      "from": "SNS 에서",
+      "to": "SNS에서",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-7",
+      "from": "URL 을",
+      "to": "URL을",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-8",
+      "from": "Scopus 등)을",
+      "to": "Scopus 등)를",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-9",
+      "from": "침향(수지)가",
+      "to": "침향(수지)이",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "particle-10",
+      "from": "자리(중생)으로",
+      "to": "자리(중생)로",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "sentence-1",
+      "from": "1일 1회 1회 1캡슐",
+      "to": "1일 1회, 1회 1캡슐",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "sentence-2",
+      "from": "검사 후 이력 부착 후 출고",
+      "to": "검사 후 이력을 부착해 출고",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "sentence-3",
+      "from": "^참조: ",
+      "to": "참고: ",
+      "scope": [
+        "data"
+      ],
+      "regex": true
+    },
+    {
+      "id": "claim-paramignya-1",
+      "from": "베트남 전통 항암차 '파라미냐(Paramignya)'",
+      "to": "베트남 전통차 '파라미냐(Paramignya)'",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-paramignya-2",
+      "from": "베트남 전통 항암차 파라미냐",
+      "to": "베트남 전통차 파라미냐",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-paramignya-3",
+      "from": "(베트남 전통 항암차)",
+      "to": "(베트남 전통차)",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-mental",
+      "from": "정신질환 치료 잠재력 입증",
+      "to": "정신 건강 관련 연구 결과",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-weight",
+      "from": "부작용 없이 체중 관리",
+      "to": "체중 관리",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-cites",
+      "from": "CITES 부속서에 관리번호 IIA-DNI-007로 등재",
+      "to": "동나이성 산림청 재배시설 관리번호 IIA-DNI-007로 등록",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "claim-fda",
+      "from": "엄격한 안전성 유효성 검증으로 효과를 글로벌 표준으로 인정",
+      "to": "미국 FDA 식품시설 등록(Food Facility Registration) 완료",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "placeholder-link",
+      "from": "[내부링크: 좋은 침향 구별하는 3가지 방법]",
+      "to": "<a href=\"/about-agarwood#tab-1\">좋은 침향 구별하는 3가지 방법</a>",
+      "toPlain": "좋은 침향 구별하는 3가지 방법",
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "agarwood-sesquiterpene-guide"
+    },
+    {
+      "id": "ai-filename-alt",
+      "kind": "altFilename",
+      "match": "^u6993731395_.*\\.png$",
+      "to": "상처 입은 침향나무 줄기에서 수지가 형성되는 부위를 확대한 모습",
+      "scope": [
+        "blog"
+      ],
+      "blogSlug": "agarwood-sesquiterpene-guide"
+    }
+  ]
+}

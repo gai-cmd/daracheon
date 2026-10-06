@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
     }
 
     // ⚠️ snap.url 은 응답에 절대 넣지 않는다. URL 경로에 비밀값 BLOB_DATA_PREFIX 가
-    // 들어 있고, 스냅샷 blob 은 access:'public' 이라 URL 을 아는 사람은 인증 없이
+    // 들어 있고, 스냅샷 blob 은 access:'public' 이라 URL을 아는 사람은 인증 없이
     // 고객 PII 전체 DB 를 내려받을 수 있다. 2026-07-26 에 이 경로로 실제 유출이
     // 가능함이 실증됐다(위조한 x-vercel-cron 헤더 → 200 → URL 획득 → 1.3MB 다운로드).
     return NextResponse.json({

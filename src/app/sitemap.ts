@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { readDataSafe } from '@/lib/db';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import type { Product } from '@/data/products';
+import { canonicalProductSlug } from '@/lib/product-slugs';
 
 // 신규 블로그·제품(blob 즉시 반영)이 다음 배포 없이도 sitemap 에 반영되도록
 // 최대 1시간 주기로 재생성. 발행 핸들러의 revalidatePath('/sitemap.xml') 와 병행.
@@ -57,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     productDetailRoutes = products
       .filter((p) => p.slug && p.published !== false)
       .map((p) => {
-        const url = `${baseUrl}/products/${p.slug}`;
+        const url = `${baseUrl}/products/${canonicalProductSlug(p.slug)}`;
         return {
           url,
           lastModified,

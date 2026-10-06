@@ -70,7 +70,7 @@ const DEFAULT_TITLE = "조엘라이프 대라천 '참'침향 - 100% 베트남산
 const OG_TITLE_MAX = 40;
 const DEFAULT_OG_TITLE = "조엘라이프 대라천 '참'침향 | 베트남산 아갈로차 정품 침향";
 const DEFAULT_DESCRIPTION =
-  "조엘라이프 대라천 '참'침향. 식약처 고시 학명 Aquilaria Agallocha Roxburgh, 베트남 5개 지역 직영 농장 200ha.";
+  "조엘라이프 대라천 '참'침향. 식약처 고시 학명 Aquilaria agallocha Roxburgh, 베트남 5개 지역 직영 농장 200ha.";
 
 // 검색 의도별로 키워드 카테고리화 — Title/Description 으로 잡기 어려운 long-tail
 // 까지 metadata.keywords 로 보강. (Google 자체는 keywords 가중치 낮지만
@@ -88,7 +88,7 @@ const KW_BENEFIT = [
 ];
 const KW_ORIGIN = [
   '베트남 침향', '하띤 침향', '베트남 하띤성 침향', '직영 농장 침향',
-  'Aquilaria Agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
+  'Aquilaria agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
   '식약처 고시 침향', '대한민국약전외한약 침향', 'CITES 침향',
 ];
 const KW_COMPARE = [
@@ -231,9 +231,9 @@ const siteJsonLd = {
         caption: '대라천 ZOEL LIFE 브랜드 로고',
       }),
       description:
-        '식약처 고시 학명 Aquilaria Agallocha Roxburgh 침향 전문 브랜드. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장 200ha에서 400만 그루를 25년 이상 재배·관리.',
+        '식약처 고시 학명 Aquilaria agallocha Roxburgh 침향 전문 브랜드. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장 200ha에서 400만 그루를 25년 이상 재배·관리.',
       knowsAbout: [
-        '침향', 'Agarwood', 'Aquilaria Agallocha Roxburgh',
+        '침향', 'Agarwood', 'Aquilaria agallocha Roxburgh',
         '침향 효능', '한약재', '천연 향료', '베트남 침향',
       ],
       areaServed: ['KR', 'JP', 'VN'],
@@ -259,7 +259,7 @@ const siteJsonLd = {
       logo: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
       slogan: 'Genuine Only · 진짜 침향만',
       description:
-        '베트남 직영 25년 이상, 학명 보증 정품 침향 전문 브랜드. Aquilaria Agallocha Roxburgh.',
+        '베트남 직영 25년 이상, 학명 보증 정품 침향 전문 브랜드. Aquilaria agallocha Roxburgh.',
     },
     {
       '@type': 'WebSite',

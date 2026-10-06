@@ -6,7 +6,7 @@ import AgarwoodEditionForm from './AgarwoodEditionForm';
 export const metadata: Metadata = {
   title: '대라천 디지털 에디션 — 한정 공개 | 진짜 침향 219,000시간의 기록',
   description:
-    '베트남 5개 성 25년 농장 기록, 학명 Aquilaria Agallocha Roxburgh의 모든 것. 신청자에게만 발송되는 한정 디지털 에디션.',
+    '베트남 5개 성 25년 농장 기록, 학명 Aquilaria agallocha Roxburgh의 모든 것. 신청자에게만 발송되는 한정 디지털 에디션.',
   robots: { index: false, follow: false },
 };
 
@@ -90,7 +90,7 @@ export default async function AgarwoodEditionLandingPage({
           >
             베트남 5개 성, 200ha의 직영 농장, 25년 이상의 시간. 식약처 고시 한약재 규격집에 등록된 학명{' '}
             <em style={{ color: 'var(--accent-soft)', fontStyle: 'normal' }}>
-              Aquilaria Agallocha Roxburgh
+              Aquilaria agallocha Roxburgh
             </em>
             의 진짜 이야기를 한 권에 담았습니다.
           </p>

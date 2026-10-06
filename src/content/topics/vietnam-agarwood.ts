@@ -18,11 +18,11 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     '침향을 처음 기록한 옛 문헌부터 청나라 시대 무역 기록까지, 침향의 주산지로 반복해 등장하는 곳이 지금의 베트남입니다. 베트남 침향이 좋은 침향으로 꼽히는 이유와, 대라천이 베트남 5개 지역 200ha 직영 농장에서 아갈로차 침향을 기르는 방식을 정리했습니다.',
   heroImage: {
     src: `${BLOB}/pages/hero/agarwood-farm-hatinh.jpg`,
-    alt: '베트남 하띤 직영 침향 농장 — 대라천 Aquilaria Agallocha Roxburgh 침향나무',
+    alt: '베트남 하띤 직영 침향 농장 — 대라천 Aquilaria agallocha Roxburgh 침향나무',
   },
   headline: '베트남 침향이란? 역사 속 산지·학명·5개 직영 농장 총정리',
   description:
-    '베트남 침향이 좋은 침향으로 꼽히는 이유를 고문헌(교주이물지·남방초목상·송사·원사)의 산지 기록으로 살펴보고, 학명 Aquilaria Agallocha Roxburgh, 베트남 하띤·동나이·냐짱·푸꾸옥·람동 직영 농장, 구매 시 확인할 증빙을 정리했습니다.',
+    '베트남 침향이 좋은 침향으로 꼽히는 이유를 고문헌(교주이물지·남방초목상·송사·원사)의 산지 기록으로 살펴보고, 학명 Aquilaria agallocha Roxburgh, 베트남 하띤·동나이·냐짱·푸꾸옥·람동 직영 농장, 구매 시 확인할 증빙을 정리했습니다.',
   about: {
     name: '베트남 침향',
     alternateName: ['베트남산 침향', 'Vietnamese agarwood', 'Trầm hương Việt Nam'],
@@ -63,11 +63,11 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
       id: 'species',
       num: '03',
       tag: 'Species',
-      title: '베트남 침향의 학명 — Aquilaria Agallocha Roxburgh',
+      title: '베트남 침향의 학명 — Aquilaria agallocha Roxburgh',
       lead: '대한민국 공식 문서가 정한 침향 품종은 아갈로차입니다.',
       paragraphs: [
-        '식약처 고시 대한민국약전외한약(생약)규격집은 침향을 팥꽃나무과(Thymelaeaceae) Aquilaria Agallocha Roxburgh의 수지가 침착된 수간목으로 규정합니다. 식약처가 발간한 한약재 관능검사 해설서와 원색 한약재감별도감, 한국한의학연구원 한약자원연구센터도 침향나무를 같은 학명으로 기록합니다.',
-        '식품공전에는 Aquilaria Agallocha Roxburgh와 Aquilaria Malaccensis Lam. 두 가지가 식용 침향 원료로 등록돼 있습니다. 같은 "침향"이라도 품종이 다를 수 있으므로, 베트남산인지와 함께 원료 학명을 확인해야 합니다.',
+        '식약처 고시 대한민국약전외한약(생약)규격집은 침향을 팥꽃나무과(Thymelaeaceae) Aquilaria agallocha Roxburgh의 수지가 침착된 수간목으로 규정합니다. 식약처가 발간한 한약재 관능검사 해설서와 원색 한약재감별도감, 한국한의학연구원 한약자원연구센터도 침향나무를 같은 학명으로 기록합니다.',
+        '식품공전에는 Aquilaria agallocha Roxburgh와 Aquilaria malaccensis Lam. 두 가지가 식용 침향 원료로 등록돼 있습니다. 같은 "침향"이라도 품종이 다를 수 있으므로, 베트남산인지와 함께 원료 학명을 확인해야 합니다.',
       ],
       blocks: [
         {
@@ -89,7 +89,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
       title: '대라천 베트남 5개 직영 침향 농장',
       lead: '하띤·람동·푸꾸옥·냐짱·동나이 — 약 200ha에 400만 그루.',
       paragraphs: [
-        '대라천은 베트남 5개 지역에 걸쳐 약 200헥타르(약 60만 평)에 400만 그루의 Aquilaria Agallocha Roxburgh 침향나무를 심어 25년 이상 직접 관리합니다. 침향은 생성 확률이 낮고 오랜 시간이 필요한 자원이어서, 대규모 식재로 안정적인 생산 기반을 확보했습니다.',
+        '대라천은 베트남 5개 지역에 걸쳐 약 200헥타르(약 60만 평)에 400만 그루의 Aquilaria agallocha Roxburgh 침향나무를 심어 25년 이상 직접 관리합니다. 침향은 생성 확률이 낮고 오랜 시간이 필요한 자원이어서, 대규모 식재로 안정적인 생산 기반을 확보했습니다.',
       ],
       blocks: [
         {
@@ -144,7 +144,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     },
   ],
   productsTitle: '베트남 직영 농장의 대라천 침향 제품',
-  productsLead: '베트남 5개 직영 농장의 Aquilaria Agallocha Roxburgh 원료로 만든 대표 제품입니다.',
+  productsLead: '베트남 5개 직영 농장의 Aquilaria agallocha Roxburgh 원료로 만든 대표 제품입니다.',
   faqTitle: '베트남 침향 자주 묻는 질문',
   faq: [
     {
@@ -153,7 +153,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     },
     {
       q: '베트남 침향의 학명은 무엇인가요?',
-      a: '대라천이 베트남 직영 농장에서 기르는 침향나무는 식약처 고시 대한민국약전외한약(생약)규격집에 등록된 Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)입니다. 유전자 종 식별 검사로 품종을 확인했습니다.',
+      a: '대라천이 베트남 직영 농장에서 기르는 침향나무는 식약처 고시 대한민국약전외한약(생약)규격집에 등록된 Aquilaria agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)입니다. 유전자 종 식별 검사로 품종을 확인했습니다.',
     },
     {
       q: '베트남 어디에서 침향을 재배하나요?',

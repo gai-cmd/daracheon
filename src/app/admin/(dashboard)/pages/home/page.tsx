@@ -210,7 +210,7 @@ const DEFAULT_NOTICE: HomeNotice = {
   tag: 'Notice — 식약처 고시 기준',
   title: '가짜가 많을수록,\n*진짜는 드러난다*',
   body:
-    "이젠 학명/품종부터 확인하세요!\n식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전', '한약재 관능검사 해설서'와 '한국한의학연구원 한약자원연구센터'에\n공식 등록된 침향은 *'Aquilaria Agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)'* 입니다.\n\n대라천 '참'침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.",
+    "이젠 학명/품종부터 확인하세요!\n식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전', '한약재 관능검사 해설서'와 '한국한의학연구원 한약자원연구센터'에\n공식 등록된 침향은 *'Aquilaria agallocha Roxburgh(아퀼라리아 아갈로차 록스버그)'* 입니다.\n\n대라천 '참'침향은 첫 묘목부터 완제품까지 모든 단계와 과정을 투명하게 공개합니다.",
   items: [
     { num: '01', text: '대한민국약전외한약\n(생약)규격집' },
     { num: '02', text: '식약처\n식품공전' },
@@ -273,7 +273,7 @@ const DEFAULT_PROCESS: HomeProcess = {
 
 const DEFAULT_VERIFICATION: VerificationRow[] = [
   { num: '01', label: '원산지 — 베트남 5개 지역 직영 200ha', meta: 'CITES' },
-  { num: '02', label: '원료 — Aquilaria Agallocha Roxburgh', meta: '식약처' },
+  { num: '02', label: '원료 — Aquilaria agallocha Roxburgh', meta: '식약처' },
   { num: '03', label: '제조 — HACCP · GMP 시설', meta: '인증' },
   { num: '04', label: '시험 — 중금속·유해물질 0건', meta: 'LOT별' },
 ];
@@ -282,7 +282,7 @@ const DEFAULT_VERIFIED_CARDS: VerifiedCard[] = [
   {
     step: '01 · Origin',
     title: '학명 확인된 AAR',
-    en: 'Aquilaria Agallocha Roxburgh',
+    en: 'Aquilaria agallocha Roxburgh',
     body:
       "식약처 '대한민국약전외한약(생약)규격집'에 등록된 공식 학명. 유전자(DNA) 검증으로 종 일치 확인 후에만 가공 단계로 진입합니다.",
   },
@@ -330,7 +330,7 @@ const DEFAULT_PROBLEM: HomeProblem = {
       alias: '베트남산 아퀼라리아 아갈로차 록스버그 침향',
       pharmacopoeia: true,
       foodCode: true,
-      note: '대한약전외한약(생약)규격집 · 식품공전 양쪽 모두 공식 등록.',
+      note: '대한민국약전외한약(생약)규격집 · 식품공전 양쪽 모두 공식 등록.',
       image: {
         src: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/species-card-roxburgh.jpg',
         alt: '베트남산 아퀼라리아 아갈로차 록스버그 침향 원목 단면',
@@ -341,7 +341,7 @@ const DEFAULT_PROBLEM: HomeProblem = {
       alias: '인도네시아산 말라센시스 램 침향',
       pharmacopoeia: false,
       foodCode: true,
-      note: '대한약전외한약(생약)규격집 미등록 — 식용 원료로만 허용되는 등급의 침향.',
+      note: '대한민국약전외한약(생약)규격집 미등록 — 식용 원료로만 허용되는 등급의 침향.',
       image: {
         src: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/pages/species-card-malaccensis.jpg',
         alt: '인도네시아산 아퀼라리아 말라센시스 침향 원목 단면 — 수지가 적고 결이 거친 식용 등급',
@@ -351,7 +351,7 @@ const DEFAULT_PROBLEM: HomeProblem = {
   speciesFoot: '시장에서는 두 종 모두 "침향" · "아가우드"로 표시될 수 있어, 학명까지 확인하지 않으면 어떤 종인지 알 수 없습니다.',
   speciesDefHerb: {
     tag: '의약품 · 한약(생약)',
-    title: '‘대한약전외한약(생약)규격집 등록’ 이란?',
+    title: '‘대한민국약전외한약(생약)규격집 등록’ 이란?',
     body: '해당 한약재·생약이 식품의약품안전처의 공식 품질 기준에 따라 안전성과 유효성을 인정받아 *의약품 원료*로 등록되고, 법적으로 제조·유통·판매할 수 있음을 의미합니다.',
   },
   speciesDefFood: {
@@ -405,7 +405,7 @@ const DEFAULT_ORIGIN_AUTHORITY: HomeOriginAuthority = {
     titleLine2: '이젠 학명·품종부터 확인하세요!',
     intro: '*가짜가 많을수록 진짜가 드러납니다.*',
     body:
-      "식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서',\n'원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 공식 등록 및 기재된 침향은\n*'아퀼라리아 아갈로차 록스버그(Aquilaria Agallocha Roxburgh)'* 입니다.",
+      "식품의약품안전처(식약처) 고시 '대한민국약전외한약(생약)규격집', '식품공전'과 식약처 발간 '한약재 관능검사 해설서',\n'원색 한약재감별도감', 그리고 '한국한의학연구원 한약자원연구센터'에 공식 등록 및 기재된 침향은\n*'아퀼라리아 아갈로차 록스버그(Aquilaria agallocha Roxburgh)'* 입니다.",
   },
   history: {
     numTag: '02 역사적 기록 - 베트남이 정품 산지',
@@ -416,7 +416,7 @@ const DEFAULT_ORIGIN_AUTHORITY: HomeOriginAuthority = {
       { era: '송나라 시대', text: '교지, 안남, 점성 등 지금의 베트남 지역이 주요 산지로 기록되어 있습니다.' },
       { era: '원나라 시대', text: '안남 지역으로 현재의 베트남에 해당합니다.' },
       { era: '명나라 시대', text: "'대명회전'에서도 역시 안남과 점성이 핵심 산지로 등장합니다." },
-      { era: "'향승'", text: '진납을 최상으로, 점성을 그 다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
+      { era: "'향승'", text: '진납을 최상으로, 점성을 그다음으로 평하고 있는데 이 역시 모두 베트남 지역권입니다.' },
       { era: '조선 시대', text: "조선의 기록에서는 청나라 시대에 베트남이 침향 생산과 무역을 주도했으며 베트남산이 '정품'으로 인정받았다는 내용까지 확인됩니다." },
     ],
     closing:
@@ -1099,7 +1099,7 @@ export default function AdminHomePage() {
                 {/* 체크박스 라벨 (=프론트엔드 종 카드의 ✓/✗ 옆 텍스트) 편집 — 두 종 카드에 공통 적용. */}
                 <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <LabeledInput
-                    label="라벨 ① — 약전외한약규격집 자리 (기본: 대한약전외한약(생약)규격집)"
+                    label="라벨 ① — 약전외한약규격집 자리 (기본: 대한민국약전외한약(생약)규격집)"
                     value={problem.pharmacopoeiaLabel ?? ''}
                     onChange={(v) => setProblem({ ...problem, pharmacopoeiaLabel: v })}
                   />
@@ -1125,7 +1125,7 @@ export default function AdminHomePage() {
                       <div className="flex items-center gap-6">
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.pharmacopoeia} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], pharmacopoeia: e.target.checked }; setProblem({ ...problem, species: n }); }} />
-                          {(problem.pharmacopoeiaLabel?.trim() || '대한약전외한약(생약)규격집') + ' 등재'}
+                          {(problem.pharmacopoeiaLabel?.trim() || '대한민국약전외한약(생약)규격집') + ' 등재'}
                         </label>
                         <label className="flex items-center gap-2 text-sm text-gray-700">
                           <input type="checkbox" checked={s.foodCode} onChange={(e) => { const n = [...problem.species]; n[i] = { ...n[i], foodCode: e.target.checked }; setProblem({ ...problem, species: n }); }} />
@@ -1187,7 +1187,7 @@ export default function AdminHomePage() {
                   <input
                     value={problem.speciesDefHerb?.title ?? ''}
                     onChange={(e) => setProblem({ ...problem, speciesDefHerb: { tag: problem.speciesDefHerb?.tag ?? '', title: e.target.value, body: problem.speciesDefHerb?.body ?? '' } })}
-                    placeholder="제목 (예: '대한약전외한약(생약)규격집 등록' 이란?)"
+                    placeholder="제목 (예: '대한민국약전외한약(생약)규격집 등록' 이란?)"
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
                   />
                   <textarea

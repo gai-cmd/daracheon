@@ -1,6 +1,6 @@
 import Script from 'next/script';
 
-// zoellife.com 의 GTM 컨테이너 ID — env 미설정 시에도 동작하도록 기본값 하드코딩.
+// zoellife.com의 GTM 컨테이너 ID — env 미설정 시에도 동작하도록 기본값 하드코딩.
 // 컨테이너 ID 는 페이지 HTML 에 그대로 노출되는 공개 값이라 비밀값 하드코딩 금지 대상이 아니다.
 // 다른 컨테이너로 전환 시 NEXT_PUBLIC_GTM_ID env 로 덮어씀.
 const DEFAULT_GTM_ID = 'GTM-W9QZFW8X';
