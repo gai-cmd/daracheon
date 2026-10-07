@@ -1,12 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fixDataFile, fixPost, fixReviews, fixText, RULES } from '@/lib/content-fix/apply-2026-10-07';
 
-// 기준 커밋(07ff503)의 시드 = 이번 정정 전 운영 데이터와 같은 상태.
-const BASE = '07ff503';
-const before = (f: string) =>
-  JSON.parse(execSync(`git show ${BASE}:data/db/${f}.json`, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }));
+// 정정 전 시드 = 07ff503 의 data/db. CI 는 얕은 클론이라 git 이력을 못 읽으므로, 이번 정정으로
+// 바뀐 문자열 잎의 정정 전 값만 고정본(fixtures)으로 두고 현재 시드에 되돌려 끼워 재구성한다.
+type Path = Array<string | number>;
+const BEFORE = JSON.parse(readFileSync('src/lib/__tests__/fixtures/content-fix-2026-10-07-before.json', 'utf8')) as {
+  files: Record<string, Array<[Path, string]>>;
+};
+const before = (f: string) => {
+  const d = after(f);
+  for (const [path, value] of BEFORE.files[f] ?? []) {
+    let node = d;
+    for (const k of path.slice(0, -1)) node = node[k];
+    node[path[path.length - 1]] = value;
+  }
+  return d;
+};
 const after = (f: string) => JSON.parse(readFileSync(`data/db/${f}.json`, 'utf8'));
 
 describe('2026-10-07 data fixes — 운영 엔진(TS) = 로컬 적용 결과(시드)', () => {
