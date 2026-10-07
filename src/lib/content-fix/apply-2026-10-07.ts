@@ -11,15 +11,30 @@
  */
 import table from './replacements-2026-10-07.json';
 
+type Scope = 'code' | 'data' | 'blog' | 'reviews';
+
 interface Rule {
   id: string;
   from: string;
   to: string;
   regex?: boolean;
-  scope: Array<'code' | 'data' | 'blog'>;
+  scope: Scope[];
+  kind?: undefined;
 }
 
-export const RULES = (table as { rules: Rule[] }).rules;
+/** 블로그 글 끝에 안내 문단을 덧붙이는 규칙 — marker 가 이미 있으면 건너뛴다(멱등). */
+interface AppendNoteRule {
+  id: string;
+  kind: 'appendNote';
+  marker: string;
+  text: string;
+  slugs: string[];
+  scope: Scope[];
+}
+
+const ALL = (table as { rules: Array<Rule | AppendNoteRule> }).rules;
+export const RULES = ALL.filter((r): r is Rule => !r.kind);
+export const NOTES = ALL.filter((r): r is AppendNoteRule => r.kind === 'appendNote');
 
 export type Counts = Record<string, number>;
 
@@ -69,7 +84,7 @@ export function fixText(s: string, rules: Rule[], counts: Counts): string {
   return out;
 }
 
-function rulesFor(scope: 'data' | 'blog'): Rule[] {
+function rulesFor(scope: Scope): Rule[] {
   return RULES.filter((r) => r.scope.includes(scope));
 }
 
@@ -95,6 +110,26 @@ export function fixDataFile<T>(data: T): { data: T; counts: Counts } {
   return { data: fixDeep(data, rulesFor('data'), counts), counts };
 }
 
+/** 고객 후기(reviews) — 띄어쓰기 규칙만, 문자열 잎 전체에 적용. */
+export function fixReviews<T>(data: T): { data: T; counts: Counts } {
+  const counts: Counts = {};
+  return { data: fixDeep(data, rulesFor('reviews'), counts), counts };
+}
+
+const escapeHtml = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function slugMatches(slug: string, slugs: string[]) {
+  return slugs.some((s) => slug === s || slug.startsWith(`${s}-`));
+}
+
+/** 에디터 JSON(문서 노드)이면 끝에 문단 노드를 붙인 새 값을, 아니면 그대로 돌려준다. */
+function appendJsonParagraph(doc: unknown, text: string): unknown {
+  if (!doc || typeof doc !== 'object') return doc;
+  const d = doc as { type?: unknown; content?: unknown };
+  if (d.type !== 'doc' || !Array.isArray(d.content)) return doc;
+  return { ...d, content: [...d.content, { type: 'paragraph', content: [{ type: 'text', text }] }] };
+}
+
 export interface FixablePost {
   slug: string;
   title?: string;
@@ -118,5 +153,11 @@ export function fixPost<P extends FixablePost>(post: P): { post: P; counts: Coun
   if (next.contentJson !== undefined) next.contentJson = fixDeep(next.contentJson, rules, counts);
   if (Array.isArray(next.tags)) next.tags = fixDeep(next.tags, rules, counts);
   if (Array.isArray(next.seoKeywords)) next.seoKeywords = fixDeep(next.seoKeywords, rules, counts);
+  for (const n of NOTES) {
+    if (!slugMatches(post.slug, n.slugs) || typeof next.content !== 'string' || next.content.includes(n.marker)) continue;
+    next.content = `${next.content}\n<p>${escapeHtml(n.text)}</p>`;
+    if (next.contentJson !== undefined) next.contentJson = appendJsonParagraph(next.contentJson, n.text);
+    bump(counts, n.id, 1);
+  }
   return { post: next, counts };
 }

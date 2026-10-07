@@ -564,6 +564,62 @@
       ]
     },
     {
+      "id": "cites-claim-1",
+      "from": "CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.",
+      "to": "CITES 서류는 원료가 국제 거래 규정에 따라 정식으로 수출입됐음을 보여 줍니다.",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "cites-claim-2",
+      "from": "CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 통과 불가능.",
+      "to": "CITES 서류는 원료가 국제 거래 규정에 따라 정식으로 수출입됐음을 보여 줍니다.",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "cites-claim-3",
+      "from": "합법 원료 100% 보증. 가짜 침향은 통과 불가능",
+      "to": "국제 거래 규정에 따른 정식 수출입 원료임을 확인하는 서류",
+      "scope": [
+        "code",
+        "data",
+        "blog"
+      ]
+    },
+    {
+      "id": "reviews-day-spacing",
+      "from": "(\\d)일차",
+      "to": "$1일 차",
+      "regex": true,
+      "scope": [
+        "reviews"
+      ]
+    },
+    {
+      "id": "note-binomial-stance",
+      "kind": "appendNote",
+      "marker": "※ 학명 안내 —",
+      "text": "※ 학명 안내 — 식약처 고시 대한민국약전외한약(생약)규격집은 침향의 기원을 Aquilaria agallocha Roxburgh로 정하고, 식품공전은 Aquilaria agallocha Roxburgh와 Aquilaria malaccensis Lam.을 함께 식용 원료로 올리고 있습니다. 식물분류학에서는 두 이름을 같은 종으로 보는 견해도 있습니다. 대라천은 한국 공정서 기준에 따라 Aquilaria agallocha Roxburgh 학명을 씁니다.",
+      "slugs": [
+        "real-agarwood-3-criteria",
+        "agarwood-grading-quality-guide",
+        "mfds-defines-agarwood-as-aquilaria-agallocha",
+        "agarwood-origin-vietnam-trade-history"
+      ],
+      "scope": [
+        "blog"
+      ],
+      "from": "",
+      "to": ""
+    },
+    {
       "id": "r06-typo-future",
       "from": "침향 산업의 미래를 공급망에 있다",
       "to": "침향 산업의 미래는 공급망에 있다",

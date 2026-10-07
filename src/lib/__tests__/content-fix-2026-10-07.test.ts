@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
-import { fixDataFile, fixPost, fixText, RULES } from '@/lib/content-fix/apply-2026-10-07';
+import { fixDataFile, fixPost, fixReviews, fixText, RULES } from '@/lib/content-fix/apply-2026-10-07';
 
 // 기준 커밋(07ff503)의 시드 = 이번 정정 전 운영 데이터와 같은 상태.
 const BASE = '07ff503';
@@ -18,6 +18,13 @@ describe('2026-10-07 data fixes — 운영 엔진(TS) = 로컬 적용 결과(시
       expect(fixDataFile(after(f)).counts).toEqual({});
     });
   }
+
+  it('reviews.json: 띄어쓰기 규칙만 적용 — 엔진 결과 = 시드, 멱등', () => {
+    const { data, counts } = fixReviews(before('reviews'));
+    expect(data).toEqual(after('reviews'));
+    expect(Object.keys(counts)).toEqual(['reviews-day-spacing']);
+    expect(fixReviews(after('reviews')).counts).toEqual({});
+  });
 
   it('점검 문서의 잘못된 표기가 시드에서 사라졌다', () => {
     const all = ['pages', 'products', 'faq'].map((f) => JSON.stringify(after(f))).join('');
@@ -79,6 +86,25 @@ describe('2026-10-07 blog fixes', () => {
       ['부속서 등재는 거래를 금지한다는 뜻이 아니라', '부속서 등재는 거래를 금지한다는 뜻이 아니라'],
     ];
     for (const [from, to] of cases) expect(blog(from)).toBe(to);
+  });
+
+  it('CITES 단정 표현 완화', () => {
+    expect(blog('<p>CITES 인증서는 합법 원료 100% 보증 — 가짜 침향은 CITES 통과 불가능합니다.</p>'))
+      .toBe('<p>CITES 서류는 원료가 국제 거래 규정에 따라 정식으로 수출입됐음을 보여 줍니다.</p>');
+  });
+
+  it('5-1 학명 안내 — 지정한 글 끝에만 한 번 덧붙이고, 에디터 JSON 에도 문단을 넣는다', () => {
+    const post = {
+      slug: 'mfds-defines-agarwood-as-aquilaria-agallocha', title: '', excerpt: '', tags: [] as string[],
+      content: '<p>본문</p>',
+      contentJson: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: '본문' }] }] },
+    };
+    const once = fixPost(post);
+    expect(once.counts['note-binomial-stance']).toBe(1);
+    expect(once.post.content).toMatch(/^<p>본문<\/p>\n<p>※ 학명 안내 — 식약처 고시 대한민국약전외한약\(생약\)규격집은 침향의 기원을 Aquilaria agallocha Roxburgh로/);
+    expect((once.post.contentJson as { content: unknown[] }).content).toHaveLength(2);
+    expect(fixPost(once.post).counts).toEqual({});
+    expect(fixPost({ ...post, slug: 'other-post' }).post.content).toBe('<p>본문</p>');
   });
 
   it('블로그 초안 59편 — 남는 잘못된 표기 없음, 두 번째 실행은 변화 없음', () => {

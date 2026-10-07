@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { authorizeCron } from '@/lib/cron-auth';
 import { readSingleForWrite, writeSingle, readDataForWrite, writeDataMerged, writeData } from '@/lib/db';
 import { readPostsForWrite, writePosts } from '@/lib/blog/store';
-import { fixDataFile, fixPost, type Counts } from '@/lib/content-fix/apply-2026-10-07';
+import { fixDataFile, fixPost, fixReviews, type Counts } from '@/lib/content-fix/apply-2026-10-07';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export const maxDuration = 60;
 /**
  * Vercel Cron 전용 — 운영 데이터 일회성 정정 (2026-10-07 표기·맞춤법 2차 점검).
  * 표: src/lib/content-fix/replacements-2026-10-07.json
- * 대상: Blob pages·products·faq·product-guides·company + 블로그 글.
+ * 대상: Blob pages·products·faq·product-guides·company·reviews(띄어쓰기만) + 블로그 글.
  *
  * 운영 데이터는 Blob/Neon 에만 있고 작업 환경에선 쓸 수 없어, 쓰기 권한이 있는 운영 서버가
  * 크론으로 직접 고친다. 각 어드민 화면과 같은 쓰기 경로를 쓴다. 모든 규칙이 "틀린 표기 → 바른
@@ -76,6 +76,14 @@ export async function GET(request: NextRequest) {
       await writeData('product-guides', fg.data);
       revalidatePath('/guide');
       revalidatePath('/products', 'layout');
+    }
+
+    // 고객 후기 — 띄어쓰기 규칙만. 어드민 후기 관리와 같은 쓰기 경로(outbox·tombstone 보존).
+    const reviews = await readDataForWrite<Record<string, unknown>>('reviews');
+    const fr = fixReviews(reviews);
+    if (changed('reviews', fr.counts)) {
+      await writeDataMerged('reviews', fr.data);
+      revalidatePath('/reviews', 'layout');
     }
 
     // 블로그 — 바뀐 글만 upsert. updatedAt 은 손대지 않는다(표기 정정은 내용 갱신이 아님).
