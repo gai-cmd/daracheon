@@ -227,7 +227,7 @@ const DEFAULT_CERTIFICATIONS: FarmStoryData['certifications'] = {
   num: '07',
   tag: 'Certifications',
   title: '신뢰의 지표 — 국제가 인정하는 품질',
-  body: 'CITES 국제거래 인증부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지. 대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.',
+  body: 'CITES 재배시설 등록부터 TSL ISO/IEC 17025:2017 안전성 시험, 중금속 8종 전부 불검출까지. 대라천의 모든 제품은 Lot 번호로 이력을 조회할 수 있습니다.',
   sections: [
     { title: '국제 거래 및 기술 특허', items: ['CITES IIA-DNI-007', '수지유도 특허 #12835'] },
     { title: '품질 보증', items: ['Organic', 'HACCP', 'OCOP', '2025 아시아 10대 브랜드'] },

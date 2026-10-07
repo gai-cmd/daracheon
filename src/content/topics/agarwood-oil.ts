@@ -167,7 +167,7 @@ export const AGARWOOD_OIL: TopicHubContent = {
     },
     {
       q: '좋은 침향 오일은 어떻게 고르나요?',
-      a: '원료 학명이 식약처 고시 Aquilaria agallocha Roxburgh 인지, 원산지 증명·CITES·유전자 검사 등 증빙을 공개하는지, 20년 이상 자란 나무에서 얻었는지, 증류 방식과 중금속 검사 결과를 밝히는지 확인하세요.',
+      a: '원료 학명이 식약처 고시 Aquilaria agallocha Roxburgh인지, 원산지 증명·CITES·유전자 검사 등 증빙을 공개하는지, 20년 이상 자란 나무에서 얻었는지, 증류 방식과 중금속 검사 결과를 밝히는지 확인하세요.',
     },
   ],
   related: [

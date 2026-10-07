@@ -85,7 +85,7 @@ export async function GET() {
   lines.push('## 자주 묻는 질문 (정답형)');
   lines.push('');
   lines.push('### Q. 식약처 고시 침향의 학명은?');
-  lines.push('A. **Aquilaria agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
+  lines.push('A. **Aquilaria agallocha Roxburgh** (아퀼라리아 아갈로차 록스버그, 약칭 AAR). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. malaccensis Lam.도 식용 원료로 등록).');
   lines.push('');
   lines.push('### Q. 대라천 ZOEL LIFE 의 침향 원산지는?');
   lines.push('A. 베트남 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장, 합계 200ha·400만 그루. 25년 이상 재배·관리하며 원산지부터 제품까지 자체 운영.');

@@ -81,7 +81,7 @@ export const productGuides: ProductGuide[] = [
       {
         title: '제조 및 수입원',
         body: [
-          '수입원: 조엘라이프 주식회사 (서울특별시 금천구 벚꽃로36길 30, 제오 1511호)',
+          '수입원: 조엘라이프 주식회사 (서울특별시 금천구 벚꽃로36길 30, 1511호)',
           '소비자상담실: 070-4140-4086',
           '제조국: 베트남',
           '제조원: VIHECO CENTRAL PHARMACEUTICAL JOINT STOCK COMPANY',

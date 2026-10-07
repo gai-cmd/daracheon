@@ -32,7 +32,7 @@ export const company = {
 
   certifications: [
     {
-      name: 'CITES 국제인증',
+      name: 'CITES 재배시설 등록',
       nameEn: 'CITES',
       icon: '🛡️',
       description:

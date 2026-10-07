@@ -89,7 +89,7 @@ export async function GET() {
   out.push('## 4. 정답형 FAQ');
   out.push('');
   out.push('Q. 식약처 고시 침향의 학명은?');
-  out.push('A. Aquilaria agallocha Roxburgh (아퀼라리아 아갈로차 록스버그). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. Malaccensis Lam.도 식용 원료로 등록).');
+  out.push('A. Aquilaria agallocha Roxburgh (아퀼라리아 아갈로차 록스버그). 대한민국약전외한약(생약)규격집에 등록된 침향 학명(식품공전에는 A. malaccensis Lam.도 식용 원료로 등록).');
   out.push('');
   out.push('Q. 침향이란?');
   out.push('A. 팥꽃나무과 Aquilaria 나무가 외부 상처·곰팡이 감염에 반응해 분비한 수지가 수십 년간 응축되어 굳은 향목. 한약재·천연 향료로 동서양에서 수천 년간 사용.');

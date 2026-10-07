@@ -7,7 +7,7 @@ export const IMAGE_LICENSE_EFFECTIVE_DATE = '2026년 7월 28일';
 
 export const IMAGE_LICENSE_CONTENT = `# 이미지 이용 안내
 
-조엘라이프 주식회사(브랜드: 대라천 ZOEL LIFE, 이하 "회사")가 운영하는 **zoellife.com** 에 게시된 사진·일러스트·도표·영상 썸네일 등 모든 이미지 자산의 저작권과 이용 조건을 안내합니다.
+조엘라이프 주식회사(브랜드: 대라천 ZOEL LIFE, 이하 "회사")가 운영하는 **zoellife.com**에 게시된 사진·일러스트·도표·영상 썸네일 등 모든 이미지 자산의 저작권과 이용 조건을 안내합니다.
 
 ---
 

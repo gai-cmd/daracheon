@@ -283,7 +283,7 @@ export default function AdminBrandStoryPage() {
           '2001 동나이성 대규모 식재',
         ],
         description:
-          "대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했고, 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다.",
+          "대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 하띤성에 13만 그루 규모의 농장을 조성하며 본격적인 침향 재배를 시작했고, 2001년 동나이성에 대규모 식재를 진행하며 미래를 준비했습니다.",
       },
       {
         era: '2014-2019',
@@ -848,7 +848,7 @@ export default function AdminBrandStoryPage() {
                         <label className="block text-xs text-gray-500 mb-1">시대 설명 문단 (선택) — 항목 아래에 단락으로 표시됩니다</label>
                         <textarea
                           rows={4}
-                          placeholder="예: 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 5개 성에 농장을 조성하며 본격적인 침향 재배를 시작했습니다..."
+                          placeholder="예: 대라천 '참'침향은 끊임없는 도전과 연구를 이어왔습니다. 2000년 베트남 하띤성에 13만 그루 규모의 농장을 조성하며 본격적인 침향 재배를 시작했습니다..."
                           value={era.description ?? ''}
                           onChange={(e) => { const n = [...historyTab.eras]; n[eraIdx] = { ...n[eraIdx], description: e.target.value }; setHistoryTab({ ...historyTab, eras: n }); }}
                           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none"

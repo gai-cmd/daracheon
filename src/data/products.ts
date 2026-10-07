@@ -54,12 +54,12 @@ export const products: Product[] = [
     priceDisplay: '가격 문의',
     image: 'https://res.cloudinary.com/ddsu7fl1o/image/upload/v1765437829/agarwood/27_ch1.png',
     description:
-      '베트남 직영 농장에서 25년간 연구한 최고급 침향 연질캡슐입니다. CITES 국제인증, HACCP 인증을 받은 정품 침향만을 사용합니다.',
+      '베트남 직영 농장에서 25년간 연구한 최고급 침향 연질캡슐입니다. CITES 재배시설 등록과 HACCP 인증을 갖춘 정품 침향만을 사용합니다.',
     shortDescription:
       '25년 연구의 결정체. CITES·HACCP 인증 프리미엄 침향 캡슐.',
     features: [
       'Aquilaria agallocha Roxburgh 정품',
-      'CITES 국제인증',
+      'CITES 재배시설 등록',
       'HACCP 식품안전관리 인증',
       '유기농 재배 원료',
       'DNA 유전자 검증 완료',

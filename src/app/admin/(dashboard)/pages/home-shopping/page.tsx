@@ -430,7 +430,7 @@ export default function AdminHomeShoppingHeroPage() {
           {/* 5. NS Videos — 영상 4편 메타 (URL 변경 가능) */}
           <SectionCard
             title="NS · 영상 4편 메타"
-            description="갤러리 카드 텍스트와 mp4 URL. URL 은 Vercel Blob 에 업로드된 자체 호스팅 mp4 만 사용하세요 (외부 CDN 금지). URL 을 비우고 저장한 카드는 공개 페이지에서 빠집니다."
+            description="갤러리 카드 텍스트와 mp4 URL. URL 은 Vercel Blob 에 업로드된 자체 호스팅 mp4 만 사용하세요 (외부 CDN 금지). URL을 비우고 저장한 카드는 공개 페이지에서 빠집니다."
             onSave={() => savePartial('nsVideos', nsVideos, 'nsVideos')}
             saving={saving === 'nsVideos'}
           >

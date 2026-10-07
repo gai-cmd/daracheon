@@ -39,7 +39,7 @@ import styles from './page.module.css';
 export const dynamic = 'force-dynamic';
 
 // 홈은 root layout 의 사이트 공통 JSON-LD(Organization·Brand·WebSite)에 더해 홈 전용 WebPage·FAQPage·대표 제품 ItemList 를 붙인다.
-// (root metadata 의 alternates.canonical 이 이미 zoellife.com 으로 지정됨.)
+// (root metadata 의 alternates.canonical 이 이미 zoellife.com으로 지정됨.)
 export const metadata: Metadata = {
   // absolute — 루트 template("%s | 조엘라이프 대라천 '참'침향")이 홈 title 에
   // 브랜드를 한 번 더 붙여 2회 중복·53자 초과되던 것을 차단.
