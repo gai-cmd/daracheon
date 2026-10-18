@@ -62,6 +62,12 @@ const nextConfig: NextConfig = {
       // AI 개발 유료 서비스 카탈로그 (사내전용 — 미들웨어 관리자 세션 게이트, noindex)
       { source: '/ai-services', destination: '/ai-services/index.html' },
       { source: '/ai-services/', destination: '/ai-services/index.html' },
+      // 콘텐츠 작업실(zoel-workshop, 별도 Vercel 프로젝트)을 같은 도메인 아래로 프록시.
+      // 미들웨어가 관리자 세션으로 게이트하고, 작업실 API 는 같은 세션 쿠키를
+      // ADMIN_SESSION_SECRET 으로 검증한다 — 로그인은 기존 관리자 Google SSO 하나.
+      { source: '/workshop', destination: 'https://zoel-workshop.vercel.app/index.html' },
+      { source: '/workshop/', destination: 'https://zoel-workshop.vercel.app/index.html' },
+      { source: '/workshop/:path*', destination: 'https://zoel-workshop.vercel.app/:path*' },
     ];
   },
   async headers() {
