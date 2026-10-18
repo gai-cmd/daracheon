@@ -96,7 +96,9 @@ button{width:100%;padding:11px;background:#4493f8;color:#fff;border:0;border-rad
   // 실행되므로 여기서 세션을 강제할 수 있다.
   // MCP(/api/ai-tools/mcp)·크론(/api/ai-tools/cron)은 자체 Bearer/CRON_SECRET
   // 인증을 쓰므로 세션 게이트에서 제외한다.
-  const isAiToolsPage = pathname.startsWith('/ai-tools') || pathname.startsWith('/ai-services');
+  // /workshop: 콘텐츠 작업실 프록시(next.config rewrites) — 관리자 세션 필수. 정적 자원·API 포함.
+  const isAiToolsPage =
+    pathname.startsWith('/ai-tools') || pathname.startsWith('/ai-services') || pathname.startsWith('/workshop');
   const isAiToolsApi = pathname.startsWith('/api/ai-tools');
   if (isAiToolsPage || isAiToolsApi) {
     if (pathname.startsWith('/api/ai-tools/mcp') || pathname.startsWith('/api/ai-tools/cron')) {
