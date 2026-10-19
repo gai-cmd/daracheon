@@ -13,5 +13,18 @@
 export const SMARTSTORE_PRODUCT_URL =
   'https://mkt.shopping.naver.com/link/6ad5a17057f8153efa4ec3e9';
 
+/**
+ * 저장된 콘텐츠(블로그 본문 등)에 박힌 옛 스마트스토어 주소를 렌더 시점에
+ * SMARTSTORE_PRODUCT_URL 로 바꾼다. 라이브 데이터는 직접 고치지 않는다는
+ * 원칙 때문에 Blob 의 원문은 그대로 두고 화면에서만 치환한다.
+ */
+const LEGACY_SMARTSTORE_URL_RE =
+  /https?:\/\/(?:m\.)?smartstore\.naver\.com\/agarwooding(?![\w-])(?:[/?#][^"'\s<>]*)?/gi;
+
+export function rewriteSmartstoreLinks(html: string): string {
+  if (!html) return html;
+  return html.replace(LEGACY_SMARTSTORE_URL_RE, SMARTSTORE_PRODUCT_URL);
+}
+
 /** 네이버 브랜드 그린 — 스토어 진입 버튼 전용. */
 export const NAVER_GREEN = '#03c75a';
