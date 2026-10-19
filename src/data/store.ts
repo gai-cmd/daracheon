@@ -6,9 +6,12 @@
  * 로그인 모듈이 구매 진입을 막는 장벽이 되어 2026-08-14 에 제거했다.
  * 스마트스토어는 비로그인 상태에서도 상품 상세를 보여주고, 결제 단계에서
  * 네이버가 알아서 로그인을 요구하므로 앞단 로그인 강제는 불필요하다.
+ *
+ * 2026-10-19: 네이버 쇼핑 마케팅 링크(mkt.shopping.naver.com)로 교체 — 외부 유입
+ * 링크로 잡혀 판매수수료가 2%p 낮게 적용된다.
  */
 export const SMARTSTORE_PRODUCT_URL =
-  'https://smartstore.naver.com/agarwooding/products/13678448200';
+  'https://mkt.shopping.naver.com/link/6ad5a17057f8153efa4ec3e9';
 
 /** 네이버 브랜드 그린 — 스토어 진입 버튼 전용. */
 export const NAVER_GREEN = '#03c75a';
