@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { readDataSafe } from '@/lib/db';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
-import { blogSitemapDates } from '@/lib/blog/sitemap-dates';
+import { blogSitemapDates, recordEditDate } from '@/lib/blog/sitemap-dates';
 import type { Product } from '@/data/products';
 import { canonicalProductSlug } from '@/lib/product-slugs';
 
@@ -21,8 +21,8 @@ function getBaseUrl(): string {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
-  // lastmod 는 실제 수정 시각을 아는 블로그 글·카테고리·목록에만 넣는다. 정적 페이지·제품에
-  // 요청 시각을 넣으면 매 크롤마다 '방금 바뀜'이 되어 검색엔진이 사이트 전체 lastmod 를 불신한다.
+  // lastmod 는 실제 수정 시각을 아는 URL(블로그 글·카테고리·목록, 편집 이력(_mt)이 있는 제품)에만
+  // 넣는다. 정적 페이지 등에 요청 시각을 넣으면 매 크롤마다 '방금 바뀜'이 되어 검색엔진이 사이트 전체 lastmod 를 불신한다.
 
   // 모든 URL 에 단일 ko-KR + x-default hreflang 신호를 부여 — Google 이
   // 다국어 변형이 없음을 명확히 인지하도록 한다. (단일 한국어 사이트.)
@@ -60,8 +60,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((p) => p.slug && p.published !== false)
       .map((p) => {
         const url = `${baseUrl}/products/${canonicalProductSlug(p.slug)}`;
+        // 저장된 마지막 편집 시각(_mt)이 있을 때만 lastmod — 없으면 태그 생략.
+        const lastModified = recordEditDate(p);
         return {
           url,
+          ...(lastModified ? { lastModified } : {}),
           changeFrequency: 'weekly' as const,
           priority: 0.8,
           alternates: withAlternates(url),

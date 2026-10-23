@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { BlogCategory, BlogPost } from '@/types/blog';
-import { blogSitemapDates, toValidDate } from '../blog/sitemap-dates';
+import { blogSitemapDates, recordEditDate, toValidDate } from '../blog/sitemap-dates';
 
 const post = (over: Partial<BlogPost>): BlogPost => ({
   id: over.slug ?? 'x',
@@ -68,5 +68,15 @@ describe('blogSitemapDates', () => {
 
   it('skips published posts without a slug', () => {
     expect(blogSitemapDates([post({ slug: '' })], [cat('science')]).posts).toEqual([]);
+  });
+});
+
+describe('recordEditDate', () => {
+  it('uses the stored _mt edit stamp and omits records without one', () => {
+    expect(recordEditDate({ _mt: 1785053134794 })?.getTime()).toBe(1785053134794);
+    expect(recordEditDate({})).toBeUndefined();
+    expect(recordEditDate({ _mt: 'x' })).toBeUndefined();
+    expect(recordEditDate({ _mt: 0 })).toBeUndefined();
+    expect(recordEditDate(null)).toBeUndefined();
   });
 });

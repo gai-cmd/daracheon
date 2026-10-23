@@ -19,7 +19,7 @@ const PAGE_OPTIONS: { path: string; label: string }[] = [
   { path: '/home-shopping', label: 'On-Air 특별관' },
   { path: '/company', label: '회사소개' },
   { path: '/reviews', label: '고객 후기' },
-  { path: '/process', label: '생산 공정' },
+  { path: '/media', label: '생산 공정' },
   { path: '/showroom', label: '쇼룸' },
   { path: '/blog', label: '블로그' },
 ];
@@ -414,7 +414,8 @@ export default function QrManager({ siteOrigin }: { siteOrigin: string }) {
 
             <datalist id="qr-page-options">
               {PAGE_OPTIONS.map((o) => (
-                <option key={o.path} value={o.path}>
+                // '생산 공정'이 /media 로 합쳐져 path 가 겹치므로 key 는 path+label.
+                <option key={`${o.path}:${o.label}`} value={o.path}>
                   {o.label}
                 </option>
               ))}

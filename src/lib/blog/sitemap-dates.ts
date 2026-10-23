@@ -7,6 +7,16 @@ export function toValidDate(iso: string | undefined): Date | undefined {
   return Number.isNaN(d.getTime()) ? undefined : d;
 }
 
+/**
+ * 저장 레코드의 `_mt`(db.ts 가 편집 시 스탬프하는 마지막 편집 ms)를 Date 로.
+ * 한 번도 편집되지 않아 `_mt` 가 없거나 깨졌으면 undefined — 날짜를 지어내지 않는다.
+ */
+export function recordEditDate(r: unknown): Date | undefined {
+  if (!r || typeof r !== 'object') return undefined;
+  const v = (r as Record<string, unknown>)._mt;
+  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? new Date(v) : undefined;
+}
+
 const postDate = (p: BlogPost) => toValidDate(p.updatedAt) ?? toValidDate(p.publishedAt);
 
 function newest(list: BlogPost[]): Date | undefined {
