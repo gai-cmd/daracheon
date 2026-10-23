@@ -43,7 +43,7 @@ export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
     links: [
       { label: '침향 이야기', href: '/about-agarwood' },
       { label: '브랜드 이야기', href: '/brand-story' },
-      { label: '생산 공정', href: '/process' },
+      { label: '생산 공정', href: '/media' },
       { label: '회사소개', href: '/company' },
     ],
   },

@@ -70,7 +70,7 @@ export const AGARWOOD_OIL: TopicHubContent = {
       ],
       links: [
         { href: '/brand-story#tab-2', label: '생산 공정 사진·영상 보기' },
-        { href: '/process', label: '베트남 직영 농장 둘러보기' },
+        { href: '/media', label: '베트남 직영 농장 둘러보기' },
       ],
     },
     {

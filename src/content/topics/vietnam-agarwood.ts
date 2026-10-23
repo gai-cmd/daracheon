@@ -114,7 +114,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
         },
       ],
       links: [
-        { href: '/process', label: '농장 사진과 영상 보기' },
+        { href: '/media', label: '농장 사진과 영상 보기' },
         { href: '/showroom', label: '베트남 동나이 직영 쇼룸' },
       ],
     },
@@ -171,7 +171,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
   related: [
     { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
-    { href: '/process', label: '베트남 침향 농장', desc: '5개 직영 농장의 사진과 영상' },
+    { href: '/media', label: '베트남 침향 농장', desc: '5개 직영 농장의 사진과 영상' },
     { href: '/showroom', label: '대라천 쇼룸', desc: '베트남 동나이 직영 침향 전시장' },
   ],
 };

@@ -43,6 +43,9 @@ const nextConfig: NextConfig = {
         destination: '/blog/agarwood-species-herbal-vs-food-standards',
         statusCode: 301,
       },
+      // /process 정리(2026-10-24) — 영상 19개가 깨진 채(Drive ID undefined) 색인돼 있었고 내용이
+      // /media 와 거의 같아 영구 이동. 인쇄된 QR(관리자 QR 목록의 /process)도 이 규칙으로 살아 있다.
+      { source: '/process', destination: '/media', permanent: true },
       // www → apex 정규화. 네이버 지도 Web 서비스 URL 등록이 apex 만 허용해서
       // www 도메인에서는 인증 실패. 모든 트래픽을 apex 로 영구 이동.
       {
