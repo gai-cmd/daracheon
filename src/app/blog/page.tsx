@@ -77,7 +77,12 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
   const pagePosts = published.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
-  const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
+  // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다. 글 읽기 실패(readPostsSafe → [])
+  // 일 때는 숨기지 않는다 — 일시 장애로 카테고리가 통째로 사라지는 것 방지.
+  const usedCategoryIds = new Set(published.map((p) => p.categoryId));
+  const sortedCategories = [...categories]
+    .filter((c) => published.length === 0 || usedCategoryIds.has(c.id))
+    .sort((a, b) => a.order - b.order);
 
   const blogJsonLd = {
     '@context': 'https://schema.org',
@@ -97,7 +102,12 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
       author:
         !p.author || /대라천|zoel/i.test(p.author)
           ? { '@id': `${SITE_URL}/#organization` }
-          : { '@type': 'Person', name: p.author },
+          : {
+              '@type': 'Person',
+              name: p.author,
+              // 작성자 개별 페이지가 없어 url 은 생략, 소속만 정규 Organization 노드로 참조.
+              worksFor: { '@id': `${SITE_URL}/#organization` },
+            },
       image: p.coverImage,
     })),
   };

@@ -14,6 +14,7 @@ import { stripEmptyFigcaptions } from '@/lib/blog/sanitize';
 import { rewriteSmartstoreLinks } from '@/data/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
+import { blogOgTitle, blogPostTitle, selectRelatedPosts } from '@/lib/blog/post-seo';
 import BlogCard from '../BlogCard';
 import styles from './BlogArticle.module.css';
 
@@ -79,9 +80,12 @@ export async function generateMetadata({
   const { preview } = await searchParams;
   const allowDraft = Boolean(preview) && (await isAdmin());
   const post = await loadPost(slug, allowDraft);
-  if (!post) return { title: '글을 찾을 수 없습니다 — 대라천 블로그' };
+  if (!post) return { title: '글을 찾을 수 없습니다' };
 
-  const title = post.seoTitle ?? `${post.title} — 대라천 블로그`;
+  // 루트 layout 의 title.template 이 브랜드를 붙이므로 여기서는 제목만 — 브랜드 중복 방지.
+  // OG/트위터 제목엔 템플릿이 적용되지 않으므로 40자 이내로 따로 자른다.
+  const title = blogPostTitle(post);
+  const ogTitle = blogOgTitle(title);
   const description = post.seoDescription ?? post.excerpt;
   const image = post.ogImage ?? post.coverImage ?? '/opengraph-image.jpg';
 
@@ -96,7 +100,7 @@ export async function generateMetadata({
       url: `${SITE_URL}/blog/${post.slug}`,
       siteName: '대라천 ZOEL LIFE',
       locale: 'ko_KR',
-      title,
+      title: ogTitle,
       description,
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
@@ -106,7 +110,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: ogTitle,
       description,
       images: image ? [image] : [],
     },
@@ -158,6 +162,13 @@ export default async function BlogPostPage({
     categoryCounts.set(p.categoryId, (categoryCounts.get(p.categoryId) ?? 0) + 1);
   }
 
+  // 발행 글이 없는 카테고리는 분류 목록에서 숨긴다. 글 읽기 실패로 목록이 비면
+  // (readPostsSafe → []) 숨기지 않는다 — 일시 장애로 분류가 통째로 사라지는 것 방지.
+  const navCategories =
+    published.length > 0
+      ? sortedCategories.filter((c) => (categoryCounts.get(c.id) ?? 0) > 0)
+      : sortedCategories;
+
   // 인기 글: viewCount 우선, 동률(초기값 0)이면 최신순 폴백.
   const popular = published
     .filter((p) => p.id !== post.id)
@@ -168,13 +179,16 @@ export default async function BlogPostPage({
     )
     .slice(0, 5);
 
-  // 우측 레일 관련 글: 같은 카테고리 최신순.
-  const relatedRail = published
-    .filter((p) => p.id !== post.id && p.categoryId === post.categoryId)
-    .slice(0, 5);
+  // 우측 레일 관련 글: 제목이 '관련 글 — 카테고리명'이므로 같은 카테고리 안에서만,
+  // 태그 공유가 많은 글 우선 → 최신순. 최신 글만 반복 노출되지 않게 오래된 글에도 링크가 간다.
+  const relatedRail = selectRelatedPosts(
+    post,
+    published.filter((p) => p.categoryId === post.categoryId),
+    5,
+  );
 
-  // 하단 관련 글 카드 그리드 (기존 유지).
-  const related = relatedRail.slice(0, 3);
+  // 하단 관련 글 카드 그리드: 카테고리 무관하게 태그 공유 → 같은 카테고리 → 최신순.
+  const related = selectRelatedPosts(post, published, 3);
 
   // 이전/다음 글 — 발행일 내림차순 목록 기준 (다음 = 더 최신, 이전 = 더 과거).
   const currentIdx = published.findIndex((p) => p.id === post.id);
@@ -215,6 +229,8 @@ export default async function BlogPostPage({
         '@type': 'Person',
         name: authorName,
         ...(post.authorEmail ? { email: post.authorEmail } : {}),
+        // 작성자 개별 페이지가 없으므로 url 은 넣지 않는다 — 소속만 정규 Organization 노드로 참조.
+        worksFor: { '@id': `${SITE_URL}/#organization` },
       };
 
   const postJsonLd = {
@@ -363,7 +379,7 @@ export default async function BlogPostPage({
                       <span className={styles.catCount}>{published.length}</span>
                     </Link>
                   </li>
-                  {sortedCategories.map((c) => (
+                  {navCategories.map((c) => (
                     <li key={c.id}>
                       <Link
                         href={`/blog/category/${c.id}`}

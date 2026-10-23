@@ -5,6 +5,7 @@ import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
+import { categoryMetaDescription } from '@/lib/blog/post-seo';
 import BlogCard from '../../BlogCard';
 import BlogPagination, { parseBlogPage } from '../../BlogPagination';
 
@@ -41,8 +42,15 @@ export async function generateMetadata({
   const base = `${SITE_URL}/blog/category/${category.id}`;
   const canonical = page > 1 ? `${base}?page=${page}` : base;
   const title = `${category.name} — 대라천 블로그${pageSuffix}`;
-  const description =
-    category.description ?? `대라천 블로그 ${category.name} 카테고리의 글 모음.`;
+  // 어드민 설명이 비었거나 짧으면 최신 글 제목 몇 개로 메타 설명을 조합한다(화면 문구는 그대로).
+  const recentTitles = posts
+    .filter((p) => p.status === 'published' && p.categoryId === id)
+    .sort((a, b) =>
+      (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
+    )
+    .slice(0, 5)
+    .map((p) => p.title);
+  const description = categoryMetaDescription(category, recentTitles);
   return {
     title,
     description,
@@ -83,7 +91,14 @@ export default async function BlogCategoryPage({
   if (page > totalPages) notFound();
   const pagePosts = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
-  const sortedCategories = [...categories].sort((a, b) => a.order - b.order);
+  // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다(현재 카테고리는 활성 표시를 위해 유지).
+  // 글 읽기 실패(readPostsSafe → [])면 숨기지 않는다 — 일시 장애 시 목록 소실 방지.
+  const usedCategoryIds = new Set(
+    posts.filter((p) => p.status === 'published').map((p) => p.categoryId)
+  );
+  const sortedCategories = [...categories]
+    .filter((c) => usedCategoryIds.size === 0 || c.id === category.id || usedCategoryIds.has(c.id))
+    .sort((a, b) => a.order - b.order);
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
   const breadcrumb = {
