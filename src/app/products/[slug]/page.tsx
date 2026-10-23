@@ -16,18 +16,6 @@ import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
 
-interface ReviewRecord {
-  productSlug?: string;
-  productId?: string;
-  rating?: number;
-  title?: string;
-  body?: string;
-  author?: string;
-  createdAt?: string;
-  verified?: boolean;
-  approved?: boolean;
-}
-
 export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
@@ -71,9 +59,8 @@ export default async function ProductDetailPage(
 ) {
   const { slug } = await params;
   // products 는 uncached — 어드민 토글이 즉시 반영되도록.
-  const [products, reviews, storedGuides] = await Promise.all([
+  const [products, storedGuides] = await Promise.all([
     readDataUncached<Product>('products'),
-    readDataSafe<ReviewRecord>('reviews'),
     // 제품상세(포장 표시사항) — /guide 와 같은 원천: 어드민 저장값(blob) 우선, 없으면 코드 기본값.
     readDataSafe<ProductGuide>('product-guides'),
   ]);
@@ -114,19 +101,9 @@ export default async function ProductDetailPage(
   ];
 
   // Product JSON-LD (Google 제품 리치 결과 + AI Overview 엔티티 매칭)
-  // AggregateRating / Review 는 reviews.json 에서 동일 제품 slug·id 로 필터.
-  const productReviews = reviews.filter(
-    (r) =>
-      (r.productSlug === product.slug || r.productId === product.id) &&
-      typeof r.rating === 'number' &&
-      r.rating > 0 &&
-      r.approved !== false,
-  );
-  const ratingCount = productReviews.length;
-  const ratingAvg =
-    ratingCount > 0
-      ? productReviews.reduce((s, r) => s + (r.rating ?? 0), 0) / ratingCount
-      : 0;
+  // aggregateRating / review 는 의도적으로 출력하지 않는다 — reviews 데이터에는 네이버 블로그 등
+  // 외부에서 가져온 후기가 섞여 있어, 자사 사이트가 이를 제품 리뷰로 마크업하면 Google 의
+  // 자기 홍보성 리뷰 정책 위반(수동 조치 위험)이 된다.
 
   // Google 의 Merchant listings 가이드라인을 충족하도록 hasMerchantReturnPolicy /
   // shippingDetails 는 의도적으로 생략(직판 정책이 페이지마다 다르므로 잘못된
@@ -188,24 +165,6 @@ export default async function ProductDetailPage(
         }
       : {}),
   };
-  if (ratingCount > 0) {
-    productJsonLd.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: Math.round(ratingAvg * 10) / 10,
-      reviewCount: ratingCount,
-      bestRating: 5,
-      worstRating: 1,
-    };
-    productJsonLd.review = productReviews.slice(0, 5).map((r) => ({
-      '@type': 'Review',
-      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
-      ...(r.author ? { author: { '@type': 'Person', name: r.author } } : {}),
-      ...(r.title ? { name: r.title } : {}),
-      ...(r.body ? { reviewBody: r.body } : {}),
-      ...(r.createdAt ? { datePublished: r.createdAt.slice(0, 10) } : {}),
-    }));
-  }
-
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

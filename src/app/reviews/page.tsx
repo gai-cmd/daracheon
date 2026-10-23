@@ -62,11 +62,10 @@ export default async function ReviewsPage() {
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : '0.0';
 
-  // 페이지 단위 schema 는 Product 가 아니라 CollectionPage + Brand 로 구성.
-  // 이전엔 "Product" 로 두고 offers 없이 aggregateRating 만 부착했는데, Google 의
-  // Product rich result 가이드라인은 offers/image 등을 함께 요구한다 (없으면 경고).
-  // 개별 제품 페이지는 별도 Product+offers schema 를 이미 출력하므로 여기선
-  // 브랜드 단위 평점만 노출. (Brand+aggregateRating 은 Knowledge Graph 인용 후보.)
+  // 페이지 단위 schema 는 CollectionPage + BreadcrumbList 만 출력한다.
+  // 자사 사이트가 자기 브랜드에 대한 후기를 Review/AggregateRating 으로 마크업하면
+  // Google 의 "자기 홍보성 리뷰(self-serving reviews)" 정책 위반 → 수동 조치 위험이라
+  // Brand aggregateRating 과 Review ItemList 는 제거했다. 화면의 별점·후기는 그대로.
   const collectionPageJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -77,38 +76,7 @@ export default async function ReviewsPage() {
     inLanguage: 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}/#website` },
     about: { '@id': `${SITE_URL}/#brand` },
-    mainEntity: {
-      '@type': 'ItemList',
-      numberOfItems: reviews.length,
-      itemListElement: reviews.slice(0, 50).map((r, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        item: {
-          '@type': 'Review',
-          author: { '@type': 'Person', name: r.author },
-          datePublished: r.date,
-          reviewRating: { '@type': 'Rating', ratingValue: String(r.rating), bestRating: '5', worstRating: '1' },
-          name: r.title,
-          reviewBody: r.content,
-          itemReviewed: { '@id': `${SITE_URL}/#brand` },
-        },
-      })),
-    },
   };
-
-  const brandRatingJsonLd = reviews.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'Brand',
-    '@id': `${SITE_URL}/#brand`,
-    name: '대라천 ZOEL LIFE',
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: avgRating,
-      reviewCount: String(reviews.length),
-      bestRating: '5',
-      worstRating: '1',
-    },
-  } : null;
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -122,7 +90,6 @@ export default async function ReviewsPage() {
   return (
     <>
       <JsonLd data={collectionPageJsonLd} />
-      {brandRatingJsonLd && <JsonLd data={brandRatingJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />
 
       {/* Hero — /products 와 동일한 좌우 분할 레이아웃 */}
