@@ -269,14 +269,7 @@ const siteJsonLd = {
       alternateName: '조엘라이프',
       inLanguage: 'ko-KR',
       publisher: { '@id': `${SITE_URL}/#organization` },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: `${SITE_URL}/products?q={search_term_string}`,
-        },
-        'query-input': 'required name=search_term_string',
-      },
+      // SearchAction 제거: /products 는 ?q= 검색을 구현하지 않아 실재하지 않는 검색 기능 마크업이었다.
     },
     // 홈 전용 노드(WebPage·홈 Breadcrumb·FAQPage)는 src/app/page.tsx 로 옮겼다.
     // 여기 두면 모든 페이지에 홈 WebPage/Breadcrumb/FAQPage 가 중복 삽입돼

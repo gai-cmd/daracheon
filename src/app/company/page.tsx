@@ -92,9 +92,8 @@ const companyJsonLd = {
         name: '대라천 침향 제품',
         url: 'https://zoellife.com/products',
       },
-      sameAs: [
-        'https://zoellife.com',
-      ],
+      // sameAs 는 외부 프로필 링크용 — 자기 사이트(zoellife.com)를 가리키던 항목은 제거.
+      // 외부 채널(인스타·유튜브)은 루트 layout 의 #organization sameAs 가 담당한다.
     },
     {
       '@type': 'BreadcrumbList',
