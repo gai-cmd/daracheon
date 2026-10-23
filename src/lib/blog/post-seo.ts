@@ -81,3 +81,17 @@ export function categoryMetaDescription(
   }
   return `${head}${picked.join(', ')}${tail}`;
 }
+
+/**
+ * 고정 슬러그 목록으로 "더 읽어보기" 링크를 고른다 — 지정 순서 유지, 발행 글만.
+ * 제목은 저장된 글 제목을 그대로 쓰고, 없는(삭제·비공개) 슬러그는 건너뛴다.
+ */
+export function pickPostsBySlug(
+  posts: Pick<BlogPost, 'slug' | 'title' | 'status'>[],
+  slugs: readonly string[],
+): { slug: string; title: string }[] {
+  return slugs.flatMap((slug) => {
+    const p = posts.find((x) => x.slug === slug && x.status === 'published');
+    return p && p.title.trim() ? [{ slug: p.slug, title: p.title.trim() }] : [];
+  });
+}

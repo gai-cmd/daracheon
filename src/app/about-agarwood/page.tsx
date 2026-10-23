@@ -5,6 +5,14 @@ import AboutAgarwoodClient from './AboutAgarwoodClient';
 import FaqSection from '@/components/seo/FaqSection';
 import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
 import { faqPageNode, type FaqEntry } from '@/lib/seo/home-faq';
+import Link from 'next/link';
+import { unstable_cache } from 'next/cache';
+import { imageObject } from '@/lib/seo/image';
+import { isStoredImageUrl } from '@/lib/blog/image-alt';
+import { pickPostsBySlug } from '@/lib/blog/post-seo';
+import { readPostsSafe, BLOG_LATEST_TAG } from '@/lib/blog/store';
+import story from '@/styles/zoel/story-page.module.css';
+import topicStyles from '@/components/seo/TopicHub.module.css';
 
 // Admin 저장 / 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
 // readSingleUncached 는 unstable_cache 우회하므로 blob 1 회 read 비용은
@@ -12,8 +20,9 @@ import { faqPageNode, type FaqEntry } from '@/lib/seo/home-faq';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  // '침향' 단독 검색어 허브 — 제목 첫머리에 검색어, 정의·학명·산지·구별법을 한 줄로 (템플릿 포함 37자).
-  title: '침향이란? 학명·산지·진짜 침향 구별법 총정리',
+  // '침향'·'침향 효능' 검색어 허브 — 제목 첫머리에 검색어, 화면의 효능(Chapter IV)·학명·산지 순.
+  // 브랜드 접미사는 루트 layout 의 title.template 이 붙인다.
+  title: '침향이란? 효능·학명·산지 총정리',
   description:
     '식약처 고시 학명 침향(沈香, Aquilaria agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
@@ -34,7 +43,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://zoellife.com/about-agarwood' },
   openGraph: {
     type: 'article',
-    title: '침향 이야기 — 식약처 고시 학명 Aquilaria agallocha Roxburgh',
+    // og:title 은 템플릿이 적용되지 않는다 — 40자 이내(네이버 가이드).
+    title: '침향이란? 효능·학명·산지 총정리',
     description: '학명·정의·효능·문헌·논문·매체 보도까지, 진짜 침향을 알아야 할 모든 것.',
     url: 'https://zoellife.com/about-agarwood',
     siteName: '대라천 ZOEL LIFE',
@@ -46,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '침향 이야기 — 학명 Aquilaria agallocha Roxburgh',
+    title: '침향이란? 효능·학명·산지 총정리',
     description: '식약처 고시 학명 침향의 정의·형성·효능·문헌·논문 종합 가이드.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/hero/agarwood-definition.png'],
   },
@@ -54,8 +64,18 @@ export const metadata: Metadata = {
 
 const SITE_URL = 'https://zoellife.com';
 
-// hero 이미지는 OG 이미지(우리 인프라)로 통일 — 외부 CDN 의존 금지(CLAUDE.md).
-const articleJsonLd = {
+// Article 대표 이미지 — 어드민 히어로 이미지가 우리 인프라(Vercel Blob·/public)일 때만 쓰고,
+// 아니면 기존 사이트 OG 이미지로 둔다 (외부 CDN 의존 금지, CLAUDE.md).
+// dateModified 는 pages 데이터에 저장된 수정 시각이 없어 기존 값을 유지한다(현재 시각 금지).
+const ARTICLE_FALLBACK_IMAGE = `${SITE_URL}/opengraph-image.jpg`;
+
+function articleImage(heroImage: string | undefined) {
+  const url = heroImage?.trim();
+  if (!url || !isStoredImageUrl(url)) return ARTICLE_FALLBACK_IMAGE;
+  return imageObject({ url, caption: '침향 이야기 — 식약처 고시 학명 Aquilaria agallocha Roxburgh' });
+}
+
+const articleJsonLdBase = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   '@id': `${SITE_URL}/about-agarwood#article`,
@@ -69,7 +89,6 @@ const articleJsonLd = {
   publisher: { '@id': `${SITE_URL}/#organization` },
   datePublished: '2026-01-07',
   dateModified: '2026-04-17',
-  image: `${SITE_URL}/opengraph-image.jpg`,
 };
 
 const breadcrumbJsonLd = {
@@ -125,6 +144,39 @@ const TOPIC_LINKS: TopicLink[] = [
   { href: '/media', label: '침향 농장·생산 공정', desc: '묘목부터 증류까지 베트남 현장 기록' },
   { href: '/products', label: '침향 제품', desc: '침향 오일·침향단·침향수·침향차 라인업' },
 ];
+
+// "더 읽어보기" — 이 허브와 겹치는 블로그 글. 제목은 블로그 저장소의 실제 제목을 쓰고,
+// 없거나 발행되지 않은 슬러그는 목록에서 빠진다.
+const FURTHER_READING_SLUGS = [
+  'agarwood-sesquiterpene-guide',
+  'real-agarwood-3-criteria',
+  'how-to-avoid-fake-agarwood',
+  'mfds-defines-agarwood-as-aquilaria-agallocha',
+] as const;
+
+// force-dynamic 페이지라 요청마다 전체 글을 읽지 않도록 캐시한다.
+// 어드민 글 저장 시 BLOG_LATEST_TAG 가 비워지므로 제목 변경도 곧 반영된다.
+const readFurtherReadingCached = unstable_cache(
+  async () => pickPostsBySlug(await readPostsSafe(), FURTHER_READING_SLUGS),
+  ['about-agarwood-further-reading'],
+  { revalidate: 300, tags: [BLOG_LATEST_TAG] },
+);
+
+/** 절대 던지지 않고, 느린 블로그 저장소가 페이지를 붙잡지 않게 2초 안에 답이 없으면 빈 목록. */
+async function readFurtherReading(timeoutMs = 2000): Promise<{ slug: string; title: string }[]> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<{ slug: string; title: string }[]>((resolve) => {
+    timer = setTimeout(() => resolve([]), timeoutMs);
+  });
+  try {
+    return await Promise.race([readFurtherReadingCached(), timeout]);
+  } catch (err) {
+    console.error('[about-agarwood] further reading read failed', err);
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 export interface FormationStep { step: string; title: string; description: string; image?: string }
 export interface SpecialReason { title: string; description: string; image?: string }
@@ -276,11 +328,14 @@ export interface AboutAgarwoodData {
 }
 
 export default async function AboutAgarwoodPage() {
-  const pagesData = await readSingleUncached<{
-    aboutAgarwood: AboutAgarwoodData;
-    home?: { solutionCta?: SolutionCta };
-    brandStory: unknown;
-  }>('pages');
+  const [pagesData, furtherReading] = await Promise.all([
+    readSingleUncached<{
+      aboutAgarwood: AboutAgarwoodData;
+      home?: { solutionCta?: SolutionCta };
+      brandStory: unknown;
+    }>('pages'),
+    readFurtherReading(),
+  ]);
   const rawAbout: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
   // Legacy fallback — solutionCta 는 2026-05-17 이전엔 home.solutionCta 에 저장됐다.
   // about-agarwood 어드민에서 새로 저장하기 전까지는 기존 home 값을 그대로 노출.
@@ -296,6 +351,8 @@ export default async function AboutAgarwoodPage() {
           : rawAbout.authenticityTab,
       }
     : null;
+
+  const articleJsonLd = { ...articleJsonLdBase, image: articleImage(data?.hero?.heroImage) };
 
   // ScholarlyArticle JSON-LD — 검증된 논문 데이터(저자·연도·저널·링크
   // 모두 갖춘 항목) 만 schema 에 포함. dummy / 일부만 입력된 항목은 제외.
@@ -367,6 +424,24 @@ export default async function AboutAgarwoodPage() {
       <AboutAgarwoodClient data={data} />
       <FaqSection title="침향 자주 묻는 질문" entries={ABOUT_FAQ} />
       <TopicLinks title="침향, 더 깊이 알아보기" links={TOPIC_LINKS} />
+      {furtherReading.length > 0 && (
+        <section className={story.chapter} aria-labelledby="further-reading-title">
+          <div className={story.wrap}>
+            <h2 id="further-reading-title" className={topicStyles.centerTitle}>
+              더 읽어보기
+            </h2>
+            <ul className={topicStyles.related}>
+              {furtherReading.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}`} className={topicStyles.relatedCard}>
+                    <span className={topicStyles.relatedLabel}>{p.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
     </>
   );
 }

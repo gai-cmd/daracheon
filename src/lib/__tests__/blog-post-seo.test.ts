@@ -3,6 +3,7 @@ import {
   blogOgTitle,
   blogPostTitle,
   categoryMetaDescription,
+  pickPostsBySlug,
   selectRelatedPosts,
 } from '@/lib/blog/post-seo';
 import type { BlogPost } from '@/types/blog';
@@ -98,5 +99,19 @@ describe('categoryMetaDescription', () => {
   it('첫 제목만으로 넘치면 잘라서 100자 이내', () => {
     const d = categoryMetaDescription({ name: '농장' }, ['가'.repeat(150)]);
     expect(Array.from(d).length).toBeLessThanOrEqual(100);
+  });
+});
+
+describe('pickPostsBySlug', () => {
+  it('지정 순서대로, 발행 글만, 없는 슬러그는 건너뛴다', () => {
+    const posts = [
+      post('b', { title: ' 글 B ' }),
+      post('a'),
+      post('d', { status: 'draft' } as Partial<BlogPost>),
+    ];
+    expect(pickPostsBySlug(posts, ['a', 'missing', 'd', 'b'])).toEqual([
+      { slug: 'a', title: '글 a' },
+      { slug: 'b', title: '글 B' },
+    ]);
   });
 });
