@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleUncached, readDataSafe, readDataUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
+import { buildVideoObjects, type VideoCandidate } from '@/lib/seo/video';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
 import type { MediaItem } from './MediaGallery';
 import type { FieldPost } from './FieldJournal';
@@ -44,34 +45,14 @@ export const metadata: Metadata = {
   },
 };
 
-function ytIdFromUrl(url: string): string | null {
-  const m = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(url);
-  return m ? m[1] : null;
-}
-
 /** /media 페이지의 영상·사진·기사를 JSON-LD 로 직렬화.
  *  AI 검색·Google AI Overview·Naver 검색이 "침향 농장 영상" 류 질의에 직접
- *  인용 가능하도록 ImageGallery + ItemList(VideoObject) + BreadcrumbList 구성. */
-function buildMediaJsonLd(media: MediaItem[]) {
-  const videos = media.filter((m) => m.type === 'video');
+ *  인용 가능하도록 ImageGallery + ItemList(VideoObject) + BreadcrumbList 구성.
+ *  VideoObject 는 Blob/YouTube 영상 + Blob·/public 썸네일 + 실제 저장 날짜를 모두 갖춘
+ *  영상만 넣는다 (buildVideoObjects). 해당 영상이 없으면 ItemList 자체를 생략. */
+function buildMediaJsonLd(media: MediaItem[], videoCandidates: VideoCandidate[]) {
   const photos = media.filter((m) => m.type === 'photo');
-
-  const videoItems = videos.map((v, i) => {
-    const id = v.url ? ytIdFromUrl(v.url) : null;
-    const watchUrl = v.url ?? (id ? `https://www.youtube.com/watch?v=${id}` : `${SITE_URL}/media`);
-    const item: Record<string, unknown> = {
-      '@type': 'VideoObject',
-      position: i + 1,
-      name: v.title,
-      description: v.excerpt ?? v.title,
-      thumbnailUrl: v.image,
-      uploadDate: v.date,
-      contentUrl: watchUrl,
-      ...(id ? { embedUrl: `https://www.youtube.com/embed/${id}` } : {}),
-      publisher: { '@type': 'Organization', name: '대라천 ZOEL LIFE' },
-    };
-    return item;
-  });
+  const videoObjects = buildVideoObjects(videoCandidates, SITE_URL);
 
   return [
     {
@@ -84,13 +65,21 @@ function buildMediaJsonLd(media: MediaItem[]) {
       isPartOf: { '@id': `${SITE_URL}/#website` },
       about: { '@id': `${SITE_URL}/#brand` },
     },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'ItemList',
-      '@id': `${SITE_URL}/media#videos`,
-      name: '침향 농장 영상',
-      itemListElement: videoItems,
-    },
+    ...(videoObjects.length > 0
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            '@id': `${SITE_URL}/media#videos`,
+            name: '침향 농장 영상',
+            itemListElement: videoObjects.map((item, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              item,
+            })),
+          },
+        ]
+      : []),
     {
       '@context': 'https://schema.org',
       '@type': 'ImageGallery',
@@ -454,7 +443,23 @@ export default async function MediaPage() {
     photos: allMedia.filter((m) => m.type === 'photo'),
   };
 
-  const mediaJsonLd = buildMediaJsonLd(allMedia);
+  // 구조화 데이터용 영상 후보 — 표시용 폴백 날짜('2026-04-11')가 아니라
+  // 데이터에 실제 저장된 date 만 넘긴다. 날짜·썸네일 없는 영상은 buildVideoObjects 가 제외.
+  const videoCandidates: VideoCandidate[] = [
+    ...dbVideos.map((v) => ({
+      title: v.title,
+      url: v.url,
+      thumbnail: v.image,
+      date: v.date,
+      description: v.excerpt,
+    })),
+    ...farmStory.processVideos.items.map((v) => {
+      const it = v as { src: string; title: string; thumbnail?: string; date?: string };
+      return { title: it.title, url: it.src, thumbnail: it.thumbnail, date: it.date };
+    }),
+  ].filter((v, i, arr) => !v.url || arr.findIndex((o) => o.url === v.url) === i);
+
+  const mediaJsonLd = buildMediaJsonLd(allMedia, videoCandidates);
 
   return (
     <>
