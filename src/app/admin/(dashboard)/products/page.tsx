@@ -943,6 +943,28 @@ export default function AdminProductsPage() {
                 />
               </div>
 
+              {/* SEO — 검색 결과 제목·설명 (비우면 자동 생성, 화면 표시에는 영향 없음) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">검색 제목 (SEO, 선택)</label>
+                <input
+                  type="text"
+                  value={editingProduct.seoTitle ?? ''}
+                  onChange={(e) => updateEditField('seoTitle', e.target.value)}
+                  placeholder="비우면 제품명 기반으로 자동 생성"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">검색 설명 (SEO, 선택)</label>
+                <textarea
+                  rows={2}
+                  value={editingProduct.seoDescription ?? ''}
+                  onChange={(e) => updateEditField('seoDescription', e.target.value)}
+                  placeholder="비우면 짧은 설명·스펙으로 자동 조합"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500 resize-none"
+                />
+              </div>
+
               {/* In Stock Toggle */}
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-700">재고 여부</label>

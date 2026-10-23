@@ -39,6 +39,10 @@ export interface Product {
    *  는 published === false 를 제외하고 렌더한다. */
   published?: boolean;
   variants?: ProductVariant[];
+  /** 검색 결과용 제목(<title>). 비우면 제품명 기반 기본 제목. 화면 H1 에는 영향 없음. */
+  seoTitle?: string;
+  /** 검색 결과용 설명(meta description). 비우면 짧은 설명·스펙으로 조합. */
+  seoDescription?: string;
 }
 
 export const products: Product[] = [

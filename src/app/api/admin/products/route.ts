@@ -126,6 +126,8 @@ export async function POST(request: Request) {
       image: body.image?.trim() || '',
       description: body.description?.trim() || '',
       shortDescription: body.shortDescription?.trim() || '',
+      ...(typeof body.seoTitle === 'string' && body.seoTitle.trim() && { seoTitle: body.seoTitle.trim() }),
+      ...(typeof body.seoDescription === 'string' && body.seoDescription.trim() && { seoDescription: body.seoDescription.trim() }),
       features: Array.isArray(body.features) ? body.features : [],
       specs: typeof body.specs === 'object' && body.specs !== null ? body.specs : {},
       inStock: body.inStock !== false,

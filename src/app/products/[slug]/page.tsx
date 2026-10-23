@@ -4,7 +4,14 @@ import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
 import { readDataSafe, readDataUncached } from '@/lib/db';
-import { formatPrice, parseDisplayPrice } from '@/lib/utils';
+import { formatPrice } from '@/lib/utils';
+import {
+  buildProductOffers,
+  pickRelatedProducts,
+  productOfferPrice,
+  productSeoDescription,
+  productSeoTitle,
+} from '@/lib/seo/product-meta';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import type { Product } from '@/data/products';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
@@ -24,19 +31,39 @@ export async function generateStaticParams() {
   return products.filter((p) => p.published !== false).map((p) => ({ slug: canonicalProductSlug(p.slug) }));
 }
 
+// 포장 표시사항(제품상세)에서 "라벨: 값" 한 줄의 값을 꺼낸다 (예: 제조국, 내용량).
+function guideField(guide: ProductGuide | undefined, label: string): string | undefined {
+  const re = new RegExp(`^${label}\\s*[:：]\\s*(.+)$`);
+  return guide?.sections
+    .flatMap((sec) => sec.body)
+    .map((line) => re.exec(line.trim())?.[1]?.trim())
+    .find(Boolean);
+}
+
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const products = await readDataSafe<Product>('products');
+  const [products, categories, storedGuides] = await Promise.all([
+    readDataSafe<Product>('products'),
+    // /products 필터와 같은 원천 — 카테고리 id → 화면 라벨(예: 환 → 침향환).
+    readDataSafe<{ id: string; label: string }>('productCategories'),
+    readDataSafe<ProductGuide>('product-guides'),
+  ]);
   const product = products.find((p) => isSameProductSlug(p.slug, slug));
   if (!product) return { title: '제품 상세 | ZOEL LIFE' };
   const url = `https://zoellife.com/products/${canonicalProductSlug(product.slug)}`;
-  const description = product.shortDescription || product.description?.slice(0, 160);
+  const categoryLabel = categories.find((c) => c.id === product.category)?.label;
+  const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
+  const title = productSeoTitle(product, categoryLabel);
+  const description = productSeoDescription(product, categoryLabel, {
+    countryOfManufacture: guideField(guide, '제조국'),
+    netContent: guideField(guide, '내용량'),
+  });
   return {
     // absolute — 루트 template 이 브랜드를 또 붙여 "…참'침향 | 조엘라이프 대라천 '참'침향"
     // 으로 이중화되던 것을 차단(브랜드 1회).
-    title: { absolute: `${product.name} | 대라천 '참'침향` },
+    title: { absolute: title },
     description,
     // self-canonical — 없으면 상위 products/layout·루트 canonical 을 상속해
     // 모든 제품 상세가 목록/홈으로 정규화되어 색인에서 탈락한다.
@@ -47,7 +74,7 @@ export async function generateMetadata(
       url,
       siteName: '대라천 ZOEL LIFE',
       locale: 'ko_KR',
-      title: `${product.name} | 대라천 '참'침향`,
+      title,
       description,
       images: product.image ? [product.image] : [],
     },
@@ -76,19 +103,15 @@ export default async function ProductDetailPage(
     if (!session) notFound();
   }
 
-  const related = products
-    .filter((p) => p.slug !== product.slug && p.category === product.category && p.published !== false)
-    .slice(0, 3);
+  // 같은 카테고리 먼저, 모자라면 다른 제품으로 채워 항상 2~3개 내부 링크를 둔다.
+  const related = pickRelatedProducts(products, product, 3);
 
   const specEntries = Object.entries(product.specs ?? {});
 
   // 포장 표시사항을 상세 본문에도 싣는다 — 종전엔 /guide 로 가는 버튼뿐이라 제품 상세 본문이
   // 450~750자로 얇았다. 표시사항 "그대로"라 효능 문구가 섞이지 않는다.
   const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
-  const countryOfOrigin = guide?.sections
-    .flatMap((sec) => sec.body)
-    .map((line) => /^제조국\s*[:：]\s*(.+)$/.exec(line.trim())?.[1]?.trim())
-    .find(Boolean);
+  const countryOfOrigin = guideField(guide, '제조국');
 
   // 검색어 주제 페이지로 가는 내부 링크 — 오일 제품은 '침향 오일' 허브를 맨 앞에.
   const topicLinks = [
@@ -107,22 +130,20 @@ export default async function ProductDetailPage(
 
   // Google 의 Merchant listings 가이드라인을 충족하도록 hasMerchantReturnPolicy /
   // shippingDetails 는 의도적으로 생략(직판 정책이 페이지마다 다르므로 잘못된
-  // 신호가 되지 않도록). priceValidUntil 은 기본 1년 후로 설정.
-  const priceValidUntil = (() => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() + 1);
-    return d.toISOString().slice(0, 10);
-  })();
+  // 신호가 되지 않도록). priceValidUntil 은 저장된 유효기한이 없어 생략한다
+  // (종전엔 요청 시각 +1년 — 매 요청마다 바뀌는 근거 없는 날짜였다).
 
   // Offer 가격: price(숫자) 우선, 0 이면 화면에 이미 노출 중인 priceDisplay 에서 복원한다.
   // price:0 + InStock 을 방출하면 화면과 불일치해 Google 리치결과 거부·수동조치 대상이 되므로
-  // availability 는 항상 product.inStock 을 따르고, 가격을 특정할 수 없으면 offers 를 생략한다.
+  // availability 는 항상 inStock 을 따르고, 가격을 특정할 수 없으면 offers 를 생략한다.
   // (offers/review/aggregateRating 이 모두 없으면 Search Console 제품 스니펫 심각 오류.)
-  const offerPrice =
-    typeof product.price === 'number' && product.price > 0
-      ? product.price
-      : parseDisplayPrice(product.priceDisplay);
+  // 판매 중 + 옵션 가격이 여럿이면 옵션별 Offer 배열 (buildProductOffers 참고).
+  const offerPrice = productOfferPrice(product);
   const hasPrice = offerPrice !== null;
+  const offers = buildProductOffers(product, {
+    url: `https://zoellife.com/products/${pageSlug}`,
+    sellerId: 'https://zoellife.com/#organization',
+  });
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -148,22 +169,7 @@ export default async function ProductDetailPage(
     category: product.category,
     ...(countryOfOrigin ? { countryOfOrigin: { '@type': 'Country', name: countryOfOrigin } } : {}),
     isPartOf: { '@id': 'https://zoellife.com/#website' },
-    ...(hasPrice
-      ? {
-          offers: {
-            '@type': 'Offer',
-            price: offerPrice,
-            priceCurrency: 'KRW',
-            priceValidUntil,
-            itemCondition: 'https://schema.org/NewCondition',
-            availability: product.inStock
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock',
-            url: `https://zoellife.com/products/${pageSlug}`,
-            seller: { '@id': 'https://zoellife.com/#organization' },
-          },
-        }
-      : {}),
+    ...(offers ? { offers } : {}),
   };
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -331,7 +337,7 @@ export default async function ProductDetailPage(
             </h2>
             <div className={styles.relatedGrid}>
               {related.map((p) => (
-                <Link key={p.id} href={`/products/${p.slug}`} className={styles.relatedCard}>
+                <Link key={p.id} href={`/products/${canonicalProductSlug(p.slug)}`} className={styles.relatedCard}>
                   <div className={styles.relatedImg}>
                     {p.image && (
                       <Image
