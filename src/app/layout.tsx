@@ -221,10 +221,12 @@ const siteJsonLd = {
     {
       '@type': 'Organization',
       '@id': `${SITE_URL}/#organization`,
-      name: '대라천 ZOEL LIFE',
+      // 회사 엔티티는 법인명, 브랜드 엔티티(#brand)는 '대라천 '참'침향' — '대라천' 검색에서 공식 사이트 귀속 신호.
+      name: '조엘라이프 주식회사',
       legalName: '조엘라이프 주식회사',
-      alternateName: ['대라천', 'Daeracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
+      alternateName: ['대라천 ZOEL LIFE', '대라천', 'Daeracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
       url: SITE_URL,
+      brand: { '@id': `${SITE_URL}/#brand` },
       logo: imageObject({
         url: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
         name: '대라천 ZOEL LIFE 로고',
@@ -254,8 +256,8 @@ const siteJsonLd = {
     {
       '@type': 'Brand',
       '@id': `${SITE_URL}/#brand`,
-      name: '대라천 ZOEL LIFE',
-      alternateName: ['대라천', 'ZOEL LIFE', '조엘라이프'],
+      name: "대라천 '참'침향",
+      alternateName: ['대라천', '대라천 ZOEL LIFE', 'ZOEL LIFE', '조엘라이프'],
       logo: `${SITE_URL}/images/ZOEL-LIFE-logo.png`,
       slogan: 'Genuine Only · 진짜 침향만',
       description:

@@ -64,6 +64,40 @@ interface Props {
   showroom?: ShowroomData | null;
 }
 
+/*
+ * 근거: 브랜드 공식 허브 고정 문구(BRAND_OWNER_LINE·BRAND_FACTS)의 출처 — 2026-10-24 확인
+ * - 조엘라이프 주식회사 = 운영 법인: src/app/layout.tsx Organization.legalName,
+ *   사이트 푸터 "조엘라이프(주)" · "© 2026 ZOEL LIFE Co., Ltd." (https://zoellife.com/brand-story)
+ * - 대라천 '참'침향 = 조엘라이프의 브랜드: brandStory.sourceBody 첫 문단
+ *   "조엘라이프는 … 프리미엄 침향 브랜드 [대라천 '참'침향]을 소개합니다" (data/db/pages.json, 라이브 /brand-story 01 THE SOURCE)
+ * - 한국 공식 채널 zoellife.com: layout.tsx SITE_URL · Organization.url (오너 지시로 명시)
+ * - 5개 지역(하띤·동나이·냐짱·푸꾸옥·람동) 직영 농장: 라이브 /brand-story 전시장 소개
+ *   "베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 직영 농장" (showroom 데이터)
+ * - 200헥타르·400만 그루 이상: brandStory.headlineSubtitle "200헥타르 부지에 400만 그루 이상의 침향나무",
+ *   processTab.stats "400만 그루 + / 베트남 직영 농장 침향나무" (라이브 /brand-story)
+ * - 2000년 하띤성 13만 그루 농장 조성 · 2001년 동나이성 대규모 식재: brandStory.historyTab.eras[0].items
+ * - 하띤성 농장 나무별 고유번호 이력 관리 · 동나이 직영공장 증기 증류: brandStory.sourceBody 넷째 문단
+ * - CITES 재배시설 등록(IIA-DNI-007, 동나이 산림청): 라이브 /brand-story 인증 탭,
+ *   certificationsTab.certs[0] (data/db/pages.json)
+ * - 2018 NTV VIETNAM CO.LTD 통합 법인 설립 · 2024 한국법인 The NTV Korea 설립 및 한국 수출 ·
+ *   2026 조엘라이프의 대라천 '참'침향 브랜드 한국 시장 본격 진출: brandStory.historyTab.eras[1]·[3].items
+ * 확인 안 된 사항(쓰지 않음): 조엘라이프 주식회사와 NTV VIETNAM·The NTV Korea 사이의 지분·계약 관계,
+ * 베트남 농장의 소유 주체. 사이트 어디에도 서술이 없어 비워 둔다.
+ */
+const BRAND_OWNER_LINE = "대라천 '참'침향 — 조엘라이프 주식회사 공식 브랜드";
+const BRAND_OFFICIAL_LEAD =
+  "대라천 '참'침향은 조엘라이프 주식회사가 운영하는 침향 브랜드이며, 한국 공식 채널은 zoellife.com입니다.";
+const BRAND_FACTS: { label: string; value: string }[] = [
+  { label: '브랜드 운영', value: '조엘라이프 주식회사 (ZOEL LIFE Co., Ltd.)' },
+  { label: '한국 공식 채널', value: 'zoellife.com' },
+  { label: '원료 산지', value: '베트남 하띤·동나이·냐짱·푸꾸옥·람동 5개 지역 직영 농장' },
+  { label: '농장 규모', value: '부지 200헥타르, 침향나무 400만 그루 이상' },
+  { label: '농장 조성', value: '2000년 하띤성 13만 그루 규모 농장 조성, 2001년 동나이성 대규모 식재' },
+  { label: '이력 관리', value: '하띤성 농장의 침향나무마다 고유번호를 부여해 관리, 침향오일은 동나이 직영공장에서 증기 증류로 생산' },
+  { label: '재배 등록', value: 'CITES 재배시설 등록 (IIA-DNI-007, 동나이 산림청)' },
+  { label: '연혁', value: '2018년 NTV VIETNAM CO.LTD 통합 법인 설립 · 2024년 한국법인 The NTV Korea 설립 및 한국 수출 · 2026년 조엘라이프의 대라천 \'참\'침향 브랜드로 한국 시장 본격 진출' },
+];
+
 const TAB_LIST = [
   '브랜드 스토리',
   '다양한 인증',
@@ -363,6 +397,8 @@ export default function BrandStoryClient({ data, showroom }: Props) {
           <div className={storyStyles.kicker}>{hero?.sectionTag ?? '브랜드 스토리 · Brand Story'}</div>
           <div className={storyStyles.heroMain}>
             <h1>
+              {/* 고정 브랜드 귀속 문구 — Blob 편집과 무관하게 H1 첫머리에 항상 노출 */}
+              <span className={styles.heroOwnerLine}>{BRAND_OWNER_LINE}</span>
               {(() => {
                 const t = hero?.titleKr ?? "대라천 '참'침향";
                 const en = hero?.titleEn;
@@ -376,11 +412,30 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 return t;
               })()}
             </h1>
-            <p className={storyStyles.lede}>
-              {hero?.subtitle ??
-                "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
-            </p>
+            <div>
+              {/* 첫 문단 — 브랜드 운영 법인과 한국 공식 채널을 고정 문구로 명시 */}
+              <p className={styles.heroOfficialLead}>{BRAND_OFFICIAL_LEAD}</p>
+              <p className={storyStyles.lede}>
+                {hero?.subtitle ??
+                  "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* 공식 정보 — 사이트에 이미 서술된 사실만 모은 요약표(근거는 파일 상단 주석) */}
+      <section className={styles.brandFacts} aria-labelledby="brand-facts-title">
+        <div className={styles.wrap}>
+          <h2 id="brand-facts-title" className={styles.brandFactsTitle}>대라천 공식 정보</h2>
+          <dl className={styles.brandFactsList}>
+            {BRAND_FACTS.map((f) => (
+              <div key={f.label} className={styles.brandFactsRow}>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 

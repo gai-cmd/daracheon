@@ -6,10 +6,16 @@ import type { ShowroomData } from '@/app/showroom/page';
 
 export const dynamic = 'force-dynamic';
 
+// 대라천 브랜드 공식 허브 — '대라천' 검색 시 공식 사이트임을 제목·설명에서 바로 드러낸다.
+// 제목에 이미 '대라천'이 들어가므로 layout 템플릿 접미사(| 대라천 '참'침향)를 붙이지 않는다(absolute).
+const BRAND_HUB_TITLE = '대라천 침향 공식 브랜드 — 베트남 직영 농장에서 조엘라이프까지';
+// OG 제목 40자 이내(네이버 권고).
+const BRAND_HUB_OG_TITLE = '대라천 침향 공식 브랜드 — 조엘라이프';
+
 export const metadata: Metadata = {
-  title: '브랜드 스토리 — 베트남 직영 농장 25년 침향 여정',
+  title: { absolute: BRAND_HUB_TITLE },
   description:
-    "베트남 5개 지역 200ha·400만 그루 규모의 직영 농장에서 25년 이상 가꿔온 대라천 '참'침향의 여정. 농장·공정·역사·인증·품질·영상을 한 페이지에.",
+    "대라천 '참'침향은 조엘라이프 주식회사의 침향 브랜드이며 한국 공식 채널은 zoellife.com입니다. 베트남 5개 지역 200ha·400만 그루 직영 농장, 공정·연혁·인증을 한 페이지에.",
   keywords: [
     // 브랜드
     '대라천', '대라천 참침향', 'ZOEL LIFE', '조엘라이프', '대라천 브랜드 스토리', '大羅天', 'Đại La Thiên',
@@ -31,7 +37,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://zoellife.com/brand-story' },
   openGraph: {
     type: 'article',
-    title: "브랜드 스토리 — 대라천 '참'침향의 25년 여정",
+    title: BRAND_HUB_OG_TITLE,
     description:
       '베트남 5개 지역 200ha 직영 농장에서 자란 400만 그루 침향나무 — 농장·공정·역사·인증·품질을 담은 대라천 브랜드 스토리.',
     url: 'https://zoellife.com/brand-story',
@@ -44,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "대라천 '참'침향 — 25년 여정",
+    title: BRAND_HUB_OG_TITLE,
     description: '베트남 5개 지역 200ha 직영 농장에서 25년 이상 가꿔온 대라천 침향의 농장·공정·역사 이야기.',
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg'],
   },
@@ -185,7 +191,7 @@ export default async function BrandStoryPage() {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     '@id': 'https://zoellife.com/brand-story#page',
-    name: "브랜드 스토리 — 대라천 '참'침향",
+    name: BRAND_HUB_TITLE,
     description:
       "베트남 5개 지역 200ha·400만 그루 직영 농장에서 25년 이상 가꿔온 대라천 '참'침향의 여정.",
     url: 'https://zoellife.com/brand-story',
