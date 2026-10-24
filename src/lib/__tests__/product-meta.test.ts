@@ -13,8 +13,13 @@ const bySlug = (s: string) => products.find((p) => p.slug === s)!;
 const ctx = { url: 'https://zoellife.com/products/x', sellerId: 'https://zoellife.com/#organization' };
 
 describe('productSeoTitle', () => {
-  it('seoTitle 이 있으면 그대로 쓴다', () => {
-    expect(productSeoTitle({ ...bySlug('agarwood-gibodan'), seoTitle: '맞춤 제목' }, '침향환')).toBe('맞춤 제목');
+  it('seoTitle 이 있으면 쓰고, 브랜드가 없으면 브랜드를 붙인다', () => {
+    expect(productSeoTitle({ ...bySlug('agarwood-gibodan'), seoTitle: '맞춤 제목' }, '침향환')).toBe(
+      "맞춤 제목 | 대라천 '참'침향",
+    );
+    expect(
+      productSeoTitle({ ...bySlug('agarwood-gibodan'), seoTitle: '맞춤 제목 | 대라천' }, '침향환'),
+    ).toBe('맞춤 제목 | 대라천');
   });
 
   it("'침향환' 라벨 카테고리는 제목에 침향환을 붙인다", () => {

@@ -39,7 +39,8 @@ function titleKeyword(p: Product, categoryLabel?: string): string | undefined {
 /** 제품 상세 <title>. seoTitle 이 있으면 그대로, 없으면 "제품명 | 브랜드" (+ 검색어). */
 export function productSeoTitle(p: Product, categoryLabel?: string): string {
   const custom = p.seoTitle?.trim();
-  if (custom) return custom;
+  // 상세 <title> 은 absolute 로 렌더되므로 어드민 입력값에 브랜드가 없으면 여기서 붙인다.
+  if (custom) return custom.includes('대라천') ? custom : `${custom} | ${PRODUCT_TITLE_SUFFIX}`;
   const base = `${p.name} | ${PRODUCT_TITLE_SUFFIX}`;
   const kw = titleKeyword(p, categoryLabel);
   if (!kw || p.name.includes(kw)) return base;
@@ -80,8 +81,15 @@ export function productSeoDescription(
   const base = (p.shortDescription || p.description?.slice(0, 160) || '').trim();
   if (base.length >= DESC_MIN) return base;
 
-  const label = categoryLabel || p.category;
-  const brandPart = `— ${PRODUCT_TITLE_SUFFIX}${label ? ` ${label}` : ''}.`;
+  const rawLabel = categoryLabel || p.category;
+  // 제품명에 이미 들어 있는 브랜드·카테고리 라벨은 반복하지 않는다.
+  const label =
+    rawLabel && !p.name.includes(rawLabel) && !p.name.includes(rawLabel.replace(/^침향/, ''))
+      ? rawLabel
+      : '';
+  const brand = p.name.includes('대라천') ? '' : PRODUCT_TITLE_SUFFIX;
+  const brandBody = [brand, label].filter(Boolean).join(' ');
+  const brandPart = brandBody ? `— ${brandBody}.` : '—';
   // 짧은 설명 끝에 마침표가 없으면 붙여 뒤 항목과 문장을 나눈다 (문구 자체는 그대로).
   const baseSentence = base && !/[.!?。]$/.test(base) ? `${base}.` : base;
   const head = `${p.name} ${brandPart}${baseSentence ? ` ${baseSentence}` : ''}`;
