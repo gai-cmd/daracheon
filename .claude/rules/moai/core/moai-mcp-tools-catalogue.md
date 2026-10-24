@@ -1,0 +1,335 @@
+---
+description: "Detail companion for moai-mcp-tools.md — the full 37-tool moai MCP catalogue with per-family tables, consumers, and CLI equivalents"
+paths: "**/moai-mcp-tools.md,**/internal/cli/mcp_server.go,**/.claude/agents/moai/*.md"
+---
+
+# moai-mcp Tool Catalogue — Detail Companion
+
+> Detail companion of `moai-mcp-tools.md` (the always-loaded stub). The stub owns the
+> MCP-over-CLI preference rule, the family index, and the unwired-by-design note. This file owns
+> the per-tool catalogue: purpose, wired consumer, and CLI equivalent for each of the 37 tools.
+> Load it when wiring a tool into an agent's `tools:` list, or when choosing between an MCP tool
+> and its Bash equivalent for a specific capability.
+
+## Tool catalogue (37 tools)
+
+### SPEC lifecycle
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__spec_progress` | List SPEC docs + frontmatter | manager-spec, manager-docs | `moai spec list` |
+| `mcp__moai__spec_audit` | SPEC lifecycle audit (era + drift) | manager-spec, manager-docs, plan-auditor, super-advisor | `moai spec audit` |
+| `mcp__moai__spec_drift` | Modern-era V3R6 drift findings | manager-spec, plan-auditor | `moai spec audit` (drift view) |
+
+Reach for these in **plan-phase** (manager-spec authoring a new SPEC, checking era
+classification + drift) and **sync-phase** (manager-docs verifying lifecycle
+closure). `spec_progress` enumerates existing SPECs + frontmatter; `spec_audit`
+classifies era and detects drift across the catalog; `spec_drift` is the focused
+modern-era V3R6 drift slice. plan-auditor uses `spec_audit`/`spec_drift` for
+plan-phase skeptical review.
+
+### Verification snapshots
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__verify_snapshot` | Read/record per-key verification snapshot | manager-develop | `moai verify check` |
+| `mcp__moai__verify_trend` | Per-key verification check history | manager-develop, sync-auditor, super-advisor | `moai verify check` |
+
+Used by **manager-develop** during run-phase self-verification (§E), and by
+sync-auditor / super-advisor for trend review. `verify_snapshot` reads or records
+the per-key snapshot keyed by HEAD digest; `verify_trend` surfaces the check
+history to judge convergence over time. The orchestrator's attributable diff-check
+consults the current snapshot key before re-executing tests.
+
+### Goal + session (autonomous loop)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__goal_arm` | Arm a condition-declared goal | **orchestrator main session ONLY** — wired to NO agent (arming an autonomous loop is an orchestrator concern) | `moai goal arm` / `/moai goal` |
+| `mcp__moai__goal_status` | Read armed-goal state | manager-develop, manager-lead | `moai goal status` |
+| `mcp__moai__session_list` | List active moai sessions | manager-lead | `moai session list` |
+
+`goal_arm` is orchestrator-only and arms an autonomous loop — never inside an
+agent (preserves the flat-hierarchy arming surface). `goal_status` lets
+manager-develop / manager-lead read the armed condition's progress; `session_list`
+lets manager-lead detect concurrent sessions on the same checkout for race
+mitigation before fan-out.
+
+### Cross-model audit (second opinion)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__audit_multi` | Multi-auditor convergence (claude + codex + glm) | plan-auditor, sync-auditor | — (MCP-only convergence entry) |
+| `mcp__moai__claude_audit` | Independent Claude subscription audit (`claude -p` with read-only isolation and structured output) | plan-auditor, sync-auditor; automatically by `audit_multi` in GPT/GLM sessions | — |
+| `mcp__moai__codex_audit` | codex backend single audit (native/adversarial) | plan-auditor, sync-auditor | — |
+| `mcp__moai__glm_audit` | GLM (z.ai) backend single audit | plan-auditor, sync-auditor | — |
+| `mcp__moai__audit_cache` | plan-audit PASS cache (compute_hash/lookup/store, process-shared) | sync-auditor | `moai audit cache` (none — MCP-only) |
+
+`claude_audit` accepts `target`, `focus`, optional `model`/`effort`, and
+`project_root`. It permits subscription login only (`authMethod=claude.ai`,
+`apiProvider=firstParty`), defaults to `claude-opus-5-5/medium`, strips
+gateway/provider
+environment variables, disables tools and session persistence, and reports
+resolved-model plus usage provenance without exposing credentials.
+
+`audit_multi` chooses the Claude participant from the launch provider. A Claude
+main session reuses its in-session `claude_verdict` as an anchor. A GPT, GLM, or
+unknown-origin session ignores any caller-supplied Claude verdict and invokes
+the independent `claude_audit` backend. Codex and GLM continue to run as their
+configured gates require. Every backend tool fails open to `inconclusive`; an
+explicitly required gate left inconclusive makes the convergence verdict fail.
+
+### On-demand self-review (advisory)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__codex_review` | codex review of the caller's OWN change — `scope: card` (the card diff) or `scope: uncommitted` | the main session; any agent whose `tools:` list names it | `moai verify codex-review` (codex leg only) |
+| `mcp__moai__glm_review` | GLM (z.ai) review of the caller's own change, sent as a diff | the main session; any agent whose `tools:` list names it | — |
+
+These are not audit tools. A result is ADVISORY (non-binding): `advisory` is
+always true, no audit receipt is filed or consumed, the `workflow.audit.gates.*`
+required conversion never applies (an absent reviewer is `inconclusive`, never
+`fail`), and the audit model pins are not read — `model` is the caller's input or
+the backend default. `scope` is required and has no default. `card` resolves
+through the same scope resolver the turn-end review gate uses, with the merge
+base recomputed on every call; a tree that is not a card worktree returns
+`inconclusive` without reviewing anything. `uncommitted` reviews the named
+tree's uncommitted changes — in the primary checkout that is the whole shared
+working tree, and there is no path restriction. Every result names `scope`,
+`base` (the merge-base SHA for `card`, empty otherwise), `backend`, and `tree`
+(the canonical root that was reviewed).
+
+GLM has no filesystem, so its material is the diff with the runtime-managed
+paths excluded: untracked files cannot be part of it and are listed in
+`excluded_untracked`, a diff cut at the size cap sets `truncated`, and an empty
+diff calls neither backend. A call is synchronous, bounded by the review budget,
+and sends no progress notifications. A server process started before these tools
+existed does not list them — reconnect it. The codex leg then falls back to
+`moai verify codex-review --project-root <tree>`; the GLM leg has no fallback.
+
+### Codex delegation (background jobs)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__codex_setup` | Probe local codex install (LookPath + version + auth) | super-advisor | `moai codex setup` |
+
+The general codex delegation family (`codex_task`, `codex_job_{status,result,cancel}`)
+was removed with the general codex execution surface; `codex_setup` stays
+as the audit surface's install probe, wired into `super-advisor` — the on-demand
+high-reasoning consultation agent. codex is
+OPTIONAL: a missing or unavailable codex yields a fail-open `inconclusive`, never
+a hard error.
+
+### Codex read-only roles (background jobs)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__codex_role_audit` | Start a read-only contract role as one top-level `codex exec` process (read-only sandbox, every MCP server disabled); returns a job id at once | a Codex session | none — a Codex session's shell cannot reach the model from a nested `codex exec` |
+| `mcp__moai__codex_role_audit_status` | Read a role job's state and timestamps | a Codex session | — |
+| `mcp__moai__codex_role_audit_result` | Read a finished role job's exit code, returned text or verdict path, and launch record path | a Codex session | — |
+| `mcp__moai__codex_role_audit_cancel` | Stop a running role-audit job by revoking its launcher context | a Codex session | — |
+
+On Codex, `spawn_agent` gives a subagent the parent session's sandbox, so a
+read-only role started that way could write. This family starts it as its own
+top-level read-only process in the caller's worktree instead. `worktree_root` is
+required and must be the worktree the server started in; `out`, when given, must
+stay under that worktree's `.moai/reports/` and is written with exactly the
+returned text. Each launched audit leaves a launch record under
+`.moai/reports/codex-audit/`. Jobs live in the server process and do not survive
+its exit.
+
+### GLM delegation (background jobs)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__glm_task` | Delegate a task (arbitrary prompt) to GLM (z.ai) (sync or background) | manager-develop, super-advisor | — (no `moai glm task` CLI exists) |
+| `mcp__moai__glm_job_status` | Read a background GLM job's status/record | manager-develop, super-advisor | — |
+| `mcp__moai__glm_job_result` | Read a background GLM job's output | manager-develop, super-advisor | — |
+| `mcp__moai__glm_job_cancel` | Stop a running background GLM job | manager-develop, super-advisor | — |
+
+The GLM delegation family mirrors the codex delegation family against the z.ai
+HTTP backend and is wired into `super-advisor` the same way: it arms a GLM task
+via `glm_task` (sync returns the completed text, background returns a job id),
+polls completion via `glm_job_status`/`glm_job_result`, and cancels via
+`glm_job_cancel`. There is no `codex_setup` counterpart — availability is
+learned from `glm_task` itself, which reports a structured failed result when
+the key is missing or z.ai is unreachable. GLM is OPTIONAL: a missing or
+unavailable GLM yields a fail-open result, never a hard error.
+`manager-develop` carries this family in full: it may start a bounded drafting job with `glm_task` only as the `External Model Delegation` section of `.claude/skills/moai/workflows/run/external-delegation.md` allows, and a GLM job sends its prompt to an external provider.
+
+### Judgment (gated, display-only)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__jev_ask` | Ask the gated judgment capability typed questions over one supplied state; typed answers with probability | gated-unavailable at the shipped default (`workflow.jev.enabled: false`); display-only — a labelled model signal a person reads, never a completion predicate, merge approval, queue mutation, or gate input, except as the second signal of the contract-mode Kickoff `llm+jev` cross-check, where it can only confirm an LLM approval or route the Kickoff to a human and never decides alone, and except as the ordering key of the `todo --auto` cycle's own candidate ranking (the auto-scoped ranking exception — selection order only, in-process, never through this tool) | — (MCP-only) |
+
+The tool is registered unconditionally so its gate-off contract is invocable
+and countable, but with the gate off it constructs no request and makes no
+network call, and while the chain's fitness measurement gate stands unrun no
+surface presents it as available. The question-design rules for authoring
+well-formed questions live in the reference skill; the call path lives in
+`internal/jev` and the tool wraps it without a second implementation.
+
+### Factory card verbs (lane-scoped)
+
+| Tool | Purpose | Consumer | CLI equivalent |
+|------|---------|----------|----------------|
+| `mcp__moai__factory_next` | Lease the lane's next card and ensure its per-card worktree (MCP form of `moai factory next`; `project_root` required; optional `card` nominates one) | factory lane session — refused outside one | `moai factory next` |
+| `mcp__moai__factory_stage` | Apply a card's next stage transition with its evidence (MCP form of `moai factory stage`; `project_root` required) | factory lane session — refused outside one | `moai factory stage` |
+| `mcp__moai__factory_complete` | Take a merge-ready card through merging to merged-local (MCP form of `moai factory complete`; `project_root` required) | factory lane session — refused outside one | `moai factory complete` |
+| `mcp__moai__factory_decide` | Record one operator decision (MCP form of `moai factory decide`); inverted gate — refused FOR a lane session | attributed factory lead | `moai factory decide` |
+| `mcp__moai__factory_renew` | Extend the lane's own card lease by the configured duration (MCP form of `moai factory renew --json`; `project_root` required); a refused renewal writes nothing | factory lane session — refused outside one | `moai factory renew` |
+| `mcp__moai__todo_add` | Append one card to the backlog queue; lane-refused like the CLI guard | factory lead or lane session | `moai todo add` |
+| `mcp__moai__todo_claim` | Claim the oldest queued card under a lease (atomic CAS), or renew a held lease | operator or lane session | `moai todo claim` |
+| `mcp__moai__todo_list` | Render the backlog queue, lock-free; read-only, no lane guard | any session | `moai todo list` |
+
+The lane verbs read the caller's lane identity from `MOAI_FACTORY_ROLE` and
+`MOAI_FACTORY_WORKER` — the carrier the frozen Codex MCP env_vars allowlist
+forwards — plus `MOAI_KANBAN_BACKEND=gpt`, and refuse outside a lane session;
+`factory_decide` inverts the gate so decisions stay the operator's.
+
+## Linked worktrees of a repository that keeps `.moai` untracked
+
+| Situation | What to pass | What happens |
+|---|---|---|
+| Linked worktree of a repository that does not track `.moai` (the worktree has no `.moai` of its own) | `project_root: <git rev-parse --show-toplevel>` | accepted when git lists it as a worktree of a primary checkout that has `.moai`; the call acts on the worktree |
+
+Such a worktree has no `.moai` of its own, yet it is still accepted: the path must
+be the top level of a worktree that `git worktree list` registers, and the
+repository's primary checkout must have `.moai`. Anything else — a subdirectory, an
+unregistered or prunable worktree, an ambiguous layout such as a separate git
+directory, or git being unavailable — is rejected. On such a worktree without its
+own workflow config, the explicit audit gate (`workflow.audit.gates`) is read from
+the primary checkout, and it is treated as `required` when the primary cannot be
+identified. Other configuration keeps being read from the worktree itself.
+
+State and the SPEC catalogue follow one store-root rule, which the MCP tools, the
+hooks, and `moai verify` all apply the same way:
+
+| What | Where it is kept or read on such a worktree |
+|---|---|
+| Audit receipts, auditor start markers and rejections, `audit_multi` convergence results, verification snapshots | the primary checkout's `.moai/state`, each record carrying the worktree's own tree identity, so the records of the primary and of every sibling worktree coexist; nothing is created under the worktree |
+| SPEC catalogue (`spec_progress`, `spec_drift`, `spec_audit`) | the union of the worktree's and the primary checkout's `.moai/specs`; each record and finding names its source, and a SPEC present in both is reported once, from the worktree, with the primary copy named as shadowed |
+| Hook-side receipt guard | reads `workflow.audit.gates.codex` from the primary checkout; a rejection recorded for one tree never clears or blocks another tree |
+| Stop review gates (`codex-review-gate`, `multi-review-gate`) | read their opt-in flag from the primary checkout; the multi gate blocks when any result of the session in the store is `fail` |
+
+When the primary checkout cannot be identified there is no store: `verify_snapshot`
+and `verify_trend` return an error, `codex_audit` and `audit_multi` keep their verdict
+but skip the receipt and convergence writes and say so in `state_notice`, the catalogue
+tools answer over the worktree only and state in `_root` that the primary catalogue was
+not read, the review gates stay disabled, and the receipt guard treats the gate as
+`required` — it refuses an auditor PASS and denies phase-entry spawns from that
+worktree, writing nothing. A `workflow.yaml` placed in the worktree ends this, because
+the worktree then carries its own config. Catalogue and state answers carry
+`_root.sources` (what was actually read) and `_root.worktree_warning`.
+
+---
+
+Classification: Lazy companion — catalogue tables and per-family guidance only. The preference rule
+stays in `moai-mcp-tools.md`. Update this file whenever a tool is added, removed, or renamed on the
+`moai mcp-server` (the Go producer lives in `internal/cli/mcp_server.go`).
+
+## Tool families (37 of the 37 tools)
+
+| Family | Tools | Wired consumers |
+|---|---|---|
+| SPEC lifecycle | `spec_progress`, `spec_audit`, `spec_drift` | manager-spec, manager-docs, plan-auditor, super-advisor |
+| Verification snapshots | `verify_snapshot`, `verify_trend` | manager-develop, sync-auditor, super-advisor |
+| Goal + session | `goal_arm`, `goal_status`, `session_list` | orchestrator only / manager-develop, manager-lead |
+| Cross-model audit | `audit_multi`, `claude_audit`, `codex_audit`, `glm_audit`, `audit_cache` | plan-auditor, sync-auditor |
+| Self-review (advisory) | `codex_review`, `glm_review` | the main session; any agent whose `tools:` list names them — never an audit verdict, no receipt |
+| Codex audit probe | `codex_setup` | super-advisor |
+| Codex read-only roles | `codex_role_audit`, `codex_role_audit_status`, `codex_role_audit_result`, `codex_role_audit_cancel` | a Codex session — starts `plan-auditor`, `sync-auditor`, `manager-todo`, `super-advisor` as a top-level read-only process instead of through `spawn_agent` |
+| GLM delegation | `glm_task`, `glm_job_{status,result,cancel}` | super-advisor, manager-develop |
+| Code queries | `graph_file_api`, `graph_find_code`, `graph_trace_calls`, `graph_shortest_path` | any agent (signature-level code navigation from the code-derived edge layer; every answer carries tree+commit provenance) |
+| Judgment (gated) | `jev_ask` | gated-unavailable at the shipped default (`workflow.jev.enabled: false`) — no request constructed, no network call; while the chain's fitness gate stands unrun it is not presented as available. Display-only: a labelled model signal a person reads, never a completion predicate, merge approval, queue mutation, or gate input, except as the second signal of the contract-mode Kickoff `llm+jev` cross-check, where it can only confirm an LLM approval or route the Kickoff to a human and never decides alone, and except as the ordering key of the `todo --auto` cycle's own candidate ranking (the auto-scoped ranking exception — selection order only, in-process, never through this tool) |
+| Factory card verbs | `factory_next`, `factory_stage`, `factory_complete`, `factory_decide`, `factory_renew`, `todo_claim`, `todo_add`, `todo_list` | factory lane sessions (lane verbs, `project_root` required on next/stage/complete/renew); `factory_decide` inverts the gate; `todo_list` is the family's read-only surface |
+
+Per-tool purpose, consumer, and CLI equivalent: `moai-mcp-tools-catalogue.md`. Claude, codex, and
+GLM audit transports fail open at the tool boundary: an unavailable backend returns
+`inconclusive`, never a hard Go error. An explicitly required gate can still turn that unmet
+evidence requirement into `overall_verdict: fail`.
+
+## Unwired-by-design
+
+`goal_arm` is intentionally wired to NO agent. Arming an autonomous loop is an
+orchestrator concern (preserves the orchestrator-only arming surface and the
+flat hierarchy invariant). Agents that need a goal's state read `goal_status`;
+only the orchestrator arms.
+
+---
+
+Classification: Evolvable reference rule — the MCP tool surface map. Update this
+file whenever a tool is added/removed/renamed on the `moai mcp-server` (the Go
+producer lives in `internal/cli/mcp_server.go`).
+
+
+## Migrated from the core body
+
+
+### moai-mcp Tool Catalogue
+
+
+> Single source of truth for the 37 tools exposed by the self-hosted `moai` MCP
+> server (`.mcp.json` → `{command: "moai", args: ["mcp-server"]}`). Each tool is
+> prefixed `mcp__moai__` at the call site. This rule tells agents and the
+> orchestrator WHEN to prefer an MCP tool over its CLI/slash equivalent.
+>
+> Wiring parity (local ↔ template) and per-agent `tools:` lists are owned by the
+> agent definitions; this file owns the capability map + the MCP-over-CLI rule.
+
+
+### The `project_root` input — name your own tree
+
+
+Thirty-two tools accept an optional `project_root` string: `spec_progress`,
+`spec_audit`, `spec_drift`, `verify_snapshot`, `verify_trend`, `codex_audit`,
+`codex_review`, `glm_audit`, `glm_review`, `claude_audit`,
+`audit_multi`, `graph_file_api`, `graph_find_code`, `graph_shortest_path`,
+`graph_trace_calls`, `factory_decide`, `todo_add`, `todo_list`, `factory_next`,
+`factory_stage`, `factory_complete`, `factory_renew`, `audit_cache`,
+`glm_job_cancel`, `glm_job_result`, `glm_job_status`,
+`glm_task`, `goal_arm`, `goal_status`, `jev_ask`, `session_list`,
+and `todo_claim`. It names the tree the call should act
+on. Four of the thirty-two
+REQUIRE it rather than accept it: the lane verbs `factory_next`, `factory_stage`,
+`factory_complete`, and `factory_renew` reject a call without it naming the
+argument; it is never defaulted.
+
+
+The caller is the only party that holds the answer, which is why it is an input.
+
+| Situation | What to pass | What happens |
+|---|---|---|
+| Session in a worktree | `project_root: <git rev-parse --show-toplevel>` | the call acts on that tree |
+| Session in the primary checkout | nothing | resolves exactly as it always has |
+| Path that is not a MoAI project root | — | the call is REJECTED with an error naming the path |
+
+
+The rejection is deliberate, not a rough edge: a silent fallback would send a
+caller who mistyped its own worktree path back to the primary checkout — the
+exact failure the parameter exists to prevent — while reporting success.
+
+
+An accepted path is **canonicalized** before use, so the call acts on the real
+directory rather than on whichever spelling reached it and a containment check
+cannot be walked through by pointing a link outside the boundary. A path that
+cannot be canonicalized is rejected on the same terms.
+
+
+A registered linked worktree of a repository that keeps `.moai` untracked is also
+accepted; rules and caveats: `moai-mcp-tools-catalogue.md` § Linked worktrees.
+
+
+For `audit_multi` the root reaches every backend in the fan-out: Claude and GLM
+use it to collect the diff sent to their isolated reviewer, while codex receives
+it as the working directory it reviews in. Passing it keeps all independent
+opinions about the same tree.
+
+
+### Cross-reference
+
+
+`moai-mcp-tools-catalogue.md` — the lazy companion. Load it for § Tool catalogue
+(37 tools) · § Tool families (the family-to-consumer map) · § Unwired-by-design (why `goal_arm` reaches no agent).
+
