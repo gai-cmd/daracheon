@@ -23,9 +23,10 @@ export async function generateMetadata(
   const { id } = await params;
   const items = await readDataSafe<MediaItem>('media');
   const item = items.find((m) => m.id === id);
-  if (!item) return { title: '미디어 | ZOEL LIFE' };
+  // 루트 layout 의 title.template 이 브랜드를 붙이므로 여기서는 브랜드 꼬리를 달지 않는다.
+  if (!item) return { title: '미디어' };
   return {
-    title: `${item.title} — ${item.source} | ZOEL LIFE`,
+    title: `${item.title} — ${item.source}`,
     description: item.excerpt ?? `${item.source} (${item.date})`,
     alternates: { canonical: `https://zoellife.com/media/${id}` },
     openGraph: item.image ? { images: [item.image] } : undefined,

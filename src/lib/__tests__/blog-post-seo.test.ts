@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   blogOgTitle,
+  blogPostMetaTitle,
   blogPostTitle,
   categoryMetaDescription,
   pickPostsBySlug,
@@ -32,6 +33,15 @@ describe('blogPostTitle / blogOgTitle', () => {
     expect(blogPostTitle({ title: '침향 이야기' })).toBe('침향 이야기');
     expect(blogPostTitle({ title: '침향 이야기', seoTitle: '침향 효능 정리' })).toBe('침향 효능 정리');
     expect(blogPostTitle({ title: '침향 이야기', seoTitle: '  ' })).toBe('침향 이야기');
+  });
+
+  it("제목에 '대라천' 이 있으면 absolute 로, 없으면 문자열로 (템플릿 접미사 1회)", () => {
+    expect(blogPostMetaTitle({ title: '침향 이야기' })).toBe('침향 이야기');
+    expect(blogPostMetaTitle({ title: '대라천 침향 이야기' })).toEqual({ absolute: '대라천 침향 이야기' });
+    expect(blogPostMetaTitle({ title: '침향 이야기', seoTitle: '대라천 침향 가이드' })).toEqual({
+      absolute: '대라천 침향 가이드',
+    });
+    expect(blogPostMetaTitle({ title: '대라천 이야기', seoTitle: '침향 가이드' })).toBe('침향 가이드');
   });
 
   it('OG 제목은 40자 이내로 자른다', () => {

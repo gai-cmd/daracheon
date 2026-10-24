@@ -37,12 +37,30 @@ describe('productSeoTitle', () => {
     );
   });
 
+  it("제품명에 '대라천' 이 있으면 브랜드 접미사를 붙이지 않는다", () => {
+    expect(productSeoTitle(bySlug('daeracheon-cham-agarwood-oil-capsule'), '침향오일')).toBe(
+      '대라천 참침향 오일 캡슐',
+    );
+  });
+
+  it("'침향오일' 라벨 카테고리는 이름에 침향 오일이 없을 때만 붙인다", () => {
+    expect(productSeoTitle(bySlug('agarwood-essential-oil-1ml'), '침향오일')).toBe(
+      "대라천 '참'침향 에센셜 오일 — 침향 오일",
+    );
+    expect(
+      productSeoTitle({ ...bySlug('agarwood-gibodan'), name: '침향오일 블렌드' }, '침향오일'),
+    ).toBe("침향오일 블렌드 | 대라천 '참'침향");
+  });
+
   it('그 외 제품은 기존 제목 그대로', () => {
     expect(productSeoTitle(bySlug('agarwood-water-500ml'), '침향수')).toBe("침향수 (沈香水) | 대라천 '참'침향");
   });
 
   it('모든 시드 제품 제목이 60자 이하', () => {
-    for (const p of products) expect(productSeoTitle(p, '침향환').length).toBeLessThanOrEqual(60);
+    for (const p of products) {
+      expect(productSeoTitle(p, '침향환').length).toBeLessThanOrEqual(60);
+      expect(productSeoTitle(p, '침향오일').length).toBeLessThanOrEqual(60);
+    }
   });
 });
 

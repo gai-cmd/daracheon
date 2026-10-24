@@ -29,22 +29,28 @@ function productText(p: Product): string {
 // 제목에 덧붙일 검색어 — 코드/데이터에 이미 있는 라벨만 쓴다.
 // · /products 필터가 '침향환' 으로 표기하는 카테고리
 // · 데이터가 이미 '침향차' / '沈香茶' 를 쓰는 차 제품
+// · /products 필터가 '침향오일' 로 표기하는 카테고리 (제목엔 띄어 쓴 '침향 오일')
 function titleKeyword(p: Product, categoryLabel?: string): string | undefined {
   if (categoryLabel === '침향환') return '침향환';
+  if (categoryLabel === '침향오일') return '침향 오일';
   const isTea = p.category === '차' || p.categoryEn === 'Tea';
   if (isTea && /침향차|沈香茶/.test(productText(p))) return '침향차';
   return undefined;
 }
 
-/** 제품 상세 <title>. seoTitle 이 있으면 그대로, 없으면 "제품명 | 브랜드" (+ 검색어). */
+/** 제품 상세 <title>. seoTitle 이 있으면 그대로, 없으면 "제품명 | 브랜드" (+ 검색어, 이름에 브랜드가 있으면 접미사 생략). */
 export function productSeoTitle(p: Product, categoryLabel?: string): string {
   const custom = p.seoTitle?.trim();
   // 상세 <title> 은 absolute 로 렌더되므로 어드민 입력값에 브랜드가 없으면 여기서 붙인다.
   if (custom) return custom.includes('대라천') ? custom : `${custom} | ${PRODUCT_TITLE_SUFFIX}`;
-  const base = `${p.name} | ${PRODUCT_TITLE_SUFFIX}`;
+  // 제품명에 이미 '대라천' 이 있으면 브랜드 접미사를 붙이지 않는다 — 브랜드 1회.
+  const brandTail = p.name.includes('대라천') ? '' : ` | ${PRODUCT_TITLE_SUFFIX}`;
+  const base = `${p.name}${brandTail}`;
   const kw = titleKeyword(p, categoryLabel);
-  if (!kw || p.name.includes(kw)) return base;
-  const withKw = `${p.name} — ${kw} | ${PRODUCT_TITLE_SUFFIX}`;
+  // 띄어쓰기만 다른 표기('침향오일' / '침향 오일')도 이미 들어 있는 것으로 본다.
+  const squash = (v: string) => v.replace(/\s+/g, '');
+  if (!kw || squash(p.name).includes(squash(kw))) return base;
+  const withKw = `${p.name} — ${kw}${brandTail}`;
   return withKw.length <= TITLE_MAX ? withKw : base;
 }
 

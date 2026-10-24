@@ -16,6 +16,17 @@ export function blogPostTitle(post: Pick<BlogPost, 'title' | 'seoTitle'>): strin
   return post.seoTitle?.trim() || post.title;
 }
 
+/**
+ * generateMetadata 의 title 값. 제목에 이미 '대라천' 이 있으면 absolute 로 내보내
+ * 루트 template 의 브랜드 접미사가 다시 붙지 않게 한다.
+ */
+export function blogPostMetaTitle(
+  post: Pick<BlogPost, 'title' | 'seoTitle'>,
+): string | { absolute: string } {
+  const title = blogPostTitle(post);
+  return title.includes('대라천') ? { absolute: title } : title;
+}
+
 /** og:title / twitter:title — 템플릿이 적용되지 않으므로 40자 이내로 자른다. */
 export function blogOgTitle(title: string, max = BLOG_OG_TITLE_MAX): string {
   const chars = Array.from(title.trim());

@@ -14,7 +14,7 @@ import { stripEmptyFigcaptions } from '@/lib/blog/sanitize';
 import { rewriteSmartstoreLinks } from '@/data/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
-import { blogOgTitle, blogPostTitle, selectRelatedPosts } from '@/lib/blog/post-seo';
+import { blogOgTitle, blogPostMetaTitle, blogPostTitle, selectRelatedPosts } from '@/lib/blog/post-seo';
 import BlogCard from '../BlogCard';
 import styles from './BlogArticle.module.css';
 
@@ -83,6 +83,7 @@ export async function generateMetadata({
   if (!post) return { title: '글을 찾을 수 없습니다' };
 
   // 루트 layout 의 title.template 이 브랜드를 붙이므로 여기서는 제목만 — 브랜드 중복 방지.
+  // 제목에 이미 '대라천' 이 있으면 absolute 로 내보내 템플릿 접미사를 막는다.
   // OG/트위터 제목엔 템플릿이 적용되지 않으므로 40자 이내로 따로 자른다.
   const title = blogPostTitle(post);
   const ogTitle = blogOgTitle(title);
@@ -90,7 +91,7 @@ export async function generateMetadata({
   const image = post.ogImage ?? post.coverImage ?? '/opengraph-image.jpg';
 
   return {
-    title,
+    title: blogPostMetaTitle(post),
     description,
     keywords: post.seoKeywords ?? post.tags,
     ...(allowDraft ? { robots: { index: false, follow: false } } : {}),
