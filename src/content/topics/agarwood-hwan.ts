@@ -12,8 +12,8 @@ import type { TopicHubContent } from '@/components/seo/TopicHub';
  *  - :113 소비기한 3년 / :114 1단 5g, 1박스 15단, 중량 75g / :115 일반식품, Organic·HACCP·OCOP 인증 / :105 대표 이미지(Blob)
  *
  * [기보단] data/db/products.json (= https://zoellife.com/products/agarwood-gibodan)
- *  - :138 25년산 침향 중심, 동충하초·제비집 등 배합한 복합환, 이름 뜻 "기(氣)를 보하는 보배로운 단(丹)"
- *    (같은 줄의 증상 완화·체력·집중력 문구는 효능 단정이라 옮기지 않았다)
+ *  - :138 25년산 침향 중심, 동충하초·제비집 등 배합한 복합환
+ *    (같은 줄의 이름 풀이 "기(氣)를 보하는…"와 증상 완화·체력·집중력 문구는 효능 암시라 옮기지 않았다)
  *  - :141 성분 / :142 보관 / :143 사용법 1일 1회 1회 1포 식후 충분한 물과 함께 / :144 소비기한 3년 / :145 1박스 3병 60포
  *  - :146 일반식품, Organic·HACCP·OCOP 인증
  *
@@ -31,13 +31,14 @@ import type { TopicHubContent } from '@/components/seo/TopicHub';
  *  - https://zoellife.com/about-agarwood 'Documents · 증명 서류' — 원산지 증명서·CITES 인증서·정식 수입 증빙·유기농 인증서·
  *    유전자 검사·성분검사서·FDA 식품시설 등록·HACCP·GMP
  *
- * [전통 문헌 — 효능은 단정하지 않고 기록으로만] /about-agarwood '문헌에 실린 침향' (동의보감: 기를 통하게 하고 몸을 따뜻하게 함)
+ * [전통 문헌] 제품을 함께 싣는 페이지라 문헌의 작용 서술('약재'·기를 통하게 함 등)은 옮기지 않았다(2026-10-24 검토 반영).
  *
  * [주의·고지]
  *  - data/db/faq.json:47 — 침향단·침향선향 등 일부 제품 12세 미만·임산부·수유부 권장 안 함
  *  - /blog/3-questions-before-buying-agarwood 고지문 — 개인차, 건강 상태에 따라 전문가 상담
  *  - /blog/real-agarwood-3-criteria 고지문 — 침향은 건강기능식품법상 기능성 원료가 아닌 일반식품 원료
  *  - https://zoellife.com/guide — "이 제품은 질병의 예방 및 치료를 위한 의약품이 아닙니다"
+ *  - 고지 섹션 "표시된 섭취법에 따라" — data/db/products.json:111·:143 복용법·사용법 표시
  *
  * 뺀 내용(사이트에 출처가 없음): 환과 단의 일반적 차이·제법, 1단당 침향 그램 수(비율×중량 환산 값은 표시사항에 없음),
  * 기보단의 침향 비율과 기보단 전용 주의 문구, 섭취 기간·효과가 나타나는 시점, 다른 회사 침향환 비교.
@@ -89,7 +90,7 @@ export const AGARWOOD_HWAN: TopicHubContent = {
         {
           title: '기보단(氣寶丹)',
           paragraphs: [
-            '25년산 침향을 중심으로 동충하초·제비집 등을 배합한 복합환입니다. 이름에는 "기(氣)를 보하는 보배로운 단(丹)"이라는 뜻이 담겨 있습니다. 한 번에 1포씩 물과 함께 먹는 방식입니다.',
+            '25년산 침향을 중심으로 동충하초·제비집 등을 배합한 복합환입니다. 한 번에 1포씩 물과 함께 먹는 방식입니다.',
           ],
         },
       ],
@@ -225,7 +226,7 @@ export const AGARWOOD_HWAN: TopicHubContent = {
           ],
         },
       ],
-      links: [{ href: '/agarwood-benefits', label: '침향 효능·주의사항 총정리' }],
+      links: [{ href: '/agarwood-benefits#caution', label: '침향 섭취 시 주의사항 더 보기' }],
     },
     {
       id: 'notice',
@@ -234,11 +235,10 @@ export const AGARWOOD_HWAN: TopicHubContent = {
       title: '침향환은 의약품이 아닙니다',
       lead: AGARWOOD_HWAN_NOTICE,
       paragraphs: [
-        '침향은 「건강기능식품에 관한 법률」상 기능성 원료로 인정된 원료가 아닌 일반식품 원료입니다. 동의보감 등 옛 의서에는 침향이 기를 통하게 하고 몸을 따뜻하게 하는 약재로 기록돼 있으나, 이는 문헌의 기록이며 침향환의 특정 효과를 뜻하지 않습니다.',
+        '침향은 「건강기능식품에 관한 법률」상 기능성 원료로 인정된 원료가 아닌 일반식품 원료입니다. 침향환은 표시된 섭취법에 따라 일반식품으로 드시기 바랍니다.',
       ],
       links: [
         { href: '/about-agarwood', label: '침향이란? 학명·문헌 자세히' },
-        { href: '/agarwood-benefits', label: '전통 문헌과 현대 연구로 본 침향' },
       ],
     },
   ],
@@ -274,7 +274,7 @@ export const AGARWOOD_HWAN: TopicHubContent = {
   related: [
     { href: '/products/agarwood-chimhyangdan', label: '침향단', desc: '25년산 침향분말 10% 배합 전통 환' },
     { href: '/products/agarwood-gibodan', label: '기보단', desc: '25년산 침향·동충하초·제비집 복합환' },
-    { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
+    { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌으로 보는 침향' },
   ],
 };

@@ -234,7 +234,7 @@ export const AGARWOOD_TEA: TopicHubContent = {
           ],
         },
       ],
-      links: [{ href: '/agarwood-benefits', label: '침향 효능·주의사항 총정리' }],
+      links: [{ href: '/agarwood-benefits#caution', label: '침향 섭취 시 주의사항 더 보기' }],
     },
     {
       id: 'notice',
@@ -247,7 +247,6 @@ export const AGARWOOD_TEA: TopicHubContent = {
       ],
       links: [
         { href: '/about-agarwood', label: '침향이란? 학명·문헌 자세히' },
-        { href: '/agarwood-benefits', label: '전통 문헌과 현대 연구로 본 침향' },
       ],
     },
   ],
@@ -284,6 +283,6 @@ export const AGARWOOD_TEA: TopicHubContent = {
     { href: '/products/agarwood-paramignya-tea', label: '침향 파라미냐차', desc: '25년산 침향 + 베트남 전통차 파라미냐, 30포' },
     { href: '/products/agarwood-tea-water-set', label: '침향차·수 세트', desc: '침향차 10포 + 침향수 100ml 기프트 세트' },
     { href: '/products/agarwood-stick-100g', label: '침향스틱 100g', desc: '25년산 침향 원목 — 취향·차 겸용' },
-    { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
+    { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
   ],
 };

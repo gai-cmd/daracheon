@@ -67,8 +67,9 @@ export interface TopicHubContent {
   datePublished: string;
   dateModified: string;
   sections: TopicSection[];
-  productsTitle: string;
-  productsLead: string;
+  /** 관련 제품 영역 제목. 생략하면 제품 영역(목차 항목·ItemList 포함)을 렌더하지 않는다 — 효능 정보 페이지용. */
+  productsTitle?: string;
+  productsLead?: string;
   faqTitle: string;
   faq: FaqEntry[];
   related: { href: string; label: string; desc: string }[];
@@ -76,6 +77,7 @@ export interface TopicHubContent {
 
 export default function TopicHub({ content, products }: { content: TopicHubContent; products: TopicProduct[] }) {
   const url = `${SITE_URL}${content.path}`;
+  const showProducts = Boolean(content.productsTitle);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -108,7 +110,7 @@ export default function TopicHub({ content, products }: { content: TopicHubConte
         ],
       },
       faqPageNode(`${url}#faq`, content.faq, { isPartOf: { '@id': `${SITE_URL}/#website` } }),
-      ...(products.length > 0
+      ...(showProducts && products.length > 0
         ? [
             {
               '@type': 'ItemList',
@@ -172,15 +174,19 @@ export default function TopicHub({ content, products }: { content: TopicHubConte
                 </a>
               </li>
             ))}
-            <li>
-              <a href="#products">
-                <span className={styles.tocNum}>{String(content.sections.length + 1).padStart(2, '0')}</span>
-                {content.productsTitle}
-              </a>
-            </li>
+            {showProducts && (
+              <li>
+                <a href="#products">
+                  <span className={styles.tocNum}>{String(content.sections.length + 1).padStart(2, '0')}</span>
+                  {content.productsTitle}
+                </a>
+              </li>
+            )}
             <li>
               <a href="#faq">
-                <span className={styles.tocNum}>{String(content.sections.length + 2).padStart(2, '0')}</span>
+                <span className={styles.tocNum}>
+                  {String(content.sections.length + (showProducts ? 2 : 1)).padStart(2, '0')}
+                </span>
                 {content.faqTitle}
               </a>
             </li>
@@ -293,7 +299,8 @@ export default function TopicHub({ content, products }: { content: TopicHubConte
         </section>
       ))}
 
-      {/* 관련 제품 */}
+      {/* 관련 제품 — productsTitle 이 없으면 영역 자체를 생략 */}
+      {showProducts && (
       <section id="products" className={`${story.chapter} ${styles.anchor}`} aria-labelledby="products-title">
         <div className={story.wrap}>
           <h2 id="products-title" className={styles.centerTitle}>
@@ -324,6 +331,7 @@ export default function TopicHub({ content, products }: { content: TopicHubConte
           )}
         </div>
       </section>
+      )}
 
       {/* FAQ — 화면 문답 = FAQPage 구조화 데이터 */}
       <FaqSection title={content.faqTitle} entries={content.faq} />

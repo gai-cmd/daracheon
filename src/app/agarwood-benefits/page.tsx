@@ -4,8 +4,9 @@ import { AGARWOOD_BENEFITS } from '@/content/topics/agarwood-benefits';
 import { pageOpenGraph } from '@/lib/seo/og';
 import { SITE_URL } from '@/lib/seo/image';
 
-// '침향 효능' 검색어 허브. 효능 정보 옆에 제품 카드를 붙이지 않도록 제품 목록은 비우고
-// (TopicHub 가 '전체 제품 보기' 링크만 출력) 데이터 조회 없이 정적으로 렌더한다.
+// '침향 효능' 검색어 허브. 효능 정보가 제품 광고로 읽히지 않도록 제품 영역을 두지 않는다
+// (콘텐츠에 productsTitle 이 없어 TopicHub 가 제품 영역·'전체 제품 보기' 링크를 렌더하지 않음).
+// 데이터 조회 없이 정적으로 렌더한다.
 
 // 요청된 제목에 이미 브랜드가 들어 있어 레이아웃 템플릿을 건너뛴다(absolute).
 const TITLE = "침향 효능 총정리 — 과학 연구와 전통 문헌으로 본 침향의 효과 | 대라천 '참'침향";
