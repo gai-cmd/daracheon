@@ -84,7 +84,8 @@ interface Props {
  * 확인 안 된 사항(쓰지 않음): 조엘라이프 주식회사와 NTV VIETNAM·The NTV Korea 사이의 지분·계약 관계,
  * 베트남 농장의 소유 주체. 사이트 어디에도 서술이 없어 비워 둔다.
  */
-const BRAND_OWNER_LINE = "대라천 '참'침향 — 조엘라이프 주식회사 공식 브랜드";
+// H1 은 "조엘라이프 주식회사 공식 브랜드 + {브랜드명}" 으로 읽힌다 — 브랜드명은 뒤의 제목이 담당.
+const BRAND_OWNER_LINE = '조엘라이프 주식회사 공식 브랜드';
 const BRAND_OFFICIAL_LEAD =
   "대라천 '참'침향은 조엘라이프 주식회사가 운영하는 침향 브랜드이며, 한국 공식 채널은 zoellife.com입니다.";
 const BRAND_FACTS: { label: string; value: string }[] = [
@@ -398,7 +399,7 @@ export default function BrandStoryClient({ data, showroom }: Props) {
           <div className={storyStyles.heroMain}>
             <h1>
               {/* 고정 브랜드 귀속 문구 — Blob 편집과 무관하게 H1 첫머리에 항상 노출 */}
-              <span className={styles.heroOwnerLine}>{BRAND_OWNER_LINE}</span>
+              <span className={styles.heroOwnerLine}>{BRAND_OWNER_LINE}</span>{' '}
               {(() => {
                 const t = hero?.titleKr ?? "대라천 '참'침향";
                 const en = hero?.titleEn;
