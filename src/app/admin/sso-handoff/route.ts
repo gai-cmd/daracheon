@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createHmac } from 'crypto';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import { getHandoffSecret, getWorkshopReturnOrigins, signHandoffToken } from '@/lib/workshop-sso';
 
 /**
  * SSO 핸드오프 — 콘텐츠 작업실(zoel-workshop) 등 사내 도구가 대라천 관리자 Google SSO 를
@@ -9,6 +9,8 @@ import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
  * 흐름: 도구의 로그인 모달 → /api/admin/auth/google/start?next=/admin/sso-handoff?return=<도구 URL>
  *   → (Google 로그인, admin-users 인가, 관리자 세션 발급) → 이 라우트 → 짧은 서명 토큰을 붙여
  *   도구의 return URL 로 302. 도구는 WORKSHOP_SSO_SECRET 으로 서명을 검증해 자기 세션을 만든다.
+ *   (admin-users 에 없는 열린 도메인 계정의 role=member 토큰은 이 라우트를 거치지 않고 구글
+ *   콜백이 직접 붙인다 — src/lib/workshop-sso.ts 참고.)
  *
  * - /admin 아래 경로라 미들웨어 관리자 세션 게이트를 그대로 통과해야만 도달한다.
  * - return 은 WORKSHOP_SSO_RETURN_ORIGINS(쉼표 구분 origin 허용 목록)에 있는 origin 만 허용.
@@ -17,16 +19,10 @@ import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-function allowedOrigins(): string[] {
-  return (process.env.WORKSHOP_SSO_RETURN_ORIGINS ?? '')
-    .split(',')
-    .map((s) => s.trim().replace(/\/$/, ''))
-    .filter(Boolean);
-}
-
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const secret = process.env.WORKSHOP_SSO_SECRET;
+  // Null when unset, too short, or equal to ADMIN_SESSION_SECRET (tokens share the session wire format).
+  const secret = getHandoffSecret();
   if (!secret) return NextResponse.json({ success: false, message: 'sso handoff not configured' }, { status: 503 });
 
   const cookie = request.headers
@@ -43,14 +39,13 @@ export async function GET(request: Request) {
   } catch {
     return NextResponse.json({ success: false, message: 'invalid return' }, { status: 400 });
   }
-  if (ret.protocol !== 'https:' || !allowedOrigins().includes(ret.origin)) {
+  if (ret.protocol !== 'https:' || !getWorkshopReturnOrigins().includes(ret.origin)) {
     return NextResponse.json({ success: false, message: 'return origin not allowed' }, { status: 400 });
   }
 
-  const payload = Buffer.from(
-    JSON.stringify({ email: session.email, name: session.name ?? session.email, role: session.role, exp: Date.now() + 60_000 })
-  ).toString('base64url');
-  const sig = createHmac('sha256', secret).update(payload).digest('base64url');
-  ret.searchParams.set('t', `${payload}.${sig}`);
+  ret.searchParams.set(
+    't',
+    signHandoffToken(secret, { email: session.email, name: session.name ?? session.email, role: session.role })
+  );
   return NextResponse.redirect(ret.toString());
 }

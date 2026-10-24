@@ -12,6 +12,15 @@ import {
   OAUTH_NEXT_COOKIE,
 } from '@/lib/google-oauth';
 import { readDataForWrite, writeDataMerged } from '@/lib/db';
+import {
+  decodeGoogleIdToken,
+  getHandoffSecret,
+  getWorkshopOpenDomains,
+  getWorkshopReturnOrigins,
+  isWorkshopOpenAccount,
+  signHandoffToken,
+  workshopReturnFromNext,
+} from '@/lib/workshop-sso';
 import type { AdminUser } from '@/lib/admin-users';
 import type { AuditEntry } from '@/lib/audit';
 
@@ -48,9 +57,52 @@ async function auditSsoLogin(email: string, role: string, action: 'login' | 'log
   }
 }
 
+// Workshop-only entry for verified accounts of an open Workspace domain (default try-n.com) that
+// are NOT registered in admin-users. Returns the workshop return URL carrying a role "member"
+// handoff token, or null when any condition fails. It never yields a zoellife admin session.
+// Threat model and env vars: src/lib/workshop-sso.ts.
+function workshopMemberEntry(args: {
+  next: string;
+  email: string;
+  userinfoVerified: boolean;
+  profileName: string;
+  idToken: string | undefined;
+  clientId: string;
+}): { redirectTo: URL; domain: string } | null {
+  // Null when unset, too short, or equal to ADMIN_SESSION_SECRET: a member token must never be
+  // signed with a key that also verifies zoellife admin session cookies.
+  const secret = getHandoffSecret();
+  if (!secret) return null;
+
+  const redirectTo = workshopReturnFromNext(args.next, getWorkshopReturnOrigins());
+  if (!redirectTo) return null;
+
+  const claims = decodeGoogleIdToken(args.idToken);
+  if (!claims || claims.email?.toLowerCase() !== args.email) return null;
+
+  const open = isWorkshopOpenAccount(
+    {
+      email: args.email,
+      emailVerified: args.userinfoVerified && claims.email_verified === true,
+      hd: claims.hd,
+      aud: claims.aud,
+    },
+    { clientId: args.clientId, domains: getWorkshopOpenDomains() }
+  );
+  if (!open) return null;
+
+  redirectTo.searchParams.set(
+    't',
+    signHandoffToken(secret, { email: args.email, name: args.profileName || args.email, role: 'member' })
+  );
+  return { redirectTo, domain: args.email.slice(args.email.lastIndexOf('@') + 1) };
+}
+
 // 구글 리다이렉트 처리:
 // state(CSRF) 검증 → code 교환 → 검증된 이메일 획득 →
 // admin-users 등록 멤버만 인가 → 기존 세션 토큰 발급.
+// 예외 출구: 미등록이지만 열린 Workspace 도메인(기본 try-n.com)의 검증된 계정은 작업실 role=member
+// 토큰만 받고(관리자 세션 없음), 자세한 조건은 src/lib/workshop-sso.ts 참고.
 export async function GET(request: Request) {
   const url = new URL(request.url);
 
@@ -76,7 +128,14 @@ export async function GET(request: Request) {
     .map((c) => c.trim())
     .find((c) => c.startsWith(`${OAUTH_NEXT_COOKIE}=`))
     ?.slice(OAUTH_NEXT_COOKIE.length + 1);
-  const next = sanitizeNextPath(nextRaw ? decodeURIComponent(nextRaw) : null);
+  // A malformed percent sequence in the cookie must not throw; sanitizeNextPath(null) gives /admin.
+  let nextDecoded: string | null = null;
+  try {
+    nextDecoded = nextRaw ? decodeURIComponent(nextRaw) : null;
+  } catch {
+    nextDecoded = null;
+  }
+  const next = sanitizeNextPath(nextDecoded);
 
   try {
     const redirectUri = resolveRedirectUri(request.url);
@@ -94,7 +153,7 @@ export async function GET(request: Request) {
       }),
     });
     if (!tokenRes.ok) return clearOAuthCookies(redirectToLogin(request, 'oauth_token'));
-    const tokens = (await tokenRes.json()) as { access_token?: string };
+    const tokens = (await tokenRes.json()) as { access_token?: string; id_token?: string };
     if (!tokens.access_token) return clearOAuthCookies(redirectToLogin(request, 'oauth_token'));
 
     // 2) 검증된 이메일 조회
@@ -118,6 +177,21 @@ export async function GET(request: Request) {
     const users = await readDataForWrite<AdminUser>('admin-users');
     const idx = users.findIndex((u) => u.email === email);
     if (idx < 0) {
+      // Not an admin-user: an open-domain Workspace account may still enter the workshop as a
+      // member. No admin session cookie is set and admin-users is not touched on this path.
+      const workshop = workshopMemberEntry({
+        next,
+        email,
+        userinfoVerified: profile.email_verified === true,
+        profileName,
+        idToken: tokens.id_token,
+        clientId: config.clientId,
+      });
+      if (workshop) {
+        await auditSsoLogin(email, 'workshop-member', 'login', `작업실 입장(${workshop.domain} 도메인)`);
+        return clearOAuthCookies(NextResponse.redirect(workshop.redirectTo.toString()));
+      }
+
       await auditSsoLogin(email, 'unknown', 'login_failed', `미등록 계정 SSO 로그인 시도: ${email}`);
       return clearOAuthCookies(redirectToLogin(request, 'not_authorized'));
     }

@@ -50,9 +50,12 @@ const deleteSchema = z.object({
   email: z.string().email(),
 });
 
+// The list is readable by every signed-in role (blog author dropdown), so it must carry no
+// credential: not the password hash and not the plain base32 TOTP seed.
 function redact(u: AdminUser) {
-  const { passwordHash: _ph, ...rest } = u;
+  const { passwordHash: _ph, totpSecret: _ts, ...rest } = u;
   void _ph;
+  void _ts;
   return rest;
 }
 
