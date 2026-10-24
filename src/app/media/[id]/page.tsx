@@ -24,10 +24,14 @@ export async function generateMetadata(
   const items = await readDataSafe<MediaItem>('media');
   const item = items.find((m) => m.id === id);
   // 루트 layout 의 title.template 이 브랜드를 붙이므로 여기서는 브랜드 꼬리를 달지 않는다.
-  if (!item) return { title: '미디어' };
+  // 상세 페이지는 내용이 얇고 /media 에서 링크되지 않으며 sitemap 에도 없다 —
+  // 색인은 막되(noindex) 링크는 따라가게(follow) 두고, canonical 은 자기 자신으로 유지.
+  const robots = { index: false, follow: true };
+  if (!item) return { title: '미디어', robots };
   return {
     title: `${item.title} — ${item.source}`,
     description: item.excerpt ?? `${item.source} (${item.date})`,
+    robots,
     alternates: { canonical: `https://zoellife.com/media/${id}` },
     openGraph: item.image ? { images: [item.image] } : undefined,
   };
