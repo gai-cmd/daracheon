@@ -141,6 +141,9 @@ const faqJsonLd = {
 const TOPIC_LINKS: TopicLink[] = [
   { href: '/vietnam-agarwood', label: '베트남 침향', desc: '천 년의 문헌이 기록한 침향의 주산지와 5개 직영 농장' },
   { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
+  { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향, 부작용·주의사항까지' },
+  { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+  { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
   { href: '/media', label: '침향 농장·생산 공정', desc: '묘목부터 증류까지 베트남 현장 기록' },
   { href: '/products', label: '침향 제품', desc: '침향 오일·침향단·침향수·침향차 라인업' },
 ];

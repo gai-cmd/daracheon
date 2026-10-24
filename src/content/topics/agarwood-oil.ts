@@ -174,6 +174,7 @@ export const AGARWOOD_OIL: TopicHubContent = {
     { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지, 베트남과 5개 직영 농장' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
     { href: '/brand-story', label: '브랜드 스토리', desc: '20년 원칙과 생산 공정, 인증' },
+    { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
     { href: '/reviews', label: '침향 오일 후기', desc: '실제 구매 고객의 사용 후기' },
   ],
 };

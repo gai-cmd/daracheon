@@ -36,6 +36,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 핵심 검색어 주제 허브 — '베트남 침향' · '침향 오일'
     { url: `${baseUrl}/vietnam-agarwood`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/vietnam-agarwood`) },
     { url: `${baseUrl}/agarwood-oil`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-oil`) },
+    // 정보 검색어 랜딩 — '침향 효능' · '침향환/침향단' · '침향차'
+    { url: `${baseUrl}/agarwood-benefits`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-benefits`) },
+    { url: `${baseUrl}/agarwood-hwan`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-hwan`) },
+    { url: `${baseUrl}/agarwood-tea`, changeFrequency: 'monthly', priority: 0.9, alternates: withAlternates(`${baseUrl}/agarwood-tea`) },
     { url: `${baseUrl}/brand-story`, changeFrequency: 'monthly', priority: 0.8, alternates: withAlternates(`${baseUrl}/brand-story`) },
     { url: `${baseUrl}/showroom`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/showroom`) },
     { url: `${baseUrl}/products`, changeFrequency: 'weekly', priority: 0.9, alternates: withAlternates(`${baseUrl}/products`) },

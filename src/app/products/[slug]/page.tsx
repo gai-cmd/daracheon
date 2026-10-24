@@ -113,10 +113,17 @@ export default async function ProductDetailPage(
   const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
   const countryOfOrigin = guideField(guide, '제조국');
 
-  // 검색어 주제 페이지로 가는 내부 링크 — 오일 제품은 '침향 오일' 허브를 맨 앞에.
+  // 검색어 주제 페이지로 가는 내부 링크 — 제품 카테고리에 맞는 정보 랜딩을 맨 앞에.
+  // (오일 → '침향 오일', 환(침향단·기보단) → '침향환·침향단', 차 → '침향차')
   const topicLinks = [
     ...(product.category === '오일'
       ? [{ href: '/agarwood-oil', label: '침향 오일 고르는 법', desc: '72시간 증류 공정과 좋은 침향 오일의 기준' }]
+      : []),
+    ...(product.category === '환'
+      ? [{ href: '/agarwood-hwan', label: '침향환·침향단 고르는 법', desc: '라벨에서 침향 함량 읽는 법과 섭취법' }]
+      : []),
+    ...(product.category === '차'
+      ? [{ href: '/agarwood-tea', label: '침향차 우리는 법', desc: '제품별 우리는 법과 고를 때 확인할 것' }]
       : []),
     { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
     { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법', desc: '학명·산지·증빙 서류로 확인하는 법' },
