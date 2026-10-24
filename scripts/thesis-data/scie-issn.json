@@ -1,6 +1,6 @@
 {
  "_note": "ISSN → true(SCIE 등재)/false(미등재 또는 MJL에 없음). 출처: Clarivate Master Journal List 공개 검색(rank-search), thesis-scie-check.mjs. _products 에 저널별 WoS 색인(SCIE/SSCI/AHCI/ESCI) 기록.",
- "_checked_at": "2026-09-23",
+ "_checked_at": "2026-09-30",
  "0265-0568": true,
  "1460-4752": true,
  "_products": {
@@ -700,7 +700,10 @@
   "1693-7147": [],
   "1229-1218": [],
   "1975-4051": [],
-  "1975-4701": []
+  "1975-4701": [],
+  "1226-7708": [
+   "Science Citation Index Expanded"
+  ]
  },
  "1420-3049": true,
  "1433-1373": true,
@@ -1264,5 +1267,7 @@
  "1975-4051": false,
  "2765-4419": false,
  "1975-4701": false,
- "2288-4688": false
+ "2288-4688": false,
+ "1226-7708": true,
+ "2092-6456": true
 }

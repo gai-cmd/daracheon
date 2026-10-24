@@ -5662,5 +5662,14 @@
   "sim": 1,
   "retracted": false,
   "api_year": "2025"
+ },
+ {
+  "doi": "10.1007/s10068-026-02310-w",
+  "resolved": true,
+  "source": "OpenAlex",
+  "type": "article",
+  "sim": 1,
+  "retracted": false,
+  "api_year": "2026"
  }
 ]

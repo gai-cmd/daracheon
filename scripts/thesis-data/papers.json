@@ -30001,5 +30001,59 @@
   "verify_source": "OpenAlex",
   "title_match": 1,
   "added_batch": "2026-09-23"
+ },
+ {
+  "title": "Quality evaluation of agarwood achieved through the GC–FID-based quantification of eudesmol isomers identified via SPME–GC/MS",
+  "title_ko": "",
+  "authors": [
+   "Jonggab Yim",
+   "Sun Young Park",
+   "Il Bum Park",
+   "Hyunwoo Ahn",
+   "Woojin Na",
+   "Kwang‐Geun Lee"
+  ],
+  "affiliations": [
+   "Dongguk University",
+   "Kwangdong Pharmaceutical"
+  ],
+  "country": [
+   "KR"
+  ],
+  "journal": "Food Science and Biotechnology",
+  "publisher": "Springer Science+Business Media",
+  "issn": [
+   "1226-7708",
+   "2092-6456"
+  ],
+  "indexing": "미확인",
+  "scopus": false,
+  "quartile": "",
+  "sjr": null,
+  "doi": "10.1007/s10068-026-02310-w",
+  "url": "https://doi.org/10.1007/s10068-026-02310-w",
+  "published_date": "2026-09-24",
+  "abstract": "",
+  "abstract_ko": "",
+  "keywords_ko": [],
+  "summary_easy": "",
+  "citation_count": 0,
+  "doc_type": "article",
+  "is_review": false,
+  "is_preprint": false,
+  "retracted": false,
+  "is_korea": true,
+  "efficacy": false,
+  "efficacy_types": [],
+  "domain": "",
+  "domain_label": "",
+  "domains": [],
+  "source_api": "OpenAlex",
+  "first_seen": "2026-09-30 19:00:18",
+  "last_updated": "2026-09-30 19:00:18",
+  "verified": true,
+  "verify_source": "OpenAlex",
+  "title_match": 1,
+  "added_batch": "2026-09-30"
  }
 ]
