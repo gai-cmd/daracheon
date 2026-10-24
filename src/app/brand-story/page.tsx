@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import { toOwnedThumbnailUrl } from '@/lib/seo/video';
 import BrandStoryClient from './BrandStoryClient';
 import type { ShowroomData } from '@/app/showroom/page';
 
@@ -73,7 +74,8 @@ export interface CertItem {
   validity?: string;
 }
 export interface NarrativeParagraph { title: string; body: string }
-export interface ProcessVideo { id: string; title: string }
+/** thumbnail — 저장돼 있을 때만 VideoObject 로 내보낸다 (Blob·/public 만 허용). */
+export interface ProcessVideo { id: string; title: string; thumbnail?: string }
 export interface ProcessChapter { title: string; titleEn: string; description: string; videos: ProcessVideo[] }
 export interface ProcessStat { value: string; label: string }
 export interface ProcessStep { step: string; name: string; duration?: string; desc: string; image?: string }
@@ -204,12 +206,16 @@ export default async function BrandStoryPage() {
   };
 
   // VideoObject 그룹 — brandStory processTab 영상 (AI 영상 검색 노출)
-  const videoItems = data?.processTab?.videoChapters?.flatMap((ch) => ch.videos) ?? [];
+  // 썸네일은 Blob·/public 만 허용(외부 CDN 금지) — 유효한 썸네일이 없는 영상은 VideoObject 에서 뺀다.
+  // (예전엔 lh3.googleusercontent.com Drive 썸네일을 조합해 넣었다.)
+  const videoItems = (data?.processTab?.videoChapters?.flatMap((ch) => ch.videos) ?? [])
+    .map((v) => ({ v, thumbnailUrl: toOwnedThumbnailUrl(v.thumbnail, 'https://zoellife.com') }))
+    .filter((x): x is { v: ProcessVideo; thumbnailUrl: string } => Boolean(x.thumbnailUrl));
   const videoJsonLd = videoItems.length > 0 ? {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: '대라천 침향 생산 공정 영상',
-    itemListElement: videoItems.map((v, i) => ({
+    itemListElement: videoItems.map(({ v, thumbnailUrl }, i) => ({
       '@type': 'VideoObject',
       position: i + 1,
       name: v.title,
@@ -217,7 +223,7 @@ export default async function BrandStoryPage() {
       contentUrl: `https://drive.google.com/file/d/${v.id}/view`,
       embedUrl: `https://drive.google.com/file/d/${v.id}/preview`,
       uploadDate: '2026-04-11',
-      thumbnailUrl: `https://lh3.googleusercontent.com/d/${v.id}=w1280`,
+      thumbnailUrl,
     })),
   } : null;
 
@@ -239,7 +245,8 @@ export default async function BrandStoryPage() {
       "베트남 5개 지역 200ha · 400만 그루 직영 농장에서 25년 이상 가꿔온 대라천 '참'침향의 여정.",
     inLanguage: 'ko-KR',
     isPartOf: { '@id': 'https://zoellife.com/#website' },
-    author: { '@type': 'Organization', name: '대라천 ZOEL LIFE', url: 'https://zoellife.com' },
+    // author·publisher 모두 root layout 의 #organization 엔티티를 참조 (옛 이름의 인라인 Organization 제거).
+    author: { '@id': 'https://zoellife.com/#organization' },
     publisher: { '@id': 'https://zoellife.com/#organization' },
     mainEntityOfPage: 'https://zoellife.com/brand-story',
     about: { '@id': 'https://zoellife.com/#brand' },

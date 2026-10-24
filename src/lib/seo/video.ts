@@ -36,6 +36,21 @@ function isPublicPath(url: string): boolean {
   return url.startsWith('/') && !url.startsWith('//');
 }
 
+/**
+ * 썸네일 주소를 VideoObject.thumbnailUrl 로 쓸 수 있는 절대 URL 로. 쓸 수 없으면 undefined.
+ * - Vercel Blob https URL → 그대로
+ * - /public 정적 자산('/…') → `${siteUrl}/…`
+ * - 그 외(lh3.googleusercontent.com 등 외부 CDN, 빈 값) → undefined
+ */
+export function toOwnedThumbnailUrl(raw: unknown, siteUrl: string): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const thumb = raw.trim();
+  if (!thumb) return undefined;
+  if (isBlobUrl(thumb)) return thumb;
+  if (isPublicPath(thumb)) return `${siteUrl}${thumb}`;
+  return undefined;
+}
+
 function youtubeId(url: string): string | null {
   const m = /^https:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(url);
   return m ? m[1] : null;
@@ -48,11 +63,8 @@ export function buildVideoObjects(videos: VideoCandidate[], siteUrl: string): Re
     if (!v.title || !v.url || !v.thumbnail || !v.date) continue;
     if (!/^\d{4}-\d{2}-\d{2}/.test(v.date)) continue;
 
-    const thumb = v.thumbnail.trim();
-    let thumbnailUrl: string;
-    if (isBlobUrl(thumb)) thumbnailUrl = thumb;
-    else if (isPublicPath(thumb)) thumbnailUrl = `${siteUrl}${thumb}`;
-    else continue;
+    const thumbnailUrl = toOwnedThumbnailUrl(v.thumbnail, siteUrl);
+    if (!thumbnailUrl) continue;
 
     const src = v.url.trim();
     const ytId = youtubeId(src);

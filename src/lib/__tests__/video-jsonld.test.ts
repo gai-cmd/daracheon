@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildVideoObjects } from '@/lib/seo/video';
+import { buildVideoObjects, toOwnedThumbnailUrl } from '@/lib/seo/video';
 
 const SITE = 'https://zoellife.com';
 const BLOB = 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
@@ -44,5 +44,19 @@ describe('buildVideoObjects', () => {
       SITE,
     );
     expect(out).toEqual([]);
+  });
+});
+
+describe('toOwnedThumbnailUrl', () => {
+  it('Blob URL 은 그대로, /public 경로는 절대 URL 로 바꾼다', () => {
+    expect(toOwnedThumbnailUrl(`${BLOB}/thumbs/a.jpg`, SITE)).toBe(`${BLOB}/thumbs/a.jpg`);
+    expect(toOwnedThumbnailUrl('  /images/a.jpg ', SITE)).toBe(`${SITE}/images/a.jpg`);
+  });
+
+  it('외부 CDN·프로토콜 상대·빈 값·비문자열은 버린다', () => {
+    expect(toOwnedThumbnailUrl('https://lh3.googleusercontent.com/d/abc=w1280', SITE)).toBeUndefined();
+    expect(toOwnedThumbnailUrl('//cdn.example.com/a.jpg', SITE)).toBeUndefined();
+    expect(toOwnedThumbnailUrl('', SITE)).toBeUndefined();
+    expect(toOwnedThumbnailUrl(undefined, SITE)).toBeUndefined();
   });
 });
