@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -11,6 +12,7 @@ import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
 // sanitize.ts 는 dompurify 를 lazy-require 하므로 top-level import 가 라우트를
 // 죽이지 않는다 — stripEmptyFigcaptions 는 순수 정규식 유틸.
 import { stripEmptyFigcaptions } from '@/lib/blog/sanitize';
+import { isOptimizableBlobImage, optimizeBodyImages } from '@/lib/blog/image-optimize';
 import { rewriteSmartstoreLinks } from '@/data/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
@@ -149,6 +151,12 @@ export default async function BlogPostPage({
   const cleanHtml = rewriteSmartstoreLinks(
     stripEmptyFigcaptions(normalizeArticleHtmlForDarkTheme(post.content)),
   );
+  // 본문 이미지: Blob 원본을 이미지 최적화기로 보내고 두 번째부터 지연 로드 — 렌더 시점 변환만,
+  // 저장된 본문은 그대로. 인용 링크 추출(citationUrls)은 href 만 보므로 영향 없음.
+  const bodyHtml = optimizeBodyImages(cleanHtml);
+  // 커버: 우리 Blob 래스터만 next/image 로 최적화. 그 외 호스트·SVG 는 remotePatterns·
+  // 최적화기 제약으로 깨질 수 있어 기존 <img> 를 유지한다.
+  const coverOptimizable = post.coverImage ? isOptimizableBlobImage(post.coverImage) : false;
 
   // ── 사이드바·연결 탐색 데이터 ─────────────────────────────
   const published = posts
@@ -405,13 +413,26 @@ export default async function BlogPostPage({
                 <div className={styles.cover}>
                   {/* 커버는 글의 LCP 요소 — 우선 로드 힌트를 준다. (CLS 는 .cover img 의
                       aspect-ratio 16/9 로 이미 예약됨) */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={post.coverImage}
-                    alt={post.title}
-                    fetchPriority="high"
-                    decoding="async"
-                  />
+                  {coverOptimizable ? (
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      width={1600}
+                      height={900}
+                      priority
+                      // height 속성(900px)이 .cover img 의 aspect-ratio 16/9 를 덮지 않도록 auto.
+                      style={{ height: 'auto' }}
+                      sizes="(min-width: 1280px) 1100px, (min-width: 1024px) 75vw, 100vw"
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      fetchPriority="high"
+                      decoding="async"
+                    />
+                  )}
                 </div>
               )}
 
@@ -422,7 +443,7 @@ export default async function BlogPostPage({
               <div
                 className={styles.article}
                 data-reading-surface
-                dangerouslySetInnerHTML={{ __html: cleanHtml }}
+                dangerouslySetInnerHTML={{ __html: bodyHtml }}
               />
 
               {post.tags.length > 0 && (
