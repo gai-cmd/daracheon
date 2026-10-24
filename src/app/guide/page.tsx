@@ -9,15 +9,19 @@ import { pageOpenGraph } from '@/lib/seo/og';
 
 const SITE_URL = 'https://zoellife.com';
 
+// 메타 설명(111자) — 이 페이지의 섹션 제목·히어로 문구에 이미 있는 사실만으로 구성.
+const GUIDE_DESCRIPTION =
+  "대라천 '참'침향 오일 제품의 섭취 방법·원재료·보관법·주의사항·제조 및 수입원을 큰 글씨로 한곳에 모았습니다. Aquilaria agallocha (Roxb) 품종에서 생산된 침향오일만 사용합니다.";
+
 export const metadata: Metadata = {
   title: '제품상세 · 복용 가이드',
-  description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
+  description: GUIDE_DESCRIPTION,
   // self-canonical — 없으면 루트 홈 canonical 을 상속해 홈 중복으로 색인된다.
   alternates: { canonical: `${SITE_URL}/guide` },
   openGraph: pageOpenGraph({
     path: '/guide',
     title: '제품상세 · 복용 가이드 | 대라천 침향',
-    description: '대라천 침향 제품의 복용 방법·원재료·보관법·주의사항을 큰 글씨로 한곳에 모았습니다.',
+    description: GUIDE_DESCRIPTION,
   }),
 };
 
