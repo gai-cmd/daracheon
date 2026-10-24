@@ -177,8 +177,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [twImageUrl],
     },
+    // canonical 기본값은 두지 않는다 — 404·noindex 페이지가 홈 canonical 을 상속하면
+    // 검색엔진이 홈 중복으로 오해한다. sitemap 의 모든 공개 페이지는 자체 canonical 을 지정한다.
     alternates: {
-      canonical: SITE_URL,
       languages: { 'ko-KR': SITE_URL, 'x-default': SITE_URL },
     },
     robots: {
