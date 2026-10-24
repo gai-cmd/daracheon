@@ -265,7 +265,8 @@ export default async function CompanyPage() {
                   <div className={styles.chapterTag}>{ch.tag}</div>
                 </div>
                 <div className={styles.chapterBody}>
-                  <h3>{ch.title}</h3>
+                  {/* 섹션 제목 = H1 다음 단계(h2). .chapterBody h2 는 기존 h3 와 동일 스타일. */}
+                  <h2>{ch.title}</h2>
                   {showLogos && (
                     <div
                       style={{

@@ -155,9 +155,9 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 <div className={storyStyles.chapterTag}>About</div>
               </div>
               <div className={storyStyles.chapterBody}>
-                <h3>
+                <h2>
                   회사 <em>개요</em>
-                </h3>
+                </h2>
 
                 {(() => {
                   const KEEP_IDENTITY = [
@@ -212,9 +212,9 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
               <div className={storyStyles.chapterTag}>General Inquiry</div>
             </div>
             <div className={storyStyles.chapterBody}>
-              <h3>
+              <h2>
                 문의 <em>양식</em>
-              </h3>
+              </h2>
               <p style={{ marginBottom: 36 }}>
                 아래 양식을 작성해 주시면 담당자가 내용을 확인하고 24시간 내 회신드립니다.
               </p>
@@ -340,9 +340,9 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 <div className={storyStyles.chapterTag}>FAQ</div>
               </div>
               <div className={storyStyles.chapterBody}>
-                <h3>
+                <h2>
                   자주 묻는 <em>질문</em>
-                </h3>
+                </h2>
                 <div className={styles.faqList} style={{ marginTop: 28 }}>
                   {faqItems.map((item, i) => (
                     <div key={i} className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}>
