@@ -4,6 +4,8 @@ import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { blogSitemapDates, recordEditDate } from '@/lib/blog/sitemap-dates';
 import type { Product } from '@/data/products';
 import { canonicalProductSlug } from '@/lib/product-slugs';
+import type { MediaItem } from '@/app/media/MediaGallery';
+import { collectSitemapImages, extractBodyBlobImages } from '@/lib/seo/sitemap-images';
 
 // 신규 블로그·제품(blob 즉시 반영)이 다음 배포 없이도 sitemap 에 반영되도록
 // 최대 1시간 주기로 재생성. 발행 핸들러의 revalidatePath('/sitemap.xml') 와 병행.
@@ -66,9 +68,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const url = `${baseUrl}/products/${canonicalProductSlug(p.slug)}`;
         // 저장된 마지막 편집 시각(_mt)이 있을 때만 lastmod — 없으면 태그 생략.
         const lastModified = recordEditDate(p);
+        // 이미지 확장 — 대표 이미지 + 갤러리 (Blob·/public 원본만, 외부 CDN 제외)
+        const images = collectSitemapImages([p.image, ...(p.gallery ?? [])], baseUrl);
         return {
           url,
           ...(lastModified ? { lastModified } : {}),
+          ...(images.length ? { images } : {}),
           changeFrequency: 'weekly' as const,
           priority: 0.8,
           alternates: withAlternates(url),
@@ -89,11 +94,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const dates = blogSitemapDates(posts, categories);
     const blogIndex = staticRoutes.find((r) => r.url === `${baseUrl}/blog`);
     if (blogIndex && dates.latest) blogIndex.lastModified = dates.latest;
+    const postBySlug = new Map(posts.filter((p) => p.status === 'published').map((p) => [p.slug, p]));
     const postRoutes: MetadataRoute.Sitemap = dates.posts.map((p) => {
       const url = `${baseUrl}/blog/${p.slug}`;
+      const post = postBySlug.get(p.slug);
+      // 이미지 확장 — 커버 + 저장 본문의 Blob 이미지 최대 5개 (본문은 읽기만)
+      const images = post
+        ? collectSitemapImages([post.coverImage, ...extractBodyBlobImages(post.content)], baseUrl)
+        : [];
       return {
         url,
         ...(p.lastModified ? { lastModified: p.lastModified } : {}),
+        ...(images.length ? { images } : {}),
         changeFrequency: 'monthly' as const,
         priority: 0.7,
         alternates: withAlternates(url),
@@ -113,6 +125,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     blogRoutes = [...categoryRoutes, ...postRoutes];
   } catch {
     /* 블로그 데이터 로드 실패 시 정적 경로만 */
+  }
+
+  try {
+    // /media 사진 갤러리 이미지 — DB 미디어 중 사진만 (Blob·/public 원본만)
+    const media = await readDataSafe<MediaItem>('media');
+    const photos = collectSitemapImages(
+      media.filter((m) => m.type === 'photo').map((m) => m.image),
+      baseUrl,
+    );
+    const mediaRoute = staticRoutes.find((r) => r.url === `${baseUrl}/media`);
+    if (mediaRoute && photos.length) mediaRoute.images = photos;
+  } catch {
+    /* 미디어 데이터 로드 실패 시 이미지 없이 */
   }
 
   return [...staticRoutes, ...productDetailRoutes, ...blogRoutes];
