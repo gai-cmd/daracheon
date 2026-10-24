@@ -2,11 +2,14 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { productImageAlt } from '@/lib/seo/product-image-alt';
 
 interface Props {
   primary: string;
   gallery?: string[];
   alt: string;
+  /** 카테고리 라벨 — 이미지 alt "<제품명> <라벨> 제품 사진 N" 조합용. */
+  categoryLabel?: string;
   badge?: string;
   outOfStock?: boolean;
 }
@@ -15,7 +18,7 @@ function isVideo(url: string): boolean {
   return /\.(mp4|webm|mov)(\?|$)/i.test(url);
 }
 
-export default function ImageGallery({ primary, gallery, alt, badge, outOfStock }: Props) {
+export default function ImageGallery({ primary, gallery, alt, categoryLabel, badge, outOfStock }: Props) {
   const allImages = [primary, ...(gallery ?? []).filter((url) => url && url !== primary)];
   const [activeIdx, setActiveIdx] = useState(0);
   const activeImage = allImages[activeIdx] ?? primary;
@@ -38,7 +41,7 @@ export default function ImageGallery({ primary, gallery, alt, badge, outOfStock 
           ) : (
             <Image
               src={activeImage}
-              alt={alt}
+              alt={productImageAlt(alt, categoryLabel, activeIdx + 1)}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority={activeIdx === 0}
@@ -79,7 +82,7 @@ export default function ImageGallery({ primary, gallery, alt, badge, outOfStock 
                   </span>
                 </>
               ) : (
-                <Image src={img} alt={`${alt} - ${idx + 1}`} fill sizes="120px" className="object-cover" />
+                <Image src={img} alt={productImageAlt(alt, categoryLabel, idx + 1)} fill sizes="120px" className="object-cover" />
               )}
             </button>
           ))}

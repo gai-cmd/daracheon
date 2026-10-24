@@ -86,10 +86,12 @@ export default async function ProductDetailPage(
 ) {
   const { slug } = await params;
   // products 는 uncached — 어드민 토글이 즉시 반영되도록.
-  const [products, storedGuides] = await Promise.all([
+  const [products, storedGuides, categories] = await Promise.all([
     readDataUncached<Product>('products'),
     // 제품상세(포장 표시사항) — /guide 와 같은 원천: 어드민 저장값(blob) 우선, 없으면 코드 기본값.
     readDataSafe<ProductGuide>('product-guides'),
+    // 갤러리 이미지 alt 의 카테고리 라벨용 (화면 문구에는 쓰지 않는다).
+    readDataSafe<{ id: string; label: string }>('productCategories'),
   ]);
   const product = products.find((p) => isSameProductSlug(p.slug, slug));
   if (!product) notFound();
@@ -209,6 +211,7 @@ export default async function ProductDetailPage(
               primary={product.image}
               gallery={product.gallery}
               alt={product.name}
+              categoryLabel={categories.find((c) => c.id === product.category)?.label}
               badge={product.badge}
               outOfStock={!product.inStock}
             />
