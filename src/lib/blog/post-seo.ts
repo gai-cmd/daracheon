@@ -1,4 +1,5 @@
 import type { BlogPost } from '@/types/blog';
+import { isOptimizableBlobImage } from './image-optimize';
 
 /**
  * 블로그 템플릿 SEO 순수 로직 — 글 제목/OG 제목, 관련 글 선택, 카테고리 메타 설명.
@@ -105,4 +106,28 @@ export function pickPostsBySlug(
     const p = posts.find((x) => x.slug === slug && x.status === 'published');
     return p && p.title.trim() ? [{ slug: p.slug, title: p.title.trim() }] : [];
   });
+}
+
+/** 사이트 기본 OG 이미지 — public/opengraph-image.jpg (app/layout.tsx 와 같은 파일). */
+export const DEFAULT_OG_IMAGE = '/opengraph-image.jpg';
+
+/** OG 로 내보낼 수 있는 커버인지 — 우리 Blob 래스터 이미지 또는 /public 상대 경로만 (외부 CDN·SVG 제외). */
+function isOwnOgImage(url: string | undefined): url is string {
+  if (!url) return false;
+  if (url.startsWith('/') && !url.startsWith('//')) return !/\.svg(\?|$)/i.test(url);
+  return isOptimizableBlobImage(url);
+}
+
+/**
+ * 카테고리 OG 이미지 — 그 카테고리 발행 글 중 가장 최신 글의 커버(우리 인프라 이미지만).
+ * 최신 글에 쓸 수 있는 커버가 없으면 그다음 최신 글로 내려가고, 하나도 없으면 사이트 기본 이미지.
+ */
+export function categoryOgImage(
+  posts: Pick<BlogPost, 'status' | 'categoryId' | 'coverImage' | 'publishedAt' | 'createdAt'>[],
+  categoryId: string,
+): string {
+  const newest = posts
+    .filter((p) => p.status === 'published' && p.categoryId === categoryId && isOwnOgImage(p.coverImage))
+    .sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt))[0];
+  return newest?.coverImage ?? DEFAULT_OG_IMAGE;
 }

@@ -5,7 +5,7 @@ import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
-import { categoryMetaDescription } from '@/lib/blog/post-seo';
+import { categoryMetaDescription, categoryOgImage } from '@/lib/blog/post-seo';
 import BlogCard from '../../BlogCard';
 import BlogPagination, { parseBlogPage } from '../../BlogPagination';
 
@@ -63,6 +63,8 @@ export async function generateMetadata({
       locale: 'ko_KR',
       title,
       description,
+      // 최신 글 커버(Blob·/public 만) — 없으면 사이트 기본 OG 이미지.
+      images: [categoryOgImage(posts, id)],
     },
   };
 }
