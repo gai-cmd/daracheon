@@ -1,2 +1,20 @@
+# State Configuration
+# Session state directory for Claude Code sessions (diagnostics baseline, coverage, etc.)
+# The directory path is not configurable: ".moai/state" is a hardcoded literal in the
+# state-path resolver and the worktree state guard, which are its single source of truth.
 state:
-    state_dir: .moai/state
+  # state.profile_max_bytes is the advisory per-profile size cap the
+  # SessionStart hygiene pass warns about: when a profile under
+  # ~/.moai/claude-profiles grows above this many bytes, the session start
+  # logs an advisory naming the profile and this key. Warning only —
+  # nothing is ever deleted by the advisory; reclaim space with
+  # `moai clean --home --force`. Remove the key to silence the check
+  # entirely (an absent key yields no warning).
+  profile_max_bytes: 8589934592
+  # state.backup_past_versions_keep is the per-file budget of past versions
+  # the update's backup pruning protects. Backups are pruned in whole runs;
+  # beyond the newest runs kept, an older run is retained while it holds the
+  # only copy of one of the newest N past versions of a file. A value below 1
+  # is read as the default, so the protection cannot be switched off here.
+  backup_past_versions_keep: 3
+  state_dir: .moai/state

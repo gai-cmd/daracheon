@@ -58,7 +58,7 @@ This rule is defined in `.claude/rules/moai/core/agent-common-protocol.md`
 
 **Layer 2 — L2/L3 worktree opt-in (recommended for known multi-session
 patterns)**: If your team works with 2+ sessions on the same project, use
-`/moai plan --worktree` or `moai worktree new SPEC-XXX --base origin/main`
+`moai cc -w <name>` (enter the worktree, then run the phase inside it)
 to materialize a per-SPEC working tree. Memory is still shared, but git
 working trees are separated → race conflict surface drops to zero.
 
@@ -162,14 +162,12 @@ whether to override the template defaults.
 
 ### `teammateMode` (runtime-managed)
 
-- **Template default**: unset (no teammate mode active)
-- **Common customization**: `"tmux"` for Agent Teams + tmux split-pane;
-  `"claude"` for Claude-only teammates; `"glm"` for GLM cost-optimization
-- **When to customize**: project actively uses Agent Teams or CG Mode for
-  parallel/cost-optimized work.
+- **Template default**: unset; the runtime determines its display behavior.
+- **Display and provider are separate**: `"tmux"` requests split-pane display; it does not select Claude or GLM. The explicit launcher and validated teammate-role policy determine provider routing.
+- **When to customize**: the project explicitly uses native Agent Teams under its experimental constraints. Legacy CG role migration is separate; a display setting does not establish mixed-provider routing.
 - **Important**: This key is typically set in `.claude/settings.local.json`
   (per-machine, not committed to git) and modified by runtime commands
-  (`moai cg`, `moai glm`, SessionStart hook). Do not add it to the project
+  (`moai glm`, SessionStart hook). Do not add it to the project
   `.claude/settings.json` template.
 
 ### `env.PATH`

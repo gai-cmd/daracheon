@@ -1,72 +1,104 @@
 llm:
-    agent_overrides: {}
-    glm:
-        base_url: https://api.z.ai/api/anthropic
-        models:
-            fable: glm-5.2
-            high: glm-5.2
-            low: glm-4.5-air
-            medium: glm-4.7
-    glm_env_var: GLM_API_KEY
-    mode: ""
-    performance_tier: medium
-    profile: medium
-    profiles:
-        low:
-            advisor:
-                effort: high
-                model: opus
-            design_harness_e2e:
-                effort: low
-                model: opus
-            develop:
-                effort: medium
-                model: opus
-            docs:
-                effort: medium
-                model: sonnet
-            git:
-                effort: low
-                model: sonnet
-            spec_auditors:
-                effort: low
-                model: opus
-        max:
-            advisor:
-                effort: medium
-                model: fable
-            design_harness_e2e:
-                effort: high
-                model: opus
-            develop:
-                effort: low
-                model: fable
-            docs:
-                effort: medium
-                model: sonnet
-            git:
-                effort: low
-                model: sonnet
-            spec_auditors:
-                effort: medium
-                model: fable
-        medium:
-            advisor:
-                effort: low
-                model: fable
-            design_harness_e2e:
-                effort: medium
-                model: opus
-            develop:
-                effort: high
-                model: opus
-            docs:
-                effort: medium
-                model: sonnet
-            git:
-                effort: low
-                model: sonnet
-            spec_auditors:
-                effort: high
-                model: opus
-    team_mode: ""
+  deployment_mode: local
+  mode: ""
+  team_mode: ""
+  # Agent harness selected at init time. One of claude | gpt | both,
+  # written explicitly on every init run — including the claude default — so
+  # doctor and update read the resolved value instead of inferring it.
+  # "gpt" means Codex-only deployment: AGENTS.md and Codex surfaces only
+  # (no .claude/ tree, no CLAUDE.md, no .mcp.json). A project initialized
+  # before this key existed reads as claude (unchanged behavior).
+  harness: "claude"
+  glm_env_var: "GLM_API_KEY"
+  # Explicit Claude Code binary pin. When set to a path, moai launches THIS
+  # binary instead of searching PATH for `claude` — pin a known-good release
+  # when a newer Claude Code release breaks compatibility with a third-party
+  # endpoint, instead of every launch auto-adopting the broken build. The
+  # path must exist and be executable; an invalid value fails the launch
+  # rather than falling back silently. The MOAI_CLAUDE_BIN environment
+  # variable overrides this key for a single launch. Leave empty for the
+  # default PATH lookup.
+  claude_bin: ""
+  profile: medium
+  agent_overrides: {}
+  # agent_overrides_consume: opt-in spawn consumption (default false). Keep
+  # it false and the map above stays storage-only — every subagent keeps the
+  # session model/effort it inherits, the documented default. Set it true and
+  # the orchestrator consults the overrides before each spawn and passes the
+  # configured model on the Agent() call; an override whose model is
+  # `inherit` stays an explicit inheritance no-op. Spawn payloads carry model
+  # only (the Agent tool exposes no effort parameter), so a pinned effort is
+  # delivered by convention, not by the payload. Note that a spawn pinned to
+  # a concrete model does not inherit the parent session's [1m] context
+  # entitlement — the closed alias set on the overrides is what keeps pins
+  # spawnable.
+  agent_overrides_consume: false
+  # defaults.sessions: the model + effort each factory session launches with.
+  # `mode: default` uses the shipped table (the values below
+  # restate it); `mode: custom` applies the cells below from the next launch,
+  # an empty cell falling back to the shipped value. Every value is a launch
+  # DEFAULT that stays changeable mid-session: Claude takes --model plus the
+  # transient --settings effort (never CLAUDE_CODE_EFFORT_LEVEL, which locks
+  # /effort); Codex takes -m and -c model_reasoning_effort (lane only — a plain
+  # `moai codex` keeps .codex/config.toml; the leader pair is reserved for a
+  # future `moai codex -f`); GLM takes the slot alias (opus ->
+  # llm.glm.models.high, sonnet -> medium) and translates its effort through
+  # llm.glm.effort (high -> max, medium -> high). Every effort is Claude
+  # vocabulary {low, medium, high, xhigh}; max and ultra are never a default.
+  # An explicit --model / --effort / -m on the command line still wins.
+  defaults:
+    sessions:
+      mode: "default"
+      cc:
+        leader: {model: "opus", effort: "high"} # moai cc -f
+        lane: {model: "sonnet", effort: "medium"} # moai cc -l
+      glm:
+        leader: {model: "opus", effort: "high"} # moai glm -f (glm-5.3 opus slot; z.ai max)
+        lane: {model: "sonnet", effort: "medium"} # moai glm -l (glm-5.3 sonnet slot; z.ai high)
+      codex:
+        leader: {model: "gpt-6.1-sol", effort: "high"} # reserved: future moai codex -f
+        lane: {model: "gpt-6.1-sol", effort: "medium"} # moai codex -l
+  # Main-session reasoning effort comes from the preference profile
+  # (`moai profile setup`), never from this file.
+  #
+  # Under a GLM backend (team_mode: glm), z.ai exposes a 3-level
+  # reasoning_effort control (low/high/max; GLM-5.3 reasons ALWAYS — reasoning
+  # cannot be disabled). The session-global mapping is:
+  #   effort low          -> reasoning_effort=low
+  #   effort medium/high  -> reasoning_effort=max
+  #   effort xhigh/max    -> reasoning_effort=max
+  # The code-producing run-phase agent runs at reasoning_effort=max regardless
+  # (coding-task recommendation).
+  #
+  # Delivery field (measured): the top-level reasoning_effort request field is
+  # the effective reasoning-control channel; a thinking-budget request object
+  # is ignored by the endpoint. Depth is controlled through reasoning_effort
+  # only.
+
+  glm:
+    base_url: "https://api.z.ai/api/anthropic"
+    models:
+      high: glm-5.2
+      medium: glm-4.7
+      low: glm-4.5-air
+      fable: glm-5.2
+      opus: glm-5.3
+      sonnet: glm-5.3
+      haiku: glm-5.3
+    # Per-tier reasoning effort (z.ai reasoning state: max | high | low).
+    # The `moai glm` launcher applies the slot serving the main session's
+    # model, overriding the session-wide effort preference; sub-agents keep
+    # the session-wide value. max is the deepest reasoning and the z.ai
+    # default; glm-5.3-flash accepts max only.
+    effort:
+      high: "max"
+      medium: "high"
+      low: "low"
+      fable: "max"
+  claude_models:
+    high: opus
+    medium: sonnet
+    low: haiku
+  default_model: sonnet
+  quality_model: opus
+  speed_model: haiku
