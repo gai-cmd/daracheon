@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createHmac } from 'crypto';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import { getWorkshopReturnOrigins, signHandoffToken } from '@/lib/workshop-sso';
 
 /**
  * SSO 핸드오프 — 콘텐츠 작업실(zoel-workshop) 등 사내 도구가 대라천 관리자 Google SSO 를
@@ -16,13 +16,6 @@ import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
  */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-function allowedOrigins(): string[] {
-  return (process.env.WORKSHOP_SSO_RETURN_ORIGINS ?? '')
-    .split(',')
-    .map((s) => s.trim().replace(/\/$/, ''))
-    .filter(Boolean);
-}
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -43,14 +36,13 @@ export async function GET(request: Request) {
   } catch {
     return NextResponse.json({ success: false, message: 'invalid return' }, { status: 400 });
   }
-  if (ret.protocol !== 'https:' || !allowedOrigins().includes(ret.origin)) {
+  if (ret.protocol !== 'https:' || !getWorkshopReturnOrigins().includes(ret.origin)) {
     return NextResponse.json({ success: false, message: 'return origin not allowed' }, { status: 400 });
   }
 
-  const payload = Buffer.from(
-    JSON.stringify({ email: session.email, name: session.name ?? session.email, role: session.role, exp: Date.now() + 60_000 })
-  ).toString('base64url');
-  const sig = createHmac('sha256', secret).update(payload).digest('base64url');
-  ret.searchParams.set('t', `${payload}.${sig}`);
+  ret.searchParams.set(
+    't',
+    signHandoffToken(secret, { email: session.email, name: session.name ?? session.email, role: session.role })
+  );
   return NextResponse.redirect(ret.toString());
 }
