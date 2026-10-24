@@ -15,11 +15,12 @@ import { GET } from '../route';
 import { SESSION_COOKIE } from '@/lib/auth';
 
 const NOW = Date.UTC(2026, 9, 24, 0, 0, 0);
-const SECRET = 'unit-test-workshop-secret';
+const SECRET = 'unit-test-workshop-secret-0123456789';
+const ADMIN_SECRET = 'unit-test-admin-session-secret-0123456789';
 const ORIGIN = 'https://zoel-workshop.vercel.app';
 const RETURN_URL = `${ORIGIN}/api/auth?action=handoff&from=/`;
 
-const ENV_KEYS = ['WORKSHOP_SSO_SECRET', 'WORKSHOP_SSO_RETURN_ORIGINS'] as const;
+const ENV_KEYS = ['WORKSHOP_SSO_SECRET', 'WORKSHOP_SSO_RETURN_ORIGINS', 'ADMIN_SESSION_SECRET'] as const;
 const savedEnv: Record<string, string | undefined> = {};
 
 // Verbatim copy of the inline implementation this route used before the refactor.
@@ -49,9 +50,11 @@ function call(returnParam: string | null, withCookie = true) {
 beforeEach(() => {
   for (const k of ENV_KEYS) savedEnv[k] = process.env[k];
   process.env.WORKSHOP_SSO_SECRET = SECRET;
+  process.env.ADMIN_SESSION_SECRET = ADMIN_SECRET;
   process.env.WORKSHOP_SSO_RETURN_ORIGINS = `${ORIGIN}/`; // trailing slash is stripped
   auth.session = { email: 'boss@zoellife.com', name: 'Test Admin', role: 'super_admin', issuedAt: NOW, expiresAt: NOW + 1 };
   vi.spyOn(Date, 'now').mockReturnValue(NOW);
+  vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -98,6 +101,18 @@ describe('/admin/sso-handoff', () => {
     expect(await res.json()).toEqual({ success: false, message: 'sso handoff not configured' });
   });
 
+  it.each([
+    ['equal to ADMIN_SESSION_SECRET', ADMIN_SECRET],
+    ['shorter than 32 characters', 'short-secret'],
+    ['whitespace only', ' '.repeat(40)],
+  ])('answers 503 and signs nothing when the secret is %s', async (_label, secret) => {
+    process.env.WORKSHOP_SSO_SECRET = secret;
+    const res = await call(RETURN_URL);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ success: false, message: 'sso handoff not configured' });
+    expect(res.headers.get('location')).toBeNull();
+  });
+
   it('redirects to the admin login when there is no valid session', async () => {
     auth.session = null;
     const res = await call(RETURN_URL, false);
@@ -115,6 +130,13 @@ describe('/admin/sso-handoff', () => {
     const res = await call(null);
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ success: false, message: 'invalid return' });
+  });
+
+  it('refuses an http return even if the allow list names the http origin', async () => {
+    process.env.WORKSHOP_SSO_RETURN_ORIGINS = 'http://zoel-workshop.vercel.app';
+    const res = await call('http://zoel-workshop.vercel.app/x');
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ success: false, message: 'return origin not allowed' });
   });
 
   it.each([

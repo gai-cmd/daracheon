@@ -25,6 +25,8 @@ export interface AdminSession {
   expiresAt: number;
 }
 
+const SESSION_ROLES: readonly AdminSession['role'][] = ['super_admin', 'admin', 'editor'];
+
 function bytesToBase64Url(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.byteLength; i++) {
@@ -90,9 +92,16 @@ export async function verifySessionToken(
   const expected = await hmacSign(payload);
   if (!constantTimeEqual(expected, signature)) return null;
   try {
-    const decoded = JSON.parse(base64UrlToString(payload)) as AdminSession;
+    const decoded = JSON.parse(base64UrlToString(payload)) as Partial<AdminSession> | null;
+    // Accept only the shape createSessionToken mints. Other tokens use the same wire format and
+    // HMAC (the workshop handoff token carries role "member" and `exp`, no `expiresAt`), so if one
+    // of their secrets ever equals ADMIN_SESSION_SECRET they would pass the signature check here;
+    // the role allow-list and a numeric expiry (an undefined one never compares as expired) stop
+    // them from being read as an admin session.
+    if (!decoded || typeof decoded.expiresAt !== 'number') return null;
+    if (!SESSION_ROLES.includes(decoded.role as AdminSession['role'])) return null;
     if (decoded.expiresAt < Date.now()) return null;
-    return decoded;
+    return decoded as AdminSession;
   } catch {
     return null;
   }

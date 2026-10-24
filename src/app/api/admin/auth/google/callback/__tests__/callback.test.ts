@@ -31,7 +31,7 @@ import { OAUTH_NEXT_COOKIE, OAUTH_STATE_COOKIE } from '@/lib/google-oauth';
 
 const NOW = Date.UTC(2026, 9, 24, 0, 0, 0);
 const CLIENT_ID = 'unit-test-client.apps.googleusercontent.com';
-const WORKSHOP_SECRET = 'unit-test-workshop-secret';
+const WORKSHOP_SECRET = 'unit-test-workshop-secret-0123456789';
 const ORIGIN = 'https://zoel-workshop.vercel.app';
 const HANDOFF_URL = `${ORIGIN}/api/auth?action=handoff&from=/`;
 const HANDOFF_NEXT = `/admin/sso-handoff?return=${encodeURIComponent(HANDOFF_URL)}`;
@@ -72,6 +72,8 @@ interface Scenario {
   idToken?: string | null; // null = token response carries no id_token
   idTokenClaims?: Record<string, unknown>;
   next?: string;
+  /** Raw g_oauth_next cookie value, sent without encodeURIComponent (for malformed values). */
+  rawNextCookie?: string;
 }
 
 async function runCallback(s: Scenario = {}) {
@@ -90,7 +92,8 @@ async function runCallback(s: Scenario = {}) {
       throw new Error(`unexpected fetch: ${url}`);
     })
   );
-  const cookie = `${OAUTH_STATE_COOKIE}=st; ${OAUTH_NEXT_COOKIE}=${encodeURIComponent(s.next ?? HANDOFF_NEXT)}`;
+  const nextCookie = s.rawNextCookie ?? encodeURIComponent(s.next ?? HANDOFF_NEXT);
+  const cookie = `${OAUTH_STATE_COOKIE}=st; ${OAUTH_NEXT_COOKIE}=${nextCookie}`;
   return GET(
     new Request('https://zoellife.com/api/admin/auth/google/callback?code=abc&state=st', {
       headers: { cookie },
@@ -170,6 +173,15 @@ describe('registered admin-users (unchanged flow)', () => {
 
     expect(res.headers.get('location')).toBe(`https://zoellife.com${HANDOFF_NEXT}`);
     expect(new URL(res.headers.get('location')!).searchParams.get('t')).toBeNull();
+    expect(hasSessionCookie(res)).toBe(true);
+  });
+
+  it('falls back to /admin instead of throwing when the g_oauth_next cookie is not valid percent-encoding', async () => {
+    db.adminUsers = [adminUser('boss@zoellife.com', 'super_admin')];
+    const res = await runCallback({ email: 'boss@zoellife.com', rawNextCookie: '%E0%A4%A', idToken: null });
+
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('https://zoellife.com/admin');
     expect(hasSessionCookie(res)).toBe(true);
   });
 
@@ -337,6 +349,32 @@ describe('everything else is still not_authorized', () => {
   it('(d) x@try-n.com when WORKSHOP_OPEN_DOMAINS is the empty string (feature off)', async () => {
     process.env.WORKSHOP_OPEN_DOMAINS = '';
     await expectDenied({ email: 'x@try-n.com' });
+  });
+
+  it('(d) a malformed g_oauth_next cookie from an unregistered account ends at not_authorized, not an exception', async () => {
+    await expectDenied({ email: 'x@try-n.com', rawNextCookie: '%E0%A4%A' });
+  });
+
+  describe('(g) a WORKSHOP_SSO_SECRET that must not sign member tokens', () => {
+    it('equal to ADMIN_SESSION_SECRET (token would be a valid admin session cookie)', async () => {
+      process.env.WORKSHOP_SSO_SECRET = process.env.ADMIN_SESSION_SECRET;
+      await expectDenied({ email: 'x@try-n.com' });
+    });
+
+    it('equal to ADMIN_SESSION_SECRET apart from surrounding whitespace', async () => {
+      process.env.WORKSHOP_SSO_SECRET = `${process.env.ADMIN_SESSION_SECRET}\n`;
+      await expectDenied({ email: 'x@try-n.com' });
+    });
+
+    it('shorter than 32 characters', async () => {
+      process.env.WORKSHOP_SSO_SECRET = 'short-secret';
+      await expectDenied({ email: 'x@try-n.com' });
+    });
+
+    it('whitespace only', async () => {
+      process.env.WORKSHOP_SSO_SECRET = ' '.repeat(40);
+      await expectDenied({ email: 'x@try-n.com' });
+    });
   });
 
   it('(e) x@try-n.com.evil.io', async () => {

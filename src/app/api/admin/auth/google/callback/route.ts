@@ -14,6 +14,7 @@ import {
 import { readDataForWrite, writeDataMerged } from '@/lib/db';
 import {
   decodeGoogleIdToken,
+  getHandoffSecret,
   getWorkshopOpenDomains,
   getWorkshopReturnOrigins,
   isWorkshopOpenAccount,
@@ -68,7 +69,9 @@ function workshopMemberEntry(args: {
   idToken: string | undefined;
   clientId: string;
 }): { redirectTo: URL; domain: string } | null {
-  const secret = process.env.WORKSHOP_SSO_SECRET;
+  // Null when unset, too short, or equal to ADMIN_SESSION_SECRET: a member token must never be
+  // signed with a key that also verifies zoellife admin session cookies.
+  const secret = getHandoffSecret();
   if (!secret) return null;
 
   const redirectTo = workshopReturnFromNext(args.next, getWorkshopReturnOrigins());
@@ -98,6 +101,8 @@ function workshopMemberEntry(args: {
 // 구글 리다이렉트 처리:
 // state(CSRF) 검증 → code 교환 → 검증된 이메일 획득 →
 // admin-users 등록 멤버만 인가 → 기존 세션 토큰 발급.
+// 예외 출구: 미등록이지만 열린 Workspace 도메인(기본 try-n.com)의 검증된 계정은 작업실 role=member
+// 토큰만 받고(관리자 세션 없음), 자세한 조건은 src/lib/workshop-sso.ts 참고.
 export async function GET(request: Request) {
   const url = new URL(request.url);
 
@@ -123,7 +128,14 @@ export async function GET(request: Request) {
     .map((c) => c.trim())
     .find((c) => c.startsWith(`${OAUTH_NEXT_COOKIE}=`))
     ?.slice(OAUTH_NEXT_COOKIE.length + 1);
-  const next = sanitizeNextPath(nextRaw ? decodeURIComponent(nextRaw) : null);
+  // A malformed percent sequence in the cookie must not throw; sanitizeNextPath(null) gives /admin.
+  let nextDecoded: string | null = null;
+  try {
+    nextDecoded = nextRaw ? decodeURIComponent(nextRaw) : null;
+  } catch {
+    nextDecoded = null;
+  }
+  const next = sanitizeNextPath(nextDecoded);
 
   try {
     const redirectUri = resolveRedirectUri(request.url);

@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createHmac } from 'crypto';
 import {
   DEFAULT_OPEN_DOMAINS,
   decodeGoogleIdToken,
+  getHandoffSecret,
   getWorkshopOpenDomains,
   getWorkshopReturnOrigins,
   isWorkshopOpenAccount,
@@ -12,7 +13,7 @@ import {
 
 // Pure helpers behind the workshop handoff and the open-domain ("anyone at @try-n.com") entry.
 // All fixtures are synthetic; no real accounts or secrets.
-const SECRET = 'unit-test-workshop-secret';
+const SECRET = 'unit-test-workshop-secret-0123456789';
 const CLIENT_ID = 'unit-test-client.apps.googleusercontent.com';
 const ORIGIN = 'https://zoel-workshop.vercel.app';
 const HANDOFF_URL = `${ORIGIN}/api/auth?action=handoff&from=/`;
@@ -61,6 +62,47 @@ describe('signHandoffToken', () => {
     const exp = JSON.parse(Buffer.from(token.split('.')[0], 'base64url').toString('utf8')).exp as number;
     expect(exp).toBeGreaterThanOrEqual(before + 60_000);
     expect(exp).toBeLessThanOrEqual(Date.now() + 60_000);
+  });
+});
+
+describe('getHandoffSecret', () => {
+  const GOOD = 'a-handoff-secret-of-at-least-32-characters';
+  const ADMIN = 'an-admin-session-secret-that-is-different-1';
+
+  it('returns a usable secret as is', () => {
+    expect(getHandoffSecret({ WORKSHOP_SSO_SECRET: GOOD, ADMIN_SESSION_SECRET: ADMIN })).toBe(GOOD);
+    expect(getHandoffSecret({ WORKSHOP_SSO_SECRET: GOOD })).toBe(GOOD);
+  });
+
+  it('accepts exactly 32 characters', () => {
+    expect(getHandoffSecret({ WORKSHOP_SSO_SECRET: 'x'.repeat(32) })).toBe('x'.repeat(32));
+  });
+
+  it.each([
+    ['unset', {}],
+    ['empty', { WORKSHOP_SSO_SECRET: '' }],
+    ['whitespace only', { WORKSHOP_SSO_SECRET: ' '.repeat(40) }],
+    ['31 characters', { WORKSHOP_SSO_SECRET: 'x'.repeat(31) }],
+    ['under 32 characters once padding is trimmed', { WORKSHOP_SSO_SECRET: `${' '.repeat(10)}${'x'.repeat(25)}${' '.repeat(10)}` }],
+    ['equal to ADMIN_SESSION_SECRET', { WORKSHOP_SSO_SECRET: ADMIN, ADMIN_SESSION_SECRET: ADMIN }],
+    ['equal to ADMIN_SESSION_SECRET apart from padding', { WORKSHOP_SSO_SECRET: ` ${ADMIN}`, ADMIN_SESSION_SECRET: `${ADMIN}\n` }],
+  ] as Array<[string, Record<string, string>]>)('returns null when it is %s', (_label, env) => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(getHandoffSecret(env)).toBeNull();
+    vi.restoreAllMocks();
+  });
+
+  it('logs why a configured secret was refused, without printing the secret', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(getHandoffSecret({ WORKSHOP_SSO_SECRET: ADMIN, ADMIN_SESSION_SECRET: ADMIN })).toBeNull();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(String(spy.mock.calls[0][0])).toContain('WORKSHOP_SSO_SECRET');
+    expect(JSON.stringify(spy.mock.calls)).not.toContain(ADMIN);
+    spy.mockClear();
+    // an unset secret is the normal "feature off" state and stays quiet
+    expect(getHandoffSecret({})).toBeNull();
+    expect(spy).not.toHaveBeenCalled();
+    vi.restoreAllMocks();
   });
 });
 
@@ -126,6 +168,12 @@ describe('workshopReturnFromNext', () => {
   it('rejects everything when the allow list is empty', () => {
     expect(workshopReturnFromNext(NEXT, [])).toBeNull();
   });
+
+  it('is https-only on its own: an http return is refused even if the allow list names the http origin', () => {
+    const httpReturn = 'http://zoel-workshop.vercel.app/x';
+    const next = `/admin/sso-handoff?return=${encodeURIComponent(httpReturn)}`;
+    expect(workshopReturnFromNext(next, ['http://zoel-workshop.vercel.app'])).toBeNull();
+  });
 });
 
 describe('isWorkshopOpenAccount', () => {
@@ -166,6 +214,16 @@ describe('isWorkshopOpenAccount', () => {
     ['a missing aud', { aud: undefined }],
   ])('rejects %s', (_label, patch) => {
     expect(isWorkshopOpenAccount({ ...ok, ...patch }, opts)).toBe(false);
+  });
+
+  it('requires exactly one @ even when the part after the first @ looks like an allowed domain', () => {
+    // Without the single-@ rule, "a@b@try-n.com" would be read as domain "b@try-n.com".
+    const odd = { clientId: CLIENT_ID, domains: ['b@try-n.com'] };
+    expect(isWorkshopOpenAccount({ ...ok, email: 'a@b@try-n.com', hd: 'b@try-n.com' }, odd)).toBe(false);
+  });
+
+  it('matches a configured domain case-insensitively when called with mixed-case domains', () => {
+    expect(isWorkshopOpenAccount(ok, { clientId: CLIENT_ID, domains: ['Try-N.com'] })).toBe(true);
   });
 
   it('rejects when the domain list is empty (feature disabled) or the client id is empty', () => {
@@ -226,6 +284,7 @@ describe('decodeGoogleIdToken', () => {
     ['a number', 42],
     ['an empty string', ''],
     ['a token without three parts', 'abc.def'],
+    ['a token with four parts', `h.${Buffer.from(JSON.stringify(base)).toString('base64url')}.s.extra`],
     ['a payload that is not JSON', `a.${Buffer.from('not json').toString('base64url')}.c`],
     ['a payload that is a JSON array', `a.${Buffer.from('[1,2]').toString('base64url')}.c`],
     ['a payload that is JSON null', `a.${Buffer.from('null').toString('base64url')}.c`],

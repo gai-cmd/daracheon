@@ -7,7 +7,9 @@
 //
 // Env vars (all read through the small getters below, never at import time):
 //   WORKSHOP_SSO_SECRET          HMAC secret shared with the workshop. Unset = the whole
-//                                handoff and the open-domain entry are disabled.
+//                                handoff and the open-domain entry are disabled. Also treated as
+//                                unset when blank, under 32 characters, or equal to
+//                                ADMIN_SESSION_SECRET (see getHandoffSecret).
 //   WORKSHOP_SSO_RETURN_ORIGINS  Comma separated https origins the token may be sent to.
 //   WORKSHOP_OPEN_DOMAINS        Comma separated Workspace domains whose verified accounts may
 //                                enter the workshop as role "member" without being registered in
@@ -16,6 +18,10 @@
 // Threat model of the open-domain entry:
 //   1. It only ever yields a workshop token with role "member". The callback never issues the
 //      zoellife admin session cookie on this path, so the admin console stays closed to it.
+//   1b. A handoff token has the same wire format and HMAC as an admin session cookie. Sharing the
+//      secret between the two would let a member token pass as a session, so verifySessionToken
+//      rejects any payload that is not an admin session, and getHandoffSecret refuses to sign
+//      with a secret that equals ADMIN_SESSION_SECRET.
 //   2. An address ending in "@try-n.com" is not proof of ownership (a consumer Google account can
 //      be created with any address), so we also require email_verified, the Workspace "hd"
 //      claim equal to that domain, and an id_token whose audience is our own OAuth client.
@@ -34,6 +40,8 @@ import type { AdminRole } from '@/lib/admin-users';
 export const HANDOFF_PATH = '/admin/sso-handoff';
 /** Lifetime of a handoff token. */
 export const HANDOFF_TOKEN_TTL_MS = 60_000;
+/** Shortest WORKSHOP_SSO_SECRET we will sign with. */
+export const MIN_HANDOFF_SECRET_LENGTH = 32;
 /** Workspace domains allowed in when WORKSHOP_OPEN_DOMAINS is not set. */
 export const DEFAULT_OPEN_DOMAINS: readonly string[] = ['try-n.com'];
 
@@ -57,6 +65,27 @@ export function signHandoffToken(secret: string, claims: HandoffClaims, now: num
   ).toString('base64url');
   const sig = createHmac('sha256', secret).update(payload).digest('base64url');
   return `${payload}.${sig}`;
+}
+
+/**
+ * The secret to sign handoff tokens with, or null when the handoff must stay off: unset, blank,
+ * shorter than MIN_HANDOFF_SECRET_LENGTH once trimmed, or equal to ADMIN_SESSION_SECRET. A refused
+ * (but set) secret is logged by reason only, never by value.
+ */
+export function getHandoffSecret(env: Env = process.env): string | null {
+  const secret = env.WORKSHOP_SSO_SECRET;
+  if (!secret) return null;
+
+  const trimmed = secret.trim();
+  let problem: string | null = null;
+  if (!trimmed) problem = 'is blank';
+  else if (trimmed.length < MIN_HANDOFF_SECRET_LENGTH) problem = `is shorter than ${MIN_HANDOFF_SECRET_LENGTH} characters`;
+  else if (trimmed === (env.ADMIN_SESSION_SECRET ?? '').trim()) problem = 'equals ADMIN_SESSION_SECRET';
+  if (problem) {
+    console.error(`[SSO] WORKSHOP_SSO_SECRET ${problem}; workshop handoff is disabled`);
+    return null;
+  }
+  return secret;
 }
 
 /** Allowed https return origins from WORKSHOP_SSO_RETURN_ORIGINS (trimmed, trailing slash stripped). */
@@ -129,7 +158,8 @@ export function isWorkshopOpenAccount(
 ): boolean {
   const { email, emailVerified, hd, aud } = account;
   if (emailVerified !== true) return false;
-  if (typeof email !== 'string' || typeof hd !== 'string' || typeof aud !== 'string') return false;
+  if (typeof email !== 'string' || typeof hd !== 'string') return false;
+  // A missing or non-string aud can never equal the (string) client id.
   if (!opts.clientId || aud !== opts.clientId) return false;
 
   const lower = email.toLowerCase();
@@ -171,7 +201,7 @@ export function decodeGoogleIdToken(idToken: unknown, now: number = Date.now()):
   } catch {
     return null;
   }
-  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+  if (!payload || typeof payload !== 'object') return null;
   const p = payload as Record<string, unknown>;
 
   if (p.iss !== 'https://accounts.google.com' && p.iss !== 'accounts.google.com') return null;
