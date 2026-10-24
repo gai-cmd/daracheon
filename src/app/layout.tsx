@@ -23,9 +23,10 @@ import '@/styles/globals.css';
 // CSS 를 발견하는 렌더-블로킹 외부 왕복 2회. next/font 는 빌드 시 폰트를
 // 내려받아 자산으로 셀프호스트하고 unicode-range 분할 CSS 를 인라인한다.
 // weight 목록은 종전 @import 와 동일하게 유지 (시각 회귀 방지).
+// 단, Noto Sans KR 900 은 src·data 전체에서 사용처가 없어 제거 (불필요한 폰트 자산 축소).
 // subsets 는 preload 힌트 — 한글 글리프는 unicode-range 로 필요 시 로드된다.
 const notoSans = Noto_Sans_KR({
-  weight: ['200', '300', '400', '500', '600', '700', '900'],
+  weight: ['200', '300', '400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
