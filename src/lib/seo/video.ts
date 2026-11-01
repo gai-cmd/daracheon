@@ -51,6 +51,31 @@ export function toOwnedThumbnailUrl(raw: unknown, siteUrl: string): string | und
   return undefined;
 }
 
+/** 달력에 실제로 있는 'YYYY-MM-DD' 인지 — 2024-02-30 은 Date 가 3월로 넘기므로 되돌려 비교해 거른다. */
+function isCalendarDate(ymd: string): boolean {
+  const d = new Date(`${ymd}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === ymd;
+}
+
+/**
+ * 저장된 날짜를 VideoObject.uploadDate 용 ISO 8601 DateTime(시간대 포함)으로. 쓸 수 없으면 undefined.
+ * Google 은 uploadDate 를 DateTime 으로 받고 시간대를 넣으라고 한다 — 날짜만 내보내면 Search Console 이
+ * 'datetime 속성에 시간대가 누락됨'·'datetime 값이 잘못됨' 을 낸다(2026-11 알림).
+ *  - 'YYYY-MM-DD' → 그날 한국 시간 자정 'YYYY-MM-DDT00:00:00+09:00'
+ *  - 시간대가 붙은 DateTime('…Z', '…+09:00') → 그대로
+ *  - 시간대 없는 시각·다른 형식·달력에 없는 날짜 → undefined (시간대를 추측해 붙이지 않는다)
+ */
+export function toUploadDateTime(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const s = raw.trim();
+  if (!isCalendarDate(s.slice(0, 10))) return undefined;
+  if (s.length === 10) return `${s}T00:00:00+09:00`;
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/.test(s) && !Number.isNaN(Date.parse(s))) {
+    return s;
+  }
+  return undefined;
+}
+
 function youtubeId(url: string): string | null {
   const m = /^https:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(url);
   return m ? m[1] : null;
@@ -60,8 +85,9 @@ function youtubeId(url: string): string | null {
 export function buildVideoObjects(videos: VideoCandidate[], siteUrl: string): Record<string, unknown>[] {
   const out: Record<string, unknown>[] = [];
   for (const v of videos) {
-    if (!v.title || !v.url || !v.thumbnail || !v.date) continue;
-    if (!/^\d{4}-\d{2}-\d{2}/.test(v.date)) continue;
+    if (!v.title || !v.url || !v.thumbnail) continue;
+    const uploadDate = toUploadDateTime(v.date);
+    if (!uploadDate) continue;
 
     const thumbnailUrl = toOwnedThumbnailUrl(v.thumbnail, siteUrl);
     if (!thumbnailUrl) continue;
@@ -78,7 +104,7 @@ export function buildVideoObjects(videos: VideoCandidate[], siteUrl: string): Re
       name: v.title,
       description: v.description || v.title,
       thumbnailUrl,
-      uploadDate: v.date,
+      uploadDate,
       ...media,
       publisher: { '@id': `${siteUrl}/#organization` },
     });

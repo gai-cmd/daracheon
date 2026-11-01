@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { readDataSafe } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
+import { toUploadDateTime } from '@/lib/seo/video';
 import styles from '@/styles/zoel/story-page.module.css';
 import type { MediaItem } from '../MediaGallery';
 
@@ -55,6 +56,9 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
   // 모두 BreadcrumbList 와 함께 emit.
   const pageUrl = `${SITE_URL}/media/${item.id}`;
   const ytId = item.url ? ytIdFromUrl(item.url) : null;
+  const uploadDate = toUploadDateTime(item.date);
+  // 영상인데 uploadDate(필수 항목)를 만들 수 없으면 무효한 VideoObject 대신 아예 내보내지 않는다.
+  const skipItemJsonLd = item.type === 'video' && !uploadDate;
   const itemJsonLd: Record<string, unknown> =
     item.type === 'video'
       ? {
@@ -63,7 +67,7 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
           name: item.title,
           description: item.excerpt ?? item.title,
           thumbnailUrl: item.image,
-          uploadDate: item.date,
+          uploadDate,
           contentUrl: item.url ?? pageUrl,
           ...(ytId ? { embedUrl: `https://www.youtube.com/embed/${ytId}` } : {}),
           publisher: { '@id': `${SITE_URL}/#organization` },
@@ -94,7 +98,7 @@ export default async function MediaDetailPage({ params }: { params: Promise<{ id
 
   return (
     <>
-      <JsonLd data={itemJsonLd} />
+      {!skipItemJsonLd && <JsonLd data={itemJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />
       {/* HERO */}
       <section className={`${styles.hero} orn-grain orn-grain--faint`} style={{ paddingBottom: '40px' }}>

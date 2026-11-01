@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
-import { toOwnedThumbnailUrl } from '@/lib/seo/video';
+import { toOwnedThumbnailUrl, toUploadDateTime } from '@/lib/seo/video';
 import BrandStoryClient from './BrandStoryClient';
 import type { ShowroomData } from '@/app/showroom/page';
 
@@ -222,7 +222,7 @@ export default async function BrandStoryPage() {
       description: `대라천 침향 생산 공정 — ${v.title}`,
       contentUrl: `https://drive.google.com/file/d/${v.id}/view`,
       embedUrl: `https://drive.google.com/file/d/${v.id}/preview`,
-      uploadDate: '2026-04-11',
+      uploadDate: toUploadDateTime('2026-04-11'),
       thumbnailUrl,
     })),
   } : null;
