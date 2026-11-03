@@ -65,18 +65,15 @@ interface Props {
 }
 
 /*
- * 근거: 브랜드 공식 허브 고정 문구(BRAND_OWNER_LINE·BRAND_OFFICIAL_LEAD)의 출처 — 2026-10-24 확인
+ * 근거: 브랜드 공식 허브 고정 문구(BRAND_OWNER_LINE)의 출처 — 2026-10-24 확인
  * - 조엘라이프 주식회사 = 운영 법인: src/app/layout.tsx Organization.legalName,
  *   사이트 푸터 "조엘라이프(주)" · "© 2026 ZOEL LIFE Co., Ltd." (https://zoellife.com/brand-story)
  * - 대라천 '참'침향 = 조엘라이프의 브랜드: brandStory.sourceBody 첫 문단
  *   "조엘라이프는 … 프리미엄 침향 브랜드 [대라천 '참'침향]을 소개합니다" (data/db/pages.json, 라이브 /brand-story 01 THE SOURCE)
- * - 한국 공식 채널 zoellife.com: layout.tsx SITE_URL · Organization.url (오너 지시로 명시)
- * 2026-11-03: "대라천 공식 정보" 요약표(BRAND_FACTS)는 오너 지시로 페이지에서 제거.
+ * 2026-11-03: "대라천 공식 정보" 요약표(BRAND_FACTS)와 히어로 첫 문단(BRAND_OFFICIAL_LEAD)은 오너 지시로 페이지에서 제거.
  */
 // H1 은 "조엘라이프 주식회사 공식 브랜드 + {브랜드명}" 으로 읽힌다 — 브랜드명은 뒤의 제목이 담당.
 const BRAND_OWNER_LINE = '조엘라이프 주식회사 공식 브랜드';
-const BRAND_OFFICIAL_LEAD =
-  "대라천 '참'침향은 조엘라이프 주식회사가 운영하는 침향 브랜드이며, 한국 공식 채널은 zoellife.com입니다.";
 
 const TAB_LIST = [
   '브랜드 스토리',
@@ -392,14 +389,10 @@ export default function BrandStoryClient({ data, showroom }: Props) {
                 return t;
               })()}
             </h1>
-            <div>
-              {/* 첫 문단 — 브랜드 운영 법인과 한국 공식 채널을 고정 문구로 명시 */}
-              <p className={styles.heroOfficialLead}>{BRAND_OFFICIAL_LEAD}</p>
-              <p className={storyStyles.lede}>
-                {hero?.subtitle ??
-                  "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
-              </p>
-            </div>
+            <p className={storyStyles.lede}>
+              {hero?.subtitle ??
+                "조엘라이프의 대라천 '참'침향은 단순한 제품이 아닌, 자연이 허락한 수십 년 이상의 기다림을 선물합니다."}
+            </p>
           </div>
         </div>
       </section>
