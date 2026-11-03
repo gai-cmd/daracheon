@@ -948,8 +948,8 @@
 .brandFacts {
   background: #0f1118;
   color: #fdfbf7;
-  border-bottom: 1px solid rgba(212, 168, 67, 0.15);
-  padding: 40px 0 44px;
+  border-top: 1px solid rgba(212, 168, 67, 0.15);
+  padding: 56px 0 64px;
 }
 
 .brandFactsTitle {

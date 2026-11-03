@@ -425,21 +425,6 @@ export default function BrandStoryClient({ data, showroom }: Props) {
         </div>
       </section>
 
-      {/* 공식 정보 — 사이트에 이미 서술된 사실만 모은 요약표(근거는 파일 상단 주석) */}
-      <section className={styles.brandFacts} aria-labelledby="brand-facts-title">
-        <div className={styles.wrap}>
-          <h2 id="brand-facts-title" className={styles.brandFactsTitle}>대라천 공식 정보</h2>
-          <dl className={styles.brandFactsList}>
-            {BRAND_FACTS.map((f) => (
-              <div key={f.label} className={styles.brandFactsRow}>
-                <dt>{f.label}</dt>
-                <dd>{f.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
       <StickyTabBar
         tabs={TAB_LIST.map((label, i) => ({ key: String(i), label }))}
         activeKey={String(activeTab)}
@@ -1440,6 +1425,21 @@ export default function BrandStoryClient({ data, showroom }: Props) {
         </section>
       </div>
 
+      {/* 공식 정보 — 사이트에 이미 서술된 사실만 모은 요약표(근거는 파일 상단 주석).
+          히어로와 탭 바 사이에 두면 탭 흐름을 끊어서, 모든 탭 아래 공통 영역으로 둔다. */}
+      <section className={styles.brandFacts} aria-labelledby="brand-facts-title">
+        <div className={styles.wrap}>
+          <h2 id="brand-facts-title" className={styles.brandFactsTitle}>대라천 공식 정보</h2>
+          <dl className={styles.brandFactsList}>
+            {BRAND_FACTS.map((f) => (
+              <div key={f.label} className={styles.brandFactsRow}>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
     </div>
   );
 }
