@@ -109,7 +109,7 @@ const nextConfig: NextConfig = {
 
     return [
       {
-        source: '/(.*)',
+        source: '/((?!admin/detail-concepts/edit/).*)',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
@@ -127,6 +127,19 @@ const nextConfig: NextConfig = {
                   value: 'max-age=31536000; includeSubDomains; preload',
                 },
               ]
+            : []),
+        ],
+      },
+      // 상세페이지 시안 편집 페이지: CSP·Referrer-Policy 는 라우트(edit/[slug]/route.ts)가 스스로 붙인다.
+      // 전역 항목과 겹치면 Next 가 라우트 값을 버리므로 위 전역 항목에서 이 경로를 뺐다.
+      {
+        source: '/admin/detail-concepts/edit/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' }, // 라우트 CSP 가 frame-ancestors 'self'
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self), payment=()' },
+          ...(isProd
+            ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' }]
             : []),
         ],
       },

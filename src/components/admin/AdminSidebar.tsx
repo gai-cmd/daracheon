@@ -37,6 +37,7 @@ const navItems: NavItem[] = [
   { label: 'QR코드 관리', href: '/admin/qr-codes', icon: '▦' },
   { label: '리뷰 관리', href: '/admin/reviews', icon: '◇', badgeKey: 'reviews_pending' },
   { label: '블로그', href: '/admin/blog', icon: '✎' },
+  { label: '상세페이지 시안', href: '/admin/detail-concepts', icon: '▤' },
   { label: '이전 홈편집', href: '/admin/pages/home', icon: '⌂' },
   { label: '계정 관리', href: '/admin/users', icon: '⦿', superAdminOnly: true },
   { label: '감사 로그', href: '/admin/audit-log', icon: '⎌' },
