@@ -1,0 +1,1017 @@
+[
+  {
+    "name": "keep: plain korean text",
+    "in": "안녕하세요 대라천 침향",
+    "out": "안녕하세요 대라천 침향"
+  },
+  {
+    "name": "keep: tag b",
+    "in": "<b>a</b>",
+    "out": "<b>a</b>"
+  },
+  {
+    "name": "keep: tag strong",
+    "in": "<strong>a</strong>",
+    "out": "<strong>a</strong>"
+  },
+  {
+    "name": "keep: tag i",
+    "in": "<i>a</i>",
+    "out": "<i>a</i>"
+  },
+  {
+    "name": "keep: tag em",
+    "in": "<em>a</em>",
+    "out": "<em>a</em>"
+  },
+  {
+    "name": "keep: tag u",
+    "in": "<u>a</u>",
+    "out": "<u>a</u>"
+  },
+  {
+    "name": "keep: tag s",
+    "in": "<s>a</s>",
+    "out": "<s>a</s>"
+  },
+  {
+    "name": "keep: tag small",
+    "in": "<small>a</small>",
+    "out": "<small>a</small>"
+  },
+  {
+    "name": "keep: tag mark",
+    "in": "<mark>a</mark>",
+    "out": "<mark>a</mark>"
+  },
+  {
+    "name": "keep: tag sup",
+    "in": "m<sup>2</sup>",
+    "out": "m<sup>2</sup>"
+  },
+  {
+    "name": "keep: tag sub",
+    "in": "H<sub>2</sub>O",
+    "out": "H<sub>2</sub>O"
+  },
+  {
+    "name": "keep: tag code",
+    "in": "<code>x = 1</code>",
+    "out": "<code>x = 1</code>"
+  },
+  {
+    "name": "keep: tag abbr",
+    "in": "<abbr>AGAL</abbr>",
+    "out": "<abbr>AGAL</abbr>"
+  },
+  {
+    "name": "keep: tag span",
+    "in": "<span>a</span>",
+    "out": "<span>a</span>"
+  },
+  {
+    "name": "keep: br void",
+    "in": "a<br>b",
+    "out": "a<br>b"
+  },
+  {
+    "name": "keep: br self-closing is normalized",
+    "in": "a<br/>b",
+    "out": "a<br>b"
+  },
+  {
+    "name": "keep: closing br tag acts as br",
+    "in": "a</br>b",
+    "out": "a<br>b"
+  },
+  {
+    "name": "keep: nested inline tags",
+    "in": "<b><i>a</i><u>b</u></b>",
+    "out": "<b><i>a</i><u>b</u></b>"
+  },
+  {
+    "name": "keep: mixed text and inline tags",
+    "in": "침향 <b>3년</b>, <em>숙성</em> 후 <span>출고</span>",
+    "out": "침향 <b>3년</b>, <em>숙성</em> 후 <span>출고</span>"
+  },
+  {
+    "name": "keep: newlines and spaces are preserved",
+    "in": "a\n  b\t c",
+    "out": "a\n  b\t c"
+  },
+  {
+    "name": "keep: class safe value",
+    "in": "<span class=\"hl a-b_c 1\">x</span>",
+    "out": "<span class=\"hl a-b_c 1\">x</span>"
+  },
+  {
+    "name": "keep: style color",
+    "in": "<span style=\"color:#aa3322\">x</span>",
+    "out": "<span style=\"color:#aa3322\">x</span>"
+  },
+  {
+    "name": "keep: style font-size and font-weight",
+    "in": "<span style=\"font-size:28px;font-weight:700\">x</span>",
+    "out": "<span style=\"font-size:28px;font-weight:700\">x</span>"
+  },
+  {
+    "name": "keep: style font-style letter-spacing line-height",
+    "in": "<span style=\"font-style:italic;letter-spacing:-0.02em;line-height:1.6\">x</span>",
+    "out": "<span style=\"font-style:italic;letter-spacing:-0.02em;line-height:1.6\">x</span>"
+  },
+  {
+    "name": "keep: style text-decoration opacity",
+    "in": "<span style=\"text-decoration:underline;opacity:.8\">x</span>",
+    "out": "<span style=\"text-decoration:underline;opacity:.8\">x</span>"
+  },
+  {
+    "name": "keep: style white-space word-break",
+    "in": "<span style=\"white-space:nowrap;word-break:keep-all\">x</span>",
+    "out": "<span style=\"white-space:nowrap;word-break:keep-all\">x</span>"
+  },
+  {
+    "name": "keep: style background-color",
+    "in": "<span style=\"background-color:#fff3cd\">x</span>",
+    "out": "<span style=\"background-color:#fff3cd\">x</span>"
+  },
+  {
+    "name": "keep: style color with rgba()",
+    "in": "<span style=\"color:rgba(0,0,0,.5)\">x</span>",
+    "out": "<span style=\"color:rgba(0,0,0,.5)\">x</span>"
+  },
+  {
+    "name": "keep: real s2_check case: background shorthand with one hex color",
+    "in": "<span class=\"yes\" style=\"background:#85858C\">O</span>",
+    "out": "<span class=\"yes\" style=\"background:#85858C\">O</span>"
+  },
+  {
+    "name": "keep: background shorthand with rgb()",
+    "in": "<span style=\"background:rgb(10, 20, 30)\">x</span>",
+    "out": "<span style=\"background:rgb(10, 20, 30)\">x</span>"
+  },
+  {
+    "name": "keep: background shorthand with a color keyword",
+    "in": "<span style=\"background:gold\">x</span>",
+    "out": "<span style=\"background:gold\">x</span>"
+  },
+  {
+    "name": "keep: style with trailing semicolon is kept verbatim",
+    "in": "<span style=\"color:red;\">x</span>",
+    "out": "<span style=\"color:red;\">x</span>"
+  },
+  {
+    "name": "keep: anchor https with forced rel",
+    "in": "<a href=\"https://example.com/a?b=1\">x</a>",
+    "out": "<a href=\"https://example.com/a?b=1\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "keep: anchor http",
+    "in": "<a href=\"http://example.com\">x</a>",
+    "out": "<a href=\"http://example.com\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "keep: anchor mailto and tel",
+    "in": "<a href=\"mailto:a@b.co\">m</a><a href=\"tel:+8210\">t</a>",
+    "out": "<a href=\"mailto:a@b.co\" rel=\"noopener noreferrer\">m</a><a href=\"tel:+8210\" rel=\"noopener noreferrer\">t</a>"
+  },
+  {
+    "name": "keep: anchor target _blank and _self",
+    "in": "<a href=\"https://e.test\" target=\"_blank\">a</a><a href=\"https://e.test\" target=\"_self\">b</a>",
+    "out": "<a href=\"https://e.test\" target=\"_blank\" rel=\"noopener noreferrer\">a</a><a href=\"https://e.test\" target=\"_self\" rel=\"noopener noreferrer\">b</a>"
+  },
+  {
+    "name": "keep: anchor with correct rel stays as is",
+    "in": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">a</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">a</a>"
+  },
+  {
+    "name": "keep: anchor inside styled span",
+    "in": "<span style=\"color:red\"><a href=\"https://e.test\">x</a></span>",
+    "out": "<span style=\"color:red\"><a href=\"https://e.test\" rel=\"noopener noreferrer\">x</a></span>"
+  },
+  {
+    "name": "keep: uppercase href scheme",
+    "in": "<a href=\"HTTPS://E.TEST/x\">x</a>",
+    "out": "<a href=\"HTTPS://E.TEST/x\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "keep: text entities stay escaped",
+    "in": "a &amp; b &lt;script&gt;alert(1)&lt;/script&gt;",
+    "out": "a &amp; b &lt;script&gt;alert(1)&lt;/script&gt;"
+  },
+  {
+    "name": "keep: nbsp serialized as entity",
+    "in": "a&nbsp;b",
+    "out": "a&nbsp;b"
+  },
+  {
+    "name": "keep: quotes and gt in text",
+    "in": "say \"hi\" &gt; there",
+    "out": "say \"hi\" &gt; there"
+  },
+  {
+    "name": "keep: emoji and CJK",
+    "in": "<b>한글</b> 日本語 🙂",
+    "out": "<b>한글</b> 日本語 🙂"
+  },
+  {
+    "name": "keep: attribute names are lowercased, values untouched",
+    "in": "<SPAN CLASS=\"a\" STYLE=\"COLOR:RED\">x</SPAN>",
+    "out": "<span class=\"a\" style=\"COLOR:RED\">x</span>"
+  },
+  {
+    "name": "keep: empty input",
+    "in": "",
+    "out": ""
+  },
+  {
+    "name": "attr: event handler attribute dropped",
+    "in": "<span onclick=\"alert(1)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: onmouseover on allowed tag dropped",
+    "in": "<b onmouseover=alert(1)>x</b>",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "attr: slash-separated event handler dropped",
+    "in": "<b/onclick=alert(1)>x</b>",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "attr: id data aria title dropped",
+    "in": "<span id=\"a\" data-x=\"1\" title=\"t\" aria-label=\"l\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: abbr title dropped",
+    "in": "<abbr title=\"t\">x</abbr>",
+    "out": "<abbr>x</abbr>"
+  },
+  {
+    "name": "attr: lang dir contenteditable dropped",
+    "in": "<span lang=\"ko\" dir=\"rtl\" contenteditable=\"true\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: class with quote and angle bracket dropped",
+    "in": "<span class=\"a&quot;b&lt;c\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: class longer than 80 chars dropped",
+    "in": "<span class=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: empty class dropped",
+    "in": "<span class=\"\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: href on non-anchor dropped",
+    "in": "<span href=\"https://e.test\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: target on non-anchor dropped",
+    "in": "<span target=\"_blank\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: target other than _blank/_self dropped",
+    "in": "<a href=\"https://e.test\" target=\"_top\">b</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">b</a>"
+  },
+  {
+    "name": "attr: foreign rel replaced",
+    "in": "<a href=\"https://e.test\" rel=\"opener\">a</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">a</a>"
+  },
+  {
+    "name": "attr: rel on non-anchor dropped",
+    "in": "<span rel=\"noopener\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: anchor ping download hreflang dropped",
+    "in": "<a href=\"https://e.test\" ping=\"https://t.test\" download=\"f\" hreflang=\"ko\">a</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">a</a>"
+  },
+  {
+    "name": "attr: relative href dropped",
+    "in": "<a href=\"/about\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "attr: fragment href dropped",
+    "in": "<a href=\"#top\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "attr: protocol-relative href dropped",
+    "in": "<a href=\"//evil.test/x\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "attr: ftp href dropped",
+    "in": "<a href=\"ftp://e.test/x\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "attr: style: disallowed property dropped, allowed kept",
+    "in": "<span style=\"color:red;position:fixed;font-size:20px\">x</span>",
+    "out": "<span style=\"color:red; font-size:20px\">x</span>"
+  },
+  {
+    "name": "attr: style: only disallowed properties removes the attribute",
+    "in": "<span style=\"position:fixed;z-index:9\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: style: declaration without colon dropped",
+    "in": "<span style=\"color\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: style: calc with plus is not an allowed value",
+    "in": "<span style=\"font-size:calc(1rem + 2px)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: style: important flag not allowed",
+    "in": "<span style=\"color:red !important\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "attr: style: comment inside value not allowed",
+    "in": "<span style=\"color:red/**/\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "tag: block tags unwrapped",
+    "in": "<div><p>a</p><p>b</p></div>",
+    "out": "ab"
+  },
+  {
+    "name": "tag: headings unwrapped",
+    "in": "<h1>t</h1>x",
+    "out": "tx"
+  },
+  {
+    "name": "tag: font tag unwrapped",
+    "in": "<font color=\"red\" size=\"7\">x</font>",
+    "out": "x"
+  },
+  {
+    "name": "tag: list unwrapped",
+    "in": "<ul><li>a</li><li>b</li></ul>",
+    "out": "ab"
+  },
+  {
+    "name": "tag: table unwrapped",
+    "in": "<table><tr><td>a</td></tr></table>",
+    "out": "a"
+  },
+  {
+    "name": "tag: unknown element unwrapped",
+    "in": "<blink>x</blink>",
+    "out": "x"
+  },
+  {
+    "name": "tag: form controls unwrapped",
+    "in": "<form action=\"x\"><input name=\"a\">t</form>",
+    "out": "t"
+  },
+  {
+    "name": "tag: button formaction unwrapped",
+    "in": "<button formaction=\"javascript:alert(1)\">go</button>",
+    "out": "go"
+  },
+  {
+    "name": "tag: allowed tag inside disallowed tag survives",
+    "in": "<div><b>x</b></div>",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "tag: textarea content stays text",
+    "in": "<textarea><script>alert(1)</script></textarea>",
+    "out": "&lt;script&gt;alert(1)&lt;/script&gt;"
+  },
+  {
+    "name": "tag: meta link base removed",
+    "in": "<meta http-equiv=\"refresh\" content=\"0;url=//e.test\"><link rel=\"stylesheet\" href=\"//e.test/x.css\"><base href=\"//e.test/\">t",
+    "out": "t"
+  },
+  {
+    "name": "xss-script: script removed with content",
+    "in": "<script>alert(1)</script>ok",
+    "out": "ok"
+  },
+  {
+    "name": "xss-script: script with src",
+    "in": "<script src=//evil.test/x.js></script>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-script: script inside allowed tag",
+    "in": "<b>a<script>alert(1)</script>c</b>",
+    "out": "<b>ac</b>"
+  },
+  {
+    "name": "xss-script: unterminated script dropped",
+    "in": "a<script>alert(1)",
+    "out": "a"
+  },
+  {
+    "name": "xss-script: two scripts",
+    "in": "<script>alert(1)</script><script>alert(2)</script>",
+    "out": ""
+  },
+  {
+    "name": "xss-script: script raw text is never parsed as markup",
+    "in": "<script type=\"text/plain\"><b>x</b></script>y",
+    "out": "y"
+  },
+  {
+    "name": "xss-script: nested split script tags leave only text",
+    "in": "<scr<script>ipt>alert(1)</scr</script>ipt>",
+    "out": "ipt&gt;alert(1)ipt&gt;"
+  },
+  {
+    "name": "xss-script: script inside anchor",
+    "in": "<a href=\"https://e.test\"><script>alert(1)</script></a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\"></a>"
+  },
+  {
+    "name": "xss-img: img onerror",
+    "in": "<img src=x onerror=alert(1)>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: uppercase img onerror",
+    "in": "<IMG SRC=x ONERROR=alert(1)>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: slash separated img attributes",
+    "in": "<img/src/onerror=alert(1)>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: img with data uri",
+    "in": "<img src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\">t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: picture source",
+    "in": "<picture><source srcset=x onerror=alert(1)><img src=x></picture>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: video source onerror",
+    "in": "<video><source onerror=alert(1)></video>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: audio with fallback content is dropped whole",
+    "in": "<audio src=x onerror=alert(1)>fallback</audio>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: input type image",
+    "in": "<input type=image src=x onerror=alert(1)>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: body onload merged attribute never reaches the output",
+    "in": "<body onload=alert(1)>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: details ontoggle",
+    "in": "<details open ontoggle=alert(1)>x</details>",
+    "out": "x"
+  },
+  {
+    "name": "xss-img: marquee onstart",
+    "in": "<marquee onstart=alert(1)>x</marquee>",
+    "out": "x"
+  },
+  {
+    "name": "xss-img: object and embed",
+    "in": "<object data=\"javascript:alert(1)\"></object><embed src=\"javascript:alert(1)\">t",
+    "out": "t"
+  },
+  {
+    "name": "xss-img: iframe removed with content",
+    "in": "<iframe src=\"https://e.test\">inner</iframe>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-svg: svg onload with child removed",
+    "in": "<svg onload=alert(1)><circle/></svg>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-svg: unterminated svg swallows the rest",
+    "in": "<svg onload=alert(1)>t",
+    "out": ""
+  },
+  {
+    "name": "xss-svg: svg script",
+    "in": "<svg><script>alert(1)</script></svg>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-svg: svg anchor with javascript href",
+    "in": "<svg><a xlink:href=\"javascript:alert(1)\"><text>click</text></a></svg>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-svg: svg animate onbegin",
+    "in": "<svg><animate onbegin=alert(1) attributeName=x dur=1s></svg>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-svg: svg foreignObject img",
+    "in": "<svg><foreignObject><img src=x onerror=alert(1)></foreignObject></svg>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-svg: svg style",
+    "in": "<svg><style>*{}</style></svg>",
+    "out": ""
+  },
+  {
+    "name": "xss-svg: allowed html tag breaks out of svg and survives",
+    "in": "<svg><b>x</b></svg>",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "xss-svg: svg inside allowed tag",
+    "in": "<b><svg><circle/></svg></b>",
+    "out": "<b></b>"
+  },
+  {
+    "name": "xss-href: javascript href",
+    "in": "<a href=\"javascript:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: mixed-case javascript href",
+    "in": "<a href=\"JaVaScRiPt:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: unquoted javascript href",
+    "in": "<a href=javascript:alert(1)>x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: leading space javascript href",
+    "in": "<a href=\" javascript:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: control char before javascript",
+    "in": "<a href=\"&#1;javascript:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: vbscript href",
+    "in": "<a href=\"vbscript:msgbox(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: data href",
+    "in": "<a href=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: javascript href keeps target, rel forced",
+    "in": "<a href=\"javascript:alert(1)\" target=\"_blank\">x</a>",
+    "out": "<a target=\"_blank\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: glued attribute after a good href is dropped",
+    "in": "<a href=\"https://e.test\"onmouseover=\"alert(1)\">x</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-href: surrounding spaces around a good href are trimmed",
+    "in": "<a href=\" https://e.test \">x</a>",
+    "out": "<a href=\"https://e.test\" rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: decimal entity j in javascript",
+    "in": "<a href=\"&#106;avascript:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: hex entity j in javascript",
+    "in": "<a href=\"&#x6A;avascript:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: named colon entity",
+    "in": "<a href=\"javascript&colon;alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: tab inside scheme",
+    "in": "<a href=\"java&#9;script:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: newline inside scheme",
+    "in": "<a href=\"java&#10;script:alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: every letter hex encoded",
+    "in": "<a href=\"&#x6A;&#x61;&#x76;&#x61;&#x73;&#x63;&#x72;&#x69;&#x70;&#x74;&#x3A;alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: zero padded decimal entities",
+    "in": "<a href=\"&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058alert(1)\">x</a>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-entity: entity in style url()",
+    "in": "<span style=\"background:u&#114;l(//e.test/x.png)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-entity: entity quote breaking out of class",
+    "in": "<span class=\"&#x22; onclick=&#x22;alert(1)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-entity: escaped markup in text stays text",
+    "in": "&lt;script&gt;alert(1)&lt;/script&gt;",
+    "out": "&lt;script&gt;alert(1)&lt;/script&gt;"
+  },
+  {
+    "name": "xss-entity: numeric entities that build a tag stay text",
+    "in": "<b>&#x3c;img src=x onerror=alert(1)&#x3e;</b>",
+    "out": "<b>&lt;img src=x onerror=alert(1)&gt;</b>"
+  },
+  {
+    "name": "xss-style: url() with javascript",
+    "in": "<span style=\"background:url(javascript:alert(1))\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: expression() in a disallowed property",
+    "in": "<span style=\"width:expression(alert(1))\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: expression() in an allowed property",
+    "in": "<span style=\"color:expression(alert(1))\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: background-image url",
+    "in": "<span style=\"background-image:url(x)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: keeps allowed, drops url declaration",
+    "in": "<span style=\"color:red;background-image:url(x);font-size:20px\">x</span>",
+    "out": "<span style=\"color:red; font-size:20px\">x</span>"
+  },
+  {
+    "name": "xss-style: background shorthand with color and url",
+    "in": "<span style=\"background:#fff url(//evil.test/x.png)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: background shorthand with image-set",
+    "in": "<span style=\"background:image-set(&quot;//evil.test/x.png&quot; 1x)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: background shorthand with more than one color token",
+    "in": "<span style=\"background:red no-repeat\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: css escape in value",
+    "in": "<span style=\"color:\\72 ed\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: css escape hides url",
+    "in": "<span style=\"color:ur\\l(x)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: uppercase URL(",
+    "in": "<span style=\"COLOR:URL(x)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: javascript: in value",
+    "in": "<span style=\"color:javascript:alert(1)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: @import declaration dropped",
+    "in": "<span style=\"color:red;@import 'x'\">x</span>",
+    "out": "<span style=\"color:red\">x</span>"
+  },
+  {
+    "name": "xss-style: moz-binding",
+    "in": "<span style=\"-moz-binding:url(x)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: behavior",
+    "in": "<span style=\"behavior:url(x.htc)\">x</span>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "xss-style: quoted semicolon does not split a declaration",
+    "in": "<span style=\"color:red;font-family:'a;b'\">x</span>",
+    "out": "<span style=\"color:red\">x</span>"
+  },
+  {
+    "name": "xss-style: style element removed with content",
+    "in": "<style>*{background:url(x)}</style>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-comment: comment removed",
+    "in": "a<!--b-->c",
+    "out": "ac"
+  },
+  {
+    "name": "xss-comment: script inside comment",
+    "in": "a<!--<script>alert(1)</script>-->b",
+    "out": "ab"
+  },
+  {
+    "name": "xss-comment: conditional comment",
+    "in": "<!--[if IE]><script>alert(1)</script><![endif]-->x",
+    "out": "x"
+  },
+  {
+    "name": "xss-comment: unterminated comment swallows the rest",
+    "in": "a<!-- unterminated <b>x</b>",
+    "out": "a"
+  },
+  {
+    "name": "xss-comment: comment closed by --!>",
+    "in": "a<!-- x --!>b",
+    "out": "ab"
+  },
+  {
+    "name": "xss-comment: abrupt empty comment",
+    "in": "<!-->x",
+    "out": "x"
+  },
+  {
+    "name": "xss-comment: processing instruction is a bogus comment",
+    "in": "a<?php echo 1 ?>b",
+    "out": "ab"
+  },
+  {
+    "name": "xss-comment: doctype inside body ignored",
+    "in": "<!DOCTYPE html>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-cdata: cdata in html is a bogus comment, no script survives",
+    "in": "a<![CDATA[<script>alert(1)</script>]]>b",
+    "out": "aalert(1)]]&gt;b"
+  },
+  {
+    "name": "xss-cdata: cdata without markup",
+    "in": "<![CDATA[x]]>y",
+    "out": "y"
+  },
+  {
+    "name": "xss-cdata: cdata inside svg hides an img as text, svg dropped",
+    "in": "<svg><![CDATA[><img src=x onerror=alert(1)>]]></svg>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-cdata: cdata inside math",
+    "in": "<math><![CDATA[x]]></math>y",
+    "out": "y"
+  },
+  {
+    "name": "xss-math: math mi with xlink href",
+    "in": "<math><mi xlink:href=\"javascript:alert(1)\">x</mi></math>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-math: math annotation-xml with script",
+    "in": "<math><annotation-xml encoding=\"text/html\"><script>alert(1)</script></annotation-xml></math>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-math: math mtext with img",
+    "in": "<math><mtext><img src=x onerror=alert(1)></mtext></math>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-math: math href",
+    "in": "<math href=\"javascript:alert(1)\">click</math>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-math: math mi slash attribute",
+    "in": "<math><mi//xlink:href=\"data:x,<script>alert(4)</script>\">",
+    "out": ""
+  },
+  {
+    "name": "xss-math: math style with img breaking out",
+    "in": "<math><style><img src=x onerror=alert(1)></style></math>",
+    "out": ""
+  },
+  {
+    "name": "xss-mxss: svg p style with attribute hiding an img",
+    "in": "<svg><p><style><a title=\"</style><img src onerror=alert(1)>\">",
+    "out": "\"&gt;"
+  },
+  {
+    "name": "xss-mxss: svg closing p then style",
+    "in": "<svg></p><style><a id=\"</style><img src=1 onerror=alert(1)>\">",
+    "out": "\"&gt;"
+  },
+  {
+    "name": "xss-mxss: noscript breakout",
+    "in": "<noscript><p title=\"</noscript><img src=x onerror=alert(1)>\">t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: style with img inside",
+    "in": "<style><img src=x onerror=alert(1)></style>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: xmp with script",
+    "in": "<xmp><script>alert(1)</script></xmp>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: template content dropped",
+    "in": "<template><script>alert(1)</script><b>x</b></template>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: title with img inside",
+    "in": "<title><img src=x onerror=alert(1)></title>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: noembed with img inside",
+    "in": "<noembed><img src=x onerror=alert(1)></noembed>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-mxss: plaintext swallows the rest",
+    "in": "<plaintext><b>x</b>",
+    "out": ""
+  },
+  {
+    "name": "xss-mxss: classic form/math/mglyph confusion",
+    "in": "<form><math><mtext></form><form><mglyph><style></math><img src onerror=alert(1)>",
+    "out": ""
+  },
+  {
+    "name": "xss-mxss: math mtext table mglyph style comment",
+    "in": "<math><mtext><table><mglyph><style><!--</style><img title=\"--&gt;&lt;/mglyph&gt;&lt;img&Tab;src=1&Tab;onerror=alert(1)&gt;\">",
+    "out": ""
+  },
+  {
+    "name": "xss-unterminated: unterminated allowed tag is closed, handler dropped",
+    "in": "<b onmouseover=alert(1)>x",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "xss-unterminated: tag cut off by end of input",
+    "in": "a<script",
+    "out": "a"
+  },
+  {
+    "name": "xss-unterminated: img cut off by end of input",
+    "in": "<img src=x onerror=alert(1)",
+    "out": ""
+  },
+  {
+    "name": "xss-unterminated: attribute value cut off by end of input",
+    "in": "<a href=\"https://e.test",
+    "out": ""
+  },
+  {
+    "name": "xss-unterminated: lone less-than at the end",
+    "in": "x<",
+    "out": "x&lt;"
+  },
+  {
+    "name": "xss-unterminated: less-than followed by space",
+    "in": "a < b",
+    "out": "a &lt; b"
+  },
+  {
+    "name": "xss-unterminated: empty open tag is closed",
+    "in": "<b>",
+    "out": "<b></b>"
+  },
+  {
+    "name": "xss-unterminated: double less-than before script",
+    "in": "<<script>alert(1)//<</script>",
+    "out": "&lt;"
+  },
+  {
+    "name": "xss-unterminated: tag name glued attribute",
+    "in": "<b <i>x</i>",
+    "out": "<b>x</b>"
+  },
+  {
+    "name": "xss-unterminated: unterminated styled span is closed",
+    "in": "<span style=\"color:red\">x",
+    "out": "<span style=\"color:red\">x</span>"
+  },
+  {
+    "name": "xss-unterminated: stray end tag ignored",
+    "in": "</b>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-unterminated: misnested formatting is repaired by the parser",
+    "in": "<b>a<i>b</b>c</i>",
+    "out": "<b>a<i>b</i></b><i>c</i>"
+  },
+  {
+    "name": "xss-case: mixed-case script",
+    "in": "<ScRiPt>alert(1)</ScRiPt>x",
+    "out": "x"
+  },
+  {
+    "name": "xss-case: mixed-case script with slash attribute",
+    "in": "<sCrIpT/src=//e.test/x.js>alert(1)</sCrIpT>t",
+    "out": "t"
+  },
+  {
+    "name": "xss-case: uppercase allowed tag is lowercased",
+    "in": "<B>x</B><BR>",
+    "out": "<b>x</b><br>"
+  },
+  {
+    "name": "xss-case: uppercase anchor with javascript href",
+    "in": "<A HREF=\"javascript:alert(1)\">x</A>",
+    "out": "<a rel=\"noopener noreferrer\">x</a>"
+  },
+  {
+    "name": "xss-case: uppercase style url",
+    "in": "<SPAN STYLE=\"BACKGROUND:URL(javascript:alert(1))\">x</SPAN>",
+    "out": "<span>x</span>"
+  },
+  {
+    "name": "allow-ext-q: real s8_copy h1 survives unchanged",
+    "in": "대라천<br><span><q>'</q>참<q>'</q>침향오일</span>",
+    "out": "대라천<br><span><q>'</q>참<q>'</q>침향오일</span>"
+  },
+  {
+    "name": "allow-ext-q: q is kept",
+    "in": "<q>a</q>",
+    "out": "<q>a</q>"
+  },
+  {
+    "name": "allow-ext-q: uppercase q is lowercased",
+    "in": "<Q>a</Q>",
+    "out": "<q>a</q>"
+  },
+  {
+    "name": "allow-ext-q: cite attribute is removed",
+    "in": "<q cite=\"https://e.test/x\">a</q>",
+    "out": "<q>a</q>"
+  },
+  {
+    "name": "allow-ext-q: event handler removed, class kept",
+    "in": "<q class=\"k\" onclick=\"alert(1)\">a</q>",
+    "out": "<q class=\"k\">a</q>"
+  },
+  {
+    "name": "allow-ext-q: script inside q is dropped with its content",
+    "in": "<q><script>alert(1)</script>a</q>",
+    "out": "<q>a</q>"
+  },
+  {
+    "name": "allow-ext-q: style url inside q is removed",
+    "in": "<q style=\"background:url(javascript:alert(1))\">a</q>",
+    "out": "<q>a</q>"
+  },
+  {
+    "name": "allow-ext-q: allowed style on q is kept",
+    "in": "<q style=\"color:#aa3322\">a</q>",
+    "out": "<q style=\"color:#aa3322\">a</q>"
+  }
+]
