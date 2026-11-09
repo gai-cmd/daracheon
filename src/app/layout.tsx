@@ -241,6 +241,14 @@ const siteJsonLd = {
         '침향 효능', '한약재', '천연 향료', '베트남 침향',
       ],
       areaServed: ['KR', 'JP', 'VN'],
+      // /company LocalBusiness 의 PostalAddress 와 같은 값 — 사이트 전체 Organization 노드에도 소재지를 명시.
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '벚꽃로36길 30, 1511호',
+        addressLocality: '금천구',
+        addressRegion: '서울특별시',
+        addressCountry: 'KR',
+      },
       sameAs: [
         'https://www.instagram.com/zoellife_official/',
         'https://www.youtube.com/@ZoelLife_official_00',
