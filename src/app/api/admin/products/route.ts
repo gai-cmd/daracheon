@@ -1,14 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { readDataUncached, readDataForWrite, writeDataMerged, stripRecordMeta } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product, ProductVariant } from '@/data/products';
+import { canonicalProductSlug } from '@/lib/product-slugs';
+import { notifyIndexNow } from '@/lib/seo/indexnow';
 
 function revalidateProducts() {
   revalidatePath('/products', 'layout');
   revalidatePath('/products/[slug]', 'layout');
   revalidatePath('/', 'layout');
+}
+
+// 공개(published !== false) 제품만 IndexNow 에 알린다 — sitemap 과 같은 기준·같은 정식 slug.
+function notifyProductIndexNow(product: Product) {
+  if (!product.slug || product.published === false) return;
+  const slug = canonicalProductSlug(product.slug);
+  after(() => notifyIndexNow([`/products/${slug}`, '/products']));
 }
 
 // 가격(숫자) 으로부터 표시용 문자열을 산출. price > 0 이면 항상 재산출하여
@@ -138,6 +147,7 @@ export async function POST(request: Request) {
     products.push(newProduct);
     await writeDataMerged('products', products);
     revalidateProducts();
+    notifyProductIndexNow(newProduct);
 
     await logAdmin('products', 'create', {
       targetId: newProduct.id,
@@ -207,6 +217,7 @@ export async function PUT(request: Request) {
     products[index] = merged;
     await writeDataMerged('products', products);
     revalidateProducts();
+    notifyProductIndexNow(merged);
 
     await logAdmin('products', 'update', {
       targetId: body.id,

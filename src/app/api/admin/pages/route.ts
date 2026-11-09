@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
+import { notifyIndexNow } from '@/lib/seo/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -133,6 +134,12 @@ export async function PUT(request: Request) {
     }
   }
   console.log(`[api:pages] PUT stage=7:revalidate paths=${revalidated.join(',')} total=${Date.now() - t0}ms`);
+
+  // Stage 8: 재검증한 공개 경로를 네이버 IndexNow 에 알린다 — 응답은 기다리지 않는다.
+  if (revalidated.length > 0) {
+    const paths = [...revalidated];
+    after(() => notifyIndexNow(paths));
+  }
 
   return NextResponse.json({
     success: true,

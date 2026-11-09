@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { cookies } from 'next/headers';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
@@ -20,6 +20,7 @@ import {
 } from '@/types/blog';
 import { generateBlogId, slugify, uniqueSlug } from '@/lib/blog/slug';
 import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
+import { blogPostPaths, notifyIndexNow } from '@/lib/seo/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -183,6 +184,10 @@ export async function POST(request: Request) {
     posts.push(post);
     await writePosts(posts, { upsertIds: [post.id] });
     revalidateBlog(post.slug, post.categoryId);
+    // 발행 상태로 만든 글만 네이버 IndexNow 에 알린다 — 응답은 기다리지 않는다.
+    if (post.status === 'published') {
+      after(() => notifyIndexNow(blogPostPaths(post.slug, post.categoryId)));
+    }
     await logAdmin('blog', 'create', {
       targetId: post.id,
       summary: `블로그 글 작성: ${post.title} (${post.status})`,
@@ -213,17 +218,21 @@ export async function PATCH(request: Request) {
     const posts = await readPostsForWrite();
     const now = new Date().toISOString();
     let updated = 0;
+    const indexNowPaths: string[] = [];
     for (const p of posts) {
       if (idSet.has(p.id) && p.status !== status) {
         p.status = status;
         p.updatedAt = now;
         if (status === 'published' && !p.publishedAt) p.publishedAt = now;
+        if (status === 'published') indexNowPaths.push(...blogPostPaths(p.slug, p.categoryId));
         updated++;
       }
     }
     if (updated > 0) {
       await writePosts(posts, { upsertIds: [...idSet] });
       revalidateBlog();
+      // 일괄 발행으로 새로 공개된 글만 IndexNow 에 알린다 (중복·100개 제한은 헬퍼가 처리).
+      if (indexNowPaths.length > 0) after(() => notifyIndexNow(indexNowPaths));
       await logAdmin('blog', 'bulk_update', {
         summary: `블로그 일괄 ${status === 'published' ? '발행' : '비공개'}: ${updated}건`,
         meta: { count: updated, status, ids: body.ids },

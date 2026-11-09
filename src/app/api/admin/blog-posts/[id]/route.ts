@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { readData } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
@@ -8,6 +8,7 @@ import { snapshotBeforeDestructive } from '@/lib/backup';
 import { type BlogPost, type BlogPostStatus } from '@/types/blog';
 import { slugify, uniqueSlug } from '@/lib/blog/slug';
 import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
+import { blogPostPaths, notifyIndexNow } from '@/lib/seo/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -148,6 +149,11 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
     posts[idx] = next;
     await writePosts(posts, { upsertIds: [next.id] });
     revalidateBlog(next.slug, prev.slug, next.categoryId);
+    // 발행 상태(초안→발행 전환 포함)인 글만 IndexNow 에 알린다. slug 가 바뀌었으면
+    // next.slug 가 새 주소라 그대로 포함된다. 초안은 알리지 않는다.
+    if (next.status === 'published') {
+      after(() => notifyIndexNow(blogPostPaths(next.slug, next.categoryId)));
+    }
     // 상태 전환을 summary 에 명시 — 발행 글이 초안으로 내려간 시점을 audit 만으로
     // 추적 가능하게 (2026-08-14 무경고 발행취소 사고의 포렌식 공백 해소).
     const statusNote =
