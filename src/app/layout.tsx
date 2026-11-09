@@ -252,6 +252,10 @@ const siteJsonLd = {
       sameAs: [
         'https://www.instagram.com/zoellife_official/',
         'https://www.youtube.com/@ZoelLife_official_00',
+        // 공식 채널 식별용 정식 주소. 구매 CTA 는 수수료 때문에 mkt 링크(src/data/store.ts)를 쓰지만
+        // sameAs 는 클릭 링크가 아니라 엔티티 표시라 리다이렉트가 아닌 원래 주소를 둔다.
+        'https://smartstore.naver.com/agarwooding',
+        'https://map.naver.com/p/entry/place/1822003781',
       ],
       // 공개 이메일 없음 — 문의는 /company 문의하기 폼으로 받는다(접수 시 슬랙 공유).
       // (종전 contact@daracheon.com 은 도메인이 존재하지 않아 수신 불가였다.)
