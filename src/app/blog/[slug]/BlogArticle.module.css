@@ -751,3 +751,34 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* 참고 문헌 — dark-theme.css 의 토큰 리맵을 피하려고 고정 색 리터럴을 쓴다. */
+.refs {
+  margin: 48px 0 0;
+  padding: 20px 22px;
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: 12px;
+}
+.refsHeading {
+  margin: 0 0 12px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: #d4a843 !important;
+}
+.refsList {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: rgba(253, 251, 247, 0.78);
+  word-break: break-word;
+}
+.refsList li + li {
+  margin-top: 8px;
+}
+.refsList a {
+  color: #d4a843;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

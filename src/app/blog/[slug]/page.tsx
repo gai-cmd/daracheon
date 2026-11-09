@@ -26,6 +26,7 @@ import {
   topicHubsForCategory,
   urlMatchesHost,
 } from '@/lib/blog/post-seo';
+import { buildCitations, doiUrl, referencesForSlug } from '@/lib/blog/references';
 import BlogCard from '../BlogCard';
 import styles from './BlogArticle.module.css';
 
@@ -238,6 +239,9 @@ export default async function BlogPostPage({
   const citationUrls = Array.from(
     new Set(Array.from(cleanHtml.matchAll(/href=["']([^"']+)["']/g)).map((m) => m[1]))
   ).filter((u) => urlMatchesHost(u, CITATION_HOSTS));
+  // 본문이 소개하는 논문 중 DOI 를 검증한 것(src/content/blog-references.ts) — 본문 밖 '참고 문헌' 블록.
+  const references = referencesForSlug(post.slug);
+  const citations = buildCitations(references, citationUrls);
 
   // 작성자 표시명: 귀속 이메일이 있으면 admin-users 의 최신 displayName(구글
   // 워크스페이스 한글 이름)을 우선한다 — 본인이 SSO 로 한 번 로그인하면 과거에
@@ -283,9 +287,7 @@ export default async function BlogPostPage({
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
     keywords: (post.seoKeywords ?? post.tags).join(', '),
     articleSection: category?.name,
-    ...(citationUrls.length
-      ? { citation: citationUrls.map((url) => ({ '@type': 'CreativeWork', url })) }
-      : {}),
+    ...(citations.length ? { citation: citations } : {}),
   };
 
   const breadcrumb = {
@@ -463,6 +465,23 @@ export default async function BlogPostPage({
                 data-reading-surface
                 dangerouslySetInnerHTML={{ __html: bodyHtml }}
               />
+
+              {/* 참고 문헌 — 본문(데이터)과 분리된 템플릿 블록. 검증된 DOI 만 싣는다. */}
+              {references.length > 0 && (
+                <section className={styles.refs} aria-label="참고 문헌">
+                  <h2 className={styles.refsHeading}>참고 문헌</h2>
+                  <ol className={styles.refsList}>
+                    {references.map((r) => (
+                      <li key={r.doi}>
+                        {r.authors} ({r.year}). {r.title}. <em>{r.journal}</em>.{' '}
+                        <a href={doiUrl(r.doi)} target="_blank" rel="noopener noreferrer">
+                          doi.org/{r.doi}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
 
               {post.tags.length > 0 && (
                 <div className={styles.tags}>
