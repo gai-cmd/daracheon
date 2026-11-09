@@ -284,5 +284,6 @@ export const AGARWOOD_TEA: TopicHubContent = {
     { href: '/products/agarwood-tea-water-set', label: '침향차·수 세트', desc: '침향차 10포 + 침향수 100ml 기프트 세트' },
     { href: '/products/agarwood-stick-100g', label: '침향스틱 100g', desc: '25년산 침향 원목 — 취향·차 겸용' },
     { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
+    { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
   ],
 };

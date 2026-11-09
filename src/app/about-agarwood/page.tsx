@@ -5,14 +5,10 @@ import AboutAgarwoodClient from './AboutAgarwoodClient';
 import FaqSection from '@/components/seo/FaqSection';
 import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
 import { faqPageNode, type FaqEntry } from '@/lib/seo/home-faq';
-import Link from 'next/link';
-import { unstable_cache } from 'next/cache';
 import { imageObject } from '@/lib/seo/image';
 import { isStoredImageUrl } from '@/lib/blog/image-alt';
-import { pickPostsBySlug } from '@/lib/blog/post-seo';
-import { readPostsSafe, BLOG_LATEST_TAG } from '@/lib/blog/store';
-import story from '@/styles/zoel/story-page.module.css';
-import topicStyles from '@/components/seo/TopicHub.module.css';
+import { readFurtherReading } from '@/lib/blog/further-reading';
+import FurtherReading from '@/components/seo/FurtherReading';
 
 // Admin 저장 / 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
 // readSingleUncached 는 unstable_cache 우회하므로 blob 1 회 read 비용은
@@ -155,31 +151,9 @@ const FURTHER_READING_SLUGS = [
   'real-agarwood-3-criteria',
   'how-to-avoid-fake-agarwood',
   'mfds-defines-agarwood-as-aquilaria-agallocha',
+  'why-is-agarwood-so-expensive',
+  'agarwood-and-sasang-constitution',
 ] as const;
-
-// force-dynamic 페이지라 요청마다 전체 글을 읽지 않도록 캐시한다.
-// 어드민 글 저장 시 BLOG_LATEST_TAG 가 비워지므로 제목 변경도 곧 반영된다.
-const readFurtherReadingCached = unstable_cache(
-  async () => pickPostsBySlug(await readPostsSafe(), FURTHER_READING_SLUGS),
-  ['about-agarwood-further-reading'],
-  { revalidate: 300, tags: [BLOG_LATEST_TAG] },
-);
-
-/** 절대 던지지 않고, 느린 블로그 저장소가 페이지를 붙잡지 않게 2초 안에 답이 없으면 빈 목록. */
-async function readFurtherReading(timeoutMs = 2000): Promise<{ slug: string; title: string }[]> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<{ slug: string; title: string }[]>((resolve) => {
-    timer = setTimeout(() => resolve([]), timeoutMs);
-  });
-  try {
-    return await Promise.race([readFurtherReadingCached(), timeout]);
-  } catch (err) {
-    console.error('[about-agarwood] further reading read failed', err);
-    return [];
-  } finally {
-    clearTimeout(timer);
-  }
-}
 
 export interface FormationStep { step: string; title: string; description: string; image?: string }
 export interface SpecialReason { title: string; description: string; image?: string }
@@ -337,7 +311,7 @@ export default async function AboutAgarwoodPage() {
       home?: { solutionCta?: SolutionCta };
       brandStory: unknown;
     }>('pages'),
-    readFurtherReading(),
+    readFurtherReading('about-agarwood-further-reading', FURTHER_READING_SLUGS),
   ]);
   const rawAbout: AboutAgarwoodData | null = pagesData?.aboutAgarwood ?? null;
   // Legacy fallback — solutionCta 는 2026-05-17 이전엔 home.solutionCta 에 저장됐다.
@@ -427,24 +401,7 @@ export default async function AboutAgarwoodPage() {
       <AboutAgarwoodClient data={data} />
       <FaqSection title="침향 자주 묻는 질문" entries={ABOUT_FAQ} />
       <TopicLinks title="침향, 더 깊이 알아보기" links={TOPIC_LINKS} />
-      {furtherReading.length > 0 && (
-        <section className={story.chapter} aria-labelledby="further-reading-title">
-          <div className={story.wrap}>
-            <h2 id="further-reading-title" className={topicStyles.centerTitle}>
-              더 읽어보기
-            </h2>
-            <ul className={topicStyles.related}>
-              {furtherReading.map((p) => (
-                <li key={p.slug}>
-                  <Link href={`/blog/${p.slug}`} className={topicStyles.relatedCard}>
-                    <span className={topicStyles.relatedLabel}>{p.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
+      <FurtherReading posts={furtherReading} />
     </>
   );
 }

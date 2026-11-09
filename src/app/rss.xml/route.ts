@@ -1,4 +1,9 @@
 import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { blogOgTitle, blogPostTitle } from '@/lib/blog/post-seo';
+import { absolutize, absolutizeHtmlUrls, cdata, imageMimeType } from '@/lib/blog/rss';
+// 순수 정규식 유틸 — dompurify 는 lazy-require 라 top-level import 가 라우트를 죽이지 않는다.
+import { stripEmptyFigcaptions } from '@/lib/blog/sanitize';
+import { rewriteSmartstoreLinks } from '@/data/store';
 
 // RSS 2.0 피드 — 네이버 서치어드바이저 "RSS 제출"·구글·피드 리더용.
 // 공개(published) 블로그 글 최신 50건. 데이터 소스는 sitemap.ts 와 동일(readPostsSafe).
@@ -50,16 +55,26 @@ export async function GET() {
       .map((p) => {
         const url = `${SITE_URL}/blog/${p.slug}`;
         const cat = categoryName.get(p.categoryId);
+        // 제목은 글 페이지 og:title 과 같은 값(seoTitle 우선, 40자 컷).
+        const title = blogOgTitle(blogPostTitle(p));
+        // 본문 전문 — 글 페이지와 같은 링크 치환·빈 캡션 제거만 적용(다크 테마 색 정규화는 화면용이라 제외).
+        const body = p.content
+          ? absolutizeHtmlUrls(rewriteSmartstoreLinks(stripEmptyFigcaptions(p.content)), SITE_URL)
+          : '';
+        const cover = p.coverImage ? absolutize(p.coverImage, SITE_URL) : '';
+        const coverType = cover ? imageMimeType(cover) : null;
         return [
           '    <item>',
-          `      <title>${esc(p.title)}</title>`,
+          `      <title>${esc(title)}</title>`,
           `      <link>${esc(url)}</link>`,
           `      <guid isPermaLink="true">${esc(url)}</guid>`,
           `      <pubDate>${rfc822(p.publishedAt ?? p.createdAt, now)}</pubDate>`,
           p.author ? `      <dc:creator>${esc(p.author)}</dc:creator>` : '',
           cat ? `      <category>${esc(cat)}</category>` : '',
           `      <description>${esc(p.excerpt || p.title)}</description>`,
-          p.coverImage ? `      <enclosure url="${esc(p.coverImage)}" type="image/jpeg" length="0" />` : '',
+          body ? `      <content:encoded>${cdata(body)}</content:encoded>` : '',
+          // RSS 2.0 은 length 를 필수로 둔다 — 바이트 수를 모르므로 0 유지. 확장자로 type 을 못 정하면 생략.
+          coverType ? `      <enclosure url="${esc(cover)}" type="${coverType}" length="0" />` : '',
           '    </item>',
         ]
           .filter(Boolean)
@@ -73,7 +88,7 @@ export async function GET() {
 
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">',
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">',
     '  <channel>',
     "    <title>대라천 ZOEL LIFE 침향 이야기</title>",
     `    <link>${esc(`${SITE_URL}/blog`)}</link>`,

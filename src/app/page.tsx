@@ -94,6 +94,9 @@ const TOPIC_LINKS = [
   { href: '/about-agarwood', label: '침향이란? 학명·형성·문헌' },
   { href: '/vietnam-agarwood', label: '베트남 침향 — 산지와 역사' },
   { href: '/agarwood-oil', label: '침향 오일 — 증류·고르는 법' },
+  { href: '/agarwood-benefits', label: '침향 효능 — 연구와 전통 문헌' },
+  { href: '/agarwood-hwan', label: '침향환 — 침향단 함량·섭취법' },
+  { href: '/agarwood-tea', label: '침향차 — 우리는 법·고르는 법' },
   { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법' },
 ];
 

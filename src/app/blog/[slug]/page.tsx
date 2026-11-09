@@ -16,7 +16,16 @@ import { isOptimizableBlobImage, optimizeBodyImages } from '@/lib/blog/image-opt
 import { rewriteSmartstoreLinks } from '@/data/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
-import { blogOgTitle, blogPostMetaTitle, blogPostTitle, selectRelatedPosts } from '@/lib/blog/post-seo';
+import {
+  blogOgTitle,
+  blogPostMetaTitle,
+  blogPostTitle,
+  selectPopularPosts,
+  selectRelatedPosts,
+  selectRelatedRail,
+  topicHubsForCategory,
+  urlMatchesHost,
+} from '@/lib/blog/post-seo';
 import BlogCard from '../BlogCard';
 import styles from './BlogArticle.module.css';
 
@@ -178,23 +187,20 @@ export default async function BlogPostPage({
       ? sortedCategories.filter((c) => (categoryCounts.get(c.id) ?? 0) > 0)
       : sortedCategories;
 
-  // 인기 글: viewCount 우선, 동률(초기값 0)이면 최신순 폴백.
-  const popular = published
-    .filter((p) => p.id !== post.id)
-    .sort(
-      (a, b) =>
-        (b.viewCount ?? 0) - (a.viewCount ?? 0) ||
-        (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
-    )
-    .slice(0, 5);
+  // 인기 글: viewCount 우선. 동률(초기값 0) 묶음은 최신순을 현재 글 슬러그 해시만큼 회전 —
+  // 글마다 다른 오래된 글이 노출된다(결정적, 조회수 조작 없음).
+  const popular = selectPopularPosts(post, published, 5);
 
-  // 우측 레일 관련 글: 제목이 '관련 글 — 카테고리명'이므로 같은 카테고리 안에서만,
-  // 태그 공유가 많은 글 우선 → 최신순. 최신 글만 반복 노출되지 않게 오래된 글에도 링크가 간다.
-  const relatedRail = selectRelatedPosts(
+  // 우측 레일 관련 글: 같은 카테고리(태그 공유 → 최신순) 우선, 3개 미만이면 다른 카테고리
+  // 글(태그 공유 → 최신순)로 5개까지 채운다. 다른 카테고리가 섞이면 제목에서 카테고리명을 뗀다.
+  const { posts: relatedRail, crossCategory: relatedRailMixed } = selectRelatedRail(
     post,
-    published.filter((p) => p.categoryId === post.categoryId),
+    published,
     5,
   );
+
+  // 본문 밖 '관련 주제' — 카테고리별 검색어 허브 페이지로 가는 서버 렌더 내부 링크.
+  const topicHubs = topicHubsForCategory(post.categoryId);
 
   // 하단 관련 글 카드 그리드: 카테고리 무관하게 태그 공유 → 같은 카테고리 → 최신순.
   const related = selectRelatedPosts(post, published, 3);
@@ -216,10 +222,22 @@ export default async function BlogPostPage({
     'kci.go.kr',
     'encykorea.aks.ac.kr',
     'cites.org',
+    'mdpi.com',
+    'sciencedirect.com',
+    'link.springer.com',
+    'springer.com',
+    'pubs.rsc.org',
+    'dbpia.co.kr',
+    'pubmed.ncbi.nlm.nih.gov',
+    'ncbi.nlm.nih.gov',
+    'onlinelibrary.wiley.com',
+    'frontiersin.org',
+    'nature.com',
+    'tandfonline.com',
   ];
   const citationUrls = Array.from(
     new Set(Array.from(cleanHtml.matchAll(/href=["']([^"']+)["']/g)).map((m) => m[1]))
-  ).filter((u) => CITATION_HOSTS.some((h) => u.includes(h)));
+  ).filter((u) => urlMatchesHost(u, CITATION_HOSTS));
 
   // 작성자 표시명: 귀속 이메일이 있으면 admin-users 의 최신 displayName(구글
   // 워크스페이스 한글 이름)을 우선한다 — 본인이 SSO 로 한 번 로그인하면 과거에
@@ -479,6 +497,18 @@ export default async function BlogPostPage({
                   )}
                 </nav>
               )}
+
+              {/* 관련 주제 — 본문(데이터)과 분리된 템플릿 링크. 이전/다음 카드 스타일을 그대로 쓴다. */}
+              {topicHubs.length > 0 && (
+                <nav className={styles.pnNav} aria-label="관련 주제">
+                  {topicHubs.map((h) => (
+                    <Link key={h.href} href={h.href} className={styles.pnCard}>
+                      <span className={styles.pnLabel}>관련 주제</span>
+                      <span className={styles.pnTitle}>{h.label}</span>
+                    </Link>
+                  ))}
+                </nav>
+              )}
             </div>
 
             {/* Left rail 하단 — 인기 글 · 관련 글 (모바일에서는 본문 아래로 흐른다) */}
@@ -510,7 +540,7 @@ export default async function BlogPostPage({
                 {relatedRail.length > 0 && (
                   <section className={styles.railBox}>
                     <h2 className={styles.railHeading}>
-                      관련 글{category ? ` — ${category.name}` : ''}
+                      관련 글{category && !relatedRailMixed ? ` — ${category.name}` : ''}
                     </h2>
                     <ul className={styles.postList}>
                       {relatedRail.map((p) => (

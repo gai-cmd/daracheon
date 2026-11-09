@@ -7,6 +7,8 @@ import story from '@/styles/zoel/story-page.module.css';
 import styles from './TopicHub.module.css';
 import FaqSection from './FaqSection';
 import TopicLinks from './TopicLinks';
+import FurtherReading from './FurtherReading';
+import type { FurtherReadingPost } from '@/lib/blog/further-reading';
 
 /**
  * 검색어 주제 허브 페이지(침향 오일·베트남 침향 등)의 공용 렌더러.
@@ -75,7 +77,16 @@ export interface TopicHubContent {
   related: { href: string; label: string; desc: string }[];
 }
 
-export default function TopicHub({ content, products }: { content: TopicHubContent; products: TopicProduct[] }) {
+export default function TopicHub({
+  content,
+  products,
+  furtherReading = [],
+}: {
+  content: TopicHubContent;
+  products: TopicProduct[];
+  /** 이 허브와 겹치는 블로그 글(저장소 제목, 발행 글만) — 비면 영역을 그리지 않는다. */
+  furtherReading?: FurtherReadingPost[];
+}) {
   const url = `${SITE_URL}${content.path}`;
   const showProducts = Boolean(content.productsTitle);
 
@@ -337,6 +348,7 @@ export default function TopicHub({ content, products }: { content: TopicHubConte
       <FaqSection title={content.faqTitle} entries={content.faq} />
 
       <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={content.related} />
+      <FurtherReading posts={furtherReading} />
     </>
   );
 }

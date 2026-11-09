@@ -276,5 +276,6 @@ export const AGARWOOD_HWAN: TopicHubContent = {
     { href: '/products/agarwood-gibodan', label: '기보단', desc: '25년산 침향·동충하초·제비집 복합환' },
     { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌으로 보는 침향' },
+    { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
   ],
 };

@@ -59,6 +59,113 @@ export function selectRelatedPosts(
     .map((x) => x.p);
 }
 
+/** 우측 레일 관련 글이 같은 카테고리만으로 이 수에 못 미치면 다른 카테고리 글로 채운다. */
+export const RELATED_RAIL_MIN_SAME_CATEGORY = 3;
+
+/**
+ * 우측 레일 관련 글. 같은 카테고리 글(태그 공유 → 최신순)을 먼저 쓰고, 그것이
+ * RELATED_RAIL_MIN_SAME_CATEGORY 개 미만이면 나머지 발행 글에서 태그 공유가 많은 순
+ * (공유 태그가 없으면 최신순)으로 limit 까지 채운다 — 글이 적은 카테고리의 레일이
+ * 비거나 한두 개로 끝나 내부 링크가 끊기는 것을 막는다.
+ * crossCategory 는 다른 카테고리 글이 섞였는지 — 레일 제목에서 카테고리명을 뗄지 판단용.
+ */
+export function selectRelatedRail(
+  current: BlogPost,
+  published: BlogPost[],
+  limit: number,
+  minSameCategory = RELATED_RAIL_MIN_SAME_CATEGORY,
+): { posts: BlogPost[]; crossCategory: boolean } {
+  const same = selectRelatedPosts(
+    current,
+    published.filter((p) => p.categoryId === current.categoryId),
+    limit,
+  );
+  if (same.length >= Math.min(minSameCategory, limit)) return { posts: same, crossCategory: false };
+  const picked = new Set(same.map((p) => p.id));
+  const topUp = selectRelatedPosts(
+    current,
+    published.filter((p) => p.categoryId !== current.categoryId && !picked.has(p.id)),
+    limit - same.length,
+  );
+  return { posts: [...same, ...topUp], crossCategory: topUp.length > 0 };
+}
+
+/** 32비트 FNV-1a — 슬러그별로 고정된(요청마다 바뀌지 않는) 회전 값을 얻는 용도. */
+export function stableHash(s: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+
+/**
+ * 인기 글: viewCount 내림차순. 조회수가 같은 글 묶음(대부분 초기값 0)은 최신순으로 늘어놓은 뒤
+ * 현재 글 슬러그의 해시만큼 회전한다 — 같은 글에서는 항상 같은 목록(결정적)이지만 글마다
+ * 다른 오래된 글이 노출돼 최신 글 5개만 반복 링크되지 않는다. 조회수 자체는 건드리지 않는다.
+ */
+export function selectPopularPosts(
+  current: Pick<BlogPost, 'id' | 'slug'>,
+  published: BlogPost[],
+  limit: number,
+): BlogPost[] {
+  const views = (p: BlogPost) => p.viewCount ?? 0;
+  const ordered = published
+    .filter((p) => p.id !== current.id)
+    .sort((a, b) => views(b) - views(a) || postTime(b).localeCompare(postTime(a)));
+  const shift = stableHash(current.slug);
+  const out: BlogPost[] = [];
+  for (let i = 0; i < ordered.length && out.length < limit; ) {
+    let j = i;
+    while (j < ordered.length && views(ordered[j]) === views(ordered[i])) j++;
+    const group = ordered.slice(i, j);
+    const k = shift % group.length;
+    out.push(...group.slice(k), ...group.slice(0, k));
+    i = j;
+  }
+  return out.slice(0, limit);
+}
+
+/**
+ * 절대 URL 의 호스트가 목록의 도메인과 같거나 그 하위 도메인인지. 문자열 포함 비교는
+ * 'nature.com' 이 'signature.com' 이나 쿼리스트링에도 걸리므로 호스트 단위로 본다.
+ * 상대 경로·잘못된 URL 은 false.
+ */
+export function urlMatchesHost(url: string, hosts: readonly string[]): boolean {
+  let host: string;
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+  return hosts.some((h) => host === h || host.endsWith(`.${h}`));
+}
+
+export interface TopicHubLink {
+  href: string;
+  label: string;
+}
+
+// 라벨 = 각 허브 페이지 metadata 의 og:title (src/app/{about-agarwood,vietnam-agarwood,agarwood-benefits}/page.tsx).
+const HUB_ABOUT: TopicHubLink = { href: '/about-agarwood', label: '침향이란? 효능·학명·산지 총정리' };
+const HUB_VIETNAM: TopicHubLink = { href: '/vietnam-agarwood', label: '베트남 침향 — 역사 속 산지·학명·직영 농장' };
+const HUB_BENEFITS: TopicHubLink = { href: '/agarwood-benefits', label: '침향 효능 총정리 — 연구와 전통 문헌' };
+
+const CATEGORY_HUBS: Record<string, TopicHubLink[]> = {
+  'agarwood-science': [HUB_BENEFITS],
+  'agarwood-life': [HUB_BENEFITS],
+  'agarwood-basics': [HUB_ABOUT, HUB_VIETNAM],
+  'real-agarwood': [HUB_ABOUT, HUB_VIETNAM],
+  'daeracheon-farm': [HUB_VIETNAM],
+  'agarwood-history': [HUB_ABOUT],
+};
+
+/** 글 카테고리 → 본문 밖 '관련 주제' 허브 링크. 매핑에 없는 카테고리(브랜드 소식 등)는 침향이란? 허브. */
+export function topicHubsForCategory(categoryId: string): TopicHubLink[] {
+  return CATEGORY_HUBS[categoryId] ?? [HUB_ABOUT];
+}
+
 // 카테고리 설명이 이보다 짧으면 메타 설명을 글 제목으로 조합한다.
 const CATEGORY_DESC_MIN = 40;
 const CATEGORY_DESC_MAX = 100;
