@@ -8,9 +8,10 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://zoellife.com')
   .replace(/^['"]+|['"]+$/g, '')
   .replace(/\/+$/, '');
 
-// AI 크롤러 정책 (2026-08-11 개정, awesome-geo 기준): "노출 O, 학습 X".
-// 검색·답변 노출용 봇(AI 검색 인용, 브랜드 인지·세일즈에 기여)은 허용하고,
-// 순수 모델 학습용 크롤러만 차단한다. 관리자/API 는 당연 차단.
+// AI 크롤러 정책 (2026-08-11 개정, awesome-geo 기준): 목표는 "노출 O, 학습 X".
+// 실제 동작: AI_CRAWLERS 는 모두 허용, TRAINING_CRAWLERS 4개만 전체 차단, 관리자/API 등은 모든 봇에 차단.
+// AI_CRAWLERS 에는 노출용이 아닌 봇(Applebot-Extended·Meta-ExternalAgent·Bytespider·cohere-ai 등)도 들어 있어
+// "학습 X" 를 보장하지는 않는다. 목록 조정은 소유자 결정 사항이다(2026-11-12 감사).
 const AI_CRAWLERS = [
   'OAI-SearchBot', // OpenAI ChatGPT search 노출
   'ChatGPT-User', // ChatGPT 브라우징 (사용자 요청 시 fetch)
@@ -47,9 +48,7 @@ export default function robots(): MetadataRoute.Robots {
   const aiRules = AI_CRAWLERS.map((ua) => ({
     userAgent: ua,
     allow: '/',
-    // /thesis 는 THESIS_PASSWORD 로 잠긴 논문 아카이브 — 인증 없이는 401 이다.
-    // 푸터에서 공개 링크로 노출되므로 크롤러가 계속 401 을 받아 "색인 생성되지
-    // 않음"으로 쌓인다. 크롤 대상에서 제외한다.
+    // 아래 '*' 그룹과 같은 차단 목록 — 이름이 지정된 봇은 '*' 그룹을 읽지 않으므로 다시 적는다.
     disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
   }));
 
@@ -59,9 +58,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         // /thesis 는 THESIS_PASSWORD 로 잠긴 논문 아카이브 — 인증 없이는 401 이다.
-    // 푸터에서 공개 링크로 노출되므로 크롤러가 계속 401 을 받아 "색인 생성되지
-    // 않음"으로 쌓인다. 크롤 대상에서 제외한다.
-    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
+        // 푸터 공개 링크는 2026-10-06 에 뺐지만(Footer.tsx), 이미 알려진 주소로 크롤러가 401 을
+        // 받아 "색인 생성되지 않음"으로 쌓이지 않도록 크롤 대상에서 계속 제외한다.
+        disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
       },
       ...aiRules,
       ...TRAINING_CRAWLERS.map((ua) => ({ userAgent: ua, disallow: '/' })),
