@@ -405,6 +405,8 @@ export default async function AboutAgarwoodPage() {
       {pressJsonLd && <JsonLd data={pressJsonLd} />}
       <AboutAgarwoodClient
         data={data}
+        // Chapter I 정의 단락 = 아래 FAQ '침향이란 무엇인가요?' 답변과 같은 상수(문구가 어긋나지 않게).
+        definitionLead={ABOUT_FAQ[0].a}
         // '진짜 침향 구별' 섹션 안의 구별법 글 링크 — 제목은 저장소의 실제 제목, 발행 글만.
         authenticityPosts={furtherReading.filter((p) => AUTHENTICITY_POST_SLUGS.includes(p.slug))}
       />

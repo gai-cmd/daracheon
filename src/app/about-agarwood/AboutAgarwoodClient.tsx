@@ -278,13 +278,15 @@ function toIsoDateAttr(raw: string): string {
 
 interface Props {
   data: AboutAgarwoodData | null;
+  /** Chapter I 제목 바로 아래 정의 단락 — 페이지 FAQ '침향이란 무엇인가요?' 답변과 같은 문자열. */
+  definitionLead?: string;
   /** '진짜 침향 구별' 섹션 안에 보여 줄 구별법 블로그 글(발행 글만, 저장소 제목). */
   authenticityPosts?: { slug: string; title: string }[];
 }
 
 const TABS = ['침향이란?', '진짜 침향 구별', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '언론에 실린 침향'] as const;
 
-export default function AboutAgarwoodClient({ data, authenticityPosts = [] }: Props) {
+export default function AboutAgarwoodClient({ data, definitionLead, authenticityPosts = [] }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [hoveredDefinitionBox, setHoveredDefinitionBox] = useState<boolean>(false);
   const [paperSummaryOpen, setPaperSummaryOpen] = useState<Paper | null>(null);
@@ -386,6 +388,12 @@ export default function AboutAgarwoodClient({ data, authenticityPosts = [] }: Pr
                   <RevealOnScroll>
                     <h2>{definition?.title ?? '침향(沈香)이란 무엇인가?'}</h2>
                   </RevealOnScroll>
+                  {/* 정의 단락 — 제목의 질문에 먼저 답한다. 어드민 저장 문구(아래 소제목·본문)는 그대로 둔다. */}
+                  {definitionLead && (
+                    <RevealOnScroll delay={50}>
+                      <p>{definitionLead}</p>
+                    </RevealOnScroll>
+                  )}
                   <RevealOnScroll delay={100}>
                     <p className={styles.chapterSubtitle}>
                       {definition?.subtitle ?? '좋은 침향을 수확하기까지는 최소 26년 이상의 긴 시간이 필요합니다.'}
