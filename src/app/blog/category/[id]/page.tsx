@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { readPublishedPostListSafe, readCategoriesCachedSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import { categoryMetaDescription, categoryOgImage } from '@/lib/blog/post-seo';
 import BlogCard from '../../BlogCard';
@@ -15,8 +15,9 @@ const POSTS_PER_PAGE = 12;
 export const dynamic = 'force-dynamic';
 
 // generateMetadata 와 페이지가 같은 요청에서 글·카테고리를 한 번만 읽도록 요청 단위로 묶는다.
-const getPosts = cache(readPostsSafe);
-const getCategories = cache(readCategoriesSafe);
+// 둘 다 캐시된 공개용 읽기 — 글은 본문 없는 발행 글 목록이다.
+const getPosts = cache(() => readPublishedPostListSafe());
+const getCategories = cache(() => readCategoriesCachedSafe());
 
 export async function generateMetadata({
   params,
@@ -34,7 +35,7 @@ export async function generateMetadata({
   }
   // 발행 글이 0편인 카테고리는 '글이 없습니다' 안내뿐인 얇은 페이지 — 색인하지 않는다.
   // 링크는 따라가도록 follow 유지. sitemap 에서도 빠진다 (lib/blog/sitemap-dates).
-  // 글 읽기가 실패하면 readPostsSafe 가 [] 를 돌려주므로, 글을 읽었을 때만 판정한다 —
+  // 글 읽기가 실패하면 목록 읽기가 [] 를 돌려주므로, 글을 읽었을 때만 판정한다 —
   // 일시 장애로 모든 카테고리에 noindex 가 붙는 것을 막는다.
   const isEmpty =
     posts.length > 0 && !posts.some((p) => p.status === 'published' && p.categoryId === id);
@@ -94,7 +95,7 @@ export default async function BlogCategoryPage({
   const pagePosts = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다(현재 카테고리는 활성 표시를 위해 유지).
-  // 글 읽기 실패(readPostsSafe → [])면 숨기지 않는다 — 일시 장애 시 목록 소실 방지.
+  // 글 읽기 실패(목록 읽기 → [])면 숨기지 않는다 — 일시 장애 시 목록 소실 방지.
   const usedCategoryIds = new Set(
     posts.filter((p) => p.status === 'published').map((p) => p.categoryId)
   );

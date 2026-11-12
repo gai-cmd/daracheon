@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import type { BlogCategory, BlogPost } from '@/types/blog';
+import type { BlogCategory } from '@/types/blog';
+import type { BlogPostListItem } from '@/lib/blog/store';
 
 interface BlogCardProps {
-  post: BlogPost;
+  // 카드는 본문을 쓰지 않는다 — 본문 없는 목록용 글도 받는다.
+  post: BlogPostListItem;
   category?: BlogCategory;
 }
 

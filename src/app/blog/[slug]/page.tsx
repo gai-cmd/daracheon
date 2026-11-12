@@ -3,9 +3,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import {
+  readPostsSafe,
+  readCategoriesSafe,
+  readPublishedPost,
+  readPublishedPostListSafe,
+  readCategoriesCachedSafe,
+  type BlogPostListItem,
+} from '@/lib/blog/store';
 import { readDataSafe } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
 import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
@@ -67,11 +75,25 @@ function decodeSlug(raw: string): string {
   }
 }
 
-async function loadPost(slug: string, allowDraft = false) {
+// 공개 경로는 캐시된 읽기를 쓰고, generateMetadata 와 페이지가 같은 요청에서 한 번만 읽도록 요청 단위로 묶는다.
+const getPublishedPost = cache((slug: string) => readPublishedPost(slug));
+const getPublishedList = cache(() => readPublishedPostListSafe());
+const getCategories = cache(() => readCategoriesCachedSafe());
+
+/**
+ * 글 한 건. 공개 경로에서 "읽기 실패"는 던져서 500 으로 나가고(error.tsx), "슬러그 없음"만 null → 404 다.
+ * 실패를 404 로 내면 검색엔진이 살아 있는 글을 삭제된 것으로 읽는다.
+ * 초안 미리보기(관리자 ?preview)는 캐시 없는 전체 읽기를 그대로 쓴다.
+ */
+async function loadPost(slug: string, allowDraft = false): Promise<BlogPost | null> {
+  if (!allowDraft) return getPublishedPost(slug);
   const posts = await readPostsSafe();
-  return (
-    posts.find((p) => p.slug === slug && (allowDraft || p.status === 'published')) ?? null
-  );
+  return posts.find((p) => p.slug === slug) ?? null;
+}
+
+/** 사이드바·관련 글용 목록 — 공개 경로는 본문 없는 발행 글 목록(캐시), 미리보기는 전체 읽기. */
+async function loadList(allowDraft: boolean): Promise<BlogPostListItem[]> {
+  return allowDraft ? readPostsSafe() : getPublishedList();
 }
 
 /** 관리자 세션이 유효할 때만 true — 초안 미리보기 게이트. */
@@ -143,8 +165,8 @@ export default async function BlogPostPage({
   const allowDraft = Boolean(preview) && (await isAdmin());
   const [post, posts, categories] = await Promise.all([
     loadPost(slug, allowDraft),
-    readPostsSafe(),
-    readCategoriesSafe(),
+    loadList(allowDraft),
+    allowDraft ? readCategoriesSafe() : getCategories(),
   ]);
   if (!post) notFound();
   const isDraftPreview = post.status !== 'published';
@@ -182,7 +204,7 @@ export default async function BlogPostPage({
   }
 
   // 발행 글이 없는 카테고리는 분류 목록에서 숨긴다. 글 읽기 실패로 목록이 비면
-  // (readPostsSafe → []) 숨기지 않는다 — 일시 장애로 분류가 통째로 사라지는 것 방지.
+  // (목록 읽기 → []) 숨기지 않는다 — 일시 장애로 분류가 통째로 사라지는 것 방지.
   const navCategories =
     published.length > 0
       ? sortedCategories.filter((c) => (categoryCounts.get(c.id) ?? 0) > 0)
