@@ -9,6 +9,7 @@
 
 import { readSingleSafe, readDataSafe } from '@/lib/db';
 import type { Product } from '@/data/products';
+import { llmsProductPath, llmsProductPriceAndStock } from '../llms.txt/llms-facts';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 86400; // 1일
@@ -123,10 +124,10 @@ export async function GET() {
   if (visible.length > 0) {
     out.push('## 6. 제품 라인업 (공개)');
     for (const p of visible) {
-      const head = p.priceDisplay ? `${p.name} (${p.priceDisplay})` : p.name;
-      out.push(`### ${head}`);
+      // 가격은 제품 페이지와 같은 순서(숫자 price 우선)로 계산하고 재고 상태를 덧붙인다.
+      out.push(`### ${p.name} (${llmsProductPriceAndStock(p)})`);
       if (p.shortDescription) out.push(p.shortDescription);
-      out.push(`- 상세 페이지: ${SITE_URL}/products/${p.slug}`);
+      out.push(`- 상세 페이지: ${SITE_URL}${llmsProductPath(p)}`);
       out.push('');
     }
   }
@@ -138,7 +139,8 @@ export async function GET() {
   out.push(`- 베트남 침향 (산지 문헌·학명·5개 직영 농장): ${SITE_URL}/vietnam-agarwood`);
   out.push(`- 침향 오일 (정의·72시간 증류 공정·고르는 법·사용법): ${SITE_URL}/agarwood-oil`);
   out.push(`- 브랜드 스토리: ${SITE_URL}/brand-story`);
-  out.push(`- 6단계 검증 공정: ${SITE_URL}/process`);
+  // /process 는 /media 로 영구 이동됐다 — 이동 전 주소를 적지 않는다.
+  out.push(`- 6단계 검증 공정: ${SITE_URL}/media`);
   out.push(`- 제품 전체: ${SITE_URL}/products`);
   out.push(`- 회사 소개·연락처: ${SITE_URL}/company`);
   out.push(`- 고객 후기: ${SITE_URL}/reviews`);
