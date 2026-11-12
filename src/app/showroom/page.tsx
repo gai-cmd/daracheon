@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import ShowroomClient from './ShowroomClient';
+import TopicLinks from '@/components/seo/TopicLinks';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,6 +78,15 @@ export default async function ShowroomPage() {
       {placeJsonLd && <JsonLd data={placeJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />
       <ShowroomClient data={data} />
+      {/* 전역 CSS 가 main > section:first-of-type, main > div > section:first-of-type 에 물결 장식을 붙이므로 두 겹 감싼다 */}
+      <div>
+        <div>
+          <TopicLinks
+            title="함께 읽으면 좋은 침향 이야기"
+            links={[{ href: '/products', label: '침향 제품', desc: '침향 오일·침향단·침향수·침향차 라인업' }]}
+          />
+        </div>
+      </div>
     </>
   );
 }

@@ -28,7 +28,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     alternateName: ['베트남산 침향', 'Vietnamese agarwood', 'Trầm hương Việt Nam'],
   },
   datePublished: '2026-10-03',
-  dateModified: '2026-10-03',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'why',
@@ -83,8 +83,28 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
       links: [{ href: '/about-agarwood', label: '대한민국 공식 기준 전체 보기' }],
     },
     {
-      id: 'farms',
+      // 2026-11-12: '침향나무' 질문에 답하는 섹션. 문장은 모두 사이트에 이미 있는 것을 옮겼다 —
+      // 과·학명: 이 파일 '학명' 섹션, 종·산지: agarwood-benefits.ts '침향이란' 섹션,
+      // 수지 형성: /about-agarwood FAQ '침향은 어떻게 만들어지나요?', 규격집 정의: agarwood-benefits.ts,
+      // 농장·수령: 이 파일 '농장' 섹션(식재 규모·푸꾸옥 고수령목).
+      id: 'tree',
       num: '04',
+      tag: 'Tree',
+      title: '침향나무는 어떤 나무인가요?',
+      lead: '팥꽃나무과 Aquilaria 나무로, 상처에 맞서 만든 수지가 오랜 세월 쌓여 굳으면 침향이 됩니다.',
+      paragraphs: [
+        '침향나무는 팥꽃나무과(Thymelaeaceae) Aquilaria 나무입니다. 침향을 만드는 Aquilaria 나무는 여러 종이 있고 종과 산지에 따라 향과 성분이 다릅니다. 식약처가 발간한 한약재 관능검사 해설서와 원색 한약재감별도감, 한국한의학연구원 한약자원연구센터는 침향나무의 학명을 Aquilaria agallocha Roxburgh로 기록합니다.',
+        '벌레·바람·낙뢰 같은 외부 충격으로 침향나무에 상처가 생기고, 그 부위로 곰팡이균이 들어가면 나무가 스스로를 지키려 수지를 분비합니다. 이 수지가 수십 년에 걸쳐 축적·숙성되어 침향이 됩니다. 식약처 고시 대한민국약전외한약(생약)규격집은 침향을 "침향나무의 수지가 침착된 수간목"으로 정의합니다.',
+        '대라천은 베트남 5개 지역에 걸쳐 약 200헥타르(약 60만 평)에 400만 그루의 Aquilaria agallocha Roxburgh 침향나무를 심어 25년 이상 직접 관리합니다. 푸꾸옥 농장에는 130년생과 50년생 침향목이 함께 자랍니다.',
+      ],
+      links: [
+        { href: '/about-agarwood', label: '침향은 어떻게 만들어지나요?' },
+        { href: '/blog/agarwood-cyp', label: "상처 입은 침향나무는 어떻게 '값비싼 향'을 만들까" },
+      ],
+    },
+    {
+      id: 'farms',
+      num: '05',
       tag: 'Farms',
       title: '대라천 베트남 5개 직영 침향 농장',
       lead: '하띤·람동·푸꾸옥·냐짱·동나이 — 약 200ha에 400만 그루.',
@@ -120,7 +140,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     },
     {
       id: 'check',
-      num: '05',
+      num: '06',
       tag: 'Checklist',
       title: '베트남 침향을 살 때 확인할 것',
       lead: '"베트남산"이라는 표기만으로는 부족합니다. 증명할 수 있어야 합니다.',
@@ -172,6 +192,8 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
     { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
+    { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+    { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
     { href: '/media', label: '베트남 침향 농장', desc: '5개 직영 농장의 사진과 영상' },
     { href: '/showroom', label: '대라천 쇼룸', desc: '베트남 동나이 직영 침향 전시장' },
   ],

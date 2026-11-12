@@ -226,6 +226,8 @@ const siteJsonLd = {
       // 회사 엔티티는 법인명, 브랜드 엔티티(#brand)는 '대라천 '참'침향' — '대라천' 검색에서 공식 사이트 귀속 신호.
       name: '조엘라이프 주식회사',
       legalName: '조엘라이프 주식회사',
+      // 사업자등록번호 — 푸터·이용약관에 표시된 값(src/data/company.ts businessReg)과 같다.
+      taxID: '749-86-03668',
       alternateName: ['대라천 ZOEL LIFE', '대라천', 'Daeracheon', 'ZOEL LIFE', '조엘라이프', '大羅天', 'Đại La Thiên'],
       url: SITE_URL,
       brand: { '@id': `${SITE_URL}/#brand` },

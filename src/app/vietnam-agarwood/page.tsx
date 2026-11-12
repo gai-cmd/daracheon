@@ -6,15 +6,16 @@ import { VIETNAM_AGARWOOD } from '@/content/topics/vietnam-agarwood';
 import { pageOpenGraph } from '@/lib/seo/og';
 import { SITE_URL } from '@/lib/seo/image';
 import { readFurtherReading } from '@/lib/blog/further-reading';
+import { VIETNAM_FURTHER_READING_SLUGS } from '@/content/topics/further-reading';
 
 // '베트남 침향' 검색어 허브. 제품 공개/비공개 토글이 바로 반영되도록 동적 렌더.
 export const dynamic = 'force-dynamic';
 
-// 이 허브와 겹치는 블로그 글 — 제목은 저장소의 실제 제목, 발행되지 않은 슬러그는 빠진다.
-const FURTHER_READING_SLUGS = ['vietnam-5-farms-200ha-4million-trees'] as const;
+// 이 허브와 겹치는 블로그 글(src/content/topics/further-reading.ts) — 제목은 저장소의 실제 제목, 발행되지 않은 슬러그는 빠진다.
+const FURTHER_READING_SLUGS = VIETNAM_FURTHER_READING_SLUGS;
 
 const TITLE = '베트남 침향 — 역사 속 산지·학명·직영 농장';
-const DESCRIPTION = '고문헌이 기록한 침향의 주산지 베트남. 학명 아갈로차, 하띤·동나이 등 5개 직영 농장, 구매 시 확인할 증빙.';
+const DESCRIPTION = '고문헌이 기록한 침향의 주산지 베트남. 침향나무의 학명 아갈로차, 하띤·동나이 등 5개 직영 농장, 구매 시 확인할 증빙.';
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -9,6 +9,8 @@ import FaqSection from './FaqSection';
 import TopicLinks from './TopicLinks';
 import FurtherReading from './FurtherReading';
 import type { FurtherReadingPost } from '@/lib/blog/further-reading';
+import { buildCitations, doiUrl } from '@/lib/blog/references';
+import type { BlogReference } from '@/content/blog-references';
 
 /**
  * 검색어 주제 허브 페이지(침향 오일·베트남 침향 등)의 공용 렌더러.
@@ -81,11 +83,14 @@ export default function TopicHub({
   content,
   products,
   furtherReading = [],
+  references = [],
 }: {
   content: TopicHubContent;
   products: TopicProduct[];
   /** 이 허브와 겹치는 블로그 글(저장소 제목, 발행 글만) — 비면 영역을 그리지 않는다. */
   furtherReading?: FurtherReadingPost[];
+  /** 본문이 언급하는 논문 중 DOI 가 검증된 것 — 화면 '참고 문헌'과 Article.citation 에 같이 쓴다. 비면 그리지 않는다. */
+  references?: BlogReference[];
 }) {
   const url = `${SITE_URL}${content.path}`;
   const showProducts = Boolean(content.productsTitle);
@@ -111,6 +116,7 @@ export default function TopicHub({
           ? { image: imageObject({ url: content.heroImage.src, caption: content.heroImage.alt }) }
           : {}),
         articleSection: content.sections.map((s) => s.title),
+        ...(references.length > 0 ? { citation: buildCitations(references, []) } : {}),
       },
       {
         '@type': 'BreadcrumbList',
@@ -170,6 +176,12 @@ export default function TopicHub({
             </h1>
             <p className={story.lede}>{content.lede}</p>
           </div>
+          {/* 최종 업데이트 — Article.dateModified·사이트맵 lastmod 와 같은 값(content.dateModified). 렌더 시각을 쓰지 않는다. */}
+          <p className={styles.crumbs} style={{ margin: '18px 0 0' }}>
+            최종 업데이트 <time dateTime={content.dateModified}>{content.dateModified.replace(/-/g, '.')}</time>
+            <span aria-hidden="true">·</span>
+            조엘라이프 주식회사
+          </p>
         </div>
       </section>
 
@@ -346,6 +358,29 @@ export default function TopicHub({
 
       {/* FAQ — 화면 문답 = FAQPage 구조화 데이터 */}
       <FaqSection title={content.faqTitle} entries={content.faq} />
+
+      {/* 참고 문헌 — 검증된 DOI 만. 논문 원제목(영문)은 화면에 싣지 않고 저자·연도·학술지·DOI 로 적는다. */}
+      {references.length > 0 && (
+        <section id="references" className={`${story.chapter} ${styles.anchor}`} aria-labelledby="references-title">
+          <div className={story.wrap}>
+            <h2 id="references-title" className={styles.centerTitle}>
+              참고 문헌
+            </h2>
+            <ul className={styles.bullets} style={{ maxWidth: 760, margin: '26px auto 0' }}>
+              {references.map((r) => (
+                <li key={r.doi}>
+                  {r.authors} ({r.year}). {r.journal}.{' '}
+                  <span className={styles.inlineLinks} style={{ display: 'inline', margin: 0 }}>
+                    <a href={doiUrl(r.doi)} target="_blank" rel="noopener noreferrer">
+                      doi.org/{r.doi}
+                    </a>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={content.related} />
       <FurtherReading posts={furtherReading} />

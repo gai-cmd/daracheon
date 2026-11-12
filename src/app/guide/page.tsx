@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
-import { readDataSafe } from '@/lib/db';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
+import topic from '@/components/seo/TopicHub.module.css';
+import { productTopicLink } from '@/components/seo/product-topic-link';
+import type { CertSection } from '@/app/brand-story/page';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 import JsonLd from '@/components/ui/JsonLd';
 import { pageOpenGraph } from '@/lib/seo/og';
@@ -30,8 +34,27 @@ export const dynamic = 'force-dynamic';
 // 침향 이야기(/about-agarwood)와 동일한 story-page 레이아웃·타이포(Noto Serif KR)로 통일.
 // 콘텐츠는 어드민 편집(blob), 미설정 시 코드 기본값.
 export default async function GuidePage() {
-  const stored = await readDataSafe<ProductGuide>('product-guides');
+  const [stored, products, pagesData] = await Promise.all([
+    readDataSafe<ProductGuide>('product-guides'),
+    readDataSafe<{ slug?: string; name?: string; shortDescription?: string; published?: boolean }>('products'),
+    readSingleSafe<{ brandStory?: { certificationsTab?: { sections?: CertSection[] } } }>('pages'),
+  ]);
   const productGuides = stored.length > 0 ? stored : defaultGuides;
+
+  // 인증·시험 식별 정보 — /brand-story '다양한 인증' 탭이 보여 주는 것과 같은 저장 데이터(제목·항목)만 글자로 반복한다.
+  const certSections = (pagesData?.brandStory?.certificationsTab?.sections ?? []).filter(
+    (s) => s?.title && Array.isArray(s.items) && s.items.length > 0,
+  );
+
+  // 관련 링크 — 이 페이지가 다루는 제품(공개 중인 것만)과 그 주제 허브.
+  const relatedLinks: TopicLink[] = [
+    ...productGuides.flatMap((g) => {
+      const link = productTopicLink(products, g.slug);
+      return link ? [link] : [];
+    }),
+    { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
+    { href: '/brand-story', label: '브랜드 스토리', desc: '20년 원칙과 생산 공정, 인증' },
+  ];
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -142,6 +165,64 @@ export default async function GuidePage() {
           </div>
         </section>
       ))}
+
+      {/* 인증·시험 식별 정보 — /brand-story 에 공개된 항목을 글자로 반복 */}
+      {certSections.length > 0 && (
+        <section id="certifications" className={styles.chapter}>
+          <div className={styles.wrap}>
+            <div className={styles.chapterBody} style={{ maxWidth: 860, margin: '0 auto' }}>
+              <div style={{ textAlign: 'center' }}>
+                <h3>인증·시험 정보</h3>
+              </div>
+              <div style={{ marginTop: 30, display: 'grid', gap: 18 }}>
+                {certSections.map((s) => (
+                  <div
+                    key={s.title}
+                    style={{
+                      border: '1px solid rgba(212,168,67,0.22)',
+                      background: 'rgba(212,168,67,0.04)',
+                      borderRadius: 4,
+                      padding: '22px 24px',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        fontFamily: "var(--font-serif), serif",
+                        fontSize: '1.16rem',
+                        color: 'var(--accent-soft)',
+                        fontWeight: 500,
+                        marginBottom: 16,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {s.title}
+                    </h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {s.items.map((line, i) => (
+                        <li key={i} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 12, alignItems: 'baseline' }}>
+                          <span style={{ color: 'var(--accent)', fontSize: '0.5rem', lineHeight: 2.4 }} aria-hidden>
+                            ●
+                          </span>
+                          <span style={{ fontSize: 'clamp(0.92rem, 2.5vw, 1.04rem)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.95, fontWeight: 300 }}>
+                            {line}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <p className={topic.inlineLinks} style={{ justifyContent: 'center' }}>
+                <Link href="/brand-story#tab-1">
+                  대라천 인증 보기 <span aria-hidden="true">→</span>
+                </Link>
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={relatedLinks} />
 
       {/* 문의 CTA */}
       <section className={styles.chapter}>
