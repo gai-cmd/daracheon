@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { readDataSafe, readDataUncached } from '@/lib/db';
+import { readDataSafe, readDataUncached, readSingleSafe } from '@/lib/db';
 import { formatPrice } from '@/lib/utils';
 import {
   buildProductOffers,
@@ -27,6 +27,17 @@ import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
+
+// 인증·시험 식별 정보 블록을 싣는 제품 — 포장 표시사항까지 실린 대표 제품(캡슐)만.
+const CERT_BLOCK_SLUG = 'daeracheon-cham-agarwood-oil-capsule';
+
+// /brand-story '인증' 탭이 쓰는 저장값(pages.brandStory.certificationsTab) 중 여기서 읽는 부분.
+interface BrandCertifications {
+  tag?: string;
+  title?: string;
+  subtitle?: string;
+  sections?: { title: string; items: string[] }[];
+}
 
 export async function generateStaticParams() {
   const products = await readDataSafe<Product>('products');
@@ -129,6 +140,14 @@ export default async function ProductDetailPage(
   const manufacturer = productSchemaManufacturer(guideField(guide, '제조원'));
   // 화면(목록 필터·제목)에 쓰는 카테고리 라벨 — 없으면 저장된 카테고리 값.
   const categoryLabel = categories.find((c) => c.id === product.category)?.label;
+
+  // 인증·시험 식별 정보 — /brand-story '인증' 탭에 이미 공개된 문구를 같은 저장값에서 읽어
+  // 그대로 옮긴다. 여기서 문구를 만들지 않으며, 저장값이 없으면 블록을 내지 않는다.
+  const certs = isSameProductSlug(product.slug, CERT_BLOCK_SLUG)
+    ? (await readSingleSafe<{ brandStory?: { certificationsTab?: BrandCertifications } }>('pages'))
+        ?.brandStory?.certificationsTab
+    : undefined;
+  const certSections = (certs?.sections ?? []).filter((sec) => sec.title && sec.items?.length > 0);
 
   // 검색어 주제 페이지로 가는 내부 링크 — 제품 카테고리에 맞는 정보 랜딩을 맨 앞에.
   // (오일 → '침향 오일', 환(침향단·기보단) → '침향환·침향단', 차 → '침향차')
@@ -330,6 +349,30 @@ export default async function ProductDetailPage(
             <p className={styles.guideNote}>
               포장의 식품 한글표시사항을 옮긴 내용입니다. 큰 글씨로 보기:{' '}
               <Link href={`/guide#${pageSlug}`}>복용 가이드</Link>
+            </p>
+          </section>
+        )}
+
+        {/* 인증·시험 — /brand-story 인증 탭의 제목·요약·항목 그대로 */}
+        {certs?.title && certSections.length > 0 && (
+          <section className={styles.guide} aria-labelledby="product-certs-title">
+            {certs.tag && <div className={styles.specsHead}>{certs.tag}</div>}
+            <h2 id="product-certs-title">{certs.title}</h2>
+            {certs.subtitle && <p className={styles.guideTagline}>{certs.subtitle}</p>}
+            <div className={styles.guideGrid}>
+              {certSections.map((sec) => (
+                <div key={sec.title} className={styles.guideCard}>
+                  <h3 className={styles.guideTitle}>{sec.title}</h3>
+                  <ul className={styles.guideList}>
+                    {sec.items.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className={styles.guideNote}>
+              자세히 보기: <Link href="/brand-story#tab-1">브랜드 이야기</Link>
             </p>
           </section>
         )}
