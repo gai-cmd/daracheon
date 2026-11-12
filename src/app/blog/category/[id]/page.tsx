@@ -10,7 +10,9 @@ import BlogCard from '../../BlogCard';
 import BlogPagination, { parseBlogPage } from '../../BlogPagination';
 
 const SITE_URL = 'https://zoellife.com';
-const POSTS_PER_PAGE = 12;
+// /blog(12편)보다 크게 잡아 지금의 모든 카테고리가 한 페이지에 끝나게 한다 —
+// 2페이지 목록(?page=2, sitemap 에 없음)으로만 닿던 글이 없어진다.
+const POSTS_PER_PAGE = 24;
 
 export const dynamic = 'force-dynamic';
 
@@ -89,7 +91,7 @@ export default async function BlogCategoryPage({
       (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
     );
 
-  // /blog 목록과 동일한 12편/페이지 숫자 페이지네이션.
+  // /blog 목록과 같은 숫자 페이지네이션(카테고리는 24편/페이지).
   const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE));
   if (page > totalPages) notFound();
   const pagePosts = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
@@ -119,8 +121,36 @@ export default async function BlogCategoryPage({
     ],
   };
 
+  // CollectionPage + ItemList — /products 와 같은 "요약 페이지 + 상세 페이지" 구조.
+  // 화면에 실제로 나열한 글만(이 페이지의 pagePosts) url·이름으로 싣고, 글 본문 마크업은 상세 페이지에만 둔다.
+  const pageUrl =
+    page > 1
+      ? `${SITE_URL}/blog/category/${category.id}?page=${page}`
+      : `${SITE_URL}/blog/category/${category.id}`;
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${pageUrl}#page`,
+    name: category.name,
+    url: pageUrl,
+    ...(category.description ? { description: category.description } : {}),
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: filtered.length,
+      itemListElement: pagePosts.map((p, i) => ({
+        '@type': 'ListItem',
+        position: (page - 1) * POSTS_PER_PAGE + i + 1,
+        name: p.title,
+        url: `${SITE_URL}/blog/${p.slug}`,
+      })),
+    },
+  };
+
   return (
     <>
+      {pagePosts.length > 0 && <JsonLd data={collection} />}
       <JsonLd data={breadcrumb} />
       <main className="min-h-screen bg-luxury-black text-luxury-cream">
         <section className="border-b border-luxury-bronze/20 px-7 py-16 lg:px-16 md:py-20">

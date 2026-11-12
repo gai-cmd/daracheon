@@ -167,6 +167,27 @@ export function topicHubsForCategory(categoryId: string): TopicHubLink[] {
   return CATEGORY_HUBS[categoryId] ?? [HUB_ABOUT];
 }
 
+/**
+ * 작성자가 브랜드·법인명(대라천/조엘라이프/ZOEL)인지 — 그러면 Person 대신 정규 Organization 노드로 귀속한다.
+ * 이름이 비어 있어도 조직으로 본다.
+ */
+export function isBrandAuthor(name: string | undefined): boolean {
+  return !name || /대라천|조엘|zoel/i.test(name);
+}
+
+/**
+ * 작성자 표시명 — 귀속 이메일이 어드민 계정과 맞으면 그 계정의 표시 이름, 아니면 저장된 author.
+ * 화면 바이라인·article:author·JSON-LD 가 같은 이름을 쓰도록 한곳에서 정한다
+ * (저장된 author 가 로그인 아이디인 글이 있다).
+ */
+export function authorDisplayName(
+  post: Pick<BlogPost, 'author' | 'authorEmail'>,
+  admins: readonly { email: string; displayName?: string }[],
+): string {
+  if (!post.authorEmail) return post.author;
+  return admins.find((u) => u.email === post.authorEmail)?.displayName?.trim() || post.author;
+}
+
 // 카테고리 설명이 이보다 짧으면 메타 설명을 글 제목으로 조합한다.
 const CATEGORY_DESC_MIN = 40;
 const CATEGORY_DESC_MAX = 100;

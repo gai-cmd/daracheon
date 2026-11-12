@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
 import { readPublishedPostListSafe, readCategoriesCachedSafe } from '@/lib/blog/store';
+import { readDataSafe } from '@/lib/db';
+import type { AdminUser } from '@/lib/admin-users';
+import { authorDisplayName, isBrandAuthor } from '@/lib/blog/post-seo';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from './BlogCard';
 import BlogPagination, { parseBlogPage } from './BlogPagination';
@@ -85,6 +88,13 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
     .filter((c) => published.length === 0 || usedCategoryIds.has(c.id))
     .sort((a, b) => a.order - b.order);
 
+  // 작성자 이름은 글 상세와 같은 표시 이름을 쓴다(저장된 author 가 로그인 아이디인 글이 있다).
+  // JSON-LD 는 1페이지에만 싣기 때문에 그때만 어드민 계정 목록을 읽는다.
+  const admins =
+    page === 1 && published.some((p) => p.authorEmail)
+      ? await readDataSafe<AdminUser>('admin-users')
+      : [];
+
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -94,23 +104,26 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
     description: '베트남 하띤 직영 침향 농장 기록 · 침향 효능 · 정통 침향 지식.',
     // 상세 페이지와 동일하게 정규 Organization 노드를 @id 참조(엔티티 표기 일관).
     publisher: { '@id': `${SITE_URL}/#organization` },
-    blogPost: published.slice(0, 20).map((p) => ({
-      '@type': 'BlogPosting',
-      headline: p.title,
-      url: `${SITE_URL}/blog/${p.slug}`,
-      datePublished: p.publishedAt ?? p.createdAt,
-      dateModified: p.updatedAt,
-      author:
-        !p.author || /대라천|zoel/i.test(p.author)
+    // 발행 글 전부 — 목록은 페이지로 나뉘어도 Blog 노드는 1페이지에 한 번만 나가므로 전체를 싣는다.
+    blogPost: published.map((p) => {
+      const authorName = authorDisplayName(p, admins);
+      return {
+        '@type': 'BlogPosting',
+        headline: p.title,
+        url: `${SITE_URL}/blog/${p.slug}`,
+        datePublished: p.publishedAt ?? p.createdAt,
+        dateModified: p.updatedAt,
+        author: isBrandAuthor(authorName)
           ? { '@id': `${SITE_URL}/#organization` }
           : {
               '@type': 'Person',
-              name: p.author,
+              name: authorName,
               // 작성자 개별 페이지가 없어 url 은 생략, 소속만 정규 Organization 노드로 참조.
               worksFor: { '@id': `${SITE_URL}/#organization` },
             },
-      image: p.coverImage,
-    })),
+        image: p.coverImage,
+      };
+    }),
   };
 
   const breadcrumb = {
@@ -124,7 +137,7 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
 
   return (
     <>
-      {/* Blog 노드(최신 20편 목록 포함)는 대표 URL 인 1페이지에만 싣는다. */}
+      {/* Blog 노드(발행 글 전체 목록 포함)는 대표 URL 인 1페이지에만 싣는다. */}
       {page === 1 && <JsonLd data={blogJsonLd} />}
       <JsonLd data={breadcrumb} />
 
