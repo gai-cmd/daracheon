@@ -253,7 +253,7 @@ export default async function ProductsPage() {
         name: p.name,
         url: `https://zoellife.com/products/${p.slug}`,
         // 저장된 대표 이미지 (상대 경로면 사이트 주소를 붙인다).
-        ...(p.image ? { image: new URL(p.image, 'https://zoellife.com').toString() } : {}),
+        ...(p.image && URL.canParse(p.image, 'https://zoellife.com') ? { image: new URL(p.image, 'https://zoellife.com').toString() } : {}),
       })),
     },
   };
