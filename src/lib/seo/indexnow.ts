@@ -52,6 +52,55 @@ export function blogPostPaths(slug: string, categoryId?: string): string[] {
   return paths;
 }
 
+interface BlogPostAddress {
+  slug: string;
+  categoryId?: string;
+  status: string;
+}
+
+/**
+ * 글 저장·삭제 전후 상태로 알릴 경로를 정한다 (prev = 저장 전, next = 저장 후, 삭제면 next = null).
+ *  - 저장 후 발행 상태면 지금 주소(글·목록·카테고리).
+ *  - 저장 전에 발행 상태였는데 초안으로 내려갔거나 삭제됐거나 슬러그·카테고리가 바뀌었으면 옛 주소도 보낸다 —
+ *    IndexNow 는 사라진 URL 도 받으며, 수집기가 다시 와서 404 를 확인해 간다.
+ *  - 발행된 적 없는 초안끼리의 저장은 아무것도 보내지 않는다.
+ */
+export function blogPostChangePaths(
+  prev: BlogPostAddress | null,
+  next: BlogPostAddress | null,
+): string[] {
+  const paths: string[] = [];
+  const nextLive = next?.status === 'published' ? next : null;
+  const prevLive = prev?.status === 'published' ? prev : null;
+  if (nextLive) paths.push(...blogPostPaths(nextLive.slug, nextLive.categoryId));
+  if (
+    prevLive &&
+    (!nextLive || prevLive.slug !== nextLive.slug || prevLive.categoryId !== nextLive.categoryId)
+  ) {
+    paths.push(...blogPostPaths(prevLive.slug, prevLive.categoryId));
+  }
+  return Array.from(new Set(paths));
+}
+
+/**
+ * 제품 저장·삭제 전후의 공개 슬러그로 알릴 경로를 정한다 (비공개·삭제는 null).
+ * 공개 주소가 바뀌었거나 없어졌으면 옛 주소도 보낸다.
+ */
+export function productChangePaths(prevSlug: string | null, nextSlug: string | null): string[] {
+  const paths: string[] = [];
+  if (nextSlug) paths.push(`/products/${nextSlug}`);
+  if (prevSlug && prevSlug !== nextSlug) paths.push(`/products/${prevSlug}`);
+  return paths.length > 0 ? [...paths, '/products'] : [];
+}
+
+// 영구 이동되는 경로 — 캐시 재검증 대상이기는 해도 IndexNow 로는 보내지 않는다 (/process → /media 308).
+const REDIRECTING_PATHS = new Set(['/process']);
+
+/** 다른 주소로 영구 이동되는 경로를 뺀다 — 308 로 답하는 URL 을 수집 요청하지 않는다. */
+export function dropRedirectingPaths(paths: string[]): string[] {
+  return paths.filter((p) => !REDIRECTING_PATHS.has(p));
+}
+
 /** 프로덕션에서만 네이버 IndexNow 로 URL 목록을 보낸다. 절대 throw 하지 않는다. */
 export async function notifyIndexNow(paths: string[]): Promise<void> {
   try {

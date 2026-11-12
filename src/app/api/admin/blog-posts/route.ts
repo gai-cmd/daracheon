@@ -224,14 +224,15 @@ export async function PATCH(request: Request) {
         p.status = status;
         p.updatedAt = now;
         if (status === 'published' && !p.publishedAt) p.publishedAt = now;
-        if (status === 'published') indexNowPaths.push(...blogPostPaths(p.slug, p.categoryId));
+        // 상태가 실제로 바뀐 글만 여기 온다 — 새로 발행된 글과, 발행에서 초안으로 내려간 글의 주소.
+        indexNowPaths.push(...blogPostPaths(p.slug, p.categoryId));
         updated++;
       }
     }
     if (updated > 0) {
       await writePosts(posts, { upsertIds: [...idSet] });
       revalidateBlog();
-      // 일괄 발행으로 새로 공개된 글만 IndexNow 에 알린다 (중복·100개 제한은 헬퍼가 처리).
+      // 일괄 발행·비공개로 상태가 바뀐 글을 IndexNow 에 알린다 (중복·100개 제한은 헬퍼가 처리).
       if (indexNowPaths.length > 0) after(() => notifyIndexNow(indexNowPaths));
       await logAdmin('blog', 'bulk_update', {
         summary: `블로그 일괄 ${status === 'published' ? '발행' : '비공개'}: ${updated}건`,
