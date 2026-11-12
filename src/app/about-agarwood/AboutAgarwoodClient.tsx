@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
+import topic from '@/components/seo/TopicHub.module.css';
 import StickyTabBar from '@/components/layout/StickyTabBar';
 import { useHashTab, setTabHash } from '@/lib/use-hash-tab';
 import type { AboutAgarwoodData, OfficialSourcesSection, AuthenticityTab, MediaTabData, Paper, Scripture } from './page';
@@ -277,11 +278,13 @@ function toIsoDateAttr(raw: string): string {
 
 interface Props {
   data: AboutAgarwoodData | null;
+  /** '진짜 침향 구별' 섹션 안에 보여 줄 구별법 블로그 글(발행 글만, 저장소 제목). */
+  authenticityPosts?: { slug: string; title: string }[];
 }
 
 const TABS = ['침향이란?', '진짜 침향 구별', '경전에 실린 침향', '문헌에 실린 침향', '논문에 실린 침향', '언론에 실린 침향'] as const;
 
-export default function AboutAgarwoodClient({ data }: Props) {
+export default function AboutAgarwoodClient({ data, authenticityPosts = [] }: Props) {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [hoveredDefinitionBox, setHoveredDefinitionBox] = useState<boolean>(false);
   const [paperSummaryOpen, setPaperSummaryOpen] = useState<Paper | null>(null);
@@ -689,6 +692,12 @@ export default function AboutAgarwoodClient({ data }: Props) {
                       </RevealOnScroll>
                     ))}
                   </div>
+                  {/* 효능 허브로 가는 링크 한 줄 — 어드민 저장 효능 문구 밖. 라벨은 홈 '더 알아보기' 줄과 같다. */}
+                  <p className={topic.inlineLinks}>
+                    <Link href="/agarwood-benefits">
+                      침향 효능 — 연구와 전통 문헌 <span aria-hidden="true">→</span>
+                    </Link>
+                  </p>
                 </div>
               </div>
             </div>
@@ -905,6 +914,16 @@ export default function AboutAgarwoodClient({ data }: Props) {
                     {auth.subtitle}
                   </p>
                 </RevealOnScroll>
+                {/* 구별법을 자세히 다룬 블로그 글 — 섹션 안에서 바로 이어 읽도록. */}
+                {authenticityPosts.length > 0 && (
+                  <p className={topic.inlineLinks}>
+                    {authenticityPosts.map((p) => (
+                      <Link key={p.slug} href={`/blog/${p.slug}`}>
+                        {p.title} <span aria-hidden="true">→</span>
+                      </Link>
+                    ))}
+                  </p>
+                )}
                 {tabHeroes.tab1 && (
                   <RevealOnScroll delay={130}>
                     <div

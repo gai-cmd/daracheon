@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/zoel/story-page.module.css';
 import { readDataSafe } from '@/lib/db';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
+import { productTopicLink } from '@/components/seo/product-topic-link';
 import { productGuides as defaultGuides, type ProductGuide } from '@/data/productGuides';
 import JsonLd from '@/components/ui/JsonLd';
 import { pageOpenGraph } from '@/lib/seo/og';
@@ -30,8 +32,21 @@ export const dynamic = 'force-dynamic';
 // 침향 이야기(/about-agarwood)와 동일한 story-page 레이아웃·타이포(Noto Serif KR)로 통일.
 // 콘텐츠는 어드민 편집(blob), 미설정 시 코드 기본값.
 export default async function GuidePage() {
-  const stored = await readDataSafe<ProductGuide>('product-guides');
+  const [stored, products] = await Promise.all([
+    readDataSafe<ProductGuide>('product-guides'),
+    readDataSafe<{ slug?: string; name?: string; shortDescription?: string; published?: boolean }>('products'),
+  ]);
   const productGuides = stored.length > 0 ? stored : defaultGuides;
+
+  // 관련 링크 — 이 페이지가 다루는 제품(공개 중인 것만)과 그 주제 허브.
+  const relatedLinks: TopicLink[] = [
+    ...productGuides.flatMap((g) => {
+      const link = productTopicLink(products, g.slug);
+      return link ? [link] : [];
+    }),
+    { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
+    { href: '/brand-story', label: '브랜드 스토리', desc: '20년 원칙과 생산 공정, 인증' },
+  ];
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -142,6 +157,8 @@ export default async function GuidePage() {
           </div>
         </section>
       ))}
+
+      <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={relatedLinks} />
 
       {/* 문의 CTA */}
       <section className={styles.chapter}>

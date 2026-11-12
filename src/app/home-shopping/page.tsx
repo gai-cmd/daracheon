@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
-import { readDataUncached, readSingleSafe } from '@/lib/db';
+import { readDataSafe, readDataUncached, readSingleSafe } from '@/lib/db';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
+import { productTopicLink } from '@/components/seo/product-topic-link';
+import { broadcastEventStatus, isBroadcastPast } from './event-status';
 import type { Broadcast } from '@/app/api/admin/broadcasts/route';
 import { autoSplitMixed, formatBroadcastDateTime, isInlineExpired, toWatchUrl } from '@/lib/broadcasts';
 import { resolveNsVideos } from '@/lib/ns-videos';
@@ -118,11 +121,15 @@ export const metadata: Metadata = {
 /** 방송 일정을 BroadcastEvent + ItemList 로 직렬화.
  *  AI 검색이 "오늘 침향 홈쇼핑 편성" 류 질의에 즉답 가능하게 한다. */
 function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
+  const now = new Date();
   const items = broadcasts.slice(0, 30).map((b, i) => {
     const start = b.scheduledAt;
     const end = new Date(
       new Date(b.scheduledAt).getTime() + (b.durationMinutes ?? 60) * 60_000
     ).toISOString();
+    // 지난 방송은 eventStatus 를 싣지 않는다(schema.org 에 EventCompleted 값이 없음). 지났는지는 종료 시각으로 판정.
+    const eventStatus = broadcastEventStatus(b.status, end, now);
+    const past = isBroadcastPast(end, now);
     return {
       '@type': 'ListItem',
       position: i + 1,
@@ -131,12 +138,7 @@ function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
         name: `${b.channel} — ${b.description ?? '침향 방송'}`,
         startDate: start,
         endDate: end,
-        eventStatus:
-          b.status === 'canceled'
-            ? 'https://schema.org/EventCancelled'
-            : b.status === 'ended'
-              ? 'https://schema.org/EventCompleted'
-              : 'https://schema.org/EventScheduled',
+        ...(eventStatus ? { eventStatus } : {}),
         eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
         publishedOn: { '@type': 'BroadcastService', name: b.channel },
         ...(b.host ? { actor: { '@type': 'Person', name: b.host } } : {}),
@@ -149,7 +151,7 @@ function buildBroadcastJsonLd(broadcasts: Broadcast[]) {
                 priceCurrency: 'KRW',
                 availability: b.soldOut
                   ? 'https://schema.org/SoldOut'
-                  : b.status === 'live' || b.status === 'scheduled'
+                  : !past && (b.status === 'live' || b.status === 'scheduled')
                     ? 'https://schema.org/InStock'
                     : 'https://schema.org/Discontinued',
                 url: `${SITE_URL}/home-shopping`,
@@ -535,6 +537,16 @@ export default async function HomeShoppingPage({
 
   const broadcastJsonLd = buildBroadcastJsonLd(all);
 
+  // 관련 링크 — 방송에서 소개하는 침향 오일 캡슐 제품(공개 중일 때만)과 침향 오일 허브.
+  const capsuleLink = productTopicLink(
+    await readDataSafe<{ slug?: string; name?: string; shortDescription?: string; published?: boolean }>('products'),
+    'daeracheon-cham-agarwood-oil-capsule',
+  );
+  const relatedLinks: TopicLink[] = [
+    ...(capsuleLink ? [capsuleLink] : []),
+    { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
+  ];
+
   return (
     <>
       {broadcastJsonLd.map((d, i) => (
@@ -915,6 +927,8 @@ export default async function HomeShoppingPage({
           </div>
         </section>
       )}
+
+      {relatedLinks.length > 0 && <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={relatedLinks} />}
     </>
   );
 }

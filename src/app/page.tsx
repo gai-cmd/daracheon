@@ -9,6 +9,7 @@ import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import { HOME_FAQ, faqPageNode } from '@/lib/seo/home-faq';
+import { productNameLinks } from '@/components/seo/product-topic-link';
 import type { MediaTabData } from '@/app/about-agarwood/page';
 import type { Announcement } from '@/app/api/admin/announcement/route';
 import {
@@ -205,6 +206,8 @@ export default async function HomePage() {
 
   // 어드민 제품 목록 순서를 그대로 따른다 — 앞의 5개가 대표 제품.
   const products = productsRaw.filter((p) => p.published !== false && isOwnAsset(p.image)).slice(0, 5);
+  // 대표 제품 타일은 5개만 흐르므로, 공개 제품 전체를 이름 링크로 한 줄 더 둔다(어드민 순서 그대로).
+  const allProductLinks = productNameLinks(productsRaw);
   // 기사 링크는 공지와 같은 검사(사이트 내부 경로·http(s))를 통과한 것만 싣는다.
   const press = (pagesData?.aboutAgarwood?.mediaTab?.items ?? [])
     .map((m) => ({ ...m, link: safeHref(m.link) }))
@@ -437,6 +440,17 @@ export default async function HomePage() {
             </div>
           )}
         </section>
+
+        {/* 전 제품 이름 링크 — 소식 그리드의 대표 제품 타일 아래. FAQ '더 알아보기' 줄과 같은 모양. */}
+        {allProductLinks.length > 0 && (
+          <nav className={styles.faqTopics} aria-label="대라천 침향 제품 전체">
+            {allProductLinks.map((p) => (
+              <Link key={p.href} href={p.href} className={styles.faqTopic}>
+                {p.label}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         {/* 4. 벤토 그리드 — 대라천을 알아가는 문들 */}
         {/* 소식 제목 아래에 딸려 읽히지 않도록 화면에는 보이지 않는 제목을 둔다 */}

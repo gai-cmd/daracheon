@@ -69,7 +69,7 @@ export const AGARWOOD_HWAN: TopicHubContent = {
     alternateName: ['침향단', '沈香丹', '침향 환', 'Agarwood pill'],
   },
   datePublished: '2026-10-24',
-  dateModified: '2026-10-24',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'what',
@@ -277,5 +277,6 @@ export const AGARWOOD_HWAN: TopicHubContent = {
     { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌으로 보는 침향' },
     { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
+    { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
   ],
 };

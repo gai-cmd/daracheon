@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   // 브랜드 접미사는 루트 layout 의 title.template 이 붙인다.
   title: '침향이란? 효능·학명·산지 총정리',
   description:
-    '식약처 고시 학명 침향(沈香, Aquilaria agallocha Roxburgh)의 정의·형성 과정·효능·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
+    '식약처 고시 학명 침향(沈香, Aquilaria agallocha Roxburgh)의 정의·형성 과정·효능·진품 구별·문헌·논문·매체 보도를 한 페이지에 정리. 수십 년 숙성이 만든 세계 3대 향의 모든 것.',
   keywords: [
     // 토픽
     '침향', '沈香', 'Agarwood', 'Aquilaria agallocha Roxburgh', '아퀼라리아 아갈로차 록스버그',
@@ -75,12 +75,14 @@ const articleJsonLdBase = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   '@id': `${SITE_URL}/about-agarwood#article`,
-  headline: '침향이란? 침향의 정의 효능 등급 역사 완벽 가이드',
+  // headline 은 <title>(브랜드 접미사 제외)과 같은 문구.
+  headline: '침향이란? 효능·학명·산지 총정리',
   description: '식약처 고시 공식 등록 침향의 정의, 효능, 문헌, 논문을 완벽 가이드합니다.',
   inLanguage: 'ko-KR',
   isPartOf: { '@id': `${SITE_URL}/#website` },
   mainEntityOfPage: `${SITE_URL}/about-agarwood`,
-  about: { '@id': `${SITE_URL}/#brand` },
+  // 페이지 주제는 브랜드가 아니라 '침향' — 주제 허브(TopicHub)와 같은 Thing 형태.
+  about: { '@type': 'Thing', name: '침향', alternateName: ['沈香', 'Agarwood', 'Aquilaria agallocha Roxburgh'] },
   author: { '@id': `${SITE_URL}/#organization` },
   publisher: { '@id': `${SITE_URL}/#organization` },
   datePublished: '2026-01-07',
@@ -154,6 +156,9 @@ const FURTHER_READING_SLUGS = [
   'why-is-agarwood-so-expensive',
   'agarwood-and-sasang-constitution',
 ] as const;
+
+// '진짜 침향 구별' 섹션 안에 다시 보여 줄 구별법 글(위 FURTHER_READING_SLUGS 의 부분집합).
+const AUTHENTICITY_POST_SLUGS: readonly string[] = ['real-agarwood-3-criteria', 'how-to-avoid-fake-agarwood'];
 
 export interface FormationStep { step: string; title: string; description: string; image?: string }
 export interface SpecialReason { title: string; description: string; image?: string }
@@ -398,7 +403,11 @@ export default async function AboutAgarwoodPage() {
       <JsonLd data={breadcrumbJsonLd} />
       {scholarlyJsonLd && <JsonLd data={scholarlyJsonLd} />}
       {pressJsonLd && <JsonLd data={pressJsonLd} />}
-      <AboutAgarwoodClient data={data} />
+      <AboutAgarwoodClient
+        data={data}
+        // '진짜 침향 구별' 섹션 안의 구별법 글 링크 — 제목은 저장소의 실제 제목, 발행 글만.
+        authenticityPosts={furtherReading.filter((p) => AUTHENTICITY_POST_SLUGS.includes(p.slug))}
+      />
       <FaqSection title="침향 자주 묻는 질문" entries={ABOUT_FAQ} />
       <TopicLinks title="침향, 더 깊이 알아보기" links={TOPIC_LINKS} />
       <FurtherReading posts={furtherReading} />

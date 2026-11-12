@@ -30,7 +30,7 @@ export const AGARWOOD_OIL: TopicHubContent = {
     alternateName: ['침향오일', '침향 에센셜 오일', 'Agarwood oil', 'Oud oil'],
   },
   datePublished: '2026-10-03',
-  dateModified: '2026-10-03',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'what',
@@ -175,6 +175,8 @@ export const AGARWOOD_OIL: TopicHubContent = {
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
     { href: '/brand-story', label: '브랜드 스토리', desc: '20년 원칙과 생산 공정, 인증' },
     { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
+    { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+    { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
     { href: '/reviews', label: '침향 오일 후기', desc: '실제 구매 고객의 사용 후기' },
   ],
 };

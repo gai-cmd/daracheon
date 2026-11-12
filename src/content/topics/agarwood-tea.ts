@@ -66,13 +66,13 @@ export const AGARWOOD_TEA: TopicHubContent = {
   },
   headline: '침향차 우리는 법·고르는 법',
   description:
-    '대라천 침향차 종류(침향 파라미냐차·침향차·수 세트·침향스틱), 제품별 물 양과 3탕까지 우리는 법, 중량·구성·소비기한 비교, 보관법과 주의사항.',
+    '대라천 침향차 종류(침향 파라미냐차·침향차·수 세트·침향스틱), 제품별 물 양과 3탕까지 우리는 법(끓이는 법), 중량·구성·소비기한 비교, 보관법과 주의사항.',
   about: {
     name: '침향차',
     alternateName: ['沈香茶', '침향 차', 'Agarwood tea'],
   },
   datePublished: '2026-10-24',
-  dateModified: '2026-10-24',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'what',
@@ -285,5 +285,6 @@ export const AGARWOOD_TEA: TopicHubContent = {
     { href: '/products/agarwood-stick-100g', label: '침향스틱 100g', desc: '25년산 침향 원목 — 취향·차 겸용' },
     { href: '/agarwood-benefits#caution', label: '침향 섭취 주의사항', desc: '섭취하지 않아야 하는 경우와 지켜야 할 점' },
     { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+    { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
   ],
 };

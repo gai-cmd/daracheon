@@ -28,7 +28,7 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     alternateName: ['베트남산 침향', 'Vietnamese agarwood', 'Trầm hương Việt Nam'],
   },
   datePublished: '2026-10-03',
-  dateModified: '2026-10-03',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'why',
@@ -172,6 +172,8 @@ export const VIETNAM_AGARWOOD: TopicHubContent = {
     { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
     { href: '/agarwood-benefits', label: '침향 효능', desc: '전통 문헌과 현대 연구로 나눠 본 침향' },
+    { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+    { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
     { href: '/media', label: '베트남 침향 농장', desc: '5개 직영 농장의 사진과 영상' },
     { href: '/showroom', label: '대라천 쇼룸', desc: '베트남 동나이 직영 침향 전시장' },
   ],

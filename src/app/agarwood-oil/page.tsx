@@ -5,6 +5,12 @@ import TopicHub from '@/components/seo/TopicHub';
 import { AGARWOOD_OIL } from '@/content/topics/agarwood-oil';
 import { pageOpenGraph } from '@/lib/seo/og';
 import { SITE_URL } from '@/lib/seo/image';
+import { readFurtherReading } from '@/lib/blog/further-reading';
+import {
+  applyNeutralLabels,
+  OIL_FURTHER_READING_LABELS,
+  OIL_FURTHER_READING_SLUGS,
+} from '@/content/topics/further-reading';
 
 // '침향 오일' 검색어 허브. 제품 공개/비공개 토글이 바로 반영되도록 동적 렌더.
 export const dynamic = 'force-dynamic';
@@ -26,9 +32,14 @@ export const metadata: Metadata = {
 };
 
 export default async function AgarwoodOilPage() {
-  const products = await readDataSafe<Product>('products');
+  // 하단 '더 읽어보기' — 제품을 함께 싣는 페이지라 연구 소개 글은 원제목 대신 중립 라벨로 보여 준다.
+  const [products, posts] = await Promise.all([
+    readDataSafe<Product>('products'),
+    readFurtherReading('agarwood-oil-further-reading', OIL_FURTHER_READING_SLUGS),
+  ]);
+  const furtherReading = applyNeutralLabels(posts, OIL_FURTHER_READING_LABELS);
   const oils = products
     .filter((p) => p.published !== false && p.slug && p.category === '오일')
     .map((p) => ({ slug: p.slug, name: p.name, image: p.image, shortDescription: p.shortDescription, category: p.categoryEn ?? p.category }));
-  return <TopicHub content={AGARWOOD_OIL} products={oils} />;
+  return <TopicHub content={AGARWOOD_OIL} products={oils} furtherReading={furtherReading} />;
 }

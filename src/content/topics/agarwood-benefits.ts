@@ -72,13 +72,13 @@ export const AGARWOOD_BENEFITS: TopicHubContent = {
   },
   headline: '침향 효능 총정리 — 과학 연구와 전통 문헌으로 본 침향의 효과',
   description:
-    '동의보감·본초강목 등 전통 문헌에 실린 침향 기록과, 세포·동물 실험 중심의 현대 연구를 실험 대상(세포·동물·사람)별로 나눠 정리. 섭취 시 주의사항과 자주 묻는 질문.',
+    '동의보감·본초강목 등 전통 문헌에 실린 침향 기록과, 세포·동물 실험 중심의 현대 연구를 실험 대상(세포·동물·사람)별로 나눠 정리. 부작용·주의사항과 자주 묻는 질문.',
   about: {
     name: '침향',
     alternateName: ['침향 효능', '沈香', 'Agarwood', 'Aquilaria agallocha Roxburgh'],
   },
   datePublished: '2026-10-24',
-  dateModified: '2026-10-24',
+  dateModified: '2026-11-12',
   sections: [
     {
       id: 'what',
@@ -251,5 +251,7 @@ export const AGARWOOD_BENEFITS: TopicHubContent = {
     { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
     { href: '/agarwood-oil', label: '침향 오일', desc: '72시간 증류로 만드는 침향 오일, 고르는 법과 사용법' },
     { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+    { href: '/agarwood-hwan', label: '침향환·침향단', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+    { href: '/agarwood-tea', label: '침향차', desc: '침향차 우리는 법과 고르는 법' },
   ],
 };

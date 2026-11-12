@@ -3,6 +3,7 @@ import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
 import { toOwnedThumbnailUrl, toUploadDateTime } from '@/lib/seo/video';
 import BrandStoryClient from './BrandStoryClient';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
 import type { ShowroomData } from '@/app/showroom/page';
 
 export const dynamic = 'force-dynamic';
@@ -56,6 +57,13 @@ export const metadata: Metadata = {
     images: ['https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/pages/brand/brand-story-hero.jpg'],
   },
 };
+
+// 하단 관련 링크 — 라벨·설명은 /about-agarwood 의 같은 카드 문구.
+const RELATED_LINKS: TopicLink[] = [
+  { href: '/vietnam-agarwood', label: '베트남 침향', desc: '천 년의 문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+  { href: '/about-agarwood', label: '침향이란?', desc: '학명·형성 과정·문헌·논문으로 보는 침향' },
+  { href: '/products', label: '침향 제품', desc: '침향 오일·침향단·침향수·침향차 라인업' },
+];
 
 export interface Farm { name: string; nameVi: string; desc: string; image?: string }
 export interface HistoryEra { era: string; items: string[]; description?: string; image?: string; imageCaption?: string }
@@ -265,6 +273,12 @@ export default async function BrandStoryPage() {
       {videoJsonLd && <JsonLd data={videoJsonLd} />}
       <JsonLd data={breadcrumbJsonLd} />
       <BrandStoryClient data={data} showroom={showroom} />
+      {/* 전역 CSS 가 main > section:first-of-type, main > div > section:first-of-type 에 물결 장식을 붙이므로 두 겹 감싼다 */}
+      <div>
+        <div>
+          <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={RELATED_LINKS} />
+        </div>
+      </div>
     </>
   );
 }

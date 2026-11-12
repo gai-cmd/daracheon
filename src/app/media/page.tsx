@@ -4,6 +4,7 @@ import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import { buildVideoObjects, type VideoCandidate } from '@/lib/seo/video';
 import MediaPageClient, { type FarmStoryData, type SceneSection } from './MediaPageClient';
+import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
 import type { MediaItem } from './MediaGallery';
 import type { FieldPost } from './FieldJournal';
 import { SUBMISSIONS_FILE, type MediaSubmission } from '@/lib/media-submissions';
@@ -50,6 +51,12 @@ export const metadata: Metadata = {
  *  인용 가능하도록 ImageGallery + ItemList(VideoObject) + BreadcrumbList 구성.
  *  VideoObject 는 Blob/YouTube 영상 + Blob·/public 썸네일 + 실제 저장 날짜를 모두 갖춘
  *  영상만 넣는다 (buildVideoObjects). 해당 영상이 없으면 ItemList 자체를 생략. */
+// 하단 관련 링크 — 라벨·설명은 허브 페이지들이 이미 쓰는 카드 문구.
+const RELATED_LINKS: TopicLink[] = [
+  { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
+  { href: '/brand-story', label: '브랜드 스토리', desc: '20년 원칙과 생산 공정, 인증' },
+];
+
 function buildMediaJsonLd(media: MediaItem[], videoCandidates: VideoCandidate[]) {
   const photos = media.filter((m) => m.type === 'photo');
   const videoObjects = buildVideoObjects(videoCandidates, SITE_URL);
@@ -467,6 +474,7 @@ export default async function MediaPage() {
         <JsonLd key={i} data={d} />
       ))}
       <MediaPageClient farmStory={farmStory} gallery={gallery} farms={farms} fieldPosts={fieldPosts} />
+      <TopicLinks title="함께 읽으면 좋은 침향 이야기" links={RELATED_LINKS} />
     </>
   );
 }
