@@ -1,11 +1,40 @@
 import type { MetadataRoute } from 'next';
-import { readDataSafe } from '@/lib/db';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
-import { blogSitemapDates, recordEditDate } from '@/lib/blog/sitemap-dates';
+import { readDataSafe, readSingleSafe } from '@/lib/db';
+import { isNeonEnabled, readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import {
+  blogSitemapDates,
+  isBlogReadSuspect,
+  recordEditDate,
+  validDateString,
+} from '@/lib/blog/sitemap-dates';
 import type { Product } from '@/data/products';
 import { canonicalProductSlug } from '@/lib/product-slugs';
 import type { MediaItem } from '@/app/media/MediaGallery';
 import { collectSitemapImages, extractBodyBlobImages } from '@/lib/seo/sitemap-images';
+import { collectRecordImages, pageUpdatedAt } from '@/lib/seo/sitemap-pages';
+import { AGARWOOD_BENEFITS } from '@/content/topics/agarwood-benefits';
+import { AGARWOOD_HWAN } from '@/content/topics/agarwood-hwan';
+import { AGARWOOD_OIL } from '@/content/topics/agarwood-oil';
+import { AGARWOOD_TEA } from '@/content/topics/agarwood-tea';
+import { VIETNAM_AGARWOOD } from '@/content/topics/vietnam-agarwood';
+
+// 코드로 정의한 주제 허브 — 콘텐츠 파일의 dateModified(JSON-LD 와 같은 값)와 대표 이미지를 sitemap 에 싣는다.
+// 날짜는 허브 내용을 고치는 커밋에서 콘텐츠 파일 쪽을 올린다(여기서 따로 적지 않는다).
+const TOPIC_HUBS = [
+  { path: '/vietnam-agarwood', hub: VIETNAM_AGARWOOD },
+  { path: '/agarwood-oil', hub: AGARWOOD_OIL },
+  { path: '/agarwood-benefits', hub: AGARWOOD_BENEFITS },
+  { path: '/agarwood-hwan', hub: AGARWOOD_HWAN },
+  { path: '/agarwood-tea', hub: AGARWOOD_TEA },
+];
+
+// 어드민에서 편집하는 페이지 — pages 레코드의 키. dateKeys 는 그 페이지가 함께 보여 주는 데이터까지
+// (/brand-story 는 쇼룸 챕터도 싣는다), imageKey 는 이미지를 모을 자기 데이터.
+const EDITED_PAGES = [
+  { path: '/about-agarwood', imageKey: 'aboutAgarwood', dateKeys: ['aboutAgarwood'] },
+  { path: '/brand-story', imageKey: 'brandStory', dateKeys: ['brandStory', 'showroom'] },
+  { path: '/showroom', imageKey: 'showroom', dateKeys: ['showroom'] },
+];
 
 // 신규 블로그·제품(blob 즉시 반영)이 다음 배포 없이도 sitemap 에 반영되도록
 // 최대 1시간 주기로 재생성. 발행 핸들러의 revalidatePath('/sitemap.xml') 와 병행.
@@ -23,7 +52,8 @@ function getBaseUrl(): string {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
-  // lastmod 는 실제 수정 시각을 아는 URL(블로그 글·카테고리·목록, 편집 이력(_mt)이 있는 제품)에만
+  // lastmod 는 실제 수정 시각을 아는 URL(블로그 글·카테고리·목록, 편집 이력(_mt)이 있는 제품,
+  // 콘텐츠 파일에 dateModified 가 있는 주제 허브, 어드민 저장 시각이 기록된 편집 페이지)에만
   // 넣는다. 정적 페이지 등에 요청 시각을 넣으면 매 크롤마다 '방금 바뀜'이 되어 검색엔진이 사이트 전체 lastmod 를 불신한다.
 
   // 모든 URL 에 단일 ko-KR + x-default hreflang 신호를 부여 — Google 이
@@ -58,6 +88,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/image-license`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/image-license`) },
   ];
 
+  const routeFor = (path: string) => staticRoutes.find((r) => r.url === `${baseUrl}${path}`);
+
+  // 주제 허브 5개 — dateModified → lastmod, 대표 이미지 → 이미지 항목 (Blob·/public 원본만).
+  for (const { path, hub } of TOPIC_HUBS) {
+    const route = routeFor(path);
+    if (!route) continue;
+    const lastModified = validDateString(hub.dateModified);
+    if (lastModified) route.lastModified = lastModified;
+    const images = collectSitemapImages([hub.heroImage?.src], baseUrl);
+    if (images.length) route.images = images;
+  }
+
+  try {
+    // 어드민 편집 페이지 — 저장 시각이 기록돼 있을 때만 lastmod, 저장된 페이지 데이터의 이미지를 이미지 항목으로.
+    const pages = await readSingleSafe<Record<string, unknown>>('pages');
+    for (const { path, imageKey, dateKeys } of EDITED_PAGES) {
+      const route = routeFor(path);
+      if (!route || !pages) continue;
+      const lastModified = pageUpdatedAt(pages, ...dateKeys);
+      if (lastModified) route.lastModified = lastModified;
+      const images = collectSitemapImages(collectRecordImages(pages[imageKey]), baseUrl);
+      if (images.length) route.images = images;
+    }
+  } catch {
+    /* 페이지 데이터 로드 실패 시 lastmod·이미지 없이 */
+  }
+
   let productDetailRoutes: MetadataRoute.Sitemap = [];
   try {
     const products = await readDataSafe<Product>('products');
@@ -84,11 +141,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   let blogRoutes: MetadataRoute.Sitemap = [];
+  const [posts, categories] = await Promise.all([
+    readPostsSafe(),
+    readCategoriesSafe(),
+  ]);
+  // 블로그 DB 가 켜져 있는데 발행 글이 0편이면 읽기 실패다(readPostsSafe 는 실패를 [] 로 삼킨다).
+  // 여기서 던져야 재생성(ISR)이 실패로 끝나 직전의 온전한 sitemap 이 계속 나간다 — 블로그 URL 이 전부
+  // 빠진 사본을 캐시하지 않는다. (빌드 시점에 DB 가 죽어 있으면 빌드가 실패한다 — 잘린 sitemap 배포보다 낫다.)
+  if (isBlogReadSuspect(isNeonEnabled(), posts.filter((p) => p.status === 'published').length)) {
+    throw new Error('[sitemap] blog read returned no published posts — keeping the last good sitemap');
+  }
   try {
-    const [posts, categories] = await Promise.all([
-      readPostsSafe(),
-      readCategoriesSafe(),
-    ]);
     // 잘못된/빈 updatedAt 은 helper 가 publishedAt 또는 '날짜 없음'으로 처리 — Invalid Date 가
     // toISOString RangeError 로 catch 에 흘러 블로그 전량이 sitemap 에서 사라지던 경로도 막는다.
     const dates = blogSitemapDates(posts, categories);

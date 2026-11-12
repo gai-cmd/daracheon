@@ -5,7 +5,7 @@ import { logAdmin } from '@/lib/audit';
 import { snapshotBeforeDestructive } from '@/lib/backup';
 import type { Product, ProductVariant } from '@/data/products';
 import { canonicalProductSlug } from '@/lib/product-slugs';
-import { notifyIndexNow } from '@/lib/seo/indexnow';
+import { notifyIndexNow, productChangePaths } from '@/lib/seo/indexnow';
 
 function revalidateProducts() {
   revalidatePath('/products', 'layout');
@@ -13,11 +13,17 @@ function revalidateProducts() {
   revalidatePath('/', 'layout');
 }
 
-// 공개(published !== false) 제품만 IndexNow 에 알린다 — sitemap 과 같은 기준·같은 정식 slug.
-function notifyProductIndexNow(product: Product) {
-  if (!product.slug || product.published === false) return;
-  const slug = canonicalProductSlug(product.slug);
-  after(() => notifyIndexNow([`/products/${slug}`, '/products']));
+// 공개(published !== false) 제품의 정식 slug — sitemap 과 같은 기준. 비공개·slug 없음은 null.
+function publicProductSlug(product: Product | null | undefined): string | null {
+  if (!product || !product.slug || product.published === false) return null;
+  return canonicalProductSlug(product.slug);
+}
+
+// 공개 제품만 IndexNow 에 알린다. 저장 전(prev)에 공개였던 제품이 비공개·삭제되거나 slug 가 바뀌면
+// 옛 주소도 함께 보낸다 (next = null 은 삭제).
+function notifyProductIndexNow(next: Product | null, prev?: Product) {
+  const paths = productChangePaths(publicProductSlug(prev), publicProductSlug(next));
+  if (paths.length > 0) after(() => notifyIndexNow(paths));
 }
 
 // 가격(숫자) 으로부터 표시용 문자열을 산출. price > 0 이면 항상 재산출하여
@@ -188,6 +194,7 @@ export async function PUT(request: Request) {
       );
     }
 
+    const before = products[index];
     const normalizedVariants = validateAndNormalizeVariants(body.variants);
     // price 가 변경되면 priceDisplay 도 항상 재산출. 어드민 UI 가
     // priceDisplay 를 갱신하지 않은 채 price 만 바꿔 저장해도
@@ -217,7 +224,7 @@ export async function PUT(request: Request) {
     products[index] = merged;
     await writeDataMerged('products', products);
     revalidateProducts();
-    notifyProductIndexNow(merged);
+    notifyProductIndexNow(merged, before);
 
     await logAdmin('products', 'update', {
       targetId: body.id,
@@ -264,6 +271,7 @@ export async function DELETE(request: Request) {
     // 삭제 id 는 removedIds 로 명시 — merge 가 부활시키지 않도록.
     await writeDataMerged('products', products, { removedIds: [body.id] });
     revalidateProducts();
+    notifyProductIndexNow(null, removed);
 
     await logAdmin('products', 'delete', {
       targetId: body.id,

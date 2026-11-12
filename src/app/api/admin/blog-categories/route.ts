@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import {
+  BLOG_LATEST_TAG,
   readPosts,
   readPostsForWrite,
   readCategories,
@@ -18,6 +19,8 @@ export const dynamic = 'force-dynamic';
 function revalidateBlogPaths() {
   revalidatePath('/blog', 'layout');
   revalidatePath('/blog/category/[id]', 'layout');
+  // 공개 블로그 경로의 카테고리·글 목록 캐시(5분)도 즉시 비운다.
+  revalidateTag(BLOG_LATEST_TAG);
 }
 
 export async function GET() {

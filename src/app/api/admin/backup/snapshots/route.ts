@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import {
   createSnapshot,
   listSnapshots,
@@ -16,6 +17,8 @@ import {
 } from '@/lib/backup';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { logAdmin } from '@/lib/audit';
+import { BLOG_LATEST_TAG } from '@/lib/blog/store';
+import { restoreTouchedBlog } from '@/lib/blog/restore-cache';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -30,6 +33,15 @@ async function requireSuperAdmin(request: NextRequest) {
     return { session: null, error: NextResponse.json({ success: false, message: '권한이 없습니다. (super_admin 전용)' }, { status: 403 }) };
   }
   return { session, error: null };
+}
+
+/** 복원이 블로그 글·카테고리를 바꿨으면 공개 블로그 캐시(태그, 5분)를 바로 비운다.
+ *  복원은 글 저장 라우트를 거치지 않으므로, 여기서 비우지 않으면 내린 글이 계속 보이고
+ *  되살린 글이 캐시된 404 로 남는다. */
+function revalidateBlogAfterRestore(restored: string[]) {
+  if (!restoreTouchedBlog(restored)) return;
+  revalidateTag(BLOG_LATEST_TAG);
+  revalidatePath('/blog', 'layout');
 }
 
 /** GET ?id=<snapshot-id>                 : Tier 1 (Blob) 스냅샷 다운로드
@@ -149,6 +161,7 @@ export async function PUT(request: NextRequest) {
 
     if (typeof body.id === 'string' && body.id) {
       const result = await restoreSnapshot(body.id, opts);
+      revalidateBlogAfterRestore(result.restored);
       await logAdmin('settings', 'update', {
         summary: `스냅샷 복원 (Tier1 Blob): ${body.id} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'tier1_blob', id: body.id, ...result, actor: gate.session!.email },
@@ -165,6 +178,7 @@ export async function PUT(request: NextRequest) {
         );
       }
       const result = await restoreFromPayload(payload, { ...opts, sourceNote: `github:${body.path}` });
+      revalidateBlogAfterRestore(result.restored);
       await logAdmin('settings', 'update', {
         summary: `스냅샷 복원 (Tier2 GitHub): ${body.path} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'tier2_github', path: body.path, ...result, actor: gate.session!.email },
@@ -181,6 +195,7 @@ export async function PUT(request: NextRequest) {
         );
       }
       const result = await restoreFromPayload(payload, { ...opts, sourceNote: 'upload' });
+      revalidateBlogAfterRestore(result.restored);
       await logAdmin('settings', 'update', {
         summary: `스냅샷 복원 (업로드): ${payload.label} ${payload.createdAt} (${result.restored.length}개 테이블, 누락 ${result.missingInBackup.length}개)`,
         meta: { source: 'upload', ...result, actor: gate.session!.email },

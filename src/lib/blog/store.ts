@@ -94,14 +94,25 @@ interface CategoryRow {
 
 const iso = (d: Date | null | undefined) => (d ? d.toISOString() : undefined);
 
+/** 목록·사이드바용 글 — 본문(content·contentJson)을 뺀 나머지 필드. */
+export type BlogPostListItem = Omit<BlogPost, 'content' | 'contentJson'>;
+
+type PostListRow = Omit<PostRow, 'content' | 'content_json'>;
+
 function rowToPost(r: PostRow): BlogPost {
+  return {
+    ...rowToListItem(r),
+    content: r.content,
+    contentJson: r.content_json ?? undefined,
+  };
+}
+
+function rowToListItem(r: PostListRow): BlogPostListItem {
   return {
     id: r.id,
     slug: r.slug,
     title: r.title,
     excerpt: r.excerpt,
-    content: r.content,
-    contentJson: r.content_json ?? undefined,
     coverImage: r.cover_image ?? undefined,
     categoryId: r.category_id,
     tags: r.tags ?? [],
@@ -286,6 +297,102 @@ export async function readLatestPublishedPostsSafe(limit = 3, timeoutMs = 2000):
     return [];
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/* ──────────────────── 공개 블로그 경로용 캐시 읽기 ────────────────────
+ * 글·목록·카테고리 페이지가 요청마다 blog_posts 전체(본문 포함)를 읽지 않도록
+ * (1) 본문을 뺀 발행 글 목록, (2) 슬러그로 찾는 발행 글 한 건, (3) 카테고리 목록을
+ * 따로 읽어 캐시한다. 태그는 어드민 글·카테고리 저장이 비우는 BLOG_LATEST_TAG 를 같이 쓰고,
+ * 어드민을 거치지 않은 DB 쓰기도 반영되도록 TTL 을 유한하게 둔다.
+ * 캐시 함수 안의 읽기는 실패 시 던진다 — 던진 결과는 캐시되지 않으므로 빈 목록이 굳지 않는다.
+ * 전체 테이블을 한 항목으로 캐시하지 않는다(데이터 캐시 항목 2MB 제한).
+ */
+const BLOG_PUBLIC_TTL = 300;
+
+/** 발행 글 목록(본문 제외, 최신순). 캐시 없음, 실패 시 던진다. */
+export async function readPublishedPostList(): Promise<BlogPostListItem[]> {
+  if (!isNeonEnabled()) {
+    const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
+    return posts
+      .filter((p) => p.status === 'published')
+      .sort((a, b) => (b.publishedAt ?? b.createdAt ?? '').localeCompare(a.publishedAt ?? a.createdAt ?? ''))
+      .map((p) => {
+        const rest: Partial<BlogPost> = { ...p };
+        delete rest.content;
+        delete rest.contentJson;
+        return rest as BlogPostListItem;
+      });
+  }
+  const rows = await sql()<PostListRow[]>`
+    SELECT id, slug, title, excerpt, cover_image, category_id, tags, author, status,
+           published_at, created_at, updated_at, reading_time, seo, reviewed, view_count
+    FROM blog_posts
+    WHERE status = 'published'
+    ORDER BY COALESCE(published_at, created_at) DESC
+  `;
+  return rows.map(rowToListItem);
+}
+
+/** 슬러그로 찾는 발행 글 한 건(본문 포함, 에디터용 content_json 제외). 캐시 없음, 실패 시 던진다. */
+async function readPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!isNeonEnabled()) {
+    const posts = await readDataSafe<BlogPost>(BLOG_POSTS_FILE);
+    return posts.find((p) => p.slug === slug && p.status === 'published') ?? null;
+  }
+  const rows = await sql()<Omit<PostRow, 'content_json'>[]>`
+    SELECT id, slug, title, excerpt, content, cover_image, category_id, tags, author, status,
+           published_at, created_at, updated_at, reading_time, seo, reviewed, view_count
+    FROM blog_posts
+    WHERE slug = ${slug} AND status = 'published'
+    LIMIT 1
+  `;
+  return rows[0] ? rowToPost({ ...rows[0], content_json: null }) : null;
+}
+
+const readPublishedPostListCached = unstable_cache(
+  () => readPublishedPostList(),
+  ['blog-published-list'],
+  { revalidate: BLOG_PUBLIC_TTL, tags: [BLOG_LATEST_TAG] },
+);
+
+const readPublishedPostBySlugCached = unstable_cache(
+  (slug: string) => readPublishedPostBySlug(slug),
+  ['blog-published-post'],
+  { revalidate: BLOG_PUBLIC_TTL, tags: [BLOG_LATEST_TAG] },
+);
+
+const readCategoriesCached = unstable_cache(
+  () => readCategories(),
+  ['blog-categories'],
+  { revalidate: BLOG_PUBLIC_TTL, tags: [BLOG_LATEST_TAG] },
+);
+
+/**
+ * 공개 글 페이지용 — 발행 글 한 건. 없는 슬러그는 null, 읽기 실패는 던진다.
+ * (실패를 null 로 삼키면 살아 있는 글이 404 로 나가 검색엔진이 '삭제됨'으로 읽는다.)
+ */
+export async function readPublishedPost(slug: string): Promise<BlogPost | null> {
+  return readPublishedPostBySlugCached(slug);
+}
+
+/** 공개 목록·사이드바용 — 발행 글 목록(본문 제외). 실패하면 [] (던지지 않는다). */
+export async function readPublishedPostListSafe(): Promise<BlogPostListItem[]> {
+  try {
+    return await readPublishedPostListCached();
+  } catch (err) {
+    console.error('[blog:store] published list read failed on public path', err);
+    return [];
+  }
+}
+
+/** 공개 페이지용 카테고리 목록(캐시). 실패하면 [] (던지지 않는다). */
+export async function readCategoriesCachedSafe(): Promise<BlogCategory[]> {
+  try {
+    return await readCategoriesCached();
+  } catch (err) {
+    console.error('[blog:store] categories read failed on public path', err);
+    return [];
   }
 }
 

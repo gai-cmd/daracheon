@@ -3,20 +3,23 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { readPublishedPostListSafe, readCategoriesCachedSafe } from '@/lib/blog/store';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import { categoryMetaDescription, categoryOgImage } from '@/lib/blog/post-seo';
 import BlogCard from '../../BlogCard';
 import BlogPagination, { parseBlogPage } from '../../BlogPagination';
 
 const SITE_URL = 'https://zoellife.com';
-const POSTS_PER_PAGE = 12;
+// /blog(12편)보다 크게 잡아 지금의 모든 카테고리가 한 페이지에 끝나게 한다 —
+// 2페이지 목록(?page=2, sitemap 에 없음)으로만 닿던 글이 없어진다.
+const POSTS_PER_PAGE = 24;
 
 export const dynamic = 'force-dynamic';
 
 // generateMetadata 와 페이지가 같은 요청에서 글·카테고리를 한 번만 읽도록 요청 단위로 묶는다.
-const getPosts = cache(readPostsSafe);
-const getCategories = cache(readCategoriesSafe);
+// 둘 다 캐시된 공개용 읽기 — 글은 본문 없는 발행 글 목록이다.
+const getPosts = cache(() => readPublishedPostListSafe());
+const getCategories = cache(() => readCategoriesCachedSafe());
 
 export async function generateMetadata({
   params,
@@ -34,7 +37,7 @@ export async function generateMetadata({
   }
   // 발행 글이 0편인 카테고리는 '글이 없습니다' 안내뿐인 얇은 페이지 — 색인하지 않는다.
   // 링크는 따라가도록 follow 유지. sitemap 에서도 빠진다 (lib/blog/sitemap-dates).
-  // 글 읽기가 실패하면 readPostsSafe 가 [] 를 돌려주므로, 글을 읽었을 때만 판정한다 —
+  // 글 읽기가 실패하면 목록 읽기가 [] 를 돌려주므로, 글을 읽었을 때만 판정한다 —
   // 일시 장애로 모든 카테고리에 noindex 가 붙는 것을 막는다.
   const isEmpty =
     posts.length > 0 && !posts.some((p) => p.status === 'published' && p.categoryId === id);
@@ -88,13 +91,13 @@ export default async function BlogCategoryPage({
       (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt)
     );
 
-  // /blog 목록과 동일한 12편/페이지 숫자 페이지네이션.
+  // /blog 목록과 같은 숫자 페이지네이션(카테고리는 24편/페이지).
   const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE));
   if (page > totalPages) notFound();
   const pagePosts = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다(현재 카테고리는 활성 표시를 위해 유지).
-  // 글 읽기 실패(readPostsSafe → [])면 숨기지 않는다 — 일시 장애 시 목록 소실 방지.
+  // 글 읽기 실패(목록 읽기 → [])면 숨기지 않는다 — 일시 장애 시 목록 소실 방지.
   const usedCategoryIds = new Set(
     posts.filter((p) => p.status === 'published').map((p) => p.categoryId)
   );
@@ -118,8 +121,36 @@ export default async function BlogCategoryPage({
     ],
   };
 
+  // CollectionPage + ItemList — /products 와 같은 "요약 페이지 + 상세 페이지" 구조.
+  // 화면에 실제로 나열한 글만(이 페이지의 pagePosts) url·이름으로 싣고, 글 본문 마크업은 상세 페이지에만 둔다.
+  const pageUrl =
+    page > 1
+      ? `${SITE_URL}/blog/category/${category.id}?page=${page}`
+      : `${SITE_URL}/blog/category/${category.id}`;
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${pageUrl}#page`,
+    name: category.name,
+    url: pageUrl,
+    ...(category.description ? { description: category.description } : {}),
+    inLanguage: 'ko-KR',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: filtered.length,
+      itemListElement: pagePosts.map((p, i) => ({
+        '@type': 'ListItem',
+        position: (page - 1) * POSTS_PER_PAGE + i + 1,
+        name: p.title,
+        url: `${SITE_URL}/blog/${p.slug}`,
+      })),
+    },
+  };
+
   return (
     <>
+      {pagePosts.length > 0 && <JsonLd data={collection} />}
       <JsonLd data={breadcrumb} />
       <main className="min-h-screen bg-luxury-black text-luxury-cream">
         <section className="border-b border-luxury-bronze/20 px-7 py-16 lg:px-16 md:py-20">

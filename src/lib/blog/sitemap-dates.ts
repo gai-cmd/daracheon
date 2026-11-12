@@ -17,6 +17,23 @@ export function recordEditDate(r: unknown): Date | undefined {
   return typeof v === 'number' && Number.isFinite(v) && v > 0 ? new Date(v) : undefined;
 }
 
+/**
+ * 코드에 적어 둔 날짜 문자열(예: 허브 콘텐츠 파일의 dateModified '2026-10-24')을 sitemap lastmod 로 쓸 때 —
+ * 유효하면 적힌 그대로(W3C 날짜 형식), 비었거나 깨졌으면 undefined.
+ */
+export function validDateString(s: string | undefined): string | undefined {
+  return toValidDate(s) ? s : undefined;
+}
+
+/**
+ * 블로그 DB(Neon)가 켜져 있는데 발행 글이 한 편도 읽히지 않으면 읽기 실패로 본다.
+ * 공개용 읽기는 실패를 빈 목록으로 삼키므로, sitemap 이 이 상태를 그대로 쓰면 블로그 URL 이
+ * 전부 빠진 사본이 다음 재생성까지 캐시된다. Blob 폴백(DB 미설정)에서는 판정하지 않는다.
+ */
+export function isBlogReadSuspect(neonEnabled: boolean, publishedCount: number): boolean {
+  return neonEnabled && publishedCount === 0;
+}
+
 const postDate = (p: BlogPost) => toValidDate(p.updatedAt) ?? toValidDate(p.publishedAt);
 
 function newest(list: BlogPost[]): Date | undefined {

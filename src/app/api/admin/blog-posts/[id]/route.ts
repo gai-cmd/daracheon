@@ -8,7 +8,7 @@ import { snapshotBeforeDestructive } from '@/lib/backup';
 import { type BlogPost, type BlogPostStatus } from '@/types/blog';
 import { slugify, uniqueSlug } from '@/lib/blog/slug';
 import { estimateReadingTime, extractPlainText, sanitizeBlogHtml } from '@/lib/blog/sanitize';
-import { blogPostPaths, notifyIndexNow } from '@/lib/seo/indexnow';
+import { blogPostChangePaths, notifyIndexNow } from '@/lib/seo/indexnow';
 
 export const dynamic = 'force-dynamic';
 
@@ -149,11 +149,10 @@ export async function PUT(request: Request, ctx: { params: Promise<{ id: string 
     posts[idx] = next;
     await writePosts(posts, { upsertIds: [next.id] });
     revalidateBlog(next.slug, prev.slug, next.categoryId);
-    // 발행 상태(초안→발행 전환 포함)인 글만 IndexNow 에 알린다. slug 가 바뀌었으면
-    // next.slug 가 새 주소라 그대로 포함된다. 초안은 알리지 않는다.
-    if (next.status === 'published') {
-      after(() => notifyIndexNow(blogPostPaths(next.slug, next.categoryId)));
-    }
+    // 발행 상태(초안→발행 전환 포함)인 글의 주소를 IndexNow 에 알린다. 발행 글이 초안으로
+    // 내려갔거나 slug·카테고리가 바뀌었으면 옛 주소도 함께 보낸다. 초안끼리의 저장은 알리지 않는다.
+    const indexNowPaths = blogPostChangePaths(prev, next);
+    if (indexNowPaths.length > 0) after(() => notifyIndexNow(indexNowPaths));
     // 상태 전환을 summary 에 명시 — 발행 글이 초안으로 내려간 시점을 audit 만으로
     // 추적 가능하게 (2026-08-14 무경고 발행취소 사고의 포렌식 공백 해소).
     const statusNote =
@@ -191,6 +190,9 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
     // 삭제 id 는 removedIds 로 명시 — merge/DELETE 대상 지정.
     await writePosts(posts, { removedIds: [id] });
     revalidateBlog(removed.slug, undefined, removed.categoryId);
+    // 발행 중이던 글을 지웠으면 없어진 주소를 IndexNow 에 알린다 (초안 삭제는 알리지 않는다).
+    const indexNowPaths = blogPostChangePaths(removed, null);
+    if (indexNowPaths.length > 0) after(() => notifyIndexNow(indexNowPaths));
     await logAdmin('blog', 'delete', {
       targetId: id,
       summary: `블로그 글 삭제: ${removed.title}`,

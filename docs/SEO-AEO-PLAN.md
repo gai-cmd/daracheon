@@ -1,194 +1,136 @@
-# 검색·AI 인용 최적화 작업 리스트 (SEO + AEO)
+# 검색·AI 인용 기술 상태 (SEO + AEO)
 
-> 작성일: 2026-04-25 (v2 — 객관적 기술 작업만)
-> 대상 도메인: https://www.zoellife.com
->
-> 본 문서는 **검증되지 않은 콘텐츠 주장·가짜 권위 신호를 만들지 않는다**.
-> 코드/설정 레벨의 객관적 SEO 작업과, 운영자가 결정·확인해야 할 외부 등록
-> 절차만 기록한다. 콘텐츠 신뢰도(저자·인증서·인용)는 실제 사실 자료가
-> 확보된 후에 별도로 처리한다.
+> 2026-11-12 기준으로 다시 썼다. 이전 판(2026-04-25)은 지금 사이트와 맞지 않는 내용
+> (www 정규 도메인, /reviews 평점 마크업, 살아 있는 /process 페이지 등)을 담고 있어 교체했다.
+> 이 저장소는 공개 저장소이므로 **코드에서 확인할 수 있는 기술 상태만** 적는다.
+> 계정·수치·운영 판단은 여기에 적지 않는다.
+
+답변 엔진(AEO) 대응은 별도 기법이 아니라 크롤링 가능 · 색인 가능 · 신뢰 가능 · 최신이라는
+기본 SEO 와 같은 일이다. `llms.txt` 는 노출 수단이 아니다.
 
 ---
 
-## 0. 현재 코드/설정 상태 점검
+## 1. 주소 · 색인 기본기
 
-### 이미 적용된 기술 SEO
-| 항목 | 위치 | 상태 |
+| 항목 | 상태 | 위치 |
 |---|---|---|
-| robots.txt | `src/app/robots.ts` | 25개 AI 봇 + 일반 크롤러 Allow, /api·/admin Disallow |
-| sitemap.xml | `src/app/sitemap.ts` | 정적 10개 + 제품 상세 동적, 비공개 제품 제외 |
-| 페이지별 metadata | 각 page.tsx | title · description · keywords · canonical · openGraph · twitter |
-| JSON-LD | 각 page.tsx | 페이지별 schema.org 타입 적용 (목록은 §1-3) |
-| 보안 헤더 | `next.config.ts` | CSP · HSTS · X-Frame · Referrer · Permissions-Policy |
-| llms.txt | `src/app/llms.txt/route.ts` | DB 연동 동적 마크다운 |
+| 정규 도메인 | `https://zoellife.com` (apex). `www` 는 apex 로 308 한 번 | `next.config.ts` redirects |
+| canonical | 페이지마다 자기 주소. 루트 레이아웃에 기본값을 두지 않는다(404·noindex 페이지가 홈 canonical 을 물려받지 않게) | 각 `page.tsx` 의 `alternates.canonical` |
+| 메타데이터 위치 | 모든 UA 에 `<head>` 로 보낸다(스트리밍 메타데이터 끔) | `next.config.ts` `htmlLimitedBots` |
+| robots.txt | 관리자·API·`/edition/`·`/agarwood-edition`·`/thesis` 제외. 크롤러별 허용·차단 목록 | `src/app/robots.ts` |
+| sitemap.xml | 공개 페이지·발행 제품·발행 글·글이 있는 카테고리. 1시간 주기 재생성 + 어드민 저장 시 즉시 재생성 | `src/app/sitemap.ts` |
+| 색인 제외 | 미디어 상세(`/media/[id]`), 글이 0편인 카테고리, 초안 미리보기 — `noindex` | 각 `page.tsx` |
+| 영구 이동 | `/process` → `/media`, `/support` → `/company#contact`, 옛 제품·글 슬러그 → 새 슬러그 | `next.config.ts` redirects |
+| RSS | `/rss.xml` — 발행 글 전문 | `src/app/rss.xml/route.ts` |
+| IndexNow(네이버) | 어드민에서 글·제품·페이지를 저장하면 해당 주소를 알린다. 발행 글·공개 제품이 내려가거나 삭제되거나 주소가 바뀌면 옛 주소도 알린다. 영구 이동되는 주소는 보내지 않는다. 프로덕션에서만 동작 | `src/lib/seo/indexnow.ts`, `src/app/api/admin/**` |
 
-### 코드 레벨에서 즉시 수정한 것 (이번 커밋)
-- env 값에 줄바꿈/공백이 섞여 sitemap URL 이 깨지던 문제 해결 (`\s+` 제거)
-- 기본값 도메인 `daracheon.com` → `zoellife.com`
-- `published === false` 제품을 sitemap 에서 제외
-- llms.txt 라우트 신규 (DB 의 실제 등록값을 그대로 출력 — 가공 없음)
+### sitemap 의 lastmod 규칙
+
+lastmod 는 **실제 수정 시각을 아는 URL 에만** 넣는다. 요청 시각을 넣지 않는다.
+
+- 블로그 글·카테고리·`/blog`: 글의 `updatedAt`
+- 제품: 저장 레코드의 마지막 편집 시각(`_mt`)
+- 주제 허브 5개: 콘텐츠 파일(`src/content/topics/*.ts`)의 `dateModified`. 허브 내용을 고치는 커밋에서 이 값을 함께 올린다
+- 어드민 편집 페이지(`/about-agarwood`, `/brand-story`, `/showroom`): 어드민 저장 시 `pages` 레코드의 `pageUpdatedAt` 에 적히는 키별 저장 시각. 기록이 없으면 lastmod 를 생략한다
+
+블로그 DB 가 켜져 있는데 발행 글이 0편으로 읽히면 sitemap 생성은 실패로 끝난다 —
+블로그 URL 이 빠진 사본을 캐시하지 않고 직전 사본을 유지하기 위해서다.
+
+### sitemap 의 이미지 항목
+
+제품(대표·갤러리), 글(커버 + 본문 이미지 최대 5개), `/media` 사진, 주제 허브 대표 이미지,
+`/about-agarwood`·`/brand-story`·`/showroom` 의 저장된 페이지 이미지. Vercel Blob 원본과
+`/public` 자산만 넣고, `/_next/image` 주소와 외부 호스트는 넣지 않는다(`src/lib/seo/sitemap-images.ts`).
 
 ---
 
-## 1. 코드/설정 작업 (객관적 검증 가능 항목만)
+## 2. 구조화 데이터 (JSON-LD)
 
-### 1-1. 환경변수 / 도메인
-- [ ] Vercel 환경변수 `NEXT_PUBLIC_SITE_URL=https://www.zoellife.com` 단일 라인 저장
-- [ ] zoellife.com 의 DNS A/CNAME 이 Vercel 프로젝트로 연결 확인
-- [ ] 환경변수 변경 후 재배포 → `/sitemap.xml` · `/robots.txt` · `/llms.txt` 의 모든 URL 이 zoellife.com 로 변경됐는지 curl 로 확인
-
-### 1-2. 검색엔진 인증 메타
-운영자가 각 콘솔에서 인증 코드를 받아오면 `src/app/layout.tsx` 의 `metadata.verification` 에 추가:
-```ts
-verification: {
-  google: '<코드>',
-  other: { 'naver-site-verification': '<코드>' },
-},
-```
-- [ ] Google Search Console 인증 코드 발급 후 추가
-- [ ] Naver Search Advisor 인증 코드 발급 후 추가
-- [ ] Bing Webmaster (선택) 인증 코드 발급 후 추가
-
-### 1-3. 페이지별 JSON-LD 현황 (이미 적용된 것만 표기)
-| 경로 | 적용된 타입 |
+| 페이지 | 타입 |
 |---|---|
-| `/` | WebSite, Organization |
-| `/about-agarwood` | Article, FAQPage, BreadcrumbList, ScholarlyArticle (논문 목록 입력 시) |
-| `/brand-story` | AboutPage, BreadcrumbList, ItemList (영상) |
-| `/products` | CollectionPage, ItemList, BreadcrumbList |
-| `/products/[slug]` | Product (offers · 등) |
-| `/company` | LocalBusiness, BreadcrumbList |
-| `/reviews` | Product, AggregateRating, Review |
-| `/process` | (없음) |
-| `/support` | (없음) |
+| 모든 페이지(루트 레이아웃) | `Organization`, `Brand`, `WebSite` — `@id` 로 서로 참조 |
+| 홈, 주제 허브, `/company` | `FAQPage` (화면에 보이는 문답만) |
+| 주제 허브, `/about-agarwood`, `/brand-story` | `Article` + `BreadcrumbList` |
+| `/products` | `CollectionPage` + `ItemList` (url 요약형) |
+| `/products/[slug]` | `Product` + `Offer` + `BreadcrumbList` — 가격·재고는 화면과 같은 값 |
+| `/blog` | `Blog` + `blogPost`(발행 글 전체) |
+| `/blog/category/[id]` | `CollectionPage` + `ItemList` + `BreadcrumbList` |
+| `/blog/[slug]` | `BlogPosting` + `BreadcrumbList`, 검증된 DOI 가 있으면 `citation` |
+| `/media` | 조건을 충족하는 영상만 `VideoObject`, 사진은 `ImageObject` |
+| `/home-shopping` | `BroadcastEvent` |
 
-### 1-4. JSON-LD 추가 작업 (코드 가능, 콘텐츠 사실 확인 필요)
-다음은 데이터가 이미 DB 에 들어 있을 때만 의미 있음. 빈 데이터로 schema 만 박는 건 가짜 신호이므로 **DB 입력 확인 후** 처리:
-- [ ] `/process` HowTo schema — `pages.brandStory.processTab.steps` 가 실제 등록되어 있을 때만 출력
-- [ ] `/products/[slug]` 의 Product schema 에 `gtin` · `mpn` 필드 — 관리자에 GTIN/MPN 입력 필드가 추가되고 값이 실제로 들어왔을 때만
-- [ ] `/about-agarwood` ScholarlyArticle 은 `papers` 항목이 실제 논문일 때만 출력 (현재 dummy 면 schema 출력 차단)
+지키는 선:
 
-### 1-5. 메타·접근성 점검 (그렙으로 검증 가능)
-- [ ] 페이지마다 `<h1>` 1개 — 자동 검사 스크립트 가능
-- [ ] 모든 `<Image>`/`<img>` 의 `alt` 속성 — 비어있는 경우 grep 으로 추출
-- [ ] `lang="ko"` 루트에 설정됨 (`src/app/layout.tsx`) — 확인 ✓
-- [ ] `viewport` width=device-width — 확인 ✓
-- [ ] 모든 페이지 canonical URL 일관성 — `metadata.alternates.canonical` 검사
+- 리뷰·평점 마크업(`Review`, `AggregateRating`)을 내보내지 않는다.
+- 검색 기능이 없으므로 `SearchAction` 을 내보내지 않는다.
+- 이미지는 `ImageObject` 로 라이선스 정보(`/image-license`)와 함께 내보낸다.
+- 글 작성자는 화면 바이라인과 같은 표시 이름을 쓴다. 브랜드·법인명이면 `Organization` 노드로 귀속한다.
 
-### 1-6. Core Web Vitals (계측 가능 항목)
-- [ ] Vercel Analytics 활성화 → 실제 사용자 LCP/CLS/INP 수집
-- [ ] PageSpeed Insights / Lighthouse 로 주요 경로 점수 기록 (월 1회 캡처)
-- [ ] LCP 후보 이미지에 `priority` 적용 여부 확인 (각 hero 첫 이미지)
-
-### 1-7. PWA / 모바일 (선택)
-- [ ] `public/manifest.webmanifest` 생성 (실제 운영 정책 결정 후)
-- [ ] 아이콘 192·512 PNG 준비
-- [ ] iOS apple-touch-icon
+구글은 FAQ 리치 결과를 제공하지 않는다. `FAQPage` 마크업은 리치 결과를 기대하고 두는 것이 아니다.
 
 ---
 
-## 2. 외부 등록 (운영자 액션, 코드 외)
+## 3. 블로그 읽기 경로
 
-코드와 무관하게 운영자가 결정·등록해야 하는 항목. 인증 코드를 받으면 §1-2 에 따라 코드에 박는다.
-
-- [ ] Google Search Console — 사이트 등록 + sitemap 제출
-- [ ] Bing Webmaster — 사이트 등록 + sitemap 제출
-- [ ] Naver Search Advisor — 사이트 등록 + sitemap 제출 + 모바일 친화도 검사
-- [ ] Naver 비즈니스 / 플레이스 (오프라인 사업장 운영 정책에 따라 결정)
-- [ ] Naver 쇼핑 (제품 판매 채널 정책에 따라 결정)
-- [ ] Google Business Profile (오프라인 사업장 운영 정책에 따라 결정)
-
-> 위 외부 채널의 등록 여부·정보 노출 범위·연결 SNS 는 모두 운영자 비즈니스
-> 결정 사항이며, 본 문서가 강제하지 않는다.
+- 공개 블로그 경로(글·`/blog`·카테고리)는 캐시된 읽기를 쓴다: 본문을 뺀 발행 글 목록, 슬러그로 찾는
+  발행 글 한 건, 카테고리 목록. 어드민 글·카테고리 저장이 캐시를 즉시 비우고, 그 밖에는 5분 뒤 다시 읽는다
+  (`src/lib/blog/store.ts`).
+- 글 페이지에서 읽기 실패는 500, 없는 슬러그만 404 다.
+- 초안 미리보기와 어드민은 캐시 없는 전체 읽기를 쓴다.
 
 ---
 
-## 3. AI 크롤러 / LLM 인용 (기술 인프라만)
+## 4. AI 크롤러 · llms.txt
 
-### 3-1. 이미 적용된 기술 신호
-- robots.txt 에서 GPTBot · ClaudeBot · PerplexityBot · Google-Extended · CCBot · Bytespider · Yeti · NaverBot · Daumoa · Bingbot · Applebot-Extended · Meta-ExternalAgent · cohere-ai · Amazonbot 등 25종 명시 Allow
-- HTTPS · HSTS · CSP — 신뢰 신호 (브라우저·크롤러 동일 적용)
-- 사이트 구조: 정적 라우트 + 동적 RSC + JSON 데이터 — 크롤링 친화적
-- llms.txt 동적 라우트 — DB 등록 사실만 출력
-
-### 3-2. llms.txt 정책
-- 저장된 DB 값(제품·회사·연혁·인증)만 그대로 출력
-- 입증되지 않은 효능 주장·평가어("최고", "유일") 자동 추가 금지
-- 외부 인용 정책 안내 (출처 표기 권장 문구) 만 고정 텍스트로 포함
-
-### 3-3. 측정 가능한 항목
-- [ ] llms.txt 응답 200 + 요청 로그 (Vercel logs) 월 1회 점검
-- [ ] robots.txt User-Agent 별 트래픽 로그 확인 (어느 봇이 실제 크롤하는지)
-
-### 3-4. 측정 불가능한 항목 (목표가 아닌 관찰 항목)
-ChatGPT / Perplexity / Google AI Overview 답변에 사이트가 인용되는지는
-랜덤성·키워드·시점에 의존해 결정론적으로 측정 불가. 본 문서에서는 KPI
-로 잡지 않는다. 운영자가 임의 시점에 검증 쿼리를 던져 트래킹할 수는 있음.
+- 크롤러별 허용·차단은 `src/app/robots.ts` 의 두 배열이 정본이다.
+- `/llms.txt`, `/llms-full.txt` 는 사이트 안내 파일이다. 노출 수단으로 다루지 않으며, 다른 페이지와
+  어긋나는 값을 담지 않도록 다음을 지킨다.
+  - 제품 가격·재고는 제품 페이지와 같은 계산(`src/app/llms.txt/llms-facts.ts`)
+  - 크롤러 허용·차단 문장은 `robots.ts` 의 실제 규칙에서 생성
+  - 영구 이동된 주소를 적지 않는다
 
 ---
 
-## 4. 콘텐츠 작업 (사실 자료가 확보된 후 별도 진행)
-
-다음 항목은 **운영자가 입증 가능한 자료를 제공해야** 코드에 반영. 문서·
-사진·인증서 PDF 등이 없는 상태에서 페이지에 추가하지 않음.
-
-- [ ] 인증서 스캔본 업로드 (CITES · HACCP · OCOP 등 — 실물 인증번호와 발급일 확인)
-- [ ] 논문 목록 입력 (`/about-agarwood` papers 탭) — 실제 DOI/저널/저자/연도 출처
-- [ ] 언론 보도 입력 (`/media` press 탭) — 실제 매체/기사 URL
-- [ ] 회사 연혁 (`/brand-story` historyTab) — 실제 일자·문서/등기 근거
-- [ ] 제품 사양 (GTIN/MPN/SKU·중량·성분) — 패키지 표시 사실
-- [ ] 후기 (`/reviews`) — 실제 구매자 동의 받은 후기, 또는 외부 블로그 후기 링크 (이미 9건 등록)
-
-각 항목은 자료 확보 시점에 단독 PR/커밋으로 처리. 일괄 추가하지 않음.
-
----
-
-## 5. 즉시 검증 가능한 체크 (배포 후 curl)
+## 5. 배포 후 확인 (변경 지점만)
 
 ```bash
-# 1. sitemap URL 정상화
-curl -s https://www.zoellife.com/sitemap.xml | head -50
-#   - 모든 <loc> 가 https://www.zoellife.com/... 로 시작
-#   - 줄바꿈으로 깨진 라인 0건
+# 글 한 편 — title·canonical 이 </head> 앞에 있는지
+curl -s https://zoellife.com/blog/<slug> | awk '/<\/head>/{exit} 1' | grep -c 'rel="canonical"'
 
-# 2. robots.txt 의 sitemap 라인
-curl -s https://www.zoellife.com/robots.txt | grep -i sitemap
-#   - "Sitemap: https://www.zoellife.com/sitemap.xml" 한 줄
+# sitemap — URL 수, 블로그 URL 포함 여부
+curl -s https://zoellife.com/sitemap.xml | grep -c '<loc>'
+curl -s https://zoellife.com/sitemap.xml | grep -c '<loc>https://zoellife.com/blog/'
 
-# 3. llms.txt 도달 가능
-curl -sI https://www.zoellife.com/llms.txt
-#   - HTTP 200, Content-Type: text/plain
-
-# 4. 비공개 제품 제외 확인
-curl -s https://www.zoellife.com/sitemap.xml | grep -c "/products/"
-#   - 현재 published=true 인 제품 수와 일치 (대부분 1)
+# llms.txt — 제품 가격을 제품 페이지와 대조
+curl -s https://zoellife.com/llms.txt | sed -n '/공개 제품/,/^$/p'
 ```
+
+"0건"을 확인할 때는 같은 명령 안에 반드시 일치해야 하는 대조 항목을 함께 둔다.
 
 ---
 
-## 6. 본 문서가 다루지 않는 것 (의도적 제외)
+## 6. 하지 않는 것 (가짜 신호 회피 규칙)
 
-다음은 효과는 있을 수 있으나 **검증 없이 만들면 거짓 신호** 가 되므로
-이 문서에서 작업 항목으로 잡지 않는다:
+검증 없이 만들면 거짓 신호가 되므로 작업 항목으로 잡지 않는다.
 
-- 미확인 저자/검수자 표기
-- 미확인 인증/수상 표기
-- "1위" / "유일" / "최고" 같은 평가어
-- 출처 없는 효능 주장
-- 양 부풀리기 (예: 작성하지 않은 논문 갯수 표기)
-- 가짜 외부 백링크 / 자체 작성 후 외부인 인용 주장
-- AI 답변 인용 KPI (관찰만 가능, 컨트롤 불가)
-
-이런 신호는 단기적으로 순위·인용을 끌어올릴 수 있으나, 검증 절차에서
-제재되거나 신뢰를 잃을 위험이 더 크다. 사실 자료가 확보된 시점에 §4
-의 절차로 진입한다.
+- 미확인 저자·검수자 표기
+- 미확인 인증·수상 표기
+- "1위" · "유일" · "최고" 같은 평가어
+- 출처 없는 효능 주장, 질병명과 제품을 잇는 표현
+- 양 부풀리기(작성하지 않은 논문 수 표기 등)
+- 창작한 후기·증언, 자체 작성 후 외부 인용인 것처럼 꾸미기
+- 리뷰·평점 구조화 데이터
+- 블로그 본문 고쳐 쓰기(본문은 이미지 속성만 손댄다)
+- 외부 CDN 이미지 주소
+- AI 전용 스키마, AI 답변 인용 수치를 목표로 삼는 것
 
 ---
 
 ## 7. 참고 문서 (외부)
 
 - robots 표준: https://www.rfc-editor.org/rfc/rfc9309
-- llms.txt: https://llmstxt.org
 - schema.org: https://schema.org
 - Google Search Central: https://developers.google.com/search/docs
 - Naver Search Advisor: https://searchadvisor.naver.com/guide
+- Next.js `htmlLimitedBots`: https://nextjs.org/docs/app/api-reference/config/next-config-js/htmlLimitedBots
+- llms.txt(비공식 제안): https://llmstxt.org

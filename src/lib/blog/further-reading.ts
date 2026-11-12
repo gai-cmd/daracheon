@@ -1,6 +1,6 @@
 import { unstable_cache } from 'next/cache';
 import { pickPostsBySlug } from './post-seo';
-import { readPostsSafe, BLOG_LATEST_TAG } from './store';
+import { readPublishedPostList, BLOG_LATEST_TAG } from './store';
 
 export interface FurtherReadingPost {
   slug: string;
@@ -14,6 +14,8 @@ export interface FurtherReadingPost {
  * 요청마다 전체 글을 읽지 않도록 캐시하고(어드민 글 저장 시 BLOG_LATEST_TAG 가 비워져
  * 제목 변경도 곧 반영), 느린 저장소가 페이지를 붙잡지 않게 제한 시간 안에 답이 없으면
  * 빈 목록을 돌려준다. 절대 던지지 않는다.
+ * 캐시 함수 안에서는 실패 시 던지는 읽기(본문 제외 발행 글 목록)를 쓴다 — 읽기 실패가
+ * 빈 목록으로 5분간 캐시되지 않도록. 던진 실패는 아래 catch 가 그 요청만 [] 로 끝낸다.
  */
 export async function readFurtherReading(
   cacheKey: string,
@@ -21,7 +23,7 @@ export async function readFurtherReading(
   timeoutMs = 2000,
 ): Promise<FurtherReadingPost[]> {
   const cached = unstable_cache(
-    async () => pickPostsBySlug(await readPostsSafe(), slugs),
+    async () => pickPostsBySlug(await readPublishedPostList(), slugs),
     // 함수 본문은 허브마다 같으므로 슬러그 목록을 키에 넣어, 목록을 바꾸면 곧바로 새 캐시를 쓴다.
     [cacheKey, ...slugs],
     { revalidate: 300, tags: [BLOG_LATEST_TAG] },

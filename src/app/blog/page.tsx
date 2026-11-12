@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/ui/JsonLd';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import { readPublishedPostListSafe, readCategoriesCachedSafe } from '@/lib/blog/store';
+import { readDataSafe } from '@/lib/db';
+import type { AdminUser } from '@/lib/admin-users';
+import { authorDisplayName, BLOG_INDEX_HUBS, isBrandAuthor } from '@/lib/blog/post-seo';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from './BlogCard';
 import BlogPagination, { parseBlogPage } from './BlogPagination';
@@ -59,9 +62,10 @@ function buildMetadata(canonical: string, pageSuffix: string): Metadata {
 
 export default async function BlogListPage({ searchParams }: BlogSearchParams) {
   const page = parseBlogPage((await searchParams).page);
+  // 본문 없는 발행 글 목록 + 카테고리 — 둘 다 캐시(어드민 저장 시 즉시 비워짐).
   const [posts, categories] = await Promise.all([
-    readPostsSafe(),
-    readCategoriesSafe(),
+    readPublishedPostListSafe(),
+    readCategoriesCachedSafe(),
   ]);
 
   const published = posts
@@ -77,12 +81,19 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
   const pagePosts = published.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
-  // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다. 글 읽기 실패(readPostsSafe → [])
+  // 발행 글이 없는 카테고리는 탐색 줄에서 숨긴다. 글 읽기 실패(목록 읽기 → [])
   // 일 때는 숨기지 않는다 — 일시 장애로 카테고리가 통째로 사라지는 것 방지.
   const usedCategoryIds = new Set(published.map((p) => p.categoryId));
   const sortedCategories = [...categories]
     .filter((c) => published.length === 0 || usedCategoryIds.has(c.id))
     .sort((a, b) => a.order - b.order);
+
+  // 작성자 이름은 글 상세와 같은 표시 이름을 쓴다(저장된 author 가 로그인 아이디인 글이 있다).
+  // JSON-LD 는 1페이지에만 싣기 때문에 그때만 어드민 계정 목록을 읽는다.
+  const admins =
+    page === 1 && published.some((p) => p.authorEmail)
+      ? await readDataSafe<AdminUser>('admin-users')
+      : [];
 
   const blogJsonLd = {
     '@context': 'https://schema.org',
@@ -93,23 +104,26 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
     description: '베트남 하띤 직영 침향 농장 기록 · 침향 효능 · 정통 침향 지식.',
     // 상세 페이지와 동일하게 정규 Organization 노드를 @id 참조(엔티티 표기 일관).
     publisher: { '@id': `${SITE_URL}/#organization` },
-    blogPost: published.slice(0, 20).map((p) => ({
-      '@type': 'BlogPosting',
-      headline: p.title,
-      url: `${SITE_URL}/blog/${p.slug}`,
-      datePublished: p.publishedAt ?? p.createdAt,
-      dateModified: p.updatedAt,
-      author:
-        !p.author || /대라천|zoel/i.test(p.author)
+    // 발행 글 전부 — 목록은 페이지로 나뉘어도 Blog 노드는 1페이지에 한 번만 나가므로 전체를 싣는다.
+    blogPost: published.map((p) => {
+      const authorName = authorDisplayName(p, admins);
+      return {
+        '@type': 'BlogPosting',
+        headline: p.title,
+        url: `${SITE_URL}/blog/${p.slug}`,
+        datePublished: p.publishedAt ?? p.createdAt,
+        dateModified: p.updatedAt,
+        author: isBrandAuthor(authorName)
           ? { '@id': `${SITE_URL}/#organization` }
           : {
               '@type': 'Person',
-              name: p.author,
+              name: authorName,
               // 작성자 개별 페이지가 없어 url 은 생략, 소속만 정규 Organization 노드로 참조.
               worksFor: { '@id': `${SITE_URL}/#organization` },
             },
-      image: p.coverImage,
-    })),
+        image: p.coverImage,
+      };
+    }),
   };
 
   const breadcrumb = {
@@ -123,7 +137,7 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
 
   return (
     <>
-      {/* Blog 노드(최신 20편 목록 포함)는 대표 URL 인 1페이지에만 싣는다. */}
+      {/* Blog 노드(발행 글 전체 목록 포함)는 대표 URL 인 1페이지에만 싣는다. */}
       {page === 1 && <JsonLd data={blogJsonLd} />}
       <JsonLd data={breadcrumb} />
 
@@ -161,6 +175,22 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
             </div>
           </nav>
         )}
+
+        {/* 주제 허브 6개 — 카테고리 줄과 같은 알약 링크. 라벨은 푸터의 허브 링크와 같은 글자. */}
+        <nav aria-label="관련 주제" className="border-b border-luxury-bronze/20 px-7 py-4 lg:px-16">
+          <div className="mx-auto flex max-w-[1312px] flex-wrap items-center gap-2">
+            <span className="text-xs text-luxury-gold">관련 주제</span>
+            {BLOG_INDEX_HUBS.map((h) => (
+              <Link
+                key={h.href}
+                href={h.href}
+                className="rounded-full border border-luxury-bronze/40 px-3 py-1 text-xs text-luxury-cream/70 transition hover:border-luxury-gold/60 hover:text-luxury-gold"
+              >
+                {h.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
 
         <section className="px-7 py-12 lg:px-16">
           <div className="mx-auto max-w-[1312px]">

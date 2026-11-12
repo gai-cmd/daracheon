@@ -1,6 +1,10 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // 메타데이터 스트리밍을 모든 UA 에 대해 끈다 — 블로그 글처럼 generateMetadata 가 느린 경로에서
+  // title·canonical·robots 가 </head> 뒤 <body> 로 흘러가, <head> 만 읽는 수집기가 놓치는 것을 막는다.
+  // (Next 기본 목록에는 OAI-SearchBot·ClaudeBot·PerplexityBot·Daumoa 등이 없다.)
+  htmlLimitedBots: /.*/,
   outputFileTracingIncludes: {
     '/**/*': ['./data/db/**/*'],
   },

@@ -1,5 +1,6 @@
 import type { BlogPost } from '@/types/blog';
 import { isOptimizableBlobImage } from './image-optimize';
+import type { BlogPostListItem } from './store';
 
 /**
  * 블로그 템플릿 SEO 순수 로직 — 글 제목/OG 제목, 관련 글 선택, 카테고리 메타 설명.
@@ -35,7 +36,7 @@ export function blogOgTitle(title: string, max = BLOG_OG_TITLE_MAX): string {
   return `${chars.slice(0, max - 1).join('').trimEnd()}…`;
 }
 
-function postTime(p: BlogPost): string {
+function postTime(p: Pick<BlogPost, 'publishedAt' | 'createdAt'>): string {
   return p.publishedAt ?? p.createdAt;
 }
 
@@ -43,13 +44,13 @@ function postTime(p: BlogPost): string {
  * 관련 글 선택: 태그를 많이 공유할수록 앞 → 같은 카테고리 → 최신순. 현재 글은 제외.
  * 최신순만 쓰면 새 글만 반복 노출되므로, 태그 기준으로 오래된 글에도 내부 링크가 간다.
  */
-export function selectRelatedPosts(
-  current: BlogPost,
-  candidates: BlogPost[],
+export function selectRelatedPosts<T extends BlogPostListItem>(
+  current: BlogPostListItem,
+  candidates: T[],
   limit: number,
-): BlogPost[] {
+): T[] {
   const tags = new Set(current.tags.map((t) => t.trim().toLowerCase()).filter(Boolean));
-  const shared = (p: BlogPost) =>
+  const shared = (p: T) =>
     new Set(p.tags.map((t) => t.trim().toLowerCase()).filter((t) => tags.has(t))).size;
   return candidates
     .filter((p) => p.id !== current.id)
@@ -69,12 +70,12 @@ export const RELATED_RAIL_MIN_SAME_CATEGORY = 3;
  * 비거나 한두 개로 끝나 내부 링크가 끊기는 것을 막는다.
  * crossCategory 는 다른 카테고리 글이 섞였는지 — 레일 제목에서 카테고리명을 뗄지 판단용.
  */
-export function selectRelatedRail(
-  current: BlogPost,
-  published: BlogPost[],
+export function selectRelatedRail<T extends BlogPostListItem>(
+  current: BlogPostListItem,
+  published: T[],
   limit: number,
   minSameCategory = RELATED_RAIL_MIN_SAME_CATEGORY,
-): { posts: BlogPost[]; crossCategory: boolean } {
+): { posts: T[]; crossCategory: boolean } {
   const same = selectRelatedPosts(
     current,
     published.filter((p) => p.categoryId === current.categoryId),
@@ -105,17 +106,17 @@ export function stableHash(s: string): number {
  * 현재 글 슬러그의 해시만큼 회전한다 — 같은 글에서는 항상 같은 목록(결정적)이지만 글마다
  * 다른 오래된 글이 노출돼 최신 글 5개만 반복 링크되지 않는다. 조회수 자체는 건드리지 않는다.
  */
-export function selectPopularPosts(
+export function selectPopularPosts<T extends BlogPostListItem>(
   current: Pick<BlogPost, 'id' | 'slug'>,
-  published: BlogPost[],
+  published: T[],
   limit: number,
-): BlogPost[] {
-  const views = (p: BlogPost) => p.viewCount ?? 0;
+): T[] {
+  const views = (p: T) => p.viewCount ?? 0;
   const ordered = published
     .filter((p) => p.id !== current.id)
     .sort((a, b) => views(b) - views(a) || postTime(b).localeCompare(postTime(a)));
   const shift = stableHash(current.slug);
-  const out: BlogPost[] = [];
+  const out: T[] = [];
   for (let i = 0; i < ordered.length && out.length < limit; ) {
     let j = i;
     while (j < ordered.length && views(ordered[j]) === views(ordered[i])) j++;
@@ -164,6 +165,40 @@ const CATEGORY_HUBS: Record<string, TopicHubLink[]> = {
 /** 글 카테고리 → 본문 밖 '관련 주제' 허브 링크. 매핑에 없는 카테고리(브랜드 소식 등)는 침향이란? 허브. */
 export function topicHubsForCategory(categoryId: string): TopicHubLink[] {
   return CATEGORY_HUBS[categoryId] ?? [HUB_ABOUT];
+}
+
+/**
+ * /blog 목록 위 주제 허브 줄 — 허브 6개 전부. 라벨·순서는 푸터의 주제 허브 링크
+ * (src/components/layout/Footer.tsx)와 같은 글자를 쓴다.
+ */
+export const BLOG_INDEX_HUBS: TopicHubLink[] = [
+  { href: '/about-agarwood', label: '침향이란' },
+  { href: '/vietnam-agarwood', label: '베트남 침향' },
+  { href: '/agarwood-oil', label: '침향 오일' },
+  { href: '/agarwood-benefits', label: '침향 효능' },
+  { href: '/agarwood-hwan', label: '침향환' },
+  { href: '/agarwood-tea', label: '침향차' },
+];
+
+/**
+ * 작성자가 브랜드·법인명(대라천/조엘라이프/ZOEL)인지 — 그러면 Person 대신 정규 Organization 노드로 귀속한다.
+ * 이름이 비어 있어도 조직으로 본다.
+ */
+export function isBrandAuthor(name: string | undefined): boolean {
+  return !name || /대라천|조엘|zoel/i.test(name);
+}
+
+/**
+ * 작성자 표시명 — 귀속 이메일이 어드민 계정과 맞으면 그 계정의 표시 이름, 아니면 저장된 author.
+ * 화면 바이라인·article:author·JSON-LD 가 같은 이름을 쓰도록 한곳에서 정한다
+ * (저장된 author 가 로그인 아이디인 글이 있다).
+ */
+export function authorDisplayName(
+  post: Pick<BlogPost, 'author' | 'authorEmail'>,
+  admins: readonly { email: string; displayName?: string }[],
+): string {
+  if (!post.authorEmail) return post.author;
+  return admins.find((u) => u.email === post.authorEmail)?.displayName?.trim() || post.author;
 }
 
 // 카테고리 설명이 이보다 짧으면 메타 설명을 글 제목으로 조합한다.

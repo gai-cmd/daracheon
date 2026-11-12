@@ -3,9 +3,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
-import { readPostsSafe, readCategoriesSafe } from '@/lib/blog/store';
+import {
+  readPostsSafe,
+  readCategoriesSafe,
+  readPublishedPost,
+  readPublishedPostListSafe,
+  readCategoriesCachedSafe,
+  type BlogPostListItem,
+} from '@/lib/blog/store';
 import { readDataSafe } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
 import { normalizeArticleHtmlForDarkTheme } from '@/lib/blog/theme-normalize';
@@ -17,9 +25,11 @@ import { rewriteSmartstoreLinks } from '@/data/store';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import {
+  authorDisplayName,
   blogOgTitle,
   blogPostMetaTitle,
   blogPostTitle,
+  isBrandAuthor,
   selectPopularPosts,
   selectRelatedPosts,
   selectRelatedRail,
@@ -67,12 +77,37 @@ function decodeSlug(raw: string): string {
   }
 }
 
-async function loadPost(slug: string, allowDraft = false) {
+// 공개 경로는 캐시된 읽기를 쓰고, generateMetadata 와 페이지가 같은 요청에서 한 번만 읽도록 요청 단위로 묶는다.
+const getPublishedPost = cache((slug: string) => readPublishedPost(slug));
+const getPublishedList = cache(() => readPublishedPostListSafe());
+const getCategories = cache(() => readCategoriesCachedSafe());
+
+/**
+ * 글 한 건. 공개 경로에서 "읽기 실패"는 던져서 500 으로 나가고(error.tsx), "슬러그 없음"만 null → 404 다.
+ * 실패를 404 로 내면 검색엔진이 살아 있는 글을 삭제된 것으로 읽는다.
+ * 초안 미리보기(관리자 ?preview)는 캐시 없는 전체 읽기를 그대로 쓴다.
+ */
+async function loadPost(slug: string, allowDraft = false): Promise<BlogPost | null> {
+  if (!allowDraft) return getPublishedPost(slug);
   const posts = await readPostsSafe();
-  return (
-    posts.find((p) => p.slug === slug && (allowDraft || p.status === 'published')) ?? null
-  );
+  return posts.find((p) => p.slug === slug) ?? null;
 }
+
+/** 사이드바·관련 글용 목록 — 공개 경로는 본문 없는 발행 글 목록(캐시), 미리보기는 전체 읽기. */
+async function loadList(allowDraft: boolean): Promise<BlogPostListItem[]> {
+  return allowDraft ? readPostsSafe() : getPublishedList();
+}
+
+/**
+ * 작성자 표시명: 귀속 이메일이 있으면 admin-users 의 최신 displayName(구글
+ * 워크스페이스 한글 이름)을 우선한다 — 본인이 SSO 로 한 번 로그인하면 과거에
+ * 귀속해 둔 글의 이름도 재저장 없이 자동 갱신된다.
+ * 화면 바이라인·article:author·JSON-LD 가 같은 값을 쓰도록 요청 단위로 묶는다.
+ */
+const getAuthorName = cache(async (author: string, authorEmail?: string) => {
+  const admins = authorEmail ? await readDataSafe<AdminUser>('admin-users') : [];
+  return authorDisplayName({ author, authorEmail }, admins);
+});
 
 /** 관리자 세션이 유효할 때만 true — 초안 미리보기 게이트. */
 async function isAdmin(): Promise<boolean> {
@@ -117,7 +152,8 @@ export async function generateMetadata({
       description,
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
-      authors: [post.author],
+      // 화면 바이라인과 같은 표시 이름 — 저장된 author 가 로그인 아이디인 글이 있다.
+      authors: [await getAuthorName(post.author, post.authorEmail)],
       tags: post.tags,
       images: image ? [{ url: image, alt: post.title }] : [],
     },
@@ -143,8 +179,8 @@ export default async function BlogPostPage({
   const allowDraft = Boolean(preview) && (await isAdmin());
   const [post, posts, categories] = await Promise.all([
     loadPost(slug, allowDraft),
-    readPostsSafe(),
-    readCategoriesSafe(),
+    loadList(allowDraft),
+    allowDraft ? readCategoriesSafe() : getCategories(),
   ]);
   if (!post) notFound();
   const isDraftPreview = post.status !== 'published';
@@ -182,7 +218,7 @@ export default async function BlogPostPage({
   }
 
   // 발행 글이 없는 카테고리는 분류 목록에서 숨긴다. 글 읽기 실패로 목록이 비면
-  // (readPostsSafe → []) 숨기지 않는다 — 일시 장애로 분류가 통째로 사라지는 것 방지.
+  // (목록 읽기 → []) 숨기지 않는다 — 일시 장애로 분류가 통째로 사라지는 것 방지.
   const navCategories =
     published.length > 0
       ? sortedCategories.filter((c) => (categoryCounts.get(c.id) ?? 0) > 0)
@@ -243,18 +279,13 @@ export default async function BlogPostPage({
   const references = referencesForSlug(post.slug);
   const citations = buildCitations(references, citationUrls);
 
-  // 작성자 표시명: 귀속 이메일이 있으면 admin-users 의 최신 displayName(구글
-  // 워크스페이스 한글 이름)을 우선한다 — 본인이 SSO 로 한 번 로그인하면 과거에
-  // 귀속해 둔 글의 이름도 재저장 없이 자동 갱신된다.
-  const admins = post.authorEmail ? await readDataSafe<AdminUser>('admin-users') : [];
-  const authorName =
-    admins.find((u) => u.email === post.authorEmail)?.displayName?.trim() || post.author;
+  // 작성자 표시명 — generateMetadata 의 article:author 와 같은 값(getAuthorName).
+  const authorName = await getAuthorName(post.author, post.authorEmail);
 
   // 작성자가 브랜드·법인명(대라천/조엘라이프/ZOEL)이면 검증 가능한 Organization 엔티티로 귀속 —
   // YMYL(건강) 주제에서 실명 없는 Person 방출보다 신뢰신호가 강하다. 개인명이면 Person.
   // '조엘라이프(주)'가 Person 으로 나가던 누락(2026-10-06)을 막기 위해 한글 '조엘'도 포함.
-  const isBrandAuthor = !authorName || /대라천|조엘|zoel/i.test(authorName);
-  const authorEntity = isBrandAuthor
+  const authorEntity = isBrandAuthor(authorName)
     ? { '@id': `${SITE_URL}/#organization` }
     : {
         '@type': 'Person',
