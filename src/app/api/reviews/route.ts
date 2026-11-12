@@ -27,15 +27,10 @@ export async function GET(request: Request) {
       );
     }
 
-    const avgRating =
-      filtered.length > 0
-        ? filtered.reduce((sum, r) => sum + r.rating, 0) / filtered.length
-        : 0;
-
+    // 평균 별점은 확인된 사실이 아니라 공개 응답에 싣지 않는다(2026-11-12 소유자 결정).
     return NextResponse.json({
       reviews: filtered,
       total: filtered.length,
-      avgRating: Math.round(avgRating * 10) / 10,
     });
   } catch (error) {
     console.error('[Reviews API] Error:', error);

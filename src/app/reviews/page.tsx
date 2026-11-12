@@ -54,7 +54,7 @@ const DEFAULT_REVIEWS_HERO: ReviewsHero = {
 
 export default async function ReviewsPage() {
   // 공개 페이지: 원문 주소가 있는 후기만, 원문 링크와 함께 보여 준다(2026-11-12 소유자 결정).
-  // 구매 인증·평균 별점·후기 수는 확인된 사실이 아니라 화면·메타·구조화 데이터 어디에도 싣지 않는다.
+  // 구매 인증·별점(개별·평균)·후기 수는 확인된 사실이 아니라 화면·메타·구조화 데이터 어디에도 싣지 않는다.
   // 저장된 date 는 원문 게시일이 아니라 다시 매긴 날짜라 보여 주지 않는다. 원문 게시일 자료가 없다.
   const reviews = publicReviews(await readDataSafe<Review>('reviews'));
   const pagesData = await readSingleSafe<{ reviews?: { hero?: ReviewsHero } }>('pages');
@@ -114,12 +114,8 @@ export default async function ReviewsPage() {
             {reviews.map((review, i) => (
               <RevealOnScroll key={review.id} delay={i * 80}>
                 <article className="bg-white p-8 border border-neutral-200 hover:border-gold-500/30 transition-colors h-full flex flex-col">
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div className="flex gap-1 text-gold-500">
-                      {[...Array(5)].map((_, j) => (
-                        <span key={j} className={j < review.rating ? '' : 'opacity-20'}>★</span>
-                      ))}
-                    </div>
+                  {/* 별점은 원문 후기에 없는 값(사이트가 매긴 값)이라 보여 주지 않는다(2026-11-12 소유자 결정). */}
+                  <div className="flex items-center justify-end gap-3 mb-4">
                     <a
                       href={review.source}
                       target="_blank"
