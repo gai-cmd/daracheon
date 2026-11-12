@@ -182,11 +182,16 @@ export function productOfferPrice(p: Product): number | null {
   return typeof p.price === 'number' && p.price > 0 ? p.price : parseDisplayPrice(p.priceDisplay);
 }
 
-/** 관련 제품 — 공개 제품 중 같은 카테고리 먼저, 모자라면 다른 카테고리로 채운다. */
+/**
+ * 관련 제품 — 공개 제품 중 같은 카테고리 먼저, 모자라면 다른 카테고리로 채운다.
+ * 후보는 목록 맨 앞이 아니라 "현재 제품 다음 순서"부터 돌아가며 고른다 — 종전엔 항상 목록
+ * 앞쪽 제품만 채워져, 뒤쪽 제품(스틱·염주·선향 등)은 어느 상세에서도 링크를 받지 못했다.
+ */
 export function pickRelatedProducts(all: Product[], current: Product, limit = 3): Product[] {
-  const others = all.filter(
-    (p) => p.published !== false && p.id !== current.id && !isSameProductSlug(p.slug, current.slug),
-  );
+  const isCurrent = (p: Product) => p.id === current.id || isSameProductSlug(p.slug, current.slug);
+  const at = all.findIndex(isCurrent);
+  const rotated = at >= 0 ? [...all.slice(at + 1), ...all.slice(0, at)] : all;
+  const others = rotated.filter((p) => p.published !== false && !isCurrent(p));
   const same = others.filter((p) => p.category === current.category);
   const rest = others.filter((p) => p.category !== current.category);
   return [...same, ...rest].slice(0, limit);

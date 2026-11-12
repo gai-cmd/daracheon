@@ -111,4 +111,24 @@ describe('pickRelatedProducts', () => {
     expect(rel[0].slug).toBe('agarwood-gibodan');
     expect(rel.some((p) => p.id === cur.id)).toBe(false);
   });
+
+  it('나머지는 현재 제품 다음 순서부터 돌아가며 채워, 모든 제품이 2곳 이상에서 링크를 받는다', () => {
+    const visible = products.filter((p) => p.published !== false);
+    const inbound = new Map(visible.map((p) => [p.id, 0]));
+    for (const cur of visible) {
+      const rel = pickRelatedProducts(products, cur);
+      expect(rel.some((p) => p.id === cur.id)).toBe(false);
+      expect(new Set(rel.map((p) => p.id)).size).toBe(rel.length);
+      for (const p of rel) inbound.set(p.id, (inbound.get(p.id) ?? 0) + 1);
+    }
+    expect(Math.min(...inbound.values())).toBeGreaterThanOrEqual(2);
+  });
+
+  it('마지막 제품은 목록 처음으로 돌아가 채운다', () => {
+    const visible = products.filter((p) => p.published !== false);
+    const last = visible[visible.length - 1];
+    const rest = pickRelatedProducts(products, last).filter((p) => p.category !== last.category);
+    const firstOther = visible.find((p) => p.category !== last.category)!;
+    expect(rest[0].id).toBe(firstOther.id);
+  });
 });

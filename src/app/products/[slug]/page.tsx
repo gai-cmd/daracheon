@@ -124,7 +124,8 @@ export default async function ProductDetailPage(
     ...(product.category === '환'
       ? [{ href: '/agarwood-hwan', label: '침향환·침향단 고르는 법', desc: '라벨에서 침향 함량 읽는 법과 섭취법' }]
       : []),
-    ...(product.category === '차'
+    // 침향스틱은 차 허브가 '차로 우리는 제품'으로 소개한다 — 허브로 돌아가는 링크를 둔다.
+    ...(product.category === '차' || isSameProductSlug(product.slug, 'agarwood-stick-100g')
       ? [{ href: '/agarwood-tea', label: '침향차 우리는 법', desc: '제품별 우리는 법과 고를 때 확인할 것' }]
       : []),
     { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
