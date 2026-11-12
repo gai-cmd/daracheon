@@ -144,7 +144,7 @@ function PostModal({ post, onClose }: { post: FieldPost; onClose: () => void }) 
   );
 }
 
-function PostCard({ post, onOpen }: { post: FieldPost; onOpen: () => void }) {
+function PostCard({ post, onOpen, active }: { post: FieldPost; onOpen: () => void; active: boolean }) {
   const cover = post.files[0];
   return (
     <button
@@ -166,7 +166,7 @@ function PostCard({ post, onOpen }: { post: FieldPost; onOpen: () => void }) {
           <img src={cover.url} alt={post.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : cover ? (
           <>
-            <video src={cover.url} muted playsInline preload="metadata" aria-hidden style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+            <video src={cover.url} muted playsInline preload={active ? 'metadata' : 'none'} aria-hidden style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
               <span style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(212,168,67,0.92)', display: 'grid', placeItems: 'center', color: '#0a0b10', fontSize: '1.3rem', paddingLeft: 3 }}>▶</span>
             </div>
@@ -198,7 +198,8 @@ function PostCard({ post, onOpen }: { post: FieldPost; onOpen: () => void }) {
   );
 }
 
-export default function FieldJournal({ posts }: { posts: FieldPost[] }) {
+/** active — 탭이 열려 있는지. 닫힌(hidden) 동안에는 카드 영상의 메타데이터를 미리 받지 않는다. */
+export default function FieldJournal({ posts, active = true }: { posts: FieldPost[]; active?: boolean }) {
   const [openPost, setOpenPost] = useState<FieldPost | null>(null);
 
   return (
@@ -224,7 +225,7 @@ export default function FieldJournal({ posts }: { posts: FieldPost[] }) {
                 }}
               >
                 {posts.map((p) => (
-                  <PostCard key={p.id} post={p} onOpen={() => setOpenPost(p)} />
+                  <PostCard key={p.id} post={p} onOpen={() => setOpenPost(p)} active={active} />
                 ))}
               </div>
             ) : (

@@ -156,8 +156,9 @@ export default function MediaPageClient({
         }}
       />
 
-      {/* TAB CONTENT */}
-      {activeTab === 'story' ? (
+      {/* TAB CONTENT — 세 탭 모두 서버 HTML 에 싣고 닫힌 탭은 hidden 으로 둔다(검색·AI 크롤러가 클릭 없이 읽도록).
+          div 로 감싸면 전역 CSS(main > div > section:first-of-type) 물결 장식이 붙으므로 section 을 쓴다. */}
+      <section role="tabpanel" id="tabpanel-story" aria-label="침향 농장 이야기" hidden={activeTab !== 'story'}>
         <>
           {/* SCENE SECTION (대라천 침향 현장) */}
           {sceneSection && (
@@ -435,8 +436,10 @@ export default function MediaPageClient({
 
           {/* 07 Certifications 섹션은 삭제됨. extraSection.images 는 갤러리 탭의 사진 갤러리로 이동. */}
         </>
-      ) : activeTab === 'gallery' ? (
+      </section>
+      <section role="tabpanel" id="tabpanel-gallery" aria-label="영상・사진 갤러리" hidden={activeTab !== 'gallery'}>
         <MediaGallery
+          active={activeTab === 'gallery'}
           videos={gallery.videos}
           photos={(certifications.extraSection?.images ?? []).map((src, idx) => ({
             id: `cert-extra-${idx}`,
@@ -447,9 +450,10 @@ export default function MediaPageClient({
             image: src,
           }))}
         />
-      ) : (
-        <FieldJournal posts={fieldPosts} />
-      )}
+      </section>
+      <section role="tabpanel" id="tabpanel-field" aria-label="현장 소식" hidden={activeTab !== 'field'}>
+        <FieldJournal posts={fieldPosts} active={activeTab === 'field'} />
+      </section>
     </>
   );
 }

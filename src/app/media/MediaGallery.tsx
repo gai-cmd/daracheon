@@ -203,9 +203,12 @@ function VideoModal({ item, onClose }: { item: MediaItem; onClose: () => void })
 export default function MediaGallery({
   videos,
   photos,
+  active = true,
 }: {
   videos: MediaItem[];
   photos: MediaItem[];
+  /** 탭이 열려 있는지 — 닫힌(hidden) 동안에는 이미지 우선 로딩·영상 메타데이터 로딩을 하지 않는다. */
+  active?: boolean;
 }) {
   const [openVideo, setOpenVideo] = useState<MediaItem | null>(null);
 
@@ -266,14 +269,14 @@ export default function MediaGallery({
                             alt={item.title}
                             fill
                             sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                            priority={vIdx === 0}
+                            priority={active && vIdx === 0}
                             style={{ objectFit: 'cover' }}
                           />
                         ) : isMp4Url && item.url ? (
                           // 썸네일 미지정 mp4 → 비디오 첫 프레임을 썸네일로 표시.
                           <video
                             src={item.url}
-                            preload="metadata"
+                            preload={active ? 'metadata' : 'none'}
                             muted
                             playsInline
                             aria-hidden
@@ -375,7 +378,7 @@ export default function MediaGallery({
                             alt={item.title}
                             fill
                             sizes="(max-width: 700px) 100vw, 33vw"
-                            priority={pIdx < 2}
+                            priority={active && pIdx < 2}
                             style={{ objectFit: 'cover' }}
                           />
                         )}

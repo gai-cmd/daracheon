@@ -203,10 +203,6 @@ export default async function CompanyPage() {
           inLanguage: 'ko-KR',
           isPartOf: { '@id': 'https://zoellife.com/#website' },
           about: { '@id': 'https://zoellife.com/#brand' },
-          speakable: {
-            '@type': 'SpeakableSpecification',
-            cssSelector: ['[itemprop=acceptedAnswer]'],
-          },
           mainEntity: faqItems.map((f) => ({
             '@type': 'Question',
             name: f.question,
