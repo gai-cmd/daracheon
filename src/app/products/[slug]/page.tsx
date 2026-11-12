@@ -3,12 +3,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { readDataSafe, readDataUncached } from '@/lib/db';
+import { readDataSafe, readDataUncached, readSingleSafe } from '@/lib/db';
 import { formatPrice } from '@/lib/utils';
 import {
   buildProductOffers,
   pickRelatedProducts,
   productOfferPrice,
+  productSchemaDescription,
+  productSchemaManufacturer,
   productSeoDescription,
   productSeoTitle,
 } from '@/lib/seo/product-meta';
@@ -18,12 +20,24 @@ import { productGuides as defaultGuides, type ProductGuide } from '@/data/produc
 import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
+import { productNameWithLabel } from '@/lib/seo/product-image-alt';
 import { canonicalProductSlug, isSameProductSlug } from '@/lib/product-slugs';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
 import styles from './page.module.css';
 
 export const dynamic = 'force-dynamic';
+
+// 인증·시험 식별 정보 블록을 싣는 제품 — 포장 표시사항까지 실린 대표 제품(캡슐)만.
+const CERT_BLOCK_SLUG = 'daeracheon-cham-agarwood-oil-capsule';
+
+// /brand-story '인증' 탭이 쓰는 저장값(pages.brandStory.certificationsTab) 중 여기서 읽는 부분.
+interface BrandCertifications {
+  tag?: string;
+  title?: string;
+  subtitle?: string;
+  sections?: { title: string; items: string[] }[];
+}
 
 export async function generateStaticParams() {
   const products = await readDataSafe<Product>('products');
@@ -76,7 +90,16 @@ export async function generateMetadata(
       locale: 'ko_KR',
       title,
       description,
-      images: product.image ? [product.image] : [],
+      images: product.image
+        ? [{ url: product.image, alt: productNameWithLabel(product.name, categoryLabel) }]
+        : [],
+    },
+    // 루트 twitter 카드(홈 제목·이미지)를 상속하지 않도록 제품 값으로 명시.
+    twitter: {
+      card: product.image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      ...(product.image ? { images: [product.image] } : {}),
     },
   };
 }
@@ -114,6 +137,17 @@ export default async function ProductDetailPage(
   // 450~750자로 얇았다. 표시사항 "그대로"라 효능 문구가 섞이지 않는다.
   const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
   const countryOfOrigin = guideField(guide, '제조국');
+  const manufacturer = productSchemaManufacturer(guideField(guide, '제조원'));
+  // 화면(목록 필터·제목)에 쓰는 카테고리 라벨 — 없으면 저장된 카테고리 값.
+  const categoryLabel = categories.find((c) => c.id === product.category)?.label;
+
+  // 인증·시험 식별 정보 — /brand-story '인증' 탭에 이미 공개된 문구를 같은 저장값에서 읽어
+  // 그대로 옮긴다. 여기서 문구를 만들지 않으며, 저장값이 없으면 블록을 내지 않는다.
+  const certs = isSameProductSlug(product.slug, CERT_BLOCK_SLUG)
+    ? (await readSingleSafe<{ brandStory?: { certificationsTab?: BrandCertifications } }>('pages'))
+        ?.brandStory?.certificationsTab
+    : undefined;
+  const certSections = (certs?.sections ?? []).filter((sec) => sec.title && sec.items?.length > 0);
 
   // 검색어 주제 페이지로 가는 내부 링크 — 제품 카테고리에 맞는 정보 랜딩을 맨 앞에.
   // (오일 → '침향 오일', 환(침향단·기보단) → '침향환·침향단', 차 → '침향차')
@@ -124,7 +158,8 @@ export default async function ProductDetailPage(
     ...(product.category === '환'
       ? [{ href: '/agarwood-hwan', label: '침향환·침향단 고르는 법', desc: '라벨에서 침향 함량 읽는 법과 섭취법' }]
       : []),
-    ...(product.category === '차'
+    // 침향스틱은 차 허브가 '차로 우리는 제품'으로 소개한다 — 허브로 돌아가는 링크를 둔다.
+    ...(product.category === '차' || isSameProductSlug(product.slug, 'agarwood-stick-100g')
       ? [{ href: '/agarwood-tea', label: '침향차 우리는 법', desc: '제품별 우리는 법과 고를 때 확인할 것' }]
       : []),
     { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
@@ -159,23 +194,19 @@ export default async function ProductDetailPage(
     '@id': `https://zoellife.com/products/${pageSlug}#product`,
     name: product.name,
     ...(product.nameEn ? { alternateName: product.nameEn } : {}),
-    description: product.description,
+    // 짧은 설명 — 메타 설명과 같은 원천. 긴 소개 문구는 화면 본문에만 둔다.
+    description: productSchemaDescription(product),
     sku: product.id,
     productID: product.id,
     inLanguage: 'ko-KR',
     // 문자열 URL 배열 대신 완전한 ImageObject 배열 — GSC 「이미지 메타데이터」가
     // 요구하는 creator/creditText/copyrightNotice/license/acquireLicensePage 포함.
     image: (product.gallery?.length ? product.gallery : product.image ? [product.image] : []).map(
-      (url, i) =>
-        imageObject({
-          url,
-          name: product.name,
-          caption: i === 0 ? product.description || product.name : product.name,
-        })
+      (url) => imageObject({ url, name: product.name, caption: product.name })
     ),
     brand: { '@id': 'https://zoellife.com/#brand' },
-    manufacturer: { '@id': 'https://zoellife.com/#organization' },
-    category: product.category,
+    ...(manufacturer ? { manufacturer } : {}),
+    category: categoryLabel || product.category,
     ...(countryOfOrigin ? { countryOfOrigin: { '@type': 'Country', name: countryOfOrigin } } : {}),
     isPartOf: { '@id': 'https://zoellife.com/#website' },
     ...(offers ? { offers } : {}),
@@ -211,7 +242,7 @@ export default async function ProductDetailPage(
               primary={product.image}
               gallery={product.gallery}
               alt={product.name}
-              categoryLabel={categories.find((c) => c.id === product.category)?.label}
+              categoryLabel={categoryLabel}
               badge={product.badge}
               outOfStock={!product.inStock}
             />
@@ -318,6 +349,30 @@ export default async function ProductDetailPage(
             <p className={styles.guideNote}>
               포장의 식품 한글표시사항을 옮긴 내용입니다. 큰 글씨로 보기:{' '}
               <Link href={`/guide#${pageSlug}`}>복용 가이드</Link>
+            </p>
+          </section>
+        )}
+
+        {/* 인증·시험 — /brand-story 인증 탭의 제목·요약·항목 그대로 */}
+        {certs?.title && certSections.length > 0 && (
+          <section className={styles.guide} aria-labelledby="product-certs-title">
+            {certs.tag && <div className={styles.specsHead}>{certs.tag}</div>}
+            <h2 id="product-certs-title">{certs.title}</h2>
+            {certs.subtitle && <p className={styles.guideTagline}>{certs.subtitle}</p>}
+            <div className={styles.guideGrid}>
+              {certSections.map((sec) => (
+                <div key={sec.title} className={styles.guideCard}>
+                  <h3 className={styles.guideTitle}>{sec.title}</h3>
+                  <ul className={styles.guideList}>
+                    {sec.items.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className={styles.guideNote}>
+              자세히 보기: <Link href="/brand-story#tab-1">브랜드 이야기</Link>
             </p>
           </section>
         )}

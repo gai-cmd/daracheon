@@ -252,6 +252,8 @@ export default async function ProductsPage() {
         position: i + 1,
         name: p.name,
         url: `https://zoellife.com/products/${p.slug}`,
+        // 저장된 대표 이미지 (상대 경로면 사이트 주소를 붙인다).
+        ...(p.image ? { image: new URL(p.image, 'https://zoellife.com').toString() } : {}),
       })),
     },
   };
@@ -280,6 +282,9 @@ export default async function ProductsPage() {
         title="침향 제품, 고르기 전에 읽어 보세요"
         links={[
           { href: '/agarwood-oil', label: '침향 오일 고르는 법', desc: '학명·원산지·나무 수령·함량으로 보는 좋은 침향 오일' },
+          // 환·차 허브 — 제품 상세의 '함께 읽어보세요' 카드와 같은 문구.
+          { href: '/agarwood-hwan', label: '침향환·침향단 고르는 법', desc: '라벨에서 침향 함량 읽는 법과 섭취법' },
+          { href: '/agarwood-tea', label: '침향차 우리는 법', desc: '제품별 우리는 법과 고를 때 확인할 것' },
           { href: '/vietnam-agarwood', label: '베트남 침향', desc: '고문헌이 기록한 침향의 주산지와 5개 직영 농장' },
           { href: '/about-agarwood#tab-1', label: '진짜 침향 구별법', desc: '학명·산지·증빙 서류 세 가지 확인법' },
           { href: '/guide', label: '복용·보관 가이드', desc: '제품별 복용 방법과 주의사항' },
