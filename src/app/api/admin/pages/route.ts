@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { readSingleUncached, readSingleForWrite, writeSingle } from '@/lib/db';
 import { logAdmin } from '@/lib/audit';
 import { dropRedirectingPaths, notifyIndexNow } from '@/lib/seo/indexnow';
+import { stampPageUpdatedAt } from '@/lib/seo/sitemap-pages';
 
 export const dynamic = 'force-dynamic';
 
@@ -102,7 +103,12 @@ export async function PUT(request: Request) {
   }
 
   // Stage 4: merge
-  const updated: PagesData = { ...existing, [body.key]: body.data };
+  // 저장 시각을 키별로 함께 적는다 — sitemap lastmod 등 "이 페이지가 실제로 언제 바뀌었나"의 출처.
+  const updated: PagesData = stampPageUpdatedAt(
+    { ...existing, [body.key]: body.data },
+    body.key,
+    new Date(),
+  );
   console.log(`[api:pages] PUT stage=4:merge merged key=${body.key}, total keys=${Object.keys(updated).length}`);
 
   // Stage 5: blob 쓰기
