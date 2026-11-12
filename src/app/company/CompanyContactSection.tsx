@@ -346,11 +346,19 @@ export default function CompanyContactSection({ faqItems, supportData }: Company
                 <div className={styles.faqList} style={{ marginTop: 28 }}>
                   {faqItems.map((item, i) => (
                     <div key={i} className={`${styles.faqItem} ${openFaq === i ? styles.faqOpen : ''}`}>
-                      <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                        aria-expanded={openFaq === i}
+                        aria-controls={`company-faq-answer-${i}`}
+                      >
                         <span>{item.question}</span>
                         <span className={styles.chevron}>▼</span>
                       </button>
-                      {openFaq === i && <div className={styles.faqAnswer}>{item.answer}</div>}
+                      {/* 답은 늘 HTML 에 두고 닫힌 항목만 hidden — FAQPage JSON-LD 와 같은 데이터(faq)라 글자가 같다. */}
+                      <div id={`company-faq-answer-${i}`} className={styles.faqAnswer} hidden={openFaq !== i}>
+                        {item.answer}
+                      </div>
                     </div>
                   ))}
                 </div>
