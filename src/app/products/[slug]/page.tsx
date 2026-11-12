@@ -9,6 +9,8 @@ import {
   buildProductOffers,
   pickRelatedProducts,
   productOfferPrice,
+  productSchemaDescription,
+  productSchemaManufacturer,
   productSeoDescription,
   productSeoTitle,
 } from '@/lib/seo/product-meta';
@@ -18,6 +20,7 @@ import { productGuides as defaultGuides, type ProductGuide } from '@/data/produc
 import { SMARTSTORE_PRODUCT_URL } from '@/data/store';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
+import { productNameWithLabel } from '@/lib/seo/product-image-alt';
 import { canonicalProductSlug, isSameProductSlug } from '@/lib/product-slugs';
 import VariantSelector from './VariantSelector';
 import ImageGallery from './ImageGallery';
@@ -76,7 +79,16 @@ export async function generateMetadata(
       locale: 'ko_KR',
       title,
       description,
-      images: product.image ? [product.image] : [],
+      images: product.image
+        ? [{ url: product.image, alt: productNameWithLabel(product.name, categoryLabel) }]
+        : [],
+    },
+    // 루트 twitter 카드(홈 제목·이미지)를 상속하지 않도록 제품 값으로 명시.
+    twitter: {
+      card: product.image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      ...(product.image ? { images: [product.image] } : {}),
     },
   };
 }
@@ -114,6 +126,9 @@ export default async function ProductDetailPage(
   // 450~750자로 얇았다. 표시사항 "그대로"라 효능 문구가 섞이지 않는다.
   const guide = (storedGuides.length > 0 ? storedGuides : defaultGuides).find((g) => isSameProductSlug(g.slug, product.slug));
   const countryOfOrigin = guideField(guide, '제조국');
+  const manufacturer = productSchemaManufacturer(guideField(guide, '제조원'));
+  // 화면(목록 필터·제목)에 쓰는 카테고리 라벨 — 없으면 저장된 카테고리 값.
+  const categoryLabel = categories.find((c) => c.id === product.category)?.label;
 
   // 검색어 주제 페이지로 가는 내부 링크 — 제품 카테고리에 맞는 정보 랜딩을 맨 앞에.
   // (오일 → '침향 오일', 환(침향단·기보단) → '침향환·침향단', 차 → '침향차')
@@ -160,23 +175,19 @@ export default async function ProductDetailPage(
     '@id': `https://zoellife.com/products/${pageSlug}#product`,
     name: product.name,
     ...(product.nameEn ? { alternateName: product.nameEn } : {}),
-    description: product.description,
+    // 짧은 설명 — 메타 설명과 같은 원천. 긴 소개 문구는 화면 본문에만 둔다.
+    description: productSchemaDescription(product),
     sku: product.id,
     productID: product.id,
     inLanguage: 'ko-KR',
     // 문자열 URL 배열 대신 완전한 ImageObject 배열 — GSC 「이미지 메타데이터」가
     // 요구하는 creator/creditText/copyrightNotice/license/acquireLicensePage 포함.
     image: (product.gallery?.length ? product.gallery : product.image ? [product.image] : []).map(
-      (url, i) =>
-        imageObject({
-          url,
-          name: product.name,
-          caption: i === 0 ? product.description || product.name : product.name,
-        })
+      (url) => imageObject({ url, name: product.name, caption: product.name })
     ),
     brand: { '@id': 'https://zoellife.com/#brand' },
-    manufacturer: { '@id': 'https://zoellife.com/#organization' },
-    category: product.category,
+    ...(manufacturer ? { manufacturer } : {}),
+    category: categoryLabel || product.category,
     ...(countryOfOrigin ? { countryOfOrigin: { '@type': 'Country', name: countryOfOrigin } } : {}),
     isPartOf: { '@id': 'https://zoellife.com/#website' },
     ...(offers ? { offers } : {}),
@@ -212,7 +223,7 @@ export default async function ProductDetailPage(
               primary={product.image}
               gallery={product.gallery}
               alt={product.name}
-              categoryLabel={categories.find((c) => c.id === product.category)?.label}
+              categoryLabel={categoryLabel}
               badge={product.badge}
               outOfStock={!product.inStock}
             />

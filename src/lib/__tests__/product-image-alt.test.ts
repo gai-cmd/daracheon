@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { productImageAlt } from '@/lib/seo/product-image-alt';
+import { productImageAlt, productNameWithLabel } from '@/lib/seo/product-image-alt';
+
+describe('productNameWithLabel', () => {
+  it('라벨을 붙이되 제품명에 이미 있으면 반복하지 않는다', () => {
+    expect(productNameWithLabel('침향단 (沈香丹)', '침향환')).toBe('침향단 (沈香丹) 침향환');
+    expect(productNameWithLabel('침향수 (沈香水)', '침향수')).toBe('침향수 (沈香水)');
+    expect(productNameWithLabel(' 기보단 ', undefined)).toBe('기보단');
+  });
+});
 
 /** 제품 갤러리 alt — 제품명 + 카테고리 라벨 + 순번, 라벨 중복·누락 처리. */
 describe('productImageAlt', () => {

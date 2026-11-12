@@ -4,6 +4,8 @@ import seed from '../../../data/db/products.json';
 import {
   buildProductOffers,
   pickRelatedProducts,
+  productSchemaDescription,
+  productSchemaManufacturer,
   productSeoDescription,
   productSeoTitle,
 } from '../seo/product-meta';
@@ -100,6 +102,22 @@ describe('buildProductOffers', () => {
 
   it('가격을 특정할 수 없으면 undefined', () => {
     expect(buildProductOffers({ ...bySlug('agarwood-gibodan'), price: 0, priceDisplay: '가격 문의', variants: [] }, ctx)).toBeUndefined();
+  });
+});
+
+describe('productSchemaDescription', () => {
+  it('짧은 설명을 쓰고, 없으면 본문 설명으로 돌아간다', () => {
+    const p = bySlug('agarwood-gibodan');
+    expect(productSchemaDescription(p)).toBe(p.shortDescription);
+    expect(productSchemaDescription({ ...p, shortDescription: '  ' })).toBe(p.description);
+  });
+});
+
+describe('productSchemaManufacturer', () => {
+  it("포장 표시의 '제조원' 이 있을 때만 Organization 으로 낸다", () => {
+    expect(productSchemaManufacturer(' VIHECO ')).toEqual({ '@type': 'Organization', name: 'VIHECO' });
+    expect(productSchemaManufacturer(undefined)).toBeUndefined();
+    expect(productSchemaManufacturer('  ')).toBeUndefined();
   });
 });
 

@@ -130,6 +130,23 @@ export function productSeoDescription(
   return out;
 }
 
+/**
+ * Product JSON-LD description — 메타 설명과 같은 원천인 짧은 설명을 쓴다.
+ * 긴 소개 문구(화면 본문)는 마크업에 되풀이하지 않는다. 짧은 설명이 없으면 본문 설명.
+ */
+export function productSchemaDescription(p: Product): string {
+  return p.shortDescription?.trim() || p.description;
+}
+
+/**
+ * Product JSON-LD manufacturer — 포장 표시사항에 '제조원' 이 있을 때만 그 이름으로 낸다.
+ * 표시가 없으면 생략한다 (종전엔 모든 제품이 수입원인 조엘라이프를 제조사로 내보냈다).
+ */
+export function productSchemaManufacturer(labelName?: string): Record<string, unknown> | undefined {
+  const name = labelName?.trim();
+  return name ? { '@type': 'Organization', name } : undefined;
+}
+
 export interface OfferContext {
   url: string;
   sellerId: string;
