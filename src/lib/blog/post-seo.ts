@@ -168,6 +168,19 @@ export function topicHubsForCategory(categoryId: string): TopicHubLink[] {
 }
 
 /**
+ * /blog 목록 위 주제 허브 줄 — 허브 6개 전부. 라벨·순서는 푸터의 주제 허브 링크
+ * (src/components/layout/Footer.tsx)와 같은 글자를 쓴다.
+ */
+export const BLOG_INDEX_HUBS: TopicHubLink[] = [
+  { href: '/about-agarwood', label: '침향이란' },
+  { href: '/vietnam-agarwood', label: '베트남 침향' },
+  { href: '/agarwood-oil', label: '침향 오일' },
+  { href: '/agarwood-benefits', label: '침향 효능' },
+  { href: '/agarwood-hwan', label: '침향환' },
+  { href: '/agarwood-tea', label: '침향차' },
+];
+
+/**
  * 작성자가 브랜드·법인명(대라천/조엘라이프/ZOEL)인지 — 그러면 Person 대신 정규 Organization 노드로 귀속한다.
  * 이름이 비어 있어도 조직으로 본다.
  */

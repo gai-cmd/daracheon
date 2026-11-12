@@ -5,7 +5,7 @@ import JsonLd from '@/components/ui/JsonLd';
 import { readPublishedPostListSafe, readCategoriesCachedSafe } from '@/lib/blog/store';
 import { readDataSafe } from '@/lib/db';
 import type { AdminUser } from '@/lib/admin-users';
-import { authorDisplayName, isBrandAuthor } from '@/lib/blog/post-seo';
+import { authorDisplayName, BLOG_INDEX_HUBS, isBrandAuthor } from '@/lib/blog/post-seo';
 import { type BlogCategory, type BlogPost } from '@/types/blog';
 import BlogCard from './BlogCard';
 import BlogPagination, { parseBlogPage } from './BlogPagination';
@@ -175,6 +175,22 @@ export default async function BlogListPage({ searchParams }: BlogSearchParams) {
             </div>
           </nav>
         )}
+
+        {/* 주제 허브 6개 — 카테고리 줄과 같은 알약 링크. 라벨은 푸터의 허브 링크와 같은 글자. */}
+        <nav aria-label="관련 주제" className="border-b border-luxury-bronze/20 px-7 py-4 lg:px-16">
+          <div className="mx-auto flex max-w-[1312px] flex-wrap items-center gap-2">
+            <span className="text-xs text-luxury-gold">관련 주제</span>
+            {BLOG_INDEX_HUBS.map((h) => (
+              <Link
+                key={h.href}
+                href={h.href}
+                className="rounded-full border border-luxury-bronze/40 px-3 py-1 text-xs text-luxury-cream/70 transition hover:border-luxury-gold/60 hover:text-luxury-gold"
+              >
+                {h.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
 
         <section className="px-7 py-12 lg:px-16">
           <div className="mx-auto max-w-[1312px]">
