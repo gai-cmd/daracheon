@@ -4,7 +4,7 @@ import RevealOnScroll from '@/components/ui/RevealOnScroll';
 import JsonLd from '@/components/ui/JsonLd';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
 import type { Review } from '@/data/reviews';
-import { formatDate } from '@/lib/utils';
+import { publicReviews } from '@/lib/reviews-public';
 import ReviewFormModal from './ReviewFormModal';
 
 export const dynamic = 'force-dynamic';
@@ -12,13 +12,13 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: '고객 리뷰·후기 — 대라천 침향 실사용기',
   description:
-    '대라천 ZOEL LIFE 프리미엄 침향 제품을 실제 구매·복용한 고객들의 생생한 후기. 침향 오일·캡슐·침향단·선향·침향수·침향차 효능 리뷰, 복용 경험담, 별점 평가.',
+    "블로그에 올라온 대라천 '참'침향 오일 캡슐 후기 모음. 후기마다 원문 링크를 함께 실었습니다.",
   keywords: [
     '침향 후기', '침향 리뷰', '침향 효능 후기', '침향 복용 후기',
     '대라천 후기', '대라천 리뷰', 'ZOEL LIFE 후기', '조엘라이프 후기',
     '침향 오일 후기', '침향 캡슐 후기', '침향환 후기',
     '침향단 후기', '침향 선향 후기', '침향수 후기', '침향차 후기',
-    '침향 별점', '침향 추천 후기',
+    '침향 추천 후기',
   ],
   alternates: { canonical: 'https://zoellife.com/reviews' },
   openGraph: {
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     siteName: '대라천 ZOEL LIFE',
     locale: 'ko_KR',
     title: '고객 리뷰·후기 — 대라천 침향 실사용기',
-    description: '인증 구매 고객의 침향 오일·캡슐·환·선향·차 실사용기와 별점 평가.',
+    description: "블로그에 올라온 대라천 '참'침향 오일 캡슐 후기와 원문 링크.",
     images: ['/opengraph-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: '고객 리뷰·후기 — 대라천 침향 실사용기',
-    description: '인증 구매 고객의 침향 별점·실사용기.',
+    description: "블로그에 올라온 대라천 '참'침향 오일 캡슐 후기와 원문 링크.",
     images: ['/twitter-image.jpg'],
   },
 };
@@ -49,30 +49,28 @@ interface ReviewsHero {
 const DEFAULT_REVIEWS_HERO: ReviewsHero = {
   kicker: 'TESTIMONIALS',
   titleKr: '고객 후기',
-  lede: 'ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기. 인증된 구매 고객의 후기를 모두 공개합니다.',
+  lede: 'ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기.',
 };
 
 export default async function ReviewsPage() {
-  // 공개 페이지: 인증된(verified) 리뷰만 표시
-  const reviews = (await readDataSafe<Review>('reviews')).filter((r) => r.verified === true);
+  // 공개 페이지: 원문 주소가 있는 후기만, 원문 링크와 함께 보여 준다(2026-11-12 소유자 결정).
+  // 구매 인증·평균 별점·후기 수는 확인된 사실이 아니라 화면·메타·구조화 데이터 어디에도 싣지 않는다.
+  // 저장된 date 는 원문 게시일이 아니라 다시 매긴 날짜라 보여 주지 않는다. 원문 게시일 자료가 없다.
+  const reviews = publicReviews(await readDataSafe<Review>('reviews'));
   const pagesData = await readSingleSafe<{ reviews?: { hero?: ReviewsHero } }>('pages');
   const hero: ReviewsHero = { ...DEFAULT_REVIEWS_HERO, ...pagesData?.reviews?.hero };
-
-  const avgRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : '0.0';
 
   // 페이지 단위 schema 는 CollectionPage + BreadcrumbList 만 출력한다.
   // 자사 사이트가 자기 브랜드에 대한 후기를 Review/AggregateRating 으로 마크업하면
   // Google 의 "자기 홍보성 리뷰(self-serving reviews)" 정책 위반 → 수동 조치 위험이라
-  // Brand aggregateRating 과 Review ItemList 는 제거했다. 화면의 별점·후기는 그대로.
+  // Review·AggregateRating 마크업은 두지 않는다.
   const collectionPageJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': `${SITE_URL}/reviews#page`,
     url: `${SITE_URL}/reviews`,
     name: '고객 리뷰·후기 — 대라천 침향',
-    description: '인증된 구매 고객의 침향 제품 별점·실사용기 모음.',
+    description: "블로그에 올라온 대라천 '참'침향 오일 캡슐 후기 모음(원문 링크 포함).",
     inLanguage: 'ko-KR',
     isPartOf: { '@id': `${SITE_URL}/#website` },
     about: { '@id': `${SITE_URL}/#brand` },
@@ -99,14 +97,6 @@ export default async function ReviewsPage() {
           <div className="grid grid-cols-1 md:grid-cols-[1.8fr_1fr] gap-8 md:gap-20 items-end">
             <div>
               <h1 className="section-title-kr text-white mb-5">{hero.titleKr}</h1>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-1 text-gold-500 text-xl">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i}>★</span>
-                  ))}
-                </div>
-                <span className="font-display text-3xl text-gold-500">{avgRating}</span>
-              </div>
             </div>
             <div>
               <p className="text-white/70 text-[0.95rem] leading-8 max-w-[780px]">
@@ -130,7 +120,14 @@ export default async function ReviewsPage() {
                         <span key={j} className={j < review.rating ? '' : 'opacity-20'}>★</span>
                       ))}
                     </div>
-                    <p className="text-xs text-neutral-400">{formatDate(review.date)}</p>
+                    <a
+                      href={review.source}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                      className="text-xs text-neutral-400 hover:text-gold-600"
+                    >
+                      원문 보기 ↗
+                    </a>
                   </div>
 
                   <h2 className="font-serif text-lg mb-3">{review.title}</h2>
@@ -141,9 +138,6 @@ export default async function ReviewsPage() {
                       <span className="px-3 py-1 text-[0.65rem] tracking-wider border border-gold-500/30 text-gold-600">
                         {review.product}
                       </span>
-                      {review.verified && (
-                        <span className="text-[0.65rem] text-green-600 tracking-wider">✓ 인증 구매</span>
-                      )}
                     </div>
                     <p className="text-sm text-neutral-600">
                       {review.author}

@@ -8,6 +8,8 @@ export interface Review {
   content: string;
   date: string;
   verified: boolean;
+  /** 블로그 등 외부 원문 주소. 공개 /reviews 는 이 값이 있는 후기만 원문 링크와 함께 보여 준다. */
+  source?: string;
   /** QR 후기 유도로 유입된 경우 출처 QR slug (어트리뷰션) */
   qrSlug?: string;
 }

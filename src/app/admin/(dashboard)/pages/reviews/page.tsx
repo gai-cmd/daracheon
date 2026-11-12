@@ -16,7 +16,7 @@ interface ReviewsPageData {
 const DEFAULT_HERO: ReviewsHero = {
   kicker: 'TESTIMONIALS',
   titleKr: '고객 후기',
-  lede: 'ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기. 인증된 구매 고객의 후기를 모두 공개합니다.',
+  lede: 'ZOEL LIFE 침향을 경험하신 고객님들의 소중한 이야기.',
 };
 
 function LabeledInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
