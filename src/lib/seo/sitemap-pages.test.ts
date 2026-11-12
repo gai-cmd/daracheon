@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { collectRecordImages, pageUpdatedAt, PAGE_UPDATED_AT_KEY, stampPageUpdatedAt } from './sitemap-pages';
+import {
+  collectRecordImages,
+  pageDateModified,
+  pageUpdatedAt,
+  PAGE_UPDATED_AT_KEY,
+  stampPageUpdatedAt,
+} from './sitemap-pages';
 
 describe('stampPageUpdatedAt / pageUpdatedAt', () => {
   const at = new Date('2026-11-12T03:00:00.000Z');
@@ -42,6 +48,13 @@ describe('stampPageUpdatedAt / pageUpdatedAt', () => {
     expect(pageUpdatedAt(pages, 'broken')).toBeUndefined();
     expect(pageUpdatedAt({}, 'brandStory')).toBeUndefined();
     expect(pageUpdatedAt(null, 'brandStory')).toBeUndefined();
+  });
+
+  it('pageDateModified: 저장 시각이 있으면 ISO, 없으면 기존 상수 그대로', () => {
+    const pages = { [PAGE_UPDATED_AT_KEY]: { brandStory: '2026-10-01T00:00:00.000Z', showroom: '2026-11-02T00:00:00.000Z' } };
+    expect(pageDateModified(pages, '2026-04-17', 'brandStory', 'showroom')).toBe('2026-11-02T00:00:00.000Z');
+    expect(pageDateModified(pages, '2026-04-17', 'aboutAgarwood')).toBe('2026-04-17');
+    expect(pageDateModified(null, '2026-04-17', 'aboutAgarwood')).toBe('2026-04-17');
   });
 });
 

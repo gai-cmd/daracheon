@@ -35,6 +35,14 @@ export function pageUpdatedAt(pages: unknown, ...keys: string[]): Date | undefin
   return latest;
 }
 
+/**
+ * Article.dateModified 용 값 — 주어진 키들의 최근 저장 시각(ISO). 기록이 없으면 fallback(기존 상수) 그대로.
+ * 렌더 시각은 쓰지 않는다.
+ */
+export function pageDateModified(pages: unknown, fallback: string, ...keys: string[]): string {
+  return pageUpdatedAt(pages, ...keys)?.toISOString() ?? fallback;
+}
+
 const IMAGE_EXT = /\.(jpe?g|png|webp|avif|gif)(\?|#|$)/i;
 
 /**

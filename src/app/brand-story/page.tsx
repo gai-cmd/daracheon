@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { readSingleUncached } from '@/lib/db';
 import JsonLd from '@/components/ui/JsonLd';
+import { pageDateModified } from '@/lib/seo/sitemap-pages';
 import { toOwnedThumbnailUrl, toUploadDateTime } from '@/lib/seo/video';
 import BrandStoryClient from './BrandStoryClient';
 import TopicLinks, { type TopicLink } from '@/components/seo/TopicLinks';
@@ -259,8 +260,9 @@ export default async function BrandStoryPage() {
     mainEntityOfPage: 'https://zoellife.com/brand-story',
     about: { '@id': 'https://zoellife.com/#brand' },
     // 형제 페이지 about-agarwood 와 동일 콘텐츠 시기 — 발행/갱신일 명시(최신성 신호).
+    // dateModified 는 어드민 저장 시각(brandStory·showroom 중 최근, sitemap lastmod 와 같은 키) — 기록이 없으면 기존 상수.
     datePublished: '2026-01-07',
-    dateModified: '2026-04-17',
+    dateModified: pageDateModified(pagesData, '2026-04-17', 'brandStory', 'showroom'),
     image: 'https://zoellife.com/opengraph-image.jpg',
     keywords:
       '대라천, ZOEL LIFE, 조엘라이프, 침향 브랜드, 베트남 침향, 25년 침향, Aquilaria agallocha Roxburgh',

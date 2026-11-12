@@ -8,6 +8,7 @@ import { faqPageNode, type FaqEntry } from '@/lib/seo/home-faq';
 import { imageObject } from '@/lib/seo/image';
 import { isStoredImageUrl } from '@/lib/blog/image-alt';
 import { readFurtherReading } from '@/lib/blog/further-reading';
+import { pageDateModified } from '@/lib/seo/sitemap-pages';
 import FurtherReading from '@/components/seo/FurtherReading';
 
 // Admin 저장 / 외부 시드 스크립트로 blob 갱신 시 즉시 반영.
@@ -62,7 +63,7 @@ const SITE_URL = 'https://zoellife.com';
 
 // Article 대표 이미지 — 어드민 히어로 이미지가 우리 인프라(Vercel Blob·/public)일 때만 쓰고,
 // 아니면 기존 사이트 OG 이미지로 둔다 (외부 CDN 의존 금지, CLAUDE.md).
-// dateModified 는 pages 데이터에 저장된 수정 시각이 없어 기존 값을 유지한다(현재 시각 금지).
+// dateModified 는 어드민 저장 시각(pages.pageUpdatedAt.aboutAgarwood)을 쓰고, 기록이 없으면 아래 상수(현재 시각 금지).
 const ARTICLE_FALLBACK_IMAGE = `${SITE_URL}/opengraph-image.jpg`;
 
 function articleImage(heroImage: string | undefined) {
@@ -334,7 +335,11 @@ export default async function AboutAgarwoodPage() {
       }
     : null;
 
-  const articleJsonLd = { ...articleJsonLdBase, image: articleImage(data?.hero?.heroImage) };
+  const articleJsonLd = {
+    ...articleJsonLdBase,
+    dateModified: pageDateModified(pagesData, articleJsonLdBase.dateModified, 'aboutAgarwood'),
+    image: articleImage(data?.hero?.heroImage),
+  };
 
   // ScholarlyArticle JSON-LD — 검증된 논문 데이터(저자·연도·저널·링크
   // 모두 갖춘 항목) 만 schema 에 포함. dummy / 일부만 입력된 항목은 제외.
