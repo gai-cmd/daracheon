@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 const FURTHER_READING_SLUGS = VIETNAM_FURTHER_READING_SLUGS;
 
 const TITLE = '베트남 침향 — 역사 속 산지·학명·직영 농장';
-const DESCRIPTION = '고문헌이 기록한 침향의 주산지 베트남. 학명 아갈로차, 하띤·동나이 등 5개 직영 농장, 구매 시 확인할 증빙.';
+const DESCRIPTION = '고문헌이 기록한 침향의 주산지 베트남. 침향나무의 학명 아갈로차, 하띤·동나이 등 5개 직영 농장, 구매 시 확인할 증빙.';
 
 export const metadata: Metadata = {
   title: TITLE,
