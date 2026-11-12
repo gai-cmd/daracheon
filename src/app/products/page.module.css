@@ -385,3 +385,36 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* /products 히어로 — H1 은 작은 라벨, 저장된 첫 화면 문구(.heroTitle)는 단락.
+   .heroTitle 값은 story-page.module.css 의 `.hero h1` 과 같다 (모양 유지).
+   색은 dark-theme 가 h1 에 강제하는 inherit 과 같게 둔다. */
+.heroCol h1.heroH1 {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  margin: 0 0 14px;
+  opacity: 0.72;
+}
+.heroTitle {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.7rem, 5vw, 4.4rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+  color: inherit;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+@media (max-width: 480px) {
+  .heroTitle { font-size: clamp(1.5rem, 7vw, 2.2rem); }
+}
+.heroTitle em {
+  font-style: normal;
+  color: var(--accent);
+  font-family: var(--font-serif), serif;
+  font-weight: 400;
+}
