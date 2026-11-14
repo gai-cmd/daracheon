@@ -198,11 +198,12 @@ interface ConsoleCategory {
 ```
 
 - 필드 모양은 프로토타입 `CATEGORIES`(index.html L781~)와 같고 `kind`만 더한다. 기존 8개 분류와 프로토타입 내보내기 파일에는 `kind`가 없으므로 읽을 때 `resource`로 채운다. `resource`·`knowledge` 밖의 값은 검증 오류다.
-- 내장 지식 분류: `src/lib/console/categories.ts`의 상수 `WIKI_CATEGORY = { id: 'wiki', kind: 'knowledge', icon: 'book', name: '위키', name_en: 'Wiki', short: '위키', short_en: 'Wiki', description: '팀이 함께 보는 지식 문서와 자료실', description_en: 'Shared knowledge pages and the team library' }`. bootstrap은 저장된 분류 앞에 이 상수를 붙여 내려준다. 직원 이름·주소·내부 id가 없으므로 코드에 두어도 시드 금지(REQ-CON-008)와 충돌하지 않는다.
-- `wiki`는 예약 id다. 가져오기 파일의 `categories`에 `id: 'wiki'`가 있으면 그 항목은 무시하고 내장 정의를 쓴다(`kind`를 `resource`로 바꿀 수 없음). `POST /api/console/categories`는 `id: 'wiki'`나 `kind: 'knowledge'`를 400으로 거절하고 `resource` 분류만 만든다. 항목 검증의 "알려진 분류 id"에는 `wiki`가 들어간다.
-- 메뉴 묶음은 순수 함수 `groupNavCategories(categories)` → `{ knowledge: [wiki], regular: [...] }`로 계산한다(단위 테스트 대상). 왼쪽 메뉴 순서: 홈 → 전체 항목 → 위키 구역(제목 "위키" + 위키 항목) → 구분선(`role="separator"`) → 일반 분류 → 공유 계정 → 내 항목.
+- 내장 지식 분류: `src/lib/console/categories.ts`의 상수 `WIKI_CATEGORY = { id: 'wiki', kind: 'knowledge', icon: 'library', name: '위키', name_en: 'Wiki', short: '위키', short_en: 'Wiki', description: '팀이 함께 보는 지식 문서와 자료실', description_en: 'Shared knowledge pages and the team library' }`. bootstrap은 저장된 분류 앞에 이 상수를 붙여 내려준다. 아이콘 `library`(책꽂이 모양 마크)는 이번에 `brand-marks.ts` 아이콘 세트에 더하는 번들 SVG이고(REQ-CON-022), 일반 분류 `guides-team`의 `book`과 겹치지 않는다(REQ-CON-026). 쓰임 구분: 위키는 팀이 함께 읽는 지식 문서·자료실, `guides-team`은 가이드·교육·워크스페이스 도구. 직원 이름·주소·내부 id가 없으므로 코드에 두어도 시드 금지(REQ-CON-008)와 충돌하지 않는다.
+- `wiki`는 예약 id다. 가져오기 파일의 `categories`에 `id: 'wiki'`가 있으면 그 항목은 무시하고 내장 정의를 쓴다(`kind`를 `resource`로 바꿀 수 없음). `POST /api/console/categories`는 `id: 'wiki'`나 `kind: 'knowledge'`를 400으로 거절하고 `resource` 분류만 만든다. 가져오기 파일의 `categories`에 `id`가 `wiki`가 아니면서 `kind: 'knowledge'`인 분류가 하나라도 있으면 가져오기 전체를 400으로 거절하고 저장된 문서를 하나도 바꾸지 않는다(§5.3). 그래서 저장된 분류에는 `knowledge`가 생기지 않고, 지식 분류는 언제나 내장 `wiki` 하나다. 항목 검증의 "알려진 분류 id"에는 `wiki`가 들어가고, 항목 추가·편집 양식의 분류 선택지는 맨 앞에 위키, 그 뒤에 일반 분류를 둔다(로그인한 누구나 위키 항목을 만들 수 있음, REQ-CON-010).
+- 메뉴 묶음은 순수 함수 `groupNavCategories(categories)` → `{ wiki: WIKI_CATEGORY, regular: [...] }`로 계산한다(단위 테스트 대상). `wiki`는 언제나 내장 상수이고, `regular`는 저장된 `resource` 분류 전부다(위 거절 규칙 때문에 저장된 `knowledge` 분류는 없다).
+- 메뉴 모양(프로토타입 `renderSide` 방식): 위키 구역은 별도 제목 없이 링크 **한 줄**이다. 아이콘 `library`, 글자 `nav.wiki`("위키" / "Wiki"), 삭제되지 않은 위키 항목 수, 주소 `#/cat/wiki`(다른 분류 링크와 같은 `cat:wiki` 화면). 메뉴에 위키 항목 링크를 하나씩 늘어놓지 않는다. 링크를 누르면 본문에 위키 항목 목록(다른 분류와 같은 목록 행, 상세 패널)을 띄운다. 왼쪽 메뉴 순서: 홈 → 전체 항목 → 구분선 → 위키 링크 → 구분선(`role="separator"`) → 분류 제목(`cats`) → 일반 분류 → 구분선 → 공유 계정 → 내 항목.
 - 위키 항목은 `category: 'wiki'`인 보통 항목이다. 권한·편집·삭제·자격증명·감사 기록 규칙이 다른 항목과 같고, 전체 항목·검색·내 항목·최근 수정에도 나온다. 홈의 분류별 요약은 일반 분류만 센다.
-- 빈 상태: 위키 구역에 삭제되지 않은 항목이 없으면 목록 자리에 `wiki.empty` 안내를 보이고, 메뉴의 위키 항목 수는 0이다.
+- 빈 상태: 삭제되지 않은 위키 항목이 없으면 위키 링크의 개수는 0이고, 링크를 눌렀을 때 본문의 목록 자리에 `wiki.empty` 안내를 보인다.
 - 첫 항목인 워크숍 위키(`자료실 · 대라천 참 침향 위키`, `https://zoel-workshop.vercel.app/apps/wiki`, `access_method: 'sso'`, `team: '공통'`)는 오너가 시드 파일의 `cards`에 넣어 가져온다(plan.md §7 4번). 담당자 이름은 시드 파일에만 적고 저장소에 남기지 않는다.
 - 이번 판의 지식 친화 성질(spec.md §4): 항목 id는 가져오기·내보내기 왕복에서 유지되고, 한·영 짝 필드와 `owners`·`updatedAt`이 내보내기에 남으며, 내보내기에는 자격증명이 없다.
 
@@ -292,7 +293,7 @@ credAccess(user, item, team):
 | 키 | 필수 | 내용 |
 |---|---|---|
 | `cards` 또는 `items` | 둘 중 정확히 하나 | `cards`: 프로토타입 "JSON 내보내기" 형식(`{app:'zoel-console', version:2, exportedAt, categories, cards[]}`). 최상위가 배열이면 `{cards: 배열}`로 본다(프로토타입 `validateDataset`과 같음). `items`: 콘솔 내보내기 형식(`GET /api/console/export`) |
-| `categories` | 선택 | 있으면 저장된 분류를 이 목록으로 교체. 없으면 저장된 분류 유지. `kind`가 없으면 `resource`, 모르는 값이면 오류. `id: 'wiki'` 항목은 무시(§3.5). 항목이 쓰는 분류 id는 모두 최종 분류 목록(내장 `wiki` 포함)에 있어야 함 |
+| `categories` | 선택 | 있으면 저장된 분류를 이 목록으로 교체. 없으면 저장된 분류 유지. `kind`가 없으면 `resource`, 모르는 값이면 오류. `id: 'wiki'` 항목은 무시(§3.5). `id`가 `wiki`가 아닌데 `kind`가 `knowledge`면 오류(400, 저장 문서 변경 없음). 항목이 쓰는 분류 id는 모두 최종 분류 목록(내장 `wiki` 포함)에 있어야 함 |
 | `people` | 선택 | 있으면 사람 목록 교체. 프로토타입 내보내기에는 없으므로 오너가 직접 붙인다(plan.md D1) |
 | `teamPins` | 선택 | 있으면 `console-settings.teamPins` 교체. 프로토타입 `TEAM_PINS`(index.html L544)는 내보내기에 들어 있지 않으므로 옮기려면 오너가 이 키로 붙인다. 없으면 저장된 값 유지 |
 | `app`, `version`, `exportedAt` | 선택 | 읽지 않음(형식 판별에 쓰지 않음) |
@@ -346,7 +347,7 @@ credAccess(user, item, team):
 - `src/app/console/login/page.tsx` — "try-n.com 계정으로 로그인" 버튼(→ `/api/admin/auth/google/start?next=<복귀 경로>`). 복귀 경로는 쿼리 `next`가 `isConsoleNext`를 통과하면 그 값, 아니면 `/console`(인코딩해 넘김). 오류 코드 안내(한·영, §2.3의 코드 전부)
 - `src/app/console/ConsoleApp.tsx` 외 하위 컴포넌트(사이드바, 홈, 목록, 상세 패널, 편집 양식, 계정 메뉴, 검색) — 프로토타입 DOM 로직을 React로 옮긴다
 - `src/app/console/console.module.css` — 프로토타입 CSS 이식(라이트 팔레트만)
-- `src/lib/console/i18n.ts` — 프로토타입 `I18N` 이식, 자격증명 안내 문구는 배포판 문구로 교체. 위키 구역 키 `nav.wiki`("위키" / "Wiki"), `wiki.empty`("아직 위키 항목이 없습니다. 관리자가 가져오기로 추가합니다." / "No wiki entries yet. An admin adds them through import.")를 두 언어에 같이 둔다
+- `src/lib/console/i18n.ts` — 프로토타입 `I18N` 이식, 자격증명 안내 문구는 배포판 문구로 교체. 위키 구역 키 `nav.wiki`("위키" / "Wiki"), `wiki.empty`("아직 위키 항목이 없습니다. 항목을 추가할 때 분류를 위키로 고르면 여기에 나옵니다." / "No wiki entries yet. Add an item and choose Wiki as its category to list it here.")를 두 언어에 같이 둔다
 - `src/lib/console/categories.ts` — 내장 `WIKI_CATEGORY`, `kind` 기본값 채우기, `groupNavCategories`(§3.5)
 - `src/lib/console/brand-marks.ts` — 프로토타입 `brandOf`·`MARKS`·`LETTERS` 이식(상수 SVG 문자열, 사용자 데이터는 넣지 않음)
 

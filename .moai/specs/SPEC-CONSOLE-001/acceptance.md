@@ -60,7 +60,7 @@
 - Then 콘솔 토큰은 발급되지 않고, 시작 요청은 `/console/login?error=console_not_configured`, 콘솔 API는 503이며, 로그에 비밀값 원문이 없다
 - And 소스에 콘솔 비밀값의 리터럴 기본값이 없다(`git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 결과 0줄)
 
-**AC-CON-005** — maps REQ-CON-004, REQ-CON-006
+**AC-CON-005** — maps REQ-CON-001, REQ-CON-004, REQ-CON-006, REQ-CON-013
 - 기준: 토큰 교차 거부
 - Given 유효한 관리자 세션 토큰, 워크숍 핸드오프 토큰, 파트너 토큰, 서명은 맞지만 `k` 표식이 없거나 만료된 토큰
 - When 각각을 `zoel_console_session` 쿠키로 넣어 `GET /api/console/bootstrap`을 요청한다
@@ -212,7 +212,7 @@
 - 기준: 화면 구조와 접속 표시
 - Given 시드를 가져온 콘솔에 로그인했다
 - When 홈과 전체 항목을 연다
-- Then 왼쪽 메뉴에 홈·전체 항목·위키 구역·일반 분류 8개·공유 계정·내 항목이 있고(위키 구역의 위치와 모양은 AC-CON-026), 홈에 팀 필수(또는 내 고정)·최근 수정·분류별 요약이 있으며, 주소 없는 항목이나 담당자 없는 항목이 있을 때만 확인 필요 한 줄이 보인다
+- Then 왼쪽 메뉴에 홈·전체 항목·위키 링크·일반 분류 8개·공유 계정·내 항목이 있고(위키 링크의 위치와 모양은 AC-CON-026), 홈에 팀 필수(또는 내 고정)·최근 수정·분류별 요약이 있으며, 주소 없는 항목이나 담당자 없는 항목이 있을 때만 확인 필요 한 줄이 보인다
 - And 목록은 카드 격자가 아닌 한 줄 행이고 행 높이 전환 기능이 없으며, 모든 행에 연필(편집) 동작이 있다
 - And 행을 누르면 오른쪽 상세 패널이 열린다
 - And 분류·접속 방식·담당자·팀·내 항목·확인 필요 거르기가 각각 목록을 줄인다
@@ -263,16 +263,17 @@
 
 ## 9.1 위키 구역
 
-**AC-CON-026** — maps REQ-CON-025
-- 기준: 위키 구역의 메뉴 위치·분류 `kind` 표식·빈 상태·언어 키
+**AC-CON-026** — maps REQ-CON-025, REQ-CON-026
+- 기준: 위키 링크의 메뉴 위치·모양, 분류 `kind` 표식, 빈 상태, 언어 키
 - Given 시드를 가져오기 전의 콘솔이다. 저장된 분류는 `kind`가 없는 일반 분류 8개이고, `category: "wiki"`인 항목은 없다
-- When 로그인한 일반 사용자가 왼쪽 메뉴를 보고 위키를 누른다
-- Then 메뉴 순서는 홈 → 전체 항목 → 위키 구역 → 구분선(`role="separator"`) → 일반 분류 8개 → 공유 계정 → 내 항목이다. 위키 구역에는 자체 제목 "위키"가 있고, 일반 분류와는 구분선으로 떨어져 있다
-- And 위키를 누르면 목록 대신 빈 상태 안내(`wiki.empty`)가 보이고 오류가 없으며, 메뉴의 위키 항목 수는 0이다. 위키 항목이 삭제된 것만 남은 경우에도 같다
-- And 단위 테스트로 고정한다. `kind`가 없는 분류는 `resource`로 읽고, 내장 `wiki`는 `knowledge`다. `groupNavCategories`는 `knowledge` 분류만 위키 구역에 넣고, 일반 분류 수는 8 그대로다
-- And `kind: "article"`처럼 모르는 값이 든 분류가 있는 파일을 가져오면 400이고 저장된 문서가 하나도 바뀌지 않는다. `categories`에 `{id: "wiki", kind: "resource"}`가 든 파일을 가져와도 위키 구역은 내장 정의(`knowledge`) 그대로다. `POST /api/console/categories`에 `id: "wiki"`나 `kind: "knowledge"`를 보내면 400이다
-- And 테스트용 시드 파일(카드 하나: `category: "wiki"`, `access_method: "sso"`, `team: "공통"`, 지어낸 담당자, 테스트용 주소)을 가져오면 위키 구역의 첫 항목이 그 카드이고, 접속 표시는 SSO이며, 빈 상태 안내가 사라진다. 그 항목은 전체 항목·검색에도 나오고, 홈의 분류별 요약에는 위키가 없다
-- And `ko`·`en` 사전 모두 `nav.wiki`("위키" / "Wiki")와 `wiki.empty`를 가진다. English로 바꾸면 위키 구역 제목이 "Wiki"다
+- When 로그인한 일반 사용자가 왼쪽 메뉴를 보고 위키 링크를 누른다
+- Then 메뉴 순서는 홈 → 전체 항목 → 구분선 → 위키 링크 → 구분선(`role="separator"`) → 분류 제목 → 일반 분류 8개 → 구분선 → 공유 계정 → 내 항목이다. 위키 구역에는 `#/cat/wiki`로 가는 링크가 정확히 1개 있고, 그 밖의 위키 항목 링크는 메뉴에 없다. 링크 글자는 "위키", 아이콘은 `library`(일반 분류 8개의 아이콘과 모두 다름), 개수는 0이다
+- And 위키 링크를 누르면 본문의 목록 자리에 빈 상태 안내(`wiki.empty`)가 보이고 오류가 없다. 위키 항목이 삭제된 것만 남은 경우에도 개수 0과 빈 상태 안내가 같다
+- And 단위 테스트로 고정한다. `kind`가 없는 분류는 `resource`로 읽고, 내장 `wiki`는 `knowledge`다. `groupNavCategories`는 `{ wiki, regular }`를 돌려주고, `wiki`는 내장 정의, `regular`는 일반 분류 8개이며 그중 `kind`가 `knowledge`인 것은 없다
+- And 가져오기 거절은 다음과 같다. `kind: "article"`처럼 모르는 값이 든 분류가 있는 파일, `categories`에 `{id: "kb", kind: "knowledge"}`가 든 파일은 각각 400이고 저장된 문서(항목·분류·사람·비밀 레코드)가 하나도 바뀌지 않는다. `categories`에 `{id: "wiki", kind: "resource"}`가 든 파일을 가져오면 성공하고, 위키는 내장 정의(`knowledge`, 아이콘 `library`) 그대로다. `POST /api/console/categories`에 `id: "wiki"`나 `kind: "knowledge"`를 보내면 400이다
+- And 일반 사용자의 항목 추가 양식에서 분류 선택지 맨 앞에 "위키"가 있고, 그 분류로 만든 항목은 위키 링크 개수를 1 늘리며 위키 목록에 나온다(관리자 권한 없이)
+- And 테스트용 시드 파일(카드 하나: `category: "wiki"`, `access_method: "sso"`, `team: "공통"`, 지어낸 담당자, 테스트용 주소)을 가져오면 위키 링크 개수가 1이 되고, 위키 링크를 누른 본문 목록의 유일한 항목이 그 카드이며, 접속 표시는 SSO이고, 빈 상태 안내가 사라진다. 그 항목은 전체 항목·검색에도 나오고, 홈의 분류별 요약에는 위키가 없다(일반 분류 8개만)
+- And `ko`·`en` 사전 모두 `nav.wiki`("위키" / "Wiki")와 `wiki.empty`를 가진다. 두 언어의 `wiki.empty` 문구에 "관리자"·"가져오기"·"admin"·"import"가 없다(대소문자 무시). English로 바꾸면 위키 링크 글자가 "Wiki"다
 - And `git grep -n "zoel-workshop.vercel.app/apps/wiki" -- src data scripts` 결과가 0줄이다(실제 위키 항목은 시드 파일로만 들어옴)
 
 ## 10. 경계 사례 모음
@@ -298,6 +299,6 @@
 
 - [ ] AC-CON-001 ~ AC-CON-026 모두 통과(증거: 명령과 출력, 스크린샷 경로)
 - [ ] 기존 관리자 로그인·워크숍 SSO 테스트 수정 없이 통과
-- [ ] plan.md §6 오너 확인 D1~D13에 대한 답이 Implementation Kickoff에서 수집되어 progress.md §E.1에 기록됨(D2·D13은 답에 따라 SPEC 개정이 먼저 필요할 수 있음)
+- [ ] plan.md §6 오너 확인 D1~D14에 대한 답이 Implementation Kickoff에서 수집되어 progress.md §E.1에 기록됨(D2·D13은 답에 따라 SPEC 개정이 먼저 필요할 수 있음)
 - [ ] 시드·비밀값이 커밋되지 않음(AC-CON-025)
 - [ ] plan.md §7·§8의 수동 작업·환경변수 목록이 배포 요청과 함께 오너에게 전달됨

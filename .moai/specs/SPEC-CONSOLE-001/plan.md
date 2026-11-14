@@ -14,8 +14,8 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - `src/lib/console/validate.ts` — 프로토타입 `validateDataset`의 서버판(URL 스킴, 길이, enum, 상한)
 - `src/lib/console/permissions.ts` — `isAdmin`·`isOwner`·`canEdit`·`credAccess`·노출 필드 거르기(`toListItem`)
 - `src/lib/console/config.ts` — 세 환경변수 점검(design.md §4.1)
-- `src/lib/console/categories.ts` — 분류 `kind`(`resource`·`knowledge`) 기본값, 내장 지식 분류 `wiki`, 메뉴 묶음 `groupNavCategories`(design.md §3.5, REQ-CON-025)
-- 테스트: 권한 행렬, 검증 경계값, 설정 무효 조건, `kind` 기본값·모르는 값 거절·`wiki` 예약
+- `src/lib/console/categories.ts` — 분류 `kind`(`resource`·`knowledge`) 기본값, 내장 지식 분류 `wiki`, 메뉴 묶음 `groupNavCategories`(design.md §3.5, REQ-CON-025·026)
+- 테스트: 권한 행렬, 검증 경계값, 설정 무효 조건, `kind` 기본값·모르는 값 거절·`wiki` 예약·`wiki` 아닌 `knowledge` 거절, `groupNavCategories`의 `{ wiki, regular }`
 
 ### M2 — 로그인과 세션 (우선순위 높음)
 
@@ -46,7 +46,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - 공통 가드: 세션·Origin·Content-Type·no-store(`src/lib/console/http.ts`)
 - `src/lib/console/import-map.ts` — 가져오기 형식 대응 순수 함수 `mapImportFile`(design.md §5.3)
 - 교체 계열 쓰기는 `removedIds = 기존 키 − 새 키`(design.md §5.4)
-- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, `mapImportFile` 대응표(이름 나누기·email 찾기·미일치·`admin` 무시·팀 고정·`people`/`categories` 키 없으면 유지·분류 `kind`·`wiki` 무시), 가져오기에서 자격증명 무시, 파일에 없는 기존 항목·사람 제거, 내보내기에 자격증명 없음
+- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, `mapImportFile` 대응표(이름 나누기·email 찾기·미일치·`admin` 무시·팀 고정·`people`/`categories` 키 없으면 유지·분류 `kind`·`wiki` 무시·`wiki` 아닌 `knowledge` 분류는 400이고 저장 문서 변경 없음), 가져오기에서 자격증명 무시, 파일에 없는 기존 항목·사람 제거, 내보내기에 자격증명 없음
 
 ### M5 — 화면 이식 (우선순위 중간)
 
@@ -55,7 +55,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - `src/app/console/console.module.css` — 라이트 팔레트, `:root` 미사용
 - `src/lib/console/i18n.ts`, `src/lib/console/brand-marks.ts`
 - `src/components/layout/ChromeGate.tsx` — `/console` 추가
-- 왼쪽 메뉴 최상단 위키 구역(제목·구분선·빈 상태), `book` 아이콘 마크, i18n 키 `nav.wiki`·`wiki.empty`(design.md §3.5, §6.1)
+- 일반 분류 위 위키 구역(개수가 붙은 위키 링크 한 줄·구분선·빈 상태), 편집 양식 분류 선택지의 위키, 새 `library` 아이콘 마크, i18n 키 `nav.wiki`·`wiki.empty`(design.md §3.5, §6.1)
 - 테스트: i18n 키 집합 동일, `brandOf` 판별 표, 접속 표시 매핑, 메뉴 순서와 위키 빈 상태(AC-CON-026)
 
 ### M6 — 검색 노출·운영 등록 (우선순위 낮음, 기계적)
@@ -150,7 +150,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 
 ## 6. 오너 확인 필요 (실행 전에 답이 필요한 것)
 
-아래 D1~D13은 확인 필요 표식 없이 표로 적은 열린 결정이라 기계 검사(MP-7)로는 잡히지 않는다. 오케스트레이터는 Implementation Kickoff Approval에서 각 항목의 답을 받아 progress.md §E.1 "owner_decisions"에 그대로 기록한 뒤 실행 단계로 넘긴다. D2·D13에서 (B)를 고르면 SPEC 개정과 재감사가 먼저다.
+아래 D1~D14는 확인 필요 표식 없이 표로 적은 열린 결정이라 기계 검사(MP-7)로는 잡히지 않는다. 오케스트레이터는 Implementation Kickoff Approval에서 각 항목의 답을 받아 progress.md §E.1 "owner_decisions"에 그대로 기록한 뒤 실행 단계로 넘긴다. D2·D13에서 (B)를 고르면 SPEC 개정과 재감사가 먼저다.
 
 | # | 내용 | 제안(기본값) |
 |---|---|---|
@@ -167,6 +167,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | D11 | 같은 사용자의 자격증명 열람 상한 | 10분에 30회 |
 | D12 | 콘솔에도 사이트 공통 GA·GTM이 실린다(`/admin`과 같음). 항목 내용은 URL에 넣지 않는다 | 그대로 둔다. 빼려면 레이아웃 변경 별도 작업 |
 | D13 | 콘솔 문서는 기존 db 헬퍼대로 공개 접근 Blob에 비밀 prefix로만 보호된다(spec.md §4 저장 한계, §4 위험 행). **(A)** 받아들인다: 자격증명만 암호문, 항목·사람·기록은 기존 고객 PII 문서와 같은 수준. REQ-CON-009는 브라우저 전달 경로만 보장한다. **(B)** 항목·사람·기록 문서도 저장 시점에 암호화한다: 새 요구사항과 새 키(또는 `CONSOLE_SECRETS_KEY` 파생 키)가 필요하고, 백업·시드 동기화 스크립트가 그 문서를 해석할 수 없게 된다. 고르면 실행 전에 SPEC을 개정한다 | 제안: (A) — 같은 저장소의 고객 문의·파트너 계정 문서가 이미 같은 보호 수준이고, prefix는 2026-07에 교체됐다. 다만 prefix 유출 이력이 있으므로 오너가 명시적으로 골라야 한다 |
+| D14 | 사람 목록의 email과 항목의 `owners[].email`을 로그인한 모든 사용자에게 내려준다(design.md §3.4). `role`(직무 메모)만 관리자에게 내려준다. 대안: email을 관리자에게만 내려준다. 고르면 일반 사용자의 담당자 지정 방식(이름으로 고르고 서버가 email을 찾음)을 design.md §3.4와 함께 개정한다 | 제안: 공개 — 볼 수 있는 사람은 모두 구글이 인증한 `@try-n.com` 직원이고 같은 Workspace 디렉터리에서 서로의 주소가 이미 보이며, 한쪽 경로에서만 빼면 다른 경로로 같은 정보가 나간다(plan-audit CON-D12) |
 
 ## 7. 저장소 밖 수동 작업 (오너)
 
