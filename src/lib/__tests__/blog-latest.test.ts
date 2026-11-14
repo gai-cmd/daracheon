@@ -107,16 +107,17 @@ describe('readLatestPublishedPostsSafe — Neon', () => {
       {
         slug: 'a',
         title: '글 A',
+        cover_image: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/a.jpg',
         published_at: new Date('2026-09-15T00:00:00.000Z'),
         created_at: new Date('2026-09-01T00:00:00.000Z'),
       },
-      { slug: 'b', title: '글 B', published_at: null, created_at: new Date('2026-09-10T00:00:00.000Z') },
+      { slug: 'b', title: '글 B', cover_image: null, published_at: null, created_at: new Date('2026-09-10T00:00:00.000Z') },
     ]);
     const out = await readLatestPublishedPostsSafe(3);
 
     expect(sqlCalls).toHaveLength(1);
     const q = sqlCalls[0].text.replace(/\s+/g, ' ');
-    expect(q).toContain('SELECT slug, title, published_at, created_at FROM blog_posts');
+    expect(q).toContain('SELECT slug, title, cover_image, published_at, created_at FROM blog_posts');
     expect(q).toContain("WHERE status = 'published'");
     expect(q).toContain('ORDER BY COALESCE(published_at, created_at) DESC');
     expect(q).toContain('LIMIT $');
@@ -124,8 +125,14 @@ describe('readLatestPublishedPostsSafe — Neon', () => {
     expect(readDataSafe).not.toHaveBeenCalled();
 
     expect(out).toEqual([
-      { slug: 'a', title: '글 A', publishedAt: '2026-09-15T00:00:00.000Z', createdAt: '2026-09-01T00:00:00.000Z' },
-      { slug: 'b', title: '글 B', publishedAt: undefined, createdAt: '2026-09-10T00:00:00.000Z' },
+      {
+        slug: 'a',
+        title: '글 A',
+        publishedAt: '2026-09-15T00:00:00.000Z',
+        createdAt: '2026-09-01T00:00:00.000Z',
+        coverImage: 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com/uploads/blog/a.jpg',
+      },
+      { slug: 'b', title: '글 B', publishedAt: undefined, createdAt: '2026-09-10T00:00:00.000Z', coverImage: undefined },
     ]);
   });
 

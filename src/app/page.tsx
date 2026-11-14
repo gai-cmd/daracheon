@@ -6,6 +6,8 @@ import { readDataSafe, readSingleSafe } from '@/lib/db';
 import { readLatestPublishedPostsSafe } from '@/lib/blog/store';
 import { isOwnAsset, parseEmphasis, resolveHomeMain, safeHref } from '@/lib/home-main';
 import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
+import { SNS_YOUTUBE_OFFICIAL } from '@/data/sns-sample';
+import { feedDateKey, feedDateLabel, type FeedItem } from '@/lib/home-feed';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import { HOME_FAQ, faqPageNode } from '@/lib/seo/home-faq';
@@ -19,8 +21,7 @@ import {
   HoverVideo,
   IgReels,
   LatestVideo,
-  VideoThumb,
-  YoutubeMark,
+  NewsFeed,
   type VideoItem,
 } from './BentoClient';
 import styles from './page.module.css';
@@ -115,11 +116,6 @@ function dateKey(raw?: string): number {
   return m ? Number(m[1]) * 10000 + Number(m[2]) * 100 + Number(m[3]) : 0;
 }
 
-function formatDot(iso?: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso ?? '');
-  return m ? `${m[1]}.${m[2]}.${m[3]}` : '';
-}
-
 /** 제목 표기 → JSX. 줄바꿈은 <br />, *강조* 는 금색(glow). */
 function renderTitle(src: string): ReactNode[] {
   return parseEmphasis(src).map((t, i) =>
@@ -178,8 +174,8 @@ export default async function HomePage() {
   const [pagesData, productsRaw, posts, announcement] = await Promise.all([
     readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData }; homeMain?: unknown }>('pages'),
     readDataSafe<ProductLite>('products'),
-    // 블로그 최신 발행글 3개 — 본문은 읽지 않고, 2초 안에 답이 없으면 타일을 숨긴다.
-    readLatestPublishedPostsSafe(3),
+    // 블로그 최신 발행글 5개 — '새로 올라온 소식' 통합 칸용. 본문은 읽지 않고, 2초 안에 답이 없으면 블로그 카드만 빠진다.
+    readLatestPublishedPostsSafe(5),
     readSingleSafe<Partial<Announcement>>('announcement'),
   ]);
 
@@ -233,14 +229,53 @@ export default async function HomePage() {
         }
       : null;
 
-  // 공식 유튜브 채널(가로 16:9 일반 영상). 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다.
+  // 공식 유튜브 두 채널(@ZoelLife_official_00 + @ZoelLife.official)을 날짜순으로 합친다.
+  // 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다. 같은 영상이 두 채널에 있으면 앞의 것만.
   const snsKo = koreanVideosOnly({ youtube: hm.youtube, instagram: hm.instagram });
-  const videos: VideoItem[] = snsKo.youtube.videos.map((v) => ({
+  const officialKo = koreanVideosOnly({ youtube: SNS_YOUTUBE_OFFICIAL, instagram: hm.instagram }).youtube;
+  const videoSources = [
+    ...snsKo.youtube.videos.map((v) => ({ v, source: snsKo.youtube.handle })),
+    ...officialKo.videos.map((v) => ({ v, source: officialKo.handle })),
+  ]
+    .filter(({ v }, i, all) => all.findIndex((x) => x.v.id === v.id) === i)
+    .map((x, i) => ({ ...x, i }))
+    .sort((a, b) => feedDateKey(b.v.publishedAt) - feedDateKey(a.v.publishedAt) || a.i - b.i);
+  const videos: VideoItem[] = videoSources.map(({ v }) => ({
     id: v.id,
     title: cleanVideoTitle(v.title),
     date: formatSnsDate(v.publishedAt),
     thumbnail: v.thumbnail,
   }));
+
+  // '새로 올라온 소식' 통합 칸 — 블로그 글 + 유튜브 영상. 블로그 표지가 우리 자산이 아니면 기본 이미지.
+  const feedItems: FeedItem[] = [
+    ...posts.map((p) => {
+      const key = feedDateKey(p.publishedAt ?? p.createdAt);
+      return {
+        kind: 'blog' as const,
+        key: p.slug,
+        title: p.title,
+        date: feedDateLabel(key),
+        sortKey: key,
+        image: isOwnAsset(p.coverImage) ? p.coverImage : '/opengraph-image.jpg',
+        source: '블로그',
+        href: `/blog/${p.slug}`,
+      };
+    }),
+    ...videoSources.map(({ v, source }, i) => {
+      const key = feedDateKey(v.publishedAt);
+      return {
+        kind: 'video' as const,
+        key: v.id,
+        title: videos[i].title,
+        date: feedDateLabel(key),
+        sortKey: key,
+        image: v.thumbnail,
+        source,
+        videoIndex: i,
+      };
+    }),
+  ];
   const ig = snsKo.instagram;
 
   return (
@@ -291,7 +326,7 @@ export default async function HomePage() {
           </aside>
         )}
 
-        {/* 3. 소식 — 자주 갱신되는 블록(제품·언론·블로그·공식 채널)을 인트로 바로 아래에 둔다 */}
+        {/* 3. 소식 — 블로그·유튜브·인스타를 첫 줄에, 대표 제품·언론 보도를 둘째 줄에 둔다 */}
         <header className={styles.sectionHead} data-reveal="">
           <span className={styles.badge}>
             <span className={styles.badgeChip}>{news.chip}</span>
@@ -303,7 +338,42 @@ export default async function HomePage() {
         </header>
 
         <section className={styles.grid} aria-labelledby="home-news-title">
-          {/* 대표 제품 — 흐르는 카드 */}
+          {/* 블로그 + 유튜브(두 채널) — 최신순으로 섞은 카드 */}
+          {feedItems.length > 0 && (
+            <div className={`${styles.tile} ${styles.tFeed}`} data-tile="" data-reveal="">
+              <div className={styles.tileHead}>
+                <span>
+                  <span className={styles.cardTitle}>블로그 · 유튜브</span>
+                  <span className={styles.cardSub}>글과 영상으로 만나는 침향 이야기</span>
+                </span>
+                <Link href="/blog" className={styles.more}>
+                  더 보기 →
+                </Link>
+              </div>
+              <NewsFeed items={feedItems} />
+            </div>
+          )}
+
+          {/* 인스타그램 — 공식 계정 릴스 커버를 세로(9:16) 그대로 넘겨 본다 (소식 영역으로 올림) */}
+          <div className={`${styles.tile} ${styles.tIg}`} data-tile="" data-reveal="">
+            <a href={ig.url} target="_blank" rel="noopener noreferrer" className={`${styles.tileHead} ${styles.igHeadLink}`}>
+              <span className={styles.igAccount}>
+                <span className={styles.igMark}>
+                  <InstagramMark size={16} />
+                </span>
+                <span>
+                  <span className={`${styles.cardTitle} ${styles.handle}`}>{ig.handle}</span>
+                  <span className={styles.cardSub}>Instagram</span>
+                </span>
+              </span>
+              <Go />
+            </a>
+            <IgReels
+              posts={ig.posts.map((p) => ({ id: p.id, permalink: p.permalink, image: p.image, caption: p.caption ?? '' }))}
+            />
+          </div>
+
+          {/* 대표 제품 — 흐르는 카드 (소식 아래 줄) */}
           {products.length > 0 && (
             <div className={`${styles.tile} ${styles.tProducts}`} data-tile="" data-reveal="">
               <div className={styles.tileHead}>
@@ -318,18 +388,16 @@ export default async function HomePage() {
               <div className={styles.prodViewport}>
                 <ul className={styles.prodTrack}>
                   {[0, 1].map((k) =>
-                    products.map((p, i) => (
+                    products.map((p) => (
                       <li key={`${k}-${p.slug}`} className={styles.prodItem} aria-hidden={k === 1 ? true : undefined}>
                         <Link href={`/products/${p.slug}`} className={styles.prodCard} tabIndex={k === 1 ? -1 : undefined}>
                           <span className={styles.prodThumb}>
-                            {/* 소식이 첫 화면에 오면서 첫 제품 사진이 모바일 LCP 요소가 되었다 — 첫 장만 우선 로딩 */}
                             {/* 이미지 검색(네이버·구글) 노출용으로 제품명을 alt 에 싣는다. 복제 트랙(k=1)은 aria-hidden 이라 중복 낭독 없음 */}
                             <Image
                               src={p.image!}
                               alt={k === 0 ? `${p.name} — 대라천 '참'침향` : ''}
                               fill
                               sizes="200px"
-                              priority={k === 0 && i === 0}
                               style={{ objectFit: 'cover' }}
                             />
                           </span>
@@ -382,63 +450,6 @@ export default async function HomePage() {
             </div>
           )}
 
-          {/* 블로그 최신 3 */}
-          {posts.length > 0 && (
-            <div className={`${styles.tile} ${styles.tBlog}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span>
-                  <span className={styles.cardTitle}>블로그</span>
-                  <span className={styles.cardSub}>침향을 더 깊이 읽는 글</span>
-                </span>
-                <Link href="/blog" className={styles.more}>
-                  더 보기 →
-                </Link>
-              </div>
-              <ol className={styles.blogList}>
-                {posts.map((p, i) => (
-                  <li key={p.slug}>
-                    <Link href={`/blog/${p.slug}`} className={styles.blogItem}>
-                      <span className={styles.blogIdx}>{String(i + 1).padStart(2, '0')}</span>
-                      <span className={styles.blogText}>
-                        <span className={styles.blogTitle}>{p.title}</span>
-                        <span className={styles.blogDate}>{formatDot(p.publishedAt)}</span>
-                      </span>
-                      <span className={styles.blogArrow} aria-hidden="true">
-                        →
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {/* 공식 채널 — 유튜브 영상 (16:9) */}
-          {videos.length > 0 && (
-            <div className={`${styles.tile} ${styles.tChannel}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span className={styles.igAccount}>
-                  <span className={`${styles.igMark} ${styles.ytMark}`}>
-                    <YoutubeMark size={16} />
-                  </span>
-                  <span>
-                    <span className={styles.cardTitle}>공식 채널</span>
-                    <span className={styles.cardSub}>
-                      {snsKo.youtube.name} {snsKo.youtube.handle}
-                    </span>
-                  </span>
-                </span>
-                <a href={snsKo.youtube.url} target="_blank" rel="noopener noreferrer" className={styles.more}>
-                  채널 구독 →
-                </a>
-              </div>
-              <div className={styles.chRow}>
-                {videos.slice(0, 2).map((v, i) => (
-                  <VideoThumb key={v.id} index={i} />
-                ))}
-              </div>
-            </div>
-          )}
         </section>
 
         {/* 전 제품 이름 링크 — 소식 그리드의 대표 제품 타일 아래. FAQ '더 알아보기' 줄과 같은 모양. */}
@@ -539,25 +550,6 @@ export default async function HomePage() {
               <span className={styles.ringNote}>{tiles.ring.note}</span>
             </span>
           </Link>
-
-          {/* 인스타그램 — 공식 계정 릴스 커버를 세로(9:16) 그대로 넘겨 본다 */}
-          <div className={`${styles.tile} ${styles.tIg}`} data-tile="" data-reveal="">
-            <a href={ig.url} target="_blank" rel="noopener noreferrer" className={`${styles.tileHead} ${styles.igHeadLink}`}>
-              <span className={styles.igAccount}>
-                <span className={styles.igMark}>
-                  <InstagramMark size={16} />
-                </span>
-                <span>
-                  <span className={`${styles.cardTitle} ${styles.handle}`}>{ig.handle}</span>
-                  <span className={styles.cardSub}>Instagram</span>
-                </span>
-              </span>
-              <Go />
-            </a>
-            <IgReels
-              posts={ig.posts.map((p) => ({ id: p.id, permalink: p.permalink, image: p.image, caption: p.caption ?? '' }))}
-            />
-          </div>
 
           {/* 브랜드 이야기 — 호버 시 증류 영상 */}
           <Link href={tiles.brand.href} className={`${styles.tile} ${styles.tBrand}`} data-tile="" data-reveal="">

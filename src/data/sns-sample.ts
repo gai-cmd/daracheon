@@ -43,3 +43,30 @@ export const SNS_SAMPLE: SnsChannels = {
     ],
   },
 };
+
+/**
+ * 두 번째 공식 YouTube 채널 @ZoelLife.official (channel_id UCGy1eR9TDWeUXkfU6U2hdWA) 스냅샷.
+ * 메인 '새로 올라온 소식'은 위 @ZoelLife_official_00 과 이 채널의 영상을 합쳐 날짜순으로 보여 준다.
+ *
+ * - 공개 RSS 2026-11-14 기준. 한글 제목만 싣고, 제목 끝의 'MD' 꼬리표는 떼었다.
+ * - 대부분 세로 쇼츠라 표지는 oardefault(1080x1920)를 960px 높이로 줄여 복사했다(외부 CDN 금지).
+ *   가로 영상(침향의 눈물)은 maxresdefault 를 쓴다.
+ * - 제외: 효능을 암시하는 제목 2건(4KRCME3rPqY 시중 침향환…, poDYXnU0Nbw 부모님께 안마의자 대신…),
+ *   영어 제목 5건(DLzHR7V-axo, mkLvy1K3YdA, bESgqPohrLE, oCLAtbA3B38 등).
+ */
+export const SNS_YOUTUBE_OFFICIAL: SnsChannels['youtube'] = {
+  name: 'ZOEL LIFE',
+  handle: '@ZoelLife.official',
+  url: 'https://www.youtube.com/@ZoelLife.official',
+  videos: [
+    { id: '8jegHbjbUsM', title: '침향의 눈물', publishedAt: '2026-11-11', thumbnail: YT_THUMB('8jegHbjbUsM') },
+    { id: 'm96mb5J0GJ0', title: '가짜 침향에 속지 마세요! 검다고 다 진짜가 아닙니다', publishedAt: '2026-08-24', thumbnail: YT_THUMB('m96mb5J0GJ0') },
+    { id: 'r_nlGYiGh3M', title: '나무의 상처가 세상에서 가장 귀한 향이 되는 순간', publishedAt: '2026-08-23', thumbnail: YT_THUMB('r_nlGYiGh3M') },
+    { id: 'NLoQPrXOvQo', title: '왜 침향나무는 20년을 기다려야 할까', publishedAt: '2026-08-06', thumbnail: YT_THUMB('NLoQPrXOvQo') },
+    { id: 'W4DJLEtIDFY', title: '한 모금에 표정이 달라졌다… ‘천년의 향’ 시음회 현장', publishedAt: '2026-08-05', thumbnail: YT_THUMB('W4DJLEtIDFY') },
+    { id: 'mM6UbfMTOFc', title: '베트남 밀림 속 200만 평 침향 농장, 그 거대한 숲을 공개합니다', publishedAt: '2026-08-05', thumbnail: YT_THUMB('mM6UbfMTOFc') },
+    { id: 'S8MhuLxtT_c', title: '나무 한 그루에 20년을 투자하는 진짜 이유', publishedAt: '2026-07-31', thumbnail: YT_THUMB('S8MhuLxtT_c') },
+    { id: 'bbugrgdogek', title: '금보다 귀하다고 불리는 나무, 베트남 침향 실물 공개', publishedAt: '2026-07-30', thumbnail: YT_THUMB('bbugrgdogek') },
+    { id: 'YTvXAig5G9U', title: '20년 넘은 나무에서만 나오는 ‘검은 눈물’의 정체', publishedAt: '2026-07-29', thumbnail: YT_THUMB('YTvXAig5G9U') },
+  ],
+};

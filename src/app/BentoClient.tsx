@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { pickFeed, type FeedFilter, type FeedItem } from '@/lib/home-feed';
 import styles from './page.module.css';
 
 /**
@@ -287,6 +289,81 @@ export function VideoThumb({ index }: { index: number }) {
       <span className={styles.chTitle}>{v.title}</span>
       <span className={styles.chDate}>{v.date}</span>
     </button>
+  );
+}
+
+/* ───────────── 새로 올라온 소식 — 블로그 + 유튜브(두 채널) 통합 ───────────── */
+
+const FEED_TABS: { key: FeedFilter; label: string }[] = [
+  { key: 'all', label: '전체' },
+  { key: 'blog', label: '블로그' },
+  { key: 'video', label: '유튜브' },
+];
+
+/**
+ * 블로그 글과 유튜브 영상을 한 칸에 최신순으로 섞어 보여 준다.
+ * '전체'는 영상이 몰려도 블로그가 최소 2개 남는다(pickFeed). 영상 카드는 공용 유튜브 모달로 연다.
+ */
+export function NewsFeed({ items, limit = 5 }: { items: FeedItem[]; limit?: number }) {
+  const { open } = useContext(VideoContext);
+  const [filter, setFilter] = useState<FeedFilter>('all');
+  const shown = pickFeed(items, filter, limit);
+
+  const card = (it: FeedItem) => {
+    const body = (
+      <>
+        <span className={styles.feedThumb}>
+          <Image src={it.image} alt="" fill sizes="(max-width: 640px) 44vw, 180px" style={{ objectFit: 'cover' }} />
+          <span className={it.kind === 'video' ? `${styles.feedBadge} ${styles.feedBadgeYt}` : styles.feedBadge}>
+            {it.kind === 'video' ? '▶ 유튜브' : '블로그'}
+          </span>
+          {it.kind === 'video' && (
+            <span className={styles.feedPlay} aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14">
+                <path fill="currentColor" d="M8 5.5v13l11-6.5z" />
+              </svg>
+            </span>
+          )}
+        </span>
+        <span className={styles.feedTitle}>{it.title}</span>
+        <span className={styles.feedMeta}>
+          {it.date}
+          {it.source ? ` · ${it.source}` : ''}
+        </span>
+      </>
+    );
+    return it.kind === 'video' ? (
+      <button type="button" className={styles.feedCard} onClick={() => open(it.videoIndex ?? 0)} aria-label={`${it.title} 재생`}>
+        {body}
+      </button>
+    ) : (
+      <Link href={it.href ?? '/blog'} className={styles.feedCard}>
+        {body}
+      </Link>
+    );
+  };
+
+  return (
+    <>
+      <div className={styles.feedTabs} role="group" aria-label="소식 종류">
+        {FEED_TABS.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            className={styles.feedTab}
+            aria-pressed={filter === t.key}
+            onClick={() => setFilter(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <ul className={styles.feedList}>
+        {shown.map((it) => (
+          <li key={`${it.kind}-${it.key}`}>{card(it)}</li>
+        ))}
+      </ul>
+    </>
   );
 }
 

@@ -230,11 +230,12 @@ export async function readPostsSafe(): Promise<BlogPost[]> {
 }
 
 /** 메인 블로그 타일용 요약 — 타일이 쓰는 필드만 담는다. */
-export type BlogPostSummary = Pick<BlogPost, 'slug' | 'title' | 'publishedAt' | 'createdAt'>;
+export type BlogPostSummary = Pick<BlogPost, 'slug' | 'title' | 'publishedAt' | 'createdAt' | 'coverImage'>;
 
 interface PostSummaryRow {
   slug: string;
   title: string;
+  cover_image: string | null;
   published_at: Date | null;
   created_at: Date;
 }
@@ -247,11 +248,11 @@ async function readLatestPublishedPosts(limit: number): Promise<BlogPostSummary[
       .filter((p) => p.status === 'published')
       .sort((a, b) => (b.publishedAt ?? b.createdAt ?? '').localeCompare(a.publishedAt ?? a.createdAt ?? ''))
       .slice(0, limit)
-      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt, createdAt: p.createdAt }));
+      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt, createdAt: p.createdAt, coverImage: p.coverImage }));
   }
   // 본문(content·content_json)은 읽지 않는다. 정렬은 /blog 와 같다 — 발행일, 없으면 작성일.
   const rows = await sql()<PostSummaryRow[]>`
-    SELECT slug, title, published_at, created_at FROM blog_posts
+    SELECT slug, title, cover_image, published_at, created_at FROM blog_posts
     WHERE status = 'published'
     ORDER BY COALESCE(published_at, created_at) DESC
     LIMIT ${limit}
@@ -261,6 +262,7 @@ async function readLatestPublishedPosts(limit: number): Promise<BlogPostSummary[
     title: r.title,
     publishedAt: iso(r.published_at),
     createdAt: iso(r.created_at)!,
+    coverImage: r.cover_image ?? undefined,
   }));
 }
 
@@ -274,7 +276,7 @@ export const BLOG_LATEST_TAG = 'blog:latest';
 // 실패(throw)는 캐시되지 않고, 제한 시간에 걸려도 조회 자체는 끝까지 돌아 다음 요청용 캐시를 채운다.
 const readLatestPublishedPostsCached = unstable_cache(
   (limit: number) => readLatestPublishedPosts(limit),
-  ['blog-latest-published'],
+  ['blog-latest-published-v2'],
   { revalidate: 300, tags: [BLOG_LATEST_TAG] },
 );
 

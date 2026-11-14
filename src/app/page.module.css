@@ -342,8 +342,8 @@ a.tile:focus-visible {
 /* ── 배치 (≥1100px, 12열) ── */
 .tHero { grid-column: span 8; grid-row: span 6; }
 .tYt { grid-column: span 4; grid-row: span 4; }
-.tStats { grid-column: span 4; grid-row: span 5; }
-.tRing { grid-column: span 4; grid-row: span 5; }
+.tStats { grid-column: span 6; grid-row: span 5; }
+.tRing { grid-column: span 6; grid-row: span 5; }
 .tIg { grid-column: span 4; grid-row: span 5; }
 .tBrand { grid-column: span 6; grid-row: span 3; }
 .tShowroom { grid-column: span 6; grid-row: span 3; }
@@ -353,6 +353,9 @@ a.tile:focus-visible {
 .tPress { grid-column: span 4; grid-row: span 4; }
 .tBlog { grid-column: span 5; grid-row: span 4; }
 .tChannel { grid-column: span 7; grid-row: span 4; }
+.tFeed { grid-column: span 8; grid-row: span 4; }
+/* 소식 영역의 인스타 칸은 옆 통합 칸과 높이를 맞춘다 */
+.grid:not(.gridBrand) > .tIg { grid-row: span 4; }
 
 /* ───────── 히어로 타일 ───────── */
 .liveChip {
@@ -1064,7 +1067,8 @@ a.tile:focus-visible {
 .tProducts,
 .tPress,
 .tBlog,
-.tChannel {
+.tChannel,
+.tFeed {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1123,6 +1127,117 @@ a.tile:focus-visible {
   font-weight: 400;
   line-height: 1.55;
   letter-spacing: 0;
+}
+
+/* ───────── 새로 올라온 소식 — 블로그 + 유튜브 통합 ───────── */
+.tFeed .tileHead { position: relative; }
+.feedTabs {
+  display: flex;
+  gap: 6px;
+  margin-top: -6px;
+}
+.feedTab {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: transparent;
+  color: #d8d4cc;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.feedTab:hover { border-color: #d4a843; color: #f3dcb4; }
+.feedTab[aria-pressed='true'] {
+  background: #d4a843;
+  border-color: #d4a843;
+  color: #141414;
+  font-weight: 600;
+}
+.feedList {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.feedList > li { display: flex; min-width: 0; }
+.feedCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f5f3ef;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+.feedThumb {
+  position: relative;
+  display: block;
+  flex: 1;
+  min-height: 120px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.feedThumb img { transition: transform 0.8s var(--ease); }
+.feedCard:hover .feedThumb img { transform: scale(1.05); }
+.feedCard:focus-visible { outline: 2px solid #f3dcb4; outline-offset: 3px; border-radius: 14px; }
+.feedBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.7);
+  border: 1px solid #d4a843;
+  color: #f3dcb4;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.feedBadgeYt { background: #e62117; border-color: #e62117; color: #fff; }
+.feedPlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #141414;
+  transform: translate(-50%, -50%);
+}
+.feedTitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.feedCard:hover .feedTitle { color: #f3dcb4; }
+.feedMeta {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.72rem;
+  color: #8a8a8a;
 }
 
 /* ───────── 언론 보도 — 세로 티커 ───────── */
@@ -1485,9 +1600,9 @@ a.tile:focus-visible {
   .tHero { grid-column: span 6; grid-row: span 5; }
   .tYt { grid-column: span 3; grid-row: span 4; }
   .tStats { grid-column: span 3; grid-row: span 4; }
-  .tRing { grid-column: span 3; grid-row: span 3; }
+  .tRing { grid-column: span 3; grid-row: span 4; }
   .tIg { grid-column: span 3; grid-row: span 5; }
-  .tBrand { grid-column: span 3; grid-row: span 5; }
+  .tBrand { grid-column: span 6; grid-row: span 3; }
   .tShowroom { grid-column: span 6; grid-row: span 3; }
   .tOnair { grid-column: span 3; grid-row: span 3; }
   .tMarquee { grid-column: span 6; grid-row: span 1; }
@@ -1495,6 +1610,8 @@ a.tile:focus-visible {
   .tPress { grid-column: span 3; grid-row: span 5; }
   .tBlog { grid-column: span 3; grid-row: span 5; }
   .tChannel { grid-column: span 6; grid-row: span 4; }
+  .tFeed { grid-column: span 6; grid-row: span 5; }
+  .grid:not(.gridBrand) > .tIg { grid-row: span 5; }
   .ringBody { padding: 20px; }
   .closing { flex-direction: column; align-items: flex-start; }
 }
@@ -1527,6 +1644,9 @@ a.tile:focus-visible {
   .tMarquee { height: 60px; }
   .tProducts { min-height: 360px; }
   .tPress { height: 380px; }
+  .feedList { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+  .feedList > li { flex: 0 0 44%; scroll-snap-align: start; }
+  .feedThumb { flex: none; aspect-ratio: 3 / 4; }
   .countNum { font-size: 44px; }
   .chRow { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .gridBrand { margin-top: 64px; }

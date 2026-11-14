@@ -117,7 +117,7 @@ export const HOME_MAIN_DEFAULTS: HomeMain = {
     primary: { label: '제품 보기', href: '/products' },
     secondary: { label: '진짜 침향 구별법', href: '/about-agarwood' },
   },
-  news: { chip: 'NEW', label: '소식', title: '새로 올라온 *대라천 소식*' },
+  news: { chip: 'NEW', label: '소식', title: '새로 올라온 *소식*' },
   stats: [
     { value: 25, unit: '년 이상', label: '연구 및 생산재배' },
     { value: 200, unit: 'ha', label: '직영 농장 합계' },

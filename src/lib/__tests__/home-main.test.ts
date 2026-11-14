@@ -43,7 +43,7 @@ describe('resolveHomeMain — 저장값이 없을 때', () => {
       primary: { label: '제품 보기', href: '/products' },
       secondary: { label: '진짜 침향 구별법', href: '/about-agarwood' },
     });
-    expect(d.news).toEqual({ chip: 'NEW', label: '소식', title: '새로 올라온 *대라천 소식*' });
+    expect(d.news).toEqual({ chip: 'NEW', label: '소식', title: '새로 올라온 *소식*' });
     expect(d.stats).toEqual([
       { value: 25, unit: '년 이상', label: '연구 및 생산재배' },
       { value: 200, unit: 'ha', label: '직영 농장 합계' },
