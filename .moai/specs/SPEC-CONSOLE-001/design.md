@@ -33,24 +33,46 @@
 ### 2.2 start 라우트
 
 - OAuth 설정이 없을 때 콘솔 모드면 `/console/login?error=sso_not_configured`로, 아니면 기존대로 `/admin/login`으로 보낸다.
+- `next`는 쿼리값을 `sanitizeNextPath`로 정리한 결과를 쓴다. 로그인 화면이 넘긴 깊은 링크(`/console/x`)는 그대로 next 쿠키에 담기고, 콘솔 경로가 아닌 값은 기존처럼 `/admin`이 된다(콘솔 모드가 아님).
 - 콘솔 세션 비밀값이 무효(§4.1)면 콘솔 모드 진입 자체를 거부하고 `/console/login?error=console_not_configured`.
 
 ### 2.3 callback 라우트 — 콘솔 분기
 
-state 검증·코드 교환·userinfo 조회까지는 기존 코드를 그대로 쓰고, admin-users 조회 **이전에** 분기한다.
+현재 콜백(`route.ts`)은 설정 검사(L110) → state 검사(L121-123) → next 쿠키 해석(L125-138) → 토큰 교환(L155-157) → userinfo(L163) → email·email_verified 거절(L172-174) → admin-users 조회(L177) 순서다. 오류 출구는 모두 `redirectToLogin` → `/admin/login`이다. 콘솔 모드는 이 출구들보다 **먼저** 정해야 한다.
+
+순서 변경:
+
+1. 핸들러 맨 앞에서 next 쿠키를 읽고 정리한다(L125-138의 코드를 위로 옮김, 해석 실패 시 `null` → `/admin`인 점은 그대로). `const consoleMode = isConsoleNext(next)`.
+2. 오류 출구 함수 하나로 모은다: `fail(code)` = 콘솔 모드면 `/console/login?error=<code>`, 아니면 기존 `redirectToLogin(request, code)`. 두 경우 모두 OAuth 임시 쿠키를 정리한다. **관리자 모드의 출구 주소·오류 코드·순서는 바이트 단위로 그대로**다(M2 특성 테스트로 고정).
+3. 설정 검사(`sso_not_configured`), state 검사(`oauth_state`), 토큰 교환(`oauth_token`), userinfo(`oauth_userinfo`), `catch`(`oauth_failed`)는 모두 `fail(code)`로 바꾼다. 콘솔 모드에서는 이 시점에 `isConsoleConfigured()`도 확인해 무효면 `fail('console_not_configured')`.
+4. userinfo를 받은 직후, L172의 email·email_verified 거절 **이전에** `if (consoleMode) return consoleEntry(...)`. 콘솔 모드는 L172를 거치지 않고 `consoleEntry`가 email 누락·미검증을 직접 판정한다. 관리자 모드는 L172 이후를 그대로 탄다.
 
 ```
-if (isConsoleNext(next)) return consoleEntry(...)   // admin-users 를 읽지도 쓰지도 않는다
+next = sanitizeNextPath(decode(cookie))      // 맨 앞
+consoleMode = isConsoleNext(next)
+config 없음            → fail('sso_not_configured')
+consoleMode && 콘솔 설정 무효 → fail('console_not_configured')
+state 불일치           → fail('oauth_state')
+토큰 교환 실패          → fail('oauth_token')
+userinfo 실패          → fail('oauth_userinfo')
+consoleMode            → return consoleEntry(...)   // admin-users 를 읽지도 쓰지도 않는다
+(관리자 모드: 기존 L170~ 그대로)
+catch                  → fail('oauth_failed')
 ```
 
 `consoleEntry` 판정(전부 충족해야 통과):
 
-1. `decodeGoogleIdToken(tokens.id_token)` 성공(iss·exp 검사 포함), ID 토큰 email(소문자)이 userinfo email과 같음
+1. userinfo email이 있고, `decodeGoogleIdToken(tokens.id_token)` 성공(iss·exp 검사 포함), ID 토큰 email(소문자)이 userinfo email(소문자)과 같음
 2. `isWorkshopOpenAccount({email, emailVerified: userinfo.email_verified === true && claims.email_verified === true, hd, aud}, {clientId, domains: ['try-n.com']})` — 이 함수가 이미 `@` 1개, 정확한 도메인 일치, `hd` 일치, `aud` 일치를 검사한다. 콘솔 도메인 목록은 `WORKSHOP_OPEN_DOMAINS`를 읽지 않고 상수 `['try-n.com']`으로 고정한다(워크숍 설정 변경이 콘솔 출입을 넓히지 않도록).
-3. 통과: 콘솔 감사 기록 `auth.login`, 기존 감사 기록(`audit-log`, module `auth`)에도 "콘솔 입장" 1줄 → 콘솔 쿠키 발급 → `next`로 302 → OAuth 임시 쿠키 정리.
-4. 실패: 콘솔 감사 기록 `auth.login_failed`(사유 코드만, 토큰 원문 없음) + 기존 감사 기록 → `/console/login?error=not_allowed`.
+3. 통과: 콘솔 감사 기록 `auth.login`, 기존 감사 기록(`audit-log`, module `auth`)에도 "콘솔 입장" 1줄 → 콘솔 쿠키 발급 → `new URL(next, request.url)`로 302(같은 출처 절대 URL — 열린 리디렉트 방지는 기존 L228과 같음) → OAuth 임시 쿠키 정리.
+4. 실패: `fail('not_allowed')`. userinfo email이 없으면 `fail('oauth_email')`.
 
-관리자 세션 쿠키는 이 분기에서 설정·삭제·갱신하지 않는다.
+감사 기록 규칙(콘솔 모드):
+
+- 신원이 생긴 뒤의 실패(구글이 email을 돌려준 뒤 `consoleEntry`가 거절)는 콘솔 감사 `auth.login_failed`(사유 코드와 시도한 email, 토큰·코드 원문 없음) + 기존 감사 기록 1줄.
+- 신원이 없는 단계의 실패(`sso_not_configured`, `console_not_configured`, `oauth_state`, `oauth_token`, `oauth_userinfo`, `oauth_email`, `oauth_failed`)는 감사 기록을 쓰지 않고 서버 로그에 사유 코드만 남긴다. 누구나 인증 없이 콜백을 두드릴 수 있으므로, 여기서 기록하면 익명 요청이 5,000건 상한을 채워 열람 기록을 밀어낼 수 있다.
+
+관리자 세션 쿠키는 콘솔 모드에서 설정·삭제·갱신하지 않는다.
 
 ### 2.4 콘솔 세션 토큰
 
@@ -72,7 +94,7 @@ if (isConsoleNext(next)) return consoleEntry(...)   // admin-users 를 읽지도
 |---|---|---|
 | `/console/login` | 통과 | 통과(화면이 "설정 안 됨" 안내) |
 | `/console`, `/console/*` | `/console/login?next=<경로>` 302 | `/console/login?error=console_not_configured` |
-| `/api/console/auth/logout` | 통과 | 통과 |
+| `/api/console/auth/logout` | 통과(쿠키 삭제만, Origin 검사는 그대로 — REQ-CON-001 예외) | 통과 |
 | `/api/console/*` | 401 JSON | 503 JSON |
 
 통과한 응답에 `X-Robots-Tag: noindex, nofollow`, `Referrer-Policy: no-referrer`를 붙인다. 관리자 쿠키는 이 블록에서 검사하지 않는다(서로 무효).
@@ -146,7 +168,7 @@ interface ConsolePerson { email: string; name: string; name_en: string; team: '�
 
 - 로그인 사용자의 팀은 이 목록에서 email로 찾는다. 없으면 `공통`(plan.md D3).
 - 관리자 여부는 이 목록과 무관하다(`CONSOLE_ADMIN_EMAILS`만).
-- 일반 사용자에게는 담당자 고르기용으로 `name`·`name_en`·`team`만 내려주고 email은 관리자에게만 내려준다.
+- 사람 목록(`name`·`name_en`·`team`·`email`)과 항목의 `owners[].email`은 로그인한 모든 사용자에게 같은 형태로 내려준다. `role`(직무 메모)은 관리자에게만 내려준다. 근거: 볼 수 있는 사람은 모두 구글이 인증한 `@try-n.com` 직원이고(같은 Workspace 디렉터리에서 서로의 주소가 이미 보임), 일반 사용자가 담당자를 고르려면 email이 있어야 한다. 한쪽 경로에서만 email을 빼면 다른 경로로 같은 정보가 나가므로(plan-audit CON-D12) 두 경로를 같게 둔다.
 
 ## 4. 권한
 
@@ -154,11 +176,13 @@ interface ConsolePerson { email: string; name: string; name_en: string; team: '�
 
 | 변수 | 조건 | 무효일 때 |
 |---|---|---|
-| `CONSOLE_SESSION_SECRET` | trim 후 32자 이상, `ADMIN_SESSION_SECRET`·`WORKSHOP_SSO_SECRET`·`CONSOLE_SECRETS_KEY`와 다름 | 콘솔 전체 닫힘 |
-| `CONSOLE_SECRETS_KEY` | 64자리 hex, 위 세 값과 다름 | 자격증명 기능만 닫힘 |
+| `CONSOLE_SESSION_SECRET` | trim 후 32자 이상, 아래 "비교 대상" 중 설정된 값 모두와 다름 | 콘솔 전체 닫힘 |
+| `CONSOLE_SECRETS_KEY` | 64자리 hex, `CONSOLE_SESSION_SECRET`과 아래 "비교 대상" 중 설정된 값 모두와 다름 | 자격증명 기능만 닫힘 |
 | `CONSOLE_ADMIN_EMAILS` | 쉼표 구분, trim·소문자, `@try-n.com` 정확 일치만 채택 | 관리자 0명(편집은 본인 항목만) |
 
-무효 사유는 로그에 사유만 남기고 값은 남기지 않는다. 어떤 변수에도 리터럴 기본값을 두지 않는다.
+비교 대상: `ADMIN_SESSION_SECRET`, `WORKSHOP_SSO_SECRET`, `PARTNER_SESSION_SECRET`, `SERIAL_SCAN_SECRET`, `QR_TRACK_SECRET`, `BACKUP_ENCRYPTION_KEY`. 미설정인 변수는 비교에서 빠진다(그 변수들이 코드에서 `ADMIN_SESSION_SECRET`으로 폴백하더라도 `ADMIN_SESSION_SECRET` 자체와 비교하므로 결과는 같다). 비교는 trim한 값끼리 상수시간으로 한다.
+
+무효 사유는 로그에 사유만 남기고 값은 남기지 않는다. 어떤 변수에도 리터럴 기본값을 두지 않고, 콘솔 코드는 다른 비밀값 변수를 읽어 서명에 쓰지 않는다(비교 용도로만 읽음).
 
 ### 4.2 판정 함수 (`src/lib/console/permissions.ts`, 순수 함수 — 단위 테스트 대상)
 
@@ -190,14 +214,14 @@ credAccess(user, item, team):
 | `POST /api/console/items/:id/restore` | canEdit(삭제 전 기준) | 되돌리기 |
 | `POST /api/console/items/:id/credential` | credAccess | body `{field: 'login_id'|'password', purpose: 'view'|'copy'}` → `{value}` |
 | `POST /api/console/categories` | 관리자 | 분류 추가 |
-| `PUT /api/console/people` | 관리자 | 사람 목록 교체 |
-| `PUT /api/console/settings` | 관리자 | 팀 필수 고정 목록 |
-| `POST /api/console/import` | 관리자 | 항목(+선택: categories, people) 전체 교체. 파일 안의 `password`·`login_id`는 읽지 않음 |
+| `PUT /api/console/people` | 관리자 | 사람 목록 교체(§5.4 교체 쓰기 규칙) |
+| `PUT /api/console/settings` | 관리자 | 팀 필수 고정 목록 `teamPins`(최대 8개, 있는 항목 id만). 감사 `settings.update` |
+| `POST /api/console/import` | 관리자 | §5.3 형식의 파일로 항목(+선택: categories, people, teamPins) 전체 교체(§5.4). 파일 안의 `password`·`login_id`는 읽지 않음 |
 | `GET /api/console/export` | 관리자 | 자격증명 없는 JSON |
 | `GET /api/console/audit` | 관리자 | 최근 200건 |
 | `POST /api/console/auth/logout` | 누구나 | 쿠키 삭제 |
 
-목록 형태의 항목에는 `note`(권한 없을 때), `deletedAt` 항목, 자격증명 값이 없고 대신 `hasLoginId`, `hasPassword`, `canEdit`, `credAccess`(`ok`|`denied`)가 붙는다.
+목록 형태의 항목에는 `note`(권한 없을 때), `deletedAt` 항목, 자격증명 값이 없고 대신 `hasLoginId`, `hasPassword`, `canEdit`, `credAccess`(`ok`|`denied`)가 붙는다. `owners`는 `{name, email?}` 그대로 내려간다(§3.4).
 
 ### 5.1 자격증명 열람 순서
 
@@ -221,13 +245,69 @@ credAccess(user, item, team):
 
 `src/lib/audit.ts`의 `AuditModule`에 `'console'`을 추가해 로그인 1줄은 기존 기록에도 남긴다(`auditSsoLogin`과 같은 방식).
 
+기록 추가는 fresh 읽기 → 추가 → 5,000건 넘는 오래된 것 정리 → `writeDataMerged('console-audit-log', next, { removedIds: 정리한 id들 })` 순서다. 정리한 id를 `removedIds`로 넘기지 않으면 §5.4의 이유로 정리한 기록이 되살아난다.
+
+### 5.3 가져오기 형식
+
+순수 함수 `mapImportFile(file, { now, actor, storedCategories })` → `{ items, categories?, people?, teamPins?, report }` 또는 오류 목록. 단위 테스트 대상이며 저장은 하지 않는다. 하나라도 오류가 있으면 아무것도 쓰지 않고 400과 오류 목록(레코드 번호·사유)을 돌려준다(원자적).
+
+받는 파일 모양(JSON 객체, 크기 2MB 이하):
+
+| 키 | 필수 | 내용 |
+|---|---|---|
+| `cards` 또는 `items` | 둘 중 정확히 하나 | `cards`: 프로토타입 "JSON 내보내기" 형식(`{app:'zoel-console', version:2, exportedAt, categories, cards[]}`). 최상위가 배열이면 `{cards: 배열}`로 본다(프로토타입 `validateDataset`과 같음). `items`: 콘솔 내보내기 형식(`GET /api/console/export`) |
+| `categories` | 선택 | 있으면 저장된 분류를 이 목록으로 교체. 없으면 저장된 분류 유지. 항목이 쓰는 분류 id는 모두 최종 분류 목록에 있어야 함 |
+| `people` | 선택 | 있으면 사람 목록 교체. 프로토타입 내보내기에는 없으므로 오너가 직접 붙인다(plan.md D1) |
+| `teamPins` | 선택 | 있으면 `console-settings.teamPins` 교체. 프로토타입 `TEAM_PINS`(index.html L544)는 내보내기에 들어 있지 않으므로 옮기려면 오너가 이 키로 붙인다. 없으면 저장된 값 유지 |
+| `app`, `version`, `exportedAt` | 선택 | 읽지 않음(형식 판별에 쓰지 않음) |
+
+카드·항목 필드 대응:
+
+- 받는 필드만 화이트리스트로 읽는다: `id`, `category`, `type`, `status`, `access_method`, `visibility`, `team`, `url`, `title`, `title_en`, `description`, `description_en`, `tags`, `links`, `note`, `note_en`, 그리고 `owner`(cards) 또는 `owners`(items). 그 밖의 키 — `password`, `login_id`(프로토타입 내보내기에는 `login_id`가 들어 있음), `version`, `updatedAt`, `deletedAt`, `hasPassword` 등 — 는 버린다.
+- `id`가 없으면 새로 만든다. 파일 안에서 `id`가 겹치면 오류.
+- enum·URL·길이 검사는 §3.2 규칙 그대로(프로토타입처럼 모르는 값을 기본값으로 바꾸지 않고 오류로 처리).
+- `version: 1`, `updatedAt: now`, `updatedBy: actor 이름`으로 새로 찍는다. 삭제 표시는 들어오지 않는다.
+
+담당자 대응(`owner` 문자열 → `owners[]`):
+
+1. `owner`를 쉼표(`,`, 전각 `，` 포함)로 나누고 각 조각을 trim, NFC 정규화, 연속 공백을 공백 하나로 줄인다. 빈 조각은 버린다. 빈 문자열이면 `owners: []`(담당자 없음).
+2. 각 이름을 최종 사람 목록(파일에 `people`이 있으면 그 목록, 없으면 저장된 목록)의 `name`과 같은 정규화로 비교한다. 정확히 한 사람과 맞으면 `{name, email}`.
+3. 맞는 사람이 없거나 둘 이상이면 `{name}`만 둔다(소유자로 판정되지 않음 — 관리자만 고칠 수 있음). 그 이름은 결과의 `report.unmatchedOwners`에 한 번씩 들어간다.
+4. 항목당 담당자 최대 10명.
+- `items` 형식의 `owners[]`는 그대로 받되 email은 소문자로 바꾸고 `@try-n.com` 정확 일치가 아니면 email을 빼고 `{name}`만 둔다(`report.unmatchedOwners`에 기록).
+
+사람 목록 대응(`people[]`):
+
+- 받는 필드: `email`, `name`, `name_en`, `team`, `role`. 프로토타입 `PEOPLE`의 `admin`, `email_hint`는 읽지 않는다. 관리자는 `CONSOLE_ADMIN_EMAILS`로만 정해지므로 `admin: true`는 아무 효과가 없다. `email_hint`는 email로 쓰지 않는다(값을 확인한 사람이 `email`에 직접 넣는다).
+- `email`은 trim·소문자, `@try-n.com` 정확 일치여야 한다. 없거나 맞지 않는 사람은 저장하지 않고 `report.peopleSkipped`(이름)에 넣는다. email이 겹치면 오류.
+- `team`은 세 값 중 하나, 아니면 오류.
+
+결과 `report`: `{ items: n, categories: n|null, people: n|null, teamPins: n|null, removed: { items, people, categories }, unmatchedOwners: string[], peopleSkipped: string[] }` — 화면은 이를 가져오기 결과로 보여 준다.
+
+### 5.4 교체 쓰기 규칙 (`writeDataMerged`의 되살리기 주의)
+
+`writeDataMerged`(db.ts L820-827)는 fresh 읽기에는 있고 새 배열에는 없는 레코드를 "동시 쓰기"로 보고 되살린다. `removedIds`에 든 키만 되살리지 않는다. 그래서 "교체" 성격의 쓰기는 반드시 지운 키를 넘긴다.
+
+| 쓰기 | `removedIds` |
+|---|---|
+| 가져오기 — `console-items` | 저장된 모든 항목 id(소프트 삭제된 것 포함) − 새 항목 id |
+| 가져오기 — `console-categories`(파일에 있을 때) | 저장된 분류 id − 새 분류 id |
+| 가져오기·`PUT /people` — `console-people` | 저장된 email − 새 email |
+| 가져오기 — `console-secrets` | 저장된 itemId 중 (새 항목에 없음) 또는 (새 항목의 접속 방식이 공유 계정이 아님) |
+| PATCH(공유 계정 → 다른 방식) — `console-secrets` | `[itemId]` |
+| 감사 기록 정리 — `console-audit-log` | 정리한 기록 id |
+
+- 가져오기 뒤에도 남는 공유 계정 항목(같은 id, 같은 접속 방식)의 비밀 레코드는 유지한다. 파일 안의 값으로 덮어쓰지 않는다.
+- 콘솔 문서는 `TOMBSTONE_FILES`(db.ts L145-148)에 넣지 않는다. 그래서 `removedIds`로 지운 id를 다음 가져오기에서 다시 들여올 수 있다(테스트로 고정).
+- 쓰기 순서: 항목 → 분류 → 사람 → 비밀 → 설정. 중간 실패 시 500과 실패 단계 이름을 돌려주고, 같은 파일을 다시 가져오면 같은 결과가 된다(멱등).
+
 ## 6. 화면
 
 ### 6.1 파일
 
 - `src/app/console/layout.tsx` — `metadata.robots = { index: false, follow: false }`, 콘솔 루트 래퍼
 - `src/app/console/page.tsx` — 서버 컴포넌트. 데이터 없이 `<ConsoleApp />`만 렌더
-- `src/app/console/login/page.tsx` — "try-n.com 계정으로 로그인" 버튼(→ `/api/admin/auth/google/start?next=/console`), 오류 코드 안내(한·영)
+- `src/app/console/login/page.tsx` — "try-n.com 계정으로 로그인" 버튼(→ `/api/admin/auth/google/start?next=<복귀 경로>`). 복귀 경로는 쿼리 `next`가 `isConsoleNext`를 통과하면 그 값, 아니면 `/console`(인코딩해 넘김). 오류 코드 안내(한·영, §2.3의 코드 전부)
 - `src/app/console/ConsoleApp.tsx` 외 하위 컴포넌트(사이드바, 홈, 목록, 상세 패널, 편집 양식, 계정 메뉴, 검색) — 프로토타입 DOM 로직을 React로 옮긴다
 - `src/app/console/console.module.css` — 프로토타입 CSS 이식(라이트 팔레트만)
 - `src/lib/console/i18n.ts` — 프로토타입 `I18N` 이식, 자격증명 안내 문구는 배포판 문구로 교체
@@ -239,6 +319,11 @@ credAccess(user, item, team):
 - 루트가 화면 전체를 덮고 배경 `#faf8f3`, 글자 `#1c1b18`을 직접 지정한다. `h1~h6 { color: inherit !important }`는 루트 색을 물려받으므로 문제없다.
 - `var(--lx-*)`, `var(--accent)` 등 사이트 전역 토큰은 쓰지 않는다. 프로토타입의 `--bg` 같은 변수는 CSS 모듈 루트 클래스 안에서만 선언한다(`:root` 금지).
 - `ChromeGate`의 `IMMERSIVE_PREFIXES`에 `/console`을 넣어 공개 사이트 헤더·푸터를 숨긴다.
+- `data-admin-root`로 피할 수 있는 것은 입력칸·label·table 규칙뿐이다. `dark-theme.css`의 나머지 전역 규칙을 피하려고 다음을 금지한다.
+  - 전역 클래스 이름 문자열: 콘솔 마크업에 `className="card"` 같은 평문 클래스를 쓰지 않는다. 특히 `card`, `page`, `container`, `shell`, `nav`, `topbar`, `hero`, `step`, `footer`(dark-theme.css L32-125, L386-390). CSS 모듈이 만든 해시 클래스만 쓴다.
+  - `<footer>` 요소: `footer, .footer { background … !important }`에 걸리므로 콘솔은 쓰지 않는다(`<div role="contentinfo">` 등으로 대신).
+  - 제목 색: `h1~h6 { color: inherit !important }` 때문에 제목에 색을 직접 줄 수 없다. 제목 색은 감싸는 요소의 `color`로 준다.
+  - 루트 밖 포털: 대화상자·토스트·메뉴를 `document.body`에 포털로 그리지 않는다. 모두 콘솔 루트 요소 안에 그린다(네이티브 `<dialog>`를 쓸 때도 루트 안에 둔다).
 
 ### 6.3 프로토타입과 달라지는 점
 

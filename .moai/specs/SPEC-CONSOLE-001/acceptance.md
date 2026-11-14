@@ -1,6 +1,6 @@
 # SPEC-CONSOLE-001 — 인수 기준 (acceptance.md)
 
-각 기준은 통과·실패로만 판정한다. "카나리 값"은 테스트에서만 쓰는 가짜 비밀번호 `canary-Pw-7f3e`, 가짜 아이디 `canary-id-91ab`를 말한다. 실제 비밀값은 테스트에 쓰지 않는다.
+각 기준은 통과·실패로만 판정한다. "카나리 값"은 테스트에서만 쓰는 가짜 비밀번호 `canary-Pw-7f3e`, 가짜 아이디 `canary-id-91ab`를 말한다. 실제 비밀값은 테스트에 쓰지 않는다. 테스트 데이터의 사람 이름·email·드라이브 id도 모두 지어낸 값을 쓴다(공개 저장소).
 
 ## 1. 로그인과 세션
 
@@ -10,28 +10,43 @@
 - When 콜백이 처리된다
 - Then 응답은 `/console`로 302이고 `zoel_console_session` 쿠키(HttpOnly, SameSite=Lax)가 설정되며, `daracheon_admin_session` 쿠키는 설정·삭제되지 않고, admin-users 문서는 쓰이지 않으며, 콘솔 감사 기록에 `auth.login` 1건이 생긴다
 
-**AC-CON-002** — maps REQ-CON-003
-- 기준: 도메인·검증 조건 거절 표
-- Given 콜백이 `next=/console`로 돌아온다
-- When 계정이 아래 중 하나다
+**AC-CON-002** — maps REQ-CON-002, REQ-CON-003
+- 기준: 도메인·검증 조건 거절 표와 콘솔 모드 오류 출구
+- Given next 쿠키가 `/console`인 상태로 콜백이 호출된다
+- When 신원이 생긴 뒤 거절되는 계정이 아래 중 하나다
   - `x@try-n.com.evil.io` / `x@mail.try-n.com` / `x@evil-try-n.com` / `x@try-n.co`
   - `a@b@try-n.com`(`@` 2개) / `@try-n.com`(로컬 부분 없음)
   - `x@try-n.com`이지만 `hd` 없음(개인 구글 계정) 또는 `hd=evil.io`
-  - `x@try-n.com`이지만 userinfo 또는 ID 토큰의 `email_verified`가 false
+  - `x@try-n.com`이지만 userinfo의 `email_verified`가 false(기존 콜백 L172보다 앞에서 콘솔 분기가 처리함)
+  - `x@try-n.com`이지만 ID 토큰의 `email_verified`가 false
   - `x@try-n.com`이지만 ID 토큰 `aud`가 다른 클라이언트
   - ID 토큰 email과 userinfo email이 다름
-- Then 각 경우 모두 `/console/login?error=...`로 302, 콘솔 쿠키 없음, 관리자 쿠키 없음, 콘솔 감사 기록에 `auth.login_failed` 1건
+- Then 각 경우 모두 `/console/login?error=not_allowed`로 302, 콘솔 쿠키 없음, 관리자 쿠키 없음, 콘솔 감사 기록에 `auth.login_failed` 1건
 - And `X@TRY-N.COM`(대소문자만 다르고 나머지 조건 충족)은 통과하며 세션 email은 `x@try-n.com`(소문자)이다
+- And 신원이 생기기 전 단계의 실패는 아래 코드로 `/console/login`에 302하고, `/admin/login`으로 가는 경우가 하나도 없으며, 콘솔 감사 기록 건수가 늘지 않는다
+
+| 상황 | 기대 위치 |
+|---|---|
+| OAuth 설정 없음 | `/console/login?error=sso_not_configured` |
+| `CONSOLE_SESSION_SECRET` 무효 | `/console/login?error=console_not_configured` |
+| state 쿠키 없음 또는 불일치 | `/console/login?error=oauth_state` |
+| 토큰 엔드포인트 4xx 또는 `access_token` 없음 | `/console/login?error=oauth_token` |
+| userinfo 4xx | `/console/login?error=oauth_userinfo` |
+| userinfo에 email 없음 | `/console/login?error=oauth_email` |
+| 처리 중 예외 | `/console/login?error=oauth_failed` |
+
+- And 같은 상황을 next 쿠키 `/admin`으로 재현하면 기존과 같은 `/admin/login?error=<같은 코드>`로 간다
 
 **AC-CON-003** — maps REQ-CON-002
-- 기준: 복귀 경로 판정과 관리자 흐름 보존
-- Given OAuth 시작 요청
-- When `next`가 `/console`, `/console/`, `/console/x`이면 콘솔 모드, `/console-evil`, `/consolex`, `//evil.io/console`, `https://evil.io/console`이면 콘솔 모드가 아니다
+- 기준: 복귀 경로 판정, 열린 리디렉트 차단, 관리자 흐름 보존
+- Given OAuth 시작 요청과 콜백
+- When `next`가 `/console`, `/console/`, `/console/x`이면 콘솔 모드, `/console-evil`, `/consolex`, `//evil.io/console`, `https://evil.io/console`, `/console\evil.io`, `/%2Fevil.io`, `/console%2F..%2Fadmin`이면 콘솔 모드가 아니거나 콘솔 경로 안에 머문다(단위 테스트로 각 값의 `isConsoleNext`·`sanitizeNextPath` 결과를 고정)
 - Then 콘솔 모드가 아닌 값은 기존처럼 `/admin`으로 정리되고, 기존 관리자 로그인·워크숍 member 출구 테스트가 수정 없이 모두 통과한다
+- And `next`가 `/console/../admin`인 콘솔 입장 성공 응답의 `Location`은 `/admin`으로 가지 않는다(정리 단계에서 거부되거나, 경로가 `/console` 아래로 정규화됨). 모든 성공 응답의 `Location` 호스트는 요청 호스트와 같다
 
 **AC-CON-004** — maps REQ-CON-005
 - 기준: 비밀값 무효 시 닫힘
-- Given `CONSOLE_SESSION_SECRET`이 (a) 없음 (b) 공백 (c) 31자 (d) `ADMIN_SESSION_SECRET`과 같음 (e) `WORKSHOP_SSO_SECRET`과 같음 (f) `CONSOLE_SECRETS_KEY`와 같음
+- Given `ADMIN_SESSION_SECRET`, `WORKSHOP_SSO_SECRET`, `PARTNER_SESSION_SECRET`, `BACKUP_ENCRYPTION_KEY`, `CONSOLE_SECRETS_KEY`가 서로 다른 유효 값으로 설정돼 있고(그래서 (a)에서 콘솔 코드가 몰래 `ADMIN_SESSION_SECRET`으로 서명하면 토큰이 발급되어 실패로 드러난다), `CONSOLE_SESSION_SECRET`이 (a) 없음 (b) 공백 (c) 31자 (d) `ADMIN_SESSION_SECRET`과 같음 (e) `WORKSHOP_SSO_SECRET`과 같음 (f) `CONSOLE_SECRETS_KEY`와 같음 (g) `PARTNER_SESSION_SECRET`과 같음 (h) `BACKUP_ENCRYPTION_KEY`와 같음
 - When `/api/admin/auth/google/start?next=/console`, `/console`, `GET /api/console/bootstrap`을 요청한다
 - Then 콘솔 토큰은 발급되지 않고, 시작 요청은 `/console/login?error=console_not_configured`, 콘솔 API는 503이며, 로그에 비밀값 원문이 없다
 - And 소스에 콘솔 비밀값의 리터럴 기본값이 없다(`git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 결과 0줄)
@@ -43,6 +58,7 @@
 - Then 모두 401이다
 - And 유효한 콘솔 토큰을 `daracheon_admin_session` 쿠키로 넣어 `/api/admin/*`을 요청하면 401이다
 - And `POST /api/console/auth/logout` 뒤 같은 브라우저의 콘솔 요청은 401이다
+- And 콘솔 쿠키 없이 같은 출처에서 `POST /api/console/auth/logout`을 보내면 401이 아니라 성공(쿠키 `Max-Age=0`)이고, `Origin: https://evil.io`이면 403이다(REQ-CON-001 예외, REQ-CON-013)
 
 **AC-CON-006** — maps REQ-CON-001, REQ-CON-006, REQ-CON-009
 - 기준: 로그인 전 차단과 페이지 소스
@@ -50,6 +66,7 @@
 - When `/console`, `/console/x`, `GET /api/console/bootstrap`, `POST /api/console/items`를 요청한다
 - Then 페이지는 `/console/login?next=...`로 302, API는 401 JSON이다
 - And 로그인한 상태의 `/console` 서버 HTML에 시드 항목 제목(예: "홈페이지 관리자"), `drive.google.com/drive/folders/`, `docs.google.com/spreadsheets/d/` 문자열이 없다
+- And `/console/x`로 302된 로그인 화면의 로그인 버튼은 `next=%2Fconsole%2Fx`로 시작 요청을 보내고, 로그인 성공 뒤 `/console/x`로 돌아온다. `/console/login?next=/admin`이면 버튼은 `next=%2Fconsole`을 보낸다
 
 ## 2. 데이터 노출
 
@@ -75,6 +92,7 @@
 - Then 비밀번호는 가림 문자로 보이고 네트워크에 비밀번호 요청이 없다
 - And 눈 아이콘을 누르면 `POST .../credential {field:"password", purpose:"view"}` 1회 후 실제 값이 보이고, 다시 누르면 가려진다
 - And 복사를 누르면 `purpose:"copy"` 요청 1회 후 클립보드에 실제 값이 들어간다
+- And 값을 드러낸 채 상세 패널을 닫았다가 같은 항목을 다시 열면 비밀번호는 다시 가림 문자이고, 눈 아이콘을 누르기 전까지 비밀번호 요청이 없다
 - And 응답 헤더는 `Cache-Control: no-store`이고, 감사 기록에 `credential.view`, `credential.copy`가 각 1건(actor b, targetId A, meta.field="password")이며 기록 어디에도 카나리 값이 없다
 
 **AC-CON-010** — maps REQ-CON-016
@@ -135,11 +153,13 @@
 
 **AC-CON-016** — maps REQ-CON-018
 - 기준: 기록 범위와 평문 부재
-- Given 한 번의 테스트 흐름에서 로그인 성공·실패, 생성, 수정, 삭제, 되돌리기, 열람, 복사, 거부, 가져오기, 사람 목록 수정, 분류 추가를 수행했다
+- Given 한 번의 테스트 흐름에서 로그인 성공·실패, 생성, 수정, 삭제, 되돌리기, 열람, 복사, 거부, 가져오기, 사람 목록 수정, 분류 추가, 팀 고정 목록 수정을 수행했다
 - When `console-audit-log`를 읽는다
 - Then 각 동작에 해당하는 action이 최소 1건씩 있고, 어떤 기록에도 카나리 값·암호문·세션 토큰·OAuth 코드가 없다
 - And 감사 기록 쓰기를 실패하게 만든 상태에서 열람을 요청하면 값 없이 503이다
 - And 기존 `audit-log`에는 콘솔 로그인 1줄만 늘고 열람 기록은 들어가지 않는다
+- And 콘솔 쿠키 없이 state가 틀린 콜백 요청을 50회 보내도 `console-audit-log` 건수가 늘지 않는다
+- And 기록이 5,000건을 넘어 정리된 뒤 다시 읽어도 정리된 기록이 되살아나지 않는다(건수 5,000 이하)
 
 **AC-CON-017** — maps REQ-CON-018
 - 기준: 관리자 기록 보기
@@ -151,13 +171,22 @@
 ## 6. 관리자 기능
 
 **AC-CON-018** — maps REQ-CON-019
-- 기준: 가져오기·내보내기·사람 목록·분류
-- Given 프로토타입 "JSON 내보내기" 파일에 `password`·`login_id` 값과 `people` 배열을 덧붙인 파일
+- 기준: 가져오기 형식·교체 의미·내보내기·사람 목록·분류·팀 고정
+- Given 저장소에 파일에 없는 기존 항목 X1, X2(X1은 공유 계정이고 카나리 비밀번호 저장), 파일에 없는 기존 사람 P0가 있다
+- And 가져올 파일은 프로토타입 "JSON 내보내기" 형식(`{app, version:2, exportedAt, categories, cards[]}`)이고, 카드에 `login_id` 값과 테스트가 덧붙인 `password` 값이 있으며, 최상위에 `people`과 `teamPins`를 덧붙였다. `people`에는 정상 2명(가 나다 `ga@try-n.com`, 라 마바 `ra@try-n.com`), `admin: true`만 있고 email이 없는 1명, email이 `x@try-n.com.evil.io`인 1명이 있다. 카드 하나의 owner는 `"가 나다, 라  마바"`(공백 2개)이고, 다른 카드의 owner는 목록에 없는 이름 `"사 아자"`다 (이름·주소는 모두 테스트용으로 지어낸 값)
 - When 관리자가 가져오기를 확인한다
-- Then 항목 수가 파일과 같고, 어떤 항목에도 파일 안의 비밀번호·아이디가 저장되지 않으며(열람 시 "미입력"), 사람 목록이 파일 내용으로 바뀌고, email이 없는 담당자 이름 목록이 결과로 표시된다
+- Then 항목 수가 파일의 카드 수와 같고, X1·X2는 bootstrap·내보내기·`console-items` 문서 어디에도 없으며, X1의 비밀 레코드는 `console-secrets`에서 사라지고, P0는 `console-people`에서 사라진다
+- And 어떤 항목에도 파일 안의 비밀번호·아이디가 저장되지 않는다(`hasLoginId: false`, `hasPassword: false`, 열람 시 "미입력")
+- And owner `"가 나다, 라  마바"` 카드는 owners 2개(`ga@try-n.com`, `ra@try-n.com`)가 되고, `"사 아자"` 카드는 owners `[{name:"사 아자"}]`(email 없음)이며 결과의 `unmatchedOwners`에 `"사 아자"`가 있다
+- And email이 없는 사람과 위장 도메인 사람은 저장되지 않고 결과의 `peopleSkipped`에 있다. 저장된 어느 사람도 관리자 권한을 받지 않는다(`admin: true`는 무시)
+- And `console-settings.teamPins`가 파일의 `teamPins` 중 가져온 항목에 있는 id만으로 바뀐다. `teamPins` 키가 없는 파일을 가져오면 저장된 값이 그대로다
+- And 같은 파일을 한 번 더 가져오면 결과가 같다. X1과 같은 id를 가진 카드가 든 파일을 그 뒤에 가져오면 그 항목이 들어온다(콘솔 문서는 tombstone 대상이 아님)
+- And `cards`와 `items`를 함께 가진 파일, 주소가 `javascript:alert(1)`인 카드가 하나 섞인 파일, 파일 안에서 id가 겹치는 파일은 400이고 저장된 문서가 하나도 바뀌지 않는다
 - And 일반 사용자의 가져오기는 403이다
-- And 내보내기 파일에는 `password`·`login_id` 키 자체가 없다
+- And 내보내기 파일에는 `password`·`login_id` 키 자체가 없고, 그 파일을 `items` 형식으로 다시 가져오면 같은 항목 집합이 된다
+- And 관리자가 `PUT /api/console/people`로 한 명을 뺀 목록을 보내면 그 사람이 문서에서 사라진다
 - And 관리자가 분류를 추가하면 왼쪽 메뉴에 나타나고, 일반 사용자에게는 분류 추가 메뉴가 없다
+- And 관리자가 `PUT /api/console/settings`로 팀 고정 목록을 바꾸면 홈의 팀 필수 목록이 바뀌고 감사 기록 `settings.update` 1건이 생긴다. 일반 사용자의 같은 요청은 403이다
 
 ## 7. 화면과 언어
 
@@ -182,10 +211,12 @@
 **AC-CON-022** — maps REQ-CON-021
 - 기준: 스타일 격리
 - Given 로컬 개발 서버에서 사이트 전역 CSS(`dark-theme.css` 포함)가 로드된 상태
-- When 콘솔 홈, 상세 패널, 편집 양식, 로그인 화면을 스크린샷으로 찍고 계산된 스타일을 확인한다
+- When 콘솔 홈, 상세 패널, 편집 양식, 삭제 인라인 확인, 되돌리기 토스트, 관리자 대화상자(가져오기·사람 목록), 로그인 화면을 스크린샷으로 찍고 계산된 스타일을 확인한다
 - Then 콘솔 루트 배경이 `#faf8f3`, 사이드바가 `#f2efe8`, 주 버튼이 `#1f6f5c`이며, 입력칸·label·제목 글자가 밝은 배경 위에서 읽힌다(입력칸 배경이 `#14161f`가 아님)
 - And 공개 사이트 헤더·푸터가 보이지 않는다
+- And 대화상자·토스트 요소가 콘솔 루트(`[data-admin-root="console"]`)의 자손이다
 - And `git grep -nE "var\(--lx-|:root" src/app/console` 결과가 0줄이다
+- And `git grep -nE "className=\"(card|page|container|shell|nav|topbar|hero|step|footer)\b|<footer|createPortal" src/app/console` 결과가 0줄이다
 
 **AC-CON-023** — maps REQ-CON-022
 - 기준: 외부 자산 없음
@@ -243,6 +274,6 @@
 
 - [ ] AC-CON-001 ~ AC-CON-025 모두 통과(증거: 명령과 출력, 스크린샷 경로)
 - [ ] 기존 관리자 로그인·워크숍 SSO 테스트 수정 없이 통과
-- [ ] plan.md §6 오너 확인 D1~D12에 대한 답이 progress.md에 기록됨
+- [ ] plan.md §6 오너 확인 D1~D13에 대한 답이 Implementation Kickoff에서 수집되어 progress.md §E.1에 기록됨(D2·D13은 답에 따라 SPEC 개정이 먼저 필요할 수 있음)
 - [ ] 시드·비밀값이 커밋되지 않음(AC-CON-025)
 - [ ] plan.md §7·§8의 수동 작업·환경변수 목록이 배포 요청과 함께 오너에게 전달됨

@@ -1,7 +1,7 @@
 ---
 id: SPEC-CONSOLE-001
 title: "조엘라이프 팀 콘솔 (/console) 배포판 — try-n.com SSO, 항목 관리, 공유 계정 보관"
-version: "0.1.0"
+version: "0.2.0"
 status: draft
 created: 2026-11-15
 updated: 2026-11-15
@@ -21,6 +21,7 @@ tier: L
 | 버전 | 날짜 | 작성 | 내용 |
 |---|---|---|---|
 | 0.1.0 | 2026-11-15 | manager-spec | 최초 작성(draft). 승인된 프로토타입(`zoel-console/index.html`)과 PLAN.md "최종 결정"(2026-11-14)을 근거로 함 |
+| 0.2.0 | 2026-11-15 | manager-spec | plan-audit 1차(FAIL 0.78) 반영. 콘솔 모드 오류 출구(CON-D1), 가져오기 형식(CON-D2)과 교체 쓰기 규칙(CON-D3), D2 충돌 명시(CON-D4), 공개 Blob 의존(CON-D5), 클립보드 조항 삭제(CON-D6), 로그아웃 예외(CON-D7), 선택 결함 D8~D15 반영. 범위는 그대로 |
 
 ## 1. 배경과 목적
 
@@ -49,21 +50,21 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 - **콘솔 관리자**: 환경변수 허용 목록에 이메일이 있는 사용자. zoellife.com 관리자 역할과 무관하다.
 - **항목(item)**: 프로토타입의 카드. 제목, 주소, 담당자, 팀, 분류, 접속 방식, 공개 범위, 연동 주소, 확인할 일 메모를 가진다.
 - **자격증명(credential)**: 접속 방식이 공유 계정인 항목의 아이디와 비밀번호. 둘 다 암호화 보관 대상이다.
-- **공개 범위(visibility)**: 전체 / 팀 / 본인. 자격증명 열람 권한을 정한다(plan.md D2).
+- **공개 범위(visibility)**: 전체 / 팀 / 본인. 이 판에서는 자격증명 열람 권한을 정한다. 항목 자체까지 가릴지는 오너 결정 D2에 달려 있다(plan.md §6 D2 — PLAN.md 3절 표와 충돌하므로 실행 전에 답이 필요).
 
 ## 3. 요구사항 (GEARS)
 
 ### 3.1 입장과 세션
 
-**REQ-CON-001** — The console shall be served under the `/console` path of zoellife.com, and every console page and console API other than the sign-in entry shall require a valid console session.
+**REQ-CON-001** — The console shall be served under the `/console` path of zoellife.com, and every console page and console API other than the console sign-in page and the console sign-out endpoint shall require a valid console session.
 
-**REQ-CON-002** — When a user starts console sign-in, the sign-in flow shall reuse the existing Google OAuth client and its existing callback in a console mode selected only by a sanitized return path equal to `/console` or a path beneath `/console/`, so that no new OAuth redirect URI is required.
+**REQ-CON-002** — When a user starts console sign-in, the sign-in flow shall reuse the existing Google OAuth client and its existing callback in a console mode selected only by a sanitized return path equal to `/console` or a path beneath `/console/`, so that no new OAuth redirect URI is required. When the console sign-in page is opened with a requested return path, the sign-in flow shall carry that path only if it is itself a console path, and shall use `/console` otherwise. The callback shall determine console mode from the return-path cookie before evaluating any other step, and when the callback runs in console mode and any step fails (OAuth not configured, console not configured, state mismatch, token exchange, userinfo lookup, admission, or an unexpected error), the callback shall redirect to the console sign-in page with an error code and shall not redirect to the admin sign-in page.
 
 **REQ-CON-003** — When the Google callback completes in console mode, the callback shall admit the account only if all of the following hold: the email is reported verified by both the userinfo response and the ID token; the address contains exactly one `@` with a non-empty local part; its domain equals `try-n.com` exactly (case-insensitive, no subdomain, no lookalike); the ID token `hd` claim equals that domain; and the ID token audience equals the configured OAuth client id. Registration in the zoellife.com admin user list shall not be required.
 
 **REQ-CON-004** — The console-mode callback shall not issue, refresh, or modify the zoellife.com admin session cookie or any admin user record, and a zoellife.com admin session shall not grant console access, nor shall a console session grant admin access.
 
-**REQ-CON-005** — The console session shall be signed only with a dedicated secret. When that secret is unset, blank, shorter than 32 characters, or equal to any of the admin session secret, the workshop handoff secret, or the console credential key, the console shall fail closed (sign-in refused, console APIs answering "not configured") and shall not fall back to any other secret or to a literal value.
+**REQ-CON-005** — The console session shall be signed only with a dedicated secret. When that secret is unset, blank, shorter than 32 characters, or equal to any configured value among the admin session secret, the workshop handoff secret, the partner session secret, the serial scan secret, the QR tracking secret, the backup encryption key, or the console credential key, the console shall fail closed (sign-in refused, console APIs answering "not configured") and shall not fall back to any other secret or to a literal value.
 
 **REQ-CON-006** — The console session token shall carry a console-specific marker and an expiry (default 12 hours), so that admin session tokens, workshop handoff tokens, and partner tokens never verify as console sessions. When the user signs out, the console shall clear the console session cookie.
 
@@ -73,7 +74,7 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 **REQ-CON-008** — The console shall persist items, categories, and the people directory as JSON documents through the existing Blob-backed data helpers under the existing data prefix, and the public repository shall not contain console seed content (internal Drive folder ids, Sheet ids, Slack channel ids, staff names, or staff emails).
 
-**REQ-CON-009** — The console shall deliver item data only through authenticated console API responses; item data shall not be embedded in server-rendered HTML, page source, or static assets.
+**REQ-CON-009** — The console shall deliver item, people, and audit data to the browser only through authenticated console API responses, and shall not embed that data in server-rendered HTML, page source, or static assets. This requirement governs delivery to the browser only; protection of the stored documents themselves is the storage limitation stated in §4 and owner decision D13 in plan.md §6.
 
 ### 3.3 항목 권한과 편집
 
@@ -93,15 +94,15 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 **REQ-CON-016** — When a signed-in user requests to view or copy a credential field, the server shall return the decrypted value only if the user is permitted by the item's visibility (전체: any signed-in user; 팀: owners, console admins, and members of the item's team, with team `공통` meaning everyone; 본인: owners and console admins), shall record an audit entry before returning the value, shall mark the response non-cacheable, and shall cap the number of reveals per user within a time window. When the request is denied or capped, the server shall return no value and shall record the denial.
 
-**REQ-CON-017** — While a credential is displayed in the detail panel, the console shall show the password masked by default, reveal it only while the eye toggle is on, copy the real value on the copy action, and attempt to clear the clipboard after 30 seconds.
+**REQ-CON-017** — While a credential is displayed in the detail panel, the console shall show the password masked by default, reveal it only while the eye toggle is on, and copy the real value on the copy action; the console shall not keep a revealed value after the detail panel closes.
 
 ### 3.5 기록
 
-**REQ-CON-018** — The console shall record an audit entry for console sign-in success and failure, item create, update, delete, and restore, credential view, copy, and denial, import, and people or category changes; no audit entry shall contain a credential value. Where the user is a console admin, the console shall show recent console audit entries.
+**REQ-CON-018** — The console shall record an audit entry for console sign-in success and failure, item create, update, delete, and restore, credential view, copy, and denial, import, people, category, and team-pin changes; no audit entry shall contain a credential value. Where the user is a console admin, the console shall show recent console audit entries.
 
 ### 3.6 관리자 기능
 
-**REQ-CON-019** — Where the user is a console admin, the console shall provide: replacing all items from an uploaded JSON file (credential fields in the file ignored), exporting items without credentials, maintaining the people directory (name, English name, email, team), and adding categories.
+**REQ-CON-019** — Where the user is a console admin, the console shall provide: replacing all items from an uploaded JSON file in the accepted import format (credential fields in the file ignored, and stored items, people, and categories absent from the file removed rather than retained), exporting items without credentials, maintaining the people directory (name, English name, email, team), adding categories, and maintaining the team-pinned item list shown on the home.
 
 ### 3.7 화면
 
@@ -123,7 +124,8 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 - 저장소는 공개다. 비밀값 리터럴, `process.env.X ?? '<literal>'` 형태의 비밀값 폴백, 시드 데이터를 커밋하지 않는다(`.claude/rules/daerachoen-constitution.md`).
 - `dark-theme.css`가 `:root` 토큰 의미를 뒤집고 body·input·label·h1~h6 색을 `!important`로 강제한다. 콘솔은 자체 범위 스타일과 고정 hex만 쓴다.
 - 외부 CDN 자산 금지(헌법 불변 원칙).
-- 기존 관리자 SSO 동작(등록 사용자만 입장, 워크숍 member 출구)은 바꾸지 않는다.
+- 기존 관리자 SSO 동작(등록 사용자만 입장, 워크숍 member 출구, 관리자 모드 오류 출구 `/admin/login`)은 바꾸지 않는다.
+- 저장 한계: 기존 db 헬퍼는 Vercel Blob을 공개 접근(`access: 'public'`)으로 쓰고, 비밀 prefix(`BLOB_DATA_PREFIX`)가 유일한 보호 수단이다. 따라서 `console-items`(드라이브·시트·Slack id), `console-people`·`console-audit-log`(직원 email)는 prefix가 새면 인증 없이 읽힌다. prefix는 2026-07에 실제로 공개 저장소에 노출된 적이 있다(헌법). 자격증명 값만은 암호문으로 저장되므로 prefix가 새도 평문이 나가지 않는다. 이 한계를 받아들일지는 오너 결정 D13이다.
 
 ## 5. 범위 제외
 
@@ -133,12 +135,15 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 - 홈 맨 위 워크숍 스튜디오 메인 띠(PLAN "미반영" 항목)
 - 고정(핀) 목록의 기기 간 동기화 — 이번에는 사용자별로 브라우저에만 저장
 - 다크 테마 — 이번 배포판은 라이트 스튜디오 팔레트만 제공(plan.md D7)
+- 클립보드 자동 비우기 — 사용자가 그 사이 복사한 다른 내용까지 지울 수 있고 통과·실패로 판정할 수 없어 뺀다(plan-audit CON-D6)
 - 삭제 항목 휴지통 화면과 영구 삭제(purge) — 되돌리기 토스트 외 복구 화면 없음
 - 댓글, 알림, 콘솔 이용 통계
 
 ### Out of Scope — 보안·운영
 
 - 자격증명 키 교체(re-encryption) 도구 — 암호문에 키 버전 칸만 남겨 두고 도구는 후속 작업
+- 개별 세션의 서버 측 즉시 폐기(차단 목록 등) — 비상시에는 `CONSOLE_SESSION_SECRET` 교체로 전체 세션을 끊는다(plan.md §4 위험 행)
+- 콘솔 문서(항목·사람·기록)의 저장 시점 암호화 — 오너 결정 D13에서 고르면 SPEC 개정 후 진행
 - 2단계 인증 코드 보관(콘솔은 인증 수단 보유자 이름만 적는다)
 - Slack #04_admin 평문 로그인 정보 정리와 비밀번호 교체(콘솔 밖 수동 작업, plan.md §7)
 - 공유 로그인의 서비스 약관 검토
@@ -157,7 +162,7 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 | 인수 기준 | 검증하는 요구사항 |
 |---|---|
 | AC-CON-001 | REQ-CON-003, REQ-CON-004 |
-| AC-CON-002 | REQ-CON-003 |
+| AC-CON-002 | REQ-CON-002, REQ-CON-003 |
 | AC-CON-003 | REQ-CON-002 |
 | AC-CON-004 | REQ-CON-005 |
 | AC-CON-005 | REQ-CON-004, REQ-CON-006 |

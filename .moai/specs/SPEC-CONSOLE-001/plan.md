@@ -18,14 +18,14 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 
 ### M2 — 로그인과 세션 (우선순위 높음)
 
-- 특성 테스트 먼저: 기존 `sanitizeNextPath`, 콜백의 관리자·워크숍 경로가 지금처럼 동작함을 고정
+- 특성 테스트 먼저: 기존 `sanitizeNextPath`, 콜백의 관리자·워크숍 경로, 관리자 모드의 오류 출구 7종(`sso_not_configured`·`oauth_state`·`oauth_token`·`oauth_userinfo`·`oauth_email`·`not_authorized`·`oauth_failed` → `/admin/login`)이 지금처럼 동작함을 고정
 - `src/lib/google-oauth.ts` — `/console` 계열 허용, `isConsoleNext`
 - `src/lib/console/session.ts` — 토큰 서명·검증(Web Crypto), 쿠키 옵션
 - `src/app/api/admin/auth/google/start/route.ts` — 콘솔 모드 오류 경로
-- `src/app/api/admin/auth/google/callback/route.ts` — admin-users 조회 앞 콘솔 분기(`consoleEntry`)
+- `src/app/api/admin/auth/google/callback/route.ts` — next 해석을 맨 앞으로 옮기고 오류 출구를 `fail(code)` 하나로 모은 뒤, userinfo 직후(L172 거절 앞) 콘솔 분기(`consoleEntry`) — design.md §2.3
 - `src/middleware.ts` — 콘솔 블록
 - `src/app/api/console/auth/logout/route.ts`
-- 테스트: 도메인 판정 표(acceptance.md AC-CON-002), 토큰 교차 거부, 비밀값 무효 시 닫힘
+- 테스트: 도메인 판정 표와 콘솔 모드 오류 출구 표(acceptance.md AC-CON-002), 열린 리디렉트 사례(AC-CON-003), 토큰 교차 거부, 비밀값 무효 시 닫힘
 
 ### M3 — 자격증명 보관과 열람 (우선순위 높음)
 
@@ -43,7 +43,9 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - `src/app/api/console/categories/route.ts`, `people/route.ts`, `settings/route.ts`
 - `src/app/api/console/import/route.ts`, `export/route.ts`, `audit/route.ts`
 - 공통 가드: 세션·Origin·Content-Type·no-store(`src/lib/console/http.ts`)
-- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, 가져오기에서 자격증명 무시, 내보내기에 자격증명 없음
+- `src/lib/console/import-map.ts` — 가져오기 형식 대응 순수 함수 `mapImportFile`(design.md §5.3)
+- 교체 계열 쓰기는 `removedIds = 기존 키 − 새 키`(design.md §5.4)
+- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, `mapImportFile` 대응표(이름 나누기·email 찾기·미일치·`admin` 무시·팀 고정), 가져오기에서 자격증명 무시, 파일에 없는 기존 항목·사람 제거, 내보내기에 자격증명 없음
 
 ### M5 — 화면 이식 (우선순위 중간)
 
@@ -88,6 +90,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | 수정 | `src/lib/db.ts` (`FILE_KEY` 2줄) | M3 |
 | 신규 | `src/app/api/console/items/[id]/credential/route.ts` | M3 |
 | 신규 | `src/lib/console/http.ts` | M4 |
+| 신규 | `src/lib/console/import-map.ts` | M4 |
 | 신규 | `src/app/api/console/bootstrap/route.ts` | M4 |
 | 신규 | `src/app/api/console/items/route.ts` | M4 |
 | 신규 | `src/app/api/console/items/[id]/route.ts` | M4 |
@@ -117,6 +120,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - 도메인 판정은 이미 검증된 `isWorkshopOpenAccount`를 재사용하고, 도메인 목록만 콘솔 상수로 고정한다.
 - 자격증명은 항목 문서와 다른 문서에 암호문으로만 둔다. 화면은 값이 필요할 때마다 서버에 묻고, 서버는 기록을 먼저 남긴 뒤 값을 준다.
 - 삭제는 소프트 삭제라 `writeDataMerged`의 tombstone을 쓰지 않고, 되돌리기가 자격증명까지 그대로 살린다.
+- 반대로 교체 계열 쓰기(가져오기, 사람 목록 교체, 감사 기록 정리)는 `writeDataMerged`가 "새 배열에 없는 레코드"를 되살리므로 지운 키를 반드시 `removedIds`로 넘긴다.
 - 화면은 프로토타입 동작을 React로 옮기되, 데이터 출처만 API로 바꾼다. 스타일은 CSS 모듈과 고정 hex.
 
 ## 4. 위험과 대응
@@ -130,6 +134,10 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | 사람 목록에 email 미입력 | 담당자가 자기 항목을 못 고침 | 관리자는 항상 편집 가능, 가져오기 때 email 없는 담당자 목록을 결과로 보여 줌 |
 | 프로토타입 2,600줄 이식 분량 | 화면 마일스톤이 길어짐 | M1~M4가 API를 먼저 굳혀 두므로 M5는 화면만 다룸. 필요하면 M5를 하위 SPEC으로 분리 |
 | 시드 id가 실수로 커밋됨 | 공개 저장소 노출 | AC-CON-025 grep 검사, 시드 파일은 저장소 밖 경로에서만 다룸 |
+| 공개 Blob + 비밀 prefix 의존 | prefix가 새면 `console-items`(드라이브·시트·Slack id)와 `console-people`·`console-audit-log`(직원 email)를 인증 없이 읽을 수 있음. prefix는 2026-07에 실제로 공개 저장소에 노출된 적이 있음 | 자격증명은 암호문만 저장(prefix가 새도 평문 없음). 나머지 문서는 기존 고객 PII 문서와 같은 수준의 보호. 받아들일지는 오너 결정 D13 |
+| 개별 세션을 서버에서 끊을 수단 없음 | 퇴사·계정 정지 직원도 남은 세션 수명(기본 12시간, 최대 168시간) 동안 콘솔과 자격증명 열람을 쓸 수 있음 | 수명 기본 12시간 유지, 비상시 `CONSOLE_SESSION_SECRET` 교체 후 재배포로 전체 세션 무효화(§7). 개별 폐기는 범위 제외 |
+| 익명 콜백 요청으로 감사 기록 밀어내기 | 5,000건 상한이 차서 열람 기록이 지워짐 | 신원이 생기기 전 실패는 기록하지 않음(design.md §2.3, AC-CON-016). 신원 있는 실패는 구글 왕복이 필요해 대량 생성이 어려움 |
+| D2 기본값(A) 선택 시 항목 주소 노출 | '팀'·'본인' 항목의 주소·연동 주소(내부 드라이브 폴더 등)가 try-n.com 직원 전원에게 보임. 시드 기준 '팀' 11개·'본인' 5개 | 오너가 D2에서 알고 고르게 함 |
 
 ## 5. 품질 게이트
 
@@ -138,10 +146,12 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 
 ## 6. 오너 확인 필요 (실행 전에 답이 필요한 것)
 
+아래 D1~D13은 확인 필요 표식 없이 표로 적은 열린 결정이라 기계 검사(MP-7)로는 잡히지 않는다. 오케스트레이터는 Implementation Kickoff Approval에서 각 항목의 답을 받아 progress.md §E.1 "owner_decisions"에 그대로 기록한 뒤 실행 단계로 넘긴다. D2·D13에서 (B)를 고르면 SPEC 개정과 재감사가 먼저다.
+
 | # | 내용 | 제안(기본값) |
 |---|---|---|
 | D1 | 시드 데이터를 공개 저장소에 넣지 않고, 배포 뒤 관리자가 콘솔에서 JSON 가져오기로 넣는다 | 이렇게 한다. 프로토타입 "JSON 내보내기"(비밀번호 제외) 파일에 사람 목록을 붙여 가져온다 |
-| D2 | 공개 범위(전체·팀·본인)는 **자격증명 열람**에만 적용하고, 항목 자체(제목·주소·담당자)는 로그인한 직원 모두에게 보인다 | 이렇게 한다(프로토타입 동작과 같음). 항목까지 숨기려면 M1에서 바꾼다 |
+| D2 | 공개 범위(전체·팀·본인)가 무엇을 가리는가. **PLAN.md 3절 표와 충돌한다**: 그 표는 "열람: 공개 범위 '전체'인 카드 열람·검색", "팀 범위: 공개 범위 '팀' 카드 열람"으로 항목 자체를 가리는 규칙이고, "최종 결정" 절은 "항목별 공개 범위"라고만 써서 이 표를 뒤집지 않는다. 반면 프로토타입 `credAccess`(index.html L1425-1431)는 자격증명만 막는다. **(A)** 자격증명 열람에만 적용: 항목 제목·주소·연동 주소·담당자는 로그인한 try-n.com 직원 전원에게 보인다. 시드 기준 '팀' 11개·'본인' 5개 항목의 주소(내부 드라이브 폴더·시트 링크 포함)가 다른 팀과 무관한 직원에게도 보인다. 현재 REQ-CON-016·020, AC-CON-010·020이 이 안으로 쓰여 있다. **(B)** PLAN 3절대로 항목 자체를 가림: 권한 없는 사용자는 목록·검색·홈 요약·상세에서 그 항목을 보지 못한다. 고르면 실행 전에 REQ-CON-016·020과 AC-CON-010·020을 개정하고 M1 `toListItem`에서 거른다(범위는 콘솔 안, 화면·API 파일 수는 같음) | 제안: (A) — 프로토타입 동작과 같고 오너가 승인한 화면이 이 동작이다. 다만 PLAN 3절과 다르므로 오너가 명시적으로 골라야 한다 |
 | D3 | 사용자의 팀은 관리자가 관리하는 사람 목록에서 정한다. 목록에 없는 사람은 `공통`으로 보고, 한국팀·방글라데시팀의 '팀' 범위 자격증명은 볼 수 없다 | 이렇게 한다 |
 | D4 | 담당자 판정은 이름이 아니라 email로 한다. 시드 담당자 9명 중 email을 아는 사람은 2명뿐이라 나머지 email이 필요하다. 채워지기 전까지 그 항목은 관리자만 고친다 | 오너가 사람 목록에 email·팀을 채운다 |
 | D5 | 콘솔 감사 기록은 별도 문서(`console-audit-log`, 5,000건)에 두고, 로그인 1줄만 기존 감사 기록에도 남긴다 | 이렇게 한다 |
@@ -152,25 +162,27 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | D10 | 콘솔 관리자는 `CONSOLE_ADMIN_EMAILS`로만 정한다(zoellife.com 관리자 역할과 무관) | 처음 값은 오너 계정 1개 |
 | D11 | 같은 사용자의 자격증명 열람 상한 | 10분에 30회 |
 | D12 | 콘솔에도 사이트 공통 GA·GTM이 실린다(`/admin`과 같음). 항목 내용은 URL에 넣지 않는다 | 그대로 둔다. 빼려면 레이아웃 변경 별도 작업 |
+| D13 | 콘솔 문서는 기존 db 헬퍼대로 공개 접근 Blob에 비밀 prefix로만 보호된다(spec.md §4 저장 한계, §4 위험 행). **(A)** 받아들인다: 자격증명만 암호문, 항목·사람·기록은 기존 고객 PII 문서와 같은 수준. REQ-CON-009는 브라우저 전달 경로만 보장한다. **(B)** 항목·사람·기록 문서도 저장 시점에 암호화한다: 새 요구사항과 새 키(또는 `CONSOLE_SECRETS_KEY` 파생 키)가 필요하고, 백업·시드 동기화 스크립트가 그 문서를 해석할 수 없게 된다. 고르면 실행 전에 SPEC을 개정한다 | 제안: (A) — 같은 저장소의 고객 문의·파트너 계정 문서가 이미 같은 보호 수준이고, prefix는 2026-07에 교체됐다. 다만 prefix 유출 이력이 있으므로 오너가 명시적으로 골라야 한다 |
 
 ## 7. 저장소 밖 수동 작업 (오너)
 
 1. Vercel(Production)에 환경변수 추가 후 재배포 — 목록은 §8
 2. `CONSOLE_SECRETS_KEY` 값을 비밀번호 관리자 등 저장소·Slack 밖의 안전한 곳에 따로 보관(분실하면 저장된 공유 비밀번호를 되살릴 수 없음)
 3. 구글 OAuth 클라이언트: 새 리디렉트 URI 등록은 필요 없다. 기존 `https://zoellife.com/api/admin/auth/google/callback`이 등록돼 있는지만 확인(관리자 SSO가 지금 동작하므로 등록돼 있을 것으로 봄 — 추정)
-4. 배포 뒤 관리자 계정으로 콘솔에 들어가 시드 JSON 가져오기(D1). 시드 파일은 저장소 밖에 둔다
+4. 배포 뒤 관리자 계정으로 콘솔에 들어가 시드 JSON 가져오기(D1). 프로토타입 "JSON 내보내기" 파일에 `people`(이름·영문 이름·팀·확인한 email)과, 팀 필수 목록을 옮기려면 `teamPins`(프로토타입 `TEAM_PINS` 7개 id)를 직접 덧붙인다(design.md §5.3). 시드 파일은 저장소 밖에 둔다. 가져오기 결과의 `unmatchedOwners`·`peopleSkipped`를 보고 사람 목록을 보완한다
 5. 사람 목록에 담당자 email·팀 입력(D4)
 6. **공유 비밀번호를 넣기 전에** Slack #04_admin(2026-09-22)에 평문으로 남은 인스타그램·유튜브 로그인 정보의 비밀번호를 바꾸고 그 메시지를 삭제(PLAN "즉시 처리", 외부 효력 행위라 오너가 직접)
 7. 공유 계정 담당자가 콘솔에서 아이디·비밀번호를 직접 입력
 8. 배포 확인: `https://zoellife.com/robots.txt`에 `/console`, try-n.com이 아닌 구글 계정으로 로그인 거절, 콘솔 응답의 `X-Robots-Tag`
 9. (콘솔과 별개, PLAN 7·9절) 드라이브·시트 공유 설정 점검, AI 도구 공유 로그인 약관 확인
+10. 비상시(퇴사자 세션 차단 등): Vercel에서 `CONSOLE_SESSION_SECRET`을 새 값으로 바꾸고 재배포하면 모든 콘솔 세션이 끊긴다(직원은 다시 로그인). 저장된 공유 비밀번호는 `CONSOLE_SECRETS_KEY`로 암호화돼 있어 영향이 없다
 
 ## 8. 환경변수 (Vercel에 오너가 추가)
 
 | 변수 | 필수 | 값 | 비고 |
 |---|---|---|---|
-| `CONSOLE_SESSION_SECRET` | 필수 | 무작위 32자 이상(예: `openssl rand -base64 48`) | `ADMIN_SESSION_SECRET`·`WORKSHOP_SSO_SECRET`·`CONSOLE_SECRETS_KEY`와 달라야 함. 없으면 콘솔 전체 닫힘 |
-| `CONSOLE_SECRETS_KEY` | 필수 | 64자리 hex(예: `openssl rand -hex 32`) | AES-256-GCM 키. 다른 세 값과 달라야 함. 없으면 자격증명 기능만 닫힘. 오프라인 보관 |
+| `CONSOLE_SESSION_SECRET` | 필수 | 무작위 32자 이상(예: `openssl rand -base64 48`) | `ADMIN_SESSION_SECRET`·`WORKSHOP_SSO_SECRET`·`PARTNER_SESSION_SECRET`·`SERIAL_SCAN_SECRET`·`QR_TRACK_SECRET`·`BACKUP_ENCRYPTION_KEY`·`CONSOLE_SECRETS_KEY` 중 설정된 값과 달라야 함. 없으면 콘솔 전체 닫힘 |
+| `CONSOLE_SECRETS_KEY` | 필수 | 64자리 hex(예: `openssl rand -hex 32`) | AES-256-GCM 키. 위 비밀값들과 달라야 함. 없으면 자격증명 기능만 닫힘. 오프라인 보관 |
 | `CONSOLE_ADMIN_EMAILS` | 필수 | 쉼표 구분 `@try-n.com` 주소(처음엔 오너 계정) | 없으면 관리자 0명 |
 | `CONSOLE_SESSION_MAX_AGE_HOURS` | 선택 | 1~168 정수 | 없으면 12 |
 
