@@ -49,7 +49,7 @@ export default function robots(): MetadataRoute.Robots {
     userAgent: ua,
     allow: '/',
     // 아래 '*' 그룹과 같은 차단 목록 — 이름이 지정된 봇은 '*' 그룹을 읽지 않으므로 다시 적는다.
-    disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
+    disallow: ['/api/', '/admin/', '/console', '/edition/', '/agarwood-edition', '/thesis'],
   }));
 
   return {
@@ -60,7 +60,8 @@ export default function robots(): MetadataRoute.Robots {
         // /thesis 는 THESIS_PASSWORD 로 잠긴 논문 아카이브 — 인증 없이는 401 이다.
         // 푸터 공개 링크는 2026-10-06 에 뺐지만(Footer.tsx), 이미 알려진 주소로 크롤러가 401 을
         // 받아 "색인 생성되지 않음"으로 쌓이지 않도록 크롤 대상에서 계속 제외한다.
-        disallow: ['/api/', '/admin/', '/edition/', '/agarwood-edition', '/thesis'],
+        // /console 은 사내 팀 콘솔(SPEC-CONSOLE-001 REQ-CON-024) — 로그인 전용이라 크롤 대상에서 뺀다.
+        disallow: ['/api/', '/admin/', '/console', '/edition/', '/agarwood-edition', '/thesis'],
       },
       ...aiRules,
       ...TRAINING_CRAWLERS.map((ua) => ({ userAgent: ua, disallow: '/' })),

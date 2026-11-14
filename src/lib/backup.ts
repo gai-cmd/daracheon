@@ -19,7 +19,7 @@ const BLOB_DATA_PREFIX_RAW = process.env.BLOB_DATA_PREFIX ?? 'db';
 const BLOB_DATA_PREFIX = BLOB_DATA_PREFIX_RAW.replace(/[^a-zA-Z0-9_-]/g, '');
 const SNAPSHOT_PREFIX = `${BLOB_DATA_PREFIX}/_snapshots/`;
 
-const DB_FILES = [
+export const DB_FILES = [
   'products',
   'reviews',
   'inquiries',
@@ -38,6 +38,13 @@ const DB_FILES = [
   'blogCategories',     // 블로그 카테고리 (실제 파일명 camelCase)
   'qr-codes',           // QR 코드 레지스트리
   'product-guides',     // 제품 사용설명서
+  // 팀 콘솔 (SPEC-CONSOLE-001 design.md §8). console-secrets 는 백업 안에서도 암호문이고,
+  // 그 키(CONSOLE_SECRETS_KEY)는 백업에 들어가지 않는다.
+  'console-items',
+  'console-categories',
+  'console-people',
+  'console-secrets',
+  'console-audit-log',  // 감사 기록 — 복원은 audit-log 와 같이 restoreAuditLog 일 때만
 ] as const;
 
 // ⚠️ 미백업 잔여 항목(다음 단계): QR 하위 per-record 컬렉션
@@ -45,7 +52,7 @@ const DB_FILES = [
 //   키별 blob 이므로 prefix 워커 기반 별도 아카이버가 필요하다. flat 컬렉션 커버리지
 //   확보 후 위 prefix 아카이빙을 추가할 것.
 
-const SINGLETON_FILES = [
+export const SINGLETON_FILES = [
   'company',
   'announcement',
   'pages',
@@ -54,6 +61,7 @@ const SINGLETON_FILES = [
   'mail-settings',
   'integration-settings',
   'telegram-bot-state', // 텔레그램 봇 상태(readSingle 로 읽는 싱글턴 — 2026-07-08 실측 확인)
+  'console-settings',   // 팀 콘솔 설정 (SPEC-CONSOLE-001)
 ] as const;
 
 type DbKey = (typeof DB_FILES)[number];
@@ -423,7 +431,7 @@ export async function restoreFromPayload(
       skipped.push(key);
       continue;
     }
-    if (key === 'audit-log' && !options.restoreAuditLog) {
+    if ((key === 'audit-log' || key === 'console-audit-log') && !options.restoreAuditLog) {
       skipped.push(key);
       continue;
     }

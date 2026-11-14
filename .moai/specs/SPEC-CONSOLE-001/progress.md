@@ -105,6 +105,26 @@ M4 에서 라우트 수준으로 확인한 인수 기준: AC-CON-004(라우트 5
 - 정적 스타일 검사 테스트는 `src/lib/__tests__/console-screen-style.test.ts` 에 둔다. `src/app/console` 안에 두면 AC-CON-022·023 grep 이 테스트에 적힌 패턴 자체를 잡는다.
 - 사이트 리셋(`* { margin: 0 }`)이 네이티브 `<dialog>` 의 가운데 정렬을 없애므로 `.dlg { margin: auto }` 를 둔다. 요소 리셋(`button`·`a` 등)은 `:where(.root)` 로 감싸 컴포넌트 클래스보다 낮은 우선순위를 유지한다.
 
+### M6 (cycle_type=tdd, 2026-11-15)
+
+증거 파일(로컬, 커밋 대상 아님): `.moai/state/verify/console-m6/`
+
+| 단계 | 명령 | 관찰 결과 |
+|---|---|---|
+| RED | `npx vitest run src/app/__tests__/console-seo.test.ts src/lib/console/__tests__/ops-registration.test.ts` | `Failed Tests 15` — robots `expected [ '/api/', '/admin/', …(3) ] to include '/console'`, vercel.json `expected undefined to be 'noindex, nofollow'`, env-check `expected undefined to be defined`, backup `DB_FILES is not iterable` (`red.log`) |
+| GREEN | 위 + `src/lib/__tests__/{env-check,backup-crypto,backup-snapshot-id}.test.ts` | `Test Files 5 passed (5)`, `Tests 41 passed (41)` (`green.log`) |
+| 기존 robots 소비자 | `npx vitest run src/app/llms.txt/llms-facts.test.ts` | `Tests 7 passed (7)` |
+| 타입 | `npx tsc --noEmit` | exit 0, 출력 없음 (`tsc.log`) |
+| 린트 | `npx eslint src/app/robots.ts src/lib/backup.ts src/lib/env-check.ts <새 테스트 2개>` | exit 0, `0 errors, 2 warnings` — 두 경고(`listGitHubBackups`·`GitHubBackupEntry` 미사용 import, backup.ts 3행)는 HEAD 판에도 같은 2건이 있음(`git show HEAD:src/lib/backup.ts \| npx eslint --stdin` 으로 확인) |
+
+M6 에서 확인한 인수 기준: AC-CON-021 중 robots(`*` 그룹과 allow 가 있는 모든 AI 크롤러 그룹 disallow 에 `/console`), sitemap(콘솔 URL 0개), `vercel.json` 헤더(`/console`·`/console/:path*`·`/api/console/:path*` 에 `X-Robots-Tag: noindex, nofollow`), 레이아웃 metadata `robots: { index: false, follow: false }`. 실제 응답 헤더·HTML meta 는 M5 로컬 화면 확인(로그인 화면 meta)과 미들웨어 헤더(M2)로 일부 확인했고, 세 응답의 헤더 확인은 M7 에서.
+
+실행 중 정한 해석:
+- env-check 에는 design §8 대로 세 변수(`CONSOLE_SESSION_SECRET`·`CONSOLE_SECRETS_KEY`·`CONSOLE_ADMIN_EMAILS`)만 `feature` 로 등록했다. 선택 변수 `CONSOLE_SESSION_MAX_AGE_HOURS` 는 등록하지 않았다(없어도 기본 12시간).
+- `console-audit-log` 복원은 기존 `audit-log` 와 같이 `restoreAuditLog` 를 줄 때만 한다. 기본 복원이 자격증명 열람 기록을 스냅샷 시점으로 되돌려 지우지 않게 하려는 것이다.
+- `DB_FILES`·`SINGLETON_FILES` 는 테스트에서 콘솔 문서 등록을 확인하려고 export 했다(동작 변화 없음).
+- `src/app/api/admin/backup/route.ts` 의 별도 `DB_FILES`(관리자 화면의 JSON 내려받기·올리기 복원)는 plan 범위 밖이라 그대로 두었다 — 그 경로의 백업 파일에는 콘솔 문서가 들어가지 않는다.
+
 ## §E.3 Run-phase Audit-Ready Signal
 
 _<M4~M7 완료 뒤 기록>_

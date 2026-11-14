@@ -155,6 +155,25 @@ export const ENV_REGISTRY: EnvSpec[] = [
     purpose: '제품 시리얼 스캔 검증 시크릿',
     ifMissing: '시리얼 스캔 검증 약화/불가',
   },
+  // 팀 콘솔(/console, SPEC-CONSOLE-001). 값 형식·서로 다름 검사는 src/lib/console/config.ts 가 한다.
+  {
+    name: 'CONSOLE_SESSION_SECRET',
+    severity: 'feature',
+    purpose: '팀 콘솔 세션 토큰 HMAC 서명 키(32자 이상, 다른 비밀값과 달라야 함)',
+    ifMissing: '팀 콘솔 전체 닫힘(503)',
+  },
+  {
+    name: 'CONSOLE_SECRETS_KEY',
+    severity: 'feature',
+    purpose: '팀 콘솔 공유 계정 비밀번호 AES-256-GCM 암호화 키(64자리 hex, 오프라인 보관)',
+    ifMissing: '팀 콘솔 자격증명 보기·복사·저장만 닫힘(항목 열람·편집은 동작)',
+  },
+  {
+    name: 'CONSOLE_ADMIN_EMAILS',
+    severity: 'feature',
+    purpose: '팀 콘솔 관리자 이메일 목록(쉼표 구분)',
+    ifMissing: '팀 콘솔 관리자 0명 — 분류·사람·설정·가져오기 편집 불가',
+  },
 
   // ── optional: 없어도 핵심 동작에 지장 없음(공개/부가) ──
   {
