@@ -72,6 +72,39 @@ M4 에서 라우트 수준으로 확인한 인수 기준: AC-CON-004(라우트 5
 - 자격증명 값을 넣은 생성·수정은 `CONSOLE_SECRETS_KEY` 무효면 503, 값이 없으면 키 없이도 동작(acceptance §10).
 - `updatedBy`·`me.name` 은 사람 목록 이름, 없으면 구글 프로필 이름.
 
+### M5 (cycle_type=tdd, 2026-11-15)
+
+증거 파일(로컬, 커밋 대상 아님): `.moai/state/verify/console-m5/` (스크린샷은 `screens/`, 화면 확인 기록은 `screens/render-check.txt`)
+
+| 단계 | 명령 | 관찰 결과 |
+|---|---|---|
+| RED | `npx vitest run src/lib/console/__tests__/{i18n,brand-marks,ui-model}.test.ts src/app/console/__tests__` | `Test Files 5 failed (5)`, `Tests 4 failed \| 4 passed (8)` — `Cannot find module '../i18n'`·`'../brand-marks'`·`'../ui-model'`, `Cannot find package '@/lib/console/ui-model'`, 스타일 검사 4건 실패(화면 파일·`data-admin-root`·팔레트·ChromeGate 없음) (`m5-red.txt`) |
+| GREEN (M5 테스트만) | 위 + `src/lib/__tests__/console-screen-style.test.ts` | `Test Files 5 passed (5)`, `Tests 80 passed (80)` |
+| 타입 | `npx tsc --noEmit` | exit 0, 출력 없음 (`tsc.txt`) |
+| 린트 | `npx eslint src/app/console src/lib/console src/components/layout/ChromeGate.tsx` | exit 0, 출력 없음 (`eslint.txt`) |
+| 대상 테스트 | `npx vitest run src/lib/console/__tests__ src/app/console/__tests__ src/app/api/console src/lib/__tests__/console-screen-style.test.ts` | `Test Files 21 passed (21)`, `Tests 399 passed (399)` (`m5-green.txt`) |
+| AC-CON-022 grep | `git grep -nE "var\(--lx-\|:root" src/app/console`, 전역 클래스·`<footer`·`createPortal` grep | 둘 다 0줄 (exit 1) |
+| AC-CON-023 grep | `git grep -nE "https?://…\.(png\|…)\|favicon\|s2/favicons\|cdn\." src/app/console src/lib/console` | 0줄 (exit 1) |
+| AC-CON-025·026 grep | 시드 주소 패턴·비밀값 폴백·`zoel-workshop.vercel.app/apps/wiki` | 모두 0줄 (exit 1) |
+
+로컬 화면 확인(지어낸 데이터 `data/db/console-*.json` — gitignore, 확인 뒤 삭제 / 일회용 비밀값 / `BLOB_READ_WRITE_TOKEN` 없이 로컬 파일 저장소 / `next dev -p 3456` + 헤드리스 Chromium), `render-check.txt` 원문 요지:
+- 계산된 스타일: 루트 `rgb(250, 248, 243)`(#faf8f3), 사이드바 `rgb(242, 239, 232)`(#f2efe8), 주 버튼 `rgb(31, 111, 92)`(#1f6f5c), 입력칸 배경 `rgb(255, 255, 255)`·글자 `rgb(28, 27, 24)`, label `rgb(92, 90, 82)`, 사이트 헤더·푸터 보이는 개수 0 (로그인·홈·편집 양식·사람 목록 대화상자에서 각각 측정)
+- 메뉴 순서: `#/` `#/all` sep `#/cat/wiki` sep heading 일반 분류 8개 sep `#/shared` `#/mine`; 위키 개수 0, 위키 클릭 시 `wiki.empty` 문구, 홈 분류별 요약은 일반 분류 8개만
+- English 전환 뒤 새로고침해도 위키 링크 글자 `Wiki`; 목록 첫 거르기 칩 `분류`; 행 12개·연필 12개
+- 자격증명: 눈 아이콘 1회 → 요청 본문 `{"field":"password","purpose":"view"}` 1건 뒤 값 표시, 다시 누르면 가림, 패널을 닫았다 다시 열면 값 없음(추가 요청 없음)
+- 삭제 인라인 확인 → 되돌리기 토스트(콘솔 루트 안) → 되돌리기로 행 복귀; 대화상자는 루트 자손
+- 외부 요청: 루트 레이아웃의 Vercel Analytics·Speed Insights 디버그 스크립트 2건뿐(레이아웃 소관, 로컬 CSP 가 차단). 콘솔 화면 자체의 외부 요청 없음
+- 로그인 화면: `<meta name="robots" content="noindex, nofollow">`, 버튼 주소 `/api/admin/auth/google/start?next=%2Fconsole`
+
+실행 중 정한 해석:
+- 공유 계정의 아이디도 암호문으로만 저장되므로(M3) 상세 패널에서 아이디 줄도 가림 표시 + 눈 아이콘·복사 요청으로 보인다(프로토타입은 아이디를 평문으로 보였음).
+- 팀 필수는 하드코딩하지 않고 `console-settings.teamPins` 를 쓴다. 관리자는 계정 메뉴의 "내 고정을 팀 필수로 지정"으로 바꾼다. 팀 필수가 비어 있으면 안내 문구만 보인다.
+- 담당자 입력칸은 이름 또는 회사 이메일을 쉼표로 받아 사람 목록과 맞춰 `{name, email}` 로 보낸다. 관리자가 아닌 사람이 편집에서 자기 자신을 빼면 화면에서 먼저 막는다(서버도 400).
+- 버전 충돌(409)은 입력값을 지우지 않고 양식 위에 안내를 띄우며, "최신 내용 불러오기"로 최신판 양식을 다시 연다(AC-CON-014 화면 부분).
+- 검색 결과 묶음의 "가이드"(프로토타입은 시드 분류 id 에 의존)를 "위키" 묶음으로 바꿨다.
+- 정적 스타일 검사 테스트는 `src/lib/__tests__/console-screen-style.test.ts` 에 둔다. `src/app/console` 안에 두면 AC-CON-022·023 grep 이 테스트에 적힌 패턴 자체를 잡는다.
+- 사이트 리셋(`* { margin: 0 }`)이 네이티브 `<dialog>` 의 가운데 정렬을 없애므로 `.dlg { margin: auto }` 를 둔다. 요소 리셋(`button`·`a` 등)은 `:where(.root)` 로 감싸 컴포넌트 클래스보다 낮은 우선순위를 유지한다.
+
 ## §E.3 Run-phase Audit-Ready Signal
 
 _<M4~M7 완료 뒤 기록>_
