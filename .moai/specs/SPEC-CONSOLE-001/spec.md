@@ -2,7 +2,7 @@
 id: SPEC-CONSOLE-001
 title: "조엘라이프 팀 콘솔 (/console) 배포판 — try-n.com SSO, 항목 관리, 공유 계정 보관"
 version: "0.4.0"
-status: draft
+status: in-progress
 created: 2026-11-15
 updated: 2026-11-15
 author: manager-spec

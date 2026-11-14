@@ -2,25 +2,36 @@ import { NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import {
   getGoogleOAuthConfig,
+  isConsoleNext,
   resolveRedirectUri,
   sanitizeNextPath,
   OAUTH_STATE_COOKIE,
   OAUTH_NEXT_COOKIE,
 } from '@/lib/google-oauth';
+import { isConsoleConfigured } from '@/lib/console/config';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 // 브라우저를 구글 동의화면으로 리다이렉트한다.
 // CSRF 방지용 state 를 쿠키에 심고, 콜백에서 대조한다.
+// next 가 콘솔 경로(isConsoleNext)면 콘솔 모드: 오류 출구가 /console/login 이다 (SPEC-CONSOLE-001).
 export async function GET(request: Request) {
-  const config = getGoogleOAuthConfig();
-  if (!config) {
-    return NextResponse.redirect(new URL('/admin/login?error=sso_not_configured', request.url));
-  }
-
   const url = new URL(request.url);
   const next = sanitizeNextPath(url.searchParams.get('next'));
+  const consoleMode = isConsoleNext(next);
+
+  const config = getGoogleOAuthConfig();
+  if (!config) {
+    if (consoleMode) {
+      return NextResponse.redirect(new URL('/console/login?error=sso_not_configured', request.url), 302);
+    }
+    return NextResponse.redirect(new URL('/admin/login?error=sso_not_configured', request.url));
+  }
+  if (consoleMode && !isConsoleConfigured()) {
+    return NextResponse.redirect(new URL('/console/login?error=console_not_configured', request.url), 302);
+  }
+
   const redirectUri = resolveRedirectUri(request.url);
   const state = randomBytes(16).toString('hex');
 

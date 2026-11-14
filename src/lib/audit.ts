@@ -20,7 +20,9 @@ export type AuditModule =
   | 'blog'
   | 'blog-categories'
   | 'qr-codes'
-  | 'product-guides';
+  | 'product-guides'
+  // 팀 콘솔(/console) 로그인 1줄 — 나머지 콘솔 기록은 console-audit-log 에 따로 둔다 (SPEC-CONSOLE-001).
+  | 'console';
 
 export type AuditAction =
   | 'create'

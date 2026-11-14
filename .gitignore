@@ -243,3 +243,5 @@ dist-ssr/
 .vercel/
 .netlify/
 .firebase/
+# 팀 콘솔(SPEC-CONSOLE-001) 로컬 개발 데이터 — 직원 email·내부 주소가 들어가므로 커밋 금지
+data/db/console-*.json

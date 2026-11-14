@@ -162,6 +162,9 @@ function tombPrefix(filename: string) {
 const FILE_KEY: Record<string, (r: unknown) => string | undefined> = {
   'admin-users': (r) => (r as { email?: string }).email,
   'password-reset-tokens': (r) => (r as { token?: string }).token,
+  // 팀 콘솔 (SPEC-CONSOLE-001): 사람 목록은 email, 암호문 문서는 itemId 가 키.
+  'console-people': (r) => (r as { email?: string }).email,
+  'console-secrets': (r) => (r as { itemId?: string }).itemId,
 };
 function keyOf(filename: string, r: unknown): string | null {
   const fn = FILE_KEY[filename];

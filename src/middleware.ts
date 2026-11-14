@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 import { PARTNER_COOKIE, verifyPartnerToken } from '@/lib/partner-auth';
+import { isConsoleConfigured } from '@/lib/console/config';
+import { CONSOLE_SESSION_COOKIE, verifyConsoleSessionToken } from '@/lib/console/session';
 
 const PUBLIC_ADMIN_PATHS = new Set([
   '/admin/login',
@@ -18,6 +20,55 @@ const PUBLIC_ADMIN_API_PREFIXES = [
 function isPublicAdminPath(pathname: string): boolean {
   if (PUBLIC_ADMIN_PATHS.has(pathname)) return true;
   return PUBLIC_ADMIN_API_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
+// ── 팀 콘솔 (/console, /api/console) — SPEC-CONSOLE-001 design.md §2.5 ──
+// 관리자·파트너와 완전히 분리된 콘솔 세션 쿠키만 검사한다 (관리자 쿠키는 여기서 무효).
+// 콘솔 비밀값이 무효면 닫힌 채로 동작한다(fail closed).
+const CONSOLE_PUBLIC_PATHS = new Set(['/console/login', '/api/console/auth/logout']);
+
+function isConsolePath(pathname: string): boolean {
+  return (
+    pathname === '/console' ||
+    pathname.startsWith('/console/') ||
+    pathname === '/api/console' ||
+    pathname.startsWith('/api/console/')
+  );
+}
+
+function withConsoleHeaders<T extends NextResponse>(res: T): T {
+  res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  res.headers.set('Referrer-Policy', 'no-referrer');
+  return res;
+}
+
+async function consoleGate(request: NextRequest, pathname: string): Promise<NextResponse> {
+  if (CONSOLE_PUBLIC_PATHS.has(pathname)) return withConsoleHeaders(NextResponse.next());
+
+  const isApi = pathname.startsWith('/api/console');
+  if (!isConsoleConfigured()) {
+    if (isApi) {
+      return withConsoleHeaders(
+        NextResponse.json({ error: 'console_not_configured' }, { status: 503, headers: { 'Cache-Control': 'no-store' } })
+      );
+    }
+    return withConsoleHeaders(
+      NextResponse.redirect(new URL('/console/login?error=console_not_configured', request.url), 302)
+    );
+  }
+
+  const session = await verifyConsoleSessionToken(request.cookies.get(CONSOLE_SESSION_COOKIE)?.value);
+  if (!session) {
+    if (isApi) {
+      return withConsoleHeaders(
+        NextResponse.json({ error: 'unauthorized' }, { status: 401, headers: { 'Cache-Control': 'no-store' } })
+      );
+    }
+    const loginUrl = new URL('/console/login', request.url);
+    loginUrl.searchParams.set('next', `${request.nextUrl.pathname}${request.nextUrl.search}`);
+    return withConsoleHeaders(NextResponse.redirect(loginUrl, 302));
+  }
+  return withConsoleHeaders(NextResponse.next());
 }
 
 export async function middleware(request: NextRequest) {
@@ -65,6 +116,8 @@ button{width:100%;padding:11px;background:#4493f8;color:#fff;border:0;border-rad
       headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
     });
   }
+
+  if (isConsolePath(pathname)) return consoleGate(request, pathname);
 
   // 외부 위탁업체 업로드 포털(/partner) — 관리자와 완전 분리된 별도 쿠키 인증.
   // 파트너 세션으로는 /admin·/api/admin 접근 불가 (아래 관리자 블록은 관리자

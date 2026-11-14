@@ -6,6 +6,7 @@ import {
 } from '@/lib/auth';
 import {
   getGoogleOAuthConfig,
+  isConsoleNext,
   resolveRedirectUri,
   sanitizeNextPath,
   OAUTH_STATE_COOKIE,
@@ -22,7 +23,10 @@ import {
   workshopReturnFromNext,
 } from '@/lib/workshop-sso';
 import type { AdminUser } from '@/lib/admin-users';
-import type { AuditEntry } from '@/lib/audit';
+import type { AuditEntry, AuditModule } from '@/lib/audit';
+import { CONSOLE_DOMAIN, isConsoleAdminEmail, isConsoleConfigured } from '@/lib/console/config';
+import { CONSOLE_SESSION_COOKIE, consoleSessionCookieOptions, createConsoleSessionToken } from '@/lib/console/session';
+import { appendConsoleAudit } from '@/lib/console/audit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,7 +42,13 @@ function clearOAuthCookies(res: NextResponse) {
   return res;
 }
 
-async function auditSsoLogin(email: string, role: string, action: 'login' | 'login_failed', summary: string) {
+async function auditSsoLogin(
+  email: string,
+  role: string,
+  action: 'login' | 'login_failed',
+  summary: string,
+  module: AuditModule = 'auth'
+) {
   try {
     const entries = await readDataForWrite<AuditEntry>('audit-log');
     entries.push({
@@ -46,7 +56,7 @@ async function auditSsoLogin(email: string, role: string, action: 'login' | 'log
       at: new Date().toISOString(),
       actor: email,
       actorRole: role,
-      module: 'auth',
+      module,
       action,
       summary,
     });
@@ -98,37 +108,99 @@ function workshopMemberEntry(args: {
   return { redirectTo, domain: args.email.slice(args.email.lastIndexOf('@') + 1) };
 }
 
+// Console mode (SPEC-CONSOLE-001 REQ-CON-002/003/004, design.md §2.3): every exit goes to the
+// console sign-in page, and admin-users and the admin session cookie are never read or written.
+function consoleLoginRedirect(request: Request, error: string) {
+  return NextResponse.redirect(new URL(`/console/login?error=${error}`, request.url), 302);
+}
+
+// Admits a verified account of exactly try-n.com (no admin-users registration needed) and issues
+// the console session cookie. Rejections once Google has returned an identity are audited; the
+// domain list is the console constant, not WORKSHOP_OPEN_DOMAINS.
+async function consoleEntry(
+  request: Request,
+  args: {
+    next: string;
+    email: string;
+    userinfoVerified: boolean;
+    profileName: string;
+    idToken: string | undefined;
+    clientId: string;
+  }
+): Promise<NextResponse> {
+  const { email } = args;
+  const role = isConsoleAdminEmail(email) ? 'console-admin' : 'console-member';
+
+  const claims = decodeGoogleIdToken(args.idToken);
+  const admitted =
+    !!claims &&
+    claims.email?.toLowerCase() === email &&
+    isWorkshopOpenAccount(
+      {
+        email,
+        emailVerified: args.userinfoVerified && claims.email_verified === true,
+        hd: claims.hd,
+        aud: claims.aud,
+      },
+      { clientId: args.clientId, domains: [CONSOLE_DOMAIN] }
+    );
+
+  const token = admitted ? await createConsoleSessionToken({ email, name: args.profileName || email }) : null;
+  if (!token) {
+    await auditConsoleLogin(email, 'unknown', false);
+    return clearOAuthCookies(consoleLoginRedirect(request, 'not_allowed'));
+  }
+
+  await auditConsoleLogin(email, role, true);
+  const response = NextResponse.redirect(new URL(args.next, request.url), 302);
+  response.cookies.set(CONSOLE_SESSION_COOKIE, token, consoleSessionCookieOptions());
+  return clearOAuthCookies(response);
+}
+
+// One console audit entry plus exactly one line in the site audit-log per identified attempt.
+// Best effort, like auditSsoLogin: a logging failure never blocks or opens the sign-in.
+async function auditConsoleLogin(email: string, role: 'console-admin' | 'console-member' | 'unknown', ok: boolean) {
+  try {
+    await appendConsoleAudit({
+      actor: email,
+      actorRole: role,
+      action: ok ? 'auth.login' : 'auth.login_failed',
+      ...(ok ? {} : { meta: { reason: 'not_allowed' } }),
+    });
+  } catch (err) {
+    console.error('[Console SSO] console audit write failed:', err);
+  }
+  await auditSsoLogin(
+    email,
+    role,
+    ok ? 'login' : 'login_failed',
+    ok ? `콘솔 입장: ${email}` : `콘솔 로그인 거절(not_allowed): ${email}`,
+    'console'
+  );
+}
+
+function readCookie(request: Request, name: string): string | undefined {
+  return request.headers
+    .get('cookie')
+    ?.split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
+}
+
 // 구글 리다이렉트 처리:
 // state(CSRF) 검증 → code 교환 → 검증된 이메일 획득 →
 // admin-users 등록 멤버만 인가 → 기존 세션 토큰 발급.
 // 예외 출구: 미등록이지만 열린 Workspace 도메인(기본 try-n.com)의 검증된 계정은 작업실 role=member
 // 토큰만 받고(관리자 세션 없음), 자세한 조건은 src/lib/workshop-sso.ts 참고.
+// 콘솔 모드: next 쿠키가 콘솔 경로면(isConsoleNext) 맨 앞에서 모드를 정하고, 모든 오류 출구가
+// /console/login 으로 간다. 관리자 모드의 출구 주소·코드·순서는 그대로다.
 export async function GET(request: Request) {
   const url = new URL(request.url);
 
-  const config = getGoogleOAuthConfig();
-  if (!config) return clearOAuthCookies(redirectToLogin(request, 'sso_not_configured'));
-
-  const code = url.searchParams.get('code');
-  const state = url.searchParams.get('state');
-  const cookieState = request.headers
-    .get('cookie')
-    ?.split(';')
-    .map((c) => c.trim())
-    .find((c) => c.startsWith(`${OAUTH_STATE_COOKIE}=`))
-    ?.slice(OAUTH_STATE_COOKIE.length + 1);
-
-  if (!code || !state || !cookieState || state !== cookieState) {
-    return clearOAuthCookies(redirectToLogin(request, 'oauth_state'));
-  }
-
-  const nextRaw = request.headers
-    .get('cookie')
-    ?.split(';')
-    .map((c) => c.trim())
-    .find((c) => c.startsWith(`${OAUTH_NEXT_COOKIE}=`))
-    ?.slice(OAUTH_NEXT_COOKIE.length + 1);
+  // The mode is decided before any other step, from the next cookie.
   // A malformed percent sequence in the cookie must not throw; sanitizeNextPath(null) gives /admin.
+  const nextRaw = readCookie(request, OAUTH_NEXT_COOKIE);
   let nextDecoded: string | null = null;
   try {
     nextDecoded = nextRaw ? decodeURIComponent(nextRaw) : null;
@@ -136,6 +208,26 @@ export async function GET(request: Request) {
     nextDecoded = null;
   }
   const next = sanitizeNextPath(nextDecoded);
+  const consoleMode = isConsoleNext(next);
+
+  // Single error exit: console sign-in page in console mode, the unchanged admin exit otherwise.
+  // Pre-identity console failures are not audited (anonymous requests must not fill the log).
+  const fail = (code: string) => {
+    if (consoleMode) console.error(`[Console SSO] sign-in failed: ${code}`);
+    return clearOAuthCookies(consoleMode ? consoleLoginRedirect(request, code) : redirectToLogin(request, code));
+  };
+
+  const config = getGoogleOAuthConfig();
+  if (!config) return fail('sso_not_configured');
+  if (consoleMode && !isConsoleConfigured()) return fail('console_not_configured');
+
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  const cookieState = readCookie(request, OAUTH_STATE_COOKIE);
+
+  if (!code || !state || !cookieState || state !== cookieState) {
+    return fail('oauth_state');
+  }
 
   try {
     const redirectUri = resolveRedirectUri(request.url);
@@ -152,15 +244,15 @@ export async function GET(request: Request) {
         grant_type: 'authorization_code',
       }),
     });
-    if (!tokenRes.ok) return clearOAuthCookies(redirectToLogin(request, 'oauth_token'));
+    if (!tokenRes.ok) return fail('oauth_token');
     const tokens = (await tokenRes.json()) as { access_token?: string; id_token?: string };
-    if (!tokens.access_token) return clearOAuthCookies(redirectToLogin(request, 'oauth_token'));
+    if (!tokens.access_token) return fail('oauth_token');
 
     // 2) 검증된 이메일 조회
     const userinfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
-    if (!userinfoRes.ok) return clearOAuthCookies(redirectToLogin(request, 'oauth_userinfo'));
+    if (!userinfoRes.ok) return fail('oauth_userinfo');
     const profile = (await userinfoRes.json()) as {
       email?: string;
       email_verified?: boolean;
@@ -169,8 +261,23 @@ export async function GET(request: Request) {
     };
     const email = profile.email?.trim().toLowerCase();
     const profileName = typeof profile.name === 'string' ? profile.name.trim() : '';
+
+    // Console mode branches off before the admin email check: it judges a missing email
+    // (oauth_email) and an unverified one (not_allowed, audited) itself.
+    if (consoleMode) {
+      if (!email) return fail('oauth_email');
+      return await consoleEntry(request, {
+        next,
+        email,
+        userinfoVerified: profile.email_verified === true,
+        profileName,
+        idToken: tokens.id_token,
+        clientId: config.clientId,
+      });
+    }
+
     if (!email || profile.email_verified === false) {
-      return clearOAuthCookies(redirectToLogin(request, 'oauth_email'));
+      return fail('oauth_email');
     }
 
     // 3) 인가: admin-users 에 등록된 멤버만 통과 (agarwooding 과 동일 모델)
@@ -193,7 +300,7 @@ export async function GET(request: Request) {
       }
 
       await auditSsoLogin(email, 'unknown', 'login_failed', `미등록 계정 SSO 로그인 시도: ${email}`);
-      return clearOAuthCookies(redirectToLogin(request, 'not_authorized'));
+      return fail('not_authorized');
     }
 
     const user = users[idx];
@@ -201,7 +308,7 @@ export async function GET(request: Request) {
     // 잠금 상태면 SSO 도 차단 (비밀번호 로그인과 동일 정책)
     if (user.lockedUntil && Date.now() < new Date(user.lockedUntil).getTime()) {
       await auditSsoLogin(email, user.role, 'login_failed', '잠긴 계정 SSO 로그인 시도');
-      return clearOAuthCookies(redirectToLogin(request, 'account_locked'));
+      return fail('account_locked');
     }
 
     // lastLoginAt 갱신 (실패해도 로그인은 진행)
@@ -240,6 +347,6 @@ export async function GET(request: Request) {
     return clearOAuthCookies(response);
   } catch (err) {
     console.error('[SSO Callback] error:', err);
-    return clearOAuthCookies(redirectToLogin(request, 'oauth_failed'));
+    return fail('oauth_failed');
   }
 }
