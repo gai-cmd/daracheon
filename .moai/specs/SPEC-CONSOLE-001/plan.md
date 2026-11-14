@@ -14,12 +14,13 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - `src/lib/console/validate.ts` — 프로토타입 `validateDataset`의 서버판(URL 스킴, 길이, enum, 상한)
 - `src/lib/console/permissions.ts` — `isAdmin`·`isOwner`·`canEdit`·`credAccess`·노출 필드 거르기(`toListItem`)
 - `src/lib/console/config.ts` — 세 환경변수 점검(design.md §4.1)
-- 테스트: 권한 행렬, 검증 경계값, 설정 무효 조건
+- `src/lib/console/categories.ts` — 분류 `kind`(`resource`·`knowledge`) 기본값, 내장 지식 분류 `wiki`, 메뉴 묶음 `groupNavCategories`(design.md §3.5, REQ-CON-025)
+- 테스트: 권한 행렬, 검증 경계값, 설정 무효 조건, `kind` 기본값·모르는 값 거절·`wiki` 예약
 
 ### M2 — 로그인과 세션 (우선순위 높음)
 
-- 특성 테스트 먼저: 기존 `sanitizeNextPath`, 콜백의 관리자·워크숍 경로, 관리자 모드의 오류 출구 7종(`sso_not_configured`·`oauth_state`·`oauth_token`·`oauth_userinfo`·`oauth_email`·`not_authorized`·`oauth_failed` → `/admin/login`)이 지금처럼 동작함을 고정
-- `src/lib/google-oauth.ts` — `/console` 계열 허용, `isConsoleNext`
+- 특성 테스트 먼저: 기존 `sanitizeNextPath`, 콜백의 관리자·워크숍 경로, 관리자 모드의 오류 출구 8종(`sso_not_configured`·`oauth_state`·`oauth_token`·`oauth_userinfo`·`oauth_email`·`not_authorized`·`account_locked`·`oauth_failed` → `/admin/login`)이 지금처럼 동작함을 고정
+- `src/lib/google-oauth.ts` — `/console` 계열 허용, `isConsoleNext`(점 세그먼트 거부 포함, design.md §2.1 표)
 - `src/lib/console/session.ts` — 토큰 서명·검증(Web Crypto), 쿠키 옵션
 - `src/app/api/admin/auth/google/start/route.ts` — 콘솔 모드 오류 경로
 - `src/app/api/admin/auth/google/callback/route.ts` — next 해석을 맨 앞으로 옮기고 오류 출구를 `fail(code)` 하나로 모은 뒤, userinfo 직후(L172 거절 앞) 콘솔 분기(`consoleEntry`) — design.md §2.3
@@ -45,7 +46,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - 공통 가드: 세션·Origin·Content-Type·no-store(`src/lib/console/http.ts`)
 - `src/lib/console/import-map.ts` — 가져오기 형식 대응 순수 함수 `mapImportFile`(design.md §5.3)
 - 교체 계열 쓰기는 `removedIds = 기존 키 − 새 키`(design.md §5.4)
-- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, `mapImportFile` 대응표(이름 나누기·email 찾기·미일치·`admin` 무시·팀 고정), 가져오기에서 자격증명 무시, 파일에 없는 기존 항목·사람 제거, 내보내기에 자격증명 없음
+- 테스트: 권한별 성공·거부, 409 충돌, 소프트 삭제·되돌리기, `mapImportFile` 대응표(이름 나누기·email 찾기·미일치·`admin` 무시·팀 고정·`people`/`categories` 키 없으면 유지·분류 `kind`·`wiki` 무시), 가져오기에서 자격증명 무시, 파일에 없는 기존 항목·사람 제거, 내보내기에 자격증명 없음
 
 ### M5 — 화면 이식 (우선순위 중간)
 
@@ -54,7 +55,8 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 - `src/app/console/console.module.css` — 라이트 팔레트, `:root` 미사용
 - `src/lib/console/i18n.ts`, `src/lib/console/brand-marks.ts`
 - `src/components/layout/ChromeGate.tsx` — `/console` 추가
-- 테스트: i18n 키 집합 동일, `brandOf` 판별 표, 접속 표시 매핑
+- 왼쪽 메뉴 최상단 위키 구역(제목·구분선·빈 상태), `book` 아이콘 마크, i18n 키 `nav.wiki`·`wiki.empty`(design.md §3.5, §6.1)
+- 테스트: i18n 키 집합 동일, `brandOf` 판별 표, 접속 표시 매핑, 메뉴 순서와 위키 빈 상태(AC-CON-026)
 
 ### M6 — 검색 노출·운영 등록 (우선순위 낮음, 기계적)
 
@@ -78,6 +80,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | 신규 | `src/lib/console/validate.ts` | M1 |
 | 신규 | `src/lib/console/permissions.ts` | M1 |
 | 신규 | `src/lib/console/config.ts` | M1 |
+| 신규 | `src/lib/console/categories.ts` | M1 |
 | 신규 | `src/lib/console/session.ts` | M2 |
 | 수정 | `src/lib/google-oauth.ts` | M2 |
 | 수정 | `src/app/api/admin/auth/google/start/route.ts` | M2 |
@@ -137,6 +140,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 | 공개 Blob + 비밀 prefix 의존 | prefix가 새면 `console-items`(드라이브·시트·Slack id)와 `console-people`·`console-audit-log`(직원 email)를 인증 없이 읽을 수 있음. prefix는 2026-07에 실제로 공개 저장소에 노출된 적이 있음 | 자격증명은 암호문만 저장(prefix가 새도 평문 없음). 나머지 문서는 기존 고객 PII 문서와 같은 수준의 보호. 받아들일지는 오너 결정 D13 |
 | 개별 세션을 서버에서 끊을 수단 없음 | 퇴사·계정 정지 직원도 남은 세션 수명(기본 12시간, 최대 168시간) 동안 콘솔과 자격증명 열람을 쓸 수 있음 | 수명 기본 12시간 유지, 비상시 `CONSOLE_SESSION_SECRET` 교체 후 재배포로 전체 세션 무효화(§7). 개별 폐기는 범위 제외 |
 | 익명 콜백 요청으로 감사 기록 밀어내기 | 5,000건 상한이 차서 열람 기록이 지워짐 | 신원이 생기기 전 실패는 기록하지 않음(design.md §2.3, AC-CON-016). 신원 있는 실패는 구글 왕복이 필요해 대량 생성이 어려움 |
+| 위키 구역을 지식 기반으로 넓힐 때 데이터 모델 재작업 | 나중에 LLM 지식 기반으로 쓰려면 id·필드를 바꿔야 할 수 있음 | 이번 판부터 안정 id·한·영 짝 필드·담당자·`updatedAt`·자격증명 없는 내보내기를 유지(spec.md §4). 작성 기능과 지식 기반은 범위 제외 |
 | D2 기본값(A) 선택 시 항목 주소 노출 | '팀'·'본인' 항목의 주소·연동 주소(내부 드라이브 폴더 등)가 try-n.com 직원 전원에게 보임. 시드 기준 '팀' 11개·'본인' 5개 | 오너가 D2에서 알고 고르게 함 |
 
 ## 5. 품질 게이트
@@ -169,7 +173,7 @@ Tier L(예상 1,000줄 이상, 20개 넘는 파일). 개발 방식: `quality.yam
 1. Vercel(Production)에 환경변수 추가 후 재배포 — 목록은 §8
 2. `CONSOLE_SECRETS_KEY` 값을 비밀번호 관리자 등 저장소·Slack 밖의 안전한 곳에 따로 보관(분실하면 저장된 공유 비밀번호를 되살릴 수 없음)
 3. 구글 OAuth 클라이언트: 새 리디렉트 URI 등록은 필요 없다. 기존 `https://zoellife.com/api/admin/auth/google/callback`이 등록돼 있는지만 확인(관리자 SSO가 지금 동작하므로 등록돼 있을 것으로 봄 — 추정)
-4. 배포 뒤 관리자 계정으로 콘솔에 들어가 시드 JSON 가져오기(D1). 프로토타입 "JSON 내보내기" 파일에 `people`(이름·영문 이름·팀·확인한 email)과, 팀 필수 목록을 옮기려면 `teamPins`(프로토타입 `TEAM_PINS` 7개 id)를 직접 덧붙인다(design.md §5.3). 시드 파일은 저장소 밖에 둔다. 가져오기 결과의 `unmatchedOwners`·`peopleSkipped`를 보고 사람 목록을 보완한다
+4. 배포 뒤 관리자 계정으로 콘솔에 들어가 시드 JSON 가져오기(D1). 프로토타입 "JSON 내보내기" 파일에 `people`(이름·영문 이름·팀·확인한 email)과, 팀 필수 목록을 옮기려면 `teamPins`(프로토타입 `TEAM_PINS` 7개 id)를 직접 덧붙인다(design.md §5.3). 시드 파일은 저장소 밖에 둔다. 위키 구역의 첫 항목으로 `cards`에 워크숍 위키 카드 하나를 덧붙인다: `category: "wiki"`, `title: "자료실 · 대라천 참 침향 위키"`, `title_en: "Library · Daracheon agarwood wiki"`, `url: "https://zoel-workshop.vercel.app/apps/wiki"`, `access_method: "sso"`, `team: "공통"`, `owner`: 오너가 정한 위키 담당자 이름(`people`에 있는 이름과 같게. 저장소에는 이름을 적지 않는다). 가져오기 결과의 `unmatchedOwners`·`peopleSkipped`를 보고 사람 목록을 보완한다
 5. 사람 목록에 담당자 email·팀 입력(D4)
 6. **공유 비밀번호를 넣기 전에** Slack #04_admin(2026-09-22)에 평문으로 남은 인스타그램·유튜브 로그인 정보의 비밀번호를 바꾸고 그 메시지를 삭제(PLAN "즉시 처리", 외부 효력 행위라 오너가 직접)
 7. 공유 계정 담당자가 콘솔에서 아이디·비밀번호를 직접 입력

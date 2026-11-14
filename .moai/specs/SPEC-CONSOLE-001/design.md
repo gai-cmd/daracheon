@@ -27,8 +27,22 @@
 
 `src/lib/google-oauth.ts`
 
-- `sanitizeNextPath`: 기존 `/admin` 규칙은 그대로 두고, `/console` 정확 일치 또는 `/console/`로 시작하는 경로를 추가로 허용한다. `//`로 시작하는 값, `/console-x`·`/consolex` 같은 접두 유사 경로, 절대 URL은 기존처럼 `/admin`으로 떨어진다.
-- 새 판정 함수 `isConsoleNext(next)`: 위 두 형태일 때만 true. start·callback이 같은 함수를 쓴다.
+- 새 판정 함수 `isConsoleNext(next)`: 아래 네 조건을 모두 만족할 때만 true. start·callback·로그인 화면이 같은 함수를 쓴다.
+  1. `/`로 시작하고 `//`로 시작하지 않으며 `\`와 제어 문자가 없다.
+  2. `?`·`#` 앞의 경로를 `/`로 나눈 첫 세그먼트가 정확히 `console`이다(`/console`, `/console/`, `/console/x`). `/console-x`, `/consolex`, `/console%2F..%2Fadmin`(첫 세그먼트가 `console%2F..%2Fadmin`)은 여기서 떨어진다.
+  3. 점 세그먼트가 없다. 각 세그먼트를 소문자로 바꾸고 `%2e`를 `.`으로 바꾼 값이 `.`이나 `..`이면 false다. WHATWG URL 파서가 점 세그먼트로 해석하는 형태(`.`, `..`, `%2E`, `%2e%2E`, `.%2e` 등)와 같은 범위다.
+  4. 이중 확인: `new URL(next, 'https://console.invalid')`의 출처가 그 기준 출처와 같고, `pathname`이 `/console`이거나 `/console/`로 시작한다.
+- `sanitizeNextPath`: `isConsoleNext`가 true면 값을 그대로 돌려주고, 아니면 기존 `/admin` 규칙(L40-45)을 그대로 적용한다. 그래서 점 세그먼트가 든 콘솔 경로는 콘솔 모드가 아니며 `/admin`으로 정리된다(관리자 흐름으로 처리되고 콘솔 쿠키는 발급되지 않는다).
+
+| 입력 | `isConsoleNext` | `sanitizeNextPath` |
+|---|---|---|
+| `/console/../admin` | false | `/admin` |
+| `/console/%2E%2E/admin` | false | `/admin` |
+| `/console/./../admin` | false | `/admin` |
+| `/console%2F..%2Fadmin` | false | `/admin` |
+| `/console/%252E%252E/x` | true | 그대로(파서가 점 세그먼트로 보지 않아 경로가 `/console/` 아래에 남음) |
+
+이 규칙 덕분에 콘솔 쿠키를 발급하는 성공 응답의 `Location` 경로는 항상 `/console`이거나 `/console/` 아래다(`new URL(next, request.url)`로 정규화해도 바뀌지 않음, AC-CON-003).
 
 ### 2.2 start 라우트
 
@@ -70,6 +84,7 @@ catch                  → fail('oauth_failed')
 감사 기록 규칙(콘솔 모드):
 
 - 신원이 생긴 뒤의 실패(구글이 email을 돌려준 뒤 `consoleEntry`가 거절)는 콘솔 감사 `auth.login_failed`(사유 코드와 시도한 email, 토큰·코드 원문 없음) + 기존 감사 기록 1줄.
+- 따라서 기존 `audit-log`에는 콘솔 로그인 시도마다 — 성공(위 3번)이든 신원이 생긴 뒤의 거절이든 — 정확히 1줄이 늘어난다. 성공 1회와 신원 있는 거절 1회가 있는 흐름이면 2줄이다(AC-CON-016). 열람·편집 등 다른 콘솔 동작은 기존 기록에 쓰지 않는다.
 - 신원이 없는 단계의 실패(`sso_not_configured`, `console_not_configured`, `oauth_state`, `oauth_token`, `oauth_userinfo`, `oauth_email`, `oauth_failed`)는 감사 기록을 쓰지 않고 서버 로그에 사유 코드만 남긴다. 누구나 인증 없이 콜백을 두드릴 수 있으므로, 여기서 기록하면 익명 요청이 5,000건 상한을 채워 열람 기록을 밀어낼 수 있다.
 
 관리자 세션 쿠키는 콘솔 모드에서 설정·삭제·갱신하지 않는다.
@@ -108,7 +123,7 @@ catch                  → fail('oauth_failed')
 | 문서 | 형태 | 키 | 비고 |
 |---|---|---|---|
 | `console-items` | 배열 | `id` | 항목. 자격증명 없음 |
-| `console-categories` | 배열 | `id` | 8개 분류 + 관리자가 추가한 분류 |
+| `console-categories` | 배열 | `id` | 8개 일반 분류 + 관리자가 추가한 분류. 내장 지식 분류 `wiki`는 저장하지 않는다(§3.5) |
 | `console-people` | 배열 | `email` | `FILE_KEY`에 email 키 등록 |
 | `console-settings` | 단일 | — | `teamPins: string[]` 등 |
 | `console-secrets` | 배열 | `itemId` | `FILE_KEY`에 itemId 키 등록. 암호문만 |
@@ -170,6 +185,27 @@ interface ConsolePerson { email: string; name: string; name_en: string; team: '�
 - 관리자 여부는 이 목록과 무관하다(`CONSOLE_ADMIN_EMAILS`만).
 - 사람 목록(`name`·`name_en`·`team`·`email`)과 항목의 `owners[].email`은 로그인한 모든 사용자에게 같은 형태로 내려준다. `role`(직무 메모)은 관리자에게만 내려준다. 근거: 볼 수 있는 사람은 모두 구글이 인증한 `@try-n.com` 직원이고(같은 Workspace 디렉터리에서 서로의 주소가 이미 보임), 일반 사용자가 담당자를 고르려면 email이 있어야 한다. 한쪽 경로에서만 email을 빼면 다른 경로로 같은 정보가 나가므로(plan-audit CON-D12) 두 경로를 같게 둔다.
 
+### 3.5 분류와 위키 구역
+
+```ts
+interface ConsoleCategory {
+  id: string;                          // ^[a-z0-9-]{1,40}$, 'wiki' 는 예약
+  kind: 'resource' | 'knowledge';      // 저장·파일에 없으면 'resource'
+  icon: string; name: string; name_en: string;
+  short: string; short_en: string;
+  description: string; description_en: string;
+}
+```
+
+- 필드 모양은 프로토타입 `CATEGORIES`(index.html L781~)와 같고 `kind`만 더한다. 기존 8개 분류와 프로토타입 내보내기 파일에는 `kind`가 없으므로 읽을 때 `resource`로 채운다. `resource`·`knowledge` 밖의 값은 검증 오류다.
+- 내장 지식 분류: `src/lib/console/categories.ts`의 상수 `WIKI_CATEGORY = { id: 'wiki', kind: 'knowledge', icon: 'book', name: '위키', name_en: 'Wiki', short: '위키', short_en: 'Wiki', description: '팀이 함께 보는 지식 문서와 자료실', description_en: 'Shared knowledge pages and the team library' }`. bootstrap은 저장된 분류 앞에 이 상수를 붙여 내려준다. 직원 이름·주소·내부 id가 없으므로 코드에 두어도 시드 금지(REQ-CON-008)와 충돌하지 않는다.
+- `wiki`는 예약 id다. 가져오기 파일의 `categories`에 `id: 'wiki'`가 있으면 그 항목은 무시하고 내장 정의를 쓴다(`kind`를 `resource`로 바꿀 수 없음). `POST /api/console/categories`는 `id: 'wiki'`나 `kind: 'knowledge'`를 400으로 거절하고 `resource` 분류만 만든다. 항목 검증의 "알려진 분류 id"에는 `wiki`가 들어간다.
+- 메뉴 묶음은 순수 함수 `groupNavCategories(categories)` → `{ knowledge: [wiki], regular: [...] }`로 계산한다(단위 테스트 대상). 왼쪽 메뉴 순서: 홈 → 전체 항목 → 위키 구역(제목 "위키" + 위키 항목) → 구분선(`role="separator"`) → 일반 분류 → 공유 계정 → 내 항목.
+- 위키 항목은 `category: 'wiki'`인 보통 항목이다. 권한·편집·삭제·자격증명·감사 기록 규칙이 다른 항목과 같고, 전체 항목·검색·내 항목·최근 수정에도 나온다. 홈의 분류별 요약은 일반 분류만 센다.
+- 빈 상태: 위키 구역에 삭제되지 않은 항목이 없으면 목록 자리에 `wiki.empty` 안내를 보이고, 메뉴의 위키 항목 수는 0이다.
+- 첫 항목인 워크숍 위키(`자료실 · 대라천 참 침향 위키`, `https://zoel-workshop.vercel.app/apps/wiki`, `access_method: 'sso'`, `team: '공통'`)는 오너가 시드 파일의 `cards`에 넣어 가져온다(plan.md §7 4번). 담당자 이름은 시드 파일에만 적고 저장소에 남기지 않는다.
+- 이번 판의 지식 친화 성질(spec.md §4): 항목 id는 가져오기·내보내기 왕복에서 유지되고, 한·영 짝 필드와 `owners`·`updatedAt`이 내보내기에 남으며, 내보내기에는 자격증명이 없다.
+
 ## 4. 권한
 
 ### 4.1 비밀값 점검 (`src/lib/console/config.ts`)
@@ -213,11 +249,11 @@ credAccess(user, item, team):
 | `DELETE /api/console/items/:id` | canEdit | 소프트 삭제 |
 | `POST /api/console/items/:id/restore` | canEdit(삭제 전 기준) | 되돌리기 |
 | `POST /api/console/items/:id/credential` | credAccess | body `{field: 'login_id'|'password', purpose: 'view'|'copy'}` → `{value}` |
-| `POST /api/console/categories` | 관리자 | 분류 추가 |
+| `POST /api/console/categories` | 관리자 | 일반(`resource`) 분류 추가. `id: 'wiki'`·`kind: 'knowledge'`는 400(§3.5) |
 | `PUT /api/console/people` | 관리자 | 사람 목록 교체(§5.4 교체 쓰기 규칙) |
 | `PUT /api/console/settings` | 관리자 | 팀 필수 고정 목록 `teamPins`(최대 8개, 있는 항목 id만). 감사 `settings.update` |
 | `POST /api/console/import` | 관리자 | §5.3 형식의 파일로 항목(+선택: categories, people, teamPins) 전체 교체(§5.4). 파일 안의 `password`·`login_id`는 읽지 않음 |
-| `GET /api/console/export` | 관리자 | 자격증명 없는 JSON |
+| `GET /api/console/export` | 관리자 | 자격증명 없는 JSON. `items`와 `categories`(`kind` 포함, 내장 `wiki` 제외) |
 | `GET /api/console/audit` | 관리자 | 최근 200건 |
 | `POST /api/console/auth/logout` | 누구나 | 쿠키 삭제 |
 
@@ -256,7 +292,7 @@ credAccess(user, item, team):
 | 키 | 필수 | 내용 |
 |---|---|---|
 | `cards` 또는 `items` | 둘 중 정확히 하나 | `cards`: 프로토타입 "JSON 내보내기" 형식(`{app:'zoel-console', version:2, exportedAt, categories, cards[]}`). 최상위가 배열이면 `{cards: 배열}`로 본다(프로토타입 `validateDataset`과 같음). `items`: 콘솔 내보내기 형식(`GET /api/console/export`) |
-| `categories` | 선택 | 있으면 저장된 분류를 이 목록으로 교체. 없으면 저장된 분류 유지. 항목이 쓰는 분류 id는 모두 최종 분류 목록에 있어야 함 |
+| `categories` | 선택 | 있으면 저장된 분류를 이 목록으로 교체. 없으면 저장된 분류 유지. `kind`가 없으면 `resource`, 모르는 값이면 오류. `id: 'wiki'` 항목은 무시(§3.5). 항목이 쓰는 분류 id는 모두 최종 분류 목록(내장 `wiki` 포함)에 있어야 함 |
 | `people` | 선택 | 있으면 사람 목록 교체. 프로토타입 내보내기에는 없으므로 오너가 직접 붙인다(plan.md D1) |
 | `teamPins` | 선택 | 있으면 `console-settings.teamPins` 교체. 프로토타입 `TEAM_PINS`(index.html L544)는 내보내기에 들어 있지 않으므로 옮기려면 오너가 이 키로 붙인다. 없으면 저장된 값 유지 |
 | `app`, `version`, `exportedAt` | 선택 | 읽지 않음(형식 판별에 쓰지 않음) |
@@ -310,7 +346,8 @@ credAccess(user, item, team):
 - `src/app/console/login/page.tsx` — "try-n.com 계정으로 로그인" 버튼(→ `/api/admin/auth/google/start?next=<복귀 경로>`). 복귀 경로는 쿼리 `next`가 `isConsoleNext`를 통과하면 그 값, 아니면 `/console`(인코딩해 넘김). 오류 코드 안내(한·영, §2.3의 코드 전부)
 - `src/app/console/ConsoleApp.tsx` 외 하위 컴포넌트(사이드바, 홈, 목록, 상세 패널, 편집 양식, 계정 메뉴, 검색) — 프로토타입 DOM 로직을 React로 옮긴다
 - `src/app/console/console.module.css` — 프로토타입 CSS 이식(라이트 팔레트만)
-- `src/lib/console/i18n.ts` — 프로토타입 `I18N` 이식, 자격증명 안내 문구는 배포판 문구로 교체
+- `src/lib/console/i18n.ts` — 프로토타입 `I18N` 이식, 자격증명 안내 문구는 배포판 문구로 교체. 위키 구역 키 `nav.wiki`("위키" / "Wiki"), `wiki.empty`("아직 위키 항목이 없습니다. 관리자가 가져오기로 추가합니다." / "No wiki entries yet. An admin adds them through import.")를 두 언어에 같이 둔다
+- `src/lib/console/categories.ts` — 내장 `WIKI_CATEGORY`, `kind` 기본값 채우기, `groupNavCategories`(§3.5)
 - `src/lib/console/brand-marks.ts` — 프로토타입 `brandOf`·`MARKS`·`LETTERS` 이식(상수 SVG 문자열, 사용자 데이터는 넣지 않음)
 
 ### 6.2 스타일 격리

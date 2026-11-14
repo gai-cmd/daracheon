@@ -1,7 +1,7 @@
 ---
 id: SPEC-CONSOLE-001
 title: "조엘라이프 팀 콘솔 (/console) 배포판 — try-n.com SSO, 항목 관리, 공유 계정 보관"
-version: "0.2.0"
+version: "0.3.0"
 status: draft
 created: 2026-11-15
 updated: 2026-11-15
@@ -10,7 +10,7 @@ priority: P1
 phase: "v1.1.0 target"
 module: "src/app/console, src/app/api/console, src/lib/console"
 lifecycle: spec-anchored
-tags: "console, sso, google-oauth, credentials, aes-256-gcm, audit, i18n, blob"
+tags: "console, sso, google-oauth, credentials, aes-256-gcm, audit, i18n, blob, wiki"
 tier: L
 ---
 
@@ -22,6 +22,7 @@ tier: L
 |---|---|---|---|
 | 0.1.0 | 2026-11-15 | manager-spec | 최초 작성(draft). 승인된 프로토타입(`zoel-console/index.html`)과 PLAN.md "최종 결정"(2026-11-14)을 근거로 함 |
 | 0.2.0 | 2026-11-15 | manager-spec | plan-audit 1차(FAIL 0.78) 반영. 콘솔 모드 오류 출구(CON-D1), 가져오기 형식(CON-D2)과 교체 쓰기 규칙(CON-D3), D2 충돌 명시(CON-D4), 공개 Blob 의존(CON-D5), 클립보드 조항 삭제(CON-D6), 로그아웃 예외(CON-D7), 선택 결함 D8~D15 반영. 범위는 그대로 |
+| 0.3.0 | 2026-11-15 | manager-spec | plan-audit 2차(FAIL 0.88) 막는 결함 반영: 가져오기의 사람·분류 제거를 키가 있을 때로 한정(CON-D16), 콘솔 복귀 경로의 점(`.`·`..`) 세그먼트 거부(CON-D17), 기존 audit-log 건수를 성공·신원 있는 거절 합계 2줄로 맞춤(CON-D18). 선택 결함 CON-D8·D19·D21 반영. 오너 요청(2026-11-15 "위키가 있다면 상위 카테고리로 근간을 만들어 놔")으로 위키 구역 추가: 분류 `kind`(`resource`·`knowledge`) 표식, 내장 지식 분류 `wiki`, 메뉴 최상단 위키 구역과 빈 상태(REQ-CON-025, AC-CON-026). 위키 작성 기능과 LLM 지식 기반은 범위 제외 |
 
 ## 1. 배경과 목적
 
@@ -58,7 +59,7 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 **REQ-CON-001** — The console shall be served under the `/console` path of zoellife.com, and every console page and console API other than the console sign-in page and the console sign-out endpoint shall require a valid console session.
 
-**REQ-CON-002** — When a user starts console sign-in, the sign-in flow shall reuse the existing Google OAuth client and its existing callback in a console mode selected only by a sanitized return path equal to `/console` or a path beneath `/console/`, so that no new OAuth redirect URI is required. When the console sign-in page is opened with a requested return path, the sign-in flow shall carry that path only if it is itself a console path, and shall use `/console` otherwise. The callback shall determine console mode from the return-path cookie before evaluating any other step, and when the callback runs in console mode and any step fails (OAuth not configured, console not configured, state mismatch, token exchange, userinfo lookup, admission, or an unexpected error), the callback shall redirect to the console sign-in page with an error code and shall not redirect to the admin sign-in page.
+**REQ-CON-002** — When a user starts console sign-in, the sign-in flow shall reuse the existing Google OAuth client and its existing callback in a console mode selected only by a sanitized return path equal to `/console` or a path beneath `/console/`, so that no new OAuth redirect URI is required. A return path any of whose segments is `.` or `..`, in literal or percent-encoded form, shall not count as a console path. When the console sign-in page is opened with a requested return path, the sign-in flow shall carry that path only if it is itself a console path, and shall use `/console` otherwise. The callback shall determine console mode from the return-path cookie before evaluating any other step, and when the callback runs in console mode and any step fails (OAuth not configured, console not configured, state mismatch, token exchange, userinfo lookup, admission, or an unexpected error), the callback shall redirect to the console sign-in page with an error code and shall not redirect to the admin sign-in page.
 
 **REQ-CON-003** — When the Google callback completes in console mode, the callback shall admit the account only if all of the following hold: the email is reported verified by both the userinfo response and the ID token; the address contains exactly one `@` with a non-empty local part; its domain equals `try-n.com` exactly (case-insensitive, no subdomain, no lookalike); the ID token `hd` claim equals that domain; and the ID token audience equals the configured OAuth client id. Registration in the zoellife.com admin user list shall not be required.
 
@@ -102,11 +103,11 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 ### 3.6 관리자 기능
 
-**REQ-CON-019** — Where the user is a console admin, the console shall provide: replacing all items from an uploaded JSON file in the accepted import format (credential fields in the file ignored, and stored items, people, and categories absent from the file removed rather than retained), exporting items without credentials, maintaining the people directory (name, English name, email, team), adding categories, and maintaining the team-pinned item list shown on the home.
+**REQ-CON-019** — Where the user is a console admin, the console shall provide: replacing all items from an uploaded JSON file in the accepted import format (credential fields in the file ignored; stored items absent from the file removed rather than retained; and, when the file includes a people list or a categories list, stored people or categories absent from that list removed rather than retained, while a file without that key leaves the stored list unchanged), exporting items without credentials, maintaining the people directory (name, English name, email, team), adding categories, and maintaining the team-pinned item list shown on the home.
 
 ### 3.7 화면
 
-**REQ-CON-020** — The console shall present the prototype's Google admin-console structure: a left navigation (home, all items, the eight categories, shared accounts, my items); a home with pinned or team-essential items, recently updated items, a per-category summary, and a single needs-attention line; single-density roomy list rows; a right-side detail panel; filters by category, access method, owner, team, my items, and needs-attention; left-aligned full-width content; a pencil edit action on every item; and exactly one access label per item drawn from SSO / 초대 / 공유 계정 / 별도 로그인, with no label on public items.
+**REQ-CON-020** — The console shall present the prototype's Google admin-console structure: a left navigation (home, all items, the Wiki section of REQ-CON-025, the eight regular categories, shared accounts, my items); a home with pinned or team-essential items, recently updated items, a per-category summary, and a single needs-attention line; single-density roomy list rows; a right-side detail panel; filters by category, access method, owner, team, my items, and needs-attention; left-aligned full-width content; a pencil edit action on every item; and exactly one access label per item drawn from SSO / 초대 / 공유 계정 / 별도 로그인, with no label on public items.
 
 **REQ-CON-021** — The console shall use scoped styles with fixed color literals of the content workshop studio palette (background `#faf8f3`, sidebar `#f2efe8`, accent `#1f6f5c`), shall not depend on site-wide design tokens, shall keep text legible despite the site-wide dark theme overrides, and shall not render the public site header or footer.
 
@@ -114,7 +115,11 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 **REQ-CON-023** — The console shall provide Korean and English interface text with a header toggle, defaulting to Korean and remembering the choice; both languages shall define the same set of text keys; when an item's English title or description is empty, the English view shall show the Korean text.
 
-### 3.8 검색 노출
+### 3.8 위키 구역
+
+**REQ-CON-025** — The console navigation shall show a top-level 위키 / Wiki section above the regular categories, visually separated from them by its own heading and a divider, and listing the items of the knowledge category. Each category shall carry a kind of `resource` or `knowledge`; a category stored or imported without a kind shall be treated as `resource`, and the console shall always provide the built-in knowledge category `wiki` (위키 / Wiki) whether or not any stored category defines it. When the Wiki section has no items, the console shall show an empty-state message in place of the list. The Wiki section's interface text shall be defined under the same keys in Korean and English. When an admin imports the seed file, the content-workshop wiki entry (자료실 · 대라천 참 침향 위키 / Library · Daracheon agarwood wiki, `https://zoel-workshop.vercel.app/apps/wiki`, access label SSO, team `공통`) shall reach the Wiki section through the same import path as every other item, and the repository shall not contain that entry as seed data. The console shall not provide wiki page authoring in this release beyond the regular item create and edit actions.
+
+### 3.9 검색 노출
 
 **REQ-CON-024** — The console pages and console APIs shall be marked `noindex, nofollow`, robots.txt shall disallow `/console` for every user-agent group that has an allow rule, and the sitemap shall not list any console URL.
 
@@ -125,6 +130,8 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 - `dark-theme.css`가 `:root` 토큰 의미를 뒤집고 body·input·label·h1~h6 색을 `!important`로 강제한다. 콘솔은 자체 범위 스타일과 고정 hex만 쓴다.
 - 외부 CDN 자산 금지(헌법 불변 원칙).
 - 기존 관리자 SSO 동작(등록 사용자만 입장, 워크숍 member 출구, 관리자 모드 오류 출구 `/admin/login`)은 바꾸지 않는다.
+- 지식 친화 데이터 모델: 콘솔은 나중에 조엘라이프의 LLM 지식 기반이 될 수 있다(범위 제외 참고). 그래서 이번 판의 데이터도 안정된 id(가져오기·내보내기 왕복에서 유지), 구조화된 JSON, 한·영 짝 필드(`title`·`title_en` 등), 담당자와 `updatedAt`, 자격증명을 뺀 깨끗한 내보내기를 유지한다. 이 성질을 깨는 변경(예: id 재발급, 영문 필드 제거)은 이 SPEC 개정 없이 하지 않는다.
+- 위키 분류 `wiki`는 코드에 내장된 정의다. 분류 이름·표식만 담고 직원 이름·주소·내부 id는 담지 않으므로 REQ-CON-008의 시드 금지와 충돌하지 않는다. 위키 항목 자체(주소·담당자)는 시드 파일로만 들어온다.
 - 저장 한계: 기존 db 헬퍼는 Vercel Blob을 공개 접근(`access: 'public'`)으로 쓰고, 비밀 prefix(`BLOB_DATA_PREFIX`)가 유일한 보호 수단이다. 따라서 `console-items`(드라이브·시트·Slack id), `console-people`·`console-audit-log`(직원 email)는 prefix가 새면 인증 없이 읽힌다. prefix는 2026-07에 실제로 공개 저장소에 노출된 적이 있다(헌법). 자격증명 값만은 암호문으로 저장되므로 prefix가 새도 평문이 나가지 않는다. 이 한계를 받아들일지는 오너 결정 D13이다.
 
 ## 5. 범위 제외
@@ -138,6 +145,13 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 - 클립보드 자동 비우기 — 사용자가 그 사이 복사한 다른 내용까지 지울 수 있고 통과·실패로 판정할 수 없어 뺀다(plan-audit CON-D6)
 - 삭제 항목 휴지통 화면과 영구 삭제(purge) — 되돌리기 토스트 외 복구 화면 없음
 - 댓글, 알림, 콘솔 이용 통계
+
+### Out of Scope — 위키·지식 기반
+
+- 위키 문서 작성 기능(본문 편집기, 마크다운, 문서 이력, 문서 간 링크) — 이번 판의 위키 구역은 다른 항목과 같은 링크 항목만 담는다
+- 조엘라이프 LLM 지식 기반 — 콘솔은 나중에 LLM이 읽는 지식 기반이 될 수 있으나, 이번 판에는 임베딩·검색 색인·LLM 호출·지식 API가 없다. 이번 판은 §4 "지식 친화 데이터 모델"만 지킨다
+- 관리자가 지식 분류를 새로 만들거나 위키 구역을 여러 개로 나누는 기능 — 지식 분류는 내장 `wiki` 하나
+- 워크숍 위키 내용의 콘솔 동기화나 미리보기 — 콘솔은 워크숍 위키로 가는 링크만 둔다
 
 ### Out of Scope — 보안·운영
 
@@ -157,7 +171,7 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 
 ## 6. 추적성
 
-인수 기준과 그 기준이 검증하는 요구사항. Given-When-Then 본문은 acceptance.md에 있다. 24개 요구사항이 모두 하나 이상의 기준에 걸린다.
+인수 기준과 그 기준이 검증하는 요구사항. Given-When-Then 본문은 acceptance.md에 있다. 25개 요구사항이 모두 하나 이상의 기준에 걸린다.
 
 | 인수 기준 | 검증하는 요구사항 |
 |---|---|
@@ -186,3 +200,4 @@ PLAN.md 8절 본문은 "별도 비공개 저장소 + Neon + 핸드오프 토큰"
 | AC-CON-021 | REQ-CON-024 |
 | AC-CON-024 | REQ-CON-016 |
 | AC-CON-025 | REQ-CON-008 |
+| AC-CON-026 | REQ-CON-025 |

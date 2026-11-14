@@ -42,11 +42,20 @@
 - Given OAuth 시작 요청과 콜백
 - When `next`가 `/console`, `/console/`, `/console/x`이면 콘솔 모드, `/console-evil`, `/consolex`, `//evil.io/console`, `https://evil.io/console`, `/console\evil.io`, `/%2Fevil.io`, `/console%2F..%2Fadmin`이면 콘솔 모드가 아니거나 콘솔 경로 안에 머문다(단위 테스트로 각 값의 `isConsoleNext`·`sanitizeNextPath` 결과를 고정)
 - Then 콘솔 모드가 아닌 값은 기존처럼 `/admin`으로 정리되고, 기존 관리자 로그인·워크숍 member 출구 테스트가 수정 없이 모두 통과한다
-- And `next`가 `/console/../admin`인 콘솔 입장 성공 응답의 `Location`은 `/admin`으로 가지 않는다(정리 단계에서 거부되거나, 경로가 `/console` 아래로 정규화됨). 모든 성공 응답의 `Location` 호스트는 요청 호스트와 같다
+- And 점 세그먼트가 든 값은 모두 콘솔 경로가 아니다(design.md §2.1 표, 단위 테스트로 고정)
+
+| `next` | `isConsoleNext` | `sanitizeNextPath` |
+|---|---|---|
+| `/console/../admin` | false | `/admin` |
+| `/console/%2E%2E/admin` | false | `/admin` |
+| `/console/./../admin` | false | `/admin` |
+
+- And 위 세 값으로 시작 요청을 보내면 콘솔 모드로 들어가지 않고(관리자 흐름으로 처리), 콜백은 콘솔 쿠키를 발급하지 않는다. `/console/login?next=<위 값>`의 로그인 버튼은 `next=%2Fconsole`을 보낸다
+- And 콘솔 쿠키를 발급하는 모든 성공 응답의 `Location` 경로는 `/console`이거나 `/console/` 아래이고, 호스트는 요청 호스트와 같다
 
 **AC-CON-004** — maps REQ-CON-005
 - 기준: 비밀값 무효 시 닫힘
-- Given `ADMIN_SESSION_SECRET`, `WORKSHOP_SSO_SECRET`, `PARTNER_SESSION_SECRET`, `BACKUP_ENCRYPTION_KEY`, `CONSOLE_SECRETS_KEY`가 서로 다른 유효 값으로 설정돼 있고(그래서 (a)에서 콘솔 코드가 몰래 `ADMIN_SESSION_SECRET`으로 서명하면 토큰이 발급되어 실패로 드러난다), `CONSOLE_SESSION_SECRET`이 (a) 없음 (b) 공백 (c) 31자 (d) `ADMIN_SESSION_SECRET`과 같음 (e) `WORKSHOP_SSO_SECRET`과 같음 (f) `CONSOLE_SECRETS_KEY`와 같음 (g) `PARTNER_SESSION_SECRET`과 같음 (h) `BACKUP_ENCRYPTION_KEY`와 같음
+- Given `ADMIN_SESSION_SECRET`, `WORKSHOP_SSO_SECRET`, `PARTNER_SESSION_SECRET`, `SERIAL_SCAN_SECRET`, `QR_TRACK_SECRET`, `BACKUP_ENCRYPTION_KEY`, `CONSOLE_SECRETS_KEY`가 서로 다른 유효 값으로 설정돼 있고(그래서 (a)에서 콘솔 코드가 몰래 `ADMIN_SESSION_SECRET`으로 서명하면 토큰이 발급되어 실패로 드러난다), `CONSOLE_SESSION_SECRET`이 (a) 없음 (b) 공백 (c) 31자 (d) `ADMIN_SESSION_SECRET`과 같음 (e) `WORKSHOP_SSO_SECRET`과 같음 (f) `CONSOLE_SECRETS_KEY`와 같음 (g) `PARTNER_SESSION_SECRET`과 같음 (h) `BACKUP_ENCRYPTION_KEY`와 같음 (i) `SERIAL_SCAN_SECRET`과 같음 (j) `QR_TRACK_SECRET`과 같음
 - When `/api/admin/auth/google/start?next=/console`, `/console`, `GET /api/console/bootstrap`을 요청한다
 - Then 콘솔 토큰은 발급되지 않고, 시작 요청은 `/console/login?error=console_not_configured`, 콘솔 API는 503이며, 로그에 비밀값 원문이 없다
 - And 소스에 콘솔 비밀값의 리터럴 기본값이 없다(`git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 결과 0줄)
@@ -153,12 +162,12 @@
 
 **AC-CON-016** — maps REQ-CON-018
 - 기준: 기록 범위와 평문 부재
-- Given 한 번의 테스트 흐름에서 로그인 성공·실패, 생성, 수정, 삭제, 되돌리기, 열람, 복사, 거부, 가져오기, 사람 목록 수정, 분류 추가, 팀 고정 목록 수정을 수행했다
+- Given 한 번의 테스트 흐름에서 로그인 성공 1회, 신원이 생긴 뒤의 로그인 거절 1회(예: `x@evil.io`), 생성, 수정, 삭제, 되돌리기, 열람, 복사, 거부, 가져오기, 사람 목록 수정, 분류 추가, 팀 고정 목록 수정을 수행했다
 - When `console-audit-log`를 읽는다
 - Then 각 동작에 해당하는 action이 최소 1건씩 있고, 어떤 기록에도 카나리 값·암호문·세션 토큰·OAuth 코드가 없다
 - And 감사 기록 쓰기를 실패하게 만든 상태에서 열람을 요청하면 값 없이 503이다
-- And 기존 `audit-log`에는 콘솔 로그인 1줄만 늘고 열람 기록은 들어가지 않는다
-- And 콘솔 쿠키 없이 state가 틀린 콜백 요청을 50회 보내도 `console-audit-log` 건수가 늘지 않는다
+- And 기존 `audit-log`에는 콘솔 로그인 성공 1줄과 신원이 생긴 뒤의 거절 1줄, 합계 정확히 2줄만 늘고, 열람·편집 등 다른 콘솔 동작의 기록은 들어가지 않는다(design.md §2.3)
+- And next 쿠키가 `/console`이고 state가 틀린 콜백 요청을 50회 보내면 50회 모두 `/console/login?error=oauth_state`로 302하고, `console-audit-log` 건수는 늘지 않는다
 - And 기록이 5,000건을 넘어 정리된 뒤 다시 읽어도 정리된 기록이 되살아나지 않는다(건수 5,000 이하)
 
 **AC-CON-017** — maps REQ-CON-018
@@ -180,6 +189,7 @@
 - And owner `"가 나다, 라  마바"` 카드는 owners 2개(`ga@try-n.com`, `ra@try-n.com`)가 되고, `"사 아자"` 카드는 owners `[{name:"사 아자"}]`(email 없음)이며 결과의 `unmatchedOwners`에 `"사 아자"`가 있다
 - And email이 없는 사람과 위장 도메인 사람은 저장되지 않고 결과의 `peopleSkipped`에 있다. 저장된 어느 사람도 관리자 권한을 받지 않는다(`admin: true`는 무시)
 - And `console-settings.teamPins`가 파일의 `teamPins` 중 가져온 항목에 있는 id만으로 바뀐다. `teamPins` 키가 없는 파일을 가져오면 저장된 값이 그대로다
+- And `people` 키가 없는 파일을 가져오면 저장된 사람 목록(P0 포함)이 그대로이고, `categories` 키가 없는 파일을 가져오면 저장된 분류 목록이 그대로다. 두 경우 모두 항목은 파일 내용으로 교체된다
 - And 같은 파일을 한 번 더 가져오면 결과가 같다. X1과 같은 id를 가진 카드가 든 파일을 그 뒤에 가져오면 그 항목이 들어온다(콘솔 문서는 tombstone 대상이 아님)
 - And `cards`와 `items`를 함께 가진 파일, 주소가 `javascript:alert(1)`인 카드가 하나 섞인 파일, 파일 안에서 id가 겹치는 파일은 400이고 저장된 문서가 하나도 바뀌지 않는다
 - And 일반 사용자의 가져오기는 403이다
@@ -202,7 +212,7 @@
 - 기준: 화면 구조와 접속 표시
 - Given 시드를 가져온 콘솔에 로그인했다
 - When 홈과 전체 항목을 연다
-- Then 왼쪽 메뉴에 홈·전체 항목·분류 8개·공유 계정·내 항목이 있고, 홈에 팀 필수(또는 내 고정)·최근 수정·분류별 요약이 있으며, 주소 없는 항목이나 담당자 없는 항목이 있을 때만 확인 필요 한 줄이 보인다
+- Then 왼쪽 메뉴에 홈·전체 항목·위키 구역·일반 분류 8개·공유 계정·내 항목이 있고(위키 구역의 위치와 모양은 AC-CON-026), 홈에 팀 필수(또는 내 고정)·최근 수정·분류별 요약이 있으며, 주소 없는 항목이나 담당자 없는 항목이 있을 때만 확인 필요 한 줄이 보인다
 - And 목록은 카드 격자가 아닌 한 줄 행이고 행 높이 전환 기능이 없으며, 모든 행에 연필(편집) 동작이 있다
 - And 행을 누르면 오른쪽 상세 패널이 열린다
 - And 분류·접속 방식·담당자·팀·내 항목·확인 필요 거르기가 각각 목록을 줄인다
@@ -251,6 +261,20 @@
   - `git grep -nE "process\.env\.[A-Z_]+ *\?\? *['\"][^'\"]{8,}" -- src/lib/console src/app/console src/app/api/console`
 - Then 콘솔 시드에서 온 id는 0건, 콘솔 시드·내보내기 JSON 파일 0개, 콘솔 코드의 비밀값 리터럴 폴백 0건이다
 
+## 9.1 위키 구역
+
+**AC-CON-026** — maps REQ-CON-025
+- 기준: 위키 구역의 메뉴 위치·분류 `kind` 표식·빈 상태·언어 키
+- Given 시드를 가져오기 전의 콘솔이다. 저장된 분류는 `kind`가 없는 일반 분류 8개이고, `category: "wiki"`인 항목은 없다
+- When 로그인한 일반 사용자가 왼쪽 메뉴를 보고 위키를 누른다
+- Then 메뉴 순서는 홈 → 전체 항목 → 위키 구역 → 구분선(`role="separator"`) → 일반 분류 8개 → 공유 계정 → 내 항목이다. 위키 구역에는 자체 제목 "위키"가 있고, 일반 분류와는 구분선으로 떨어져 있다
+- And 위키를 누르면 목록 대신 빈 상태 안내(`wiki.empty`)가 보이고 오류가 없으며, 메뉴의 위키 항목 수는 0이다. 위키 항목이 삭제된 것만 남은 경우에도 같다
+- And 단위 테스트로 고정한다. `kind`가 없는 분류는 `resource`로 읽고, 내장 `wiki`는 `knowledge`다. `groupNavCategories`는 `knowledge` 분류만 위키 구역에 넣고, 일반 분류 수는 8 그대로다
+- And `kind: "article"`처럼 모르는 값이 든 분류가 있는 파일을 가져오면 400이고 저장된 문서가 하나도 바뀌지 않는다. `categories`에 `{id: "wiki", kind: "resource"}`가 든 파일을 가져와도 위키 구역은 내장 정의(`knowledge`) 그대로다. `POST /api/console/categories`에 `id: "wiki"`나 `kind: "knowledge"`를 보내면 400이다
+- And 테스트용 시드 파일(카드 하나: `category: "wiki"`, `access_method: "sso"`, `team: "공통"`, 지어낸 담당자, 테스트용 주소)을 가져오면 위키 구역의 첫 항목이 그 카드이고, 접속 표시는 SSO이며, 빈 상태 안내가 사라진다. 그 항목은 전체 항목·검색에도 나오고, 홈의 분류별 요약에는 위키가 없다
+- And `ko`·`en` 사전 모두 `nav.wiki`("위키" / "Wiki")와 `wiki.empty`를 가진다. English로 바꾸면 위키 구역 제목이 "Wiki"다
+- And `git grep -n "zoel-workshop.vercel.app/apps/wiki" -- src data scripts` 결과가 0줄이다(실제 위키 항목은 시드 파일로만 들어옴)
+
 ## 10. 경계 사례 모음
 
 | 사례 | 기대 |
@@ -272,7 +296,7 @@
 
 ## 12. Definition of Done
 
-- [ ] AC-CON-001 ~ AC-CON-025 모두 통과(증거: 명령과 출력, 스크린샷 경로)
+- [ ] AC-CON-001 ~ AC-CON-026 모두 통과(증거: 명령과 출력, 스크린샷 경로)
 - [ ] 기존 관리자 로그인·워크숍 SSO 테스트 수정 없이 통과
 - [ ] plan.md §6 오너 확인 D1~D13에 대한 답이 Implementation Kickoff에서 수집되어 progress.md §E.1에 기록됨(D2·D13은 답에 따라 SPEC 개정이 먼저 필요할 수 있음)
 - [ ] 시드·비밀값이 커밋되지 않음(AC-CON-025)
