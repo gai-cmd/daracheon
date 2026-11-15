@@ -589,3 +589,44 @@ export function needsCredDeleteConfirm(item: Pick<ConsoleListItem, 'hasLoginId' 
 export function hasCredential(item: Pick<ConsoleListItem, 'hasLoginId' | 'hasPassword'>): boolean {
   return item.hasLoginId || item.hasPassword;
 }
+
+/* ---------- 채널 새 소식 (SPEC-CONSOLE-002 REQ-CS2-037·038, design.md §2.15) ---------- */
+
+function relLuminance(hex: string): number {
+  const n = parseInt(hex.slice(1), 16);
+  const lin = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+}
+
+/** WCAG 대비 (두 '#rrggbb' 색). */
+export function contrastRatio(a: string, b: string): number {
+  const [hi, lo] = [relLuminance(a), relLuminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+const BADGE_INK = '#1c1b18';
+
+/**
+ * 채널 배지 글자색: 콘솔 잉크색과 흰색 중 채널 색과 대비가 큰 쪽. 그래도 4.5:1 에 못 미치는 중간 밝기 색에서는
+ * 순수 검정(어떤 배경에서도 흰색과 검정 중 하나는 4.58:1 이상)을 쓴다. 형식이 틀린 색은 회색으로 본다.
+ */
+export function badgeTextColor(bg: string): string {
+  const color = /^#[0-9a-fA-F]{6}$/.test(bg) ? bg.toLowerCase() : '#777777';
+  const best = contrastRatio(color, '#ffffff') >= contrastRatio(color, BADGE_INK) ? '#ffffff' : BADGE_INK;
+  return contrastRatio(color, best) >= 4.5 ? best : '#000000';
+}
+
+/** 피드 항목 주소: http(s) 또는 같은 출처 경로('/…', '//'·'/\' 제외)만. 통과하면 받은 값을 그대로 돌려준다. */
+export function feedHref(u: unknown): string | null {
+  if (typeof u !== 'string' || !u) return null;
+  if (u.startsWith('/')) return /^\/[^/\\]/.test(u) ? u : null;
+  try {
+    const x = new URL(u);
+    return x.protocol === 'http:' || x.protocol === 'https:' ? u : null;
+  } catch {
+    return null;
+  }
+}

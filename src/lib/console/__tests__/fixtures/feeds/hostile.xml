@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE rss [
+  <!ENTITY x "EXPANDED">
+  <!ENTITY y "&x;&x;&x;&x;&x;&x;&x;&x;">
+]>
+<rss version="2.0">
+  <!-- <item><title>commented out</title><link>https://example.com/c</link></item> -->
+  <channel>
+    <title>Hostile</title>
+    <item>
+      <title>entity &x; &y; stays</title>
+      <link>https://example.com/entity</link>
+      <pubDate>Tue, 10 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>&lt;script&gt;a&lt;/script&gt;b</title>
+      <link>https://example.com/script</link>
+      <pubDate>Mon, 09 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>bad link</title>
+      <link>javascript:alert(1)</link>
+      <pubDate>Sun, 08 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>no date</title>
+      <link>https://example.com/nodate</link>
+      <pubDate>someday</pubDate>
+    </item>
+    <item>
+      <title>가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가가</title>
+      <link>https://example.com/long</link>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

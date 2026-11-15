@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:activity="http://activitystrea.ms/spec/1.0/" version="2.0">
+  <channel>
+    <title><![CDATA[지어낸 블로그]]></title>
+    <link><![CDATA[https://blog.naver.com/fakeblog]]></link>
+    <image>
+      <url>http://blogpfthumb.phinf.naver.net/fake/profile.png</url>
+      <title><![CDATA[지어낸 블로그]]></title>
+      <link><![CDATA[https://blog.naver.com/fakeblog]]></link>
+    </image>
+    <description><![CDATA[지어낸 설명]]></description>
+    <language>ko</language>
+    <generator>Naver Blog</generator>
+    <pubDate>Wed, 04 Nov 2026 10:22:52 +0900</pubDate>
+    <item>
+      <author>fakeblog</author>
+      <category><![CDATA[차]]></category>
+      <title><![CDATA[침향 차 & 우리는 법]]></title>
+      <link><![CDATA[https://blog.naver.com/fakeblog/224000000001?fromRss=true&trackingCode=rss]]></link>
+      <guid>https://blog.naver.com/fakeblog/224000000001</guid>
+      <description><![CDATA[첫 문단 <img src="https://blogthumb.pstatic.net/MjAyNjEx%2FfakeA.png?type=s3" /> 이어지는 글]]></description>
+      <pubDate>Wed, 04 Nov 2026 10:22:52 +0900</pubDate>
+      <tag><![CDATA[차,침향]]></tag>
+      <activity:verb>post</activity:verb>
+      <activity:object-type>blog</activity:object-type>
+    </item>
+    <item>
+      <author>fakeblog</author>
+      <title><![CDATA[두 번째 글]]></title>
+      <link><![CDATA[https://blog.naver.com/fakeblog/224000000000?fromRss=true&trackingCode=rss]]></link>
+      <guid>https://blog.naver.com/fakeblog/224000000000</guid>
+      <description><![CDATA[그림 없는 글]]></description>
+      <pubDate>Mon, 02 Nov 2026 09:00:00 +0900</pubDate>
+    </item>
+  </channel>
+</rss>

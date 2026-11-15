@@ -11,7 +11,7 @@ import s from './console.module.css';
 import { cx } from './cx';
 import { useUi } from './ui-context';
 
-export type AdminAction = 'export' | 'import' | 'people' | 'category' | 'teamPins' | 'audit';
+export type AdminAction = 'export' | 'import' | 'people' | 'category' | 'teamPins' | 'channels' | 'audit';
 
 const LEGEND_KEYS = ['sso', 'invite', 'shared-credential', 'internal-login'] as const;
 
@@ -110,6 +110,7 @@ export function AccountMenuBody({
           {item('user', t('mPeople'), () => onAdmin('people'))}
           {item('plus', t('mAddCat'), () => onAdmin('category'))}
           {item('star', t('mTeamPins'), () => onAdmin('teamPins'))}
+          {item('video', t('mChannels'), () => onAdmin('channels'))}
           {item('list', t('mAudit'), () => onAdmin('audit'))}
         </>
       ) : null}

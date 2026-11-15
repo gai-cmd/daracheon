@@ -3,7 +3,7 @@ import { createElement, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { WIKI_CATEGORY } from '@/lib/console/categories';
 import type { ConsoleLang } from '@/lib/console/i18n';
-import type { ConsoleCategory, ConsoleListItem } from '@/lib/console/types';
+import type { ConsoleCategory, ConsoleListItem, FeedResponse } from '@/lib/console/types';
 import type { ConsoleMe } from '@/lib/console/ui-model';
 import { AppContext, type AppValue } from '../app-context';
 import { UiProvider } from '../ui-context';
@@ -107,4 +107,25 @@ export function splitMore(html: string): { outside: string; inside: string } {
   // f-more 는 form 의 마지막 div — 닫는 </form> 직전까지가 안쪽이다.
   const end = html.indexOf('</form>', start);
   return { outside: html.slice(0, open) + html.slice(end), inside: html.slice(open, end) };
+}
+
+/** 채널 새 소식 고정 데이터 (SPEC-CONSOLE-002 M4): 채널 3개, 글 20건, 네 번째마다 썸네일 없음. 지어낸 값만. */
+export function makeFeed(): FeedResponse {
+  const channels: FeedResponse['channels'] = [
+    { id: 'ch-a', label: '지어낸 영상', label_en: 'Made-up videos', color: '#c4302b', kind: 'youtube', home: 'https://www.youtube.com/channel/UCfake000000000000000001', ok: true },
+    { id: 'ch-b', label: '지어낸 블로그', label_en: 'Made-up blog', color: '#f2c94c', kind: 'naver', home: 'https://blog.naver.com/fakeblog', ok: true },
+    { id: 'ch-c', label: '자사 블로그', label_en: '', color: '#1f6f5c', kind: 'zoellife-blog', home: '/blog', ok: true },
+  ];
+  const items: FeedResponse['items'] = [];
+  for (let i = 0; i < 20; i++) {
+    const c = channels[i % 3];
+    items.push({
+      channelId: c.id,
+      title: `글 ${String(i + 1).padStart(2, '0')}`,
+      url: c.kind === 'zoellife-blog' ? `/blog/fake-${i}` : `https://example.com/p/${i}`,
+      publishedAt: new Date(Date.UTC(2026, 10, 14, 23 - i)).toISOString(),
+      thumb: i % 4 === 3 ? null : `/api/console/feed/thumb?u=${encodeURIComponent(`https://i2.ytimg.com/vi/fake${i}/hqdefault.jpg`)}`,
+    });
+  }
+  return { channels, items };
 }

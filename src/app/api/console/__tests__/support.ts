@@ -66,6 +66,8 @@ export const dbMock = {
   readSingle: vi.fn(async (name: string) => clone(store.singles.get(name) ?? null)),
   readSingleUncached: vi.fn(async (name: string) => clone(store.singles.get(name) ?? null)),
   readSingleForWrite: vi.fn(async (name: string) => clone(store.singles.get(name) ?? null)),
+  /** 공개 Blob 호스트 (SPEC-CONSOLE-002 M4 썸네일 허용 목록). 지어낸 호스트. */
+  publicBlobHost: vi.fn(() => 'fakeblob.public.blob.vercel-storage.com'),
   writeSingle: vi.fn(async (name: string, data: Rec) => {
     if (store.failWrites.has(name)) throw new Error(`write failed: ${name}`);
     store.writes.push(name);

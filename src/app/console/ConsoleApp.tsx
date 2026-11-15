@@ -26,7 +26,7 @@ import {
   type ViewMode,
 } from '@/lib/console/ui-model';
 import AccountMenu, { type AdminAction } from './AccountMenu';
-import { AuditDialog, CategoryDialog, ImportDialog, PeopleDialog, downloadExport } from './AdminDialogs';
+import { AuditDialog, CategoryDialog, ChannelsDialog, ImportDialog, PeopleDialog, downloadExport } from './AdminDialogs';
 import { ackAutofillGuide, api, type BootstrapData } from './api';
 import { AppContext, type AppValue, type FormFocus, type MenuEntry, type RoutePreset, type ToastOptions } from './app-context';
 import AutofillGuideDialog from './AutofillGuideDialog';
@@ -53,6 +53,8 @@ type DialogState =
   // resolve 가 있으면 양식에서 연 것: 추가된 id 를 돌려주고 화면은 옮기지 않는다 (SPEC-CONSOLE-002 REQ-CS2-012).
   | { kind: 'category'; resolve?: (id: string | null) => void }
   | { kind: 'audit' }
+  // 채널 관리 (SPEC-CONSOLE-002 REQ-CS2-030)
+  | { kind: 'channels' }
   | { kind: 'guide' }
   | null;
 type LoadState = 'loading' | 'ready' | 'error' | 'unconfigured';
@@ -116,6 +118,8 @@ export default function ConsoleApp() {
   const [drawer, setDrawer] = useState(false);
   const [searching, setSearching] = useState(false);
   const [guideBusy, setGuideBusy] = useState(false);
+  // 채널을 저장하면 올려 홈의 채널 새 소식을 새로 받게 한다 (SPEC-CONSOLE-002 REQ-CS2-037).
+  const [feedRev, setFeedRev] = useState(0);
   const guideChecked = useRef(false);
   const { toasts, push: toast, remove: dropToast } = useToasts();
   const opener = useRef<HTMLElement | null>(null);
@@ -459,6 +463,7 @@ export default function ConsoleApp() {
       else if (a === 'people') setDialog({ kind: 'people' });
       else if (a === 'category') setDialog({ kind: 'category' });
       else if (a === 'audit') setDialog({ kind: 'audit' });
+      else if (a === 'channels') setDialog({ kind: 'channels' });
       else if (a === 'teamPins') {
         if (!pins.length) {
           toast(t('teamPinsNeedPins'));
@@ -562,8 +567,9 @@ export default function ConsoleApp() {
 
   const viewItems = itemsForView(view, items, { me: data!.me, searchQ, categories, people: data!.people });
   let body;
-  if (view.name === 'home') body = <HomeView />;
-  else {
+  if (view.name === 'home') {
+    body = <HomeView feedRev={feedRev} onManageChannels={data!.me.isAdmin ? () => setDialog({ kind: 'channels' }) : undefined} />;
+  } else {
     const cat = view.name === 'cat' ? categories.find((c) => c.id === view.cat) : undefined;
     const title =
       view.name === 'cat'
@@ -640,6 +646,8 @@ export default function ConsoleApp() {
       />
     ) : dialog?.kind === 'audit' ? (
       <AuditDialog onClose={() => setDialog(null)} overlay={toastLayer} />
+    ) : dialog?.kind === 'channels' ? (
+      <ChannelsDialog onClose={() => setDialog(null)} onSaved={() => setFeedRev((n) => n + 1)} overlay={toastLayer} />
     ) : dialog?.kind === 'guide' ? (
       <AutofillGuideDialog
         info={detectBrowser(navigator.userAgent)}

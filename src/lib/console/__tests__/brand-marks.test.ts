@@ -8,7 +8,7 @@ describe('brandOf()', () => {
   it.each([
     ['https://www.youtube.com/@example', 'youtube'],
     ['https://youtu.be/abc', 'youtube'],
-    ['https://www.instagram.com/example', 'instagram'],
+    ['https://www.instagram.com/fakeexample', 'instagram'],
     ['https://drive.google.com/file/d/abc/view', 'drive'],
     ['https://docs.google.com/spreadsheets/u/0/', 'sheets'],
     ['https://docs.google.com/document/u/0/', 'docs'],
@@ -17,7 +17,7 @@ describe('brandOf()', () => {
     ['https://search.google.com/search-console', 'gsc'],
     ['https://admin.google.com/', 'gadmin'],
     ['https://mail.google.com/', 'google'],
-    ['https://blog.naver.com/example', 'nblog'],
+    ['https://blog.naver.com/fakeexample', 'nblog'],
     ['https://smartstore.naver.com/example', 'nstore'],
     ['https://searchadvisor.naver.com/', 'nsearch'],
     ['https://searchad.naver.com/', 'nsearch'],

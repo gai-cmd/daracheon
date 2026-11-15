@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+  <link rel="self" href="https://www.youtube.com/feeds/videos.xml?channel_id=UCfake000000000000000001"/>
+  <id>yt:channel:fake000000000000000001</id>
+  <yt:channelId>fake000000000000000001</yt:channelId>
+  <title>지어낸 채널</title>
+  <link rel="alternate" href="https://www.youtube.com/channel/UCfake000000000000000001"/>
+  <author>
+    <name>지어낸 채널</name>
+    <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+  </author>
+  <published>2020-01-01T00:00:00+00:00</published>
+  <entry>
+    <id>yt:video:fakevid0001</id>
+    <yt:videoId>fakevid0001</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 1 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0001"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-14T01:00:08+00:00</published>
+    <updated>2026-11-14T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 1</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0001?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0001/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 1</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0002</id>
+    <yt:videoId>fakevid0002</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 2 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0002"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-13T01:00:08+00:00</published>
+    <updated>2026-11-13T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 2</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0002?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0002/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 2</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0003</id>
+    <yt:videoId>fakevid0003</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 3 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0003"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-12T01:00:08+00:00</published>
+    <updated>2026-11-12T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 3</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0003?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0003/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 3</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0004</id>
+    <yt:videoId>fakevid0004</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 4 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0004"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-11T01:00:08+00:00</published>
+    <updated>2026-11-11T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 4</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0004?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0004/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 4</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0005</id>
+    <yt:videoId>fakevid0005</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 5 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0005"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-10T01:00:08+00:00</published>
+    <updated>2026-11-10T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 5</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0005?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0005/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 5</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0006</id>
+    <yt:videoId>fakevid0006</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 6 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0006"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-09T01:00:08+00:00</published>
+    <updated>2026-11-09T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 6</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0006?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0006/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 6</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0007</id>
+    <yt:videoId>fakevid0007</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 7 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0007"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-08T01:00:08+00:00</published>
+    <updated>2026-11-08T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 7</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0007?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0007/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 7</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0008</id>
+    <yt:videoId>fakevid0008</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 8 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0008"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-07T01:00:08+00:00</published>
+    <updated>2026-11-07T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 8</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0008?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0008/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 8</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0009</id>
+    <yt:videoId>fakevid0009</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 9 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0009"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-06T01:00:08+00:00</published>
+    <updated>2026-11-06T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 9</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0009?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0009/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 9</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0010</id>
+    <yt:videoId>fakevid0010</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 10 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0010"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-05T01:00:08+00:00</published>
+    <updated>2026-11-05T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 10</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0010?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0010/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 10</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0011</id>
+    <yt:videoId>fakevid0011</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 11 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0011"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-04T01:00:08+00:00</published>
+    <updated>2026-11-04T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 11</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0011?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0011/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 11</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0012</id>
+    <yt:videoId>fakevid0012</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 12 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0012"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-03T01:00:08+00:00</published>
+    <updated>2026-11-03T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 12</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0012?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0012/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 12</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0013</id>
+    <yt:videoId>fakevid0013</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 13 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0013"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-02T01:00:08+00:00</published>
+    <updated>2026-11-02T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 13</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0013?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0013/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 13</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0014</id>
+    <yt:videoId>fakevid0014</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 14 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0014"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-11-01T01:00:08+00:00</published>
+    <updated>2026-11-01T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 14</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0014?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0014/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 14</media:description>
+    </media:group>
+  </entry>
+  <entry>
+    <id>yt:video:fakevid0015</id>
+    <yt:videoId>fakevid0015</yt:videoId>
+    <yt:channelId>UCfake000000000000000001</yt:channelId>
+    <title>지어낸 영상 15 &amp; 차 이야기</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=fakevid0015"/>
+    <author>
+      <name>지어낸 채널</name>
+      <uri>https://www.youtube.com/channel/UCfake000000000000000001</uri>
+    </author>
+    <published>2026-10-31T01:00:08+00:00</published>
+    <updated>2026-10-31T01:00:08+00:00</updated>
+    <media:group>
+      <media:title>지어낸 영상 15</media:title>
+      <media:content url="https://www.youtube.com/v/fakevid0015?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i2.ytimg.com/vi/fakevid0015/hqdefault.jpg" width="480" height="360"/>
+      <media:description>설명 15</media:description>
+    </media:group>
+  </entry>
+</feed>

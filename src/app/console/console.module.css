@@ -2158,8 +2158,183 @@ select.input {
 }
 .recentBar {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 8px;
   margin: 8px 0;
+}
+.recentBar .sp {
+  flex: 1;
+}
+
+/* ---------- 채널 새 소식 (SPEC-CONSOLE-002 M4, design.md §2.15). 고정 hex 와 콘솔 루트 변수만 ---------- */
+.feedChips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  /* 칩 줄 안에서만 가로로 밀린다 — 페이지는 가로 스크롤이 생기지 않는다. */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  margin: 0 0 10px;
+  padding: 2px 0 4px;
+}
+.fchip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.fchip[aria-checked='true'] {
+  border-color: #1f6f5c;
+  background: #dcefe8;
+  color: #1f6f5c;
+}
+.fchip:focus-visible {
+  outline: 2px solid #1f6f5c;
+  outline-offset: 2px;
+}
+.fdot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(28, 27, 24, 0.18);
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+.tiles > li {
+  min-width: 0;
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+.tile:focus-visible {
+  outline: 2px solid #1f6f5c;
+  outline-offset: 2px;
+}
+.tileImg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #ece8de;
+  color: #6b675d;
+}
+.tileImg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tileBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 12px 12px;
+}
+.badge {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tileT {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.tileD {
+  color: var(--ink-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.linkTile .tileImg {
+  background: #f2efe8;
+}
+.feedSkel {
+  /* 피드를 받는 동안 구역 자리를 잡아 둔다 (타일 두 줄 높이 안팎). */
+  min-height: 320px;
+  margin: 0 0 10px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f2efe8 0%, #ece8de 50%, #f2efe8 100%);
+}
+.feedEmpty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 10px;
+}
+.recentTg {
+  margin-top: 2px;
+}
+
+/* 채널 편집기 행 (PeopleDialog 의 .prow 와 같은 모양) */
+.chrow {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr) 44px 36px 112px;
+  gap: 6px;
+  align-items: center;
+}
+.chNoSrc {
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.chColor {
+  width: 40px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.chOn {
+  width: 18px;
+  height: 18px;
+  justify-self: center;
+  accent-color: #1f6f5c;
+}
+.chActs {
+  display: inline-flex;
+  gap: 2px;
 }
 .cards {
   display: grid;
@@ -2590,6 +2765,13 @@ a.tAct {
   .pins {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .tileBody {
+    padding: 8px 10px 10px;
+  }
   .sum {
     grid-template-columns: 1fr;
     gap: 0;
@@ -2783,6 +2965,14 @@ a.tAct {
   }
   .prow {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 40px;
+  }
+  .chrow {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .chrow.prowH {
+    display: none;
   }
 }
 @media (max-width: 479.98px) {

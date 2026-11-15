@@ -66,6 +66,18 @@ const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 const BLOB_PUBLIC_BASE =
   process.env.BLOB_PUBLIC_BASE ?? 'https://xpklzng0qyaecv6i.public.blob.vercel-storage.com';
 
+/**
+ * 공개 Blob 호스트 이름. 팀 콘솔 썸네일 경로의 허용 목록이 쓴다 (SPEC-CONSOLE-002 CS2-D28) —
+ * 같은 판단을 콘솔 코드에 다시 적지 않으려고 여기서 내보낸다. 주소가 틀리면 null.
+ */
+export function publicBlobHost(): string | null {
+  try {
+    return new URL(BLOB_PUBLIC_BASE).hostname;
+  } catch {
+    return null;
+  }
+}
+
 // Retry tuning for blob reads. Transient Vercel Blob / CDN failures
 // typically resolve in <1s; 3 attempts @ 250ms/500ms covers the common
 // case without adding meaningful latency to the happy path (first

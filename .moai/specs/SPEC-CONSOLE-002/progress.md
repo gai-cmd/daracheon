@@ -289,6 +289,112 @@ eslint=0   (출력 0바이트)
 - 사용 기록 행위자·마지막 수정자는 이름 문자열만 저장돼 있어, 사람 목록의 한국어 이름과 정확히 같을 때만 영문 이름으로 바뀐다(`nameLabel`). 이름이 같은 사람이 둘이면 첫 사람의 영문 이름이 보인다.
 - `next build`는 돌리지 않았다.
 
+### M4 — 채널 새 소식 (2026-11-15, manager-develop, cycle_type=tdd)
+
+**바뀐 것**
+
+| 파일 | 내용 |
+|---|---|
+| `src/lib/console/types.ts` | `CONSOLE_CHANNEL_KINDS`, `ConsoleChannel`, `ConsoleSettings.channels?`, `MAX_CHANNELS = 12`, 피드 응답 형식 `FeedChannelInfo`·`FeedItemInfo`·`FeedResponse`·`FeedErrorCode`(화면과 서버가 함께 씀) |
+| `src/lib/console/channels.ts` (신규) | `validateChannels`(종류별 출처 규칙, 색 `#rrggbb` 소문자 저장, 이름 1~40자, 영문 이름 0~40자, 중복·모르는 id, 13개 이상 → 오류 목록, 새 행에 `ch-` + 8자 id, order 다시 매김), `normalizeStoredChannels`(저장된 틀린 행 버림), `readChannels`, `channelHome`(CS2-D25) |
+| `src/app/api/console/channels/route.ts` (신규) | GET·PUT, 관리자 전용(`authorizeConsole(..., { admin: true })`, PUT 은 Origin·Content-Type 검사), `{ ...current, channels }` 쓰기(teamPins 보존), 감사 `settings.update` `meta: { channels: n }` |
+| `src/lib/console/feed-fetch.ts` (신규) | `fetchAllowed`: https 전용, IP 문자열·localhost 거부, 요청별 허용 목록, `assertPublicHttpUrl`(src/lib/ssrf.ts) 재사용, 리다이렉트는 같은 검사를 통과한 곳으로 한 번만, 5초 `AbortController`, `content-length`·스트림 읽기로 크기 상한, `credentials: 'omit'`·`referrerPolicy: 'no-referrer'`·`redirect: 'manual'`, 쿠키·Referer 머리글 없음 |
+| `src/lib/console/feed-parse.ts` (신규) | 의존성 없는 정규식 파서: CDATA 는 남기고 주석·`<!DOCTYPE>`(내부 부분집합 포함)·처리 명령 제거, XML 기본·숫자 엔티티만 풂, 제목 태그 제거·200자, Atom `rel=alternate`(rel 없음 포함) → 첫 `link`, `pubDate`→`published`→`updated`→`dc:date`, 썸네일 `media:thumbnail` → 그림 `media:content` → 그림 `enclosure` → 설명 속 첫 `<img src>`. 피드가 아닌 문서는 `null` |
+| `src/lib/console/feed.ts` (신규) | `buildFeed`(켜진 채널만 설정 순서, 채널당 6건, 전체 최신순·날짜 없는 것 뒤, 같은 출처는 한 번만 요청, 실패 격리), 모듈 캐시 `${kind}:${source}` 성공 30분·실패 5분·설정에 없는 키 정리, 자사 블로그 `readLatestPublishedPostsSafe(6)` → `/blog/<slug>`, 인스타그램 요청 없음, `thumbAllowed`·`thumbUrl`(허용 목록 그림만 썸네일 경로, 아니면 null). 시계·fetch·블로그 읽기·Blob 호스트 주입 가능 |
+| `src/lib/db.ts` | `publicBlobHost()` 내보내기 하나(CS2-D28). 기존 동작 그대로 |
+| `src/app/api/console/feed/route.ts` (신규) | GET, 세션 필요(401), `Cache-Control: private, max-age=1800` |
+| `src/app/api/console/feed/thumb/route.ts` (신규) | GET, 세션 필요(401), `u` ≤ 2048자, `fetchAllowed`(상한 2MB) + 허용 목록, `image/*`(SVG 제외)만 → 원본 형식·`nosniff`·`private, max-age=86400`·`Content-Security-Policy: default-src 'none'`. 그 밖은 코드에 묶은 16×9 단색 PNG(77바이트), `private, max-age=300`, `X-Thumb-Fallback: 1` |
+| `src/app/console/ChannelFeed.tsx` (신규) | 칩 radiogroup(이름 채널/Channels, 화살표·Home·End, 선택된 칩만 탭 순서), 글 타일(16:9 그림 또는 빈 상자, 채널 색 배지, 두 줄 제목, `<time>`), 링크 타일, 자리 표시(`aria-busy`), 빈 상태(관리자만 채널 관리), 오류 + 다시 시도. `<img>` 는 썸네일 경로로 시작할 때만 그림 |
+| `src/app/console/HomeView.tsx` | "최근 수정된 항목" 구역 자리에 "채널 새 소식"(`h-feed`). 최근 수정 목록은 그 구역 안 "최근 수정한 카드 보기" 펼침으로(M3 구조 그대로, "더 보기"는 펼침 안으로). props `feed`·`feedRev`·`onManageChannels` |
+| `src/app/console/AdminDialogs.tsx` | `ChannelsDialog`(행마다 종류·이름·영문 이름·출처(자사 블로그는 칸 없음, 종류별 placeholder)·색·켜기·위아래·삭제, 12개까지 추가, 서버 오류를 행 번호로 표시) |
+| `src/app/console/AccountMenu.tsx`, `ConsoleApp.tsx`, `api.ts` | 관리자 도구 "채널 관리"/"Channels", 대화상자 연결, 저장 뒤 `feedRev` 를 올려 피드를 새로 받음, `fetchFeed(fresh)`·`fetchChannels`·`saveChannels` |
+| `src/lib/console/ui-model.ts` | `badgeTextColor`(콘솔 잉크색 `#1c1b18`·흰색 중 대비가 큰 쪽, 둘 다 4.5:1 미만이면 검정 `#000000`), `contrastRatio`, `feedHref`(http(s)·같은 출처 경로만) |
+| `src/lib/console/i18n.ts` | `mChannels`, `feed.*`, `chan.*` 한·영 |
+| `src/app/console/console.module.css` | `.feedChips`(칩 줄만 `overflow-x: auto`), `.fchip`, `.tiles`(`minmax(200px, 1fr)`, 콘텐츠 640px 이하 두 열), `.tileImg`(`aspect-ratio: 16 / 9`), `.tileT`(`-webkit-line-clamp: 2`), `.badge`, `.feedSkel`(`min-height: 320px`), `.chrow` 등. 고정 hex 와 콘솔 루트 변수만 |
+| 테스트 (신규) | `src/lib/console/__tests__/{channels,feed-fetch,feed-parse,feed,badge-color}.test.ts`, `src/app/api/console/__tests__/{channels,feed-thumb}.test.ts`, `src/app/console/__tests__/{channel-feed,channel-feed-dom}.test.ts`, 고정 데이터 `src/lib/console/__tests__/fixtures/feeds/{youtube-atom,naver-rss,rss2-generic,atom-generic,hostile}.xml`(지어낸 값) |
+| 테스트 (수정) | `support.ts` 의 db 가짜에 `publicBlobHost`, `render-helpers.ts` 에 `makeFeed`, `brand-marks.test.ts` 의 지어낸 주소 두 개를 `fakeexample` 로(AC-CS2-040 grep 이 id 부분 `fake` 시작을 요구) |
+
+모든 테스트는 바깥 네트워크에 요청하지 않는다: fetch 는 주입하거나 `vi.spyOn(globalThis, 'fetch')`, DNS 는 `node:dns/promises` 가짜, 블로그 저장소는 가짜.
+
+**설계와 다르게 정한 것 (리드 확인용)**
+
+- 자사 블로그 커버 그림이 상대 경로(`/images/…`)면 `thumb` 는 `null` 이다. CS2-D24("모든 타일 그림은 썸네일 경로를 거친다")와 AC-CS2-037("thumb 는 null 이거나 썸네일 경로")을 글자 그대로 따랐다. 관리자 업로드 커버는 Blob 이므로(헌법) 썸네일 경로로 나온다.
+- 가져오기는 성공했지만 보여 줄 글이 0건인 채널(없는 네이버 id 가 빈 `<channel>` 을 돌려주는 경우, research.md §6.2)도 링크 타일로 보인다. 채널이 사라진 것처럼 보이지 않게 하려는 CS2-D25 의 취지를 넓혀 적용했다.
+- 배지 글자색은 design.md 의 "검정 `#1c1b18`과 흰색" 그대로 고르되, `#777777` 처럼 둘 다 4.5:1 에 못 미치는 중간 밝기에서만 순수 검정을 쓴다(그 색에서 `#1c1b18` 3.85:1, 흰색 4.48:1, 검정 4.69:1 — node 로 WCAG 공식 계산).
+- 썸네일 경로는 `authorizeConsole` 대신 세션만 확인한다(그림마다 사람 목록 문서를 읽지 않으려고). 관리자 권한은 필요 없는 경로이고 미들웨어도 같은 세션을 검사한다. 채널 목록은 캐시되는 `readSingle` 로 읽는다.
+- 자사 블로그 글은 피드 메모리 캐시에 넣지 않는다. 바깥 요청이 없고, 블로그 저장소 함수가 이미 5분 캐시와 2초 제한을 갖고 있다.
+- 브라우저는 피드 응답을 30분 개인 캐시로 다시 쓰고, 관리자가 채널을 저장한 직후에만 `cache: 'no-cache'` 로 새로 받는다.
+
+**인수 기준 (M4)** — "테스트"는 이번 회차에 돌린 vitest.
+
+| AC | 판정 | 근거 / 남은 것 |
+|---|---|---|
+| AC-CS2-031 | PASS(테스트) | `api/.../channels.test.ts`: 종류마다 하나인 5개 저장 → 200, 순서·값 같음, `teamPins` 그대로, `settings.update` 1건(`{ channels: 5 }`), 다시 저장 시 기존 id 유지·새 행만 새 id. 멤버 읽기·저장 403, 세션 없음 401, `Origin: https://evil.io` 403. `UCshort`·`Bad.Id`·`http://`·`https://u:p@`·자사 블로그 `x`·`red`·빈 이름·41자·같은 id 두 개·13개·모르는 id 모두 400 + 문서 그대로. `channel-feed.test.ts`: 편집기 행마다 종류·이름·영문 이름·출처·색·켜기·위·아래·삭제, 계정 메뉴 관리자 "채널 관리"/"Channels", 멤버 없음 |
+| AC-CS2-032 | PASS(테스트) | `feed.test.ts`: 켜진 4 + 꺼진 1 → 채널 4개(설정 순서), 유튜브·블로그 ok, 네이버 `timeout`, RSS `http_status`, 항목 유튜브 6 + 블로그 3 최신순, 항목 칸 5개. `feed-thumb.test.ts`: 경로 401, 200 + 실패 채널 격리 |
+| AC-CS2-033 | PASS(테스트) | 두 번 → 1회, 29분 → 1회, 31분 → 2회. 실패 4분 → 재요청 없음, 6분 → 재요청. 출처 바꾼 채널만 새로. 경로 `Cache-Control: private, max-age=1800` |
+| AC-CS2-034 | PASS(테스트) | `feed-fetch.test.ts`: `http:`·`127.0.0.1`·`[::1]`·`localhost`·`example.net`·`www.youtube.com.example.net`·DNS `10.0.0.5` 모두 fetch 0회. `302 → http:` 1회 요청 후 `redirect_rejected`, 두 번 리다이렉트 실패, 허용 https 로 한 번 넘어가면 성공. 1MB+1 → `too_large`, 스트림 당김 18회 이하(1MB 정확히는 성공), 가짜 타이머 4999ms 미결·5001ms `timeout`, `credentials: 'omit'`·`no-referrer`·`manual`·쿠키/Referer 없음, `assertPublicHttpUrl` 가져오기 문 |
+| AC-CS2-035 | PASS(테스트) | `feed-parse.test.ts`: 4종 첫 항목 제목·주소·ISO 날짜·썸네일(퍼센트 인코딩 유지), `&amp;`·`&#39;` 풀림, DOCTYPE 엔티티 미전개, `<script>a</script>b` → `ab`, `javascript:` 빠짐, 주석 속 항목 무시, 날짜 없는 항목 맨 뒤, 201자 → 200자, HTML 은 `null`. `git diff 0a6d164d --stat -- package.json package-lock.json` 출력 없음 |
+| AC-CS2-036 | PASS(테스트) | 자사 블로그 `readBlog(6)`, 6건 `/blog/<slug>`, fetch 0회. 인스타그램 fetch 0회·ok·항목 0·home 프로필. 정적 렌더: 인스타그램·실패 채널마다 링크 타일, 문구 한·영, `href`=home, 새 탭·`noopener noreferrer`, 배지 |
+| AC-CS2-037 | PASS(테스트) | `feed-thumb.test.ts`: 401, 허용 5종 200 + 원본 형식·nosniff·`private, max-age=86400`, 거절 9종(없음·2049자·http·외부·접미사 우회 2종·IP·localhost·꺼진 RSS 호스트) fetch 0회 + 기본 그림 `private, max-age=300`, SVG·HTML·2MB+1·허용 밖 리다이렉트·404 → 기본 그림, 경로 소스에 `http(s)://` 없음. `feed.test.ts`: 피드의 `thumb` 는 null 또는 썸네일 경로, 허용 밖 그림은 null, `thumbAllowed` 허용·거절 표 |
+| AC-CS2-038 | PASS(테스트) / 미확인(브라우저) | 정적 렌더 한·영 제목, "최근 수정된 항목" 없음, radiogroup 하나에 전체 + 3, 전체 12개 최신순, 타일 그림 src·배지 색·제목·`<time>`·새 탭, CSS 16:9·두 줄·두 열·칩 줄 스크롤, 자리 표시 `aria-busy` + `min-height`, 빈 상태 문구·관리자만 채널 관리, 오류 다시 시도. jsdom: 마운트 시 `/api/console/feed` 1회, 칩 → 그 채널 6개 이하, 펼침 `aria-expanded` false→true + 최근 수정 6개 + 보기 전환. 브라우저 375px `scrollWidth`·두 열 `top`·불러오기 전후 제목 `top` 은 미확인 |
+| AC-CS2-039 (M4 몫) | PASS(테스트) / 미확인(브라우저 키보드) | 한·영 키 집합 테스트 통과(새 키 포함), 채널 칩 radiogroup 이름, 편집기 위·아래·삭제 `aria-label`, `badge-color.test.ts` 7색 모두 4.5:1 이상(테스트 안에서 WCAG 공식으로 따로 계산). jsdom 에서 칩 화살표·Home·End·초점 이동 확인 |
+| AC-CS2-040 | PASS(명령) / 미확인(브라우저) | 아래 grep 결과. 로컬 데이터 실채널 브라우저 확인은 이번 회차에 하지 않았다 |
+
+**RED** (구현 전, 새 테스트 9개 파일, 로그 `.moai/state/verify/cs2-m4/red.log`):
+
+```
+Error: Cannot find module '../channels' imported from …/src/lib/console/__tests__/channels.test.ts
+Error: Cannot find module '/src/lib/console/feed-fetch' imported from …/src/lib/console/__tests__/feed-fetch.test.ts
+Error: Cannot find module '../feed-parse' imported from …/src/lib/console/__tests__/feed-parse.test.ts
+Error: Cannot find module '/src/app/api/console/channels/route' imported from …/src/app/api/console/__tests__/channels.test.ts
+TypeError: badgeTextColor is not a function
+AssertionError: expected '' to match /<h2 id="h-feed">채널 새 소식<\/h2>/
+ Test Files  9 failed (9)
+      Tests  24 failed | 1 passed (25)
+```
+
+모듈이 없는 5개 파일은 파일 단위로 실패해 테스트 수에 들어가지 않는다. 통과한 1건은 "멤버 계정 메뉴에 채널 관리 없음"(원래 없으므로).
+
+**GREEN 중 고친 것**: 링크 타일 `href` 가 `new URL().href` 정규화로 끝에 `/` 가 붙어 실패 → 검사만 하고 받은 값을 그대로 쓰도록(`feedHref`). `.feedChips` 의 `scrollbar-width` 가 기존 스크롤바 범위 테스트(`.root` 범위 밖 규칙 금지)에 걸려 뺐다. 테스트의 `Uint8Array` 본문 타입 오류(tsc) → `Blob` 으로 감쌈.
+
+**검증** (같은 트리, 이 회차 실행, 부하 2.1~3.4):
+
+```
+$ npx vitest run src/lib/console src/app/api/console src/app/console src/lib/__tests__/console-scrollbar-style.test.ts src/lib/__tests__/console-screen-style.test.ts src/lib/__tests__/console-guide-style.test.ts src/lib/__tests__/ssrf.test.ts src/app/__tests__/console-seo.test.ts src/app/api/admin/auth/google/callback/__tests__ src/lib/__tests__/google-oauth-console.test.ts
+ Test Files  60 passed (60)
+      Tests  856 passed (856)
+
+$ npx tsc --noEmit
+tsc=0
+
+$ xargs npx eslint < eslint-files.txt   # 바뀐·새 ts·tsx 29개
+eslint=0 bytes= 0
+```
+
+공개 저장소 점검 (AC-CS2-040):
+
+```
+$ grep -rnoE "UC[A-Za-z0-9_-]{22}" src/lib/console src/app/console src/app/api/console | grep -oE "UC[A-Za-z0-9_-]{22}$" | sort | uniq -c
+  39 UCfake000000000000000001
+$ grep -rnoE "rss\.blog\.naver\.com/[a-z0-9_-]+|blog\.naver\.com/[a-z0-9_-]+|instagram\.com/[A-Za-z0-9_.]+" src/lib/console src/app/console src/app/api/console | grep -vcE "\.com/fake"
+0
+$ git ls-files data/db | grep -c console-
+0
+$ git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src | wc -l
+0
+```
+
+(커밋 전 작업 트리에서 `grep -r` 로 셌다 — 새 파일이 아직 추적되지 않아 `git grep` 대신 썼다. 커밋 뒤 `git grep` 으로도 같은 결과여야 한다.) 새 코드의 email 은 `*@try-n.com` 지어낸 주소뿐, 바깥 이미지·폰트·스크립트 참조 없음(`console-screen-style.test.ts` 통과). 로그 원본 `.moai/state/verify/cs2-m4/`(커밋 안 함).
+
+**미룬 것 / 남은 일 (리드 확인 필요)**
+
+- 브라우저 확인 전부(로그인 세션 필요): AC-CS2-038 375px `scrollWidth ≤ 375`·첫 두 타일 같은 `top`·불러오기 전후 제목 `top`, AC-CS2-039 키보드만으로 칩·보기 전환, AC-CS2-040 로컬 데이터에 실제 채널을 넣고 썸네일/링크 타일·네트워크 탭 같은 출처 확인과 채널별 결과(값 없이) 기록. 유튜브 피드가 지금도 404 인지는 이번 회차에 바깥 요청을 하지 않아 모른다.
+- `next build` 는 돌리지 않았다.
+- 썸네일 경로 응답은 원본을 통째로 메모리에 읽은 뒤 보낸다(상한 2MB). 스트리밍 전달은 하지 않는다.
+- 캐시는 인스턴스마다 따로다(spec.md §1.2). 한 출처가 5초 시간 초과면 피드 응답도 그만큼 늦는다(출처들은 동시에 가져옴).
+- 채널을 저장해도 다른 사람 브라우저는 최대 30분 동안 예전 피드를 볼 수 있다(`private, max-age=1800`).
+
+
 ## §E.3 Run-phase Audit-Ready Signal
 
 _<pending run-phase>_

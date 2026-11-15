@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { ConsoleListItem } from '@/lib/console/types';
 import { attentionCounts, categoryName, homeSummary, recentItems, safeUrl } from '@/lib/console/ui-model';
 import { useApp } from './app-context';
+import ChannelFeed, { type FeedState } from './ChannelFeed';
 import { AccTag } from './ItemCard';
 import { BrandMark, Icon } from './Icon';
 import { ItemList } from './ListView';
@@ -112,11 +113,22 @@ function PinEditList({ items }: { items: ConsoleListItem[] }) {
   );
 }
 
-// Home (REQ-CON-020): pinned or team essentials, recently updated, the per-category summary of the
+// Home (REQ-CON-020): pinned or team essentials, channel updates, the per-category summary of the
 // regular categories (never the wiki, REQ-CON-025), and one needs-attention line only when needed.
-// SPEC-CONSOLE-002 M3: 최근 수정 목록은 "최근 수정한 카드 보기" 펼침 안에서 목록·카드 보기로 그린다
-// (REQ-CS2-022/037). M4 에서 이 구역 위에 채널 새 소식이 들어온다. recentOpen 은 처음 펼침 상태(테스트용).
-export default function HomeView({ recentOpen = false }: { recentOpen?: boolean }) {
+// SPEC-CONSOLE-002 M4: 예전 "최근 수정된 항목" 자리에 "채널 새 소식"(REQ-CS2-037)이 들어오고, 최근 수정 목록은 그
+// 구역 안 "최근 수정한 카드 보기" 펼침에서 목록·카드 보기로 그린다(REQ-CS2-022). recentOpen·feed 는 테스트용 처음 상태,
+// feedRev 가 바뀌면 피드를 새로 받는다(채널 저장 뒤), onManageChannels 는 관리자 빈 상태의 "채널 관리".
+export default function HomeView({
+  recentOpen = false,
+  feed,
+  feedRev = 0,
+  onManageChannels,
+}: {
+  recentOpen?: boolean;
+  feed?: FeedState;
+  feedRev?: number;
+  onManageChannels?: () => void;
+}) {
   const { lang, t, L } = useUi();
   const app = useApp();
   const [pinEdit, setPinEdit] = useState(false);
@@ -179,26 +191,15 @@ export default function HomeView({ recentOpen = false }: { recentOpen?: boolean 
         )}
       </section>
 
-      <section className={s.hsec} aria-labelledby="h-recent">
+      <section className={s.hsec} aria-labelledby="h-feed">
         <div className={s.hsecH}>
-          <h2 id="h-recent">{t('recent')}</h2>
-          <span className={s.sp} />
-          {app.items.length > 6 ? (
-            <a
-              className={s.linkbtn}
-              href="#/all"
-              onClick={(e) => {
-                e.preventDefault();
-                app.go({ name: 'all' }, { sort: { key: 'updated', dir: -1 } });
-              }}
-            >
-              {t('seeMore')}
-            </a>
-          ) : null}
+          <h2 id="h-feed">{t('feed.title')}</h2>
         </div>
+        <ChannelFeed initial={feed} rev={feedRev} onManage={onManageChannels} />
         <button
           type="button"
-          className={cx(s.btn, s.ghost, s.moreTg)}
+          id="h-recent"
+          className={cx(s.btn, s.ghost, s.moreTg, s.recentTg)}
           aria-expanded={showRecent}
           aria-controls="h-recent-list"
           onClick={() => setShowRecent((v) => !v)}
@@ -211,6 +212,19 @@ export default function HomeView({ recentOpen = false }: { recentOpen?: boolean 
             recent.length ? (
               <>
                 <div className={s.recentBar}>
+                  {app.items.length > 6 ? (
+                    <a
+                      className={s.linkbtn}
+                      href="#/all"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        app.go({ name: 'all' }, { sort: { key: 'updated', dir: -1 } });
+                      }}
+                    >
+                      {t('seeMore')}
+                    </a>
+                  ) : null}
+                  <span className={s.sp} />
                   <ViewToggle />
                 </div>
                 <div className={s.listwrap}>

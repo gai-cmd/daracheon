@@ -1,7 +1,14 @@
 // Browser-side calls to the console API (SPEC-CONSOLE-001 design.md §5). Same-origin fetches only;
 // the session cookie travels automatically and every response is no-store on the server side.
 
-import { AUTOFILL_GUIDE_VERSION, type ConsoleCategory, type ConsoleListItem, type ConsolePerson } from '@/lib/console/types';
+import {
+  AUTOFILL_GUIDE_VERSION,
+  type ConsoleCategory,
+  type ConsoleChannel,
+  type ConsoleListItem,
+  type ConsolePerson,
+  type FeedResponse,
+} from '@/lib/console/types';
 import type { ConsoleMe } from '@/lib/console/ui-model';
 
 export interface BootstrapData {
@@ -73,4 +80,37 @@ export function fetchActivity(itemId: string) {
 /** 자동 입력 끄기 안내를 확인했다고 서버에 남긴다(사람별, 같은 버전이면 다시 써도 같음). */
 export function ackAutofillGuide() {
   return api<{ autofillGuideAck: boolean }>('POST', '/api/console/me/autofill-guide', { version: AUTOFILL_GUIDE_VERSION });
+}
+
+/**
+ * 홈 채널 새 소식 (SPEC-CONSOLE-002 REQ-CS2-031). 서버가 30분 개인 캐시를 허용하므로 보통은 브라우저 캐시를 쓰고,
+ * 관리자가 채널을 바꾼 직전처럼 새 값이 필요할 때만 fresh 로 다시 받는다.
+ */
+export async function fetchFeed(fresh = false): Promise<FeedResponse | null> {
+  let res: Response;
+  try {
+    res = await fetch('/api/console/feed', { credentials: 'same-origin', cache: fresh ? 'no-cache' : 'default' });
+  } catch {
+    return null;
+  }
+  if (!res.ok) return null;
+  try {
+    const data = (await res.json()) as Partial<FeedResponse>;
+    return Array.isArray(data.channels) && Array.isArray(data.items) ? (data as FeedResponse) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 관리자: 채널 목록 전체 (REQ-CS2-030). */
+export function fetchChannels() {
+  return api<{ channels: ConsoleChannel[] }>('GET', '/api/console/channels');
+}
+
+/** 채널 편집기가 보내는 한 줄. 새 행은 id 가 없고, order 는 서버가 행 순서로 매긴다. */
+export type ChannelDraft = Omit<ConsoleChannel, 'id' | 'order'> & { id?: string };
+
+/** 관리자: 채널 목록을 통째로 바꾼다. */
+export function saveChannels(channels: ChannelDraft[]) {
+  return api<{ channels: ConsoleChannel[] }>('PUT', '/api/console/channels', { channels });
 }

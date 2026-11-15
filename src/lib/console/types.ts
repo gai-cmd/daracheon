@@ -106,6 +106,59 @@ export interface ConsolePerson {
 
 export interface ConsoleSettings {
   teamPins: string[];
+  /** 홈 "채널 새 소식"의 채널 목록 (SPEC-CONSOLE-002 REQ-CS2-030). 없으면 빈 목록. */
+  channels?: ConsoleChannel[];
+}
+
+/* ---------- 채널 새 소식 (SPEC-CONSOLE-002 M4, design.md §2.10~§2.11) ---------- */
+
+export const CONSOLE_CHANNEL_KINDS = ['youtube', 'naver', 'rss', 'zoellife-blog', 'instagram'] as const;
+export type ConsoleChannelKind = (typeof CONSOLE_CHANNEL_KINDS)[number];
+export const MAX_CHANNELS = 12;
+
+export interface ConsoleChannel {
+  /** 서버가 붙인다: 'ch-' + 무작위 8자. 저장 뒤 바뀌지 않는다. */
+  id: string;
+  label: string;
+  /** 비면 label 을 쓴다. */
+  label_en: string;
+  kind: ConsoleChannelKind;
+  /** 종류별 규칙 (REQ-CS2-030). 자사 블로그는 빈 문자열. */
+  source: string;
+  /** '#rrggbb' 소문자. */
+  color: string;
+  enabled: boolean;
+  /** 0부터, 저장할 때 행 순서로 다시 매긴다. */
+  order: number;
+}
+
+export type FeedErrorCode = 'timeout' | 'network' | 'http_status' | 'too_large' | 'redirect_rejected' | 'not_allowed' | 'parse_error';
+
+/** GET /api/console/feed 의 채널 한 줄. 출처 값(id·주소)은 보내지 않고 공개 주소(home)만 보낸다. */
+export interface FeedChannelInfo {
+  id: string;
+  label: string;
+  label_en: string;
+  color: string;
+  kind: ConsoleChannelKind;
+  home: string;
+  ok: boolean;
+  error?: FeedErrorCode;
+}
+
+export interface FeedItemInfo {
+  channelId: string;
+  title: string;
+  /** 바깥 피드는 http(s) 주소, 자사 블로그는 같은 출처 경로 '/blog/<slug>'. */
+  url: string;
+  publishedAt: string | null;
+  /** 썸네일 경로('/api/console/feed/thumb?u=…') 또는 null. 바깥 호스트 주소는 오지 않는다. */
+  thumb: string | null;
+}
+
+export interface FeedResponse {
+  channels: FeedChannelInfo[];
+  items: FeedItemInfo[];
 }
 
 /** One AES-256-GCM sealed field. `kv` is the key version (only 1 for now). */
