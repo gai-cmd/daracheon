@@ -93,3 +93,68 @@ D8. CS2-PA-D8 — acceptance.md:L163 (AC-CS2-018), L83 (AC-CS2-007) — 두 판�
 7. D7·D8은 고칠지 말지 작성자 재량이다.
 
 재감사는 위 결함 목록에 한정해 진행한다. D1이 해결되고 새 결함이 생기지 않으면 PASS 판정이 가능하다. 현재 점수 0.86은 Tier M 기준 0.80을 넘는다. D6에서 Tier L로 올리면 기준은 0.85다.
+
+---
+
+# SPEC Review Report: SPEC-CONSOLE-002 (2차)
+Iteration: 2/3
+Verdict: FAIL
+Overall Score: 0.91
+
+> Reasoning context ignored per M1 Context Isolation. 판정 근거는 개정본(HEAD 0263e838, spec 0.2.0)의 spec.md·plan.md·acceptance.md·progress.md와 워크트리 코드뿐이다.
+> 재감사 범위: 1차 결함 CS2-PA-D1~D8의 해결 여부 확인과, 개정으로 바뀐 부분(`git diff 9ef773c0 0263e838`)에서 새로 생긴 결함 찾기.
+> 교차 모델 감사 백엔드: 호출하지 않음(이 감사 세션에 MCP 감사 도구가 노출되지 않음). Claude 단독 판정.
+
+1차에서 막는 결함이던 D1은 해결됐다. 이번에는 실행해서 확인했다. D2·D3·D4·D5·D7·D8도 모두 반영됐다. 남은 것은 D6(Tier M 상한 초과) 하나다. 개정본은 이를 고치지 않고 "리드 결정 대기"로만 적어 두었다(plan.md:L3, progress.md:L15). 그래서 frontmatter의 `tier: M`(spec.md:L14)을 SPEC 자신의 본문이 부정하는 상태가 됐다. Tier는 산출물 구성, 진행 경로(Tier M은 main 직접, Tier L은 PR), PASS 기준을 정한다. 또 상한 초과 시 "Tier를 올리거나 나누라"는 규칙은 HARD 규칙이다(`spec-workflow.md` § SPEC Complexity Tier, L152). 재감사 계약상 이전 회차 결함이 풀리지 않으면 FAIL이다. 그래서 이번 FAIL 사유는 이것 하나다. 나머지 판정 기준은 모두 통과했다.
+
+## Must-Pass Results
+
+- [PASS] MP-1 REQ 번호 일관성: `grep -c '^\*\*REQ-CS2-' spec.md` → 21(REQ-CS2-001~021, spec.md:L55~L105). AC는 `grep -c '^\*\*AC-CS2-'` → 22이고, `uniq -d` 결과 중복 0건이다. 개정 과정에서 번호를 새로 붙이거나 뺀 곳은 없다.
+- [PASS] MP-2 GEARS 형식(요구사항 층 기준): 고쳐진 REQ-CS2-006(L65)·009(L75)·014(L87)도 Event 패턴("When the user selects 링크 after 공유 계정, the form shall restore…", "When the browser blocks the new tab, the console shall show…")과 Ubiquitous 패턴을 지킨다. AC는 검증 층이라 Given-When-Then으로 따로 채점했다.
+- [PASS] MP-3 frontmatter: 12개 정식 필드가 모두 있다(spec.md:L2~L13). `version: "0.2.0"`으로 올렸고 HISTORY 0.2.0 행(L25)과 맞는다.
+- [N/A] MP-4 언어 중립성: Next.js/TypeScript 단일 저장소 SPEC이다.
+- [PASS] MP-5 D7 교차 SPEC: 참조는 SPEC-CONSOLE-001뿐이다. `grep '^status:' ../SPEC-CONSOLE-001/spec.md` → `status: in-progress`. BLOCKING 없음.
+- [PASS] MP-6 D8: `grep -rn syscall` 0건이라 자동 PASS다.
+- [PASS] MP-7 확인 필요 표식: `grep -rn 'NEEDS CLARIFICATION'` 0건이다. research.md는 없다(Tier M 기준).
+
+## Category Scores (0.0-1.0, rubric-anchored)
+
+| Dimension | Score | Rubric Band | Evidence |
+|-----------|-------|-------------|----------|
+| Clarity | 0.90 | 0.75~1.0 | 1차의 설계·요구사항 어긋남 세 곳이 맞춰졌다. D2는 plan.md CS2-D8과 §2.4(`window.open('', '_blank')` → `w.opener = null` → `w.location.replace`), D5는 §2.5 `.root, .root *`, D4는 CS2-D10과 acceptance §8에서 해결됐다. 남은 흠: plan.md:L172의 "design.md §6.2"가 어느 SPEC의 design.md인지 밝히지 않는다(R2-D1) |
+| Completeness | 0.85 | 0.75~1.0 | 필수 절이 모두 있고 D3(삭제 확인)과 D7(왕복 복원)이 요구사항으로 들어갔다(REQ-CS2-009, L75). 감점: Tier 분류가 본문과 어긋난다(D6). Tier L이 되면 design.md·research.md가 필요하다 |
+| Testability | 0.90 | 0.75~1.0 | D8 해결. AC-CS2-018은 `sessionStorage.clear()` 절차로, AC-CS2-007 Safari 항목은 ±16 픽셀 기준으로 바꿨다. 남은 흠: AC-CS2-014는 Safari에서도 새 탭이 열려야 한다고 단정한다(R2-D2) |
+| Traceability | 1.00 | 1.0 | REQ 21개가 모두 AC에 걸린다(spec.md §6, L144~L167). D3는 새 AC 대신 AC-CS2-009 안의 검증 줄로 들어갔고, AC-CS2-009의 연결 대상은 REQ-CS2-009로 맞다. 고아 AC 없음 |
+
+## Regression Check (1차 결함)
+
+- D1 (스크롤바 선택자 순수성): **RESOLVED**. plan.md §2.5(L170~L174)가 `:global(html):has(.root)`와 `.root, .root *`로 바뀌었다. 직접 실행해 확인했다. Next에 번들된 `postcss-modules-local-by-default`(`mode: 'pure'`)로 현재 `console.module.css` 전체와 계획된 규칙 8개(`:global(html):has(.root)`, 그 `::-webkit-scrollbar`·`-track`·`-thumb`·`-thumb:hover`, `.root, .root *`, `.root *::-webkit-scrollbar`, `.root *::-webkit-scrollbar-thumb:hover`)를 함께 처리했다. 결과는 `OK`였고 `html:has(:local(.root)) …`, `:local(.root), :local(.root) * …`로 변환됐다. `.root`가 실제로 쓰이는지도 확인했다. `ConsoleApp.tsx:L443, L575`, `login/LoginScreen.tsx:L59`에서 `s.root`를 쓴다. 대화상자는 루트 안에 그려진다(`Dialog.tsx:L9` 주석 "rendered inside the console root … no portal"). AC-CS2-007에 순수성 검사 줄도 추가됐다(acceptance.md:L86).
+- D2 (`noopener` 판정 불가): **RESOLVED**. REQ-CS2-014(L87)에 "열리면 링크를 보이지 않는다"와 리퍼러 금지가 들어갔다. plan.md CS2-D8과 §2.4는 `noopener` 없이 연 뒤 `opener`를 끊는다. 리퍼러 정책이 적용되는지는 추정이라고 밝히고, AC-CS2-014에서 `document.referrer === ''`로 확인하도록 했다. 정직하게 처리했다.
+- D3 (링크 전환 시 비밀값 삭제): **RESOLVED**. REQ-CS2-009에 저장 전 확인을 요구하고, 취소하면 요청 0건으로 정했다. plan.md CS2-D11과 §2.3에 기존 서버 동작(삭제)을 바꾸지 않는 이유가 있다. AC-CS2-009(acceptance.md:L105~L106)가 취소 시 PATCH 0건과 `console-secrets` 보존, 확인 시 PATCH 1건, 계정 정보가 없을 때 대화상자 없음을 확인한다. 판정 근거인 `hasLoginId`·`hasPassword`는 이미 항목 모델에 있다(`src/lib/console/types.ts:L158~L159`).
+- D4 (bootstrap `me` 엄격 비교): **RESOLVED**. 값을 최상위 `prefs.autofillGuideAck`로 옮겼다(plan.md CS2-D10, §2.2). `bootstrap.test.ts:L33`은 `r.json.me`만 `toEqual`로 비교하고, 응답 전체를 엄격 비교하는 테스트는 없다(`grep 'json).toEqual'` 결과는 items.test.ts:L263의 자격증명 값 비교 1건뿐). 그래서 새 최상위 키가 기존 테스트를 깨지 않는다. acceptance AC-CS2-006·§8과 plan M1이 서로 맞는다.
+- D5 (안쪽 영역 `scrollbar-width`): **RESOLVED**. plan §2.5에 `.root, .root *`가 들어갔고(순수성 통과는 D1에서 확인), AC-CS2-007(L83)이 안쪽 요소의 `scrollbarWidth: thin`을 본다. 공용 규칙은 `globals.css:L142~L162` `@layer base` 안의 `html`과 전체 `::-webkit-scrollbar`다. 콘솔 규칙은 층 밖에 있으므로 우선하고, 색은 `html`에서 상속된다. 설계와 맞다.
+- D6 (Tier M 상한 초과): **UNRESOLVED**. 요구사항 21 > 16, 인수 기준 22 > 16(`spec-workflow.md` L146~L152), 바뀌는 소스 파일 22개 > 15개다. 개정본은 초과를 인정하는 문장만 넣었다(plan.md:L3, progress.md:L15). 아래 D6 항목 참고.
+- D7 (종류 왕복 시 원래 값 소실): **RESOLVED**. REQ-CS2-009, plan CS2-D12와 §2.3(`applyKind(form, kind, linkMemory)`), AC-CS2-009의 순수 함수 사례 4개(L100~L103)가 서로 맞는다. 공유 계정으로 열린 항목이 링크로 바뀌면 `link`·`public`이 되는 경우도 REQ와 AC 사이에서 어긋나지 않는다.
+- D8 (판정 절차 모호): **RESOLVED**. AC-CS2-018(L173)은 `sessionStorage.clear()` 뒤 새로고침으로, AC-CS2-007(L84)은 "스크롤 막대 보기: 항상" 조건과 채널별 ±16 수치 기준으로 바꿨다.
+
+## 개정분 점검 (범위·보안·스크롤바·SPEC-CONSOLE-001 정합·위생)
+
+- 범위 S1~S6: 1차 대조표 그대로 모두 다룬다. 개정으로 빠진 범위는 없다. 소유자가 이어 보낸 요청("자동 입력 끄기 안내 팝업과 설정 화면 안내")은 계속 S6 = REQ-CS2-006, 018~020에 있다. 따라서 D6를 "S6 분리"로 풀면 오너가 요청한 기능이 다른 SPEC으로 밀린다. 이 점은 리드가 판단할 때 고려해야 한다.
+- S4 보안: 개정이 서버 판정 순서(plan §2.2)를 건드리지 않았다. D3 해결책은 화면에서만 막고 서버의 비밀 기록 삭제 규칙(`items/[id]/route.ts:L24~L25`)은 그대로 둔다. SPEC-CONSOLE-001 동작과 맞다. 확인을 우회한 PATCH가 오면 기존대로 지워진다. 이것은 SPEC-CONSOLE-001이 정한 서버 계약이라 새 위험이 아니다.
+- 스크롤바 누출: `.root`는 해시된 지역 클래스다. 공개 사이트와 `/admin`에는 이 클래스가 없으므로 `html:has(:local(.root))`가 걸리지 않는다. 공용 파일 불변 확인(AC-CS2-008)도 그대로다.
+- SPEC-CONSOLE-001 정합: `me` 모양을 유지하고(CS2-D10), 기존 복사 함수(`ConsoleApp.tsx:L186~L209`, `navigator.clipboard` 실패 시 투명하고 `aria-hidden`인 textarea로 대체)를 그대로 쓸 수 있다. REQ-CS2-020의 "보이지 않고, 보조 기술에서 숨기고, 같은 작업 안에서 제거"와도 맞는다.
+- 공개 저장소 위생: 네 문서의 email 표기는 모두 `@try-n.com` 지어낸 주소다(`grep -noE '[A-Za-z0-9._-]+@…' *.md | grep -v try-n.com` 0건). 개정분에 직원 이름, 내부 id, 내부 주소가 없다.
+
+## Defects Found (structured defect-list)
+
+D6. CS2-PA-D6 (이월) — spec.md:L14 `tier: M` vs plan.md:L3, progress.md:L15 — 요구사항 21개, 인수 기준 22개, 소스 파일 22개로 Tier M 상한(16 / 16 / 5~15)을 넘는다. 그런데도 frontmatter는 M으로 남아 있다. 1차 이후 결정이 내려지지 않았다. 이 SPEC의 본문이 스스로 Tier M이 아니라고 적고 있어 분류가 내부적으로 모순된다. Tier가 진행 경로(A/B), 산출물 구성, PASS 기준을 정하므로 이 상태로는 run 단계를 어떤 규칙으로 진행할지 정해지지 않는다. 이전 회차에서 풀리지 않은 결함이다. — Severity: major — Class: blocking — Required fix: 리드가 결정하고 문서에 반영한다. (a) **Tier L 승격**: spec.md `tier: L`, design.md를 추가해 plan.md §1~§2 설계를 옮긴다. research.md도 추가해 코드 조사 근거를 담는다. 1차에서 확인한 `credential/route.ts` 판정 순서, `globals.css` 층 구조, CSS 모듈 순수성 실행 결과 등이 들어가면 된다. plan.md:L3의 "리드 결정 대기" 문장과 progress.md를 고친다. PASS 기준은 0.85이고 이번 점수 0.91은 기준을 넘는다. 진행 경로는 Route B(PR)가 된다. (b) **S6 분리**: REQ-CS2-006, 018~020과 AC-CS2-006, 018~020을 별도 SPEC으로 옮겨 각 16개 이하로 줄인다. 이 경우 오너가 이어 요청한 기능이 뒤로 밀린다. 어느 쪽이든 3차 재감사는 이 결함과, (a)를 고르면 새로 생기는 design.md·research.md에 한정한다.
+
+R2-D1. CS2-PA-R2-D1 — plan.md:L172 — "(design.md §6.2, 포털 없음)"은 SPEC-CONSOLE-002에 design.md가 없는 지금, SPEC-CONSOLE-001의 design.md를 가리키는 것으로 읽힌다. 그런데 어느 SPEC의 문서인지 밝히지 않았다. D6를 (a)로 풀어 이 SPEC에 design.md가 생기면 같은 이름의 다른 문서를 가리키게 된다. — Severity: minor — Class: optional — Required fix: "SPEC-CONSOLE-001 design.md §6.2"로 적는다.
+
+R2-D2. CS2-PA-R2-D2 — acceptance.md:L142~L144 (AC-CS2-014) — Then 절이 "Chrome과 Safari에서 … 새 탭이 로그인 주소로 열린다"고 단정한다. 그런데 plan CS2-D8대로라면 새 탭은 아이디 복사 요청(`await`)이 끝난 뒤에 열린다. 비동기 요청 뒤의 `window.open`은 브라우저의 사용자 동작 판정에 따라 막힐 수 있고, plan.md 위험표도 이를 위험으로 적어 두었다. Safari가 이 경우를 막는다면 구현이 SPEC대로 링크 대체 경로를 보여도 이 AC는 FAIL이 된다. Safari 동작은 이번 감사에서 실행해 확인하지 않았다. 따라서 이 항목은 가설이다. — Severity: minor — Class: optional — Required fix: Safari 줄을 "새 탭이 열리거나, 막히면 토스트 안에 로그인 주소 링크가 보인다(어느 쪽이었는지 진행 기록에 남긴다)"로 바꾼다. Chrome 기본 설정에서 새 탭이 열린다는 판정은 그대로 둔다.
+
+## Recommendation
+
+1. **D6(막는 결함, 리드 결정)**: Tier L로 올릴지, S6를 나눌지 정한다. 오너가 S6 기능을 이번 작업에 넣기를 원하는 흐름이라면 (a) Tier L 승격이 자연스럽다. 이 경우 `tier: L`, design.md(plan §1~§2 이전), research.md(1차·2차 감사에서 실행으로 확인한 근거 포함)를 추가하고 plan.md:L3와 progress.md를 고친다.
+2. R2-D1·R2-D2는 고칠지 말지 작성자 재량이다. 고치면 D6 개정에 함께 넣으면 된다.
+3. 3차 재감사는 D6 해결 여부와 새로 생기는 문서(design.md·research.md)에 한정한다. D6만 풀리고 새 결함이 없으면 PASS다. 현재 점수 0.91은 Tier L 기준 0.85도 넘는다.
