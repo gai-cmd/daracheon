@@ -109,6 +109,14 @@ describe('console document keys', () => {
     expect(rows.map((r) => r.email)).toEqual(['b@try-n.com']);
   });
 
+  it('console-user-prefs: keyed by email, so two people acknowledging at once both survive (SPEC-CONSOLE-002)', async () => {
+    const pref = (email: string) => ({ email, autofillGuide: { version: 1, at: '2026-11-15T00:00:00.000Z' } });
+    await db.writeDataMerged('console-user-prefs', [pref('a@try-n.com')]);
+    await db.writeDataMerged('console-user-prefs', [pref('b@try-n.com')]);
+    const rows = (await db.readDataUncached('console-user-prefs')) as Array<{ email: string }>;
+    expect(rows.map((r) => r.email).sort()).toEqual(['a@try-n.com', 'b@try-n.com']);
+  });
+
   it('console documents are not tombstoned: a removed id can be imported again', async () => {
     await db.writeDataMerged('console-secrets', [secret('A')]);
     await db.writeDataMerged('console-secrets', [], { removedIds: ['A'] });

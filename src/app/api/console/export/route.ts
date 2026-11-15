@@ -1,5 +1,6 @@
 import { readDataUncached } from '@/lib/db';
 import { authorizeConsole, consoleJson } from '@/lib/console/http';
+import { hidesPassword } from '@/lib/console/permissions';
 import { readRegularCategories } from '@/lib/console/store';
 import { CONSOLE_DOCS, type ConsoleItem } from '@/lib/console/types';
 
@@ -26,6 +27,8 @@ function toExportItem(i: ConsoleItem) {
     links: (i.links ?? []).map((l) => ({ label: l.label, label_en: l.label_en, url: l.url })),
     note: i.note,
     note_en: i.note_en,
+    // 표식만 내보낸다. 자격증명 값은 없다 (SPEC-CONSOLE-002 REQ-CS2-002).
+    hide_password: hidesPassword(i),
     updatedAt: i.updatedAt,
     updatedBy: i.updatedBy,
   };

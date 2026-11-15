@@ -58,6 +58,7 @@ function item(over: Partial<ConsoleListItem> & { id: string }): ConsoleListItem 
     version: 1,
     updatedAt: '2026-11-01T00:00:00.000Z',
     updatedBy: '테스트 담당',
+    hide_password: false,
     hasLoginId: false,
     hasPassword: false,
     canEdit: false,

@@ -60,7 +60,7 @@ export type ConsoleItemFields = Pick<
   | 'links'
   | 'note'
   | 'note_en'
->;
+> & { hide_password: boolean };
 
 /** Absolute http(s) or mailto URL only. Relative, protocol-relative and script URLs are refused. */
 export function isSafeConsoleUrl(value: unknown): boolean {
@@ -180,11 +180,17 @@ export function validateItemFields(raw: unknown, opts: { categoryIds: ReadonlySe
   const url = c.text(raw, 'url', CONSOLE_LIMITS.url);
   if (url && !isSafeConsoleUrl(url)) c.fail('url', 'scheme');
 
+  const access_method = c.oneOf(raw, 'access_method', CONSOLE_ACCESS_METHODS);
+  // hide_password (SPEC-CONSOLE-002 REQ-CS2-001): 없으면 false, boolean 이 아니면 오류,
+  // 공유 계정이 아니면 false 로 저장한다 (CS2-D4).
+  const hide = raw.hide_password;
+  if (hide !== undefined && typeof hide !== 'boolean') c.fail('hide_password', 'type');
+
   const value: ConsoleItemFields = {
     category,
     type: c.oneOf(raw, 'type', CONSOLE_ITEM_TYPES),
     status: c.oneOf(raw, 'status', CONSOLE_STATUSES),
-    access_method: c.oneOf(raw, 'access_method', CONSOLE_ACCESS_METHODS),
+    access_method,
     visibility: c.oneOf(raw, 'visibility', CONSOLE_VISIBILITIES),
     team: c.oneOf(raw, 'team', CONSOLE_TEAMS),
     owners: validateOwners(c, raw.owners),
@@ -197,6 +203,7 @@ export function validateItemFields(raw: unknown, opts: { categoryIds: ReadonlySe
     links: validateLinks(c, raw.links),
     note: c.text(raw, 'note', CONSOLE_LIMITS.note),
     note_en: c.text(raw, 'note_en', CONSOLE_LIMITS.note),
+    hide_password: access_method === 'shared-credential' && hide === true,
   };
   return c.errors.length ? { ok: false, errors: c.errors } : { ok: true, value };
 }

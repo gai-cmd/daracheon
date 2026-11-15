@@ -50,6 +50,14 @@ export function credAccess(user: ConsoleUser, item: Pick<ConsoleItem, 'owners' |
   return 'ok';
 }
 
+// @MX:ANCHOR: [AUTO] hide_password 판정의 단일 지점 — 목록·내보내기·자격증명 라우트가 함께 쓴다.
+// @MX:REASON: 여기서 access_method 조건을 빼면 링크 항목에 남은 표식이 되살아나고, 목록 표시와
+// 서버의 보기 거절(REQ-CS2-004)이 서로 어긋난다.
+/** 이 항목이 비밀번호 보기를 막는지 (SPEC-CONSOLE-002 REQ-CS2-001·004). 공유 계정 항목에서만 참이 될 수 있다. */
+export function hidesPassword(item: Pick<ConsoleItem, 'access_method' | 'hide_password'>): boolean {
+  return item.access_method === 'shared-credential' && item.hide_password === true;
+}
+
 /**
  * The browser-facing shape of one item. Built field by field (a response DTO), so a stray
  * credential value or record metadata on the stored object can never be copied out.
@@ -76,6 +84,8 @@ export function toListItem(
     description_en: item.description_en,
     tags: [...(item.tags ?? [])],
     links: (item.links ?? []).map((l) => ({ label: l.label, label_en: l.label_en, url: l.url })),
+    // 저장값이 없거나 공유 계정이 아닌 항목은 false (REQ-CS2-001).
+    hide_password: hidesPassword(item),
     version: item.version,
     updatedAt: item.updatedAt,
     updatedBy: item.updatedBy,

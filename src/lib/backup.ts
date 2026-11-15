@@ -45,6 +45,7 @@ export const DB_FILES = [
   'console-people',
   'console-secrets',
   'console-audit-log',  // 감사 기록 — 복원은 audit-log 와 같이 restoreAuditLog 일 때만
+  'console-user-prefs', // 사람별 화면 기록(자동 입력 끄기 안내 확인) — SPEC-CONSOLE-002
 ] as const;
 
 // ⚠️ 미백업 잔여 항목(다음 단계): QR 하위 per-record 컬렉션

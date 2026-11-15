@@ -25,7 +25,12 @@ export const CONSOLE_DOCS = {
   settings: 'console-settings',
   secrets: 'console-secrets',
   audit: 'console-audit-log',
+  /** 사람별 화면 기록(자동 입력 끄기 안내 확인). email 키 (SPEC-CONSOLE-002 REQ-CS2-006). */
+  userPrefs: 'console-user-prefs',
 } as const;
+
+/** 자동 입력 끄기 안내 버전. 안내 내용이 크게 바뀌면 올려서 모두에게 다시 띄운다 (CS2-D7). */
+export const AUTOFILL_GUIDE_VERSION = 1;
 
 export interface ConsoleOwner {
   name: string;
@@ -59,11 +64,23 @@ export interface ConsoleItem {
   /** Private note: returned only to owners and console admins. */
   note: string;
   note_en: string;
+  /**
+   * 담당자·관리자가 아닌 사람에게 비밀번호 보기를 막고 복사만 허용한다 (SPEC-CONSOLE-002 REQ-CS2-001).
+   * 없으면 false. access_method 가 'shared-credential' 이 아니면 서버가 false 로 저장한다.
+   */
+  hide_password?: boolean;
   version: number;
   updatedAt: string;
   updatedBy: string;
   deletedAt?: string;
   deletedBy?: string;
+}
+
+/** 사람별 화면 기록 한 건. email 과 안내 확인 표시만 담는다 (REQ-CS2-006). */
+export interface ConsoleUserPrefs {
+  /** 소문자 email. 문서 키. */
+  email: string;
+  autofillGuide?: { version: number; at: string };
 }
 
 export interface ConsoleCategory {
@@ -152,7 +169,9 @@ export interface ConsoleUser {
 export type CredentialAccess = 'ok' | 'denied';
 
 /** Item shape sent to the browser in lists (never carries credential values). */
-export type ConsoleListItem = Omit<ConsoleItem, 'note' | 'note_en' | 'deletedAt' | 'deletedBy'> & {
+export type ConsoleListItem = Omit<ConsoleItem, 'note' | 'note_en' | 'deletedAt' | 'deletedBy' | 'hide_password'> & {
+  /** 목록에서는 항상 boolean (REQ-CS2-001). */
+  hide_password: boolean;
   note?: string;
   note_en?: string;
   hasLoginId: boolean;

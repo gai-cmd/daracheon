@@ -2,7 +2,7 @@
 id: SPEC-CONSOLE-002
 title: "팀 콘솔 공유 계정 정비 — 양식 종류 선택, 비밀번호 숨김 공유, 사용 기록, 자동 입력 끄기 안내, 콘솔 스크롤바"
 version: "0.4.0"
-status: draft
+status: in-progress
 created: 2026-11-15
 updated: 2026-11-15
 author: manager-spec

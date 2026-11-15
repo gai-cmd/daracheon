@@ -165,6 +165,8 @@ const FILE_KEY: Record<string, (r: unknown) => string | undefined> = {
   // 팀 콘솔 (SPEC-CONSOLE-001): 사람 목록은 email, 암호문 문서는 itemId 가 키.
   'console-people': (r) => (r as { email?: string }).email,
   'console-secrets': (r) => (r as { itemId?: string }).itemId,
+  // SPEC-CONSOLE-002: 사람별 화면 기록(자동 입력 끄기 안내 확인)도 email 이 키.
+  'console-user-prefs': (r) => (r as { email?: string }).email,
 };
 function keyOf(filename: string, r: unknown): string | null {
   const fn = FILE_KEY[filename];

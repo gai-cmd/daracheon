@@ -75,6 +75,8 @@ const ITEM_FIELDS = [
   'links',
   'note',
   'note_en',
+  // SPEC-CONSOLE-002 REQ-CS2-002: boolean 표식만. 값 검사는 validateItemFields 가 한다.
+  'hide_password',
 ] as const;
 
 function isRecord(v: unknown): v is Record<string, unknown> {

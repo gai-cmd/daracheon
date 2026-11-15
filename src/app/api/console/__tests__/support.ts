@@ -25,22 +25,33 @@ export const ENV: Record<string, string> = {
   CONSOLE_ADMIN_EMAILS: 'adm@try-n.com',
 };
 
-const KEY_OF: Record<string, string> = { 'console-people': 'email', 'console-secrets': 'itemId' };
+const KEY_OF: Record<string, string> = {
+  'console-people': 'email',
+  'console-secrets': 'itemId',
+  'console-user-prefs': 'email',
+};
 const keyOf = (doc: string, r: Rec) => r[KEY_OF[doc] ?? 'id'] as string | undefined;
 
 export const store = {
   docs: new Map<string, Rec[]>(),
   singles: new Map<string, Rec>(),
   failWrites: new Set<string>(),
+  /** 읽기가 실패하는 문서 (SPEC-CONSOLE-002: prefs 읽기 실패에도 bootstrap 은 살아야 함). */
+  failReads: new Set<string>(),
   writes: [] as string[],
 };
+
+function readOrFail(name: string) {
+  if (store.failReads.has(name)) throw new Error(`read failed: ${name}`);
+  return clone(store.docs.get(name) ?? []);
+}
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 
 export const dbMock = {
-  readData: vi.fn(async (name: string) => clone(store.docs.get(name) ?? [])),
-  readDataUncached: vi.fn(async (name: string) => clone(store.docs.get(name) ?? [])),
-  readDataForWrite: vi.fn(async (name: string) => clone(store.docs.get(name) ?? [])),
+  readData: vi.fn(async (name: string) => readOrFail(name)),
+  readDataUncached: vi.fn(async (name: string) => readOrFail(name)),
+  readDataForWrite: vi.fn(async (name: string) => readOrFail(name)),
   writeDataMerged: vi.fn(async (name: string, next: Rec[], opts: { removedIds?: string[] } = {}) => {
     if (store.failWrites.has(name)) throw new Error(`write failed: ${name}`);
     store.writes.push(name);
@@ -126,6 +137,7 @@ export function resetStore(saved: Record<string, string | undefined>) {
   ]);
   store.singles = new Map();
   store.failWrites = new Set();
+  store.failReads = new Set();
   store.writes = [];
   vi.spyOn(Date, 'now').mockReturnValue(NOW);
   vi.spyOn(console, 'error').mockImplementation(() => {});

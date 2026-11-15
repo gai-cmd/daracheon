@@ -2,7 +2,7 @@ import { readDataUncached } from '@/lib/db';
 import { getConsoleAdminEmails } from '@/lib/console/config';
 import { readConsoleSession } from '@/lib/console/session';
 import { consoleJson, guardStateChange } from '@/lib/console/http';
-import { credAccess, resolveConsoleUser } from '@/lib/console/permissions';
+import { credAccess, hidesPassword, isOwner, resolveConsoleUser } from '@/lib/console/permissions';
 import { appendConsoleAudit, countRecentCredentialReveals } from '@/lib/console/audit';
 import { getVaultKey, openField } from '@/lib/console/vault';
 import {
@@ -28,7 +28,8 @@ type Purpose = (typeof PURPOSES)[number];
 // @MX:REASON: the audit entry must be written before the value leaves; reordering these steps
 // would reveal credentials without a trace (REQ-CON-016, AC-CON-016).
 // Reveals one shared-credential field (SPEC-CONSOLE-001 REQ-CON-016, design.md §5.1):
-// session + Origin -> item -> visibility check (denial audited) -> rate cap (audited) ->
+// session + Origin -> item -> visibility check (denial audited) -> hide_password view gate
+// (SPEC-CONSOLE-002, denial audited) -> rate cap (audited) ->
 // audit entry written FIRST (no entry, no value) -> decrypt -> { value }, never cached.
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const blocked = guardStateChange(request);
@@ -78,6 +79,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         console.error('[console credential] deny audit failed:', err instanceof Error ? err.message : 'unknown');
       }
       return consoleJson({ error: 'forbidden' }, 403);
+    }
+
+    // SPEC-CONSOLE-002 REQ-CS2-004: 비밀번호 숨기기 항목은 편집 권한자(관리자·담당자)만 볼 수 있고,
+    // 나머지는 복사만 된다. 거절은 열람 상한(view·copy 건수)에 들어가지 않는 credential.deny 로 남긴다.
+    if (credField === 'password' && purpose === 'view' && hidesPassword(item) && !(user.isAdmin || isOwner(user, item))) {
+      try {
+        await appendConsoleAudit({ ...auditBase, action: 'credential.deny', meta: { field: credField, reason: 'reveal_hidden' } });
+      } catch (err) {
+        console.error('[console credential] hidden-deny audit failed:', err instanceof Error ? err.message : 'unknown');
+      }
+      return consoleJson({ error: 'reveal_hidden' }, 403);
     }
 
     if ((await countRecentCredentialReveals(user.email, { windowMs: REVEAL_WINDOW_MS })) >= REVEAL_LIMIT) {
