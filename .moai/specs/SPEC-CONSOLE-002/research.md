@@ -63,7 +63,9 @@
 ### 2.6 복사와 입력 칸
 
 - 복사 도우미 `copyText`(`ConsoleApp.tsx` L186~L209): 보안 컨텍스트에서 `navigator.clipboard.writeText`를 먼저 쓰고, 실패하거나 쓸 수 없으면 임시 `textarea`를 열린 대화상자 또는 콘솔 루트에 붙였다가 `execCommand('copy')` 뒤 `remove()`한다. 임시 칸은 `readonly`, `aria-hidden="true"`, `position:fixed`·1px·`opacity:0`이다.
-- 양식 입력 칸은 대부분 `autoComplete="off"`이지만 비밀번호 칸 `f-pw`는 `autoComplete="new-password"`다(`ItemForm.tsx` L412). `data-1p-ignore`·`data-lpignore`는 아직 없다. REQ-CS2-020이 이를 바꾼다(design.md §2.7).
+- 양식 입력 칸은 대부분 `autoComplete="off"`이지만 비밀번호 칸 `f-pw`는 `autoComplete="new-password"`다(`ItemForm.tsx` L412). `data-1p-ignore`·`data-lpignore`는 아직 없다. REQ-CS2-020은 아이디 칸 `off`와 비밀번호 칸 `new-password`를 그대로 두고 두 칸에 `data-1p-ignore`·`data-lpignore="true"`를 더한다(design.md §2.7).
+- 같은 출처의 관리자 로그인 양식 `src/app/admin/login/page.tsx` L107~L109는 `type="password"`·`autoComplete="current-password"`다. 관리자 브라우저에는 이 출처(zoellife.com)의 저장된 비밀번호가 있을 수 있다.
+- MDN `autocomplete` 속성 문서(<https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/autocomplete>)는 브라우저가 로그인 칸의 `off`를 무시할 수 있고, 대부분의 최신 브라우저에서 `off`로는 비밀번호 관리자의 자동 채우기나 저장 제안을 막지 못한다고 적는다. `new-password`는 새 비밀번호 칸용 값이고, 브라우저가 기존 비밀번호를 잘못 채우지 않는 데 쓸 수 있다고 적는다. 문서는 "할 수 있다"로 표현하므로 보장이 아니고, 다른 사람의 비밀번호를 넣는 칸을 직접 다루지는 않는다. 그래서 실제 동작은 AC-CS2-020의 브라우저 확인으로 본다.
 
 ### 2.7 bootstrap 응답과 기존 테스트
 
@@ -109,4 +111,5 @@
 - 스크립트가 시작한 새 탭 이동에서 `document.referrer`가 빈 문자열인지 — AC-CS2-014.
 - 브라우저별 설정 주소와 메뉴 이름(design.md §2.6 표) — 이 맥에 설치된 브라우저만 직접 확인한다(AC-CS2-019). 설치되지 않은 브라우저는 미확인으로 남긴다.
 - macOS `x-apple.systempreferences:` 딥링크가 웹 페이지에서 Safari 자동 완성 설정을 여는지 — 확인한 경우에만 쓴다.
+- 같은 출처 비밀번호가 저장된 Chrome 프로필에서 공유 계정 편집 양식의 아이디·비밀번호 칸이 자동으로 채워지지 않는지 — AC-CS2-020 브라우저 확인. 채워지면 실패이며 진행 기록에 남긴다.
 - 운영 데이터의 공유 계정 항목 수와 계정 정보 저장 비율 — 운영 Blob을 읽지 않는 작업이라 조사하지 않았다.

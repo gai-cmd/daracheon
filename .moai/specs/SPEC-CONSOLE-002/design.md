@@ -196,7 +196,11 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 
 ### 2.7 입력 칸 속성과 화면에 보이지 않는 복사
 
-- 콘솔이 그리는 자격증명 입력 칸(양식의 아이디·비밀번호)에는 `autocomplete="off"`, `data-1p-ignore`, `data-lpignore="true"`를 붙인다(REQ-CS2-020). 지금 비밀번호 칸은 `autoComplete="new-password"`(research.md §2.6)이므로 `off`로 바꾼다. 브라우저가 이 속성을 무시할 수 있다는 점은 spec.md §1.1에 적었다.
+- 콘솔이 그리는 자격증명 입력 칸은 칸마다 속성이 다르다(REQ-CS2-020).
+  - 아이디 칸: `autocomplete="off"`(지금과 같음).
+  - 비밀번호 칸: `autocomplete="new-password"`를 그대로 둔다(SPEC-CONSOLE-001 값, research.md §2.6). 이유: 브라우저는 비밀번호 칸의 `off`를 따르지 않을 수 있고, 같은 출처의 `/admin/login`에 저장된 관리자 비밀번호가 이 칸에 채워지면 "빈 칸 = 유지" 규칙(§2.3)이 깨져 공유 비밀번호가 관리자 개인 비밀번호로 바뀐 채 멤버에게 복사될 수 있다(plan-audit CS2-PA-R3-D1).
+  - 두 칸 모두 `data-1p-ignore`, `data-lpignore="true"`를 더한다.
+- 브라우저가 이 속성도 무시할 수 있다는 점은 spec.md §1.1에 적었다. 그래서 AC-CS2-020은 속성 확인과 함께, 같은 출처 비밀번호가 저장된 브라우저에서 칸이 비어 있고 저장해도 값이 바뀌지 않는지를 실제로 확인한다.
 - 복사는 기존 `copyText`(research.md §2.6)를 그대로 쓴다. `navigator.clipboard.writeText`가 먼저이고, 쓸 수 없을 때만 임시 `textarea`를 쓴다. 임시 칸은 이미 `opacity:0`·1px·`aria-hidden="true"`이고 같은 작업 안에서 `remove()`된다. 값을 보이는 요소에 넣는 새 경로는 만들지 않는다.
 
 ## 3. 요구사항과 설계 대응

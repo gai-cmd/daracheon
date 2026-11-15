@@ -1,7 +1,7 @@
 ---
 id: SPEC-CONSOLE-002
 title: "팀 콘솔 공유 계정 정비 — 양식 종류 선택, 비밀번호 숨김 공유, 사용 기록, 자동 입력 끄기 안내, 콘솔 스크롤바"
-version: "0.3.0"
+version: "0.4.0"
 status: draft
 created: 2026-11-15
 updated: 2026-11-15
@@ -24,6 +24,7 @@ depends_on: [SPEC-CONSOLE-001]
 | 0.1.0 | 2026-11-15 | manager-spec | 최초 작성(draft). 오너 요청 2건(2026-11-15: 스크롤바·분류 선택기·TeamPassword식 계정 공유, 자동 입력 끄기 안내)과 리드가 정한 범위 S1~S6을 근거로 함 |
 | 0.2.0 | 2026-11-15 | manager-spec | plan-audit 1차(FAIL 0.86) 결함 반영. CS2-PA-D1 스크롤바 선택자를 CSS 모듈 순수성 검사를 통과하는 형태로 교체, D2 새 탭 차단 판정 방식 교체(REQ-CS2-014), D3 링크 전환 시 저장된 계정 정보 삭제 확인(REQ-CS2-009), D4 안내 확인 값을 `me` 밖으로 이동(REQ-CS2-006), D5 안쪽 스크롤 영역 굵기, D7 종류 왕복 시 원래 형식·접속 방식 복원(REQ-CS2-009), D8 판정 절차 수치화. D6(Tier 초과)은 리드 결정 대기 |
 | 0.3.0 | 2026-11-15 | manager-spec | plan-audit 2차(FAIL 0.91) 반영. CS2-PA-D6 리드 결정 (a): 범위 S1~S6을 유지하고 Tier L로 승격(오너가 S6을 이번 작업에 요청). design.md 추가(0.2.0 plan.md §1~§2 이전, 입력 칸 속성 §2.7과 요구사항 대응표 §3 추가), research.md 추가(코드 조사·TeamPassword 도움말 조사). PASS 기준 0.85, 진행 경로 Route B. R2-D1 "SPEC-CONSOLE-001 design.md §6.2"로 명시, R2-D2 AC-CS2-014 Safari 판정을 "새 탭 또는 토스트 안 링크"로 완화. 요구사항·인수 기준 본문 번호는 바꾸지 않음 |
+| 0.4.0 | 2026-11-15 | manager-spec | plan-audit 3차(FAIL 0.93) 반영, 리드가 이 수정으로 3차를 수용(재감사 없음). CS2-PA-R3-D1: REQ-CS2-020을 칸별로 나눔 — 아이디 칸 `autocomplete="off"`, 비밀번호 칸 `autocomplete="new-password"` 유지(같은 출처 `/admin/login`의 저장된 비밀번호가 공유 계정 양식에 채워지는 위험), 두 칸 모두 `data-1p-ignore`·`data-lpignore="true"`. §1.1 한계 문장, design.md §2.7, AC-CS2-020(칸별 판정 + 같은 출처 저장 비밀번호 브라우저 확인), research.md §2.6·§4 함께 고침. CS2-PA-R3-D2: AC-CS2-014 Chrome 조건을 "Chrome 기본 설정(팝업 차단 켜짐, 이 사이트 예외 없음)"으로 고침. 요구사항·인수 기준 번호는 바꾸지 않음 |
 
 ## 1. 배경과 목적
 
@@ -39,7 +40,7 @@ SPEC-CONSOLE-001로 `/console`이 운영 중이다. 오너가 실제로 써 보�
 
 - **복사만 허용은 화면 수준의 장치다.** "비밀번호 숨기기"를 켜도 복사하는 순간 비밀번호는 멤버의 브라우저와 클립보드로 간다. 붙여 넣은 칸을 개발자 도구로 보거나 다른 곳에 붙여 넣으면 값을 알 수 있다. 암호학적 비밀 유지가 아니라 "화면에 보여 주지 않고, 누가 언제 복사했는지 남기는" 장치다.
 - **이 사이트는 브라우저 설정을 바꿀 수 없다.** 웹 페이지는 `chrome://`, `edge://`, `about:` 같은 내부 설정 주소로 이동할 수 없다. 콘솔은 안내하고, 설정 주소를 복사해 주고, 멤버가 확인했다는 표시를 받을 뿐이다. 멤버가 실제로 껐는지는 확인할 수 없다.
-- **입력 칸 속성은 권고일 뿐이다.** `autocomplete="off"` 같은 속성을 브라우저가 무시하고 저장을 제안할 수 있다. 그래서 안내 팝업이 필요하다.
+- **입력 칸 속성은 권고일 뿐이다.** 브라우저는 로그인·비밀번호 칸의 `autocomplete="off"`를 따르지 않을 수 있다. 그래서 비밀번호 칸은 이 사이트에 저장된 다른 비밀번호가 채워지지 않도록 `autocomplete="new-password"`로 둔다. 그래도 브라우저가 속성을 무시하고 채우거나 저장을 제안할 수 있다. 그래서 안내 팝업이 필요하다.
 
 ## 2. 용어
 
@@ -99,7 +100,7 @@ SPEC-CONSOLE-001로 `/console`이 운영 중이다. 오너가 실제로 써 보�
 
 **REQ-CS2-019** — The autofill-guide dialog shall detect the browser from the user agent (Chrome, Edge, Whale, Safari, Firefox; desktop or mobile; otherwise a generic guide) and shall show numbered steps for that browser to turn off password-save offers and automatic sign-in or autofill. Where the browser is a desktop browser with a known settings address, the primary button 설정 화면 열기 shall copy that address to the clipboard and tell the user to paste it into the address bar; on Safari and on mobile browsers the dialog shall show the menu path instead of a copy button. The dialog shall state that the site cannot change browser settings itself.
 
-**REQ-CS2-020** — Every credential input the console renders shall carry `autocomplete="off"`, `data-1p-ignore`, and `data-lpignore="true"`, and when the console copies a credential value it shall not place that value in any visible element; any temporary copy element shall be invisible, hidden from assistive technology, and removed in the same task.
+**REQ-CS2-020** — The login-ID input the console renders shall carry `autocomplete="off"`, the password input the console renders shall carry `autocomplete="new-password"`, and both inputs shall carry `data-1p-ignore` and `data-lpignore="true"`; when the console copies a credential value it shall not place that value in any visible element; any temporary copy element shall be invisible, hidden from assistive technology, and removed in the same task.
 
 ### 3.6 화면 — 공통 (M2)
 

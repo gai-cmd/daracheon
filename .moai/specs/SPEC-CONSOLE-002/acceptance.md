@@ -142,7 +142,7 @@
 - Given 로그인 주소와 카나리 아이디가 있는 공유 계정 항목, member 세션
 - When Chrome과 Safari에서 "로그인 열기"를 누른다
 - Then 두 브라우저 모두 클립보드 내용이 카나리 아이디이고, 토스트 "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요"가 보인다
-- And Chrome(팝업 차단을 끈 기본 설정)에서는 새 탭이 로그인 주소로 열리고, 콘솔에 대체 링크가 보이지 않는다
+- And Chrome 기본 설정(팝업 차단 켜짐, 이 사이트 예외 없음)에서는 새 탭이 로그인 주소로 열리고, 콘솔에 대체 링크가 보이지 않는다
 - And Safari에서는 새 탭이 로그인 주소로 열리거나, 막히면 토스트 안에 로그인 주소로 가는 링크가 보인다. 어느 쪽이었는지 progress.md §E.2에 남긴다
 - And 사이트 설정에서 팝업을 차단한 Chrome에서는 새 탭이 열리지 않고, 그 대신 로그인 주소로 가는 링크가 토스트 안에 보인다
 - And 새 탭에서 `window.opener`가 `null`이고 `document.referrer`가 빈 문자열이다
@@ -184,7 +184,10 @@
 **AC-CS2-020** — maps REQ-CS2-020 · 테스트 + 브라우저 확인
 - Given 공유 계정 양식과 상세 패널
 - When 정적 렌더한다
-- Then 아이디 입력과 비밀번호 입력(그리고 콘솔이 그리는 다른 자격증명 입력) 모두에 `autocomplete="off"`, `data-1p-ignore`, `data-lpignore="true"`가 있다
+- Then 아이디 입력에 `autocomplete="off"`가 있다
+- And 비밀번호 입력에 `autocomplete="new-password"`가 있고 `autocomplete="off"`가 아니다
+- And 아이디 입력과 비밀번호 입력 모두에 `data-1p-ignore`와 `data-lpignore="true"`가 있다
+- And 브라우저: 같은 출처(콘솔을 띄운 로컬 개발 서버의 `/admin/login`)의 아이디·비밀번호를 저장해 둔 Chrome 프로필로, 카나리 아이디·카나리 비밀번호가 저장된 공유 계정 항목의 편집 양식을 열면 아이디 칸과 비밀번호 칸이 둘 다 비어 있다(자동 채우기 없음). 다른 칸만 고쳐 저장하면 PATCH 요청 본문에 `login_id`·`password` 값이 없고, 저장 뒤 담당자가 "보기"로 확인한 아이디·비밀번호가 저장 전 카나리 값과 같다. 칸이 채워졌거나 값이 바뀌면 실패다
 - And 복사 대체 경로(클립보드 API가 없을 때)의 임시 요소는 `aria-hidden="true"`, 투명(opacity 0)이며 복사 직후 문서에서 사라진다(단위 테스트 또는 브라우저 확인에서 복사 뒤 `document.querySelectorAll('textarea[aria-hidden="true"]').length === 0`)
 
 ## 6. 공통 (M2)
