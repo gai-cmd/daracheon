@@ -10,6 +10,7 @@ import {
   type ConsoleAccessMethod,
   type ConsoleItemType,
   type ConsoleListItem,
+  type ConsoleOwner,
   type ConsoleTeam,
   type ConsoleVisibility,
 } from '@/lib/console/types';
@@ -17,6 +18,7 @@ import {
   LINK_ACCESS_METHODS,
   applyKind,
   categoryName,
+  enFormTitles,
   hostOf,
   isMine,
   kindOf,
@@ -32,6 +34,7 @@ import { useApp, type FormFocus } from './app-context';
 import { PanelHead } from './DetailPanel';
 import Dialog from './Dialog';
 import { Icon } from './Icon';
+import { nextInGroup } from './radio-keys';
 import s from './console.module.css';
 import { cx } from './cx';
 import { useUi } from './ui-context';
@@ -39,6 +42,7 @@ import { useUi } from './ui-context';
 const MASK = '••••••••';
 /** 분류 select 의 관리자 전용 마지막 선택지 값 (REQ-CS2-012). 실제 분류 id 와 겹치지 않는다. */
 const NEW_CATEGORY = '__new_category__';
+const KINDS = ['link', 'shared'] as const;
 const SHARE_TARGETS = [
   ['전체', 'share.all'],
   ['팀', 'share.team'],
@@ -53,9 +57,8 @@ function KindControl({ kind, onChange }: { kind: ItemKind; onChange: (k: ItemKin
   const { t } = useUi();
   const refs = { link: useRef<HTMLButtonElement>(null), shared: useRef<HTMLButtonElement>(null) };
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
-    e.preventDefault();
-    const next: ItemKind = e.key === 'Home' ? 'link' : e.key === 'End' ? 'shared' : kind === 'link' ? 'shared' : 'link';
+    const next = nextInGroup(e, kind, KINDS);
+    if (!next) return;
     onChange(next);
     refs[next].current?.focus();
   };
@@ -65,7 +68,7 @@ function KindControl({ kind, onChange }: { kind: ItemKind; onChange: (k: ItemKin
         {t('kind.label')}
       </span>
       <div className={cx(s.seg, s.wide, s.kindSeg)} role="radiogroup" aria-labelledby="f-kind-l" onKeyDown={onKey}>
-        {(['link', 'shared'] as const).map((k) => (
+        {KINDS.map((k) => (
           <button
             key={k}
             ref={refs[k]}
@@ -105,6 +108,8 @@ function Field({ id, label, hint, err, children, after }: { id: string; label: s
 interface LinkRow {
   key: number;
   label: string;
+  /** 영어 화면에서 고치는 영문 이름 (REQ-CS2-025). 한국어 화면에서는 아래 orig 규칙을 쓴다. */
+  labelEn: string;
   url: string;
   orig?: { label: string; label_en: string };
 }
@@ -114,6 +119,8 @@ type Errors = Partial<Record<'title' | 'url' | 'links' | 'owners' | 'form', stri
 // Add / edit form in the detail panel (REQ-CON-010/013/014). By default only the address and the
 // linked addresses are open; "더 보기" reveals the rest. Credential fields are write-only: an empty
 // field keeps what is stored, and a stored value is never shown here.
+// SPEC-CONSOLE-002 REQ-CS2-025 (design.md §2.9): 영어 화면은 영문 칸(title_en·description_en·note_en·label_en)이
+// 주 입력이고 한국어 칸은 더 보기 안 "Korean text" 묶음으로 간다. 빈 영문 칸은 한국어 값을 placeholder 로 보인다.
 export default function ItemForm({
   item,
   defaultCategory,
@@ -132,6 +139,7 @@ export default function ItemForm({
   const { lang, t, L } = useUi();
   const app = useApp();
   const isNew = !item;
+  const en = lang === 'en';
   const choices = useMemo(() => categoryChoices(app.categories), [app.categories]);
   const meOwner = { name: app.me.name, email: app.me.email };
 
@@ -141,7 +149,7 @@ export default function ItemForm({
   const [desc, setDesc] = useState(item?.description ?? '');
   const seq = useRef(0);
   const [links, setLinks] = useState<LinkRow[]>(() =>
-    (item?.links ?? []).map((l) => ({ key: seq.current++, label: l.label, url: l.url, orig: { label: l.label, label_en: l.label_en } }))
+    (item?.links ?? []).map((l) => ({ key: seq.current++, label: l.label, labelEn: l.label_en ?? '', url: l.url, orig: { label: l.label, label_en: l.label_en } }))
   );
   const [loginId, setLoginId] = useState('');
   const [pw, setPw] = useState('');
@@ -151,11 +159,8 @@ export default function ItemForm({
   const [type, setType] = useState<ConsoleItemType>(item?.type ?? 'link');
   const [team, setTeam] = useState<ConsoleTeam>(item?.team ?? app.me.team);
   // A name round-trips only when the people list maps it back to the same email; otherwise the email is shown.
-  const [owners, setOwners] = useState(() =>
-    (item ? item.owners : [meOwner])
-      .map((o) => (o.email && !app.people.some((p) => p.name === o.name && p.email.toLowerCase() === o.email!.toLowerCase()) ? o.email : o.name))
-      .join(', ')
-  );
+  // 영어 화면은 영문 이름을 쓰고, 같은 검사를 영문 이름에도 한다 (REQ-CS2-026).
+  const [owners, setOwners] = useState(() => (item ? item.owners : [meOwner]).map((o) => ownerInputLabel(o)).join(', '));
   const [tags, setTags] = useState((item?.tags ?? []).join(', '));
   const [access, setAccess] = useState<ConsoleAccessMethod>(item?.access_method ?? 'public');
   // 링크일 때의 형식·접속 방식 기억 (CS2-D12). 공유 계정으로 갈 때 갱신하고 링크로 돌아올 때 되살린다.
@@ -165,6 +170,7 @@ export default function ItemForm({
   const pending = useRef<Record<string, unknown> | null>(null);
   const [vis, setVis] = useState<ConsoleVisibility>(item?.visibility ?? '전체');
   const [note, setNote] = useState(item?.note ?? '');
+  const [noteEn, setNoteEn] = useState(item?.note_en ?? '');
   const [titleEn, setTitleEn] = useState(item?.title_en ?? '');
   const [descEn, setDescEn] = useState(item?.description_en ?? '');
   const [errors, setErrors] = useState<Errors>({});
@@ -199,6 +205,15 @@ export default function ItemForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function ownerInputLabel(o: ConsoleOwner): string {
+    if (!o.email) return o.name;
+    const p = app.people.find((x) => x.email.toLowerCase() === o.email!.toLowerCase());
+    const shown = en && p?.name_en ? p.name_en : o.name;
+    return ownersFromText(shown, app.people)[0]?.email === o.email.toLowerCase() ? shown : o.email;
+  }
+  /** 빈 영문 칸의 placeholder: 한국어 값이 있을 때만. */
+  const koHint = (enValue: string, koValue: string) => (!enValue && koValue ? koValue : undefined);
+
   const kind = kindOf({ access_method: access });
   const shared = kind === 'shared';
   const chooseKind = (k: ItemKind) => {
@@ -229,21 +244,26 @@ export default function ItemForm({
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const errs: Errors = {};
-    const tt = title.trim();
-    if (!tt) errs.title = t('errTitle');
+    // 영어 화면: 한국어 제목이 비면 영문 제목을 함께 보낸다, 둘 다 비면 영문 칸에 오류 (CS2-D16).
+    const titles = en ? enFormTitles(title, titleEn) : title.trim() ? { title: title.trim(), title_en: titleEn.trim() } : null;
+    if (!titles) errs.title = t('errTitle');
     const nu = normUrl(url);
     if (nu === null) errs.url = t('errUrl');
     const outLinks: { label: string; label_en: string; url: string }[] = [];
     for (const r of links) {
       const label = r.label.trim();
       const raw = r.url.trim();
-      if (!label && !raw) continue;
+      if (!label && !raw && !(en && r.labelEn.trim())) continue;
       const lu = normUrl(raw);
       if (!raw || !lu) {
         errs.links = t('errUrl');
         continue;
       }
-      outLinks.push({ label: label || hostOf(lu), label_en: r.orig && r.orig.label === label ? r.orig.label_en : '', url: lu });
+      // 한국어 화면: 한국어 이름을 고치면 영문 이름을 비운다(SPEC-CONSOLE-001). 영어 화면: 두 값을 그대로 보낸다.
+      if (en) {
+        const labelEn = r.labelEn.trim();
+        outLinks.push({ label: label || labelEn || hostOf(lu), label_en: labelEn, url: lu });
+      } else outLinks.push({ label: label || hostOf(lu), label_en: r.orig && r.orig.label === label ? r.orig.label_en : '', url: lu });
     }
     const ownerList = ownersFromText(owners, app.people);
     if (item && !app.me.isAdmin && !isMine({ owners: ownerList }, app.me.email)) errs.owners = t('errOwnerSelf');
@@ -267,8 +287,8 @@ export default function ItemForm({
       team,
       owners: ownerList,
       url: finalUrl,
-      title: tt,
-      title_en: titleEn.trim(),
+      title: titles!.title,
+      title_en: titles!.title_en,
       description: desc.trim(),
       description_en: descEn.trim(),
       tags: tags
@@ -277,7 +297,8 @@ export default function ItemForm({
         .filter(Boolean),
       links: outLinks,
       note: noteT,
-      note_en: item && item.note === noteT ? item.note_en ?? '' : '',
+      // 한국어 화면에서 한국어 메모를 고치면 영문 메모를 비운다(SPEC-CONSOLE-001). 영어 화면은 영문 값을 그대로.
+      note_en: en ? noteEn.trim() : item && item.note === noteT ? item.note_en ?? '' : '',
       hide_password: shared ? hidePw : false,
     };
     if (shared) {
@@ -377,16 +398,39 @@ export default function ItemForm({
     </Field>
   );
 
+  const descId = en ? 'f-desc-en' : 'f-desc';
   const descField = (
-    <Field id="f-desc" label={shared ? t('fMemo') : t('fDesc')} hint={shared ? t('fMemoHint') : undefined}>
+    <Field id={descId} label={shared ? t('fMemo') : t('fDesc')} hint={shared ? t('fMemoHint') : undefined}>
       <textarea
-        id="f-desc"
+        id={descId}
         className={s.input}
         rows={2}
         maxLength={500}
-        value={desc}
-        aria-describedby={shared ? 'f-desc-hint' : undefined}
-        onChange={(e) => setDesc(e.target.value)}
+        lang={en ? 'en' : undefined}
+        value={en ? descEn : desc}
+        placeholder={en ? koHint(descEn, desc) : undefined}
+        aria-describedby={shared ? `${descId}-hint` : undefined}
+        onChange={(e) => (en ? setDescEn(e.target.value) : setDesc(e.target.value))}
+      />
+    </Field>
+  );
+
+  const titleId = en ? 'f-title-en' : 'f-title';
+  const titleField = (
+    <Field id={titleId} label={t('fTitle')} err={errors.title}>
+      <input
+        id={titleId}
+        ref={refs.title}
+        className={s.input}
+        type="text"
+        autoComplete="off"
+        maxLength={200}
+        lang={en ? 'en' : undefined}
+        value={en ? titleEn : title}
+        placeholder={en ? koHint(titleEn, title) : undefined}
+        aria-invalid={errors.title ? true : undefined}
+        aria-describedby={`${titleId}-err`}
+        onChange={(e) => (en ? setTitleEn(e.target.value) : setTitle(e.target.value))}
       />
     </Field>
   );
@@ -405,10 +449,14 @@ export default function ItemForm({
               type="text"
               autoComplete="off"
               maxLength={80}
-              placeholder={t('fLinkLabel')}
+              data-link-label={en ? 'en' : 'ko'}
+              lang={en ? 'en' : undefined}
+              placeholder={en ? r.label || t('fLinkLabel') : t('fLinkLabel')}
               aria-label={`${t('fLinks')} · ${t('fLinkLabel')}`}
-              value={r.label}
-              onChange={(e) => setLinks((ls) => ls.map((x) => (x.key === r.key ? { ...x, label: e.target.value } : x)))}
+              value={en ? r.labelEn : r.label}
+              onChange={(e) =>
+                setLinks((ls) => ls.map((x) => (x.key === r.key ? (en ? { ...x, labelEn: e.target.value } : { ...x, label: e.target.value }) : x)))
+              }
             />
             <input
               className={cx(s.input, s.lUrl)}
@@ -444,7 +492,7 @@ export default function ItemForm({
         type="button"
         className={cx(s.linkbtn, s.moreTg)}
         disabled={links.length >= 20}
-        onClick={() => setLinks((ls) => [...ls, { key: seq.current++, label: '', url: '' }])}
+        onClick={() => setLinks((ls) => [...ls, { key: seq.current++, label: '', labelEn: '', url: '' }])}
       >
         <Icon name="plus" size={16} />
         {t('addLink')}
@@ -574,20 +622,7 @@ export default function ItemForm({
           ) : null}
           <KindControl kind={kind} onChange={chooseKind} />
           {catField}
-          <Field id="f-title" label={t('fTitle')} err={errors.title}>
-            <input
-              id="f-title"
-              ref={refs.title}
-              className={s.input}
-              type="text"
-              autoComplete="off"
-              maxLength={200}
-              value={title}
-              aria-invalid={errors.title ? true : undefined}
-              aria-describedby="f-title-err"
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </Field>
+          {titleField}
           {urlField}
           {shared ? (
             <div className={s.cred}>
@@ -644,7 +679,7 @@ export default function ItemForm({
             </Field>
             <datalist id="f-people">
               {app.people.map((p) => (
-                <option key={p.email} value={p.name}>
+                <option key={p.email} value={en && p.name_en ? p.name_en : p.name}>
                   {p.email}
                 </option>
               ))}
@@ -674,15 +709,63 @@ export default function ItemForm({
                 </Field>
               </div>
             )}
-            <Field id="f-note" label={t('fNote')} hint={t('fNoteHint')}>
-              <textarea id="f-note" className={s.input} rows={2} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />
-            </Field>
-            <Field id="f-title-en" label={t('fTitleEn')} hint={t('fEnHint')}>
-              <input id="f-title-en" className={s.input} type="text" lang="en" autoComplete="off" maxLength={200} value={titleEn} onChange={(e) => setTitleEn(e.target.value)} />
-            </Field>
-            <Field id="f-desc-en" label={t('fDescEn')}>
-              <textarea id="f-desc-en" className={s.input} rows={2} lang="en" maxLength={500} value={descEn} onChange={(e) => setDescEn(e.target.value)} />
-            </Field>
+            {en ? (
+              <>
+                <Field id="f-note-en" label={t('fNote')} hint={t('fNoteHint')}>
+                  <textarea
+                    id="f-note-en"
+                    className={s.input}
+                    rows={2}
+                    lang="en"
+                    maxLength={1000}
+                    value={noteEn}
+                    placeholder={koHint(noteEn, note)}
+                    onChange={(e) => setNoteEn(e.target.value)}
+                  />
+                </Field>
+                <div className={s.koGroup} role="group" aria-labelledby="f-ko-l">
+                  <span className={s.lblT} id="f-ko-l">
+                    {t('koGroup')}
+                  </span>
+                  <Field id="f-title" label={t('fTitleKo')}>
+                    <input id="f-title" className={s.input} type="text" lang="ko" autoComplete="off" maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} />
+                  </Field>
+                  <Field id="f-desc" label={t('fDescKo')}>
+                    <textarea id="f-desc" className={s.input} rows={2} lang="ko" maxLength={500} value={desc} onChange={(e) => setDesc(e.target.value)} />
+                  </Field>
+                  <Field id="f-note" label={t('fNoteKo')}>
+                    <textarea id="f-note" className={s.input} rows={2} lang="ko" maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />
+                  </Field>
+                  {links.map((r, i) => (
+                    <Field key={r.key} id={`f-link-ko-${r.key}`} label={`${t('fLinkLabelKo')} · ${r.labelEn || hostOf(r.url) || i + 1}`}>
+                      <input
+                        id={`f-link-ko-${r.key}`}
+                        className={s.input}
+                        type="text"
+                        lang="ko"
+                        autoComplete="off"
+                        maxLength={80}
+                        data-link-label="ko"
+                        value={r.label}
+                        onChange={(e) => setLinks((ls) => ls.map((x) => (x.key === r.key ? { ...x, label: e.target.value } : x)))}
+                      />
+                    </Field>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <Field id="f-note" label={t('fNote')} hint={t('fNoteHint')}>
+                  <textarea id="f-note" className={s.input} rows={2} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />
+                </Field>
+                <Field id="f-title-en" label={t('fTitleEn')} hint={t('fEnHint')}>
+                  <input id="f-title-en" className={s.input} type="text" lang="en" autoComplete="off" maxLength={200} value={titleEn} onChange={(e) => setTitleEn(e.target.value)} />
+                </Field>
+                <Field id="f-desc-en" label={t('fDescEn')}>
+                  <textarea id="f-desc-en" className={s.input} rows={2} lang="en" maxLength={500} value={descEn} onChange={(e) => setDescEn(e.target.value)} />
+                </Field>
+              </>
+            )}
           </div>
         </form>
       </div>

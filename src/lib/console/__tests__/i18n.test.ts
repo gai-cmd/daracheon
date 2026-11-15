@@ -112,3 +112,38 @@ describe('SPEC-CONSOLE-002 strings', () => {
     for (const [k, v] of Object.entries(KO)) expect(translate('ko', k), k).toBe(v);
   });
 });
+
+// SPEC-CONSOLE-002 M3: 보기 방식·영문 양식 문구(AC-CS2-023/026/039), 공유 계정 안내 문구(AC-CS2-030).
+describe('SPEC-CONSOLE-002 M3 strings', () => {
+  const PAIRS: Record<string, [string, string]> = {
+    'view.label': ['보기 방식', 'View'],
+    'view.list': ['목록', 'List'],
+    'view.cards': ['카드', 'Cards'],
+    koGroup: ['한국어 내용', 'Korean text'],
+    recentToggle: ['최근 수정한 카드 보기', 'Recently edited cards'],
+  };
+  it('new M3 keys read as decided in both languages', () => {
+    for (const [k, [ko, en]] of Object.entries(PAIRS)) {
+      expect(translate('ko', k), k).toBe(ko);
+      expect(translate('en', k), k).toBe(en);
+    }
+  });
+
+  it('sharedDesc is the exact owner wording (AC-CS2-030)', () => {
+    expect(translate('ko', 'sharedDesc')).toBe('팀이 함께 쓰는 로그인이에요. 항목을 열어 아이디와 비밀번호를 복사해 로그인하세요.');
+    expect(translate('en', 'sharedDesc')).toBe('Logins the team shares. Open an item to copy the login ID and password and sign in.');
+  });
+
+  it('shared-credential access note says 아이디 / login ID and never promises viewing (AC-CS2-030)', () => {
+    const ko = translate('ko', 'accNote.shared-credential');
+    const en = translate('en', 'accNote.shared-credential');
+    expect(ko).toContain('아이디');
+    expect(ko).not.toContain('사용자 이름');
+    expect(en).toContain('login ID');
+    expect(en.toLowerCase()).not.toContain('username');
+    for (const k of ['sharedDesc', 'accNote.shared-credential']) {
+      expect(translate('ko', k), k).not.toContain('볼 수');
+      expect(translate('en', k).toLowerCase(), k).not.toMatch(/\bsee\b|\bview/);
+    }
+  });
+});

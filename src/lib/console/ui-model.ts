@@ -507,6 +507,43 @@ export function initials(name: string): string {
   return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : s.slice(0, 2)).toUpperCase();
 }
 
+/* ---------- 보기 방식 (SPEC-CONSOLE-002 REQ-CS2-022~024, design.md §2.8) ---------- */
+
+/** 항목 목록을 그리는 두 방식. 브라우저 하나에 하나만 기억한다. */
+export type ViewMode = 'list' | 'cards';
+export const VIEW_STORAGE_KEY = 'zoel-console:view';
+
+/** 저장값이 'list'·'cards' 면 그 값, 아니면 폭 480px 이하에서 목록, 그보다 넓으면 카드. */
+export function resolveViewMode(stored: unknown, width: number): ViewMode {
+  if (stored === 'list' || stored === 'cards') return stored;
+  return width > 480 ? 'cards' : 'list';
+}
+
+/* ---------- 영어 화면의 이름과 양식 (SPEC-CONSOLE-002 REQ-CS2-025/026, design.md §2.9) ---------- */
+
+/** 사람 한 명의 화면 이름. 영어 화면이면 사람 목록의 name_en, 없으면 한국어 이름, 그다음 email. */
+export function personName(email: string, fallbackName: string, people: readonly ConsolePerson[], lang: ConsoleLang): string {
+  if (lang === 'en') {
+    const p = people.find((x) => lower(x.email) === lower(email));
+    if (p?.name_en) return p.name_en;
+  }
+  return fallbackName || email;
+}
+
+/** 이름만 저장된 표시(마지막 수정한 사람 등). 영어 화면에서 사람 목록의 한국어 이름과 정확히 같으면 영문 이름. */
+export function nameLabel(label: string, people: readonly ConsolePerson[], lang: ConsoleLang): string {
+  if (lang !== 'en' || !label) return label;
+  return people.find((x) => x.name === label)?.name_en || label;
+}
+
+/** 영어 화면 저장 제목. 한국어 제목이 비면 영문 제목을 한국어 제목으로도 보낸다. 둘 다 비면 null (CS2-D16). */
+export function enFormTitles(title: string, titleEn: string): { title: string; title_en: string } | null {
+  const ko = title.trim();
+  const en = titleEn.trim();
+  if (!ko && !en) return null;
+  return { title: ko || en, title_en: en };
+}
+
 /* ---------- 추가·편집 양식의 종류 선택 (SPEC-CONSOLE-002 REQ-CS2-009, design.md §2.3) ---------- */
 
 /** 양식 맨 위 두 갈래: 링크 / 공유 계정. 저장 칸은 기존 type·access_method 다. */

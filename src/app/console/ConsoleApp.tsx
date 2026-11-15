@@ -9,17 +9,21 @@ import {
   EMPTY_FILTERS,
   PIN_STORAGE_KEY,
   MAX_PINS,
+  VIEW_STORAGE_KEY,
   buildNav,
   categoryName,
   hashOf,
   itemsForView,
+  ownersText,
   readPins,
+  resolveViewMode,
   viewFromHash,
   viewKey,
   writePins,
   type ConsoleView,
   type ListFilters,
   type SortState,
+  type ViewMode,
 } from '@/lib/console/ui-model';
 import AccountMenu, { type AdminAction } from './AccountMenu';
 import { AuditDialog, CategoryDialog, ImportDialog, PeopleDialog, downloadExport } from './AdminDialogs';
@@ -92,6 +96,11 @@ export default function ConsoleApp() {
   const [lang, setLangState] = useState<ConsoleLang>('ko');
   const t = useCallback((key: string, vars?: Record<string, string | number>) => translate(lang, key, vars), [lang]);
   const [load, setLoad] = useState<LoadState>('loading');
+  // 보기 방식은 첫 목록 렌더 전에 정한다(목록은 bootstrap 뒤에야 그려진다). 서버 렌더에서는 목록이 없으므로
+  // 기본값을 쓰고, 브라우저에서는 저장값과 폭으로 정한다 (SPEC-CONSOLE-002 REQ-CS2-024).
+  const [viewMode, setViewModeState] = useState<ViewMode>(() =>
+    typeof window === 'undefined' ? 'cards' : resolveViewMode(store.get(VIEW_STORAGE_KEY), window.innerWidth)
+  );
   const [data, setData] = useState<BootstrapData | null>(null);
   const [pinStore, setPinStore] = useState<unknown>(null);
   const [hash, setHash] = useState('');
@@ -145,6 +154,11 @@ export default function ConsoleApp() {
   const setLang = useCallback((l: ConsoleLang) => {
     setLangState(l);
     store.set(LANG_STORAGE_KEY, l);
+  }, []);
+
+  const setViewMode = useCallback((m: ViewMode) => {
+    setViewModeState(m);
+    store.set(VIEW_STORAGE_KEY, m);
   }, []);
 
   const items = useMemo(() => data?.items ?? [], [data]);
@@ -229,7 +243,7 @@ export default function ConsoleApp() {
       const item = data?.items.find((i) => i.id === id);
       if (!item || !data) return;
       if (!item.canEdit) {
-        const owners = item.owners.map((o) => o.name).join(', ');
+        const owners = ownersText(item.owners, data.people, lang);
         const title = lang === 'en' && item.title_en ? item.title_en : item.title;
         toast(owners ? t('editOnlyOwner', { o: owners }) : t('editNoOwner'), {
           action: t('copyReq'),
@@ -369,6 +383,8 @@ export default function ConsoleApp() {
             openAutofillGuide,
             addCategory,
             openMenu,
+            viewMode,
+            setViewMode,
           }
         : null,
     [
@@ -391,6 +407,8 @@ export default function ConsoleApp() {
       openAutofillGuide,
       addCategory,
       openMenu,
+      viewMode,
+      setViewMode,
     ]
   );
 

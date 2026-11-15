@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import type { ConsoleLang } from '@/lib/console/i18n';
-import { initials } from '@/lib/console/ui-model';
+import { initials, personName } from '@/lib/console/ui-model';
 import { useApp } from './app-context';
 import { Icon } from './Icon';
 import { Popover } from './Popover';
@@ -31,10 +31,11 @@ export function AccountMenuBody({
   onSignOut: () => void;
   close: (refocus: boolean) => void;
 }) {
-  const { t } = useUi();
+  const { lang, t } = useUi();
   const app = useApp();
   const [legend, setLegend] = useState(false);
-  const name = app.me.name || app.me.email;
+  // 영어 화면은 영문 이름 → 한국어 이름 → email (SPEC-CONSOLE-002 REQ-CS2-026). me 자체는 바꾸지 않는다.
+  const name = personName(app.me.email, app.me.name, app.people, lang);
   const item = (icon: string, label: string, run: () => void, extra?: { danger?: boolean }) => (
     <button
       type="button"
@@ -120,7 +121,7 @@ export function AccountMenuBody({
 
 // Account button + popover (prototype openAccount). No theme menu (light only) and no reset.
 export default function AccountMenu({ onLang, onAdmin, onSignOut }: { onLang: (l: ConsoleLang) => void; onAdmin: (a: AdminAction) => void; onSignOut: () => void }) {
-  const { t } = useUi();
+  const { lang, t } = useUi();
   const app = useApp();
   const btn = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -129,7 +130,8 @@ export default function AccountMenu({ onLang, onAdmin, onSignOut }: { onLang: (l
     setAnchor(null);
     if (refocus) btn.current?.focus();
   }, []);
-  const name = app.me.name || app.me.email;
+  // 영어 화면은 영문 이름 → 한국어 이름 → email (SPEC-CONSOLE-002 REQ-CS2-026). me 자체는 바꾸지 않는다.
+  const name = personName(app.me.email, app.me.name, app.people, lang);
 
   return (
     <>

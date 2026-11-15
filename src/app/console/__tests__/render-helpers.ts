@@ -82,6 +82,9 @@ export function makeApp(me: ConsoleMe, items: ConsoleListItem[] = []): AppValue 
     openAutofillGuide: noop,
     addCategory: async () => null,
     writeClipboard: async () => true,
+    // 보기 방식 (M3). 기존 정적 렌더 테스트는 행을 보므로 목록이 기본이다.
+    viewMode: 'list',
+    setViewMode: noop,
   };
 }
 

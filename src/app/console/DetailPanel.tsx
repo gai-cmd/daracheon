@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ConsoleListItem } from '@/lib/console/types';
-import { absTime, hasCredential, hostOf, ownersText, relTime, safeUrl } from '@/lib/console/ui-model';
+import { absTime, hasCredential, hostOf, nameLabel, ownersText, relTime, safeUrl } from '@/lib/console/ui-model';
 import { fetchActivity, revealCredential, type ActivityEvent, type CredentialField } from './api';
 import { useApp } from './app-context';
 import { AccTag } from './HomeView';
@@ -120,6 +120,7 @@ function credErrKey(status: number, error?: string): string {
 /** 이 항목의 최근 자격증명 사건 (REQ-CS2-016). 편집 권한자에게만 그리고, 펼칠 때 한 번 불러온다 (CS2-D9). */
 function Activity({ item }: { item: ConsoleListItem }) {
   const { lang, t } = useUi();
+  const app = useApp();
   const [state, setState] = useState<'idle' | 'loading' | 'error' | ActivityEvent[]>('idle');
   const asked = useRef(false);
   const load = () => {
@@ -153,7 +154,7 @@ function Activity({ item }: { item: ConsoleListItem }) {
         <ul className={s.actList}>
           {state.map((ev, i) => (
             <li key={`${ev.at}-${i}`}>
-              <span className={s.actWho}>{ev.actor}</span>
+              <span className={s.actWho}>{nameLabel(ev.actor, app.people, lang)}</span>
               <span className={cx(s.actWhat, ev.action === 'deny' && s.danger)}>
                 {t(`act.${ev.action}`)}
                 {ev.field ? ` · ${ev.field === 'password' ? t('card.pw') : t('card.id')}` : ''}
@@ -234,7 +235,7 @@ function CredentialBlock({ item }: { item: ConsoleListItem }) {
           label={t('pLastUp')}
           value={
             <span className={s.vval} title={absTime(lang, item.updatedAt)}>
-              {`${relTime(lang, item.updatedAt)} · ${item.updatedBy || t('seedImport')}`}
+              {`${relTime(lang, item.updatedAt)} · ${nameLabel(item.updatedBy, app.people, lang) || t('seedImport')}`}
             </span>
           }
         />
@@ -386,7 +387,7 @@ export default function DetailPanel({ item, onClose }: { item: ConsoleListItem; 
           {shared ? null : (
             <>
               <dt>{t('pUpdated')}</dt>
-              <dd title={absTime(lang, item.updatedAt)}>{`${relTime(lang, item.updatedAt)} · ${item.updatedBy || t('seedImport')}`}</dd>
+              <dd title={absTime(lang, item.updatedAt)}>{`${relTime(lang, item.updatedAt)} · ${nameLabel(item.updatedBy, app.people, lang) || t('seedImport')}`}</dd>
             </>
           )}
         </dl>

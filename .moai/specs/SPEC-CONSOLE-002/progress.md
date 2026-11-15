@@ -211,6 +211,84 @@ login=200
 - 안내 팝업 "확인했어요" 저장이 실패하면 팝업을 닫지 않고 토스트로 알린다. 서버 `prefs` 읽기 실패 시 bootstrap이 `true`를 주므로(M1) 팝업이 뜨지 않는다.
 
 
+### M3 — 보기 전환·영문 모드·작은 수정 (2026-11-15, manager-develop, cycle_type=tdd)
+
+**바뀐 것**
+
+| 파일 | 내용 |
+|---|---|
+| `src/lib/console/ui-model.ts` | `ViewMode`, `VIEW_STORAGE_KEY = 'zoel-console:view'`, `resolveViewMode(stored, width)`(저장값 `list`·`cards`만, 아니면 480px 이하 목록·넘으면 카드), `personName(email, fallbackName, people, lang)`, `nameLabel(label, people, lang)`(이름만 저장된 마지막 수정자·사용 기록 행위자), `enFormTitles(title, titleEn)`(CS2-D16) |
+| `src/app/console/radio-keys.ts` (신규) | `nextInGroup`: radiogroup 화살표·Home·End 공용 처리. 종류 선택과 보기 방식이 함께 씀(plan.md M3 "같아지면 공용 도우미로") |
+| `src/app/console/ViewToggle.tsx` (신규) | 목록 \| 카드 radiogroup(`aria-label` 보기 방식 / View), 선택된 쪽만 `tabindex=0`, 버튼 너비 고정(74px) |
+| `src/app/console/ItemCard.tsx` (신규) | 카드 한 장(아이콘·제목 버튼 2줄·설명 2줄·분류·접속 방식·계정 정보 표시·담당자·열기·더 보기). 행과 같이 쓰는 `itemMenu`, `RowConfirm`, `AccTag`를 여기로 옮김(HomeView↔ListView 순환 import 방지) |
+| `src/app/console/ListView.tsx` | 툴바 오른쪽에 `ViewToggle`(빈 목록에도 있음). `ItemList`(목록이면 `ul[data-view=list]` 행, 카드면 `ul[data-view=cards]` 격자) 분리·export. 카드 방식은 열 머리(`HeadRow`)를 그리지 않음. 행 둘째 줄 = 설명(화면 언어) → 없으면 호스트 → 주소도 없으면 "주소 미확인" |
+| `src/app/console/HomeView.tsx` | 최근 수정 목록을 "최근 수정한 카드 보기" 펼침(`aria-expanded`, 처음 닫힘) 안으로, 같은 `ItemList` + `ViewToggle`. 고정 칩·분류별 요약은 그대로(컨트롤 없음). `recentOpen` prop(처음 펼침 상태, 정적 렌더 테스트용) |
+| `src/app/console/ConsoleApp.tsx`, `app-context.ts` | `viewMode`·`setViewMode`를 AppContext로. 처음 값은 `useState` 초기화 함수에서 `resolveViewMode(store.get(...), window.innerWidth)`(서버 렌더는 목록이 없어 기본값), 저장은 기존 `store.set`(예외 삼킴). 편집 권한 없음 토스트의 담당자 이름도 `ownersText`(영문 이름) |
+| `src/app/console/ItemForm.tsx` | 영어 화면: 제목 자리 `f-title-en`, 설명(메모) 자리 `f-desc-en`, 더 보기 메모 `f-note-en`, 링크 이름 칸이 `label_en`(`data-link-label="en"`), 빈 영문 칸은 한국어 값이 placeholder. 한국어 칸(`f-title`·`f-desc`·`f-note`·링크 한국어 이름)은 더 보기 안 "Korean text" 묶음(`role=group`). 저장: 한국어 제목이 비면 영문 제목을 함께, 둘 다 비면 `f-title-en`에 오류·요청 없음, 영문 메모·링크 영문 이름은 그대로 보냄(한국어 값을 지우지 않음). 한국어 화면의 "한국어 값을 고치면 영문 값을 비우는" 규칙은 한국어 화면에서만. 담당자 처음 값·`datalist`는 영어 화면에서 영문 이름, 같은 사람으로 되돌아오는지 검사는 `ownersFromText` 왕복으로 |
+| `src/app/console/AccountMenu.tsx` | 계정 칩·팝오버 머리 이름과 아바타 글자에 `personName`(`me` 객체는 그대로) |
+| `src/app/console/DetailPanel.tsx` | 마지막 수정한 사람(2곳)과 사용 기록 행위자에 `nameLabel` |
+| `src/lib/console/i18n.ts` | 새 키 한·영: `view.label/list/cards`, `recentToggle`, `koGroup`, `fTitleKo`·`fDescKo`·`fNoteKo`·`fLinkLabelKo`. `sharedDesc`를 REQ-CS2-029 문구로, `accNote.shared-credential`을 "아이디"/"login ID"로(보기 약속 없음) |
+| `src/lib/console/brand-marks.ts` | 카드 보기 아이콘 `grid`(내장 SVG, 바깥 참조 없음) |
+| `src/app/console/console.module.css` | `.viewSeg`(선택 `#dcefe8`/`#1f6f5c`), `.cards` 격자(`repeat(auto-fill, minmax(220px, 1fr))`, `grid-auto-rows: 1fr`), `.card*`(제목·설명 `-webkit-line-clamp: 2`, 설명은 두 줄 자리를 늘 확보), 좁은 목록(`@container list` ≤520px) 1열, `.koGroup`, `.guideSteps { list-style: decimal }`(REQ-CS2-028). 사이트 토큰·`:root` 없음, 콘솔 루트 변수와 고정 hex만 |
+| 테스트 (신규) | `src/lib/console/__tests__/view-mode.test.ts`, `src/app/console/__tests__/{list-views,item-form-en,names-en,no-hangul-literals}.test.ts`(정적 렌더·소스 검사), `{list-views-dom,item-form-en-dom}.test.ts`(jsdom, fetch 가짜), 검사 함수 `__tests__/hangul-scan.ts`(TypeScript 파서로 문자열·템플릿·JSX 글자 노드만 봄 — 주석은 노드가 아니라 빠짐), `src/lib/__tests__/console-guide-style.test.ts`. `i18n.test.ts`에 M3 문구 3건, `render-helpers.ts`의 `makeApp`에 `viewMode: 'list'`(기존 정적 렌더 테스트가 행을 보므로) |
+
+**한글 문자열 검사 허용 목록** (`no-hangul-literals.test.ts`): `Sidebar.tsx`의 `'한국어'`·`'한'`(언어 고르기의 자국어 이름), `layout.tsx`의 메타데이터 제목. 팀(`CONSOLE_TEAMS`)·공개 범위(`CONSOLE_VISIBILITIES`) 저장값과 정확히 같은 문자열은 데이터 값으로 자동 허용(`ItemForm`의 `'전체'`·`'팀'`·`'본인'`, `ListView`·`AdminDialogs`의 `'공통'`). 스캔 결과 그 밖의 한글 문자열은 원래 없었다 — 영어 화면에 남던 한국어는 화면 문구가 아니라 데이터(한국어 칸·한국어 이름)였고, 이번 회차에 양식 영문 칸·영문 이름 표시로 고쳤다.
+
+**인수 기준 (M3)** — "테스트"는 이번 회차에 돌린 vitest.
+
+| AC | 판정 | 근거 / 남은 것 |
+|---|---|---|
+| AC-CS2-023 | PASS(테스트) / 미확인(브라우저 `top` 고정) | `list-views.test.ts`: radiogroup 1개·이름 보기 방식/View·radio 목록/카드(List/Cards)·선택된 쪽만 `tabindex="0"`(ko·en × 두 방식), 위키·분류·공유 계정·내 항목·검색·빈 목록에도 있음, 홈은 펼침 안에만(고정 칩·요약 밖). `list-views-dom.test.ts`: 오른쪽 화살표 → 카드·초점 이동, Home → 목록, End → 카드 |
+| AC-CS2-024 | PASS(테스트) / 미확인(브라우저 카드 높이 0px 차이·두 줄 자르기) | 정적 렌더: 목록 둘째 줄(설명 / 호스트 / 주소 미확인), 동작 칸 직접 버튼 ≤2(열기·편집) + 더 보기 1, `data-view` 구분, 카드 구성·주소 있을 때만 열기·SSO 표시 1개·공개 표시 없음, `data-id` 순서 같음, 공유 계정 보기 두 방식 모두 계정 정보 있음/없음. jsdom: 행·카드 제목 모두 `openDetail('x2')` |
+| AC-CS2-025 | PASS(테스트) | `view-mode.test.ts`(사례 8개, 키 이름), jsdom: `getItem`·`setItem` 예외에도 기본(1280px → 카드) 렌더·전환 가능, 저장값 목록 + 1280px 에서 MutationObserver 로 `data-view="cards"` 0회, 카드로 바꾼 뒤 분류 보기로 옮겨도 카드·`localStorage` 에 `"cards"` |
+| AC-CS2-026 | PASS(테스트) | `item-form-en.test.ts` 7건(첫 화면 `f-title-en`·`f-desc-en` + placeholder, 순서 `f-cat, f-title-en, f-url`, Korean text 묶음 안 `f-title`·`f-desc`·`f-note`, `f-note-en`·링크 영문 이름 먼저 + placeholder, 한국어 화면 배치 그대로). `item-form-en-dom.test.ts`: 새 항목 영문 제목만 → `title`·`title_en` 둘 다 "Alpha", 두 제목 비면 요청 0·`aria-invalid`·"Enter a title.", 영문 설명만 고치면 `description` 그대로, 영문 메모·링크 영문 이름 저장 + 한국어 값 유지. 기존 한국어 양식 테스트(`item-form*.test.ts`)는 기대값 수정 없이 통과 |
+| AC-CS2-027 | PASS(테스트) | `names-en.test.ts` 6건(계정 칩·팝오버 "Gana"·`initials("Gana")`, 한국어 화면 그대로, 행·카드·상세 "Gana, 다라", 마지막 수정자 "Gana", 영문 빈 항목·분류는 한국어, 담당자 처음 값·제안 목록). `item-form-en-dom`: "Member, Gana" 입력 → 두 사람 email. `bootstrap.test.ts` 는 손대지 않고 통과(같은 실행에 포함) |
+| AC-CS2-028 | PASS(테스트) | `no-hangul-literals.test.ts` 7건: 현재 트리 통과, 허용 항목마다 이유 + 실제 소스에 있음(낡은 항목 검사), `login/` 포함 확인, `<span>안녕</span>`·`title="안녕"`·`` `안녕 ${x}` `` 각 1건, 주석 3종 0건, `'https://…'; // 안녕` 0건 |
+| AC-CS2-029 | PASS(테스트) / 미확인(브라우저 `listStyleType`) | `console-guide-style.test.ts`: `.guideSteps` 에 `list-style: decimal`, ko·en 모두 `<ol>` 안 `<li>` 2개 이상 |
+| AC-CS2-030 | PASS(테스트) | `i18n.test.ts`: `sharedDesc` 한·영 정확히 일치, `accNote.shared-credential` 에 아이디/login ID, 사용자 이름/username 없음, "볼 수"·see·view 없음 |
+| AC-CS2-039 (M3 몫) | PASS(테스트) / 미확인(브라우저 키보드·영어 화면 갈무리) | 한·영 키 집합 테스트 통과(새 키 포함), 보기 방식 radiogroup 이름. 채널 칩·채널 편집기 부분은 M4 |
+
+**RED** (구현 전, 새 테스트 8개 파일 + `i18n.test.ts`, 로그 `.moai/state/verify/cs2-m3/red.log`):
+
+```
+ FAIL  src/app/console/__tests__/no-hangul-literals.test.ts [ src/app/console/__tests__/no-hangul-literals.test.ts ]
+Error: Cannot find module './hangul-scan' imported from …/src/app/console/__tests__/no-hangul-literals.test.ts
+TypeError: resolveViewMode is not a function
+TypeError: personName is not a function
+TypeError: enFormTitles is not a function
+AssertionError: expected [] to have a length of 1 but got +0
+ Test Files  9 failed (9)
+      Tests  40 failed | 20 passed (60)
+```
+
+파일별 실패 수(로그의 `FAIL` 줄): `view-mode` 8, `list-views` 9, `item-form-en` 7, `list-views-dom` 5, `item-form-en-dom` 4, `names-en` 3, `i18n` 3(새 M3 판정), `console-guide-style` 1, `no-hangul-literals` 파일 단위(검사 함수 없음). 통과한 20건은 기본 보고 형식에 항목별로 남지 않아 개수로만 맞춰 본 추정이다: `names-en` 3건(담당자 표시는 기존 `ownerName`이 이미 영문 이름을 씀, 한국어 화면 칩, 영문 빈 항목·분류의 한국어 대체), `item-form-en-dom` 1건(영문 설명 — 기존 더 보기의 `f-desc-en`), `list-views` 1건(공유 계정 표시 — 카드 방식이 없어 두 경우 모두 행으로 그려짐), `console-guide-style` 1건(`<ol>`·`<li>` 구조는 M2부터), 나머지 14건은 `i18n.test.ts`의 기존 판정.
+
+**RED 뒤 테스트 수정 2건** (구현이 아니라 판정이 넓었던 것): `list-views.test.ts`의 "둘째 줄에 호스트 없음"이 제목 옆 바깥 링크 아이콘의 `href`까지 잡아서 둘째 줄(`rL2`)만 보도록 좁힘. `item-form-en.test.ts`의 "한국어 화면에 '한국어 내용' 없음"이 기존 문구 `fEnHint`("…한국어 내용을 보여 줘요")에 걸려서 묶음 id(`f-ko-l`) 검사로 바꿈. 같은 파일의 링크 이름 판정은, 링크 종류의 연동 주소가 M2(AC-CS2-010)대로 첫 화면에 있어서 "더 보기 안"이 아니라 "영문 칸이 Korean text 묶음보다 앞"으로 고쳤다(구현 전에 고침).
+
+**GREEN / 검증** (같은 트리, 이 회차 실행, 부하 1.1~1.5):
+
+```
+$ npx vitest run src/lib/console src/app/api/console src/app/console src/lib/__tests__/console-scrollbar-style.test.ts src/lib/__tests__/console-screen-style.test.ts src/lib/__tests__/console-guide-style.test.ts
+ Test Files  45 passed (45)
+      Tests  575 passed (575)
+
+$ npx tsc --noEmit
+tsc=0
+
+$ npx eslint <바뀐·새 ts·tsx 24개>
+eslint=0   (출력 0바이트)
+```
+
+공개 저장소 점검: `git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 0줄. 새 테스트의 email 은 `a@`·`b@`·`c@`·`g@try-n.com` 지어낸 주소뿐. 바깥 이미지·폰트·스크립트 참조 없음(`console-screen-style.test.ts`·`brand-marks.test.ts` 통과). 로그 원본 `.moai/state/verify/cs2-m3/`(커밋 안 함).
+
+**미룬 것 / 남은 일**
+
+- 브라우저 확인은 이번 회차에 하지 않았다(로그인 세션이 필요한 `/console` 목록 화면): AC-CS2-023 전환 중 툴바·목록 머리 `top` 고정, AC-CS2-024 카드 첫 줄 높이 차이 0px·두 줄 자르기(제목 80자·설명 300자), AC-CS2-029 `listStyleType`·번호 표시, AC-CS2-039 키보드만으로 조작·영어 화면 갈무리, 375px 폭. 리드 확인 필요.
+- 홈: M3 만 배포하면 최근 수정 목록이 처음에 닫혀 보인다(REQ-CS2-037 의 펼침 구조를 먼저 들임). M4 의 채널 새 소식이 그 위에 들어오므로 M3·M4 를 함께 배포하는 편이 낫다. 홈 머리의 "더 보기"(전체 항목, 최근 수정 순) 링크는 그대로 둠.
+- 영어 화면 양식에서 한국어 칸을 비운 채 영문만 넣은 설명·메모는 한국어 화면에서 빈 칸으로 보인다(`localized`는 영문 → 한국어 방향만 대체). 제목만 REQ-CS2-025 대로 영문을 한국어 제목으로도 보낸다.
+- 사용 기록 행위자·마지막 수정자는 이름 문자열만 저장돼 있어, 사람 목록의 한국어 이름과 정확히 같을 때만 영문 이름으로 바뀐다(`nameLabel`). 이름이 같은 사람이 둘이면 첫 사람의 영문 이름이 보인다.
+- `next build`는 돌리지 않았다.
+
 ## §E.3 Run-phase Audit-Ready Signal
 
 _<pending run-phase>_

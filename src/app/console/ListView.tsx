@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { CONSOLE_ACCESS_METHODS, CONSOLE_TEAMS, type ConsoleListItem } from '@/lib/console/types';
 import {
   GROUP_ROWS,
@@ -23,9 +23,10 @@ import {
   type SortKey,
   type SortState,
 } from '@/lib/console/ui-model';
-import { useApp, type MenuEntry } from './app-context';
-import { AccTag } from './HomeView';
+import { useApp } from './app-context';
+import ItemCard, { AccTag, RowConfirm, itemMenu } from './ItemCard';
 import { BrandMark, Icon } from './Icon';
+import ViewToggle from './ViewToggle';
 import s from './console.module.css';
 import { cx } from './cx';
 import { useUi } from './ui-context';
@@ -136,6 +137,7 @@ function Toolbar({ view, list, items }: { view: ConsoleView; list: ListState; it
         ) : null}
       </div>
       <div className={s.tbRight}>
+        <ViewToggle />
         <button
           type="button"
           className={cx(s.fchip, s.sortchip, list.sort.key && s.on)}
@@ -188,35 +190,6 @@ function HeadRow({ showCat, list }: { showCat: boolean; list: ListState }) {
   );
 }
 
-function RowConfirm({ item, onClose }: { item: ConsoleListItem; onClose: () => void }) {
-  const { t } = useUi();
-  const app = useApp();
-  const noRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => noRef.current?.focus(), []);
-  return (
-    <div
-      className={s.rConfirm}
-      role="group"
-      aria-label={t('delAsk')}
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') {
-          e.preventDefault();
-          e.stopPropagation();
-          onClose();
-        }
-      }}
-    >
-      <span>{t('delAsk')}</span>
-      <button type="button" className={cx(s.btn, s.xs, s.dangerSolid)} onClick={() => void app.deleteItem(item.id)}>
-        {t('del')}
-      </button>
-      <button ref={noRef} type="button" className={cx(s.btn, s.xs, s.ghost)} onClick={onClose}>
-        {t('cancel')}
-      </button>
-    </div>
-  );
-}
-
 function Row({
   item,
   showCat,
@@ -240,16 +213,9 @@ function Row({
   const team = item.team === '공통' ? '' : t(`teamShort.${item.team}`);
   const acc = accessLabel(lang, item.access_method);
   const owners = ownersText(item.owners ?? [], app.people, lang);
-
-  const more = (anchor: HTMLElement) => {
-    const entries: MenuEntry[] = [
-      { icon: pinned ? 'starFill' : 'star', label: pinned ? t('unpin') : t('pin'), run: () => app.togglePin(item.id) },
-      { icon: 'edit', label: t('edit'), run: () => app.requestEdit(item.id) },
-    ];
-    if (href) entries.push({ icon: 'copy', label: t('copyLink'), run: () => app.copyText(item.url, t('copied')) });
-    if (item.canEdit) entries.push('sep', { icon: 'trash', label: t('del'), danger: true, run: () => setConfirm(item.id) });
-    app.openMenu(anchor, entries, 'end');
-  };
+  // 둘째 줄: 설명(화면 언어), 없으면 주소의 호스트, 주소도 없으면 "주소 미확인" (REQ-CS2-023).
+  const desc = L(item, 'description');
+  const more = (anchor: HTMLElement) => app.openMenu(anchor, itemMenu(item, app, t, () => setConfirm(item.id)), 'end');
 
   return (
     <li className={cx(s.row, app.panelId === item.id && s.sel)} data-id={item.id}>
@@ -279,7 +245,9 @@ function Row({
             ) : null}
           </span>
           <span className={s.rL2}>
-            {href ? (
+            {desc ? (
+              <span className={s.rHost}>{desc}</span>
+            ) : href ? (
               <span className={s.rHost}>{host || item.url}</span>
             ) : (
               <span className={s.rMiss}>
@@ -342,8 +310,44 @@ function Row({
   );
 }
 
-// List views (REQ-CON-020): roomy one-line rows only (no density toggle), filters with the
-// category chip first, a pencil edit action on every row, rows open the right-side detail panel.
+/**
+ * 항목 목록 한 덩어리를 보기 방식대로 그린다: 목록이면 행, 카드면 같은 높이 카드 격자 (SPEC-CONSOLE-002
+ * REQ-CS2-023). 두 방식은 같은 항목을 같은 순서로 보인다. 홈의 최근 수정 펼침도 이것을 쓴다.
+ */
+export function ItemList({
+  items,
+  showCat,
+  showCred,
+  confirmId,
+  setConfirm,
+}: {
+  items: ConsoleListItem[];
+  showCat: boolean;
+  showCred: boolean;
+  confirmId: string | null;
+  setConfirm: (id: string | null) => void;
+}) {
+  const app = useApp();
+  if (app.viewMode === 'cards') {
+    return (
+      <ul className={s.cards} data-view="cards">
+        {items.map((c) => (
+          <ItemCard key={c.id} item={c} showCred={showCred} confirming={confirmId === c.id} setConfirm={setConfirm} />
+        ))}
+      </ul>
+    );
+  }
+  return (
+    <ul className={s.rows} data-view="list">
+      {items.map((c) => (
+        <Row key={c.id} item={c} showCat={showCat} showCred={showCred} confirming={confirmId === c.id} setConfirm={setConfirm} />
+      ))}
+    </ul>
+  );
+}
+
+// List views (REQ-CON-020): filters with the category chip first, a pencil edit action on every row,
+// rows open the right-side detail panel. SPEC-CONSOLE-002 M3: rows or uniform cards (view toggle).
 export default function ListView({
   view,
   title,
@@ -369,11 +373,7 @@ export default function ListView({
   const shown = sortItems(applyFilters(items, list.filters, app.me), list.sort, lang, app.people);
   const filtered = hasActiveFilter(list.filters);
   const rows = (its: ConsoleListItem[]) => (
-    <ul className={s.rows}>
-      {its.map((c) => (
-        <Row key={c.id} item={c} showCat={showCat} showCred={view.name === 'shared'} confirming={confirmId === c.id} setConfirm={setConfirmId} />
-      ))}
-    </ul>
+    <ItemList items={its} showCat={showCat} showCred={view.name === 'shared'} confirmId={confirmId} setConfirm={setConfirmId} />
   );
 
   return (
@@ -402,7 +402,7 @@ export default function ListView({
           </div>
         ) : (
           <>
-            <HeadRow showCat={showCat} list={list} />
+            {app.viewMode === 'list' ? <HeadRow showCat={showCat} list={list} /> : null}
             {grouped && list.sort.key !== 'updated'
               ? app.categories.map((cat) => {
                   const its = shown.filter((c) => c.category === cat.id);

@@ -2,18 +2,15 @@
 
 import { useState } from 'react';
 import type { ConsoleListItem } from '@/lib/console/types';
-import { accessLabel, attentionCounts, categoryName, homeSummary, recentItems, relTime, absTime, safeUrl } from '@/lib/console/ui-model';
+import { attentionCounts, categoryName, homeSummary, recentItems, safeUrl } from '@/lib/console/ui-model';
 import { useApp } from './app-context';
+import { AccTag } from './ItemCard';
 import { BrandMark, Icon } from './Icon';
+import { ItemList } from './ListView';
+import ViewToggle from './ViewToggle';
 import s from './console.module.css';
 import { cx } from './cx';
 import { useUi } from './ui-context';
-
-function AccTag({ item }: { item: ConsoleListItem }) {
-  const { lang } = useUi();
-  const label = accessLabel(lang, item.access_method);
-  return label ? <span className={s.acc}>{label}</span> : null;
-}
 
 function PinChip({ item }: { item: ConsoleListItem }) {
   const { t, L } = useUi();
@@ -117,17 +114,20 @@ function PinEditList({ items }: { items: ConsoleListItem[] }) {
 
 // Home (REQ-CON-020): pinned or team essentials, recently updated, the per-category summary of the
 // regular categories (never the wiki, REQ-CON-025), and one needs-attention line only when needed.
-export default function HomeView() {
+// SPEC-CONSOLE-002 M3: 최근 수정 목록은 "최근 수정한 카드 보기" 펼침 안에서 목록·카드 보기로 그린다
+// (REQ-CS2-022/037). M4 에서 이 구역 위에 채널 새 소식이 들어온다. recentOpen 은 처음 펼침 상태(테스트용).
+export default function HomeView({ recentOpen = false }: { recentOpen?: boolean }) {
   const { lang, t, L } = useUi();
   const app = useApp();
   const [pinEdit, setPinEdit] = useState(false);
+  const [showRecent, setShowRecent] = useState(recentOpen);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const byId = new Map(app.items.map((i) => [i.id, i]));
   const usingTeam = !app.pins.length;
   const pinItems = (usingTeam ? app.teamPins : app.pins).map((id) => byId.get(id)).filter((x): x is ConsoleListItem => !!x);
   const recent = recentItems(app.items).slice(0, 6);
   const summary = homeSummary(app.categories, app.items, app.teamPins);
   const attn = attentionCounts(app.items);
-  const catOf = (id: string) => app.categories.find((c) => c.id === id);
 
   return (
     <>
@@ -196,25 +196,32 @@ export default function HomeView() {
             </a>
           ) : null}
         </div>
-        {recent.length ? (
-          <ul className={s.mini}>
-            {recent.map((c) => (
-              <li key={c.id}>
-                <button type="button" className={s.mrow} onClick={(e) => app.openDetail(c.id, e.currentTarget)}>
-                  <BrandMark url={c.url} title={L(c, 'title')} />
-                  <span className={s.mN}>{L(c, 'title')}</span>
-                  <span className={s.mC}>{categoryName(lang, catOf(c.category))}</span>
-                  <span className={s.mB}>{c.updatedBy || t('seedImport')}</span>
-                  <span className={s.mT} title={absTime(lang, c.updatedAt)}>
-                    {relTime(lang, c.updatedAt, true)}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className={s.hint}>{t('emptyList')}</p>
-        )}
+        <button
+          type="button"
+          className={cx(s.btn, s.ghost, s.moreTg)}
+          aria-expanded={showRecent}
+          aria-controls="h-recent-list"
+          onClick={() => setShowRecent((v) => !v)}
+        >
+          <span>{t('recentToggle')}</span>
+          <Icon name="chevron" size={16} />
+        </button>
+        <div id="h-recent-list" hidden={!showRecent}>
+          {showRecent ? (
+            recent.length ? (
+              <>
+                <div className={s.recentBar}>
+                  <ViewToggle />
+                </div>
+                <div className={s.listwrap}>
+                  <ItemList items={recent} showCat={true} showCred={false} confirmId={confirmId} setConfirm={setConfirmId} />
+                </div>
+              </>
+            ) : (
+              <p className={s.hint}>{t('emptyList')}</p>
+            )
+          ) : null}
+        </div>
       </section>
 
       <section className={s.hsec} aria-labelledby="h-sum">

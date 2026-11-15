@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react';
 import type { ConsoleCategory, ConsoleListItem, ConsolePerson } from '@/lib/console/types';
-import type { ConsoleMe, ConsoleView, ListFilters, SortState } from '@/lib/console/ui-model';
+import type { ConsoleMe, ConsoleView, ListFilters, SortState, ViewMode } from '@/lib/console/ui-model';
 
 export interface MenuItem {
   icon?: string;
@@ -53,6 +53,9 @@ export interface AppValue {
   /** 관리자: 분류 추가 대화상자를 열고, 추가된 분류 id(취소하면 null)를 돌려준다 (REQ-CS2-012). */
   addCategory: () => Promise<string | null>;
   openMenu: (anchor: HTMLElement, items: MenuEntry[], align?: 'start' | 'end') => void;
+  /** 모든 항목 목록이 함께 쓰는 보기 방식 (SPEC-CONSOLE-002 REQ-CS2-022~024). 브라우저에 기억한다. */
+  viewMode: ViewMode;
+  setViewMode: (m: ViewMode) => void;
 }
 
 export type FormFocus = 'title' | 'url' | 'owner' | 'id' | 'pw';

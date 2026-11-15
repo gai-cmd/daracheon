@@ -2138,6 +2138,148 @@ select.input {
 }
 
 /* ---------- pointer hover (never load-bearing) ---------- */
+/* ---------- view toggle and cards (SPEC-CONSOLE-002 M3, design.md §2.8) ---------- */
+.viewSeg {
+  flex: none;
+}
+.viewSeg button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  /* 너비를 고정해 방식이 바뀌어도 툴바 안 다른 요소가 밀리지 않는다. */
+  width: 74px;
+  height: 34px;
+  padding: 0 8px;
+}
+.viewSeg button[aria-checked='true'] {
+  background: #dcefe8;
+  color: #1f6f5c;
+}
+.recentBar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px 14px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.card.sel {
+  border-color: var(--accent);
+  background: var(--active);
+}
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.cardTop .bmark {
+  margin-top: 1px;
+}
+.cardT {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 14.5px;
+  font-weight: 650;
+  line-height: 1.35;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+.cardDesc {
+  /* 두 줄 자리를 늘 남겨 카드 높이가 같다. */
+  min-height: calc(2 * 1.45em);
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+.cardMuted {
+  color: var(--ink-3);
+}
+.cardMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 20px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.cardCat {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cardFoot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  min-width: 0;
+}
+.cardOwner {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.card .rConfirm {
+  /* 카드 아래쪽 동작 줄 위에 겹쳐 연다 (카드 높이가 바뀌지 않는다). */
+  top: auto;
+  left: 0;
+  height: 48px;
+  border-radius: 0 0 12px 12px;
+}
+@container list (max-width: 519.98px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+.koGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
 /* ---------- shared accounts (SPEC-CONSOLE-002) ---------- */
 .kindSeg button {
   display: inline-flex;
@@ -2326,6 +2468,8 @@ a.tAct {
 .guideSteps {
   margin: 0;
   padding-left: 22px;
+  /* 사이트 전역 CSS 가 목록 기호를 지우므로 번호를 직접 켠다 (SPEC-CONSOLE-002 REQ-CS2-028). */
+  list-style: decimal;
   font-size: 14px;
   line-height: 1.6;
 }
