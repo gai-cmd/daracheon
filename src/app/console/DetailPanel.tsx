@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ConsoleListItem } from '@/lib/console/types';
-import { absTime, hostOf, ownersText, relTime, safeUrl } from '@/lib/console/ui-model';
-import { revealCredential, type CredentialField } from './api';
+import { absTime, hasCredential, hostOf, ownersText, relTime, safeUrl } from '@/lib/console/ui-model';
+import { fetchActivity, revealCredential, type ActivityEvent, type CredentialField } from './api';
 import { useApp } from './app-context';
 import { AccTag } from './HomeView';
 import { BrandMark, Icon } from './Icon';
@@ -43,29 +43,28 @@ function VRow({ label, value, children }: { label: string; value: ReactNode; chi
 }
 
 /**
- * One TeamPass-style secret row (REQ-CON-016/017, AC-CON-009). Masked by default; the eye asks the
- * server for the value (purpose "view") and keeps it only in this component's state; copy asks
- * again with purpose "copy". Nothing is requested until a button is pressed, and the value is
- * dropped when the panel closes or shows another item (the component unmounts).
+ * One TeamPass-style secret row (REQ-CON-016/017, AC-CON-009; SPEC-CONSOLE-002 REQ-CS2-013). Masked by
+ * default; the eye asks the server for the value (purpose "view") and keeps it only in this component's
+ * state; copy asks again with purpose "copy" and writes straight to the clipboard without rendering it or
+ * keeping it in state. The eye is not offered for the password while the item hides it from this viewer.
+ * Nothing is requested until a button is pressed, and the value is dropped when the panel closes or
+ * shows another item (the component unmounts).
  */
-function SecretRow({ item, field, editable }: { item: ConsoleListItem; field: CredentialField; editable: boolean }) {
+function SecretRow({ item, field }: { item: ConsoleListItem; field: CredentialField }) {
   const { t } = useUi();
   const app = useApp();
   const [value, setValue] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const isPw = field === 'password';
   const present = isPw ? item.hasPassword : item.hasLoginId;
-
-  const fail = (status: number, error?: string) => {
-    const key =
-      status === 403 ? 'forbidden' : status === 429 ? 'rate_limited' : error === 'not_set' ? 'not_set' : status === 503 ? 'unavailable' : 'failed';
-    app.toast(t(`credErr.${key}`));
-  };
+  const label = isPw ? t('card.pw') : t('card.id');
+  // 서버도 같은 조건에서 보기를 거절한다 (REQ-CS2-004). 편집 권한자 = 관리자 또는 담당자 (CS2-D2).
+  const viewHidden = isPw && item.hide_password && !item.canEdit;
 
   if (!present) {
     return (
-      <VRow label={isPw ? t('pPw') : t('pUser')} value={<span className={cx(s.vval, s.none)}>{isPw ? t('pwNone') : t('idNone')}</span>}>
-        {editable ? (
+      <VRow label={label} value={<span className={cx(s.vval, s.none)}>{isPw ? t('pwNone') : t('idNone')}</span>}>
+        {item.canEdit ? (
           <button type="button" className={cx(s.btn, s.xs, s.ghost)} onClick={() => app.requestEdit(item.id, isPw ? 'pw' : 'id')}>
             {t('enterIt')}
           </button>
@@ -83,24 +82,30 @@ function SecretRow({ item, field, editable }: { item: ConsoleListItem; field: Cr
     const r = await revealCredential(item.id, field, 'view');
     setBusy(false);
     if (r.ok) setValue(r.data.value);
-    else fail(r.status, r.data.error);
+    else app.toast(t(`credErr.${credErrKey(r.status, r.data.error)}`));
   };
   const copy = async () => {
     setBusy(true);
     const r = await revealCredential(item.id, field, 'copy');
     setBusy(false);
-    if (r.ok) app.copyText(r.data.value, isPw ? t('pwCopied') : t('idCopied'));
-    else fail(r.status, r.data.error);
+    if (!r.ok) {
+      app.toast(t(`credErr.${credErrKey(r.status, r.data.error)}`));
+      return;
+    }
+    const ok = await app.writeClipboard(r.data.value);
+    app.toast(ok ? (isPw ? t('card.pwCopied') : t('card.idCopied')) : t('copyFail'));
   };
   const shown = value !== null;
-  const eyeLabel = isPw ? (shown ? t('hidePw') : t('showPw')) : shown ? t('hideId') : t('showId');
-  const copyLabel = isPw ? t('copyPw') : t('copyId');
+  const eyeLabel = isPw ? (shown ? t('card.hidePw') : t('card.showPw')) : shown ? t('card.hideId') : t('card.showId');
+  const copyLabel = isPw ? t('card.copyPw') : t('card.copyId');
 
   return (
-    <VRow label={isPw ? t('pPw') : t('pUser')} value={<span className={cx(s.vval, s.mono)}>{shown ? value : MASK}</span>}>
-      <button type="button" className={s.ibtn} aria-label={eyeLabel} title={eyeLabel} aria-pressed={shown} disabled={busy} onClick={() => void toggle()}>
-        <Icon name={shown ? 'eyeOff' : 'eye'} />
-      </button>
+    <VRow label={label} value={<span className={cx(s.vval, s.mono)}>{shown ? value : MASK}</span>}>
+      {viewHidden ? null : (
+        <button type="button" className={s.ibtn} aria-label={eyeLabel} title={eyeLabel} aria-pressed={shown} disabled={busy} onClick={() => void toggle()}>
+          <Icon name={shown ? 'eyeOff' : 'eye'} />
+        </button>
+      )}
       <button type="button" className={s.ibtn} aria-label={copyLabel} title={copyLabel} disabled={busy} onClick={() => void copy()}>
         <Icon name="copy" />
       </button>
@@ -108,33 +113,123 @@ function SecretRow({ item, field, editable }: { item: ConsoleListItem; field: Cr
   );
 }
 
+function credErrKey(status: number, error?: string): string {
+  return status === 403 ? 'forbidden' : status === 429 ? 'rate_limited' : error === 'not_set' ? 'not_set' : status === 503 ? 'unavailable' : 'failed';
+}
+
+/** 이 항목의 최근 자격증명 사건 (REQ-CS2-016). 편집 권한자에게만 그리고, 펼칠 때 한 번 불러온다 (CS2-D9). */
+function Activity({ item }: { item: ConsoleListItem }) {
+  const { lang, t } = useUi();
+  const [state, setState] = useState<'idle' | 'loading' | 'error' | ActivityEvent[]>('idle');
+  const asked = useRef(false);
+  const load = () => {
+    if (asked.current) return;
+    asked.current = true;
+    setState('loading');
+    void fetchActivity(item.id).then((r) => {
+      if (r.ok) setState(r.data.events ?? []);
+      else {
+        asked.current = false;
+        setState('error');
+      }
+    });
+  };
+  return (
+    <details className={s.activity} onToggle={(e) => (e.currentTarget.open ? load() : undefined)}>
+      <summary>
+        <Icon name="list" size={16} />
+        <span>{t('card.activity')}</span>
+        <Icon name="chevron" size={14} className={s.actChev} />
+      </summary>
+      {state === 'loading' || state === 'idle' ? (
+        <p className={s.fine}>{t('card.activityLoading')}</p>
+      ) : state === 'error' ? (
+        <p className={s.fine} role="alert">
+          {t('card.activityFail')}
+        </p>
+      ) : !state.length ? (
+        <p className={s.fine}>{t('card.activityEmpty')}</p>
+      ) : (
+        <ul className={s.actList}>
+          {state.map((ev, i) => (
+            <li key={`${ev.at}-${i}`}>
+              <span className={s.actWho}>{ev.actor}</span>
+              <span className={cx(s.actWhat, ev.action === 'deny' && s.danger)}>
+                {t(`act.${ev.action}`)}
+                {ev.field ? ` · ${ev.field === 'password' ? t('card.pw') : t('card.id')}` : ''}
+              </span>
+              <time className={s.actWhen} dateTime={ev.at} title={absTime(lang, ev.at)}>
+                {relTime(lang, ev.at, true)}
+              </time>
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
+  );
+}
+
 function CredentialBlock({ item }: { item: ConsoleListItem }) {
   const { lang, t } = useUi();
   const app = useApp();
+  const [opening, setOpening] = useState(false);
   const href = safeUrl(item.url);
   const owners = ownersText(item.owners ?? [], app.people, lang) || t('anAdmin');
+  const ok = item.credAccess === 'ok';
+  const stored = hasCredential(item);
+
+  // @MX:NOTE: [AUTO] 순서가 규칙이다: 복사 → 빈 탭(noopener 없이 열어 null 여부로 차단 판단) → opener 끊기 → 이동.
+  // 로그인 열기 (REQ-CS2-014, CS2-D8): 아이디 복사가 먼저(새 탭이 포커스를 가져가면 클립보드 쓰기가 거절됨),
+  // 그다음 opener 없는 빈 탭을 열어 주소로 보낸다. 탭이 막히면 토스트 안 링크로 대신한다.
+  const openLogin = async () => {
+    if (!href) return;
+    let msg = t('card.openedNoId');
+    if (item.hasLoginId) {
+      setOpening(true);
+      const r = await revealCredential(item.id, 'login_id', 'copy');
+      setOpening(false);
+      if (r.ok) msg = (await app.writeClipboard(r.data.value)) ? t('card.idCopiedOpen') : t('copyFail');
+      else msg = t(`credErr.${credErrKey(r.status, r.data.error)}`);
+    }
+    const w = window.open('', '_blank');
+    if (w) {
+      w.opener = null;
+      w.location.replace(href);
+    }
+    app.toast(msg, w ? undefined : { href, hrefLabel: t('card.openLink') });
+  };
+
   return (
-    <section className={s.pnSec}>
+    <section className={s.pnSec} data-cred-card="true">
       <h3 className={s.pnLabel}>{t('pAccount')}</h3>
       <div className={s.vault}>
-        {item.credAccess === 'ok' ? (
-          <>
-            <SecretRow item={item} field="login_id" editable={item.canEdit} />
-            <SecretRow item={item} field="password" editable={item.canEdit} />
-          </>
-        ) : (
-          <div className={s.credLock}>
-            <Icon name="lock" size={16} />
-            <span>{t('credDenied', { v: t(`vis.${item.visibility}`), o: owners })}</span>
-          </div>
-        )}
-        <VRow label={t('pUrl')} value={<span className={cx(s.vval, !href && s.none)} title={href ? item.url : undefined}>{href ? item.url : t('noUrl')}</span>}>
+        <VRow label={t('card.url')} value={<span className={cx(s.vval, !href && s.none)} title={href ? item.url : undefined}>{href ? item.url : t('noUrl')}</span>}>
           {href ? (
-            <button type="button" className={s.ibtn} aria-label={t('copyUrl')} title={t('copyUrl')} onClick={() => app.copyText(item.url, t('copied'))}>
+            <button type="button" className={s.ibtn} aria-label={t('card.copyUrl')} title={t('card.copyUrl')} onClick={() => app.copyText(item.url, t('copied'))}>
               <Icon name="copy" />
             </button>
           ) : null}
         </VRow>
+        {!ok ? (
+          <div className={s.credLock}>
+            <Icon name="lock" size={16} />
+            <span>{t('credDenied', { v: t(`vis.${item.visibility}`), o: owners })}</span>
+          </div>
+        ) : stored ? (
+          <>
+            <SecretRow item={item} field="login_id" />
+            <SecretRow item={item} field="password" />
+          </>
+        ) : (
+          <div className={s.credEmpty}>
+            <span>{t('card.empty')}</span>
+            {item.canEdit ? (
+              <button type="button" className={cx(s.btn, s.xs, s.ghost)} onClick={() => app.requestEdit(item.id, 'id')}>
+                {t('card.enterCred')}
+              </button>
+            ) : null}
+          </div>
+        )}
         <VRow
           label={t('pLastUp')}
           value={
@@ -144,8 +239,24 @@ function CredentialBlock({ item }: { item: ConsoleListItem }) {
           }
         />
       </div>
-      {item.credAccess === 'ok' && !item.canEdit && (!item.hasPassword || !item.hasLoginId) ? <p className={s.fine}>{t('pwLater')}</p> : null}
+      {ok ? (
+        <div className={s.cardActs}>
+          {stored && href ? (
+            <button type="button" className={cx(s.btn, s.primary)} disabled={opening} onClick={() => void openLogin()}>
+              <Icon name="external" size={15} />
+              {t('card.openLogin')}
+            </button>
+          ) : null}
+          <button type="button" className={s.linkbtn} onClick={app.openAutofillGuide}>
+            {t('guide.menu')}
+            <Icon name="chevron" size={14} className={s.chevR} />
+          </button>
+        </div>
+      ) : null}
+      {ok && stored && item.hide_password && !item.canEdit ? <p className={s.fine}>{t('card.hiddenNote')}</p> : null}
+      {ok && stored && !item.canEdit && (!item.hasPassword || !item.hasLoginId) ? <p className={s.fine}>{t('pwLater')}</p> : null}
       <p className={s.fine}>{t('credFine')}</p>
+      {item.canEdit ? <Activity item={item} /> : null}
     </section>
   );
 }

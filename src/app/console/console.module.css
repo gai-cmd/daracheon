@@ -100,6 +100,52 @@
   background: #dcefe8;
   color: #1c1b18;
 }
+
+/* Console scrollbar (SPEC-CONSOLE-002 REQ-CS2-007/008, design.md §2.5). globals.css paints the site-wide
+   scrollbar dark/gold inside @layer base; these unlayered rules win, and apply only while a console root
+   (app or sign-in) is in the page — html:has(.root) — so the public site and /admin keep theirs.
+   Every selector carries the local .root class (CSS-module purity check). Chrome 121+ and Firefox use
+   scrollbar-color/width; the ::-webkit-scrollbar rules (and the hover colour) reach Safari. */
+:global(html):has(.root) {
+  scrollbar-width: thin;
+  scrollbar-color: #d6d0c4 #f2efe8;
+}
+:global(html):has(.root)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+:global(html):has(.root)::-webkit-scrollbar-track {
+  background: #f2efe8;
+}
+:global(html):has(.root)::-webkit-scrollbar-thumb {
+  border: 0;
+  border-radius: 8px;
+  background: #d6d0c4;
+}
+:global(html):has(.root)::-webkit-scrollbar-thumb:hover {
+  background: #bdb5a6;
+}
+/* scrollbar-width is not inherited, so inner scroll areas (menu, list, panel, dialogs) get it directly. */
+.root,
+.root * {
+  scrollbar-width: thin;
+  scrollbar-color: #d6d0c4 #f2efe8;
+}
+.root *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.root *::-webkit-scrollbar-track {
+  background: transparent;
+}
+.root *::-webkit-scrollbar-thumb {
+  border: 0;
+  border-radius: 8px;
+  background: #d6d0c4;
+}
+.root *::-webkit-scrollbar-thumb:hover {
+  background: #bdb5a6;
+}
 .sr {
   position: absolute;
   width: 1px;
@@ -2092,6 +2138,218 @@ select.input {
 }
 
 /* ---------- pointer hover (never load-bearing) ---------- */
+/* ---------- shared accounts (SPEC-CONSOLE-002) ---------- */
+.kindSeg button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+}
+.kindSeg button[aria-checked='true'] {
+  background: #dcefe8;
+  color: #1f6f5c;
+}
+.radios {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.radio,
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 36px;
+  padding: 6px 2px;
+  font-size: 14px;
+  color: #1c1b18;
+  cursor: pointer;
+}
+.check label {
+  cursor: pointer;
+}
+.radio input,
+.check input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: #1f6f5c;
+}
+.dlgP {
+  margin-bottom: 18px;
+  color: #5c5a52;
+}
+.credEmpty {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  min-height: 52px;
+  padding: 10px 12px 10px 14px;
+  background: #ffffff;
+  font-size: 14px;
+  color: #5c5a52;
+}
+.credEmpty span {
+  flex: 1;
+  min-width: 12ch;
+}
+.cardActs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.chevR {
+  transform: rotate(-90deg);
+}
+.activity {
+  border: 1px solid #e3dfd4;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.activity summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #5c5a52;
+  cursor: pointer;
+  list-style: none;
+}
+.activity summary::-webkit-details-marker {
+  display: none;
+}
+.actChev {
+  margin-left: auto;
+  transition: transform 0.15s var(--ease);
+}
+.activity[open] .actChev {
+  transform: rotate(180deg);
+}
+.activity > p {
+  padding: 0 14px 12px;
+}
+.actList {
+  margin: 0;
+  padding: 0 14px 10px;
+  list-style: none;
+}
+.actList li {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  padding: 7px 0;
+  border-top: 1px solid #e3dfd4;
+  font-size: 13px;
+}
+.actWho {
+  flex: 1;
+  min-width: 10ch;
+  overflow: hidden;
+  color: #1c1b18;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actWhat {
+  color: #5c5a52;
+}
+.actWhat.danger {
+  color: #b23b2e;
+}
+.actWhen {
+  color: #6b675d;
+  font-variant-numeric: tabular-nums;
+}
+.rCred {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #8a5410;
+  font-weight: 600;
+}
+.rCred.on {
+  color: #1f6f5c;
+}
+.rCred::before {
+  content: '·';
+  margin-right: 3px;
+  color: #6b675d;
+  font-weight: 400;
+}
+.sideH {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+.sideH > span {
+  flex: 1;
+}
+.sideAdd {
+  width: 28px;
+  height: 28px;
+  margin: -4px -6px -4px 0;
+  border-radius: 8px;
+}
+a.tAct {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+}
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.guideLead {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #dcefe8;
+  color: #1c1b18;
+  font-size: 14px;
+}
+.guideLead .ic {
+  flex: none;
+  margin-top: 2px;
+  color: #1f6f5c;
+}
+.guideSteps {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.guideSteps li + li {
+  margin-top: 4px;
+}
+.guideAddr {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #e3dfd4;
+  border-radius: 12px;
+  background: #faf8f3;
+}
+.guideAddr .vtext {
+  min-width: 0;
+}
+.guideAddr code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .btn.primary:not(:disabled):hover {
     background: var(--accent-hover);

@@ -82,3 +82,33 @@ describe('resolveLang()', () => {
     expect(resolveLang('ko')).toBe('ko');
   });
 });
+
+// SPEC-CONSOLE-002 AC-CS2-021: 이번 화면에서 새로 쓰는 문구가 한·영 같은 키로 있고, 오너가 정한 한국어 문구와 같다.
+describe('SPEC-CONSOLE-002 strings', () => {
+  const KO: Record<string, string> = {
+    'kind.label': '종류',
+    'kind.link': '링크',
+    'kind.shared': '공유 계정',
+    'share.all': '전체 멤버',
+    'share.team': '우리 팀',
+    'share.self': '나만(비공개)',
+    hidePwLabel: '멤버에게 비밀번호 숨기기 (복사만 허용)',
+    newCategory: '+ 새 분류 만들기…',
+    'card.openLogin': '로그인 열기',
+    'card.idCopiedOpen': '아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요',
+    'card.empty': '아직 계정 정보가 없어요',
+    'card.enterCred': '계정 정보 입력',
+    'card.activity': '사용 기록',
+    'guide.menu': '자동 입력 끄기 안내',
+    'guide.open': '설정 화면 열기',
+    'guide.ack': '확인했어요',
+    'guide.later': '나중에',
+  };
+  it('new keys exist in both languages', () => {
+    const en = dictKeys(CONSOLE_DICT.en);
+    for (const k of Object.keys(KO)) expect(en, k).toContain(k);
+  });
+  it('Korean wording matches the owner-facing text', () => {
+    for (const [k, v] of Object.entries(KO)) expect(translate('ko', k), k).toBe(v);
+  });
+});

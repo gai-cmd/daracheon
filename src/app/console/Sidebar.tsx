@@ -38,11 +38,14 @@ export default function Sidebar({
   current,
   onClose,
   onLang,
+  onAddCategory,
 }: {
   nav: NavEntry[];
   current: string;
   onClose: () => void;
   onLang: (l: ConsoleLang) => void;
+  /** 관리자에게만 넘긴다: 분류 제목 옆 "+" (SPEC-CONSOLE-002 REQ-CS2-012). */
+  onAddCategory?: () => void;
 }) {
   const { lang, t } = useUi();
   return (
@@ -69,7 +72,12 @@ export default function Sidebar({
         if (e.type === 'heading') {
           return (
             <div key={`h-${i}`} className={s.sideH} data-nav-heading="true">
-              {t(e.labelKey)}
+              <span>{t(e.labelKey)}</span>
+              {onAddCategory ? (
+                <button type="button" className={cx(s.ibtn, s.sideAdd)} aria-label={t('addCategory')} title={t('addCategory')} onClick={onAddCategory}>
+                  <Icon name="plus" size={16} />
+                </button>
+              ) : null}
             </div>
           );
         }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { GUIDE_LATER_KEY, detectBrowser, shouldAutoOpenGuide } from '@/lib/console/browser-guide';
 import { WIKI_CATEGORY_ID } from '@/lib/console/categories';
 import { LANG_STORAGE_KEY, resolveLang, translate, type ConsoleLang } from '@/lib/console/i18n';
 import type { ConsoleListItem } from '@/lib/console/types';
@@ -22,8 +23,10 @@ import {
 } from '@/lib/console/ui-model';
 import AccountMenu, { type AdminAction } from './AccountMenu';
 import { AuditDialog, CategoryDialog, ImportDialog, PeopleDialog, downloadExport } from './AdminDialogs';
-import { api, type BootstrapData } from './api';
+import { ackAutofillGuide, api, type BootstrapData } from './api';
 import { AppContext, type AppValue, type FormFocus, type MenuEntry, type RoutePreset, type ToastOptions } from './app-context';
+import AutofillGuideDialog from './AutofillGuideDialog';
+import { writeClipboard } from './clipboard';
 import DetailPanel from './DetailPanel';
 import HomeView from './HomeView';
 import { Icon } from './Icon';
@@ -43,8 +46,10 @@ type Panel = { mode: 'detail'; id: string } | { mode: 'form'; id: string | null;
 type DialogState =
   | { kind: 'import'; text: string; count: number }
   | { kind: 'people' }
-  | { kind: 'category' }
+  // resolve 가 있으면 양식에서 연 것: 추가된 id 를 돌려주고 화면은 옮기지 않는다 (SPEC-CONSOLE-002 REQ-CS2-012).
+  | { kind: 'category'; resolve?: (id: string | null) => void }
   | { kind: 'audit' }
+  | { kind: 'guide' }
   | null;
 type LoadState = 'loading' | 'ready' | 'error' | 'unconfigured';
 
@@ -101,6 +106,8 @@ export default function ConsoleApp() {
   const [dialog, setDialog] = useState<DialogState>(null);
   const [drawer, setDrawer] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [guideBusy, setGuideBusy] = useState(false);
+  const guideChecked = useRef(false);
   const { toasts, push: toast, remove: dropToast } = useToasts();
   const opener = useRef<HTMLElement | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -183,28 +190,11 @@ export default function ConsoleApp() {
   }, []);
 
   /* ---------- feedback ---------- */
+  // 복사는 clipboard.ts 한 곳에서 한다(값을 보이는 요소에 넣지 않음, SPEC-CONSOLE-002 REQ-CS2-020).
+  const writeClip = useCallback((text: string) => writeClipboard(text), []);
   const copyText = useCallback(
     (text: string, okMsg: string) => {
-      const fallback = () => {
-        const host = document.querySelector<HTMLElement>('dialog[open]') ?? document.querySelector<HTMLElement>('[data-admin-root="console"]');
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.setAttribute('aria-hidden', 'true');
-        ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
-        host?.append(ta);
-        ta.select();
-        let ok = false;
-        try {
-          ok = document.execCommand('copy');
-        } catch {
-          ok = false;
-        }
-        ta.remove();
-        toast(ok ? okMsg : t('copyFail'));
-      };
-      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(() => toast(okMsg), fallback);
-      else fallback();
+      void writeClipboard(text).then((ok) => toast(ok ? okMsg : t('copyFail')));
     },
     [t, toast]
   );
@@ -313,6 +303,45 @@ export default function ConsoleApp() {
     });
   }, []);
 
+  /* ---------- autofill guide (SPEC-CONSOLE-002 REQ-CS2-018) ---------- */
+  const openAutofillGuide = useCallback(() => setDialog({ kind: 'guide' }), []);
+  const addCategory = useCallback(() => new Promise<string | null>((resolve) => setDialog({ kind: 'category', resolve })), []);
+
+  // 첫 화면이 그려진 뒤 한 번: 확인하지 않았고 이번 브라우저 세션에 "나중에"를 누르지 않았을 때.
+  useEffect(() => {
+    if (!data || guideChecked.current) return;
+    guideChecked.current = true;
+    let later = false;
+    try {
+      later = window.sessionStorage.getItem(GUIDE_LATER_KEY) === '1';
+    } catch {
+      // storage unavailable
+    }
+    if (!shouldAutoOpenGuide({ ack: data.prefs?.autofillGuideAck ?? true, laterThisSession: later })) return;
+    requestAnimationFrame(() => setDialog((d) => d ?? { kind: 'guide' }));
+  }, [data]);
+
+  const guideLater = useCallback(() => {
+    try {
+      window.sessionStorage.setItem(GUIDE_LATER_KEY, '1');
+    } catch {
+      // storage unavailable
+    }
+    setDialog(null);
+  }, []);
+
+  const guideAck = useCallback(async () => {
+    setGuideBusy(true);
+    const r = await ackAutofillGuide();
+    setGuideBusy(false);
+    if (!r.ok) {
+      toast(r.status === 0 ? t('errNetwork') : t('guide.ackFail'));
+      return;
+    }
+    setData((d) => (d ? { ...d, prefs: { autofillGuideAck: true } } : d));
+    setDialog(null);
+  }, [t, toast]);
+
   const defaultCategory = view.name === 'cat' ? view.cat : categories.find((c) => c.id !== WIKI_CATEGORY_ID)?.id ?? WIKI_CATEGORY_ID;
   const startAdd = useCallback(() => openForm(null), [openForm]);
 
@@ -336,10 +365,33 @@ export default function ConsoleApp() {
             go,
             toast: (msg: string, opts?: ToastOptions) => toast(msg, opts),
             copyText,
+            writeClipboard: writeClip,
+            openAutofillGuide,
+            addCategory,
             openMenu,
           }
         : null,
-    [data, categories, items, live, pins, panel, togglePin, setPins, openDetail, requestEdit, startAdd, deleteItem, go, toast, copyText, openMenu]
+    [
+      data,
+      categories,
+      items,
+      live,
+      pins,
+      panel,
+      togglePin,
+      setPins,
+      openDetail,
+      requestEdit,
+      startAdd,
+      deleteItem,
+      go,
+      toast,
+      copyText,
+      writeClip,
+      openAutofillGuide,
+      addCategory,
+      openMenu,
+    ]
   );
 
   /* ---------- keyboard ---------- */
@@ -552,18 +604,33 @@ export default function ConsoleApp() {
       <PeopleDialog onClose={() => setDialog(null)} onSaved={() => void reload()} overlay={toastLayer} />
     ) : dialog?.kind === 'category' ? (
       <CategoryDialog
-        onClose={() => setDialog(null)}
+        onClose={() => {
+          dialog.resolve?.(null);
+          setDialog(null);
+        }}
         overlay={toastLayer}
         onAdded={(id) => {
+          const resolve = dialog.resolve;
           setDialog(null);
           void reload().then(() => {
             toast(t('cat.added'));
-            go({ name: 'cat', cat: id });
+            // 양식에서 연 경우 양식이 새 분류를 고른다. 화면은 그대로 둔다.
+            if (resolve) resolve(id);
+            else go({ name: 'cat', cat: id });
           });
         }}
       />
     ) : dialog?.kind === 'audit' ? (
       <AuditDialog onClose={() => setDialog(null)} overlay={toastLayer} />
+    ) : dialog?.kind === 'guide' ? (
+      <AutofillGuideDialog
+        info={detectBrowser(navigator.userAgent)}
+        busy={guideBusy}
+        onAck={() => void guideAck()}
+        onLater={guideLater}
+        onCopyAddress={(addr) => copyText(addr, t('guide.copied'))}
+        overlay={toastLayer}
+      />
     ) : null;
 
   const nav = buildNav({ categories, items, me: data!.me });
@@ -623,7 +690,13 @@ export default function ConsoleApp() {
             <AccountMenu onLang={setLang} onAdmin={(a) => void onAdmin(a)} onSignOut={() => void signOut()} />
           </header>
           <div className={s.frame}>
-            <Sidebar nav={nav} current={viewKey(view)} onClose={() => setDrawer(false)} onLang={setLang} />
+            <Sidebar
+              nav={nav}
+              current={viewKey(view)}
+              onClose={() => setDrawer(false)}
+              onLang={setLang}
+              onAddCategory={data!.me.isAdmin ? () => setDialog({ kind: 'category' }) : undefined}
+            />
             <div className={s.main} id="console-main" ref={mainRef} tabIndex={-1} inert={phone && (drawer || !!panel) ? true : undefined}>
               <div className={s.content}>{body}</div>
             </div>

@@ -4,13 +4,15 @@
 
 import { WIKI_CATEGORY, WIKI_CATEGORY_ID, groupNavCategories } from './categories';
 import { localized, translate, type ConsoleLang } from './i18n';
-import type {
-  ConsoleAccessMethod,
-  ConsoleCategory,
-  ConsoleListItem,
-  ConsoleOwner,
-  ConsolePerson,
-  ConsoleTeam,
+import {
+  CONSOLE_ACCESS_METHODS,
+  type ConsoleAccessMethod,
+  type ConsoleCategory,
+  type ConsoleItemType,
+  type ConsoleListItem,
+  type ConsoleOwner,
+  type ConsolePerson,
+  type ConsoleTeam,
 } from './types';
 
 export type ConsoleView =
@@ -503,4 +505,50 @@ export function initials(name: string): string {
   if (/[가-힣]/.test(s)) return s.length > 2 ? s.slice(-2) : s;
   const w = (name || '').split(/[\s._-]+/).filter(Boolean);
   return (w.length > 1 ? w[0][0] + w[w.length - 1][0] : s.slice(0, 2)).toUpperCase();
+}
+
+/* ---------- 추가·편집 양식의 종류 선택 (SPEC-CONSOLE-002 REQ-CS2-009, design.md §2.3) ---------- */
+
+/** 양식 맨 위 두 갈래: 링크 / 공유 계정. 저장 칸은 기존 type·access_method 다. */
+export type ItemKind = 'link' | 'shared';
+
+/** 형식과 접속 방식 한 쌍. 종류를 바꿀 때 함께 바뀌는 저장 칸. */
+export interface KindFields {
+  type: ConsoleItemType;
+  access_method: ConsoleAccessMethod;
+}
+
+/** 링크일 때 고를 수 있는 접속 방식(공유 계정 제외, REQ-CS2-010). */
+export const LINK_ACCESS_METHODS: readonly ConsoleAccessMethod[] = CONSOLE_ACCESS_METHODS.filter((m) => m !== 'shared-credential');
+
+export function kindOf(item: Pick<ConsoleListItem, 'access_method'> | null): ItemKind {
+  return item?.access_method === 'shared-credential' ? 'shared' : 'link';
+}
+
+/** 양식이 기억하는 "링크일 때의 형식·접속 방식" 처음 값. 링크였던 적이 없으면 link·public (CS2-D12). */
+export function linkMemoryFor(item: KindFields | null): KindFields {
+  return item && item.access_method !== 'shared-credential' ? { type: item.type, access_method: item.access_method } : { type: 'link', access_method: 'public' };
+}
+
+/**
+ * 종류를 바꾼 결과. 공유 계정으로 갈 때 지금의 링크 값을 기억하고 account·shared-credential 로,
+ * 링크로 돌아올 때 기억해 둔 값을 되살린다. 같은 종류를 다시 고르면 그대로.
+ */
+export function applyKind(cur: KindFields, kind: ItemKind, memory: KindFields): { state: KindFields; memory: KindFields } {
+  const isShared = cur.access_method === 'shared-credential';
+  if (kind === 'shared') {
+    if (isShared) return { state: cur, memory };
+    return { state: { type: 'account', access_method: 'shared-credential' }, memory: { type: cur.type, access_method: cur.access_method } };
+  }
+  return isShared ? { state: { ...memory }, memory } : { state: cur, memory };
+}
+
+/** 저장된 아이디·비밀번호가 있는 항목을 링크로 저장하려 할 때만 삭제 확인을 받는다 (CS2-D11). */
+export function needsCredDeleteConfirm(item: Pick<ConsoleListItem, 'hasLoginId' | 'hasPassword'> | null, kind: ItemKind): boolean {
+  return !!item && kind === 'link' && (item.hasLoginId || item.hasPassword);
+}
+
+/** 공유 계정 항목에 아이디나 비밀번호가 저장돼 있는지 (REQ-CS2-015/017). */
+export function hasCredential(item: Pick<ConsoleListItem, 'hasLoginId' | 'hasPassword'>): boolean {
+  return item.hasLoginId || item.hasPassword;
 }

@@ -23,7 +23,9 @@ export function useToasts() {
 }
 
 function Toast({ item, onDone }: { item: ToastItem; onDone: (id: number) => void }) {
-  const left = useRef(item.duration ?? (item.action ? 6000 : 2800));
+  // 단추나 링크가 있는 토스트는 누를 시간을 더 준다.
+  const interactive = !!(item.action || item.href);
+  const left = useRef(item.duration ?? (interactive ? 6000 : 2800));
   const started = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const run = useCallback(() => {
@@ -41,13 +43,18 @@ function Toast({ item, onDone }: { item: ToastItem; onDone: (id: number) => void
   }, [run]);
   return (
     <div
-      className={cx(s.toast, item.action && s.hasAct)}
-      onMouseEnter={item.action ? pause : undefined}
-      onMouseLeave={item.action ? run : undefined}
-      onFocus={item.action ? pause : undefined}
-      onBlur={item.action ? run : undefined}
+      className={cx(s.toast, interactive && s.hasAct)}
+      onMouseEnter={interactive ? pause : undefined}
+      onMouseLeave={interactive ? run : undefined}
+      onFocus={interactive ? pause : undefined}
+      onBlur={interactive ? run : undefined}
     >
       <span>{item.msg}</span>
+      {item.href ? (
+        <a className={s.tAct} href={item.href} target="_blank" rel="noopener noreferrer" onClick={() => onDone(item.id)}>
+          {item.hrefLabel ?? item.href}
+        </a>
+      ) : null}
       {item.action ? (
         <button
           type="button"

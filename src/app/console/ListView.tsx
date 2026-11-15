@@ -10,6 +10,7 @@ import {
   categoryName,
   emptyStateKey,
   hasActiveFilter,
+  hasCredential,
   hostOf,
   noOwner,
   ownerOptions,
@@ -216,7 +217,20 @@ function RowConfirm({ item, onClose }: { item: ConsoleListItem; onClose: () => v
   );
 }
 
-function Row({ item, showCat, confirming, setConfirm }: { item: ConsoleListItem; showCat: boolean; confirming: boolean; setConfirm: (id: string | null) => void }) {
+function Row({
+  item,
+  showCat,
+  showCred,
+  confirming,
+  setConfirm,
+}: {
+  item: ConsoleListItem;
+  showCat: boolean;
+  /** 공유 계정 보기에서 계정 정보 저장 여부를 보인다 (SPEC-CONSOLE-002 REQ-CS2-017). */
+  showCred: boolean;
+  confirming: boolean;
+  setConfirm: (id: string | null) => void;
+}) {
   const { lang, t, L } = useUi();
   const app = useApp();
   const title = L(item, 'title');
@@ -275,6 +289,12 @@ function Row({ item, showCat, confirming, setConfirm }: { item: ConsoleListItem;
             )}
             {team ? <span className={s.rTeam}>{team}</span> : null}
             {acc ? <span className={s.rAcc2}>{acc}</span> : null}
+            {showCred ? (
+              <span className={cx(s.rCred, hasCredential(item) && s.on)}>
+                <Icon name={hasCredential(item) ? 'check' : 'key'} size={13} />
+                {hasCredential(item) ? t('credSet') : t('credUnset')}
+              </span>
+            ) : null}
           </span>
         </span>
       </div>
@@ -351,7 +371,7 @@ export default function ListView({
   const rows = (its: ConsoleListItem[]) => (
     <ul className={s.rows}>
       {its.map((c) => (
-        <Row key={c.id} item={c} showCat={showCat} confirming={confirmId === c.id} setConfirm={setConfirmId} />
+        <Row key={c.id} item={c} showCat={showCat} showCred={view.name === 'shared'} confirming={confirmId === c.id} setConfirm={setConfirmId} />
       ))}
     </ul>
   );

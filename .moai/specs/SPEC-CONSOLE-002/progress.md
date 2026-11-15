@@ -102,6 +102,105 @@ eslint 경고 2건은 `src/lib/backup.ts` 3행의 기존 미사용 import(`listG
 - 안내 확인 POST의 400 본문은 `{ error: 'invalid', errors: [{ field: 'version', reason: 'unknown_value' }] }` 모양이다(기존 항목 라우트와 같은 형식).
 - 전체 스위트는 CI에 맡겼다(부하 3~4, 계획 §6대로 콘솔 관련 테스트만 로컬 실행).
 
+### M2 — 화면 (2026-11-15, manager-develop, cycle_type=tdd)
+
+**바뀐 것**
+
+| 파일 | 내용 |
+|---|---|
+| `src/lib/console/password-gen.ts` (신규) | `generatePassword(20)`: 네 종류 각 1자 + 나머지, Fisher–Yates 섞기. 난수는 `crypto.getRandomValues` 한 바이트씩, `randomIndex`가 `256 - 256 % n` 이상을 버림(거부 표본추출) |
+| `src/lib/console/browser-guide.ts` (신규) | `detectBrowser(ua)`(design.md §2.6 순서), `guideFor(info)`(설정 주소는 데스크톱 Chrome·Edge·Whale·Firefox만, 단계 문구 키), `shouldAutoOpenGuide`, `GUIDE_LATER_KEY`(sessionStorage) |
+| `src/lib/console/ui-model.ts` | `ItemKind`, `kindOf`, `linkMemoryFor`, `applyKind`(CS2-D12 왕복 복원), `needsCredDeleteConfirm`(CS2-D11), `hasCredential`, `LINK_ACCESS_METHODS` |
+| `src/lib/console/i18n.ts` | 새 문구 한·영(`kind`, `share`, `hidePw*`, `fLoginUrl`, `fMemo*`, `genPw`, `newCategory`, `addCategory`, `credSet/Unset`, `credDel`, `card.*`, `act.*`, `guide.*`). 자격증명 행을 `card.*`로 옮기면서 쓰이지 않게 된 9개 키(`pUser`·`pPw`·`pUrl`·`copyPw`·`copyId`·`showId`·`hideId`·`idCopied`·`pwCopied`)는 지움 |
+| `src/app/console/ItemForm.tsx` | 맨 위 종류 radiogroup(화살표·Home·End, 선택된 쪽만 tabindex 0) → 분류 select(관리자는 마지막에 `+ 새 분류 만들기…`) → 제목. 공유 계정: 로그인 주소·아이디·비밀번호(눈·생성)·메모(안내 문구)·공유 대상 라디오 3개·숨기기 체크가 첫 화면, 연동 주소는 더 보기로. 링크: SPEC-CONSOLE-001 첫 화면 그대로, 더 보기 접속 방식에서 `shared-credential` 뺌. 저장 본문에 `hide_password`(링크면 false). 저장된 계정 정보가 있는 항목을 링크로 저장하면 요청 전에 확인 대화상자. 아이디 칸 `autocomplete="off"`, 비밀번호 칸 `new-password`, 두 칸 모두 `data-1p-ignore`·`data-lpignore="true"` |
+| `src/app/console/DetailPanel.tsx` | 자격증명 카드(`data-cred-card`): 로그인 주소 → 아이디 → 비밀번호 → 마지막 수정. 복사는 `purpose: 'copy'` → 클립보드로 바로, 상태에 안 둠. 숨기기 대상(편집 권한 없음)에게 비밀번호 보기 없음. 로그인 열기(아이디 복사 → `window.open('', '_blank')` → `opener = null` → `location.replace`, 막히면 토스트 안 링크). 빈 상태 + 편집 권한자 "계정 정보 입력"(`requestEdit(id,'id')`). 편집 권한자만 `<details>` 사용 기록(펼칠 때 `/activity` 1회). 카드에 "자동 입력 끄기 안내" |
+| `src/app/console/clipboard.ts` (신규) | `writeClipboard`: ConsoleApp `copyText`의 복사 부분을 분리(동작 같음). 클립보드 API 먼저, 대체 경로 임시 textarea는 `aria-hidden`·`opacity:0`·`tabIndex -1`, 같은 작업에서 `remove()` |
+| `src/app/console/AutofillGuideDialog.tsx` (신규) | 기존 `Dialog` 사용. "이 사이트는 브라우저 설정을 직접 바꿀 수 없어요…" 첫 줄, 이유, 브라우저별 번호 단계, 설정 주소가 있으면 주소 표시 + "설정 화면 열기"(복사 + 토스트), 확인했어요 / 나중에. 닫기(X·Esc)는 나중에와 같음 |
+| `src/app/console/ConsoleApp.tsx` | 첫 데이터 뒤 다음 프레임에 한 번 자동 표시(`prefs.autofillGuideAck`가 false이고 sessionStorage 표시 없음, 다른 대화상자가 없을 때만). 나중에 → sessionStorage, 확인했어요 → `POST /api/console/me/autofill-guide {version:1}` 후 `prefs` 갱신. `addCategory()`(양식용: 추가 id 또는 null, 화면 이동 없음), 사이드바 "+"(관리자), `writeClipboard`·`openAutofillGuide`를 AppContext로 |
+| `src/app/console/AccountMenu.tsx` | 팝오버 본문을 `AccountMenuBody`로 분리(정적 렌더 테스트용), 모든 사람에게 "자동 입력 끄기 안내" 항목 |
+| `src/app/console/Sidebar.tsx` | `onAddCategory`가 있을 때(관리자) 분류 제목 옆 `aria-label="분류 추가"` "+" |
+| `src/app/console/ListView.tsx` | 공유 계정 보기에서만 행에 "계정 정보 있음 / 없음" |
+| `src/app/console/Toasts.tsx`, `app-context.ts`, `api.ts` | 토스트 `href`(새 탭 링크), `fetchActivity`, `ackAutofillGuide`, `BootstrapData.prefs?` |
+| `src/app/console/console.module.css` | 스크롤바(design.md §2.5): `:global(html):has(.root)` thin + `#d6d0c4 #f2efe8`, `::-webkit-scrollbar*` 8px·둥근 막대·hover `#bdb5a6`, `.root, .root *` thin + 같은 색, `.root *::-webkit-scrollbar*`(트랙 transparent). 새 컨트롤 스타일은 고정 hex. `globals.css`·`dark-theme.css`는 수정 없음 |
+| 테스트 (신규) | `src/lib/console/__tests__/{password-gen,browser-guide,item-kind}.test.ts`, `src/lib/__tests__/console-scrollbar-style.test.ts`(범위·색·순수성 검사·globals 그대로), `src/app/console/__tests__/{item-form,detail-panel,shared-ui}.test.ts`(정적 렌더), `{item-form-dom,detail-panel-dom,console-guide-dom,clipboard}.test.ts`(jsdom 클릭 동작), 도우미 `render-helpers.ts`. `i18n.test.ts`에 새 키·한국어 문구 확인 2건 추가 |
+
+**인수 기준 (M2)** — "테스트"는 이번 회차에 돌린 vitest, "브라우저"는 로컬 개발 서버(`localhost:3457`) + 헤드리스 Chrome 157(CDP)로 본 것.
+
+| AC | 판정 | 근거 / 남은 것 |
+|---|---|---|
+| AC-CS2-007 | PASS(테스트·Chrome) / 미확인(Firefox·Safari·로그인 후 `/console`) | 테스트: `console-scrollbar-style.test.ts` 8건(고정 hex만, `var(--` 없음, 순수성 검사 통과). 개발 서버 `/console/login` 200, 컴파일된 CSS에 `html:has(.console_root__j9GAA)…` 확인. Chrome `/console/login`: html `rgb(214, 208, 196) rgb(242, 239, 232)`/`thin`, 콘솔 루트·안쪽 div 같음. Firefox 미설치, Safari 픽셀 측정·세션 필요한 `/console` 안쪽 영역은 리드 확인 필요. `next build`는 돌리지 않음 |
+| AC-CS2-008 | PASS(Chrome `/`·`/admin/login`, diff) / 미확인(Firefox, `/console`→`/` 이동) | Chrome `/`, `/admin/login`: `rgb(212, 168, 67) rgb(20, 22, 29)`. `git diff HEAD -- src/styles/globals.css src/styles/zoel/dark-theme.css` 출력 없음 |
+| AC-CS2-009 | PASS(테스트) / 미확인(네트워크 탭) | `item-form.test.ts`(radiogroup→분류 select 순서, aria-checked), `item-kind.test.ts`(4개 왕복 사례), `item-form-dom.test.ts`(공유 계정 저장 본문 `account`/`shared-credential`, 삭제 확인: 취소 시 요청 0건·입력값 유지, 삭제하고 저장 시 PATCH 1건, 저장된 정보 없으면 묻지 않음) |
+| AC-CS2-010 | PASS(테스트) | `item-form.test.ts` 4건(더 보기 밖 배치, 메모 안내 ko/en, 링크 양식 칸 구성 `f-cat,f-title,f-url,f-desc`+연동 주소, 접속 방식에 `shared-credential` 없음) |
+| AC-CS2-011 | PASS(테스트) | `password-gen.test.ts` 4건(10,000회, 스파이, 거부 표본추출) + `item-form-dom` 생성 버튼 20자·눈 켜짐 |
+| AC-CS2-012 | PASS(테스트) / 미확인(브라우저) | 정적 렌더(관리자 마지막 선택지, 멤버 없음, 사이드바 `분류 추가`), `item-form-dom`(추가 → 새 분류·제목 유지, 취소 → 이전 분류) |
+| AC-CS2-013 | PASS(테스트) / 미확인(실브라우저 클립보드) | `detail-panel.test.ts`(행·버튼, 숨김 시 멤버 보기 없음·담당자 있음, 아이디 보기 둘 다), `detail-panel-dom`(copy 요청 본문, `writeClipboard(카나리)`, body·input에 카나리 없음) |
+| AC-CS2-014 | 부분(jsdom) / 미확인(Chrome·Safari 실제 새 탭, `opener`·`referrer`, 감사 1건) | `detail-panel-dom` 3건: `login_id` copy → 클립보드 → `open('', '_blank')` → `opener = null` → `replace(url)` → 토스트 문구, 막히면 토스트 `href`, 아이디 없으면 요청 없이 이동. 실제 팝업 차단·`document.referrer` 확인은 세션이 필요해 못 함 |
+| AC-CS2-015 | PASS(테스트) | 정적 렌더(빈 상태 문구, 행 없음, 담당자만 버튼) + `detail-panel-dom`(`requestEdit('it-1','id')`) |
+| AC-CS2-016 | PASS(테스트) / 미확인(브라우저) | 정적 렌더(담당자·관리자만, 렌더 시 fetch 0) + `detail-panel-dom`(펼치면 `/activity` 1회, 다시 펼쳐도 1회, 누가·복사 표시) |
+| AC-CS2-017 | PASS(테스트) | `shared-ui.test.ts`(ko/en, 다른 보기엔 없음) |
+| AC-CS2-018 | PASS(테스트) / 미확인(다른 브라우저 실확인) | `browser-guide.test.ts`(판정표 4경우), `shared-ui`(계정 메뉴), `detail-panel`(카드), `console-guide-dom`(첫 표시 → 나중에 → 재마운트 안 뜸 → sessionStorage 비우면 뜸 → 확인했어요 POST `{version:1}` → 안 뜸 → 계정 메뉴로 열림) |
+| AC-CS2-019 | PASS(테스트) / 미확인(설정 주소 실확인) | `browser-guide.test.ts` 9개 UA + 주소 유무 + 단계 키 ko/en, `shared-ui`(주소 없으면 버튼 없음, 한계 문구 ko/en). 설치된 브라우저: Chrome, Safari. 주소 붙여넣기 확인은 이번 회차에 하지 않음. Edge·Whale·Firefox 미설치(미확인). iOS 메뉴 이름(설정 → 일반 → 자동 완성 및 암호)도 미확인 후보값. `x-apple.systempreferences:` 딥링크는 확인 못 해 넣지 않음(메뉴 경로만) |
+| AC-CS2-020 | PASS(테스트) / 미확인(같은 출처 저장 비밀번호 Chrome 확인) | `item-form.test.ts`(칸별 속성), `clipboard.test.ts` 3건(임시 칸 aria-hidden·opacity 0·복사 뒤 0개) |
+| AC-CS2-021 | PASS(테스트) / 미확인(레이아웃 이동·375px) | `i18n.test.ts`(키 집합 같음 + 새 키), 정적 렌더(radiogroup 이름 2개, 체크박스 label, 생성·보기·복사·사이드바 + aria-label), `item-form-dom`(화살표 키로 바뀌고 초점 이동) |
+| AC-CS2-022 | 미확인 | 흐름 전체 브라우저 확인은 세션이 필요해 리드 몫. 구성 요소는 AC-CS2-003/004(M1)·013·016 테스트로 고정 |
+
+**RED** (구현 전, `npx vitest run` 새 테스트 파일 + 기존 `i18n.test.ts`·`sidebar.test.ts`, 로그 `.moai/state/verify/cs2-m2/red.log`):
+
+```
+ FAIL  src/app/console/__tests__/clipboard.test.ts [ src/app/console/__tests__/clipboard.test.ts ]
+Error: Failed to resolve import "../clipboard" from "src/app/console/__tests__/clipboard.test.ts". Does the file exist?
+ FAIL  src/lib/__tests__/console-scrollbar-style.test.ts > console scrollbar (scoped) > has scrollbar rules
+AssertionError: expected 0 to be greater than or equal to 5
+ Test Files  10 failed | 1 passed (11)
+      Tests  39 failed | 19 passed (58)
+```
+
+통과한 19건은 기존 `sidebar.test.ts`·`i18n.test.ts` 판정과, 규칙이 아직 없어 빈 집합으로 통과한 스크롤바 검사(순수성·globals 그대로 등)다.
+
+**나중에 쓴 테스트와 변이 확인**: `item-form-dom.test.ts`(9건)와 `console-guide-dom.test.ts`(1건)는 해당 동작을 구현한 뒤에 쓴 클릭 동작 테스트다. 테스트가 동작을 실제로 잡는지 보려고 구현을 일부러 망가뜨려(삭제 확인 끄기, 새 분류 선택 끄기, 화살표 초점 끄기, 생성 끄기, 자동 표시 끄기) 돌렸다:
+
+```
+$ npx vitest run src/app/console/__tests__/item-form-dom.test.ts src/app/console/__tests__/console-guide-dom.test.ts   (변이 적용)
+ Test Files  2 failed (2)
+      Tests  6 failed | 4 passed (10)
+```
+
+변이를 되돌린 뒤 같은 명령은 `Tests  10 passed (10)`. 실패하지 않은 4건은 변이와 무관한 동작(공유 계정 저장 본문, 공유 대상·숨기기 본문, 저장된 정보 없을 때 묻지 않음, 새 분류 취소)이다. 로그 `.moai/state/verify/cs2-m2/mutation.log`.
+
+**GREEN / 검증** (같은 트리, 이 회차 실행, 부하 1.7~2.9):
+
+```
+$ npx vitest run src/lib/console src/app/api/console src/app/console src/lib/__tests__/console-scrollbar-style.test.ts src/lib/__tests__/console-screen-style.test.ts src/lib/__tests__/backup-crypto.test.ts src/lib/__tests__/backup-snapshot-id.test.ts src/app/api/admin/users/__tests__/users.test.ts
+ Test Files  40 passed (40)
+      Tests  538 passed (538)
+
+$ npx tsc --noEmit
+tsc=0
+
+$ npx eslint <바뀐 ts·tsx 28개>
+eslint=0   (출력 0바이트)
+
+$ curl http://localhost:3457/console/login   (npx next dev -p 3457)
+login=200
+ ✓ Compiled /console/login in 1582ms (1105 modules)
+
+헤드리스 Chrome 157 (CDP, getComputedStyle(document.documentElement))
+/console/login  html "rgb(214, 208, 196) rgb(242, 239, 232)" / thin, 루트·안쪽 div 같음
+/               html "rgb(212, 168, 67) rgb(20, 22, 29)" / auto
+/admin/login    html "rgb(212, 168, 67) rgb(20, 22, 29)" / auto
+```
+
+공개 저장소 점검: `git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 0줄. 새 코드의 email은 `*@try-n.com` 지어낸 주소뿐, 외부 이미지·폰트·스크립트 참조 없음(`console-screen-style.test.ts` 통과). 로그 원본 `.moai/state/verify/cs2-m2/`(커밋 안 함). 개발 서버와 헤드리스 Chrome은 확인 뒤 종료했고 남은 프로세스 없음(`pgrep` 빈 출력). 개발 서버가 만든 `next-env.d.ts`는 지웠다.
+
+**미룬 것 / 남은 일 (리드 브라우저 확인 필요)**
+
+- 로그인 세션이 필요한 확인 전부: AC-CS2-007 안쪽 스크롤 영역(`/console`), 009 네트워크 탭, 012 대화상자 흐름, 013 실제 클립보드, 014 Chrome·Safari 새 탭·팝업 차단·`window.opener`·`document.referrer`·감사 1건, 016·018 실브라우저 흐름, 020 같은 출처 저장 비밀번호 Chrome 프로필, 021 레이아웃 이동·375px, 022 흐름 전체.
+- Firefox·Edge·Whale은 이 맥에 없다(미확인). Safari 스크롤바 픽셀 측정, 설정 주소 붙여넣기 결과(Chrome `chrome://password-manager/settings` 포함)는 이번 회차에 하지 않았다. 단계 문구의 메뉴 이름(예: Chrome "비밀번호 저장 제안", iOS "자동 완성 및 암호")은 후보값이다.
+- `npx next build`는 돌리지 않았다(개발 서버 컴파일로 CSS 순수성만 확인).
+- `/console` → `/` 앱 안 이동 뒤 스크롤바 복귀는 확인하지 못했다(콘솔 루트가 사라지면 `:has()`가 풀리는 구조라 추정상 문제없음).
+- 안내 팝업 "확인했어요" 저장이 실패하면 팝업을 닫지 않고 토스트로 알린다. 서버 `prefs` 읽기 실패 시 bootstrap이 `true`를 주므로(M1) 팝업이 뜨지 않는다.
+
 
 ## §E.3 Run-phase Audit-Ready Signal
 

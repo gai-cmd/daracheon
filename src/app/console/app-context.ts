@@ -18,6 +18,9 @@ export interface ToastOptions {
   action?: string;
   onAction?: () => void;
   duration?: number;
+  /** 토스트 안에 새 탭으로 여는 링크 (새 탭이 막혔을 때의 대체 경로, SPEC-CONSOLE-002 REQ-CS2-014). */
+  href?: string;
+  hrefLabel?: string;
 }
 
 export interface RoutePreset {
@@ -43,6 +46,12 @@ export interface AppValue {
   go: (view: ConsoleView, preset?: RoutePreset) => void;
   toast: (msg: string, opts?: ToastOptions) => void;
   copyText: (text: string, okMsg: string) => void;
+  /** 토스트 없이 클립보드에만 쓴다. 성공하면 true (SPEC-CONSOLE-002). */
+  writeClipboard: (text: string) => Promise<boolean>;
+  /** 자동 입력 끄기 안내 팝업을 연다 (REQ-CS2-018). */
+  openAutofillGuide: () => void;
+  /** 관리자: 분류 추가 대화상자를 열고, 추가된 분류 id(취소하면 null)를 돌려준다 (REQ-CS2-012). */
+  addCategory: () => Promise<string | null>;
   openMenu: (anchor: HTMLElement, items: MenuEntry[], align?: 'start' | 'end') => void;
 }
 
