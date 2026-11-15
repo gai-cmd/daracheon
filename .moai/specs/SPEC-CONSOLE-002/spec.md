@@ -1,7 +1,7 @@
 ---
 id: SPEC-CONSOLE-002
 title: "팀 콘솔 공유 계정 정비 — 양식 종류 선택, 비밀번호 숨김 공유, 사용 기록, 자동 입력 끄기 안내, 콘솔 스크롤바"
-version: "0.2.0"
+version: "0.3.0"
 status: draft
 created: 2026-11-15
 updated: 2026-11-15
@@ -11,7 +11,7 @@ phase: "v1.2.0 target"
 module: "src/app/console, src/app/api/console, src/lib/console"
 lifecycle: spec-anchored
 tags: "console, shared-account, credentials, hide-password, audit, autofill, scrollbar, i18n, a11y"
-tier: M
+tier: L
 depends_on: [SPEC-CONSOLE-001]
 ---
 
@@ -23,6 +23,7 @@ depends_on: [SPEC-CONSOLE-001]
 |---|---|---|---|
 | 0.1.0 | 2026-11-15 | manager-spec | 최초 작성(draft). 오너 요청 2건(2026-11-15: 스크롤바·분류 선택기·TeamPassword식 계정 공유, 자동 입력 끄기 안내)과 리드가 정한 범위 S1~S6을 근거로 함 |
 | 0.2.0 | 2026-11-15 | manager-spec | plan-audit 1차(FAIL 0.86) 결함 반영. CS2-PA-D1 스크롤바 선택자를 CSS 모듈 순수성 검사를 통과하는 형태로 교체, D2 새 탭 차단 판정 방식 교체(REQ-CS2-014), D3 링크 전환 시 저장된 계정 정보 삭제 확인(REQ-CS2-009), D4 안내 확인 값을 `me` 밖으로 이동(REQ-CS2-006), D5 안쪽 스크롤 영역 굵기, D7 종류 왕복 시 원래 형식·접속 방식 복원(REQ-CS2-009), D8 판정 절차 수치화. D6(Tier 초과)은 리드 결정 대기 |
+| 0.3.0 | 2026-11-15 | manager-spec | plan-audit 2차(FAIL 0.91) 반영. CS2-PA-D6 리드 결정 (a): 범위 S1~S6을 유지하고 Tier L로 승격(오너가 S6을 이번 작업에 요청). design.md 추가(0.2.0 plan.md §1~§2 이전, 입력 칸 속성 §2.7과 요구사항 대응표 §3 추가), research.md 추가(코드 조사·TeamPassword 도움말 조사). PASS 기준 0.85, 진행 경로 Route B. R2-D1 "SPEC-CONSOLE-001 design.md §6.2"로 명시, R2-D2 AC-CS2-014 Safari 판정을 "새 탭 또는 토스트 안 링크"로 완화. 요구사항·인수 기준 본문 번호는 바꾸지 않음 |
 
 ## 1. 배경과 목적
 

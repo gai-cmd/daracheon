@@ -141,8 +141,9 @@
 **AC-CS2-014** — maps REQ-CS2-014 · 브라우저 확인
 - Given 로그인 주소와 카나리 아이디가 있는 공유 계정 항목, member 세션
 - When Chrome과 Safari에서 "로그인 열기"를 누른다
-- Then 클립보드 내용이 카나리 아이디이고, 토스트 "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요"가 보이며, 새 탭이 로그인 주소로 열린다
-- And 팝업 차단을 끈(기본 설정) Chrome에서 새 탭이 열렸을 때 콘솔에 대체 링크가 보이지 않는다
+- Then 두 브라우저 모두 클립보드 내용이 카나리 아이디이고, 토스트 "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요"가 보인다
+- And Chrome(팝업 차단을 끈 기본 설정)에서는 새 탭이 로그인 주소로 열리고, 콘솔에 대체 링크가 보이지 않는다
+- And Safari에서는 새 탭이 로그인 주소로 열리거나, 막히면 토스트 안에 로그인 주소로 가는 링크가 보인다. 어느 쪽이었는지 progress.md §E.2에 남긴다
 - And 사이트 설정에서 팝업을 차단한 Chrome에서는 새 탭이 열리지 않고, 그 대신 로그인 주소로 가는 링크가 토스트 안에 보인다
 - And 새 탭에서 `window.opener`가 `null`이고 `document.referrer`가 빈 문자열이다
 - And 감사 기록에 `login_id`의 `credential.copy` 1건이 생긴다
@@ -173,7 +174,7 @@
 - And 브라우저: 처음 들어온 `a@try-n.com`에게 팝업이 1번 뜬다 → "나중에" → 같은 탭 새로고침 시 안 뜬다 → 개발자 도구 콘솔에서 `sessionStorage.clear()`를 실행하고 새로고침하면 다시 뜬다(새 브라우저 세션과 같은 상태. 세션 복원 기능의 영향을 받지 않도록 브라우저를 닫는 절차는 쓰지 않는다) → "확인했어요" → 새로고침해도 안 뜬다 → 다른 브라우저(또는 새 프로필)로 같은 계정에 들어와도 안 뜬다 → 계정 메뉴의 "자동 입력 끄기 안내"를 누르면 열린다
 
 **AC-CS2-019** — maps REQ-CS2-019 · 테스트 + 브라우저 확인
-- Given `detectBrowser`와 안내표(plan.md §2.6)
+- Given `detectBrowser`와 안내표(design.md §2.6)
 - When 공개된 표준 UA 문자열 표(Chrome·Edge·Whale·Firefox·Safari 데스크톱, Chrome Android, iPhone Safari, iPhone Chrome, 알 수 없는 UA)로 단위 테스트한다
 - Then 각 UA가 기대한 `{ browser, mobile }`로 판별되고, Edge·Whale UA는 `chrome`으로 판별되지 않는다
 - And 데스크톱 Chrome·Edge·Whale·Firefox는 설정 주소가 있고 Safari·모바일·기타는 없다. 대화상자 정적 렌더에서 주소가 없는 경우 "설정 화면 열기" 버튼이 없고 메뉴 경로 단계가 있다
