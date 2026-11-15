@@ -1,7 +1,7 @@
 ---
 id: SPEC-CONSOLE-002
 title: "팀 콘솔 공유 계정 정비 — 양식 종류 선택, 비밀번호 숨김 공유, 사용 기록, 자동 입력 끄기 안내, 콘솔 스크롤바"
-version: "0.1.0"
+version: "0.2.0"
 status: draft
 created: 2026-11-15
 updated: 2026-11-15
@@ -22,6 +22,7 @@ depends_on: [SPEC-CONSOLE-001]
 | 버전 | 날짜 | 작성 | 내용 |
 |---|---|---|---|
 | 0.1.0 | 2026-11-15 | manager-spec | 최초 작성(draft). 오너 요청 2건(2026-11-15: 스크롤바·분류 선택기·TeamPassword식 계정 공유, 자동 입력 끄기 안내)과 리드가 정한 범위 S1~S6을 근거로 함 |
+| 0.2.0 | 2026-11-15 | manager-spec | plan-audit 1차(FAIL 0.86) 결함 반영. CS2-PA-D1 스크롤바 선택자를 CSS 모듈 순수성 검사를 통과하는 형태로 교체, D2 새 탭 차단 판정 방식 교체(REQ-CS2-014), D3 링크 전환 시 저장된 계정 정보 삭제 확인(REQ-CS2-009), D4 안내 확인 값을 `me` 밖으로 이동(REQ-CS2-006), D5 안쪽 스크롤 영역 굵기, D7 종류 왕복 시 원래 형식·접속 방식 복원(REQ-CS2-009), D8 판정 절차 수치화. D6(Tier 초과)은 리드 결정 대기 |
 
 ## 1. 배경과 목적
 
@@ -61,7 +62,7 @@ SPEC-CONSOLE-001로 `/console`이 운영 중이다. 오너가 실제로 써 보�
 
 **REQ-CS2-005** — The console shall provide a per-item activity endpoint that answers only console admins and owners of the item (403 for any other signed-in user, 401 without a session, 404 for an unknown or deleted item) with at most the 20 most recent credential events of that item, newest first, each giving the actor's display name (from the people directory, otherwise the email), the action, the field, the time, and the denial reason where one exists. The response shall contain no credential value and shall be marked non-cacheable.
 
-**REQ-CS2-006** — The console shall keep one autofill-guide acknowledgement per signed-in user, keyed by email on the server, holding only the email, the guide version, and the acknowledgement time. When a signed-in user acknowledges the guide, the server shall record it (Origin-checked, idempotent), and the bootstrap payload shall tell that user whether they have acknowledged the current guide version, so that the acknowledgement follows the person across browsers and devices.
+**REQ-CS2-006** — The console shall keep one autofill-guide acknowledgement per signed-in user, keyed by email on the server, holding only the email, the guide version, and the acknowledgement time. When a signed-in user acknowledges the guide, the server shall record it (Origin-checked, idempotent), and the bootstrap payload shall tell that user whether they have acknowledged the current guide version without changing the existing `me` object, so that the acknowledgement follows the person across browsers and devices.
 
 ### 3.2 화면 — 스크롤바 (M2)
 
@@ -71,7 +72,7 @@ SPEC-CONSOLE-001로 `/console`이 운영 중이다. 오너가 실제로 써 보�
 
 ### 3.3 화면 — 추가·편집 양식 (M2)
 
-**REQ-CS2-009** — The item create and edit form shall show at its top a two-choice kind control, 링크 / 공유 계정 (Link / Shared account), exposed as a radio group, with the category selector directly below it. When the user selects 공유 계정, the form shall set the item type to `account` and the access method to `shared-credential`; when the user selects 링크 after 공유 계정, the form shall set the type to `link` and the access method to `public`. When an existing item is edited, the form shall open on 공유 계정 exactly when the item's access method is `shared-credential`.
+**REQ-CS2-009** — The item create and edit form shall show at its top a two-choice kind control, 링크 / 공유 계정 (Link / Shared account), exposed as a radio group, with the category selector directly below it. When the user selects 공유 계정, the form shall set the item type to `account` and the access method to `shared-credential`. When the user selects 링크 after 공유 계정, the form shall restore the type and access method the form last held while it was on 링크; where the form has never been on 링크 (a new item, or an existing item that opened on 공유 계정), it shall use the type `link` and the access method `public`. When an existing item is edited, the form shall open on 공유 계정 exactly when the item's access method is `shared-credential`. When the user saves an existing item that has a stored login ID or password while the kind control is on 링크, the form shall first ask for confirmation, stating that the stored login ID and password will be deleted permanently, and shall send no request when the user cancels.
 
 **REQ-CS2-010** — While the kind control is on 공유 계정, the form shall show without the "더 보기" toggle: the login address (the item address), the login ID, the password (masked, with an eye toggle and a 생성 generate button), a memo (the item description, with a hint that it is visible to everyone who can see the item and must not hold a password), a share-target radio group 전체 멤버 / 우리 팀 / 나만(비공개) mapped to the visibility values 전체 / 팀 / 본인, and a checkbox 멤버에게 비밀번호 숨기기 (복사만 허용) mapped to `hide_password`. While the kind control is on 링크, the form shall keep the current fields, and the access-method choices under "더 보기" shall not include `shared-credential`.
 
@@ -83,7 +84,7 @@ SPEC-CONSOLE-001로 `/console`이 운영 중이다. 오너가 실제로 써 보�
 
 **REQ-CS2-013** — While the detail panel shows a shared-credential item that the viewer may access and that has a stored login ID or password, the panel shall show a credential card with the rows 로그인 주소 / 아이디 / 비밀번호 and the actions 아이디 복사, 비밀번호 복사, and a 보기 eye toggle. Copy actions shall request the value with purpose `copy`, write it to the clipboard, and shall not render it in the page or keep it in component state. The 보기 toggle shall not be offered for the password while `hide_password` is `true` and the viewer is not an editor of the item.
 
-**REQ-CS2-014** — When the viewer presses 로그인 열기 on a credential card with a login address, the console shall copy the login ID (purpose `copy`) to the clipboard, show the toast "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요", and open the login address in a new tab without giving the new tab a reference to the console; when the browser blocks the new tab, the console shall show a link to the login address in its place.
+**REQ-CS2-014** — When the viewer presses 로그인 열기 on a credential card with a login address, the console shall copy the login ID (purpose `copy`) to the clipboard, show the toast "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요", and open the login address in a new tab without giving the new tab a reference to the console and without sending the console address as the referrer. When the browser blocks the new tab, the console shall show a link to the login address in its place; when the new tab opens, the console shall not show that link.
 
 **REQ-CS2-015** — When a shared-credential item has neither a stored login ID nor a stored password, the detail panel shall show the empty state "아직 계정 정보가 없어요", and for editors an "계정 정보 입력" button that opens the edit form focused on the login ID field.
 

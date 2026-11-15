@@ -1,6 +1,6 @@
 # SPEC-CONSOLE-002 — 구현 계획 (plan.md)
 
-Tier M(파일 15개 안팎, 기존 모듈 위에 얹는 변경). 개발 방식: `quality.yaml` `development_mode` 설정을 따른다. 기존 자격증명 라우트·양식은 SPEC-CONSOLE-001 테스트가 이미 고정하고 있으므로, 바뀌는 동작마다 실패하는 테스트를 먼저 쓴다. 시간 예측은 적지 않는다.
+frontmatter는 Tier M이지만, 바뀌는 소스 파일은 §3 기준 22개(M1 10개, M2 12개)이고 요구사항 21개·인수 기준 22개로 Tier M 상한(파일 5~15, 요구사항·인수 기준 각 16)을 넘는다. Tier를 올릴지(L) 자동 입력 안내(S6)를 떼어 낼지는 plan-audit CS2-PA-D6에 따라 리드가 정한다. 기존 모듈 위에 얹는 변경이다. 개발 방식: `quality.yaml` `development_mode` 설정을 따른다. 기존 자격증명 라우트·양식은 SPEC-CONSOLE-001 테스트가 이미 고정하고 있으므로, 바뀌는 동작마다 실패하는 테스트를 먼저 쓴다. 시간 예측은 적지 않는다.
 
 순서는 바뀔 가능성이 큰 결정(데이터 모델, API 계약, 양식 흐름)을 앞에 두고 스타일·문구 같은 기계적 작업을 뒤에 둔다.
 
@@ -15,8 +15,11 @@ Tier M(파일 15개 안팎, 기존 모듈 위에 얹는 변경). 개발 방식: 
 | CS2-D5 | 안내 확인 표시는 서버의 새 문서 `console-user-prefs`(email 키)에 둔다. localStorage 폴백은 쓰지 않는다 | 비용이 작다: 문서 1개, `FILE_KEY` 한 줄, 라우트 1개, bootstrap 칸 1개. 오너 요청은 "각자의 컴퓨터"지만 리드 범위는 "사람마다 한 번"이고, 브라우저 저장만 쓰면 기기·브라우저를 바꿀 때마다 다시 뜬다. `console-settings`(관리자 전용 PUT, `teamPins`)에 섞지 않는 이유는 쓰기 권한과 동시 쓰기 충돌을 분리하기 위해서다 |
 | CS2-D6 | "나중에"는 서버에 아무것도 쓰지 않고 `sessionStorage`에만 표시 | 다음 방문에 다시 보여야 하므로 영구 기록이 필요 없다 |
 | CS2-D7 | 안내 버전 상수 `AUTOFILL_GUIDE_VERSION = 1`. 확인 기록은 버전을 함께 담는다 | 안내 내용이 크게 바뀌면 버전만 올려 모두에게 다시 띄울 수 있다 |
-| CS2-D8 | 로그인 열기는 "아이디 복사 → 새 탭 열기" 순서 | 새 탭을 먼저 열면 콘솔 문서가 포커스를 잃어 `navigator.clipboard.writeText`가 거절된다. 대신 비동기 요청 뒤 열기는 팝업 차단에 걸릴 수 있어, 막히면 링크를 띄운다(REQ-CS2-014) |
+| CS2-D8 | 로그인 열기는 "아이디 복사 → 새 탭 열기" 순서. 새 탭은 `noopener` 없이 빈 탭으로 열고, 열린 뒤 `opener`를 끊고 주소로 보낸다 | 새 탭을 먼저 열면 콘솔 문서가 포커스를 잃어 `navigator.clipboard.writeText`가 거절된다. 대신 비동기 요청 뒤 열기는 팝업 차단에 걸릴 수 있어, 막히면 링크를 띄운다(REQ-CS2-014). `window.open`에 `noopener`를 주면 HTML 표준상 열기에 성공해도 반환값이 언제나 `null`이라 차단 여부를 알 수 없다(plan-audit CS2-PA-D2, 표준 지식 근거 — 실행 단계 AC-CS2-014에서 확인) |
 | CS2-D9 | 사용 기록은 펼칠 때 불러온다 | 패널을 열 때마다 요청하지 않는다. 담당자가 아닌 사람에겐 섹션 자체가 없다 |
+| CS2-D10 | 안내 확인 값은 bootstrap 최상위 `prefs.autofillGuideAck`에 둔다. `me`는 건드리지 않는다 | 기존 `bootstrap.test.ts:L33`이 `me`를 `toEqual`로 엄격 비교한다. `me` 밖에 두면 SPEC-CONSOLE-001 테스트를 고치지 않아도 된다(plan-audit CS2-PA-D4) |
+| CS2-D11 | 저장된 계정 정보가 있는 항목을 링크로 바꿔 저장하면 저장 전에 삭제 확인을 받는다. 서버 동작(공유 계정에서 벗어나면 비밀 기록 삭제)은 바꾸지 않는다 | 기존 PATCH는 접속 방식이 `shared-credential`이 아니면 비밀 기록을 지운다(`src/app/api/console/items/[id]/route.ts:L24~L25`, `store.ts` `planSecretChange` L94). 종류 선택이 양식 맨 위로 올라와 실수로 누르기 쉬워졌으므로 화면에서 막는다. 서버에서 비밀 기록을 남겨 두는 방식은 링크 항목에 쓰이지 않는 암호문을 남기고 SPEC-CONSOLE-001 동작을 바꾸므로 택하지 않는다(plan-audit CS2-PA-D3) |
+| CS2-D12 | 종류를 링크 → 공유 계정 → 링크로 왕복하면, 양식이 마지막으로 링크였을 때의 형식·접속 방식으로 되돌린다 | `project`·`sso` 같은 원래 값을 잃지 않게 한다. 링크였던 적이 없으면(새 항목, 공유 계정으로 열린 항목) `link`·`public`(plan-audit CS2-PA-D7) |
 
 ## 2. 설계
 
@@ -93,9 +96,9 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 
 **`GET /api/console/bootstrap`** (기존, 칸 추가)
 
-- `me.autofillGuideAck: boolean` — 내 레코드의 `autofillGuide.version >= AUTOFILL_GUIDE_VERSION`이면 `true`.
+- 최상위 `prefs: { autofillGuideAck: boolean }` — 내 레코드의 `autofillGuide.version >= AUTOFILL_GUIDE_VERSION`이면 `true`. `me`의 모양(`email`·`name`·`team`·`isAdmin`)은 바꾸지 않는다(CS2-D10).
 - `items[].hide_password: boolean`.
-- `console-user-prefs` 읽기가 실패해도 bootstrap은 실패시키지 않고 `autofillGuideAck: true`로 답한다(안내 팝업 때문에 콘솔 전체가 막히지 않게. 계정 메뉴로 다시 열 수 있다).
+- `console-user-prefs` 읽기가 실패해도 bootstrap은 실패시키지 않고 `prefs.autofillGuideAck: true`로 답한다(안내 팝업 때문에 콘솔 전체가 막히지 않게. 계정 메뉴로 다시 열 수 있다).
 
 **`POST /api/console/items`, `PATCH /api/console/items/[id]`** (기존, 칸 추가)
 
@@ -132,7 +135,9 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 
 - 종류 버튼은 `role="radiogroup"` 안의 두 `role="radio"`, 화살표 키로 이동, `aria-checked`.
 - "우리 팀"의 팀 이름은 양식의 팀 값(기본은 내 팀)을 괄호로 보여 준다. 팀이 `공통`이면 우리 팀은 사실상 전체와 같다(SPEC-CONSOLE-001 규칙).
-- 링크 ↔ 공유 계정을 바꿔도 입력한 제목·주소·분류·설명은 지우지 않는다. 아이디·비밀번호 입력값은 공유 계정에서 벗어나면 저장 본문에 넣지 않는다(서버도 무시함 — 기존 동작).
+- 링크 ↔ 공유 계정을 바꿔도 입력한 제목·주소·분류·설명은 지우지 않는다. 아이디·비밀번호 입력값은 공유 계정에서 벗어나면 저장 본문에 넣지 않는다.
+- **링크로 바꿔 저장하면 저장된 계정 정보가 지워진다(기존 서버 동작, CS2-D11).** 편집을 시작할 때 항목에 저장된 아이디나 비밀번호가 있었고(`hasLoginId || hasPassword`) 종류가 링크인 채로 저장을 누르면, 요청을 보내기 전에 기존 확인 대화상자로 "저장된 아이디·비밀번호가 영구히 삭제돼요. 계속할까요?"를 묻는다. "삭제하고 저장"을 누를 때만 PATCH를 보내고, "취소"하면 요청 없이 양식으로 돌아간다(입력값 유지). 저장된 계정 정보가 없거나 새 항목이면 묻지 않는다.
+- 종류 왕복 규칙(CS2-D12): 양식은 "링크일 때의 형식·접속 방식"을 따로 기억한다. 처음 값은 편집을 시작할 때의 `type`·`access_method`(접속 방식이 `shared-credential`이면 `link`·`public`, 새 항목이면 `link`·`public`)이고, 링크 상태에서 사용자가 "더 보기"로 형식·접속 방식을 바꾸면 그 값으로 갱신한다. 공유 계정 → 링크로 돌아오면 이 값을 되살린다. 이 변환은 순수 함수(예: `applyKind(form, kind, linkMemory)`)로 두고 단위 테스트한다.
 - 기존 항목 편집: `access_method === 'shared-credential'`이면 공유 계정으로 열린다. 저장된 비밀번호는 지금처럼 보여 주지 않고 빈 칸 = 유지.
 - 비밀번호 생성기 `generatePassword(length = 20)`: 소문자·대문자·숫자·기호 `!@#$%^&*-_=+?` 각 1자 이상, `crypto.getRandomValues` + 거부 표본추출(나머지 편향 없음), 자리 섞기도 같은 난수원. 생성하면 눈 토글이 켜져 사용자가 값을 확인할 수 있다(작성자 본인 화면).
 - 관리자 "+ 새 분류 만들기…": 선택지를 고르면 선택값을 바꾸지 않은 채 기존 `CategoryDialog`를 연다. 추가되면 새 id를 선택, 취소하면 이전 분류 유지. 양식은 그대로 남는다.
@@ -154,16 +159,19 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 
 - 복사 버튼은 값을 받아 바로 클립보드에 쓰고 지역 변수 참조를 버린다. 상태에 넣지 않는다. 자바스크립트 문자열은 메모리에서 지울 수 없으므로 "참조를 남기지 않는다"까지만 약속한다.
 - 보기 토글은 지금처럼 값을 컴포넌트 상태에만 두고 패널이 닫히면 버린다(REQ-CON-017).
-- 로그인 열기: `login_id`를 `copy`로 받아 클립보드에 쓴 뒤 `window.open(url, '_blank', 'noopener,noreferrer')`. 반환값이 `null`이면 토스트 안에 `<a target="_blank" rel="noopener noreferrer">` 링크. 아이디가 없으면 주소만 연다.
+- 로그인 열기: `login_id`를 `copy`로 받아 클립보드에 쓴 뒤 `const w = window.open('', '_blank')`(`noopener` 없이 — CS2-D8). `w`가 `null`이면 새 탭이 막힌 것이므로 토스트 안에 `<a href={url} target="_blank" rel="noopener noreferrer">` 링크를 보인다. `w`가 있으면 `w.opener = null` 후 `w.location.replace(url)`로 보내고 링크는 보이지 않는다. 아이디가 없으면 주소만 연다.
+- 리퍼러: 콘솔 응답에는 이미 `Referrer-Policy: no-referrer`가 붙는다(`src/middleware.ts` `withConsoleHeaders`). 콘솔 스크립트가 시작한 `w.location.replace` 이동에도 이 정책이 적용될 것으로 보지만 추정이므로, AC-CS2-014에서 새 탭의 `document.referrer`가 빈 문자열인지 확인한다. 비어 있지 않으면 이동 대상을 `<a rel="noreferrer">`를 만들어 누르는 방식 등으로 바꾸고 그 결과를 진행 기록에 남긴다.
 - 사용 기록: `<details>` 형태의 펼침. 펼칠 때 `/activity` 한 번 요청, 실패하면 섹션 안에 오류 한 줄.
 - 공유 계정 목록 보기: 각 행에 "계정 정보 있음 / 없음" 작은 표시(`hasLoginId || hasPassword`).
 
 ### 2.5 스크롤바 범위
 
 - 공용 규칙은 `globals.css`의 `@layer base` 안에 있다. 콘솔 규칙은 `console.module.css`(층 없음)에 두므로 층 순서상 항상 이긴다. `globals.css`는 고치지 않는다.
-- 페이지 스크롤바: `:global(html:has([data-admin-root="console"]))`에 `scrollbar-width: thin; scrollbar-color: #d6d0c4 #f2efe8;` 그리고 같은 선택자의 `::-webkit-scrollbar*`(너비 8px, 둥근 막대, 막대 `#d6d0c4`, 마우스 올림 `#bdb5a6`, 트랙 `#f2efe8`).
-- 내부 스크롤 영역: `.root` 아래 모든 요소의 `::-webkit-scrollbar*`. `scrollbar-color`는 상속 속성이라 페이지 설정이 안쪽까지 내려간다. 대화상자(`dialog`)가 루트 밖에 붙는 경우도 `html:has(...)` 아래로 잡는다.
-- 콘솔 표식은 이미 있는 `data-admin-root="console"`(콘솔 앱 루트 2곳, 로그인 화면 1곳)을 쓴다. 다른 화면에는 이 속성이 없다.
+- **선택자는 Next.js CSS 모듈 순수성 검사(`mode: 'pure'`)를 통과해야 한다.** 모든 선택자에 지역 클래스가 하나 이상 있어야 하므로 `:global(html:has([data-admin-root="console"]))`처럼 전역만 있는 선택자는 빌드를 멈춘다(plan-audit CS2-PA-D1). 대신 콘솔 루트 클래스 `.root`를 `:has()` 안에 넣는다.
+- 페이지 스크롤바: `:global(html):has(.root) { scrollbar-width: thin; scrollbar-color: #d6d0c4 #f2efe8; }`, 그리고 `:global(html):has(.root)::-webkit-scrollbar`·`::-webkit-scrollbar-track`·`::-webkit-scrollbar-thumb`·`::-webkit-scrollbar-thumb:hover`(너비 8px, 둥근 막대, 막대 `#d6d0c4`, 마우스 올림 `#bdb5a6`, 트랙 `#f2efe8`).
+- 내부 스크롤 영역: `.root, .root * { scrollbar-width: thin; }`와 `.root *::-webkit-scrollbar*`. `scrollbar-color`는 상속 속성이라 페이지 설정이 안쪽까지 내려가지만 **`scrollbar-width`는 상속되지 않으므로** 안쪽 요소에 직접 준다(plan-audit CS2-PA-D5). 콘솔 대화상자(`Dialog.tsx`의 `<dialog>`)는 루트 안에 그려지므로(design.md §6.2, 포털 없음) `.root *`에 걸린다.
+- 콘솔 표식: 콘솔 앱 루트 2곳(`ConsoleApp.tsx`)과 로그인 화면(`login/LoginScreen.tsx`)이 모두 같은 `console.module.css`의 `.root`를 쓴다. 그래서 `html:has(:local(.root))`는 콘솔 화면에만 걸리고, 공개 사이트와 `/admin`에는 이 해시 클래스가 없다. 기존 `data-admin-root="console"` 속성은 그대로 둔다.
+- 사전 확인(2026-11-15, 이 워크트리): Next에 번들된 `postcss-modules-local-by-default`를 `mode: 'pure'`로 돌려 `:global(html:has([data-admin-root="console"]))`는 `is not pure` 오류, `:global(html):has(.root)`·`:global(html):has(.root)::-webkit-scrollbar`·`:global(html):has(.root)::-webkit-scrollbar-thumb:hover`·`.root, .root *`·`.root *::-webkit-scrollbar-thumb`는 통과(각각 `html:has(:local(.root))…`, `:local(.root) *…`로 변환)함을 확인했다. 실행 단계에서 같은 검사를 테스트로 고정한다(AC-CS2-007).
 - 브라우저별 차이(솔직하게): Chrome 121 이후와 Firefox는 표준 `scrollbar-color`를 쓰며, 표준 속성이 걸리면 Chrome은 `::-webkit-scrollbar`를 무시한다. 그래서 마우스 올림 색 `#bdb5a6`은 Safari처럼 `::-webkit-scrollbar`를 쓰는 브라우저에서만 보인다. `:has()`는 Chrome 105, Safari 15.4, Firefox 121부터 지원한다.
 
 ### 2.6 자동 입력 끄기 안내
@@ -184,7 +192,7 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 - macOS 시스템 설정 딥링크(`x-apple.systempreferences:`)는 Safari의 자동 완성 설정이 Safari 앱 안에 있어 쓸모가 불확실하다. 브라우저에서 실제로 해당 화면이 열리는 것을 확인한 경우에만 추가하고, 확인하지 못하면 메뉴 경로만 둔다.
 - 팝업 본문 맨 위에 한 줄: "이 사이트는 브라우저 설정을 직접 바꿀 수 없어요. 아래 순서대로 한 번만 꺼 주세요."
 - 설정 주소 복사는 버튼을 누른 그 순간(사용자 동작 안)에 한다. 복사 결과는 토스트로 알린다: "주소를 복사했어요 — 새 탭 주소창에 붙여넣으세요".
-- 첫 자동 표시는 bootstrap이 `autofillGuideAck: false`이고 이번 브라우저 세션에 "나중에"를 누른 적이 없을 때, 콘솔 첫 화면이 그려진 뒤 한 번.
+- 첫 자동 표시는 bootstrap의 `prefs.autofillGuideAck`가 `false`이고 이번 브라우저 세션에 "나중에"를 누른 적이 없을 때, 콘솔 첫 화면이 그려진 뒤 한 번.
 
 ## 3. 마일스톤
 
@@ -200,8 +208,8 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 - `src/app/api/console/items/[id]/credential/route.ts` — §2.2 7단계 숨김 판정
 - `src/app/api/console/items/[id]/activity/route.ts` — 신규
 - `src/app/api/console/me/autofill-guide/route.ts` — 신규
-- `src/app/api/console/bootstrap/route.ts` — `me.autofillGuideAck`
-- 테스트(실패를 먼저 보고 구현): AC-CS2-001 ~ 006. 기존 SPEC-CONSOLE-001 자격증명·가져오기·내보내기·bootstrap 테스트가 수정 없이 통과해야 한다.
+- `src/app/api/console/bootstrap/route.ts` — 최상위 `prefs.autofillGuideAck`(CS2-D10, `me`는 그대로)
+- 테스트(실패를 먼저 보고 구현): AC-CS2-001 ~ 006. 기존 SPEC-CONSOLE-001 자격증명·가져오기·내보내기·bootstrap 테스트가 수정 없이 통과해야 한다. `bootstrap.test.ts:L33`의 `me` 엄격 비교가 깨지지 않도록 새 값은 `me` 밖에 둔다.
 
 ### M2 — 화면 (우선순위 높음) — 범위 S1, S2, S3, S5, S6 + S4의 화면 표시
 
@@ -224,6 +232,8 @@ export const AUTOFILL_GUIDE_VERSION = 1;
 | 브라우저가 입력 칸 속성을 무시하고 저장을 제안 | 멤버 브라우저에 공유 비밀번호가 저장됨 | 속성은 넣되(REQ-CS2-020) 안내 팝업이 본 대책. 남는 위험은 §1.1에 적음 |
 | 새 탭을 연 뒤 클립보드 쓰기 거절, 또는 비동기 요청 뒤 팝업 차단 | 로그인 열기가 반쪽만 동작 | 복사 먼저, 막히면 링크(CS2-D8). AC-CS2-014에서 Chrome·Safari로 확인 |
 | 설정 주소가 브라우저 버전마다 다름 | 붙여 넣어도 다른 화면이 열림 | 후보값을 실행 단계에서 확인하고 진행 기록에 남김. 미설치 브라우저는 미확인 항목으로 표시 |
+| 공유 계정 항목을 실수로 링크로 바꿔 저장 | 저장된 공유 아이디·비밀번호가 되돌릴 수 없이 삭제됨 | 저장 전 삭제 확인(CS2-D11, REQ-CS2-009, AC-CS2-009). 확인을 누르면 지워지는 것은 기존 동작 그대로다 |
+| 스크롤바 선택자가 CSS 모듈 순수성 검사에 걸림 | `next build`·`next dev` 실패 | 지역 클래스를 품은 `:global(html):has(.root)` 형태(§2.5). 순수성 검사 테스트로 고정(AC-CS2-007) |
 | `:has()` 미지원 구형 브라우저 | 콘솔에서도 사이트 공용 스크롤바가 보임 | 기능 손상은 없음(색만 다름). 지원 버전은 §2.5 |
 | `console-user-prefs` 쓰기 동시성 | 두 사람이 동시에 확인하면 한쪽 기록이 사라질 수 있음 | email 키 병합 쓰기(`writeDataMerged`)로 다른 사람 레코드를 보존. 최악이어도 팝업이 한 번 더 뜰 뿐 |
 | 숨김 거절 반복으로 감사 기록이 늘어남 | 기록 5,000건 창이 빨리 밀림 | 화면이 숨김 대상에게 보기 버튼을 아예 보여 주지 않으므로 정상 사용에선 생기지 않음 |

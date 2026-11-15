@@ -66,12 +66,13 @@
 **AC-CS2-006** — maps REQ-CS2-006 · 테스트
 - Given `a@try-n.com`과 `b@try-n.com` 세션, `console-user-prefs` 비어 있음
 - When a가 bootstrap → `POST /api/console/me/autofill-guide { version: 1 }` → bootstrap 순으로 부른다
-- Then 첫 bootstrap `me.autofillGuideAck === false`, POST 200 `{ autofillGuideAck: true }`, 두 번째 bootstrap `true`
+- Then 첫 bootstrap `prefs.autofillGuideAck === false`, POST 200 `{ autofillGuideAck: true }`, 두 번째 bootstrap `prefs.autofillGuideAck === true`
+- And bootstrap의 `me` 키는 `email`·`name`·`team`·`isAdmin` 네 개 그대로이고, 기존 `src/app/api/console/__tests__/bootstrap.test.ts`가 수정 없이 통과한다
 - And 같은 POST를 한 번 더 보내도 200이고 a의 레코드는 1개다
 - And b의 bootstrap은 여전히 `false`이고, b가 확인한 뒤에도 a의 레코드가 남아 있다
 - And 저장된 레코드의 키는 `email`, `autofillGuide`뿐이고 `autofillGuide`의 키는 `version`, `at`뿐이다
 - And 세션 없는 POST 401, `Origin: https://evil.io` 403, `{ version: 2 }` 400
-- And `console-user-prefs` 읽기가 실패하도록 만들면 bootstrap은 200이고 `autofillGuideAck === true`다
+- And `console-user-prefs` 읽기가 실패하도록 만들면 bootstrap은 200이고 `prefs.autofillGuideAck === true`다
 
 ## 2. 스크롤바 (M2)
 
@@ -79,9 +80,10 @@
 - Given §0 환경
 - When Chrome과 Firefox로 `/console`(로그인 후)과 `/console/login`을 연다
 - Then 두 화면 모두 `getComputedStyle(document.documentElement).scrollbarColor`가 `rgb(214, 208, 196) rgb(242, 239, 232)`이고 `scrollbarWidth`가 `thin`이다
-- And 목록·상세 패널·사이드바 스크롤 요소의 계산된 `scrollbarColor`도 같다
-- And Safari로 `/console`을 열어 찍은 스크린샷의 세로 스크롤 막대가 밝은 색(어두운 트랙·금색 막대가 아님)이다
+- And 목록·상세 패널·사이드바 스크롤 요소의 계산된 `scrollbarColor`도 같고, 계산된 `scrollbarWidth`도 `thin`이다
+- And Safari: macOS 시스템 설정 "스크롤 막대 보기"를 "항상"으로 둔 채 `/console`을 열어 화면을 캡처하고, 세로 스크롤 막대의 막대 중앙 픽셀이 `#d6d0c4`(214, 208, 196)와 각 채널 ±16 이내, 트랙 픽셀이 `#f2efe8`(242, 239, 232)와 각 채널 ±16 이내다(측정한 RGB 값을 진행 기록에 남긴다)
 - And 테스트: `console.module.css`의 스크롤바 규칙이 `#f2efe8`(또는 `transparent`), `#d6d0c4`, `#bdb5a6`만 쓰고 `var(--`를 쓰지 않는다
+- And 테스트: `console.module.css` 전체를 Next에 번들된 `postcss-modules-local-by-default`(`mode: 'pure'`)로 처리하면 오류가 없다(전역만 있는 선택자 금지 — plan-audit CS2-PA-D1). 그리고 로컬 개발 서버에서 `/console/login`이 200으로 열린다(CSS 컴파일 오류 없음). 부하가 36 미만이면 `npx next build`도 통과한다
 
 **AC-CS2-008** — maps REQ-CS2-008 · 브라우저 확인 + 테스트
 - Given §0 환경
@@ -96,8 +98,14 @@
 - When 각각 정적 렌더한다
 - Then 첫 입력 컨트롤이 `role="radiogroup"`이고 그 안에 `role="radio"`가 2개(링크, 공유 계정)이며 바로 다음 컨트롤이 분류 `select`다
 - And 새 양식은 링크가 `aria-checked="true"`, 공유 계정 항목의 편집 양식은 공유 계정이 `aria-checked="true"`다
-- And 종류를 저장 칸으로 바꾸는 순수 함수가 공유 계정 → `{ type: "account", access_method: "shared-credential" }`, 공유 계정에서 링크로 → `{ type: "link", access_method: "public" }`을 돌려준다(단위 테스트)
+- And 종류를 저장 칸으로 바꾸는 순수 함수(단위 테스트):
+  - 새 항목: 공유 계정 → `{ type: "account", access_method: "shared-credential" }`, 다시 링크 → `{ type: "link", access_method: "public" }`
+  - `type: "project"`, `access_method: "sso"`로 열린 항목: 공유 계정 → 링크로 왕복하면 `{ type: "project", access_method: "sso" }`로 돌아온다
+  - 위 항목에서 링크 상태로 접속 방식을 `invite`로 바꾼 뒤 공유 계정 → 링크로 왕복하면 `{ type: "project", access_method: "invite" }`이다(마지막 링크 상태 값)
+  - `access_method: "shared-credential"`로 열린 항목에서 링크로 → `{ type: "link", access_method: "public" }`
 - And 브라우저: 공유 계정을 눌러 저장하면 요청 본문의 `type`이 `account`, `access_method`가 `shared-credential`이다(네트워크 탭)
+- And 저장 전 삭제 확인(단위 테스트 또는 브라우저): 저장된 아이디나 비밀번호가 있는 공유 계정 항목을 편집하며 링크로 바꾸고 저장을 누르면, PATCH 요청 전에 "저장된 아이디·비밀번호가 영구히 삭제돼요"(영어판 대응 문구)가 있는 확인 대화상자가 뜬다. "취소"하면 PATCH 요청이 0건이고 양식 입력값과 서버의 `console-secrets` 기록이 그대로다. "삭제하고 저장"을 누르면 PATCH 1건이 나간다
+- And 저장된 계정 정보가 없는 공유 계정 항목이나 새 항목을 링크로 저장할 때는 확인 대화상자가 뜨지 않는다
 
 **AC-CS2-010** — maps REQ-CS2-010 · 테스트
 - Given 종류가 공유 계정인 양식과 링크인 양식
@@ -133,8 +141,10 @@
 **AC-CS2-014** — maps REQ-CS2-014 · 브라우저 확인
 - Given 로그인 주소와 카나리 아이디가 있는 공유 계정 항목, member 세션
 - When Chrome과 Safari에서 "로그인 열기"를 누른다
-- Then 클립보드 내용이 카나리 아이디이고, 토스트 "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요"가 보이며, 새 탭이 로그인 주소로 열린다. 새 탭이 막힌 브라우저에서는 그 대신 로그인 주소로 가는 링크가 보인다
-- And 새 탭에서 `window.opener`가 `null`이다
+- Then 클립보드 내용이 카나리 아이디이고, 토스트 "아이디를 복사했어요 — 비밀번호 복사 후 붙여넣으세요"가 보이며, 새 탭이 로그인 주소로 열린다
+- And 팝업 차단을 끈(기본 설정) Chrome에서 새 탭이 열렸을 때 콘솔에 대체 링크가 보이지 않는다
+- And 사이트 설정에서 팝업을 차단한 Chrome에서는 새 탭이 열리지 않고, 그 대신 로그인 주소로 가는 링크가 토스트 안에 보인다
+- And 새 탭에서 `window.opener`가 `null`이고 `document.referrer`가 빈 문자열이다
 - And 감사 기록에 `login_id`의 `credential.copy` 1건이 생긴다
 
 **AC-CS2-015** — maps REQ-CS2-015 · 테스트
@@ -160,7 +170,7 @@
 - Given 자동 표시 판정 순수 함수 `shouldAutoOpenGuide({ ack, laterThisSession })`
 - Then `{ false, false }`만 `true`이고 나머지 세 경우는 `false`다(단위 테스트)
 - And 계정 메뉴와 자격증명 카드의 정적 렌더에 "자동 입력 끄기 안내" 항목이 있다
-- And 브라우저: 처음 들어온 `a@try-n.com`에게 팝업이 1번 뜬다 → "나중에" → 같은 탭 새로고침 시 안 뜬다 → 브라우저를 닫고 새 세션으로 들어오면 다시 뜬다 → "확인했어요" → 새로고침해도 안 뜬다 → 다른 브라우저(또는 새 프로필)로 같은 계정에 들어와도 안 뜬다 → 계정 메뉴의 "자동 입력 끄기 안내"를 누르면 열린다
+- And 브라우저: 처음 들어온 `a@try-n.com`에게 팝업이 1번 뜬다 → "나중에" → 같은 탭 새로고침 시 안 뜬다 → 개발자 도구 콘솔에서 `sessionStorage.clear()`를 실행하고 새로고침하면 다시 뜬다(새 브라우저 세션과 같은 상태. 세션 복원 기능의 영향을 받지 않도록 브라우저를 닫는 절차는 쓰지 않는다) → "확인했어요" → 새로고침해도 안 뜬다 → 다른 브라우저(또는 새 프로필)로 같은 계정에 들어와도 안 뜬다 → 계정 메뉴의 "자동 입력 끄기 안내"를 누르면 열린다
 
 **AC-CS2-019** — maps REQ-CS2-019 · 테스트 + 브라우저 확인
 - Given `detectBrowser`와 안내표(plan.md §2.6)
@@ -193,7 +203,7 @@
 
 ## 7. 경계 사례 (위 기준에 포함되지 않은 확인)
 
-- 숨기기를 켠 채 종류를 링크로 바꿔 저장하면 `hide_password`가 `false`로 저장된다(AC-CS2-001의 PATCH 사례와 같은 규칙).
+- 숨기기를 켠 채 종류를 링크로 바꿔 저장하면 `hide_password`가 `false`로 저장된다(AC-CS2-001의 PATCH 사례와 같은 규칙). 저장된 계정 정보가 있으면 그 전에 삭제 확인이 뜬다(AC-CS2-009).
 - 담당자가 아닌 관리자도 숨김 예외다(AC-CS2-004 표의 admin 행).
 - 아이디만 있고 비밀번호가 없는 공유 계정은 빈 상태가 아니라 기존 행 표시를 쓴다(비밀번호 행은 "없음" 표시).
 - 로그인 주소가 없는 공유 계정에서는 "로그인 열기"를 보이지 않는다.
@@ -203,7 +213,7 @@
 
 - `npx tsc --noEmit` 오류 0
 - 바뀐 경로에 대한 `npx eslint` 오류 0
-- 콘솔 관련 테스트(`src/lib/console`, `src/app/api/console`, `src/app/console`, 관리자 콜백 테스트) 전부 통과. SPEC-CONSOLE-001 테스트는 기대값을 바꾸지 않는다(새 칸 `hide_password` 추가로 깨지는 스냅샷이 있다면 그 차이만 반영하고 진행 기록에 적는다)
+- 콘솔 관련 테스트(`src/lib/console`, `src/app/api/console`, `src/app/console`, 관리자 콜백 테스트) 전부 통과. SPEC-CONSOLE-001 테스트는 기대값을 바꾸지 않는다. 안내 확인 값은 `me` 밖(`prefs`)에 두므로 `bootstrap.test.ts`의 `me` 엄격 비교도 그대로 통과해야 한다. 예외는 새 칸 `hide_password` 추가로 깨지는 항목 스냅샷뿐이며, 그 차이만 반영하고 진행 기록에 적는다
 - 공개 저장소 점검: `git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 0줄, 새 파일에 실제 직원 이름·email·내부 id 없음
 - 외부 호스트 자산 없음: 새 코드에 `https://` 이미지·폰트·스크립트 참조 없음
 
