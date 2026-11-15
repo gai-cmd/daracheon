@@ -158,3 +158,75 @@ R2-D2. CS2-PA-R2-D2 — acceptance.md:L141~L147 (AC-CS2-014) — Then 절이 "Ch
 1. **D6(막는 결함, 리드 결정)**: Tier L로 올릴지, S6를 나눌지 정한다. 오너가 S6 기능을 이번 작업에 넣기를 원하는 흐름이라면 (a) Tier L 승격이 자연스럽다. 이 경우 `tier: L`, design.md(plan §1~§2 이전), research.md(1차·2차 감사에서 실행으로 확인한 근거 포함)를 추가하고 plan.md:L3와 progress.md를 고친다.
 2. R2-D1·R2-D2는 고칠지 말지 작성자 재량이다. 고치면 D6 개정에 함께 넣으면 된다.
 3. 3차 재감사는 D6 해결 여부와 새로 생기는 문서(design.md·research.md)에 한정한다. D6만 풀리고 새 결함이 없으면 PASS다. 현재 점수 0.91은 Tier L 기준 0.85도 넘는다.
+
+---
+
+# SPEC Review Report: SPEC-CONSOLE-002 (3차)
+Iteration: 3/3
+Verdict: FAIL
+Overall Score: 0.93
+
+> Reasoning context ignored per M1 Context Isolation. 판정 근거는 개정본(HEAD d51f3c1b, spec 0.3.0)의 spec.md·plan.md·acceptance.md·design.md·research.md·progress.md와 워크트리 코드뿐이다. 코드는 `git diff --stat 7dc9bd4e HEAD -- src` 결과 0줄로, 운영 중인 origin/main과 같다.
+> 재감사 범위: 2차 결함 CS2-PA-D6·R2-D1·R2-D2의 해결 여부와, 이번에 새로 생긴 design.md·research.md. Tier L 입력 계약에 따라 다섯 문서를 모두 읽었다.
+> 교차 모델 감사 백엔드: 호출하지 않음(이 감사 세션에 MCP 감사 도구가 노출되지 않음). Claude 단독 판정.
+
+2차에서 막는 결함이던 D6(Tier 분류 모순)은 해결됐다. R2-D1·R2-D2도 반영됐다. design.md §1~§2.6은 0.2.0 plan.md §1~§2를 R2-D1 한 줄만 고쳐 그대로 옮긴 것이다(두 구간을 `diff`로 비교해 차이 1줄 확인). research.md의 코드 인용도 줄 번호까지 대조해 모두 맞았다.
+
+그런데 새로 들어간 design.md §2.7에서 결함 하나가 나왔다. 비밀번호 입력 칸을 지금의 `autocomplete="new-password"`에서 `autocomplete="off"`로 바꾸기로 했는데, 이렇게 하면 SPEC-CONSOLE-001이 이미 갖춘 자동 채우기 방어가 오히려 약해질 수 있다(R3-D1). 고치는 데는 한 줄이면 된다. 다만 잘못된 채로 구현되면 관리자 개인 비밀번호가 공유 계정에 저장되어 멤버에게 넘어갈 수 있는 보안 문제라서 막는 결함으로 분류했다. 아래 R3-D1에 근거와 확인하지 못한 부분을 함께 적었다.
+
+## Must-Pass Results
+
+- [PASS] MP-1 REQ 번호 일관성: `grep -c '^\*\*REQ-CS2-' spec.md` → 21(REQ-CS2-001~021, spec.md:L56~L106). AC는 22개(AC-CS2-001~022)이고 중복이 없다. 0.3.0은 번호를 바꾸지 않았다(spec.md:L26 "요구사항·인수 기준 본문 번호는 바꾸지 않음").
+- [PASS] MP-2 GEARS 형식(요구사항 층 기준): 0.3.0에서 REQ 본문은 바뀌지 않았다(`git diff 5100e84a d51f3c1b -- spec.md`는 frontmatter 2줄과 HISTORY 1행뿐). 2차 판정이 그대로 유효하다. AC는 검증 층이라 Given-When-Then으로 따로 채점했다.
+- [PASS] MP-3 frontmatter: 정식 12개 필드가 모두 있다(spec.md:L2~L13). `version: "0.3.0"`은 HISTORY 0.3.0 행(L26)과 맞고, `tier: L`(L14)은 열거값 범위 안이다. 거부되는 별칭은 없다.
+- [N/A] MP-4 언어 중립성: Next.js/TypeScript 단일 저장소 SPEC이다.
+- [PASS] MP-5 D7 교차 SPEC: 참조는 SPEC-CONSOLE-001뿐이다. `grep '^status:' .moai/specs/SPEC-CONSOLE-001/spec.md` → `status: in-progress`. BLOCKING 없음.
+- [PASS] MP-6 D8: `grep -n syscall` 다섯 문서 0건이라 자동 PASS다.
+- [PASS] MP-7 확인 필요 표식: `grep -n 'NEEDS CLARIFICATION' plan.md research.md` 0건이다. 이번에는 research.md도 있어서 검사 대상에 넣었다.
+
+## Category Scores (0.0-1.0, rubric-anchored)
+
+| Dimension | Score | Rubric Band | Evidence |
+|-----------|-------|-------------|----------|
+| Clarity | 0.90 | 0.75~1.0 | Tier 모순이 사라졌다. spec.md:L14 `tier: L`, plan.md:L3, progress.md:L7~L9가 같은 내용(산출물 5개, 기준 0.85, Route B)을 말한다. design.md §3(L202~L225)이 요구사항 21개를 설계 절에 하나씩 대응시켜 읽기 쉬워졌다. 감점: design.md:L199가 내세운 근거("속성을 `off`로 바꾼다")가 브라우저의 문서화된 동작과 반대 방향일 수 있다(R3-D1) |
+| Completeness | 0.95 | 1.0 | Tier L 산출물 5개가 모두 있다. research.md는 코드 근거(§2), TeamPassword 조사(§3), 확인하지 못한 것(§4, L106~L112)을 갖췄다. 필수 절과 Out of Scope H3 3개(spec.md:L120, L129, L135)도 그대로다 |
+| Testability | 0.90 | 0.75~1.0 | R2-D2가 해결됐다(acceptance.md:L144~L146). 감점: AC-CS2-020(L184~L188)은 정적 렌더에서 속성이 붙었는지만 본다. 같은 출처에 저장된 비밀번호가 양식에 채워지지 않는지는 확인하지 않는다(R3-D1). AC-CS2-014:L145의 "팝업 차단을 끈 기본 설정"은 Chrome 기본값(차단 켜짐)과 다르게 읽힌다(R3-D2) |
+| Traceability | 1.00 | 1.0 | spec.md §6 표(L145~L168)에서 REQ 21개가 모두 AC에 걸리고 고아 AC가 없다. design.md §3이 REQ→설계 방향도 채워 Tier L 추적 사슬(REQ→설계→AC)이 이어진다 |
+
+종합 0.93(네 점수의 조화평균). 2차 0.91보다 올랐으므로 점수 하락에 따른 STOP 신호는 없다. Tier L 기준 0.85를 넘지만, 막는 결함 R3-D1이 남아 FAIL이다.
+
+## Regression Check (2차 결함)
+
+- D6 (Tier 분류 모순): **RESOLVED**. spec.md:L14가 `tier: L`이 됐다. 요구사항 21개와 인수 기준 22개는 Tier L 상한 25/25 안에 들고, 바뀌는 소스 파일 22개는 Tier L 범위(15개 초과)에 맞는다(`spec-workflow.md` L138~L150). Tier L이 요구하는 design.md와 research.md가 생겼다. plan.md:L3의 "리드 결정 대기"는 결정 내용(리드 결정 (a), 범위 S1~S6 유지, 기준 0.85, Route B, PR·머지·배포는 사람 승인 뒤)으로 바뀌었다. progress.md:L7~L9, L19와도 맞는다. Tier L이 Route B라는 점도 `spec-workflow.md` L26과 맞는다.
+- R2-D1 (design.md §6.2의 출처 불명): **RESOLVED**. design.md:L172가 "SPEC-CONSOLE-001 design.md §6.2"로 바뀌었다. 그 절이 실제로 있다(SPEC-CONSOLE-001/design.md:L354 `### 6.2 스타일 격리`). 옛 plan.md와 비교해 이 SPEC에서 고친 곳은 이 한 줄뿐이다.
+- R2-D2 (Safari 새 탭 단정): **RESOLVED**. acceptance.md:L146이 "Safari에서는 새 탭이 열리거나, 막히면 토스트 안에 로그인 주소로 가는 링크가 보인다. 어느 쪽이었는지 progress.md §E.2에 남긴다"가 됐다. 클립보드·토스트 판정은 두 브라우저에 공통으로 남았다(L144). research.md §4(L108)에도 확인할 일로 올라 있다.
+
+## 새 문서 점검 (design.md·research.md)
+
+- **옮겨 온 설계가 원본과 같은지**: `git show 5100e84a:plan.md`의 §1~§2와 design.md §1~§2.6을 `diff`로 비교했다. 차이는 L172(R2-D1) 한 줄뿐이다. 1·2차에서 확인한 설계(판정 순서, 순수성 통과 선택자, `prefs` 위치, 삭제 확인, 왕복 복원)가 그대로 넘어왔다.
+- **research.md 코드 인용 대조**(이 트리에서 해당 줄을 직접 출력해 확인함):
+  - credential/route.ts: L24 `PURPOSES`, L31 판정 순서 주석, L54 용도 검사, L76 `credential.deny`, L85 `credential.rate_limited`, L89 429, L98 `` `credential.${purpose}` ``. 모두 일치한다.
+  - 기타 코드: audit.ts L44~L55(view·copy만 셈), permissions.ts L36~L38 `canEdit`, items/[id]/route.ts L23~L25 주석, store.ts L85·L94 `planSecretChange`·`remove`, ui-model.ts L19·L227, sidebar.test.ts L47, ConsoleApp.tsx L443·L575(`.root`)·L501~L508(제목·설명)·L186~L209(`copyText`), ListView.tsx L103, DetailPanel.tsx L221, ItemForm.tsx L137·L412(`autoComplete="new-password"`), SearchBox.tsx L95, LoginScreen.tsx L59, Dialog.tsx L9(포털 없음 주석, `createPortal` 0건), globals.css L134·L142~L146·L150·L153·L159·L168·L224, middleware.ts L39·L41, bootstrap.test.ts L33. 모두 일치한다.
+  - vitest.config.ts는 `environment: 'node'`, `include: ['src/**/*.test.ts']`이고, `package.json`에 `jsdom`·`happy-dom`이 없다(grep 0건). 화면 검증을 정적 렌더와 로컬 브라우저 확인으로 나눈 판단(research.md §2.9)과 맞는다.
+- **TeamPassword 조사(research.md §3)**: 도움말 문서 URL 4개와 그 요약은 이번 감사에서 열어 보지 못했다(이 세션에 웹 조회 도구가 없음). 따라서 미확인이다. 다만 그 결론("보지 못하게 하기"는 역할 단위 화면 제한이고, 값은 결국 멤버 쪽으로 간다)은 이 SPEC의 범위와 판정을 바꾸지 않는다. 문서도 "문서에 적힌 범위까지만"이라고 한계를 밝혔다(L104).
+- **S6 정직성**: spec.md §1.1(L40~L42)과 design.md §2.6(L191~L193)이 "브라우저 설정은 바꿀 수 없다", "설정 주소는 실행 단계에서 확인할 후보값", "`x-apple.systempreferences:`는 확인한 경우에만"을 유지한다. research.md §4가 확인하지 못한 항목 5개를 따로 적었다. PASS.
+- **S4 보안**: 서버 판정 순서(design.md §2.2, L58~L69)는 2차와 같다. 숨김 거절은 공개 범위 판정 뒤, 상한 앞에 오고, `copy`에는 기존 관문이 그대로 걸린다. 1·2차 판정이 유효하다.
+- **스크롤바 범위**: design.md §2.5(L167~L175)는 2차 때 실행으로 확인한 선택자 그대로다. research.md §2.5(L51~L59)에 순수성 검사 결과가 남았다.
+- **SPEC-CONSOLE-001 정합**: `me` 모양 유지(CS2-D10), 기존 `copyText` 재사용(design.md §2.7 L200), 서버 비밀 기록 삭제 규칙 유지(CS2-D11). 어긋나는 곳은 R3-D1 하나다. SPEC-CONSOLE-001이 비밀번호 칸에 둔 `new-password`를 바꾸려 한다.
+- **공개 저장소 위생**: 다섯 문서의 email 표기는 모두 `@try-n.com` 지어낸 주소다(`grep -noE '[A-Za-z0-9._-]+@[A-Za-z0-9.-]+' *.md | grep -v try-n.com` 0건). Drive·Docs·Slack 주소와 Blob 호스트도 0건이다. research.md의 외부 URL은 공개 도움말 센터뿐이다.
+- 참고(결함 아님): Route B 규칙은 plan 단계를 main checkout에서 하라고 한다(`spec-workflow.md` L50). 이 SPEC은 워크트리 브랜치에서 작성됐는데, 이는 리드가 작업 환경으로 정한 것이고 SPEC 내용의 결함은 아니다. PR을 만들 때 Late-Branch 절차를 이 브랜치 기준으로 적용하면 된다.
+
+## Defects Found (structured defect-list)
+
+R3-D1. CS2-PA-R3-D1 — design.md:L199 (§2.7), spec.md:L102 (REQ-CS2-020), acceptance.md:L184~L188 (AC-CS2-020) — design.md §2.7은 "지금 비밀번호 칸은 `autoComplete="new-password"`이므로 `off`로 바꾼다"고 정한다. 확인된 사실은 세 가지다. ① 현재 비밀번호 칸은 `autoComplete="new-password"`다(ItemForm.tsx:L412). ② 같은 출처(zoellife.com)의 `/admin/login`에 `type="password"`·`autoComplete="current-password"` 로그인 양식이 있어서(`src/app/admin/login/page.tsx:L108~L110`), 관리자 브라우저에는 이 출처의 저장된 비밀번호가 있을 수 있다. ③ AC-CS2-020은 속성이 붙었는지만 정적 렌더로 본다. 그런데 브라우저 문서(MDN `autocomplete` 속성 설명)에 따르면 주요 브라우저는 로그인·비밀번호 칸의 `autocomplete="off"`를 따르지 않는다. 다른 사람의 비밀번호를 넣는 칸에 저장된 비밀번호가 채워지지 않게 하려면 `autocomplete="new-password"`를 쓰라고 권한다. 이 설명이 맞다면 `off`로 바꾼 공유 계정 양식에 관리자 자신의 `/admin` 아이디·비밀번호가 자동으로 채워질 수 있다. 저장된 비밀번호가 있는 항목을 편집하면 빈 칸은 "기존 값 유지"를 뜻한다(design.md:L141). 그런데 그 칸이 자동으로 채워진 채 저장되면, 공유 비밀번호가 관리자 개인 비밀번호로 소리 없이 바뀐다. 그러면 그 값이 모든 멤버에게 복사 가능한 상태로 넘어간다. 이것은 브라우저 문서에 근거한 가설이다. 이번 감사에서 Chrome으로 실제 채워지는지 실행해 보지는 않았다. — Severity: major — Class: blocking — Required fix: (1) REQ-CS2-020과 design.md §2.7을 고쳐 비밀번호 입력에는 `autocomplete="new-password"`를 유지하고, 아이디 입력에는 `autocomplete="off"`를 쓴다. 두 칸 모두 `data-1p-ignore`·`data-lpignore="true"`를 붙인다. design.md:L199의 "`off`로 바꾼다" 문장은 지우고 이유를 한 줄 남긴다. (2) AC-CS2-020 Then 절을 칸별로 나눈다(아이디 `off`, 비밀번호 `new-password`, 두 칸 모두 `data-1p-ignore`·`data-lpignore="true"`). (3) AC-CS2-020에 브라우저 확인 한 줄을 더한다. "같은 출처에 저장된 비밀번호가 있는 Chrome 프로필로 저장된 비밀번호가 있는 공유 계정 항목의 편집 양식을 열면, 아이디·비밀번호 칸이 비어 있고 저장해도 비밀번호가 바뀌지 않는다(감사 기록·`console-secrets` 버전으로 확인)". `off`를 꼭 써야 한다면 (1) 대신 이 브라우저 확인을 통과 조건으로 삼는다.
+
+R3-D2. CS2-PA-R3-D2 — acceptance.md:L145 (AC-CS2-014) — "Chrome(팝업 차단을 끈 기본 설정)"이라는 표현이 모호하다. Chrome 기본값은 팝업 차단이 켜진 상태다. 이 문구대로라면 시험하는 사람이 차단을 끄고 확인할 수 있다. 그러면 "비동기 요청 뒤 열기가 기본 설정에서 막히지 않는다"는, 가장 확인할 가치가 있는 조건을 놓친다. — Severity: minor — Class: optional — Required fix: "Chrome 기본 설정(팝업 차단 켜짐, 이 사이트 예외 없음)"으로 고친다.
+
+## Recommendation
+
+1. **R3-D1(막는 결함)**: REQ-CS2-020, design.md §2.7, AC-CS2-020을 위 지시대로 고친다. 비밀번호 칸은 SPEC-CONSOLE-001의 `new-password`를 유지하고 아이디 칸만 `off`로 둔다. 같은 출처의 저장된 비밀번호가 채워지지 않는지 브라우저 확인 줄을 더한다. 고칠 곳은 세 문서의 몇 줄이고 요구사항 번호는 바뀌지 않는다.
+2. R3-D2는 고칠지 말지 작성자 재량이다. 고치면 같은 개정에 넣으면 된다.
+3. 이번이 3회 상한의 마지막 회차다. 재시도 계약상 오케스트레이터는 사용자에게 다음 중 하나를 묻는다. 이 감사의 권고는 (a)다.
+   - (a) R3-D1을 고친 뒤 이 결함 하나만 확인하는 좁은 재확인을 진행한다(사용자가 반복 상한 연장을 승인하는 경우).
+   - (b) R3-D1을 run 단계 첫 작업으로 넘기고 PASS-with-debt로 진행한다. 이 경우 manager-develop 지시문에 R3-D1의 수정 지시를 그대로 넣어야 한다.
+   - 그 밖의 판정 기준은 모두 통과했고, 점수 0.93은 Tier L 기준 0.85를 넘는다.
