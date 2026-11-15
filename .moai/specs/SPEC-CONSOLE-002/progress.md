@@ -21,6 +21,15 @@
   - revision 0.4.0 (2026-11-15): R3-D1 → REQ-CS2-020을 칸별로 나눔(아이디 `autocomplete="off"`, 비밀번호 `autocomplete="new-password"` 유지, 두 칸 모두 `data-1p-ignore`·`data-lpignore="true"`). AC-CS2-020은 칸별 판정 + 같은 출처 저장 비밀번호가 있는 Chrome 프로필에서 두 칸이 비고 저장해도 공유 비밀번호가 바뀌지 않는지 브라우저 확인. design.md §2.7, spec.md §1.1, research.md §2.6·§4 함께 고침. R3-D2 → AC-CS2-014 "Chrome 기본 설정(팝업 차단 켜짐, 이 사이트 예외 없음)"
   - verdict: 리드가 3차를 이 수정 조건으로 수용(2026-11-15). 점수 0.93 ≥ Tier L 기준 0.85, R3-D1·R3-D2 수정 반영 완료, 추가 감사 회차 없음 (3회 상한 도달)
 - plan_audit_accepted: true (리드 수용, 2026-11-15, score 0.93, revision 0.4.0)
+- addendum_0_5_0 (2026-11-15, manager-spec):
+  - 근거: 운영 중인 콘솔을 본 오너 후속 요청 3건(보기 전환, 영문 모드, 홈 채널 새 소식)과 M2 감사의 작은 결함 2건(안내 단계 번호, 공유 계정 설명 문구). 범위는 리드가 정했다(오너가 설계를 위임)
+  - 추가: M3 보기 전환·영문 모드·작은 수정 (REQ-CS2-022~029, AC-CS2-023~030), M4 채널 새 소식 (REQ-CS2-030~038, AC-CS2-031~040. AC-CS2-039는 M3·M4 공통)
+  - 합계: requirements 38 (REQ-CS2-001 ~ REQ-CS2-038), acceptance_criteria 40 (AC-CS2-001 ~ AC-CS2-040), milestones M1~M4. 기존 001~022 번호·본문은 바꾸지 않음
+  - 바뀐 문서: spec.md(0.5.0, §1.2·§2·§3.7~§3.9·§4·§5·§6), plan.md(M3·M4·위험·완료 조건), acceptance.md(§10~§13, §8·§9), design.md(CS2-D13~D28, §2.8~§2.15, §3), research.md(§5~§7)
+  - SPEC-CONSOLE-001 REQ-CON-020의 두 조항(단일 높이 목록 행, 홈 최근 수정 목록)을 이 추가분이 바꾼다(spec.md §4)
+  - 리드에게 알릴 사실: (1) 리드 범위의 "카드 = 지금의 카드 격자"와 달리 코드에 항목 카드 격자가 없어 카드 보기는 새로 만든다(research.md §5.1, design.md CS2-D13). (2) "기존 관리자 설정 대화상자"가 없어 채널 편집기를 새 관리자 대화상자로 둔다(CS2-D26). (3) 유튜브 채널 피드 주소가 2026-11-15 확인에서 공개 채널 5곳 모두 404였다. 형식은 2024-12-25 보관본으로 확인했고, 실패 채널은 링크 타일로 보인다(research.md §6.1, CS2-D25). (4) WebFetch는 유튜브 피드에서 404, `rss.blog.naver.com`·`web.archive.org`에서 가져오기 거절이라 `curl`로 확인했다(research.md §6)
+  - audit: 별도 plan-audit 회차 없이 리드가 수용. 이유: 오너가 설계를 리드에게 위임했고, 리드가 범위를 파일·수치 수준까지 정해 넘겼다(2026-11-15). 구현 뒤 sync-auditor 관문은 그대로 거친다
+  - addendum_accepted: true (리드 수용, 2026-11-15, revision 0.5.0, plan-audit 회차 없음)
 
 ## §E.2 Run-phase Evidence
 

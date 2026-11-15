@@ -220,9 +220,166 @@
 - 콘솔 관련 테스트(`src/lib/console`, `src/app/api/console`, `src/app/console`, 관리자 콜백 테스트) 전부 통과. SPEC-CONSOLE-001 테스트는 기대값을 바꾸지 않는다. 안내 확인 값은 `me` 밖(`prefs`)에 두므로 `bootstrap.test.ts`의 `me` 엄격 비교도 그대로 통과해야 한다. 예외는 새 칸 `hide_password` 추가로 깨지는 항목 스냅샷뿐이며, 그 차이만 반영하고 진행 기록에 적는다
 - 공개 저장소 점검: `git grep -nE "CONSOLE_(SESSION_SECRET|SECRETS_KEY|ADMIN_EMAILS) *(\?\?|\|\|) *['\"]" src` 0줄, 새 파일에 실제 직원 이름·email·내부 id 없음
 - 외부 호스트 자산 없음: 새 코드에 `https://` 이미지·폰트·스크립트 참조 없음
+- (0.5.0) 채널 새 소식의 `<img>`는 모두 `/api/console/feed/thumb?u=…` 또는 같은 출처 경로를 가리킨다(AC-CS2-037). 피드를 가져오는 서버 코드와 썸네일 경로는 바깥 요청 검사(AC-CS2-034)를 통과해야 한다
+- (0.5.0) 실제 채널 id·블로그 id·피드 주소가 콘솔 코드(`src/lib/console`, `src/app/console`, `src/app/api/console`)와 그 테스트에 없다(AC-CS2-040)
 
 ## 9. 완료 정의
 
-- 22개 기준이 모두 통과하고, 기준별 명령·관찰 결과가 progress.md §E.2에 있다
+- 40개 기준(M1·M2의 001~022, 0.5.0 추가분 M3·M4의 023~040)이 모두 통과하고, 기준별 명령·관찰 결과가 progress.md §E.2에 있다
 - 브라우저 확인 중 확인하지 못한 항목(설치되지 않은 브라우저 등)은 "미확인"으로 명시돼 있다
 - 로컬 확인용 `data/db/console-*.json`, 세션 쿠키 스크립트, 임시 비밀값이 커밋에 없다
+
+## 10. 보기 전환·영문 모드·작은 수정 (M3, 0.5.0 추가분)
+
+판정 수단은 §0~§1과 같다. M2부터 클릭 동작은 파일 단위 jsdom 환경 테스트(`*-dom.test.ts`)로도 판정한다(progress.md §E.2 M2). "넓은 화면"은 폭 1280px, "좁은 화면"은 폭 375px이다.
+
+**AC-CS2-023** — maps REQ-CS2-022 · 테스트 + 브라우저 확인
+- Given 전체 항목 보기를 한국어와 영어로 정적 렌더한다
+- Then 목록 머리에 `role="radiogroup"`이 하나 있고 접근 가능한 이름이 "보기 방식" / "View"이며, 그 안에 `role="radio"` 두 개 "목록"·"카드"("List"·"Cards")가 있고, `aria-checked="true"`인 쪽만 `tabindex="0"`이다
+- And 위키, 분류, 공유 계정, 내 항목, 검색 결과, 홈 "최근 수정한 카드" 펼침의 렌더에도 같은 컨트롤이 있고, 홈의 고정 칩과 분류별 요약 영역 안에는 없다
+- And jsdom: 컨트롤에 초점을 둔 채 오른쪽 화살표를 누르면 "카드"가 선택되고 초점이 옮겨 가며, Home은 "목록", End는 "카드"를 고른다
+- And 브라우저(넓은 화면, 항목 10개 이상): 목록 → 카드 → 목록으로 바꾸는 동안 툴바와 목록 머리의 `getBoundingClientRect().top`이 세 번 모두 같다
+
+**AC-CS2-024** — maps REQ-CS2-023 · 테스트 + 브라우저 확인
+- Given 항목 3개(설명이 있는 것, 설명 없이 주소만 있는 것, 주소가 없는 것)와, 공유 계정 보기의 항목 2개(계정 정보 있음·없음)
+- When 목록 방식과 카드 방식으로 각각 정적 렌더한다
+- Then 목록: 행마다 브랜드 아이콘, 제목, 둘째 줄이 있고 둘째 줄은 첫 항목에서 설명, 둘째 항목에서 주소의 호스트다. 담당자가 보이고, 직접 버튼은 "열기"·"편집" 두 개 이하이며 그 밖에는 더 보기 메뉴 버튼만 있다
+- And 카드: 목록 영역에 `data-view="cards"`가 있고, 카드마다 브랜드 아이콘, 제목, 설명, 분류 이름, 담당자, 더 보기 메뉴 버튼이 있으며, 주소가 있는 카드에만 "열기"가 있다. 공개가 아닌 접속 방식의 항목에는 접속 방식 표시가 하나 있다
+- And 공유 계정 보기에서는 두 방식 모두 "계정 정보 있음"·"계정 정보 없음"이 보인다
+- And 두 방식의 `data-id` 순서가 같다
+- And jsdom: 카드 제목을 누르면 행 제목을 누를 때와 같은 항목으로 상세 패널 열기가 호출된다
+- And 브라우저(넓은 화면): 제목 80자·설명 300자인 항목이 섞여 있어도 카드 첫 줄의 카드 높이(`getBoundingClientRect().height`)가 모두 같다(차이 0px). 제목은 두 줄, 설명은 두 줄까지만 보인다
+
+**AC-CS2-025** — maps REQ-CS2-024 · 테스트
+- Given 순수 함수 `resolveViewMode(stored, width)`
+- Then `('list', 1280)` → 목록, `('cards', 375)` → 카드, `(null, 1280)` → 카드, `(null, 481)` → 카드, `(null, 480)` → 목록, `('grid', 1280)` → 카드(알 수 없는 값은 기본값)
+- And jsdom: `localStorage.getItem`과 `setItem`이 예외를 던지게 해도 목록 보기가 기본 방식으로 그려지고 오류가 나지 않는다
+- And jsdom: 저장값을 "목록"으로 둔 채 넓은 화면으로 마운트하면 첫 렌더부터 행이고, 마운트 뒤 어느 시점에도 `data-view="cards"` 요소가 생기지 않는다(MutationObserver로 확인)
+- And jsdom: "카드"로 바꾼 뒤 다른 목록 보기(분류)로 옮기면 그 보기도 카드이고, 저장소에 그 값이 남는다
+
+**AC-CS2-026** — maps REQ-CS2-025 · 테스트
+- Given 영어 화면에서 `title: "가나 제목"`, `title_en: ""`, `description: "가나 설명"`, `description_en: ""`, `note: "가나 메모"`, `note_en: ""`, 링크 하나(`label: "가나 링크"`, `label_en: ""`)를 가진 기존 항목의 편집 양식을 정적 렌더한다
+- Then 첫 화면(더 보기 밖)의 제목 자리에 `f-title-en`이 있고 `placeholder="가나 제목"`이다. 설명 자리에는 `f-desc-en`(`placeholder="가나 설명"`)이 있다
+- And `f-title`·`f-desc`·`f-note`(한국어)는 더 보기 안 "Korean text" 묶음에 있고, 더 보기 안 메모 칸과 링크 이름 칸은 영문 칸(`note_en`·`label_en`)을 먼저 보여 주며 각각 한국어 값을 placeholder로 가진다
+- And jsdom: 영어 화면 새 항목에서 영문 제목만 "Alpha"로 채워 저장하면 POST 본문이 `title: "Alpha"`, `title_en: "Alpha"`다
+- And jsdom: 영어 화면에서 두 제목이 모두 비어 있으면 요청이 0건이고 `f-title-en`에 `aria-invalid="true"`와 필수 입력 오류 문구가 있다
+- And jsdom: 영어 화면에서 영문 설명만 고쳐 저장하면 PATCH 본문의 `description`이 "가나 설명" 그대로다(한국어 값을 지우지 않음)
+- And 한국어 화면의 기존 양식 테스트(SPEC-CONSOLE-001, M2 `item-form*.test.ts`)가 기대값을 바꾸지 않고 통과한다
+
+**AC-CS2-027** — maps REQ-CS2-026 · 테스트
+- Given 사람 목록 `{ email: "a@try-n.com", name: "가나", name_en: "Gana" }`, `{ email: "b@try-n.com", name: "다라", name_en: "" }`, 로그인한 사람 `a@try-n.com`, `title_en`이 빈 항목 하나, `name_en`이 빈 분류 하나
+- When 영어 화면으로 계정 메뉴, 목록 행, 카드, 상세 패널, 편집 양식의 담당자 제안 목록을 정적 렌더한다
+- Then 계정 칩 이름은 "Gana"이고 아바타 글자는 `initials("Gana")`의 결과다
+- And 담당자 표시는 a가 "Gana", b가 "다라"이고, 제안 목록에 "Gana"가 있다
+- And 담당자 입력 "Gana"는 `a@try-n.com`으로 해석된다
+- And `title_en`이 빈 항목은 한국어 제목이, `name_en`이 빈 분류는 한국어 이름이 보인다
+- And `bootstrap.test.ts`의 `me` 엄격 비교가 수정 없이 통과한다
+
+**AC-CS2-028** — maps REQ-CS2-027 · 테스트
+- Given 새 테스트 `src/app/console/__tests__/no-hangul-literals.test.ts`와 그 검사 함수
+- Then 현재 트리의 `src/app/console/**/*.tsx`(테스트 폴더 제외)에서 통과하고, 허용 목록의 모든 항목에 이유 문구가 있다
+- And 검사 함수에 `<span>안녕</span>`, `title="안녕"`, `` `안녕 ${x}` ``가 든 소스 문자열을 넣으면 각각 1건을 보고하고, `// 안녕`, `/* 안녕 */`, `{/* 안녕 */}`만 든 문자열은 0건이다
+- And 허용 목록에 소스에 없는 항목을 하나 더하면 테스트가 실패한다(허용 목록이 낡지 않음)
+
+**AC-CS2-029** — maps REQ-CS2-028 · 테스트 + 브라우저 확인
+- Given `console.module.css`와 안내 대화상자 정적 렌더
+- Then `.guideSteps` 규칙에 `list-style: decimal`(또는 `list-style-type: decimal`)이 있고, 단계는 `<ol>` 안의 `<li>`다
+- And 브라우저: 안내 대화상자에서 `getComputedStyle(ol).listStyleType === "decimal"`이고 단계 앞에 1., 2., 3.이 보인다(한국어·영어 각 1회)
+
+**AC-CS2-030** — maps REQ-CS2-029 · 테스트
+- Then 한국어 `sharedDesc`가 정확히 "팀이 함께 쓰는 로그인이에요. 항목을 열어 아이디와 비밀번호를 복사해 로그인하세요."이고 영어가 정확히 "Logins the team shares. Open an item to copy the login ID and password and sign in."이다
+- And 한국어 `accNote.shared-credential`에 "아이디"가 있고 "사용자 이름"이 없으며, 영어판에 "login ID"가 있고 "username"이 없다
+- And 두 키의 한국어 문구에 "볼 수", 영어 문구에 "see"·"view"가 없다
+
+## 11. 채널 새 소식 (M4, 0.5.0 추가분)
+
+M4 테스트는 바깥 네트워크에 요청하지 않는다. 피드·썸네일 요청은 주입한 가짜 fetch와 가짜 DNS 조회로 판정하고, 피드 고정 데이터(fixture)는 research.md §6에서 확인한 구조를 지어낸 값으로 다시 쓴 파일이다. 유튜브 id는 `UCfake`로 시작하는 22자 꼬리 값(예: `UCfakechannel00000000001`), 네이버 블로그 id는 `fake`로 시작하는 값, RSS·인스타그램 주소는 `https://example.com/…`·`https://example.org/…`만 쓴다. 시간은 주입한 시계로 움직인다.
+
+**AC-CS2-031** — maps REQ-CS2-030 · 테스트
+- Given 관리자 `admin@try-n.com` 세션, `teamPins: ["it-1"]`가 저장된 설정 문서
+- When 올바른 채널 5개(종류마다 하나)를 저장한다
+- Then 200이고 설정 문서의 `channels`가 보낸 순서·값과 같으며 `teamPins`가 `["it-1"]` 그대로이고, 감사 기록에 `settings.update` 1건이 남는다. 새 행의 id는 서버가 붙이고 기존 id는 유지된다
+- And `member@try-n.com`의 읽기·저장은 403, 세션이 없으면 401, `Origin: https://evil.io`인 저장은 403이다
+- And 다음 각 경우는 400이고 설정 문서가 저장 전과 같다: `youtube` 출처 `UCshort`, `naver` 출처 `Bad.Id`, `rss` 출처 `http://example.com/feed`, `instagram` 출처 `https://u:p@example.org/x`, `zoellife-blog` 출처 `x`, 색 `red`, 빈 이름, 41자 이름, 같은 id 두 개, 채널 13개
+- And 채널 편집기 정적 렌더(관리자): 행마다 종류 선택, 이름, 영문 이름, 출처, 색, 켜기/끄기, 위·아래 버튼이 있고, 계정 메뉴의 관리자 도구에 "채널 관리" / "Channels"가 있다. 멤버 렌더에는 그 항목이 없다
+
+**AC-CS2-032** — maps REQ-CS2-031 · 테스트
+- Given 켜진 채널 4개(유튜브 fixture 15건, 네이버 응답 시간 초과, RSS 500 응답, 자사 블로그 글 3건)와 꺼진 채널 1개
+- When 멤버 세션으로 피드를 요청한다
+- Then 200이고 `channels`가 설정 순서의 켜진 채널 4개뿐이다. 유튜브·블로그는 `ok: true`, 네이버는 `ok: false`·`error: "timeout"`, RSS는 `ok: false`·`error: "http_status"`다
+- And `items`에는 유튜브 6건과 블로그 3건만 있고 `publishedAt` 내림차순이며, 항목마다 `channelId`·`title`·`url`·`publishedAt`·`thumb`(문자열 또는 null) 칸이 있다
+- And 세션이 없으면 401이다
+
+**AC-CS2-033** — maps REQ-CS2-032 · 테스트
+- Given 가짜 fetch 호출 횟수를 세는 피드 집계와 주입한 시계
+- When 같은 설정으로 피드를 두 번 요청하고, 29분 뒤, 31분 뒤에 다시 요청한다
+- Then 출처마다 fetch가 처음 1번, 29분 뒤에도 그대로 1번, 31분 뒤 2번이다
+- And 실패한 출처는 4분 뒤 요청에서 다시 가져오지 않고 6분 뒤 요청에서 다시 가져온다
+- And 한 채널의 출처 값을 바꾸면 다음 요청에서 그 채널만 새로 가져온다
+- And 응답의 `Cache-Control`이 `private, max-age=1800`이다
+
+**AC-CS2-034** — maps REQ-CS2-033 · 테스트
+- Given 바깥 요청 함수(피드용 허용 목록 `www.youtube.com`), 가짜 DNS 조회, 가짜 fetch
+- Then 다음 각 주소는 fetch 호출 없이 거절된다: `http://www.youtube.com/…`, `https://127.0.0.1/…`, `https://[::1]/…`, `https://localhost/…`, 허용 목록에 없는 `https://example.net/…`, `https://www.youtube.com.example.net/…`, DNS가 `10.0.0.5`를 돌려주는 허용 호스트
+- And 첫 응답이 `302 Location: http://rss.blog.naver.com/x`(research.md §6.2에서 본 모양)이면 두 번째 요청 없이 실패하고, 리다이렉트가 두 번 이어지면 실패하며, 허용 목록 안의 `https:` 주소로 한 번 넘어가면 성공한다
+- And 본문이 1MB + 1바이트이면 `too_large`로 실패하고, 상한을 넘긴 뒤에는 더 읽지 않는다(스트림 읽기 횟수로 확인)
+- And 응답이 5초 안에 오지 않으면 `timeout`으로 실패한다(가짜 타이머)
+- And 나가는 요청에 `Cookie`·`Referer` 헤더가 없고 `credentials: "omit"`, `referrerPolicy: "no-referrer"`, `redirect: "manual"`이다
+- And 이 함수는 `src/lib/ssrf.ts`의 `assertPublicHttpUrl`로 공개 주소를 검사한다(가져오기 문을 `grep`으로 확인)
+
+**AC-CS2-035** — maps REQ-CS2-034 · 테스트
+- Given fixture 4종: 유튜브 Atom(15건, `media:thumbnail`이 `i2.ytimg.com`), 네이버 RSS(CDATA 제목·주소, 설명 안 `<img src>`가 `blogthumb.pstatic.net`, `pubDate` `Wed, 04 Nov 2026 10:22:52 +0900` 꼴), 일반 RSS 2.0(`enclosure type="image/jpeg"`, 제목에 `&amp;`·`&#39;`), 일반 Atom(`link rel="alternate"`, `updated`만 있음)
+- Then 각 fixture의 첫 항목 제목·주소·`publishedAt`(ISO 문자열)·썸네일 원본 주소가 기대값과 같고, `&amp;`·`&#39;`는 `&`·`'`로 풀린다
+- And 적대적 입력: `<!DOCTYPE … <!ENTITY x "…">]>`와 `&x;`가 든 피드에서 엔티티가 펼쳐지지 않고, 제목의 `<script>a</script>b`는 태그가 빠진 글자만 남으며, `javascript:` 주소 항목은 빠지고, 날짜를 읽을 수 없는 항목은 남되 날짜 있는 항목 뒤에 온다
+- And 201자 제목은 200자로 잘린다
+- And `package.json`의 의존성 목록이 이 마일스톤 전후로 같다
+
+**AC-CS2-036** — maps REQ-CS2-035 · 테스트
+- Given 가짜 블로그 저장소(발행 7건, 임시 저장 1건)와 호출을 세는 가짜 fetch
+- Then 자사 블로그 채널은 발행 글 6건만, 최신순으로, `url`이 `/blog/<slug>` 꼴이며, fetch 호출이 0건이다
+- And 인스타그램 채널은 fetch 호출 0건, `ok: true`, 항목 0건이고 `home`이 설정한 프로필 주소다
+- And 홈 정적 렌더: 인스타그램 채널과 `ok: false` 채널마다 링크 타일이 하나씩 있고, 타일은 채널 배지와 "인스타그램에서 보기" / "View on Instagram"(실패한 채널은 "<채널 이름>에서 보기" / "View on <label>")을 보이며, `href`가 그 채널의 `home`, `target="_blank"`, `rel="noopener noreferrer"`다
+
+**AC-CS2-037** — maps REQ-CS2-036 · 테스트
+- Given 썸네일 경로, 가짜 fetch, 가짜 DNS, 공개 Blob 호스트를 돌려주는 `src/lib/db.ts` 도우미, 켜진 RSS 채널 `https://example.com/feed.xml`
+- Then 세션이 없으면 401이다
+- And `https://i.ytimg.com/vi/x/hqdefault.jpg`, `https://i2.ytimg.com/vi/x/hqdefault.jpg`, `https://blogthumb.pstatic.net/a.png`, 공개 Blob 호스트의 이미지, `https://example.com/a.jpg`는 200이고 원본 `Content-Type`, `X-Content-Type-Options: nosniff`, `Cache-Control: private, max-age=86400`이 붙는다
+- And 다음 각 경우는 fetch 호출 없이 기본 그림(`Cache-Control: private, max-age=300`)을 돌려준다: `u` 없음, 2049자 `u`, `http://i.ytimg.com/…`, `https://evil.example/…`, `https://ytimg.com.evil.example/…`, `https://i.ytimg.com.evil.example/…`, `https://127.0.0.1/…`, `https://localhost/…`
+- And 원본이 `image/svg+xml`, `text/html`, 2MB + 1바이트, 허용 목록 밖으로의 리다이렉트이면 기본 그림이다
+- And 피드 응답의 `thumb` 값은 모두 `null`이거나 `/api/console/feed/thumb?u=`로 시작하고, 허용 목록 밖 이미지를 가진 항목의 `thumb`는 `null`이다
+
+**AC-CS2-038** — maps REQ-CS2-037 · 테스트 + 브라우저 확인
+- Given 채널 3개와 항목 20건의 피드 데이터
+- When 홈을 한국어·영어로 정적 렌더한다
+- Then 제목 "채널 새 소식" / "Channel updates"인 구역이 있고, "최근 수정된 항목" 제목 구역은 없다
+- And 거르기 칩이 `role="radiogroup"` 하나 안에 "전체" + 채널 3개로 있고, "전체"에서 타일이 12개, 최신순이다. jsdom에서 채널 칩을 누르면 그 채널 타일만(6개 이하) 남는다
+- And 타일마다 `<img>`의 `src`가 `/api/console/feed/thumb?u=`로 시작하거나 기본 그림이고, 채널 배지에 채널 이름과 그 채널 색 배경이 있으며, 제목, 날짜가 있고, 타일 링크는 `target="_blank"`, `rel="noopener noreferrer"`다
+- And `console.module.css`의 타일 그림 규칙에 `aspect-ratio: 16 / 9`, 제목 규칙에 두 줄 자르기(`-webkit-line-clamp: 2`)가 있다
+- And 불러오는 중 렌더에는 높이가 정해진 자리 표시 영역이 있고, 켜진 채널이 없으면 안내 문구가 있으며 "채널 관리" 버튼은 관리자 렌더에만 있다
+- And "최근 수정한 카드 보기" 버튼이 `aria-expanded="false"`이고, jsdom에서 누르면 `true`가 되며 최근 수정 항목 목록(최대 6개)이 보기 전환 컨트롤과 함께 나타난다
+- And 브라우저(좁은 화면): 홈에서 `document.documentElement.scrollWidth <= 375`이고 첫 두 타일의 `getBoundingClientRect().top`이 같다(두 열)
+- And 브라우저(넓은 화면): 피드를 불러오기 전과 뒤에 "채널 새 소식" 제목의 `top`이 같다
+
+## 12. M3·M4 공통 (0.5.0 추가분)
+
+**AC-CS2-039** — maps REQ-CS2-038 · 테스트 + 브라우저 확인
+- Then 한·영 키 집합이 같다는 기존 테스트가 M3·M4 새 키를 포함해 통과한다
+- And 정적 렌더: 보기 방식 radiogroup과 채널 칩 radiogroup에 접근 가능한 이름이 있고, 새 아이콘 전용 버튼(채널 편집기의 위·아래·삭제, 링크 타일의 바깥 링크 아이콘이 있다면 그것)에 모두 `aria-label`이 있다
+- And 순수 함수 `badgeTextColor(hex)`: `#ffffff`, `#000000`, `#ff0000`, `#1f6f5c`, `#f2c94c`, `#777777`, `#3b5998` 각각에서 고른 글자색과 배경의 대비가 4.5:1 이상이다(WCAG 상대 휘도 공식으로 계산)
+- And 브라우저: 키보드만으로 보기 방식 컨트롤과 채널 칩에 들어가 화살표 키로 고를 수 있다. 영어 화면에서 항목 편집 양식·계정 칩·담당자 표시를 화면 갈무리해 한국어가 영문 칸이 빈 데이터 값에만 남아 있음을 확인한다
+
+**AC-CS2-040** — maps REQ-CS2-030, REQ-CS2-035, REQ-CS2-036, REQ-CS2-037 · 명령 + 브라우저 확인 (흐름 전체·공개 저장소 점검)
+- Given 이 마일스톤의 커밋이 들어간 트리
+- Then `git grep -nE "UC[A-Za-z0-9_-]{22}" -- src/lib/console src/app/console src/app/api/console`의 모든 결과가 `UCfake`로 시작한다. 범위를 콘솔 경로로 한정하는 이유: 공개 사이트 코드(`src/data`, `src/app/layout.tsx` 등)에는 SPEC-CONSOLE-002 이전부터 회사 공개 채널 주소가 있고(research.md §5.8), 이 SPEC은 그 파일을 건드리지 않는다
+- And `git grep -nE "rss\.blog\.naver\.com/[a-z0-9_-]+|blog\.naver\.com/[a-z0-9_-]+|instagram\.com/[A-Za-z0-9_.]+" -- src/lib/console src/app/console src/app/api/console`의 모든 결과에서 id 부분이 `fake`로 시작한다
+- And `git ls-files data/db | grep console-` 출력이 없다(로컬 확인 데이터 미커밋)
+- And 브라우저(§0 환경, 관리자): 채널 편집기에 채널을 넣고(실제 값은 로컬 데이터에만 둔다) 홈을 열면, 가져오기에 성공한 채널은 썸네일 타일, 실패한 채널(2026-11-15 기준 유튜브 포함 예상)과 인스타그램은 링크 타일로 보인다. 개발자 도구 네트워크 탭에서 페이지가 부른 이미지 요청은 모두 같은 출처(`/api/console/feed/thumb` 또는 정적 자산)다. 채널별 결과(썸네일/링크 타일, 실패면 `error` 코드)를 진행 기록에 남기되 채널 id와 주소는 적지 않는다
+
+## 13. M3·M4 경계 사례
+
+- 영어 화면에서 한국어 제목이 이미 있는 항목의 영문 제목만 고쳐도 한국어 제목은 바뀌지 않는다(AC-CS2-026의 설명 사례와 같은 규칙).
+- 보기 방식은 목록 보기마다가 아니라 브라우저 하나에 하나다. 한 보기에서 바꾸면 모든 목록 보기에 적용된다.
+- 같은 글이 두 채널에 있으면(예: 블로그 글이 RSS로도 나옴) 각각 따로 보인다. 중복 제거는 하지 않는다.
+- 피드 항목 주소에 붙은 추적 매개변수(예: 네이버의 `fromRss=true`)는 그대로 둔다.
+- 채널이 모두 실패하면 링크 타일만 보이고, 구역 자체는 사라지지 않는다.
+- 썸네일 원본 주소의 퍼센트 인코딩(research.md §6.2의 네이버 이미지 경로)은 다시 인코딩하지 않고 그대로 요청한다.
