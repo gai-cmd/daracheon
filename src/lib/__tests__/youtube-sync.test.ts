@@ -71,3 +71,12 @@ describe('syncYoutube', () => {
     expect(write).not.toHaveBeenCalled();
   });
 });
+
+describe('syncYoutube — 읽기 실패', () => {
+  it('기존 목록을 못 읽으면 쓰지 않고 오류를 던진다', async () => {
+    const write = vi.fn(async () => {});
+    const { d } = deps({ read: async () => { throw new Error('blob down'); }, write });
+    await expect(syncYoutube(d)).rejects.toThrow('blob down');
+    expect(write).not.toHaveBeenCalled();
+  });
+});

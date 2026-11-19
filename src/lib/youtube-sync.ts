@@ -3,7 +3,7 @@
 // 한 번 쌓인 영상은 피드에서 밀려나도 남는다 — 시간이 갈수록 목록이 채널 전체에 가까워진다. 서버 전용.
 
 import { put } from '@vercel/blob';
-import { readSingleSafe, writeSingle } from '@/lib/db';
+import { readSingleForWrite, writeSingle } from '@/lib/db';
 import { fetchAllowed } from '@/lib/console/feed-fetch';
 import { parseFeed } from '@/lib/console/feed-parse';
 import { cleanVideoTitle } from '@/lib/sns';
@@ -136,7 +136,8 @@ export function liveSyncDeps(): SyncDeps {
       });
       return res.url;
     },
-    read: () => readSingleSafe<YoutubeStore>(YOUTUBE_STORE),
+    // 쓰기 기준 목록은 캐시·예비본 없이 읽고, 읽기 실패면 throw — 빈 목록으로 덮어써 쌓인 영상을 잃지 않게.
+    read: () => readSingleForWrite<YoutubeStore>(YOUTUBE_STORE),
     write: (store) => writeSingle(YOUTUBE_STORE, store),
     now: () => new Date().toISOString(),
   };
