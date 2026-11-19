@@ -33,7 +33,7 @@ interface VideoCtx {
   open: (index: number) => void;
 }
 
-const VideoContext = createContext<VideoCtx>({ videos: [], open: () => {} });
+export const VideoContext = createContext<VideoCtx>({ videos: [], open: () => {} });
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -304,7 +304,7 @@ const FEED_TABS: { key: FeedFilter; label: string }[] = [
  * 블로그 글과 유튜브 영상을 한 칸에 최신순으로 섞어 보여 준다.
  * '전체'는 영상이 몰려도 블로그가 최소 2개 남는다(pickFeed). 영상 카드는 공용 유튜브 모달로 연다.
  */
-export function NewsFeed({ items, limit = 5 }: { items: FeedItem[]; limit?: number }) {
+export function NewsFeed({ items, limit = 5, head }: { items: FeedItem[]; limit?: number; head?: ReactNode }) {
   const { open } = useContext(VideoContext);
   const [filter, setFilter] = useState<FeedFilter>('all');
   const shown = pickFeed(items, filter, limit);
@@ -343,8 +343,19 @@ export function NewsFeed({ items, limit = 5 }: { items: FeedItem[]; limit?: numb
     );
   };
 
+  // '더 보기'는 고른 탭을 따라간다 — 유튜브 탭이면 영상 모음(/videos), 그 외엔 블로그.
+  const moreHref = filter === 'video' ? '/videos' : '/blog';
+
   return (
     <>
+      {head !== undefined && (
+        <div className={styles.tileHead}>
+          {head}
+          <Link href={moreHref} className={styles.more}>
+            더 보기 →
+          </Link>
+        </div>
+      )}
       <div className={styles.feedTabs} role="group" aria-label="소식 종류">
         {FEED_TABS.map((t) => (
           <button

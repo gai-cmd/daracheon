@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { readDataSafe, readSingleSafe } from '@/lib/db';
 import { readLatestPublishedPostsSafe } from '@/lib/blog/store';
 import { isOwnAsset, parseEmphasis, resolveHomeMain, safeHref } from '@/lib/home-main';
-import { cleanVideoTitle, formatSnsDate, koreanVideosOnly } from '@/lib/sns';
-import { SNS_YOUTUBE_OFFICIAL } from '@/data/sns-sample';
+import { collectOfficialVideos } from '@/lib/home-videos';
 import { feedDateKey, feedDateLabel, type FeedItem } from '@/lib/home-feed';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
@@ -22,7 +21,6 @@ import {
   IgReels,
   LatestVideo,
   NewsFeed,
-  type VideoItem,
 } from './BentoClient';
 import styles from './page.module.css';
 
@@ -229,23 +227,7 @@ export default async function HomePage() {
         }
       : null;
 
-  // 공식 유튜브 두 채널(@ZoelLife_official_00 + @ZoelLife.official)을 날짜순으로 합친다.
-  // 한글 제목만, 제목은 해시태그·꼬리표를 걷어 낸다. 같은 영상이 두 채널에 있으면 앞의 것만.
-  const snsKo = koreanVideosOnly({ youtube: hm.youtube, instagram: hm.instagram });
-  const officialKo = koreanVideosOnly({ youtube: SNS_YOUTUBE_OFFICIAL, instagram: hm.instagram }).youtube;
-  const videoSources = [
-    ...snsKo.youtube.videos.map((v) => ({ v, source: snsKo.youtube.handle })),
-    ...officialKo.videos.map((v) => ({ v, source: officialKo.handle })),
-  ]
-    .filter(({ v }, i, all) => all.findIndex((x) => x.v.id === v.id) === i)
-    .map((x, i) => ({ ...x, i }))
-    .sort((a, b) => feedDateKey(b.v.publishedAt) - feedDateKey(a.v.publishedAt) || a.i - b.i);
-  const videos: VideoItem[] = videoSources.map(({ v }) => ({
-    id: v.id,
-    title: cleanVideoTitle(v.title),
-    date: formatSnsDate(v.publishedAt),
-    thumbnail: v.thumbnail,
-  }));
+  const { snsKo, videoSources, videos } = collectOfficialVideos(hm);
 
   // '새로 올라온 소식' 통합 칸 — 블로그 글 + 유튜브 영상. 블로그 표지가 우리 자산이 아니면 기본 이미지.
   const feedItems: FeedItem[] = [
@@ -341,16 +323,15 @@ export default async function HomePage() {
           {/* 블로그 + 유튜브(두 채널) — 최신순으로 섞은 카드 */}
           {feedItems.length > 0 && (
             <div className={`${styles.tile} ${styles.tFeed}`} data-tile="" data-reveal="">
-              <div className={styles.tileHead}>
-                <span>
-                  <span className={styles.cardTitle}>블로그 · 유튜브</span>
-                  <span className={styles.cardSub}>글과 영상으로 만나는 침향 이야기</span>
-                </span>
-                <Link href="/blog" className={styles.more}>
-                  더 보기 →
-                </Link>
-              </div>
-              <NewsFeed items={feedItems} />
+              <NewsFeed
+                items={feedItems}
+                head={
+                  <span>
+                    <span className={styles.cardTitle}>블로그 · 유튜브</span>
+                    <span className={styles.cardSub}>글과 영상으로 만나는 침향 이야기</span>
+                  </span>
+                }
+              />
             </div>
           )}
 

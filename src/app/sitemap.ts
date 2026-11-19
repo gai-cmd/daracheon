@@ -80,6 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/media`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/media`) },
     { url: `${baseUrl}/reviews`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/reviews`) },
     { url: `${baseUrl}/blog`, changeFrequency: 'weekly', priority: 0.8, alternates: withAlternates(`${baseUrl}/blog`) },
+    { url: `${baseUrl}/videos`, changeFrequency: 'weekly', priority: 0.6, alternates: withAlternates(`${baseUrl}/videos`) },
     { url: `${baseUrl}/guide`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/guide`) },
     { url: `${baseUrl}/privacy`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/privacy`) },
     { url: `${baseUrl}/terms`, changeFrequency: 'yearly', priority: 0.3, alternates: withAlternates(`${baseUrl}/terms`) },
