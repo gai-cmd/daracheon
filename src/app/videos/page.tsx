@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { readSingleSafe } from '@/lib/db';
 import { resolveHomeMain } from '@/lib/home-main';
 import { collectOfficialVideos } from '@/lib/home-videos';
+import { YOUTUBE_STORE, type YoutubeStore } from '@/lib/youtube-sync';
 import { BentoRoot } from '../BentoClient';
 import VideoGrid from './VideoGrid';
 
@@ -27,8 +28,11 @@ export const metadata: Metadata = {
 };
 
 export default async function VideosPage() {
-  const pagesData = await readSingleSafe<{ homeMain?: unknown }>('pages');
-  const { videoSources, videos } = collectOfficialVideos(resolveHomeMain(pagesData?.homeMain));
+  const [pagesData, ytStore] = await Promise.all([
+    readSingleSafe<{ homeMain?: unknown }>('pages'),
+    readSingleSafe<YoutubeStore>(YOUTUBE_STORE),
+  ]);
+  const { videoSources, videos } = collectOfficialVideos(resolveHomeMain(pagesData?.homeMain), ytStore?.videos);
 
   return (
     <BentoRoot videos={videos} className="min-h-screen bg-[#0b0b0d] text-[#fdfbf7]">

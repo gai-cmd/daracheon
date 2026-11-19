@@ -6,6 +6,7 @@ import { readDataSafe, readSingleSafe } from '@/lib/db';
 import { readLatestPublishedPostsSafe } from '@/lib/blog/store';
 import { isOwnAsset, parseEmphasis, resolveHomeMain, safeHref } from '@/lib/home-main';
 import { collectOfficialVideos } from '@/lib/home-videos';
+import { YOUTUBE_STORE, type YoutubeStore } from '@/lib/youtube-sync';
 import { feedDateKey, feedDateLabel, type FeedItem } from '@/lib/home-feed';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
@@ -169,12 +170,13 @@ function Go() {
 }
 
 export default async function HomePage() {
-  const [pagesData, productsRaw, posts, announcement] = await Promise.all([
+  const [pagesData, productsRaw, posts, announcement, ytStore] = await Promise.all([
     readSingleSafe<{ aboutAgarwood?: { mediaTab?: MediaTabData }; homeMain?: unknown }>('pages'),
     readDataSafe<ProductLite>('products'),
     // 블로그 최신 발행글 5개 — '새로 올라온 소식' 통합 칸용. 본문은 읽지 않고, 2초 안에 답이 없으면 블로그 카드만 빠진다.
     readLatestPublishedPostsSafe(5),
     readSingleSafe<Partial<Announcement>>('announcement'),
+    readSingleSafe<YoutubeStore>(YOUTUBE_STORE),
   ]);
 
   // 어드민 '메인 페이지'에서 저장한 문구·링크·미디어. 저장 전이면 전부 기본값.
@@ -227,7 +229,7 @@ export default async function HomePage() {
         }
       : null;
 
-  const { snsKo, videoSources, videos } = collectOfficialVideos(hm);
+  const { snsKo, videoSources, videos } = collectOfficialVideos(hm, ytStore?.videos);
 
   // '새로 올라온 소식' 통합 칸 — 블로그 글 + 유튜브 영상. 블로그 표지가 우리 자산이 아니면 기본 이미지.
   const feedItems: FeedItem[] = [
