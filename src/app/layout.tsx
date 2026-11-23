@@ -330,11 +330,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const rawMainNav = nav?.main ?? DEFAULT_MAIN_NAV;
   // 라벨 마이그레이션: '홈쇼핑 특별관' → 'On-Air 특별관' (URL 동일).
   // blob 의 사용자 커스텀 라벨이 있어도 어드민 재저장 없이 즉시 반영.
-  const mainNav = rawMainNav.map((item) =>
+  const relabeledNav = rawMainNav.map((item) =>
     item.href === '/home-shopping' && item.label === '홈쇼핑 특별관'
       ? { ...item, label: 'On-Air 특별관' }
       : item
   );
+  // 네이버 라이브 메뉴: blob 에 없으면 'On-Air 특별관' 바로 뒤(없으면 끝)에 삽입.
+  // 어드민에서 직접 추가·이동한 경우(href 존재)에는 손대지 않는다.
+  const mainNav = relabeledNav.some((item) => item.href === '/naver-live')
+    ? relabeledNav
+    : (() => {
+        const at = relabeledNav.findIndex((item) => item.href === '/home-shopping');
+        const next = [...relabeledNav];
+        next.splice(at === -1 ? next.length : at + 1, 0, { label: '네이버 라이브', href: '/naver-live' });
+        return next;
+      })();
 
   // 브랜드 로고 (좌측 상단) + 푸터 회사 정보 — settings(company)는 위 Promise.all 에서 함께 읽음.
   const brandLogo = settings?.brandLogo ?? '';

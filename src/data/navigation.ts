@@ -27,6 +27,7 @@ export const DEFAULT_MAIN_NAV: NavItem[] = [
   { label: '침향 농장 이야기', href: '/media' },
   { label: '제품 소개', href: '/products' },
   { label: 'On-Air 특별관', href: '/home-shopping' },
+  { label: '네이버 라이브', href: '/naver-live' },
   { label: '회사소개', href: '/company' },
 ];
 

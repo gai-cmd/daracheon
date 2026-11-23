@@ -78,12 +78,27 @@
 @media (min-width: 1024px) {
   .navLinks { display: flex; }
 }
+/* 메뉴 8개(네이버 라이브 추가) — 좁은 PC 폭에서 줄바꿈 대신 간격·글자 축소 */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  .navLinks { gap: 14px; }
+  .navLinks a { font-size: 0.8rem; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .navLinks { gap: 10px; }
+  .navLinks a { font-size: 0.76rem; }
+  .storeCtaPrefix { display: none; }
+  .navInner { padding: 0 24px; }
+  .guideCtaTop .navCtaLabel { display: none; }
+  .navBrandKr, .navBrandEn { display: none; }
+  .navLinks { margin: 0 12px; }
+}
 
 .navLinks a {
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 400;
+  white-space: nowrap;
   padding: 6px 0;
   border-bottom: 1px solid transparent;
   transition: all 300ms;
