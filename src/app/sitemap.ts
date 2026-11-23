@@ -76,6 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/showroom`, changeFrequency: 'monthly', priority: 0.7, alternates: withAlternates(`${baseUrl}/showroom`) },
     { url: `${baseUrl}/products`, changeFrequency: 'weekly', priority: 0.9, alternates: withAlternates(`${baseUrl}/products`) },
     { url: `${baseUrl}/home-shopping`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/home-shopping`) },
+    { url: `${baseUrl}/naver-live`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/naver-live`) },
     { url: `${baseUrl}/company`, changeFrequency: 'monthly', priority: 0.6, alternates: withAlternates(`${baseUrl}/company`) },
     { url: `${baseUrl}/media`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/media`) },
     { url: `${baseUrl}/reviews`, changeFrequency: 'weekly', priority: 0.7, alternates: withAlternates(`${baseUrl}/reviews`) },

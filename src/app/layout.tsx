@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ChromeGate from '@/components/layout/ChromeGate';
 import ShippingNoticePopup from '@/components/layout/ShippingNoticePopup';
+import NaverLivePopup from '@/components/layout/NaverLivePopup';
 import JsonLd from '@/components/ui/JsonLd';
 import { imageObject } from '@/lib/seo/image';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
@@ -384,6 +385,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </ChromeGate>
         <ChromeGate>
           <ShippingNoticePopup />
+          <NaverLivePopup />
         </ChromeGate>
         {/* Vercel Analytics + Speed Insights — 실제 사용자 LCP/CLS/INP 수집.
             DNT 자동 존중. 환경변수 없이도 동작 (Vercel 대시보드에서 확인). */}
