@@ -35,8 +35,9 @@ export default function NaverLivePage() {
           대라천 침향, <em>라이브로 만나다</em>
         </h1>
         <p className={styles.lede}>
-          네이버 쇼핑라이브 정규 방송을 시작합니다. 방송 시간에 맞춰 들어오시면 실시간으로 묻고 답하며
-          라이브 혜택을 받으실 수 있습니다.
+          네이버 쇼핑라이브 정규 방송을 시작합니다.
+          <br />
+          방송 시간에 맞춰 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.
         </p>
         <LiveStatus />
       </section>
