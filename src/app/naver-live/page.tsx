@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import JsonLd from '@/components/ui/JsonLd';
 import { NAVER_LIVE_SESSIONS, NAVER_LIVE_URL, formatSessionKst } from '@/lib/naver-live';
+import { PROMO_VIDEO } from '@/lib/naver-live-promo';
 import LiveStatus from './LiveStatus';
 import PromoFilm from './PromoFilm';
 import styles from './page.module.css';
@@ -26,9 +27,20 @@ export default function NaverLivePage() {
     organizer: { '@id': `${SITE_URL}/#organization` },
   }));
 
+  const video = {
+    '@type': 'VideoObject',
+    name: PROMO_VIDEO.title,
+    description: PROMO_VIDEO.description,
+    thumbnailUrl: `${SITE_URL}${PROMO_VIDEO.poster}`,
+    contentUrl: `${SITE_URL}${PROMO_VIDEO.src}`,
+    uploadDate: `${PROMO_VIDEO.uploadDate}T00:00:00+09:00`,
+    duration: `PT${PROMO_VIDEO.durationSec}S`,
+    publisher: { '@id': `${SITE_URL}/#organization` },
+  };
+
   return (
     <div className={styles.page}>
-      <JsonLd data={{ '@context': 'https://schema.org', '@graph': events }} />
+      <JsonLd data={{ '@context': 'https://schema.org', '@graph': [...events, video] }} />
 
       <section className={styles.hero}>
         <p className={styles.kicker}>NAVER SHOPPING LIVE</p>

@@ -17,6 +17,7 @@ import { AGARWOOD_HWAN } from '@/content/topics/agarwood-hwan';
 import { AGARWOOD_OIL } from '@/content/topics/agarwood-oil';
 import { AGARWOOD_TEA } from '@/content/topics/agarwood-tea';
 import { VIETNAM_AGARWOOD } from '@/content/topics/vietnam-agarwood';
+import { NAVER_LIVE_PAGE_UPDATED, PROMO_IMAGES, PROMO_VIDEO } from '@/lib/naver-live-promo';
 
 // 코드로 정의한 주제 허브 — 콘텐츠 파일의 dateModified(JSON-LD 와 같은 값)와 대표 이미지를 sitemap 에 싣는다.
 // 날짜는 허브 내용을 고치는 커밋에서 콘텐츠 파일 쪽을 올린다(여기서 따로 적지 않는다).
@@ -100,6 +101,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (lastModified) route.lastModified = lastModified;
     const images = collectSitemapImages([hub.heroImage?.src], baseUrl);
     if (images.length) route.images = images;
+  }
+
+  // /naver-live — 코드로 관리하는 페이지. 내용을 고친 커밋에서 올린 날짜 → lastmod,
+  // 장면 스틸 → 이미지 항목, 홍보 영상 → 동영상 항목.
+  const naverLive = routeFor('/naver-live');
+  if (naverLive) {
+    naverLive.lastModified = NAVER_LIVE_PAGE_UPDATED;
+    const images = collectSitemapImages(PROMO_IMAGES, baseUrl);
+    if (images.length) naverLive.images = images;
+    naverLive.videos = [
+      {
+        title: PROMO_VIDEO.title,
+        description: PROMO_VIDEO.description,
+        thumbnail_loc: `${baseUrl}${PROMO_VIDEO.poster}`,
+        content_loc: `${baseUrl}${PROMO_VIDEO.src}`,
+        duration: PROMO_VIDEO.durationSec,
+        publication_date: PROMO_VIDEO.uploadDate,
+      },
+    ];
   }
 
   try {

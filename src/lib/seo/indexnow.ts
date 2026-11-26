@@ -101,6 +101,33 @@ export function dropRedirectingPaths(paths: string[]): string[] {
   return paths.filter((p) => !REDIRECTING_PATHS.has(p));
 }
 
+/** 하루 한 번 도는 크론의 수집 창 — 하루 + 여유 2시간 (겹친 구간의 중복 제출은 무해하다). */
+export const RECENT_WINDOW_MS = 26 * 3600_000;
+
+interface SitemapEntryLike {
+  url: string;
+  lastModified?: string | Date;
+}
+
+/**
+ * sitemap 항목 가운데 lastmod 가 최근 창 안에 있는 URL 만 고른다 — 코드 배포로 바뀐 페이지처럼
+ * 저장 핸들러가 알리지 못하는 변경도 lastmod 만 올라가면 다음 크론에서 네이버에 알려진다.
+ * 미래·잘못된 날짜와 lastmod 없는 항목은 버린다.
+ */
+export function recentlyModifiedUrls(
+  entries: SitemapEntryLike[],
+  now: number,
+  windowMs: number = RECENT_WINDOW_MS,
+): string[] {
+  return entries
+    .filter((e) => {
+      if (!e.lastModified) return false;
+      const t = e.lastModified instanceof Date ? e.lastModified.getTime() : Date.parse(e.lastModified);
+      return Number.isFinite(t) && t <= now && now - t <= windowMs;
+    })
+    .map((e) => e.url);
+}
+
 /** 프로덕션에서만 네이버 IndexNow 로 URL 목록을 보낸다. 절대 throw 하지 않는다. */
 export async function notifyIndexNow(paths: string[]): Promise<void> {
   try {
