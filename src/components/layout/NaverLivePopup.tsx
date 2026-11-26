@@ -48,7 +48,7 @@ export default function NaverLivePopup() {
   }, [open]);
 
   if (!notice) return null;
-  const { session, eyebrow, titleLines, lead, cta, state } = notice;
+  const { session, eyebrow, titleLines, lead, cta, coupang, state } = notice;
 
   const hideToday = () => {
     try {
@@ -116,6 +116,10 @@ export default function NaverLivePopup() {
             <dt>정규 편성</dt>
             <dd>총 {NAVER_LIVE_SESSIONS.length}회 · 매회 19시</dd>
           </div>
+          <div className={styles.row}>
+            <dt>동시 방송</dt>
+            <dd>네이버 쇼핑라이브 · 쿠팡 라이브</dd>
+          </div>
         </dl>
 
         <div className={styles.actions}>
@@ -131,6 +135,15 @@ export default function NaverLivePopup() {
             {cta.label}
           </a>
         </div>
+        <a
+          className={styles.coupangLink}
+          href={coupang.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={close}
+        >
+          {coupang.label}
+        </a>
       </div>
     </div>
   );

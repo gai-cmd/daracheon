@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NAVER_LIVE_SESSIONS, NAVER_LIVE_URL, popupNotice } from '@/lib/naver-live';
+import { COUPANG_LIVE_URL, NAVER_LIVE_SESSIONS, NAVER_LIVE_URL, popupNotice } from '@/lib/naver-live';
 
 const at = (iso: string) => Date.parse(iso);
 
@@ -19,8 +19,9 @@ describe('popupNotice', () => {
     expect(n?.state).toBe('live');
     expect(n?.eyebrow).toBe('NAVER SHOPPING LIVE · 지금 방송 중');
     expect(n?.titleLines).toEqual(['대라천 네이버 쇼핑라이브', '지금 방송 중입니다']);
-    expect(n?.lead.startsWith('지금 들어오시면')).toBe(true);
-    expect(n?.cta).toEqual({ label: '라이브 보러 가기', href: NAVER_LIVE_URL, external: true });
+    expect(n?.lead).toContain('지금 들어오시면');
+    expect(n?.cta).toEqual({ label: '네이버 라이브 보기', href: NAVER_LIVE_URL, external: true });
+    expect(n?.coupang).toEqual({ label: '쿠팡 라이브 보기', href: COUPANG_LIVE_URL });
   });
 
   it('1회차가 끝나면 다음 회차 안내로 넘어간다', () => {

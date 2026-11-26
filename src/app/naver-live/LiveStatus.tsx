@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import {
+  COUPANG_LIVE_URL,
   NAVER_LIVE_URL,
   currentOrNextSession,
   formatSessionKst,
@@ -54,8 +55,12 @@ export default function LiveStatus() {
         </p>
       ) : null}
       <a className={styles.cta} href={NAVER_LIVE_URL} target="_blank" rel="noopener noreferrer">
-        {state === 'live' ? '지금 바로 시청하기' : '네이버에서 알림받기'}
+        {state === 'live' ? '네이버에서 시청하기' : '네이버에서 알림받기'}
       </a>
+      <a className={styles.ctaCoupang} href={COUPANG_LIVE_URL} target="_blank" rel="noopener noreferrer">
+        {state === 'live' ? '쿠팡에서 시청하기' : '쿠팡에서 알림받기'}
+      </a>
+      <p className={styles.simulcast}>네이버 쇼핑라이브 · 쿠팡 라이브 동시 방송</p>
     </div>
   );
 }

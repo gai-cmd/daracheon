@@ -1,6 +1,8 @@
 // 네이버 쇼핑라이브 정규 방송 편성 (NS홈쇼핑 broadcasts 와 별개 채널).
 // 회차별 방송 타이틀/테마는 각 항목의 topic 에 둔다 (미정이면 비워 두면 "주제 추후 공개" 표시).
 export const NAVER_LIVE_URL = 'https://shoppinglive.naver.com/livebridge/2100572';
+/** 네이버 쇼핑라이브와 같은 시간에 동시 송출되는 쿠팡 라이브 */
+export const COUPANG_LIVE_URL = 'https://link.coupang.com/a/iLI9OAXmRo';
 
 export interface NaverLiveSession {
   round: number;
@@ -66,6 +68,8 @@ export interface PopupNotice {
   titleLines: [string, string];
   lead: string;
   cta: { label: string; href: string; external: boolean };
+  /** 쿠팡 라이브 동시 송출 바로가기 */
+  coupang: { label: string; href: string };
 }
 
 /**
@@ -82,8 +86,9 @@ export function popupNotice(now: number): PopupNotice | null {
       state: 'live',
       eyebrow: 'NAVER SHOPPING LIVE · 지금 방송 중',
       titleLines: [brand, '지금 방송 중입니다'],
-      lead: '지금 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
-      cta: { label: '라이브 보러 가기', href: NAVER_LIVE_URL, external: true },
+      lead: '네이버·쿠팡에서 동시에 방송합니다. 지금 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
+      cta: { label: '네이버 라이브 보기', href: NAVER_LIVE_URL, external: true },
+      coupang: { label: '쿠팡 라이브 보기', href: COUPANG_LIVE_URL },
     };
   }
   const first = session.round === 1;
@@ -92,8 +97,9 @@ export function popupNotice(now: number): PopupNotice | null {
     state: 'upcoming',
     eyebrow: `NAVER SHOPPING LIVE · ${first ? '첫 방송' : `${session.round}회차`}`,
     titleLines: [brand, first ? '첫 방송을 시작합니다' : `${session.round}회차 방송 안내`],
-    lead: '방송 시간에 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
+    lead: '네이버·쿠팡에서 동시에 방송합니다. 방송 시간에 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
     cta: { label: '방송 일정 보기', href: '/naver-live', external: false },
+    coupang: { label: '쿠팡 라이브 알림받기', href: COUPANG_LIVE_URL },
   };
 }
 

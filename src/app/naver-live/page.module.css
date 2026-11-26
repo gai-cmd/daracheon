@@ -165,3 +165,31 @@
   text-align: center;
   color: #9c9384 !important;
 }
+
+.ctaCoupang {
+  display: inline-block;
+  margin: 6px 0 0 8px;
+  padding: 13px 28px;
+  border-radius: 999px;
+  background: #fdfbf7;
+  color: #1f1a14 !important;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ctaCoupang:hover {
+  background: #ece3d2;
+}
+
+.simulcast {
+  margin: 10px 0 0;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+@media (max-width: 420px) {
+  .ctaCoupang {
+    margin-left: 0;
+  }
+}

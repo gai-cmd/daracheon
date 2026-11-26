@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRef, useState } from 'react';
-import { NAVER_LIVE_URL } from '@/lib/naver-live';
+import { COUPANG_LIVE_URL, NAVER_LIVE_URL } from '@/lib/naver-live';
 import { PROMO_CHAPTERS, PROMO_VIDEO, type PromoScene } from '@/lib/naver-live-promo';
 import styles from './PromoFilm.module.css';
 
@@ -100,6 +100,9 @@ export default function PromoFilm() {
         <p className={styles.closingText}>영상 속 이야기, 라이브에서 직접 묻고 들어 보세요.</p>
         <a className={styles.cta} href={NAVER_LIVE_URL} target="_blank" rel="noopener noreferrer">
           네이버에서 알림받기
+        </a>
+        <a className={styles.ctaCoupang} href={COUPANG_LIVE_URL} target="_blank" rel="noopener noreferrer">
+          쿠팡에서 알림받기
         </a>
       </div>
     </section>
