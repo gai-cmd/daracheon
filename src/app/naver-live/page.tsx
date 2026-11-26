@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import JsonLd from '@/components/ui/JsonLd';
 import { NAVER_LIVE_SESSIONS, NAVER_LIVE_URL, formatSessionKst } from '@/lib/naver-live';
 import LiveStatus from './LiveStatus';
+import PromoFilm from './PromoFilm';
 import styles from './page.module.css';
 
 const SITE_URL = 'https://zoellife.com';
@@ -41,6 +42,8 @@ export default function NaverLivePage() {
         </p>
         <LiveStatus />
       </section>
+
+      <PromoFilm />
 
       <section className={styles.schedule} aria-labelledby="schedule-title">
         <h2 id="schedule-title" className={styles.sectionTitle}>

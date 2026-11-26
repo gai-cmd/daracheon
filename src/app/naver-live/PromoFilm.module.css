@@ -1,0 +1,208 @@
+/* dark-theme.css 가 전역 토큰·h2/h3/p 색을 !important 로 덮으므로 고정 hex + !important 사용 */
+.film {
+  position: relative;
+  left: 50%;
+  width: min(1100px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  margin: 0 0 88px;
+  text-align: center;
+}
+
+.kicker {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: #d4b26a !important;
+}
+
+.title {
+  margin: 0 0 14px;
+  font-family: var(--font-serif), 'Noto Serif KR', serif;
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 600;
+  color: #fdfbf7 !important;
+}
+
+.lede {
+  margin: 0 auto 32px;
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #cfc6b8 !important;
+}
+
+.player {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #4a3f2c;
+  background: #000;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.chapters {
+  margin: 72px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.chapter {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.chapter + .chapter {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid #2e281f;
+}
+
+.chapterHead {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chapterNo {
+  flex: none;
+  font-family: var(--font-serif), 'Noto Serif KR', serif;
+  font-size: 34px;
+  line-height: 1;
+  color: #d4b26a !important;
+}
+
+.chapterTitle {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fdfbf7 !important;
+}
+
+.chapterDesc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #b5ac9d !important;
+}
+
+.scenes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.scenes[data-count='2'] {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.scene {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  border: 1px solid #3a3226;
+  background: #111;
+}
+
+.img {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.scene:hover .img,
+.scene:focus-visible .img {
+  transform: scale(1.04);
+}
+
+.scene:focus-visible .thumb,
+.sceneActive .thumb {
+  border-color: #d4b26a;
+  box-shadow: 0 0 0 1px #d4b26a;
+}
+
+.time {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.68);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: #fdfbf7 !important;
+}
+
+.caption {
+  font-size: 14px;
+  color: #e6ded0 !important;
+}
+
+.closing {
+  margin-top: 64px;
+}
+
+.closingText {
+  margin: 0 0 18px;
+  font-size: 16px;
+  color: #cfc6b8 !important;
+}
+
+.cta {
+  display: inline-block;
+  padding: 13px 28px;
+  border-radius: 999px;
+  background: #03c75a;
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cta:hover {
+  background: #02b351;
+}
+
+@media (max-width: 900px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .chapterHead {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .scenes,
+  .scenes[data-count='2'] {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .chapterNo {
+    font-size: 26px;
+  }
+}
