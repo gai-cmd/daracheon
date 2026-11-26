@@ -16,6 +16,12 @@ export const PROMO_VIDEO = {
   uploadDate: '2026-11-26',
 };
 
+/** 사이트 전역 팝업용 무음 반복 클립 (본편 0–4s · 38–42s · 81.5–86s, 720p, 약 0.9MB). */
+export const PROMO_TEASER = {
+  src: `${BASE}/promo-teaser.mp4`,
+  poster: `${BASE}/poster.jpg`,
+};
+
 export interface PromoScene {
   src: string;
   /** 영상 속 시점 (초) */
@@ -56,7 +62,7 @@ export const PROMO_CHAPTERS: PromoChapter[] = [
     title: '추출',
     desc: '목질을 걷어내고 수지 부위만 골라 72시간 연속 증류해 오일을 얻습니다.',
     scenes: [
-      scene('select.jpg', 33, '목질 제거 · 수지 부위 선별'),
+      scene('select.jpg', 33, '목질 제거\u00a0· 수지\u00a0부위\u00a0선별'),
       scene('distill.jpg', 36, '72시간 연속 증류'),
       scene('oil.jpg', 39, '침향 오일'),
     ],
@@ -67,7 +73,7 @@ export const PROMO_CHAPTERS: PromoChapter[] = [
     scenes: [
       scene('facility.jpg', 48, '등록·관리되는 침향 재배시설'),
       scene('dna.jpg', 57, 'DNA 분석을 통한 침향 수종 확인'),
-      scene('haccp.jpg', 63, 'HACCP · ISO 22000 · OCOP 4성'),
+      scene('haccp.jpg', 63, 'HACCP\u00a0· ISO\u00a022000\u00a0· OCOP\u00a04성'),
     ],
   },
   {

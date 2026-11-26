@@ -6,7 +6,21 @@ import { NAVER_LIVE_URL } from '@/lib/naver-live';
 import { PROMO_CHAPTERS, PROMO_VIDEO, type PromoScene } from '@/lib/naver-live-promo';
 import styles from './PromoFilm.module.css';
 
-const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+// WebKit 은 word-break: keep-all 에서 닫는 괄호 앞도 줄바꿈 자리로 본다 ("Roxb." / ")").
+// 괄호로 끝나는 단어를 통째로 줄바꿈 금지로 묶는다.
+function keepClosingParen(text: string) {
+  return text.split(/(\S+\))/).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} style={{ whiteSpace: 'nowrap' }}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+const mmss =(s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 export default function PromoFilm() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -52,11 +66,11 @@ export default function PromoFilm() {
               <span className={styles.chapterNo}>{String(i + 1).padStart(2, '0')}</span>
               <div>
                 <h3 className={styles.chapterTitle}>{c.title}</h3>
-                <p className={styles.chapterDesc}>{c.desc}</p>
+                <p className={styles.chapterDesc}>{keepClosingParen(c.desc)}</p>
               </div>
             </div>
             <div className={styles.scenes} data-count={c.scenes.length}>
-              {c.scenes.map((s) => (
+              {c.scenes.map((s, j) => (
                 <button
                   key={s.src}
                   type="button"
@@ -69,7 +83,7 @@ export default function PromoFilm() {
                       src={s.src}
                       alt={s.caption}
                       fill
-                      sizes="(max-width: 720px) 100vw, 360px"
+                      sizes={`(max-width: 720px) ${c.scenes.length === 3 && j === 0 ? 100 : 50}vw, (max-width: 900px) 33vw, 400px`}
                       className={styles.img}
                     />
                     <span className={styles.time}>▶ {mmss(s.at)}</span>

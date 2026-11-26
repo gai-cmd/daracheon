@@ -141,10 +141,11 @@
   box-shadow: 0 0 0 1px #d4b26a;
 }
 
+/* 스틸에 박힌 자막은 대부분 왼쪽·가운데·오른쪽 아래에 있어 비어 있는 오른쪽 위에 둔다 */
 .time {
   position: absolute;
+  top: 8px;
   right: 8px;
-  bottom: 8px;
   padding: 3px 9px;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.68);
@@ -154,6 +155,7 @@
 }
 
 .caption {
+  text-wrap: balance;
   font-size: 14px;
   color: #e6ded0 !important;
 }
@@ -189,10 +191,25 @@
     gap: 18px;
   }
 
+  /* 번호·제목은 한 줄, 설명은 장면 그리드와 같은 왼쪽 선에서 시작 */
   .chapterHead {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: baseline;
-    gap: 16px;
+    column-gap: 12px;
+    row-gap: 8px;
+  }
+
+  .chapterHead > div {
+    display: contents;
+  }
+
+  .chapterTitle {
+    margin: 0;
+  }
+
+  .chapterDesc {
+    grid-column: 1 / -1;
   }
 }
 
@@ -200,6 +217,11 @@
   .scenes,
   .scenes[data-count='2'] {
     grid-template-columns: 1fr 1fr;
+  }
+
+  /* 장면 3개짜리 챕터: 첫 장면을 넓게, 나머지 둘을 아래에 — 혼자 남는 칸 방지 */
+  .scenes[data-count='3'] .scene:first-child {
+    grid-column: 1 / -1;
   }
 
   .chapterNo {
