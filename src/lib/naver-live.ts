@@ -59,6 +59,44 @@ export function currentOrNextSession(now: number): NaverLiveSession | null {
   return NAVER_LIVE_SESSIONS.find((s) => sessionState(s, now) !== 'ended') ?? null;
 }
 
+export interface PopupNotice {
+  session: NaverLiveSession;
+  state: Exclude<SessionState, 'ended'>;
+  eyebrow: string;
+  titleLines: [string, string];
+  lead: string;
+  cta: { label: string; href: string; external: boolean };
+}
+
+/**
+ * 사이트 전역 팝업 문구 — 진행 중이거나 다음 회차를 안내한다. 모든 회차가 끝나면 null(팝업 없음).
+ * 방송 시간에는 네이버 라이브로 바로 보내고, 그 외에는 편성표 페이지로 보낸다.
+ */
+export function popupNotice(now: number): PopupNotice | null {
+  const session = currentOrNextSession(now);
+  if (!session) return null;
+  const brand = '대라천 네이버 쇼핑라이브';
+  if (sessionState(session, now) === 'live') {
+    return {
+      session,
+      state: 'live',
+      eyebrow: 'NAVER SHOPPING LIVE · 지금 방송 중',
+      titleLines: [brand, '지금 방송 중입니다'],
+      lead: '지금 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
+      cta: { label: '라이브 보러 가기', href: NAVER_LIVE_URL, external: true },
+    };
+  }
+  const first = session.round === 1;
+  return {
+    session,
+    state: 'upcoming',
+    eyebrow: `NAVER SHOPPING LIVE · ${first ? '첫 방송' : `${session.round}회차`}`,
+    titleLines: [brand, first ? '첫 방송을 시작합니다' : `${session.round}회차 방송 안내`],
+    lead: '방송 시간에 들어오시면 실시간으로 묻고 답하며 라이브 혜택을 받으실 수 있습니다.',
+    cta: { label: '방송 일정 보기', href: '/naver-live', external: false },
+  };
+}
+
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 /** "11월 26일(목) 19:00–20:00" — KST 기준 */

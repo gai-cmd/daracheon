@@ -2,14 +2,12 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { NAVER_LIVE_SESSIONS, formatSessionKst } from '@/lib/naver-live';
+import { NAVER_LIVE_SESSIONS, formatSessionKst, popupNotice, type PopupNotice } from '@/lib/naver-live';
 import { PROMO_TEASER } from '@/lib/naver-live-promo';
 import styles from './NaverLivePopup.module.css';
 
-// 네이버 쇼핑라이브 첫 방송 안내 팝업.
-// 1회차 방송 종료 시각이 지나면 자동으로 렌더링되지 않는다 (코드 삭제 전까지 무해).
-const FIRST = NAVER_LIVE_SESSIONS[0];
-const SHOW_UNTIL = Date.parse(FIRST.endAt);
+// 네이버 쇼핑라이브 방송 안내 팝업 — 진행 중이거나 다음 회차를 안내한다.
+// 마지막 회차 종료 시각이 지나면 자동으로 렌더링되지 않는다 (코드 삭제 전까지 무해).
 const DISMISS_KEY = 'zl_naverlive_first_hide_until';
 
 function endOfTodayKst(): number {
@@ -20,12 +18,15 @@ function endOfTodayKst(): number {
 
 export default function NaverLivePopup() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [notice, setNotice] = useState<PopupNotice | null>(null);
+  const open = notice !== null;
+  const close = () => setNotice(null);
   // 움직임 줄이기 설정이면 자동 재생하지 않고 포스터만 보인다.
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
-    if (Date.now() >= SHOW_UNTIL) return;
+    const next = popupNotice(Date.now());
+    if (!next) return;
     if (pathname?.startsWith('/naver-live') || pathname?.startsWith('/admin')) return;
     try {
       const hideUntil = Number(window.localStorage.getItem(DISMISS_KEY) ?? 0);
@@ -34,19 +35,20 @@ export default function NaverLivePopup() {
       // 저장소 접근 불가(사생활 보호 모드 등) — 그냥 노출
     }
     setReduceMotion(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
-    setOpen(true);
+    setNotice(next);
   }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  if (!open) return null;
+  if (!notice) return null;
+  const { session, eyebrow, titleLines, lead, cta, state } = notice;
 
   const hideToday = () => {
     try {
@@ -54,11 +56,11 @@ export default function NaverLivePopup() {
     } catch {
       // 무시
     }
-    setOpen(false);
+    close();
   };
 
   return (
-    <div className={styles.backdrop} onClick={() => setOpen(false)}>
+    <div className={styles.backdrop} onClick={close}>
       <div
         className={styles.panel}
         role="dialog"
@@ -66,7 +68,7 @@ export default function NaverLivePopup() {
         aria-labelledby="naver-live-popup-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <a className={styles.media} href="/naver-live" onClick={() => setOpen(false)} aria-label="홍보 영상 전체 보기">
+        <a className={styles.media} href="/naver-live" onClick={close} aria-label="홍보 영상 전체 보기">
           <video
             className={styles.video}
             src={PROMO_TEASER.src}
@@ -81,24 +83,20 @@ export default function NaverLivePopup() {
           <span className={styles.mediaBadge}>▶ 홍보 영상 전체 보기</span>
         </a>
 
-        <p className={styles.liveEyebrow}>NAVER SHOPPING LIVE · 첫 방송</p>
+        <p className={styles.liveEyebrow}>{eyebrow}</p>
         <h2 id="naver-live-popup-title" className={styles.title}>
-          대라천 네이버 쇼핑라이브
+          {titleLines[0]}
           <br />
-          첫 방송을 시작합니다
+          {titleLines[1]}
         </h2>
-        <p className={styles.lead}>
-          방송 시간에 들어오시면 실시간으로 묻고 답하며
-          <br />
-          라이브 혜택을 받으실 수 있습니다.
-        </p>
+        <p className={styles.lead}>{lead}</p>
 
         <dl className={styles.table}>
           <div className={styles.row}>
-            <dt>첫 방송</dt>
+            <dt>{state === 'live' ? '방송 중' : session.round === 1 ? '첫 방송' : '다음 방송'}</dt>
             <dd className={styles.accent}>
               {/* 좁은 화면에서 "19:" / "00–20:00" 처럼 시각 중간이 끊기지 않게 공백에서만 줄바꿈 */}
-              {formatSessionKst(FIRST)
+              {formatSessionKst(session)
                 .split(' ')
                 .map((part, i) => (
                   <Fragment key={i}>
@@ -108,6 +106,12 @@ export default function NaverLivePopup() {
                 ))}
             </dd>
           </div>
+          {session.topic && (
+            <div className={`${styles.row} ${styles.topicRow}`}>
+              <dt>{session.round}회차</dt>
+              <dd>{session.topic}</dd>
+            </div>
+          )}
           <div className={styles.row}>
             <dt>정규 편성</dt>
             <dd>총 {NAVER_LIVE_SESSIONS.length}회 · 매회 19시</dd>
@@ -118,8 +122,13 @@ export default function NaverLivePopup() {
           <button type="button" className={styles.ghost} onClick={hideToday}>
             오늘 하루 보지 않기
           </button>
-          <a className={styles.naverPrimary} href="/naver-live" onClick={() => setOpen(false)}>
-            방송 일정 보기
+          <a
+            className={styles.naverPrimary}
+            href={cta.href}
+            onClick={close}
+            {...(cta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {cta.label}
           </a>
         </div>
       </div>

@@ -181,6 +181,8 @@
 /* 낮은 화면(가로 모드 등)에서 패널이 넘치지 않도록 영상 높이를 줄인다 */
 @media (max-height: 700px) {
   .media { aspect-ratio: 21 / 9; }
+  /* 회차 주제는 /naver-live 편성표에도 있다 — 낮은 화면에서는 버튼이 밀려나지 않게 숨긴다 */
+  .topicRow { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

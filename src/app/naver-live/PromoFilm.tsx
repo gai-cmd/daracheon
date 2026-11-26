@@ -20,7 +20,7 @@ function keepClosingParen(text: string) {
   );
 }
 
-const mmss =(s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 export default function PromoFilm() {
   const videoRef = useRef<HTMLVideoElement>(null);
